@@ -213,7 +213,7 @@ data class CurationDatabaseContext(
                 CurationDatabaseReader.COMPLICATION_TSV to ComplicationConfigFactory(icdModel),
                 CurationDatabaseReader.INTOLERANCE_TSV to IntoleranceConfigFactory(icdModel),
                 CurationDatabaseReader.TOXICITY_TSV to ToxicityConfigFactory(icdModel),
-                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(),
+                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(icdModel),
                 CurationDatabaseReader.INFECTION_TSV to InfectionConfigFactory(icdModel)
             )
                 .map { (tsv, factory) ->

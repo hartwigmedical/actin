@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.util.Either
@@ -15,11 +14,7 @@ class InfectionConfigFactory(private val icdModel: IcdModel) : CurationConfigFac
             else -> interpretation == "NULL"
         }
         val input = parts[fields["input"]!!]
-        val (icdCodes, icdValidationErrors) = if ("icd" in fields) {
-            validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
-        } else {
-            emptySet<IcdCode>() to emptyList()
-        }
+        val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.INFECTION, input, "icd", fields, parts, icdModel)
         return ValidatedCurationConfig(
             ComorbidityConfig(
                 input = input,
