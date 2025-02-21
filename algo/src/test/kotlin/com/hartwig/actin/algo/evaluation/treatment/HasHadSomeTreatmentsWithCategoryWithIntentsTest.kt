@@ -17,6 +17,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
     private val matchingIntents = setOf(Intent.PALLIATIVE)
     private val minDate = LocalDate.of(2022, 4, 1)
     private val function = HasHadSomeTreatmentsWithCategoryWithIntents(matchingCategory, matchingIntents)
+    private val functionWithDate = HasHadSomeTreatmentsWithCategoryWithIntents(matchingCategory, matchingIntents, minDate)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -99,8 +100,6 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
-    private val functionWithDate = HasHadSomeTreatmentsWithCategoryWithIntents(matchingCategory, matchingIntents, minDate)
-
     @Test
     fun `Should fail when date is too old`() {
         val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
@@ -130,6 +129,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
         )
         assertEvaluation(EvaluationResult.PASS, functionWithDate.evaluate(patientRecord))
     }
+
     @Test
     fun `Should fail when treatments with correct category and intent but unknown date`() {
         val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
@@ -141,6 +141,6 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
     }
 }
