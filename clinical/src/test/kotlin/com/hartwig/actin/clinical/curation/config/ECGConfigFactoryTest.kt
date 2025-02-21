@@ -21,8 +21,7 @@ class ECGConfigFactoryTest {
     fun `Should return ECG config from valid inputs`() {
         val icdMainCode = icdModel.codeToNodeMap.keys.first()
         val icdCodesCheck = setOf(IcdCode(icdMainCode, null))
-
-        val config = createConfig(interpretation = "interpretation", icd = "node 1", isQTCF = "1", qtcfValue = "1", qtcfUnit = "ms")
+        val config = createConfig(interpretation = "interpretation", icd = icdModel.titleToCodeMap.keys.first(), isQTCF = "1", qtcfValue = "1", qtcfUnit = "ms")
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo(INPUT)
         assertThat(config.config.curated).isNotNull
@@ -58,7 +57,7 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return empty config when input evaluates to true`() {
-        val config = createConfig(input = "Ja", icd = "")
+        val config = createConfig(input = "Ja")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("Ja", ignore = false, curated = Ecg(null, null, null)))
     }
