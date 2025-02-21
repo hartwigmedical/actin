@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPD
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
@@ -29,15 +30,17 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.undetermined("Undetermined if received at least $minSystemicTreatments systemic treatments")
             }
 
-            systemicTreatments.all { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
+            systemicTreatments.all { treatmentResultedInPD(it) == true } -> {
                 EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments with PD")
             }
 
-            systemicTreatmentsWithoutStartDate.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == false } -> {
+            systemicTreatmentsWithoutStartDate.isNotEmpty() && systemicTreatments.any { treatmentResultedInPD(it) == true }
+                    && (systemicTreatmentsWithoutStartDate.any { treatmentResultedInPD(it) != true }
+                    || lastTreatment?.let { treatmentResultedInPD(it) } != true) -> {
                 EvaluationFactory.undetermined(undeterminedMessage)
             }
 
-            lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } == true -> {
+            lastTreatment?.let { treatmentResultedInPD(it) } == true -> {
                 val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
                 EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
             }

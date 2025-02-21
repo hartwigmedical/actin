@@ -36,6 +36,19 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
+    fun `Should fail when history contains less only non PD treatments`() {
+        val knownDateTreatments = listOf("1", "2").map { treatmentEntry(it, true, startYear = 2022, stopYear = 2023) }
+        val unknownDateTreatment = treatmentEntry("3", true, startYear = null)
+
+        FUNCTIONS.forEach {
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                it.evaluate(TreatmentTestFactory.withTreatmentHistory(knownDateTreatments + unknownDateTreatment))
+            )
+        }
+    }
+
+    @Test
     fun `Should evaluate to undetermined when requested number of treatments is met only when counting duplicate treatments entries twice`() {
         val treatment = treatmentEntry("1", true, StopReason.PROGRESSIVE_DISEASE)
 
@@ -84,60 +97,40 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when minimal treatment lines is met with PD in last line but multiple lines without date and PD in only some`() {
-        val unknownDateTreatments = listOf(
-            treatmentEntry("3", true, StopReason.TOXICITY, stopYear = null, startYear = null),
-            treatmentEntry("4", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
-        )
-
+    fun `Should evaluate to undetermined when minimal treatment lines is met with PD in last line but multiple lines without date and not all PD`() {
+        val unknownDateSomePd = listOf(unknownDateTreatmentWithPD("1"), treatmentEntry("2", true, StopReason.TOXICITY, startYear = null))
+        val unknownDateNonPd = listOf("1", "2").map { treatmentEntry(it, true, StopReason.TOXICITY, startYear = null) }
         val knownDateTreatment = treatmentEntry("4", true, StopReason.PROGRESSIVE_DISEASE, stopYear = 2024, startYear = 2023)
 
-        FUNCTIONS.forEach {
-            assertEvaluation(
-                EvaluationResult.UNDETERMINED,
-                it.evaluate(TreatmentTestFactory.withTreatmentHistory(unknownDateTreatments + knownDateTreatment))
-            )
+        listOf(unknownDateSomePd, unknownDateNonPd).forEach { treatmentList ->
+            FUNCTIONS.forEach {
+                assertEvaluation(
+                    EvaluationResult.UNDETERMINED,
+                    it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList + knownDateTreatment))
+                )
+            }
         }
     }
 
     @Test
-    fun `Should evaluate to undetermined when minimal treatment lines is met with TOXICITY in last line and multiple lines without date with PD in some`() {
-        val unknownDateTreatments = listOf(
-            treatmentEntry("3", true, StopReason.TOXICITY, stopYear = null, startYear = null),
-            treatmentEntry("4", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
-        )
+    fun `Should evaluate to undetermined when minimal treatment lines is met without PD in last line and multiple lines without date with PD in some or all`() {
+        val unknownDateAllPd = listOf("1", "2").map { unknownDateTreatmentWithPD(it) }
+        val unknownDateSomePd = listOf(unknownDateTreatmentWithPD("1"), treatmentEntry("2", true, StopReason.TOXICITY, startYear = null))
+        val knownDateNonPd = treatmentEntry("3", true, StopReason.TOXICITY, stopYear = 2022, startYear = 2022)
 
-        val knownDateTreatment = treatmentEntry("4", true, StopReason.TOXICITY, stopYear = 2023, startYear = 2023)
-
-        FUNCTIONS.forEach {
-            assertEvaluation(
-                EvaluationResult.UNDETERMINED,
-                it.evaluate(TreatmentTestFactory.withTreatmentHistory(unknownDateTreatments + knownDateTreatment))
-            )
-        }
-    }
-
-    @Test
-    fun `Should evaluate to undetermined when minimal treatment lines is met with TOXICITY in last line and multiple lines without date with PD in all`() {
-        val unknownDateTreatments = listOf(
-            treatmentEntry("3", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
-            treatmentEntry("4", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
-        )
-
-        val knownDateTreatment = treatmentEntry("4", true, StopReason.TOXICITY, stopYear = 2023, startYear = 2023)
-
-        FUNCTIONS.forEach {
-            assertEvaluation(
-                EvaluationResult.UNDETERMINED,
-                it.evaluate(TreatmentTestFactory.withTreatmentHistory(unknownDateTreatments + knownDateTreatment))
-            )
+        listOf(unknownDateAllPd, unknownDateSomePd).forEach { treatmentList ->
+            FUNCTIONS.forEach {
+                assertEvaluation(
+                    EvaluationResult.UNDETERMINED,
+                    it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList + knownDateNonPd))
+                )
+            }
         }
     }
 
     @Test
     fun `Should pass when minimal treatment lines is met with PD in last line and multiple lines without date with PD in all`() {
-        val unknownDateTreatments =
-            listOf("1", "2").map { treatmentEntry(it, true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null) }
+        val unknownDateTreatments = listOf("1", "2").map { unknownDateTreatmentWithPD(it) }
         val knownDateTreatments = listOf(
             treatmentEntry("3", true, StopReason.TOXICITY, stopYear = 2022, startYear = 2022),
             treatmentEntry("4", true, StopReason.PROGRESSIVE_DISEASE, stopYear = 2024, startYear = 2023),
@@ -190,6 +183,10 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
             stopReason = stopReason,
             stopYear = stopYear
         )
+    }
+
+    private fun unknownDateTreatmentWithPD(name: String): TreatmentHistoryEntry {
+        return treatmentEntry(name, true, StopReason.PROGRESSIVE_DISEASE, null, null)
     }
 
     companion object {
