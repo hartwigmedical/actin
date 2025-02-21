@@ -37,14 +37,14 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return ignore config when input evaluates to false`() {
-        val config = createConfig(input = "nvt", isQTCF = "1", qtcfValue = "1")
+        val config = createConfig(input = "nvt")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("nvt", ignore = true, curated = null))
     }
 
     @Test
     fun `Should return ignore config when input evaluates to null`() {
-        val config = createConfig(input = "possible", isQTCF = "1", qtcfValue = "1")
+        val config = createConfig(input = "possible")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("possible", ignore = true, curated = null))
     }
