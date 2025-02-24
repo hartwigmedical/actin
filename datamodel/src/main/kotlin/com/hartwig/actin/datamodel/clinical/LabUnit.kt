@@ -37,6 +37,7 @@ enum class LabUnit(private val display: String) : Displayable {
     UNITS_OF_INR("INR"),
     NANOMOLES_PER_DAY("nmol/24h"),
     MILLIMOLES_PER_DAY("mmol/24h"),
+    GRAMS_PER_DAY("g/24h"),
     MILLIMETERS_PER_HOUR("mm/hr"),
     MILLILITERS_PER_MINUTE("mL/min"),
     FEMTOLITERS("fL"),
