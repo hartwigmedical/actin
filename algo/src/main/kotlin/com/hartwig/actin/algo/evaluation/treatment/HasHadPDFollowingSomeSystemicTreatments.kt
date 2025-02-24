@@ -14,19 +14,18 @@ class HasHadPDFollowingSomeSystemicTreatments(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentHistory = record.oncologicalHistory
-        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory)
-        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.oncologicalHistory)
         val systemicTreatments = treatmentHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
         val (systemicTreatmentsWithStartDate, systemicTreatmentsWithoutStartDate) = systemicTreatments.partition { it.startYear != null }
         val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(systemicTreatmentsWithStartDate)
+        val lastTreatmentResultedInPD = lastTreatment?.let { treatmentResultedInPD(it) } == true
         val undeterminedMessage = "Has had at least $minSystemicTreatments systemic treatments but undetermined if PD after last line"
 
         return when {
-            maxSystemicCount < minSystemicTreatments -> {
+            SystemicTreatmentAnalyser.maxSystemicTreatments(treatmentHistory) < minSystemicTreatments -> {
                 EvaluationFactory.fail("Has not received at least $minSystemicTreatments systemic treatments with PD")
             }
 
-            minSystemicCount < minSystemicTreatments -> {
+            SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory) < minSystemicTreatments -> {
                 EvaluationFactory.undetermined("Undetermined if received at least $minSystemicTreatments systemic treatments")
             }
 
@@ -34,18 +33,18 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments with PD")
             }
 
-            systemicTreatmentsWithoutStartDate.isNotEmpty() && systemicTreatments.any { treatmentResultedInPD(it) == true }
-                    && (systemicTreatmentsWithoutStartDate.any { treatmentResultedInPD(it) != true }
-                    || lastTreatment?.let { treatmentResultedInPD(it) } != true) -> {
+            systemicTreatmentsWithoutStartDate.any { entry -> (treatmentResultedInPD(entry) == true) != lastTreatmentResultedInPD } -> {
                 EvaluationFactory.undetermined(undeterminedMessage)
             }
 
-            lastTreatment?.let { treatmentResultedInPD(it) } == true -> {
+            lastTreatmentResultedInPD -> {
                 val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
                 EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
             }
 
-            lastTreatment?.let { it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || it.treatmentHistoryDetails?.stopYear == null } == true -> {
+            lastTreatment?.let {
+                it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || it.treatmentHistoryDetails?.stopYear == null
+            } == true -> {
                 EvaluationFactory.undetermined(undeterminedMessage)
             }
 
