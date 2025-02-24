@@ -82,15 +82,10 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | who                        | Patient: WHO                   |
 | hasActiveInfection         | Other relevant patient history |
 | activeInfectionDescription | Other relevant patient history |
-| hasToxicitiesGrade2        | Toxicity details               |
-| hasSigAberrationLatestECG  | ECG details                    |
-| ecgAberrationDescription   | ECG details                    |
-| qtcfValue                  | ECG details                    |
-| qtcfUnit                   | ECG details                    |
-| lvef                       | ECG details                    |
+| lvef                       | Other relevant patient history |
 | hasComplications           | Complication details           |
 
-#### N treatment history entries in oncological history
+#### 0+ treatment history entries in oncological history
 
 | Field                   | Origin                       |
 |-------------------------|------------------------------|
@@ -141,7 +136,7 @@ The details may include multiple treatment stages representing switches from the
 | startYear  | Added in curation        |
 | startMonth | Added in curation        |
 
-#### N prior second primaries
+#### 0+ prior second primaries
 
 | Field            | Origin                                     |
 |------------------|--------------------------------------------|
@@ -155,18 +150,64 @@ The details may include multiple treatment stages representing switches from the
 | treatmentHistory | Previous primary tumors: Treatment history |
 | status           | Previous primary tumors: Status            |
 
-#### N other conditions
+#### 0+ comorbidities
 
-| Field                        | Origin                      |
-|------------------------------|-----------------------------|
-| name                         | Other condition: name       |
-| year                         | Other condition: start date |
-| month                        | Other condition: start date |
-| icd                          | Added in curation           |
-| category                     | Added in curation           |
-| isContraindicationForTherapy | Added in curation           |
+Comorbidities are diseases or medical conditions that coexist alongside the primary diagnosis.
+These consist of complications, intolerances, toxicities, ECGs, and other conditions.
+Each subtype has fields for name, year, month, and ICD codes to enable generic matching across all comorbidities.
+They can also be considered individually:
 
-#### N prior (non-WGS) molecular tests
+##### 0+ other conditions
+
+| Field    | Origin                      |
+|----------|-----------------------------|
+| name     | Other condition: name       |
+| year     | Other condition: start date |
+| month    | Other condition: start date |
+| icdCodes | Added in curation           |
+
+##### 0+ cancer related complications
+
+| Field    | Origin                   |
+|----------|--------------------------|
+| name     | Complication: name       |
+| icdCodes | Added in curation        |
+| year     | Complication: start date |
+| month    | Complication: start date |
+
+
+##### 0+ toxicities
+
+| Field         | Origin            |
+|---------------|-------------------|
+| name          | Toxicities: Name  |
+| evaluatedDate | Toxicities: Date  |
+| icdCodes      | Added in curation |
+| grade         | Toxicities: Grade |
+| source        | If applicable     |
+| endDate       | If provided       |
+
+##### 0+ intolerances
+
+| Field              | Details           |
+|--------------------|-------------------|
+| name               | Allergies: Name   |
+| icdCodes           | Added in curation |
+| type               | Allergies: Type   |
+| clinicalStatus     | If applicable     |
+| verificationStatus | If applicable     |
+| criticality        | If applicable     |
+
+##### 0+ ECGs
+
+| Field       | Origin            |
+|-------------|-------------------|
+| name        | ECG details       |
+| qtcfMeasure | ECG details       |
+| jtcMeasure  | ECG details       |
+| icdCodes    | Added in curation |
+
+#### 0+ prior (non-WGS) molecular tests
 
 | Field                                    | Origin                    |
 |------------------------------------------|---------------------------|
@@ -179,16 +220,7 @@ The details may include multiple treatment stages representing switches from the
 | scoreValueUnit                           | Molecular test: Result    |
 | impliesPotentialPriorIndeterminateStatus | Added in curation         |
 
-#### N cancer related complications
-
-| Field | Origin                   |
-|-------|--------------------------|
-| name  | Complication: name       |
-| icd   | Added in curation        |
-| year  | Complication: start date |
-| month | Complication: start date |
-
-#### N lab values
+#### 0+ lab values
 
 | Field        | Origin                                |
 |--------------|---------------------------------------|
@@ -202,37 +234,14 @@ The details may include multiple treatment stages representing switches from the
 | refLimitUp   | Lab values: Institutional upper limit |
 | isOutsideRef | Added in curation                     |
 
-#### N toxicities
-
-| Field         | Origin            |
-|---------------|-------------------|
-| name          | Toxicities: Name  |
-| evaluatedDate | Toxicities: Date  |
-| icd           | Added in curation |
-| grade         | Toxicities: Grade |
-| source        | If applicable     |
-
-#### N intolerances
-
-| Field              | Details           |
-|--------------------|-------------------|
-| name               | Allergies: Name   |
-| icd                | Added in curation |
-| category           | Added in curation |
-| subcategories      | Added in curation |
-| type               | Allergies: Type   |
-| clinicalStatus     | If applicable     |
-| verificationStatus | If applicable     |
-| criticality        | If applicable     |
-
-#### N surgeries
+#### 0+ surgeries
 
 | Field   | Origin        |
 |---------|---------------|
 | endDate | If applicable |
 | status  | If applicable |
 
-#### N vital function measurements
+#### 0+ vital function measurements
 
 | Field       | Origin                |
 |-------------|-----------------------|
@@ -242,7 +251,7 @@ The details may include multiple treatment stages representing switches from the
 | value       | Vital function: Value |
 | unit        | Vital function: Unit  |
 
-#### N body weight measurements
+#### 0+ body weight measurements
 
 | Field | Origin                                              |
 |-------|-----------------------------------------------------|
@@ -250,14 +259,14 @@ The details may include multiple treatment stages representing switches from the
 | value | Vital function -> Body weight: Value of measurement |
 | unit  | Vital function -> Body weight: Unit of measurement  |
 
-#### N blood transfusions
+#### 0+ blood transfusions
 
 | Field   | Origin                     |
 |---------|----------------------------|
 | date    | Blood transfusion: Date    |
 | product | Blood transfusion: Product |
 
-#### N medications
+#### 0+ medications
 
 | Field                            | Example Value                                                                | Origin                                   |
 |----------------------------------|------------------------------------------------------------------------------|------------------------------------------|
