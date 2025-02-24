@@ -17,16 +17,14 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val history = record.oncologicalHistory.filter { it.intents?.intersect(intentsToFind)?.isNotEmpty() == true }
         val treatmentSummary = if (minDate == null) {
-            createTreatmentSummary(record) { it.intents?.intersect(intentsToFind)?.isNotEmpty() }
+            createTreatmentSummary(history)
         } else {
-            createTreatmentSummary(record) {
-                it.intents?.intersect(intentsToFind)?.isNotEmpty() == true &&
-                        TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
-            }
+            createTreatmentSummary(history) { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false) }
         }
         val treatmentSummaryDateNull =
-            createTreatmentSummary(record) { it.intents?.intersect(intentsToFind)?.isNotEmpty() == true && it.startYear == null }
+            createTreatmentSummary(history) { it.startYear == null }
 
         val intentsList = Format.concatItemsWithOr(intentsToFind)
 
@@ -56,11 +54,11 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
     }
 
     private fun createTreatmentSummary(
-        record: PatientRecord,
+        oncologicalHistory: List<TreatmentHistoryEntry>,
         classifier: (TreatmentHistoryEntry) -> Boolean? = { true }
     ): TreatmentSummaryForCategory {
         return TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.oncologicalHistory,
+            oncologicalHistory,
             category,
             classifier
         )
