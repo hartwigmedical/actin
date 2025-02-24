@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 class HasHadSomeTreatmentsWithCategoryWithIntents(
@@ -16,33 +17,32 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val oncologicalHistory = if (minDate == null) {
-            record.oncologicalHistory
+        val treatmentSummary = if (minDate == null) {
+            createTreatmentSummary(record) { it.intents?.intersect(intentsToFind)?.isNotEmpty() }
         } else {
-            record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) }
+            createTreatmentSummary(record) {
+                it.intents?.intersect(intentsToFind)?.isNotEmpty() == true &&
+                        TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
+            }
         }
-
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            oncologicalHistory,
-            category,
-            { historyEntry -> historyEntry.intents?.intersect(intentsToFind)?.isNotEmpty() }
-        )
+        val treatmentSummaryDateNull =
+            createTreatmentSummary(record) { it.intents?.intersect(intentsToFind)?.isNotEmpty() == true && it.startYear == null }
 
         val intentsList = Format.concatItemsWithOr(intentsToFind)
-        val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
 
         return when {
-            treatmentSummary.hasSpecificMatch() &&
-                    (minDate == null || treatmentSummary.specificMatches.any { it.startYear != null }) -> {
-                EvaluationFactory.pass("Has received $intentsList ${category.display()} ($treatmentDisplay)")
-            }
-
             treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.undetermined("Has received $intentsList ${category.display()} ($treatmentDisplay) with unknown date")
+                val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
+                EvaluationFactory.pass("Has received $intentsList ${category.display()} ($treatmentDisplay)")
             }
 
             treatmentSummary.hasApproximateMatch() -> {
                 EvaluationFactory.undetermined("Undetermined if received ${category.display()} is $intentsList")
+            }
+
+            treatmentSummaryDateNull.hasSpecificMatch() -> {
+                val treatmentDisplay = treatmentSummaryDateNull.specificMatches.joinToString(", ") { it.treatmentDisplay() }
+                EvaluationFactory.undetermined("Has received $intentsList ${category.display()} ($treatmentDisplay) with unknown date")
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
@@ -53,5 +53,16 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
                 EvaluationFactory.fail("Has not received $intentsList ${category.display()}")
             }
         }
+    }
+
+    private fun createTreatmentSummary(
+        record: PatientRecord,
+        classifier: (TreatmentHistoryEntry) -> Boolean? = { true }
+    ): TreatmentSummaryForCategory {
+        return TreatmentSummaryForCategory.createForTreatmentHistory(
+            record.oncologicalHistory,
+            category,
+            classifier
+        )
     }
 }
