@@ -16,11 +16,6 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
     private val minDate: LocalDate? = null
 ) : EvaluationFunction {
 
-    private fun hasAnyMatchingIntent(entry: TreatmentHistoryEntry) = entry.intents?.intersect(intentsToFind)?.isNotEmpty()
-    private fun historyAfterDate(record: PatientRecord, includeUnknown: Boolean): List<TreatmentHistoryEntry> {
-        return record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate!!, includeUnknown) }
-    }
-
     override fun evaluate(record: PatientRecord): Evaluation {
         val oncologicalHistory = if (minDate == null) record.oncologicalHistory else historyAfterDate(record, false)
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(oncologicalHistory, category, ::hasAnyMatchingIntent)
@@ -46,16 +41,22 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
             }
 
             else -> {
-                val treatmentSummaryWithNull = TreatmentSummaryForCategory.createForTreatmentHistory(
+                val treatmentSummaryWithUnknownDate = TreatmentSummaryForCategory.createForTreatmentHistory(
                     historyAfterDate(record, true), category, ::hasAnyMatchingIntent
                 )
-                if (treatmentSummaryWithNull.hasSpecificMatch()) {
-                    val treatmentDisplay = treatmentSummaryWithNull.specificMatches.joinToString(", ") { it.treatmentDisplay() }
+                if (treatmentSummaryWithUnknownDate.hasSpecificMatch()) {
+                    val treatmentDisplay = treatmentSummaryWithUnknownDate.specificMatches.joinToString(", ") { it.treatmentDisplay() }
                     EvaluationFactory.undetermined("Has received $intentsList ${category.display()} ($treatmentDisplay) with unknown date")
                 } else {
                     EvaluationFactory.fail("Has not received $intentsList ${category.display()}")
                 }
             }
         }
+    }
+
+    private fun hasAnyMatchingIntent(entry: TreatmentHistoryEntry) = entry.intents?.intersect(intentsToFind)?.isNotEmpty()
+
+    private fun historyAfterDate(record: PatientRecord, includeUnknown: Boolean): List<TreatmentHistoryEntry> {
+        return record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate!!, includeUnknown) }
     }
 }
