@@ -36,20 +36,14 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
                 EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included $intentsList ${category.display()}")
             }
 
-            minDate == null -> {
-                EvaluationFactory.fail("Has not received $intentsList ${category.display()}")
-            }
-
             else -> {
-                val treatmentSummaryWithUnknownDate = TreatmentSummaryForCategory.createForTreatmentHistory(
-                    historyAfterDate(record, true), category, ::hasAnyMatchingIntent
-                )
-                if (treatmentSummaryWithUnknownDate.hasSpecificMatch()) {
-                    val treatmentDisplay = treatmentSummaryWithUnknownDate.specificMatches.joinToString(", ") { it.treatmentDisplay() }
-                    EvaluationFactory.undetermined("Has received $intentsList ${category.display()} ($treatmentDisplay) with unknown date")
-                } else {
-                    EvaluationFactory.fail("Has not received $intentsList ${category.display()}")
-                }
+                minDate?.let {
+                    TreatmentSummaryForCategory.createForTreatmentHistory(
+                        historyAfterDate(record, true), category, ::hasAnyMatchingIntent
+                    ).specificMatches.ifEmpty { null }
+                }?.let { unknownDateMatches ->
+                    EvaluationFactory.undetermined("Has received $intentsList ${category.display()} (${unknownDateMatches.joinToString(", ")}) with unknown date")
+                } ?: EvaluationFactory.fail("Has not received $intentsList ${category.display()}")
             }
         }
     }
