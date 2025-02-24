@@ -90,7 +90,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
                     } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && extendedVariant?.isBiallelic == true) {
                         reportableNonDriverBiallelicVariantsOther.add(variant.event)
                     } else if (
-                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRepairDeficient == true)
+                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRecombinationDeficient == true)
                         || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.isMicrosatelliteUnstable == true)
                     ) {
                         reportableNonDriverNonBiallelicVariantsOther.add(variant.event)

@@ -1,59 +1,12 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.datamodel.clinical.TumorStage
-import java.util.TreeMap
+import com.hartwig.actin.util.Either
 
 internal object QuestionnaireCuration {
-
-    private val OPTION_MAPPING = TreeMap<String, Boolean?>(String.CASE_INSENSITIVE_ORDER).apply {
-        putAll(
-            mapOf(
-                "no" to false,
-                "non" to false,
-                "none" to false,
-                "no indien ja welke" to false,
-                "nee" to false,
-                "neee" to false,
-                "o" to false,
-                "n.v.t." to null,
-                "n.v.t" to null,
-                "nvt" to null,
-                "nvt." to null,
-                "na" to null,
-                "yes" to true,
-                "tes" to true,
-                "ja" to true,
-                "es" to true,
-                "yes/no" to null,
-                "yes/no/unknown" to null,
-                "(yes/no)" to null,
-                "ye" to true,
-                "yes related to prostatecarcinoma" to true,
-                "yes (cervix)" to true,
-                "yes bone lesion l1 l2 with epidural extension" to true,
-                "yes manubrium sterni" to true,
-                "yes vertebra l2" to true,
-                "yes wherefore surgery jun 2023" to true,
-                "unknown" to null,
-                "uknown" to null,
-                "unknonw" to null,
-                "onknown" to null,
-                "unkown" to null,
-                "Unknown (can be seem on CT but not clearly demarcated, has not been measured before)" to null,
-                "suspect lesion" to null,
-                "unknown after surgery" to null,
-                "-" to null,
-                "botaantasting bij weke delen massa" to false,
-                "no total resection" to false,
-                "probably" to null,
-                "possible" to null,
-                "onbekend" to null,
-                "suspected" to null
-            )
-        )
-    }
 
     private val STAGE_MAPPING = mapOf(
         "I" to TumorStage.I,
@@ -81,21 +34,13 @@ internal object QuestionnaireCuration {
         "na" to null
     )
 
-    fun toOption(subject: String, option: String?): ValidatedQuestionnaireCuration<Boolean> {
-        if (option.isNullOrEmpty()) {
-            return ValidatedQuestionnaireCuration(null)
-        }
-        if (!isConfiguredOption(option)) {
-            return ValidatedQuestionnaireCuration(
-                null,
-                listOf(QuestionnaireCurationError(subject, "Unrecognized questionnaire option: '$option'"))
+    fun toBoolean(subject: String, option: String?): ValidatedQuestionnaireCuration<Boolean> {
+        return when (val parsed = BooleanValueParser.parseBoolean(option)) {
+            is Either.Right -> ValidatedQuestionnaireCuration(parsed.value)
+            else -> ValidatedQuestionnaireCuration(
+                null, listOf(QuestionnaireCurationError(subject, "Unrecognized questionnaire option: '$option'"))
             )
         }
-        return ValidatedQuestionnaireCuration(OPTION_MAPPING[option])
-    }
-
-    private fun isConfiguredOption(option: String?): Boolean {
-        return option != null && OPTION_MAPPING.containsKey(option)
     }
 
     fun toStage(subject: String, stage: String?): ValidatedQuestionnaireCuration<TumorStage> {
@@ -140,12 +85,12 @@ internal object QuestionnaireCuration {
         return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | last treatment date: $lastTreatmentInfo")
     }
 
-    fun toInfectionStatus(subject: String, significantCurrentInfection: String?): ValidatedQuestionnaireCuration<InfectionStatus> {
-        return buildFromDescription(subject, significantCurrentInfection, QuestionnaireCuration::buildInfectionStatus)
+    fun toInfectionStatus(significantCurrentInfection: String?): ValidatedQuestionnaireCuration<InfectionStatus> {
+        return buildFromDescription(significantCurrentInfection, QuestionnaireCuration::buildInfectionStatus)
     }
 
-    fun toECG(subject: String, significantAberrationLatestECG: String?): ValidatedQuestionnaireCuration<ECG> {
-        return buildFromDescription(subject, significantAberrationLatestECG, QuestionnaireCuration::buildECG)
+    fun toEcg(significantAberrationLatestEcg: String?): ValidatedQuestionnaireCuration<Ecg> {
+        return buildFromDescription(significantAberrationLatestEcg, QuestionnaireCuration::buildEcg)
     }
 
     private fun buildInfectionStatus(
@@ -155,31 +100,24 @@ internal object QuestionnaireCuration {
         return ValidatedQuestionnaireCuration(InfectionStatus(hasActiveInfection = hasActiveInfection, description = description))
     }
 
-    private fun buildECG(hasSignificantAberrationLatestECG: Boolean, description: String?): ValidatedQuestionnaireCuration<ECG> {
+    private fun buildEcg(isPresent: Boolean, description: String?): ValidatedQuestionnaireCuration<Ecg> {
         return ValidatedQuestionnaireCuration(
-            ECG(
-                hasSigAberrationLatestECG = hasSignificantAberrationLatestECG,
-                aberrationDescription = description,
+            Ecg(
+                name = description,
                 jtcMeasure = null,
                 qtcfMeasure = null
-            )
+            ).takeIf { isPresent }
         )
     }
 
     private fun <T> buildFromDescription(
-        subject: String,
         description: String?,
         buildFunction: (Boolean, String?) -> ValidatedQuestionnaireCuration<T>
     ): ValidatedQuestionnaireCuration<T> {
-        val present: ValidatedQuestionnaireCuration<Boolean> = if (isConfiguredOption(description)) {
-            toOption(subject, description)
-        } else if (!description.isNullOrEmpty()) {
-            ValidatedQuestionnaireCuration(true)
-        } else {
-            ValidatedQuestionnaireCuration(null)
+        val isPresent = when (val parsed = BooleanValueParser.parseBoolean(description)) {
+            is Either.Right -> parsed.value
+            else -> true
         }
-        return if (present.curated == null) {
-            ValidatedQuestionnaireCuration(null, present.errors)
-        } else buildFunction(present.curated, description)
+        return isPresent?.let { buildFunction(it, description) } ?: ValidatedQuestionnaireCuration(null)
     }
 }

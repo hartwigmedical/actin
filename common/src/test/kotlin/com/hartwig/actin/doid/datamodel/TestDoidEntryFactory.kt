@@ -5,9 +5,10 @@ object TestDoidEntryFactory {
     fun createMinimalTestDoidEntry(): DoidEntry {
         return DoidEntry(
             id = "TEST-DOID",
-            metadata = GraphMetadata(),
+            metadata = GraphMetadata(null, ""),
             nodes = emptyList(),
-            edges = emptyList()
+            edges = emptyList(),
+            logicalDefinitionAxioms = emptyList()
         )
     }
 }

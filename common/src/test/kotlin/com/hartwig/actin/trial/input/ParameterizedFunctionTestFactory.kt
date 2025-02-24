@@ -186,6 +186,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("string1;string2", "1")
             }
 
+            FunctionInput.MANY_BODY_LOCATIONS -> {
+                listOf("${BodyLocationCategory.LIVER};${BodyLocationCategory.LUNG}")
+            }
+
             FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION -> {
                 listOf("1", BodyLocationCategory.LIVER.toString())
             }

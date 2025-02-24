@@ -40,12 +40,12 @@ class SignatureEvidenceTest {
     }
 
     @Test
-    fun `Should determine evidence and trials for homologous repair deficiency`() {
-        val hrdMatches = signatureEvidence.findHomologousRepairMatches(true)
+    fun `Should determine evidence and trials for homologous recombination deficiency`() {
+        val hrdMatches = signatureEvidence.findHomologousRecombinationMatches(true)
         assertThat(hrdMatches.evidenceMatches).containsExactly(EVIDENCE_FOR_HRD)
         assertThat(hrdMatches.matchingCriteriaPerTrialMatch).isEqualTo(mapOf(TRIAL_FOR_HRD to TRIAL_FOR_HRD.anyMolecularCriteria()))
 
-        val hrpMatches = signatureEvidence.findHomologousRepairMatches(false)
+        val hrpMatches = signatureEvidence.findHomologousRecombinationMatches(false)
         assertThat(hrpMatches.evidenceMatches).isEmpty()
         assertThat(hrpMatches.matchingCriteriaPerTrialMatch).isEmpty()
     }

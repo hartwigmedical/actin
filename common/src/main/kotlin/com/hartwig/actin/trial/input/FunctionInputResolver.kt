@@ -267,6 +267,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_BODY_LOCATIONS -> {
+                    createManyBodyLocationsInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION -> {
                     createOneIntegerOneBodyLocationInput(function)
                     return true
@@ -669,6 +674,11 @@ class FunctionInputResolver(
             strings = toStringList(function.parameters.first()),
             integer = parameterAsInt(function, 1)
         )
+    }
+
+    fun createManyBodyLocationsInput(function: EligibilityFunction): Set<BodyLocationCategory> {
+        assertParamConfig(function, FunctionInput.MANY_BODY_LOCATIONS, 1)
+        return toStringList(function.parameters.first()).map { BodyLocationCategory.valueOf(it.uppercase()) }.toSet()
     }
 
     fun createOneIntegerOneBodyLocationInput(function: EligibilityFunction): OneIntegerOneBodyLocation {

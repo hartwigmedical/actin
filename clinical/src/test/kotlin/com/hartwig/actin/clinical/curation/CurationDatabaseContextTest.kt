@@ -18,57 +18,53 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all databases validation errors`() {
-        val expectedUnusedConfig = IntRange(0, 14).map {
+        val expectedUnusedConfig = IntRange(0, 12).map {
             CurationConfigValidationError(NOT_IMPORTANT, NOT_IMPORTANT, NOT_IMPORTANT, it.toString(), NOT_IMPORTANT)
         }
         val context = CurationDatabaseContext(
-            primaryTumorCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
-            treatmentHistoryEntryCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[1]),
-            secondPrimaryCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[2]),
-            lesionLocationCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[3]),
-            comorbidityCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[4]),
-            ecgCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[5]),
-            infectionCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[6]),
-            periodBetweenUnitCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[7]),
-            molecularTestIhcCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
-            molecularTestPdl1Curation = curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
-            sequencingTestCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
-            medicationNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
-            medicationDosageCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
-            administrationRouteTranslation = mockk(),
-            toxicityTranslation = mockk(),
-            bloodTransfusionTranslation = mockk(),
-            dosageUnitTranslation = mockk(),
-            surgeryNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
-            laboratoryCuration =  curationDatabaseWithUnusedConfig(expectedUnusedConfig[14])
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[1]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[2]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[3]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[4]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[5]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[6]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[7]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
+            mockk(),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
+            mockk(),
+            mockk(),
+            mockk(),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
     }
 
     @Test
     fun `Should combine all unused configs in curation databases, except blood transfusions`() {
-        val expectedUnusedConfig = IntRange(0, 17).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 15).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
         val context = CurationDatabaseContext(
-            primaryTumorCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
-            treatmentHistoryEntryCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[1]),
-            secondPrimaryCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[2]),
-            lesionLocationCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[3]),
-            comorbidityCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[4]),
-            ecgCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[5]),
-            infectionCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[6]),
-            periodBetweenUnitCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[7]),
-            molecularTestIhcCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
-            molecularTestPdl1Curation = curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
-            sequencingTestCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
-            medicationNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
-            medicationDosageCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
-            administrationRouteTranslation = translationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
-            laboratoryCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
-            toxicityTranslation = translationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
-            bloodTransfusionTranslation = bloodTransfusionTranslation,
-            dosageUnitTranslation = translationDatabaseWithUnusedConfig(expectedUnusedConfig[16]),
-            surgeryNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[17])
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[1]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[2]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[3]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[4]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[5]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[6]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[7]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
+            bloodTransfusionTranslation,
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[15])
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { bloodTransfusionTranslation wasNot Called }

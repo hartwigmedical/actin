@@ -72,7 +72,8 @@
               {
                 "pred": "hasExactSynonym",
                 "val": "Decubitus ulcer any site",
-                "xrefs": []
+                "xrefs": [],
+                "synonymType": "synonymType"
               },
               {
                 "pred": "hasExactSynonym",
@@ -171,13 +172,10 @@
       ],
       "id": "http://purl.obolibrary.org/obo/doid.owl",
       "meta": {
-        "subsets": [],
-        "basicPropertyValues": []
+        "basicPropertyValues": [],
+        "version": "1"
       },
-      "equivalentNodesSets": [],
-      "logicalDefinitionAxioms": [],
-      "domainRangeAxioms": [],
-      "propertyChainAxioms": []
+      "logicalDefinitionAxioms": []
     }
   ]
 }

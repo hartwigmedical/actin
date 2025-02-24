@@ -84,7 +84,7 @@ class StandardDataIngestionTest {
             treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration
             ),
-            clinicalStatusExtractor = StandardClinicalStatusExtractor(curationDatabase.ecgCuration),
+            clinicalStatusExtractor = StandardClinicalStatusExtractor(),
             tumorDetailsExtractor = StandardTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
                 curationDatabase.lesionLocationCuration,

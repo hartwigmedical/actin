@@ -55,12 +55,6 @@
   "clinicalStatus": {
     "who": 0,
     "infectionStatus": null,
-    "ecg": {
-      "hasSigAberrationLatestECG": true,
-      "aberrationDescription": "Sinus tachycardia",
-      "qtcfMeasure": null,
-      "jtcMeasure": null
-    },
     "lvef": null,
     "hasComplications": true
   },
@@ -252,6 +246,15 @@
       "year": null,
       "month": null,
       "comorbidityClass": "INTOLERANCE"
+    },
+    {
+      "name": "Sinus tachycardia",
+      "qtcfMeasure": null,
+      "jtcMeasure": null,
+      "icdCodes": [],
+      "year": null,
+      "month": null,
+      "comorbidityClass": "ECG"
     }
   ],
   "priorIHCTests": [

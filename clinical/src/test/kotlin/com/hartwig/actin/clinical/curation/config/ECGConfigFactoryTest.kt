@@ -3,35 +3,72 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 
+private const val INPUT = "input"
+private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
+
 class ECGConfigFactoryTest {
-    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
+    private val icdModel = TestIcdFactory.createTestModel()
 
     @Test
-    fun `Should return ECGConfig from valid inputs`() {
-        val config = ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "0", "", ""))
+    fun `Should return ECG config from valid inputs`() {
+        val icdMainCode = icdModel.codeToNodeMap.keys.first()
+        val icdCodesCheck = setOf(IcdCode(icdMainCode, null))
+        val config = createConfig(interpretation = "interpretation", icd = icdModel.titleToCodeMap.keys.first(), isQTCF = "1", qtcfValue = "1", qtcfUnit = "ms")
         assertThat(config.errors).isEmpty()
-        assertThat(config.config.input).isEqualTo("input")
-        assertThat(config.config.interpretation).isEqualTo("interpretation")
-        assertThat(config.config.isQTCF).isEqualTo(true)
-        assertThat(config.config.qtcfValue).isEqualTo(1)
-        assertThat(config.config.qtcfUnit).isEqualTo("ms")
-        assertThat(config.config.isJTC).isEqualTo(false)
-        assertThat(config.config.jtcValue).isNull()
-        assertThat(config.config.jtcUnit).isNull()
+        assertThat(config.config.input).isEqualTo(INPUT)
+        assertThat(config.config.curated).isNotNull
+        val curated = config.config.curated as Ecg
+        with(curated) {
+            assertThat(name).isEqualTo("interpretation")
+            assertThat(qtcfMeasure).isEqualTo(EcgMeasure(1, "ms"))
+            assertThat(jtcMeasure).isNull()
+            assertThat(icdCodes).isEqualTo(icdCodesCheck)
+        }
     }
 
     @Test
-    fun `Should return validation error when qtcf is not a number`() {
-        val config: ValidatedCurationConfig<ECGConfig> =
-            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "invalid", "ms", "1", "1", "ms"))
+    fun `Should return ignore config when input evaluates to false`() {
+        val config = createConfig(input = "nvt")
+        assertThat(config.errors).isEmpty()
+        assertThat(config.config).isEqualTo(ComorbidityConfig("nvt", ignore = true, curated = null))
+    }
+
+    @Test
+    fun `Should return ignore config when input evaluates to null`() {
+        val config = createConfig(input = "possible")
+        assertThat(config.errors).isEmpty()
+        assertThat(config.config).isEqualTo(ComorbidityConfig("possible", ignore = true, curated = null))
+    }
+
+    @Test
+    fun `Should return ignore config when interpretation is NULL`() {
+        val config = createConfig(interpretation = "NULL")
+        assertThat(config.errors).isEmpty()
+        assertThat(config.config).isEqualTo(ComorbidityConfig(INPUT, ignore = true, curated = null))
+    }
+
+    @Test
+    fun `Should return empty config when input evaluates to true`() {
+        val config = createConfig(input = "Ja")
+        assertThat(config.errors).isEmpty()
+        assertThat(config.config).isEqualTo(ComorbidityConfig("Ja", ignore = false, curated = Ecg(null, null, null)))
+    }
+
+    @Test
+    fun `Should return validation error when QTCF is not a number`() {
+        val config = createConfig(isQTCF = "1", qtcfValue = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.ECG.categoryName,
-                "input",
+                INPUT,
                 "qtcfValue",
                 "invalid",
                 "integer"
@@ -40,15 +77,47 @@ class ECGConfigFactoryTest {
     }
 
     @Test
-    fun `Should return validation error when jtc is not a number`() {
-        val config: ValidatedCurationConfig<ECGConfig> =
-            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "invalid", "ms"))
-        assertThat(config.errors).containsExactly(CurationConfigValidationError(
-            CurationCategory.ECG.categoryName,
-            "input",
-            "jtcValue",
-            "invalid",
-            "integer"
-        ))
+    fun `Should return validation error when JTC is not a number`() {
+        val config = createConfig(isJTC = "1", jtcValue = "invalid")
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.ECG.categoryName,
+                INPUT,
+                "jtcValue",
+                "invalid",
+                "integer"
+            )
+        )
+    }
+
+    @Test
+    fun `Should return validation error when ICD code is invalid`() {
+        val config = createConfig(icd = "invalid")
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                "ECG",
+                INPUT,
+                "icd",
+                "invalid",
+                "icd",
+                "ICD title \"invalid\" is not known - check for existence in ICD model"
+            )
+        )
+    }
+
+    private fun createConfig(
+        input: String = INPUT,
+        interpretation: String = "",
+        icd: String = "",
+        isJTC: String = "0",
+        isQTCF: String = "0",
+        qtcfValue: String = "",
+        qtcfUnit: String = "",
+        jtcValue: String = "",
+        jtcUnit: String = ""
+    ): ValidatedCurationConfig<ComorbidityConfig> {
+        return EcgConfigFactory(icdModel).create(
+            fields, arrayOf(input, interpretation, icd, isQTCF, isJTC, qtcfValue, qtcfUnit, jtcValue, jtcUnit)
+        )
     }
 }

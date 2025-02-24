@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -10,10 +11,29 @@ class InfectionConfigFactoryTest {
 
     @Test
     fun `Should return InfectionConfig from valid inputs`() {
-        val config = InfectionConfigFactory().create(fields, arrayOf("input", "interpretation"))
-        assertThat(config.errors).isEmpty()
-        assertThat(config.config.input).isEqualTo("input")
-        assertThat(config.config.ignore).isFalse()
-        assertThat(config.config.interpretation).isEqualTo("interpretation")
+        val (config, errors) = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(
+            fields,
+            arrayOf("input", "interpretation", "node 1")
+        )
+        assertThat(errors).isEmpty()
+        assertThat(config.input).isEqualTo("input")
+        assertThat(config.ignore).isFalse()
+        assertThat(config.curated).isNotNull
+        assertThat(config.curated!!.name).isEqualTo("interpretation")
+    }
+
+    @Test
+    fun `Should return validation error when ICD code is invalid`() {
+        val config = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("input", "interpretation", "invalid"))
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                "Infection",
+                "input",
+                "icd",
+                "invalid",
+                "icd",
+                "ICD title \"invalid\" is not known - check for existence in ICD model"
+            )
+        )
     }
 }

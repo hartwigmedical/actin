@@ -31,6 +31,17 @@ class HasIntoleranceRelatedToStudyMedicationTest {
     }
 
     @Test
+    fun `Should fail when toxicity with matching ICD code has grade below 2 or null`() {
+        val icdMainCode = matchingIcdCodes.first()
+        listOf(
+            ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 1, icdMainCode),
+            ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, null, icdMainCode)
+        ).forEach { match ->
+            assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
+        }
+    }
+
+    @Test
     fun `Should evaluate to undetermined when active intolerance has matching ICD code`() {
         val intolerance = ComorbidityTestFactory.intolerance(
             icdMainCode = matchingIcdCodes.first(),

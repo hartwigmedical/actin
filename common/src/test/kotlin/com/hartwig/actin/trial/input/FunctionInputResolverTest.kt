@@ -604,6 +604,18 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many body location input`() {
+        val rule = firstOfType(FunctionInput.MANY_BODY_LOCATIONS)
+        val valid = create(rule, listOf("liver;lung"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        val expected = setOf(BodyLocationCategory.LIVER, BodyLocationCategory.LUNG)
+        assertThat(resolver.createManyBodyLocationsInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("liver")))!!).isTrue
+        assertThat(resolver.hasValidInputs(create(rule, listOf("liver;not a body location")))!!).isFalse()
+    }
+
+    @Test
     fun `Should resolve functions with one integer one body location input`() {
         val rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION)
         val valid = create(rule, listOf("2", "liver"))

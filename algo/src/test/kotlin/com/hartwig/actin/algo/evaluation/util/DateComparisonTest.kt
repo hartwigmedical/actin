@@ -31,6 +31,19 @@ class DateComparisonTest {
     }
 
     @Test
+    fun `Should determine if year and month are exactly the same as reference date`() {
+        val refMonth = 6
+        val refYear = 2020
+        val refDate = LocalDate.of(refYear, refMonth, 20)
+        assertThat(DateComparison.isExactYearAndMonth(refDate, null, null)).isFalse()
+        assertThat(DateComparison.isExactYearAndMonth(refDate, refYear, null)).isFalse()
+        assertThat(DateComparison.isExactYearAndMonth(refDate, refYear, refMonth)).isTrue()
+        assertThat(DateComparison.isExactYearAndMonth(refDate, null, refMonth)).isFalse()
+        assertThat(DateComparison.isExactYearAndMonth(refDate, refYear, refMonth.minus(1))).isFalse()
+        assertThat(DateComparison.isExactYearAndMonth(refDate, refYear.minus(1), refMonth)).isFalse()
+    }
+
+    @Test
     fun `Should return null when start or stop year is null`() {
         assertThat(DateComparison.minWeeksBetweenDates(null, null, null, null)).isNull()
         assertThat(DateComparison.minWeeksBetweenDates(1900, null, null, null)).isNull()

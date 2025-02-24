@@ -1,7 +1,6 @@
 package com.hartwig.actin.doid.serialization
 
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
@@ -57,10 +56,7 @@ object DoidJson {
                     nodes = extractNodes(array(graph, "nodes")),
                     edges = extractEdges(array(graph, "edges")),
                     metadata = extractGraphMetadata(`object`(graph, "meta")),
-                    logicalDefinitionAxioms = extractLogicalDefinitionAxioms(array(graph, "logicalDefinitionAxioms")),
-                    equivalentNodesSets = optionalStringList(graph, "equivalentNodesSets"),
-                    domainRangeAxioms = optionalStringList(graph, "domainRangeAxioms"),
-                    propertyChainAxioms = optionalStringList(graph, "propertyChainAxioms")
+                    logicalDefinitionAxioms = extractLogicalDefinitionAxioms(optionalArray(graph, "logicalDefinitionAxioms"))
                 )
             }
         }
@@ -110,20 +106,10 @@ object DoidJson {
 
     private fun extractGraphMetadata(metadata: JsonObject): GraphMetadata {
         DatamodelCheckerFactory.graphMetadataChecker().check(metadata)
-        val xrefs = optionalArray(metadata, "xrefs")?.let { xrefArray ->
-            val xrefChecker: JsonDatamodelChecker = DatamodelCheckerFactory.metadataXrefChecker()
-            xrefArray.map { xrefElement ->
-                val xref: JsonObject = xrefElement.asJsonObject
-                xrefChecker.check(xref)
-                Xref(`val` = string(xref, "val"))
-            }
-        } ?: emptyList()
 
         return GraphMetadata(
             basicPropertyValues = extractBasicPropertyValues(optionalArray(metadata, "basicPropertyValues")),
-            subsets = optionalStringList(metadata, "subsets"),
-            xrefs = xrefs,
-            version = optionalString(metadata, "version")
+            version = string(metadata, "version")
         )
     }
 
@@ -144,30 +130,28 @@ object DoidJson {
     }
 
     private fun extractLogicalDefinitionAxioms(logicalDefinitionAxiomArray: JsonArray?): List<LogicalDefinitionAxioms>? {
-        if (logicalDefinitionAxiomArray == null) {
-            return null
-        }
         val logicalDefinitionAxiomsChecker: JsonDatamodelChecker = DatamodelCheckerFactory.logicalDefinitionAxiomChecker()
 
-        return logicalDefinitionAxiomArray.map { logicalDefinitionAxiomElement ->
+        return logicalDefinitionAxiomArray?.map { logicalDefinitionAxiomElement ->
             val logicalDefinitionAxiom: JsonObject = logicalDefinitionAxiomElement.asJsonObject
             logicalDefinitionAxiomsChecker.check(logicalDefinitionAxiom)
-
-            val restrictionChecker: JsonDatamodelChecker = DatamodelCheckerFactory.restrictionChecker()
-            val restrictions = array(logicalDefinitionAxiom, "restrictions").filter(JsonElement::isJsonObject)
-                .map { restrictionElement ->
-                    val restriction: JsonObject = restrictionElement.asJsonObject
-                    restrictionChecker.check(restriction)
-                    Restriction(
-                        propertyId = string(restriction, "propertyId"),
-                        fillerId = string(restriction, "fillerId")
-                    )
-                }
 
             LogicalDefinitionAxioms(
                 definedClassId = string(logicalDefinitionAxiom, "definedClassId"),
                 genusIds = stringList(logicalDefinitionAxiom, "genusIds"),
-                restrictions = restrictions
+                restrictions = extractLogicalDefinitionAxiomRestrictions(optionalArray(logicalDefinitionAxiom, "restrictions"))
+            )
+        }
+    }
+
+    private fun extractLogicalDefinitionAxiomRestrictions(restrictionArray: JsonArray?): List<Restriction>? {
+        val restrictionChecker: JsonDatamodelChecker = DatamodelCheckerFactory.restrictionChecker()
+        return restrictionArray?.map { restrictionElement ->
+            val restriction: JsonObject = restrictionElement.asJsonObject
+            restrictionChecker.check(restriction)
+            Restriction(
+                propertyId = string(restriction, "propertyId"),
+                fillerId = string(restriction, "fillerId")
             )
         }
     }
@@ -177,14 +161,7 @@ object DoidJson {
             return null
         }
         DatamodelCheckerFactory.metadataChecker().check(metadata)
-        val xrefs = optionalArray(metadata, "xrefs")?.let { xrefArray ->
-            val xrefChecker: JsonDatamodelChecker = DatamodelCheckerFactory.metadataXrefChecker()
-            xrefArray.map { xrefElement ->
-                val xref: JsonObject = xrefElement.asJsonObject
-                xrefChecker.check(xref)
-                Xref(`val` = string(xref, "val"))
-            }
-        } ?: emptyList()
+        val xrefs = extractDoidXrefValList(optionalArray(metadata, "xrefs"))
 
         return Metadata(
             synonyms = extractSynonyms(optionalArray(metadata, "synonyms")),
@@ -196,6 +173,19 @@ object DoidJson {
             deprecated = optionalBool(metadata, "deprecated"),
             comments = optionalStringList(metadata, "comments"),
         )
+    }
+
+    private fun extractDoidXrefValList(xrefs: JsonArray?): List<Xref>? {
+        if (xrefs == null) {
+            return null
+        }
+        val xrefChecker: JsonDatamodelChecker = DatamodelCheckerFactory.metadataXrefChecker()
+
+        return xrefs.map { xrefElement ->
+            val xref: JsonObject = xrefElement.asJsonObject
+            xrefChecker.check(xref)
+            Xref(string(xref, "val"))
+        }
     }
 
     fun extractSnomedConceptId(xrefs: List<Xref>?): String? {
@@ -236,7 +226,8 @@ object DoidJson {
             Synonym(
                 pred = string(synonym, "pred"),
                 `val` = string(synonym, "val"),
-                xrefs = stringList(synonym, "xrefs")
+                xrefs = optionalStringList(synonym, "xrefs"),
+                synonymType = optionalString(synonym, "synonymType")
             )
         }
     }
@@ -248,7 +239,7 @@ object DoidJson {
         DatamodelCheckerFactory.definitionChecker().check(definition)
         return Definition(
             `val` = string(definition, "val"),
-            xrefs = stringList(definition, "xrefs")
+            xrefs = optionalStringList(definition, "xrefs")
         )
     }
 }

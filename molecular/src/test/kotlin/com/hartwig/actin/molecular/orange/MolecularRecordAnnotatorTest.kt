@@ -14,7 +14,7 @@ class MolecularRecordAnnotatorTest {
         val annotated = annotator.annotate(TestMolecularFactory.createProperTestOrangeRecord())
         with(annotated.characteristics) {
             assertThat(microsatelliteEvidence).isNotNull
-            assertThat(homologousRepairEvidence).isNotNull
+            assertThat(homologousRecombinationEvidence).isNotNull
             assertThat(tumorMutationalBurdenEvidence).isNotNull
             assertThat(tumorMutationalLoadEvidence).isNotNull
         }
@@ -25,7 +25,7 @@ class MolecularRecordAnnotatorTest {
         val annotated = annotator.annotate(TestMolecularFactory.createMinimalTestOrangeRecord())
         with(annotated.characteristics) {
             assertThat(microsatelliteEvidence).isNull()
-            assertThat(homologousRepairEvidence).isNull()
+            assertThat(homologousRecombinationEvidence).isNull()
             assertThat(tumorMutationalBurdenEvidence).isNull()
             assertThat(tumorMutationalLoadEvidence).isNull()
         }

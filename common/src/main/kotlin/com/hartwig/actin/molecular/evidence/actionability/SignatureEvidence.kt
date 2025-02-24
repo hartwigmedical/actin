@@ -15,8 +15,8 @@ class SignatureEvidence(
         return findMatches(isMicrosatelliteUnstable, TumorCharacteristicType.MICROSATELLITE_UNSTABLE)
     }
 
-    fun findHomologousRepairMatches(isHomologousRepairDeficient: Boolean): ActionabilityMatch {
-        return findMatches(isHomologousRepairDeficient, TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
+    fun findHomologousRecombinationMatches(isHomologousRecombinationDeficient: Boolean): ActionabilityMatch {
+        return findMatches(isHomologousRecombinationDeficient, TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
     }
 
     fun findTumorBurdenMatches(hasHighTumorMutationalBurden: Boolean): ActionabilityMatch {

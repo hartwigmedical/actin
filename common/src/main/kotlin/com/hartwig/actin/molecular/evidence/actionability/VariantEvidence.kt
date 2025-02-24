@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
@@ -86,7 +87,12 @@ class VariantEvidence(
         isMatch: (T, VariantMatchCriteria) -> Boolean,
         extractActionableEvent: (MolecularCriterium) -> T,
     ): List<EfficacyEvidence> {
-        return evidences.filter { variant.isReportable && isMatch.invoke(extractActionableEvent.invoke(it.molecularCriterium()), variant) }
+        return evidences.filter {
+            variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH && isMatch.invoke(
+                extractActionableEvent.invoke(it.molecularCriterium()),
+                variant
+            )
+        }
     }
 
     private fun <T> selectMatchingTrials(
@@ -96,7 +102,12 @@ class VariantEvidence(
         extractActionableEvent: (MolecularCriterium) -> T,
     ): Map<ActionableTrial, Set<MolecularCriterium>> {
         val matchPredicate: Predicate<MolecularCriterium> =
-            Predicate { variant.isReportable && isMatch(extractActionableEvent.invoke(it), variant) }
+            Predicate {
+                variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH && isMatch(
+                    extractActionableEvent.invoke(it),
+                    variant
+                )
+            }
 
         return trialMatcher.apply(matchPredicate)
     }

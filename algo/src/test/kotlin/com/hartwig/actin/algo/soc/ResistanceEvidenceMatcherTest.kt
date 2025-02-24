@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
@@ -109,12 +110,28 @@ class ResistanceEvidenceMatcherTest {
         val hotspotWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "G")
         val hasHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()
-                .copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
+                .copy(
+                    gene = "gene 1",
+                    chromosome = "X",
+                    position = 2,
+                    ref = "A",
+                    alt = "G",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    isReportable = true
+                )
         ).molecularHistory
 
         val hasOtherHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()
-                .copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
+                .copy(
+                    gene = "gene 2",
+                    chromosome = "X",
+                    position = 2,
+                    ref = "A",
+                    alt = "G",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    isReportable = true
+                )
         ).molecularHistory
 
         val hotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence, hasHotspot)
@@ -158,10 +175,11 @@ class ResistanceEvidenceMatcherTest {
         val hasRange = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
                 gene = "gene 1",
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE),
                 chromosome = "X",
                 position = 6,
-                isReportable = true,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
+                driverLikelihood = DriverLikelihood.HIGH,
+                isReportable = true
             )
         ).molecularHistory
 

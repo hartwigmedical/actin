@@ -285,8 +285,8 @@ CREATE TABLE `molecular`
     `predictedTumorType` varchar(50),
     `predictedTumorLikelihood` double precision,
     `isMicrosatelliteUnstable` BOOLEAN,
-    `homologousRepairScore` double precision,
-    `isHomologousRepairDeficient` BOOLEAN,
+    `homologousRecombinationScore` double precision,
+    `isHomologousRecombinationDeficient` BOOLEAN,
     `tumorMutationalBurden` double precision,
     `hasHighTumorMutationalBurden` BOOLEAN,
     `tumorMutationalLoad` int,
@@ -303,8 +303,8 @@ CREATE TABLE `microsatelliteEvidence`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `homologousRepairEvidence`;
-CREATE TABLE `homologousRepairEvidence`
+DROP TABLE IF EXISTS `homologousRecombinationEvidence`;
+CREATE TABLE `homologousRecombinationEvidence`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `molecularId` int NOT NULL,
     `treatment` varchar(500) NOT NULL,

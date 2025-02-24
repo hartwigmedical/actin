@@ -1,18 +1,15 @@
 package com.hartwig.actin.molecular.interpretation
 
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 object GeneAlterationFactory {
 
-    fun convertAlteration(
-        gene: String,
-        input: ServeGeneAlteration?
-    ): GeneAlteration {
+    fun convertAlteration(gene: String, input: ServeGeneAlteration?): GeneAlteration {
         return object : GeneAlteration {
             override val gene: String = gene
 

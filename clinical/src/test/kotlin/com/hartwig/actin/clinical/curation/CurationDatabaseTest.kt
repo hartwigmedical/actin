@@ -32,13 +32,9 @@ class CurationDatabaseTest {
     fun `Should return all unused curation inputs`() {
         val database = CurationDatabase(
             mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY
-        ) { it.ecgEvaluatedInputs }
-        assertThat(database.reportUnusedConfig(emptyList())).containsExactly(
-            UnusedCurationConfig(
-                CurationCategory.COMORBIDITY.categoryName,
-                INPUT
-            )
-        )
+        ) { it.comorbidityEvaluatedInputs }
+        assertThat(database.reportUnusedConfig(emptyList()))
+            .containsExactly(UnusedCurationConfig(CurationCategory.COMORBIDITY.categoryName, INPUT))
     }
 
     @Test

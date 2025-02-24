@@ -3,14 +3,15 @@ package com.hartwig.actin.molecular.panel
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
@@ -25,6 +26,7 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import org.apache.logging.log4j.LogManager
+import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
@@ -40,6 +42,16 @@ fun isHotspot(geneAlteration: ServeGeneAlteration?): Boolean {
             geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
 }
 
+fun eventString(paveResponse: PaveResponse): String {
+    return formatVariantImpact(
+        paveResponse.impact.hgvsProteinImpact,
+        paveResponse.impact.hgvsCodingImpact,
+        paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
+        paveResponse.impact.canonicalEffect.contains("upstream_gene_variant"),
+        paveResponse.impact.canonicalEffect
+    )
+}
+
 class PanelVariantAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
@@ -50,42 +62,43 @@ class PanelVariantAnnotator(
 
     private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
 
-    fun annotate(variants: Set<SequencedVariant>): List<Variant> {
-        val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
+    fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
+        val variantExtractions = indexVariantExtractionsToUniqueIds(sequencedVariants)
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
-        val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
 
-        return annotateWithDriverLikelihood(variantsWithEvidence)
+        val annotatedVariants =
+            createVariants(transvarVariants, paveAnnotations, variantExtractions).map { annotateWithGeneAlteration(it) }
+        return annotateWithDriverLikelihood(annotatedVariants).map { annotateWithEvidence(it) }
     }
 
     private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
         return variants.withIndex().associate { it.index.toString() to it.value }
     }
 
-    private fun resolveVariants(variantExtractions: Map<String, SequencedVariant>): Map<String, com.hartwig.actin.tools.variant.Variant> {
+    private fun resolveVariants(variantExtractions: Map<String, SequencedVariant>): Map<String, TransvarVariant> {
         return variantExtractions.mapValues { (_, value) -> transvarAnnotation(value) }
             .mapNotNull { if (it.value != null) it.key to it.value!! else null }
             .toMap()
     }
 
-    private fun transvarAnnotation(panelVariantExtraction: SequencedVariant): com.hartwig.actin.tools.variant.Variant? {
+    private fun transvarAnnotation(sequencedVariant: SequencedVariant): TransvarVariant? {
         val externalVariantAnnotation =
             variantResolver.resolve(
-                panelVariantExtraction.gene,
-                panelVariantExtraction.transcript,
-                panelVariantExtraction.hgvsCodingOrProteinImpact()
+                sequencedVariant.gene,
+                sequencedVariant.transcript,
+                sequencedVariant.hgvsCodingOrProteinImpact()
             )
 
         if (externalVariantAnnotation == null) {
-            logger.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
+            logger.error("Unable to resolve variant '$sequencedVariant' in variant annotator. See prior warnings.")
             return null
         }
 
         return externalVariantAnnotation
     }
 
-    private fun annotateWithPave(transvarVariants: Map<String, com.hartwig.actin.tools.variant.Variant>): Map<String, PaveResponse> {
+    private fun annotateWithPave(transvarVariants: Map<String, TransvarVariant>): Map<String, PaveResponse> {
         if (transvarVariants.isEmpty()) {
             return emptyMap()
         }
@@ -108,75 +121,45 @@ class PanelVariantAnnotator(
         return paveResponses
     }
 
-    private fun annotateWithEvidence(
-        transvarVariants: Map<String, com.hartwig.actin.tools.variant.Variant>,
+    private fun createVariants(
+        transvarVariants: Map<String, TransvarVariant>,
         paveAnnotations: Map<String, PaveResponse>,
         variantExtractions: Map<String, SequencedVariant>
     ): List<Variant> {
         return transvarVariants.map { (id, transvarAnnotation) ->
+            val sequencedVariant = variantExtractions[id]!!
             val paveResponse = paveAnnotations[id]!!
-            val extraction = variantExtractions[id]!!
 
-            val criteria = variantMatchCriteria(extraction, transvarAnnotation, paveResponse)
-            val evidence = evidenceDatabase.evidenceForVariant(criteria)
-            val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
-            val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
-
-            createVariantWithEvidence(
-                extraction,
-                evidence,
-                geneAlteration,
-                serveGeneAlteration,
-                transvarAnnotation,
-                paveResponse
-            )
+            createVariant(sequencedVariant, transvarAnnotation, paveResponse)
         }
     }
 
-    private fun variantMatchCriteria(
-        panelVariantExtraction: SequencedVariant,
-        transvarVariant: com.hartwig.actin.tools.variant.Variant,
-        paveResponse: PaveResponse
-    ) = VariantMatchCriteria(
-        isReportable = true,
-        gene = panelVariantExtraction.gene,
-        chromosome = transvarVariant.chromosome(),
-        ref = transvarVariant.ref(),
-        alt = transvarVariant.alt(),
-        position = transvarVariant.position(),
-        type = variantType(transvarVariant),
-        codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect)
-    )
-
-    private fun createVariantWithEvidence(
+    private fun createVariant(
         variant: SequencedVariant,
-        evidence: ClinicalEvidence,
-        geneAlteration: GeneAlteration,
-        serveGeneAlteration: ServeGeneAlteration?,
-        transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
+        transvarAnnotation: TransvarVariant,
         paveResponse: PaveResponse
     ) = Variant(
-        chromosome = transcriptAnnotation.chromosome(),
-        position = transcriptAnnotation.position(),
-        ref = transcriptAnnotation.ref(),
-        alt = transcriptAnnotation.alt(),
-        type = variantType(transcriptAnnotation),
+        chromosome = transvarAnnotation.chromosome(),
+        position = transvarAnnotation.position(),
+        ref = transvarAnnotation.ref(),
+        alt = transvarAnnotation.alt(),
+        type = variantType(transvarAnnotation),
         variantAlleleFrequency = variant.variantAlleleFrequency,
-        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
-        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
-        isHotspot = isHotspot(serveGeneAlteration),
-        isReportable = true,
-        event = "${variant.gene} ${impact(paveResponse)}",
+        canonicalImpact = canonicalImpact(paveResponse.impact, transvarAnnotation),
+        otherImpacts = otherImpacts(paveResponse, transvarAnnotation),
+        isHotspot = false,
 
-        driverLikelihood = DriverLikelihood.LOW,
-        evidence = evidence,
+        isReportable = true,
+        event = "${variant.gene} ${eventString(paveResponse)}",
+        driverLikelihood = null,
+        evidence = ClinicalEvidence(emptySet(), emptySet()),
         gene = variant.gene,
-        geneRole = geneAlteration.geneRole,
-        proteinEffect = geneAlteration.proteinEffect,
-        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null
     )
 
-    private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptVariantImpact {
+    private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
             paveImpact.gene,
             paveImpact.transcript,
@@ -194,17 +177,14 @@ class PanelVariantAnnotator(
         )
     }
 
-    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: com.hartwig.actin.tools.variant.Variant): Set<TranscriptVariantImpact> {
+    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptVariantImpact> {
         return paveResponse.transcriptImpact
             .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.transcript }
             .map { transcriptImpact(it, transvarVariant) }
             .toSet()
     }
 
-    private fun transcriptImpact(
-        paveTranscriptImpact: PaveTranscriptImpact,
-        transvarVariant: com.hartwig.actin.tools.variant.Variant
-    ): TranscriptVariantImpact {
+    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
             paveTranscriptImpact.gene,
             paveTranscriptImpact.transcript,
@@ -252,8 +232,21 @@ class PanelVariantAnnotator(
         }
     }
 
-    private fun annotateWithDriverLikelihood(annotatedVariants: List<Variant>): List<Variant> {
-        val variantsByGene = annotatedVariants.groupBy { it.gene }
+    private fun annotateWithGeneAlteration(variant: Variant): Variant {
+        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+        val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
+        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
+
+        return variant.copy(
+            isHotspot = isHotspot(serveGeneAlteration),
+            geneRole = geneAlteration.geneRole,
+            proteinEffect = geneAlteration.proteinEffect,
+            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        )
+    }
+
+    private fun annotateWithDriverLikelihood(variants: List<Variant>): List<Variant> {
+        val variantsByGene = variants.groupBy { it.gene }
         return variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()
             val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
@@ -266,15 +259,10 @@ class PanelVariantAnnotator(
             }
         }
     }
-}
 
-fun impact(paveResponse: PaveResponse): String {
-    return formatVariantImpact(
-        paveResponse.impact.hgvsProteinImpact,
-        paveResponse.impact.hgvsCodingImpact,
-        paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
-        paveResponse.impact.canonicalEffect.contains("upstream_gene_variant"),
-        paveResponse.impact.canonicalEffect
-    )
+    private fun annotateWithEvidence(variant: Variant): Variant {
+        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+        val evidence = evidenceDatabase.evidenceForVariant(criteria)
+        return variant.copy(evidence = evidence)
+    }
 }
-

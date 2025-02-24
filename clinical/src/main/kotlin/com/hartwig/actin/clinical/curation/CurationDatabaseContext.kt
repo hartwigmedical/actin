@@ -4,11 +4,9 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
-import com.hartwig.actin.clinical.curation.config.ECGConfig
-import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
+import com.hartwig.actin.clinical.curation.config.EcgConfigFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.config.IHCTestConfigFactory
-import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
 import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
@@ -48,8 +46,6 @@ data class CurationDatabaseContext(
     val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>,
     val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
     val comorbidityCuration: CurationDatabase<ComorbidityConfig>,
-    val ecgCuration: CurationDatabase<ECGConfig>,
-    val infectionCuration: CurationDatabase<InfectionConfig>,
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
     val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
     val molecularTestPdl1Curation: CurationDatabase<IHCTestConfig>,
@@ -70,8 +66,6 @@ data class CurationDatabaseContext(
             secondPrimaryCuration,
             lesionLocationCuration,
             comorbidityCuration,
-            ecgCuration,
-            infectionCuration,
             periodBetweenUnitCuration,
             molecularTestIhcCuration,
             molecularTestPdl1Curation,
@@ -97,8 +91,6 @@ data class CurationDatabaseContext(
         secondPrimaryCuration.validationErrors,
         lesionLocationCuration.validationErrors,
         comorbidityCuration.validationErrors,
-        ecgCuration.validationErrors,
-        infectionCuration.validationErrors,
         periodBetweenUnitCuration.validationErrors,
         molecularTestIhcCuration.validationErrors,
         molecularTestPdl1Curation.validationErrors,
@@ -142,15 +134,6 @@ data class CurationDatabaseContext(
                 CurationCategory.LESION_LOCATION
             ) { it.lesionLocationEvaluatedInputs },
             comorbidityCuration = createComorbidityCurationDatabase(curationDir, icdModel),
-            ecgCuration = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.ECG_TSV,
-                ECGConfigFactory(),
-                CurationCategory.ECG
-            ) { it.ecgEvaluatedInputs },
-            infectionCuration = CurationDatabaseReader.read(
-                curationDir, CurationDatabaseReader.INFECTION_TSV, InfectionConfigFactory(), CurationCategory.INFECTION
-            ) { it.infectionEvaluatedInputs },
             periodBetweenUnitCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.PERIOD_BETWEEN_UNIT_TSV,
@@ -226,35 +209,19 @@ data class CurationDatabaseContext(
         )
 
         private fun createComorbidityCurationDatabase(curationDir: String, icdModel: IcdModel): CurationDatabase<ComorbidityConfig> {
-            val otherConditionDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV,
-                OtherConditionConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            val complicationCurationDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.COMPLICATION_TSV,
-                ComplicationConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            val intoleranceCurationDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.INTOLERANCE_TSV,
-                IntoleranceConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            val toxicityCurationDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.TOXICITY_TSV,
-                ToxicityConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            return otherConditionDatabase + complicationCurationDatabase + intoleranceCurationDatabase + toxicityCurationDatabase
+            return listOf(
+                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV to OtherConditionConfigFactory(icdModel),
+                CurationDatabaseReader.COMPLICATION_TSV to ComplicationConfigFactory(icdModel),
+                CurationDatabaseReader.INTOLERANCE_TSV to IntoleranceConfigFactory(icdModel),
+                CurationDatabaseReader.TOXICITY_TSV to ToxicityConfigFactory(icdModel),
+                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(icdModel),
+                CurationDatabaseReader.INFECTION_TSV to InfectionConfigFactory(icdModel)
+            )
+                .map { (tsv, factory) ->
+                    CurationDatabaseReader.read(curationDir, tsv, factory, CurationCategory.COMORBIDITY) { it.comorbidityEvaluatedInputs }
+                }
+                .reduce(CurationDatabase<ComorbidityConfig>::plus)
         }
+
     }
 }

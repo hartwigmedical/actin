@@ -10,8 +10,8 @@ import org.junit.Test
 
 class HasQTCFWithGenderTest {
 
-    private val hasQTCFOfAtLeastWithGenderFunction = HasQTCFWithGender(450.0, Gender.MALE, ECGMeasureEvaluationFunctions::hasSufficientQTCF)
-    private val hasQTCFOfAtMostWithGenderFunction = HasQTCFWithGender(450.0, Gender.MALE, ECGMeasureEvaluationFunctions::hasLimitedQTCF)
+    private val hasQTCFOfAtLeastWithGenderFunction = HasQtcfWithGender(450.0, Gender.MALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
+    private val hasQTCFOfAtMostWithGenderFunction = HasQtcfWithGender(450.0, Gender.MALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
 
     @Test
     fun `Should fail with incorrect gender`() {
@@ -27,8 +27,8 @@ class HasQTCFWithGenderTest {
 
     @Test
     fun `Should evaluate to recoverable undetermined when no ECG present`() {
-        val atLeastEvaluation = hasQTCFOfAtLeastWithGenderFunction.evaluate(CardiacFunctionTestFactory.withECG(null))
-        val atMostEvaluation = hasQTCFOfAtMostWithGenderFunction.evaluate(CardiacFunctionTestFactory.withECG(null))
+        val atLeastEvaluation = hasQTCFOfAtLeastWithGenderFunction.evaluate(CardiacFunctionTestFactory.withEcg(null))
+        val atMostEvaluation = hasQTCFOfAtMostWithGenderFunction.evaluate(CardiacFunctionTestFactory.withEcg(null))
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, atLeastEvaluation)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, atMostEvaluation)
         assertThat(atLeastEvaluation.recoverable).isTrue()
