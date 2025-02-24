@@ -23,8 +23,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
         } else {
             createTreatmentSummary(history) { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false) }
         }
-        val treatmentSummaryDateNull =
-            createTreatmentSummary(history) { it.startYear == null }
+        val treatmentSummaryDateNull = createTreatmentSummary(history) { it.startYear == null }
 
         val intentsList = Format.concatItemsWithOr(intentsToFind)
 
