@@ -27,17 +27,17 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
             category,
             { historyEntry -> historyEntry.intents?.intersect(intentsToFind)?.isNotEmpty() }
         )
+
         val intentsList = Format.concatItemsWithOr(intentsToFind)
+        val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
 
         return when {
             treatmentSummary.hasSpecificMatch() &&
-                    (minDate == null || treatmentSummary.specificMatches.filter { it.startYear != null}.isNotEmpty()) -> {
-                val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
+                    (minDate == null || treatmentSummary.specificMatches.any { it.startYear != null }) -> {
                 EvaluationFactory.pass("Has received $intentsList ${category.display()} ($treatmentDisplay)")
             }
 
             treatmentSummary.hasSpecificMatch() -> {
-                val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
                 EvaluationFactory.undetermined("Has received $intentsList ${category.display()} ($treatmentDisplay) with unknown date")
             }
 
