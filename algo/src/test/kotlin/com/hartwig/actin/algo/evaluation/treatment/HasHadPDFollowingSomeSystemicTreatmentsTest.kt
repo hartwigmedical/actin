@@ -21,7 +21,7 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
-    fun `Should fail when history contains less systemic treatments than requested`() {
+    fun `Should fail when history contains fewer systemic treatments than requested`() {
         assertResultForTreatmentHistory(EvaluationResult.FAIL, listOf(treatmentEntry("1")))
     }
 
@@ -33,7 +33,7 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when requested number of treatments is met only when counting duplicate treatments entries twice`() {
+    fun `Should be undetermined when requested number of treatments is met only when counting duplicate treatments entries twice`() {
         val treatment = treatmentEntry("1", StopReason.PROGRESSIVE_DISEASE)
         assertResultForTreatmentHistory(EvaluationResult.UNDETERMINED, listOf(treatment, treatment))
     }
@@ -62,7 +62,15 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
             treatmentEntry("1", StopReason.PROGRESSIVE_DISEASE, startYear = null),
             treatmentEntry("2", StopReason.TOXICITY, startYear = 2022, stopYear = 2022),
         )
+        assertResultForTreatmentHistory(EvaluationResult.UNDETERMINED, treatments)
+    }
 
+    @Test
+    fun `Should be undetermined when had minimum lines of treatment with some progressive disease but no known dates`() {
+        val treatments = listOf(
+            treatmentEntry("1", StopReason.PROGRESSIVE_DISEASE, startYear = null),
+            treatmentEntry("2", StopReason.TOXICITY, startYear = null),
+        )
         assertResultForTreatmentHistory(EvaluationResult.UNDETERMINED, treatments)
     }
 
