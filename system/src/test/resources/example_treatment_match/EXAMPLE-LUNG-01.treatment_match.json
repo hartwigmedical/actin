@@ -2,9 +2,9 @@
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
   "referenceDate": {
-    "year": 2024,
-    "month": 11,
-    "day": 14
+    "year": 2025,
+    "month": 2,
+    "day": 25
   },
   "referenceDateIsLive": true,
   "trialMatches": [
@@ -186,7 +186,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L but measurement occurred before 16-Aug-2024"
+              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L"
             ],
             "undeterminedMessages": [],
             "failMessages": [],
