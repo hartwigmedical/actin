@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -36,7 +35,6 @@ class ReportRegressionTest(private val exampleName: String) {
     }
 
     @Test
-    @Ignore
     fun `Regress report textually and visually`() {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
         val localExampleReportApplication = LocalExampleReportApplication()
