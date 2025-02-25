@@ -163,7 +163,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.molecularSummaryType != MolecularSummaryType.NONE && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
             }, SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
                 report.config.includeEligibleSOCTreatmentSummary
-            }, EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth).takeIf {
+            }, EligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
                 report.config.includeApprovedTreatmentsInSummary
             }) +
                 primaryCohortsGenerators + otherCohortGenerators +
