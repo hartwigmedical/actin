@@ -36,7 +36,7 @@ object SystemicTreatmentAnalyser {
             .maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
     }
 
-    private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
+    fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
         return treatmentHistoryEntry.allTreatments().any(Treatment::isSystemic)
     }
 
