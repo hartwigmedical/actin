@@ -63,8 +63,8 @@ object ActinTrialGeneratorFunctions {
             val cohort = cohortList.first()
             val trialLabelText = listOfNotNull(
                 Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
-                Text("\n"),
-                Text(cohort.acronym).addStyle(Styles.tableContentStyle()),
+                if (trialIdIsNotAcronym(cohort)) Text("\n") else null,
+                if (trialIdIsNotAcronym(cohort)) Text(cohort.acronym).addStyle(Styles.tableContentStyle()) else null,
                 cohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
                     ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
 
@@ -85,4 +85,6 @@ object ActinTrialGeneratorFunctions {
             table.addCell(createContent(finalSubTable))
         }
     }
+
+    private fun trialIdIsNotAcronym(cohort: InterpretedCohort) = cohort.trialId.trimIndent() != cohort.acronym
 }
