@@ -323,5 +323,26 @@ class GeneHasVariantInExonRangeOfTypeTest {
         )
     }
 
+    @Test
+    fun `Should pass for variant with matching canonical and non-canonical impact`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.DELETE,
+                        driverLikelihood = DriverLikelihood.HIGH,
+                        canonicalImpact = impactWithExon(MATCHING_EXON),
+                        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                    )
+                )
+            )
+        )
+    }
+
     private fun impactWithExon(affectedExon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 }
