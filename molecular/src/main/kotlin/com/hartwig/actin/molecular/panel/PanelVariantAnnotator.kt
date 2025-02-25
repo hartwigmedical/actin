@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -19,6 +20,7 @@ import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
+import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.ImpactDisplay.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
@@ -198,6 +200,7 @@ class PanelVariantAnnotator(
             isSpliceRegion = paveTranscriptImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
+            effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
             codingEffect = codingEffect(
                 paveTranscriptImpact.effects
                     .map(PaveCodingEffect::fromPaveVariantEffect)
@@ -229,6 +232,30 @@ class PanelVariantAnnotator(
             PaveCodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
             PaveCodingEffect.SPLICE -> CodingEffect.SPLICE
             PaveCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
+        }
+    }
+    private fun variantEffect(paveVariantEffect: PaveVariantEffect): VariantEffect {
+        return when (paveVariantEffect) {
+            PaveVariantEffect.STOP_GAINED -> VariantEffect.STOP_GAINED
+            PaveVariantEffect.STOP_LOST -> VariantEffect.STOP_LOST
+            PaveVariantEffect.START_LOST -> VariantEffect.START_LOST
+            PaveVariantEffect.FRAMESHIFT -> VariantEffect.FRAMESHIFT
+            PaveVariantEffect.SPLICE_ACCEPTOR -> VariantEffect.SPLICE_ACCEPTOR
+            PaveVariantEffect.SPLICE_DONOR -> VariantEffect.SPLICE_DONOR
+            PaveVariantEffect.INFRAME_INSERTION -> VariantEffect.INFRAME_INSERTION
+            PaveVariantEffect.INFRAME_DELETION -> VariantEffect.INFRAME_DELETION
+            PaveVariantEffect.MISSENSE -> VariantEffect.MISSENSE
+            PaveVariantEffect.PHASED_MISSENSE -> VariantEffect.PHASED_MISSENSE
+            PaveVariantEffect.PHASED_INFRAME_INSERTION -> VariantEffect.PHASED_INFRAME_INSERTION
+            PaveVariantEffect.PHASED_INFRAME_DELETION -> VariantEffect.PHASED_INFRAME_DELETION
+            PaveVariantEffect.SYNONYMOUS -> VariantEffect.SYNONYMOUS
+            PaveVariantEffect.PHASED_SYNONYMOUS -> VariantEffect.PHASED_SYNONYMOUS
+            PaveVariantEffect.INTRONIC -> VariantEffect.INTRONIC
+            PaveVariantEffect.FIVE_PRIME_UTR -> VariantEffect.FIVE_PRIME_UTR
+            PaveVariantEffect.THREE_PRIME_UTR -> VariantEffect.THREE_PRIME_UTR
+            PaveVariantEffect.UPSTREAM_GENE -> VariantEffect.UPSTREAM_GENE
+            PaveVariantEffect.NON_CODING_TRANSCRIPT -> VariantEffect.NON_CODING_TRANSCRIPT
+            PaveVariantEffect.OTHER -> VariantEffect.OTHER
         }
     }
 
