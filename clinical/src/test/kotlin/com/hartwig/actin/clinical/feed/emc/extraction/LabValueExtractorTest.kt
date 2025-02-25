@@ -16,14 +16,17 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE_NAME = "Cannot curate"
 private const val CANNOT_CURATE_CODE = "Cannot curate"
 private const val EPSILON = 1.0E-10
+private const val LAB_CODE = "Hb"
+private const val LAB_NAME = "Hemoglobine"
+private val LAB_MEASUREMENT = LabMeasurement.HEMOGLOBIN
 
 class LabValueExtractorTest {
 
     val extractor = LabValueExtractor(
         TestCurationFactory.curationDatabase(
             LabMeasurementConfig(
-                input = "Hb | Hemoglobine",
-                labMeasurement = LabMeasurement.HEMOGLOBIN
+                input = "$LAB_CODE | $LAB_NAME",
+                labMeasurement = LAB_MEASUREMENT
             )
         )
     )
@@ -33,8 +36,8 @@ class LabValueExtractorTest {
         val labEntry1 = LabEntry(
             subject = PATIENT_ID,
             valueQuantityComparator = "",
-            codeCodeOriginal = "Hb",
-            codeDisplayOriginal = "Hemoglobine",
+            codeCodeOriginal = LAB_CODE,
+            codeDisplayOriginal = LAB_NAME,
             valueQuantityValue = 19.0,
             valueQuantityUnit = "g/dl",
             referenceRangeText = "14 - 18",
@@ -54,7 +57,7 @@ class LabValueExtractorTest {
         assertThat(extractedValues).hasSize(1)
         assertThat(extractedValues[0].date).isEqualTo(LocalDate.of(2020, 1, 1))
         assertThat(extractedValues[0].comparator).isEqualTo("")
-        assertThat(extractedValues[0].measurement).isEqualTo(LabMeasurement.HEMOGLOBIN)
+        assertThat(extractedValues[0].measurement).isEqualTo(LAB_MEASUREMENT)
         assertThat(extractedValues[0].value).isEqualTo(19.0)
         assertThat(extractedValues[0].refLimitLow).isEqualTo(14.0)
         assertThat(extractedValues[0].refLimitUp).isEqualTo(18.0)
@@ -64,9 +67,9 @@ class LabValueExtractorTest {
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
                 PATIENT_ID,
-                CurationCategory.LABORATORY,
+                CurationCategory.LAB_MEASUREMENT,
                 "$CANNOT_CURATE_CODE | $CANNOT_CURATE_NAME",
-                "Could not find laboratory config for input '$CANNOT_CURATE_CODE | $CANNOT_CURATE_NAME'"
+                "Could not find lab measurement config for input '$CANNOT_CURATE_CODE | $CANNOT_CURATE_NAME'"
             )
         )
     }
@@ -110,15 +113,17 @@ class LabValueExtractorTest {
     }
 
     private fun labEntryWithRange(referenceRangeText: String): List<LabEntry> {
-        return listOf(LabEntry(
-            subject = PATIENT_ID,
-            codeCodeOriginal = "Hb",
-            codeDisplayOriginal = "Hemoglobine",
-            valueQuantityComparator = "test",
-            valueQuantityValue = 0.0,
-            valueQuantityUnit = "g/dL",
-            referenceRangeText = referenceRangeText,
-            effectiveDateTime = LocalDate.of(2024, 11, 22)
-        ))
+        return listOf(
+            LabEntry(
+                subject = PATIENT_ID,
+                codeCodeOriginal = LAB_CODE,
+                codeDisplayOriginal = LAB_NAME,
+                valueQuantityComparator = "test",
+                valueQuantityValue = 0.0,
+                valueQuantityUnit = "g/dL",
+                referenceRangeText = referenceRangeText,
+                effectiveDateTime = LocalDate.of(2024, 11, 22)
+            )
+        )
     }
 }

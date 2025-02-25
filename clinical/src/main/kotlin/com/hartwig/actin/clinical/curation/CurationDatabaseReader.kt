@@ -30,7 +30,7 @@ class CurationDatabaseReader {
         const val MEDICATION_DOSAGE_TSV = "medication_dosage.tsv"
         const val INTOLERANCE_TSV = "intolerance.tsv"
         const val SURGERY_NAME_TSV = "surgery_name.tsv"
-        const val LABORATORY_TSV = "laboratory.tsv"
+        const val LAB_MEASUREMENT_TSV = "lab_measurement.tsv"
 
         fun <T : CurationConfig> read(
             clinicalCurationDirectory: String,

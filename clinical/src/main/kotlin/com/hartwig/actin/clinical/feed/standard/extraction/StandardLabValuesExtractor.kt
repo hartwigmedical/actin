@@ -13,16 +13,17 @@ import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
 
-class StandardLabValuesExtractor(private val labCuration: CurationDatabase<LabMeasurementConfig>) :
+class StandardLabValuesExtractor(private val labMeasurementCuration: CurationDatabase<LabMeasurementConfig>) :
     StandardDataExtractor<List<LabValue>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<LabValue>> {
         return ehrPatientRecord.labValues.map { providedLabValue ->
+            val inputText = "${providedLabValue.measureCode} | ${providedLabValue.measure}"
             val curationResponse = CurationResponse.createFromConfigs(
-                labCuration.find("${providedLabValue.measureCode} | ${providedLabValue.measure}"),
+                labMeasurementCuration.find(inputText),
                 ehrPatientRecord.patientDetails.hashedId,
-                CurationCategory.LABORATORY,
-                "${providedLabValue.measureCode} | ${providedLabValue.measure}",
-                "laboratory"
+                CurationCategory.LAB_MEASUREMENT,
+                inputText,
+                "lab measurement"
             )
             val labValue = curationResponse.config()?.takeIf { !it.ignore }?.let {
                 labValue(providedLabValue, it.labMeasurement)

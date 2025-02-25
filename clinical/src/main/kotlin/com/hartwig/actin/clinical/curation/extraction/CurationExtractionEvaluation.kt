@@ -16,10 +16,10 @@ data class CurationExtractionEvaluation(
     val medicationNameEvaluatedInputs: Set<String> = emptySet(),
     val medicationDosageEvaluatedInputs: Set<String> = emptySet(),
     val administrationRouteEvaluatedInputs: Set<Translation<String>> = emptySet(),
-    val laboratoryEvaluatedInputs: Set<String> = emptySet(),
     val toxicityTranslationEvaluatedInputs: Set<Translation<String>> = emptySet(),
     val dosageUnitEvaluatedInputs: Set<Translation<String>> = emptySet(),
-    val surgeryTranslationEvaluatedInputs: Set<String> = emptySet()
+    val surgeryTranslationEvaluatedInputs: Set<String> = emptySet(),
+    val labMeasurementEvaluatedInputs: Set<String> = emptySet(),
 ) {
     operator fun plus(other: CurationExtractionEvaluation?): CurationExtractionEvaluation {
         return if (other == null) this else CurationExtractionEvaluation(
@@ -35,10 +35,10 @@ data class CurationExtractionEvaluation(
             medicationNameEvaluatedInputs = medicationNameEvaluatedInputs + other.medicationNameEvaluatedInputs,
             medicationDosageEvaluatedInputs = medicationDosageEvaluatedInputs + other.medicationDosageEvaluatedInputs,
             administrationRouteEvaluatedInputs = administrationRouteEvaluatedInputs + other.administrationRouteEvaluatedInputs,
-            laboratoryEvaluatedInputs = laboratoryEvaluatedInputs + other.laboratoryEvaluatedInputs,
             toxicityTranslationEvaluatedInputs = toxicityTranslationEvaluatedInputs + other.toxicityTranslationEvaluatedInputs,
             dosageUnitEvaluatedInputs = dosageUnitEvaluatedInputs + other.dosageUnitEvaluatedInputs,
-            surgeryTranslationEvaluatedInputs = surgeryTranslationEvaluatedInputs + other.surgeryTranslationEvaluatedInputs
+            surgeryTranslationEvaluatedInputs = surgeryTranslationEvaluatedInputs + other.surgeryTranslationEvaluatedInputs,
+            labMeasurementEvaluatedInputs = labMeasurementEvaluatedInputs + other.labMeasurementEvaluatedInputs,
         )
     }
 }

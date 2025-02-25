@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 class LabInterpretation(private val measurements: Map<LabMeasurement, List<LabValue>>) {
-    
+
     fun mostRecentRelevantDate(): LocalDate? {
         return measurements.mapNotNull { (_, values) -> values.firstOrNull()?.date }.maxWithOrNull(LocalDate::compareTo)
     }

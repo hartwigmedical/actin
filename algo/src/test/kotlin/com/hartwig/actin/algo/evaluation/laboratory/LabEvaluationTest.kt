@@ -91,9 +91,9 @@ class LabEvaluationTest {
 
     @Test
     fun `Should be able to use overrides for refLimitUp`() {
-        val firstCode = LabEvaluation.REF_LIMIT_UP_OVERRIDES.keys.iterator().next()
-        val overrideRefLimitUp: Double = LabEvaluation.REF_LIMIT_UP_OVERRIDES[firstCode]!!
-        val value: LabValue = LabTestFactory.create(value = 1.8 * overrideRefLimitUp).copy(measurement = firstCode)
+        val firstLabMeasurement = LabEvaluation.REF_LIMIT_UP_OVERRIDES.keys.iterator().next()
+        val overrideRefLimitUp: Double = LabEvaluation.REF_LIMIT_UP_OVERRIDES[firstLabMeasurement]!!
+        val value: LabValue = LabTestFactory.create(value = 1.8 * overrideRefLimitUp).copy(measurement = firstLabMeasurement)
         assertThat(LabEvaluation.evaluateVersusMaxULN(value, 2.0)).isEqualTo(WITHIN_THRESHOLD)
     }
 

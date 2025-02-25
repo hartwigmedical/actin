@@ -12,7 +12,7 @@ enum class CurationCategory(val categoryName: String) {
     ECG("ECG"),
     INFECTION("Infection"),
     INTOLERANCE("Intolerance"),
-    LABORATORY("Laboratory"),
+    LAB_MEASUREMENT("Lab measurement"),
     LESION_LOCATION("Lesion Location"),
     MEDICATION_DOSAGE("Medication Dosage"),
     MEDICATION_NAME("Medication Name"),

@@ -151,7 +151,7 @@ class StandardDataIngestion(
             StandardSurgeryExtractor(curationDatabaseContext.surgeryNameCuration),
             StandardVitalFunctionsExtractor(),
             StandardBloodTransfusionExtractor(),
-            StandardLabValuesExtractor(curationDatabaseContext.laboratoryCuration),
+            StandardLabValuesExtractor(curationDatabaseContext.labMeasurementCuration),
             StandardComorbidityExtractor(curationDatabaseContext.comorbidityCuration),
             StandardOncologicalHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
             StandardClinicalStatusExtractor(),

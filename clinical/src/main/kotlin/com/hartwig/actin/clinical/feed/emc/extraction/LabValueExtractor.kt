@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.feed.emc.lab.LabUnitResolver
 import com.hartwig.actin.datamodel.clinical.LabValue
 import org.apache.logging.log4j.LogManager
 
-class LabValueExtractor(private val laboratoryCuration: CurationDatabase<LabMeasurementConfig>) {
+class LabValueExtractor(private val labMeasurementCuration: CurationDatabase<LabMeasurementConfig>) {
 
     private val logger = LogManager.getLogger(LabValueExtractor::class.java)
 
@@ -24,12 +24,13 @@ class LabValueExtractor(private val laboratoryCuration: CurationDatabase<LabMeas
             val isOutsideRef = if (limits.lower != null || limits.upper != null) {
                 limits.lower != null && value < limits.lower || limits.upper != null && value > limits.upper
             } else null
+            val inputText = "${entry.codeCodeOriginal} | ${entry.codeDisplayOriginal}"
             val curationResponse = CurationResponse.createFromConfigs(
-                laboratoryCuration.find("${entry.codeCodeOriginal} | ${entry.codeDisplayOriginal}"),
+                labMeasurementCuration.find(inputText),
                 patientId,
-                CurationCategory.LABORATORY,
-                "${entry.codeCodeOriginal} | ${entry.codeDisplayOriginal}",
-                "laboratory"
+                CurationCategory.LAB_MEASUREMENT,
+                inputText,
+                "lab measurement"
             )
             val curatedLab = curationResponse.config()?.takeIf { !it.ignore }?.let {
                 LabValue(
@@ -92,6 +93,6 @@ class LabValueExtractor(private val laboratoryCuration: CurationDatabase<LabMeas
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
-            LabValueExtractor(laboratoryCuration = curationDatabaseContext.laboratoryCuration)
+            LabValueExtractor(labMeasurementCuration = curationDatabaseContext.labMeasurementCuration)
     }
 }

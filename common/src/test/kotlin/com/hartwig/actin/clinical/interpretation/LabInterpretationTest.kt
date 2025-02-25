@@ -9,7 +9,7 @@ import java.time.LocalDate
 class LabInterpretationTest {
 
     private val testDate = LocalDate.of(2020, 1, 1)
-    
+
     @Test
     fun `Should return null or empty for queries on missing data`() {
         val empty = interpret(emptyList())
@@ -25,8 +25,18 @@ class LabInterpretationTest {
     fun `Should interpret lab values`() {
         val minimalLabValue = LabInterpretationTestFactory.createMinimal()
         val measurements =
-            listOf(1, 5, 3, 2, 4, 4).map { minimalLabValue.copy(date = testDate.minusDays(it.toLong()), measurement = LabMeasurement.ALBUMIN) } +
-            listOf(2, 3).map { minimalLabValue.copy(date = testDate.minusDays(it.toLong()), measurement = LabMeasurement.THROMBOCYTES_ABS) }
+            listOf(1, 5, 3, 2, 4, 4).map {
+                minimalLabValue.copy(
+                    date = testDate.minusDays(it.toLong()),
+                    measurement = LabMeasurement.ALBUMIN
+                )
+            } +
+                    listOf(2, 3).map {
+                        minimalLabValue.copy(
+                            date = testDate.minusDays(it.toLong()),
+                            measurement = LabMeasurement.THROMBOCYTES_ABS
+                        )
+                    }
         val interpretation = interpret(measurements)
         val mostRecent = interpretation.mostRecentRelevantDate()
         assertThat(mostRecent).isEqualTo(testDate.minusDays(1))

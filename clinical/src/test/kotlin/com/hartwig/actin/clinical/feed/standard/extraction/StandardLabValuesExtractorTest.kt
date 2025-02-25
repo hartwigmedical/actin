@@ -17,8 +17,9 @@ import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-private const val LAB_CODE = "HGB"
+private const val LAB_CODE = "Hb"
 private const val LAB_NAME = "Hemoglobine"
+private val LAB_MEASUREMENT = LabMeasurement.HEMOGLOBIN
 
 private val EHR_LAB_VALUE = ProvidedLabValue(
     evaluationTime = LocalDateTime.of(2024, 2, 28, 0, 0),
@@ -34,12 +35,12 @@ private val EHR_LAB_VALUE = ProvidedLabValue(
 private val LAB_CONFIG = LabMeasurementConfig(
     input = "$LAB_CODE | $LAB_NAME",
     ignore = false,
-    labMeasurement = LabMeasurement.HEMOGLOBIN
+    labMeasurement = LAB_MEASUREMENT
 )
 
 private val LAB_VALUE = LabValue(
     date = LocalDate.of(2024, 2, 28),
-    measurement = LabMeasurement.HEMOGLOBIN,
+    measurement = LAB_MEASUREMENT,
     unit = LabUnit.GRAMS_PER_DECILITER,
     value = 12.0,
     comparator = ">",
@@ -53,7 +54,7 @@ class StandardLabValuesExtractorTest {
     private val extractor = StandardLabValuesExtractor(labCuration)
 
     @Test
-    fun `Should extract and curate lab values with known units`() {
+    fun `Should extract and curate lab values with lab measurement and known units`() {
         every { labCuration.find("$LAB_CODE | $LAB_NAME") } returns setOf(LAB_CONFIG)
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(
@@ -97,9 +98,9 @@ class StandardLabValuesExtractorTest {
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 patientId = HASHED_ID_IN_BASE64,
-                category = CurationCategory.LABORATORY,
+                category = CurationCategory.LAB_MEASUREMENT,
                 feedInput = "$LAB_CODE | $LAB_NAME",
-                message = "Could not find laboratory config for input '$LAB_CODE | $LAB_NAME'"
+                message = "Could not find lab measurement config for input '$LAB_CODE | $LAB_NAME'"
             )
         )
     }

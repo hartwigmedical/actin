@@ -357,55 +357,55 @@ Trials could lead to `WARN` in case knowing the exact trial treatment is require
 
 _Blood components / blood cell components_
 
-| Rule                                        | When does a patient pass evaluation?                                                   | Note                                                                                                             |
-|---------------------------------------------|----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X            | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X                                         |                                                                                                                  |
-| HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X        | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X*LLN                                     |                                                                                                                  |
-| HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X           | Lymphocytes absolute (LYMPHO-ABS-eDA/LYMPHO-ABS-eDM) in 10*9/L => X                    |                                                                                                                  |
-| HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X | Lymphocytes in cells per mm3 => X                                                      | In case lymphocytes is measured in 10\*9/L, the value is converted using Lympho[cells/mm3]=Lympho[10\*9/L]/0.001 |
-| HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X           | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) in 10^9/L or 10\*9/L => X |                                                                                                                  |
-| HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X          | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X                                     |                                                                                                                  |
-| HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X       | Hemoglobin (Hb) in g/dL => X.                                                          | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206                |
-| HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X     | Hemoglobin (Hb) in mmol/L => X.                                                        | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206                |
-| HAS_POTENTIAL_LEUKOCYTOSIS                  | Leukocytes absolute (LEUKO-ABS) in 10^9/L => ULN                                       |                                                                                                                  |
+| Rule                                        | When does a patient pass evaluation?                                         | Note                                                                                                             |
+|---------------------------------------------|------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X            | Leukocytes absolute (LEUKOCYTES_ABS) in 10^9/L => X                          |                                                                                                                  |
+| HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X        | Leukocytes absolute (LEUKOCYTES_ABS) in 10^9/L => X*LLN                      |                                                                                                                  |
+| HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X           | Lymphocytes absolute (LYMPHOCYTES_ABS) in 10*9/L => X                        |                                                                                                                  |
+| HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X | Lymphocytes in cells per mm3 => X                                            | In case lymphocytes is measured in 10\*9/L, the value is converted using Lympho[cells/mm3]=Lympho[10\*9/L]/0.001 |
+| HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X           | Neutrophil granulocytes absolute (NEUTROPHILS_ABS) in 10^9/L or 10\*9/L => X |                                                                                                                  |
+| HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X          | Thrombocytes absolute (THROMBOCYTES_ABS) in 10*9/L => X                      |                                                                                                                  |
+| HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X       | Hemoglobin (HEMOGLOBIN) in g/dL => X.                                        | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206                |
+| HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X     | Hemoglobin (HEMOGLOBIN) in mmol/L => X.                                      | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206                |
+| HAS_POTENTIAL_LEUKOCYTOSIS                  | Leukocytes absolute (LEUKOCYTES_ABS) in 10^9/L => ULN                        |                                                                                                                  |
 
 _Blood clotting factors_
 
-| Rule                                        | When does a patient pass evaluation?                   | Note |
-|---------------------------------------------|--------------------------------------------------------|------|
-| HAS_INR_ULN_OF_AT_MOST_X                    | International normalized ratio (INR/POCT_INR) <= X*ULN |      |
-| HAS_PT_ULN_OF_AT_MOST_X                     | Prothrombin time (PT/POCT_PT) <= X*ULN                 |      |
-| HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS   | Prothrombin time (PT) LLN<X<ULN                        |      |
-| HAS_APTT_ULN_OF_AT_MOST_X                   | Activated partial thromboplastin time (APTT) <= X*ULN  |      |
-| HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Activated partial thromboplastin time (APTT) LLN<X<ULN |      |
-| HAS_PTT_ULN_OF_AT_MOST_X                    | T.B.D.                                                 |      |
+| Rule                                        | When does a patient pass evaluation?                                                    | Note |
+|---------------------------------------------|-----------------------------------------------------------------------------------------|------|
+| HAS_INR_ULN_OF_AT_MOST_X                    | International normalized ratio (INTERNATIONAL_NORMALIZED_RATIO) <= X*ULN                |      |
+| HAS_PT_ULN_OF_AT_MOST_X                     | Prothrombin time (PROTHROMBIN_TIME) <= X*ULN                                            |      |
+| HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS   | Prothrombin time (PROTHROMBIN_TIME) LLN<X<ULN                                           |      |
+| HAS_APTT_ULN_OF_AT_MOST_X                   | Activated partial thromboplastin time (ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME) <= X*ULN  |      |
+| HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Activated partial thromboplastin time (ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME) LLN<X<ULN |      |
+| HAS_PTT_ULN_OF_AT_MOST_X                    | T.B.D.                                                                                  |      |
 
 _Liver function_
 
-| Rule                                                                                         | When does a patient pass evaluation?                                              | Note                                                                                |
-|----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X                                                           | Albumin (ALB) in g/dL => X.                                                       | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10. |
-| HAS_ALBUMIN_LLN_OF_AT_LEAST_X                                                                | Albumin (ALB) > X*ULN                                                             |                                                                                     |
-| HAS_ASAT_ULN_OF_AT_MOST_X                                                                    | Aspartate aminotransferase (ASAT) <= X*ULN                                        |                                                                                     |
-| HAS_ALAT_ULN_OF_AT_MOST_X                                                                    | Alanine aminotransferase (ALAT) <= X*ULN                                          |                                                                                     |
-| HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT                | ALAT + ASAT <= X*ULN or <= Y*ULN if liver metastases present                      |                                                                                     |
-| HAS_ALP_ULN_OF_AT_MOST_X                                                                     | Alkaline phosphatase (ALP) <= X*ULN                                               |                                                                                     |
-| HAS_ALP_ULN_OF_AT_LEAST_X                                                                    | Alkaline phosphatase (ALP) => X*ULN                                               |                                                                                     |
-| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X                                                         | Total Bilirubin (TBIL) <= X*ULN                                                   |                                                                                     |
-| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_Y_IF_GILBERT_DISEASE                                 | Total Bilirubin (TBIL) <= X*ULN or Y * ULN if Gilbert disease                     |                                                                                     |
-| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_Y_IF_GILBERT_DISEASE | Total Bilirubin (TBIL) <= X*ULN or Direct Bilirubin <= Y * ULN if Gilbert disease |                                                                                     |
-| HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X                                                  | Total Bilirubin (TBIL) in umol/L <= X                                             |                                                                                     |
-| HAS_TOTAL_BILIRUBIN_MG_PER_DL_OF_AT_MOST_X                                                   | Total Bilirubin (TBIL) in mg/dL <= X                                              |                                                                                     |
-| HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                                        | Direct Bilirubin (DBIL) <= X*ULN                                                  | Direct Bilirubin = Conjugated bilirubin                                             |
-| HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X                                        | Direct Bilirubin (DBIL) / Total Bilirubin (TBIL) * 100 <= X                       |                                                                                     |
-| HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                                      | Total bilirubin (TBIL) - Direct Bilirubin (DBIL) <= X*ULN                         | Indirect Bilirubin = Unconjugated bilirubin                                         |
+| Rule                                                                                         | When does a patient pass evaluation?                                                         | Note                                                                                |
+|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X                                                           | Albumin (ALBUMIN) in g/dL => X.                                                              | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10. |
+| HAS_ALBUMIN_LLN_OF_AT_LEAST_X                                                                | Albumin (ALBUMIN) > X*ULN                                                                    |                                                                                     |
+| HAS_ASAT_ULN_OF_AT_MOST_X                                                                    | Aspartate aminotransferase (ASPARTATE_AMINOTRANSFERASE) <= X*ULN                             |                                                                                     |
+| HAS_ALAT_ULN_OF_AT_MOST_X                                                                    | Alanine aminotransferase (ALANINE_AMINOTRANSFERASE) <= X*ULN                                 |                                                                                     |
+| HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT                | ALAT + ASAT <= X*ULN or <= Y*ULN if liver metastases present                                 |                                                                                     |
+| HAS_ALP_ULN_OF_AT_MOST_X                                                                     | Alkaline phosphatase (ALKALINE_PHOSPHATASE) <= X*ULN                                         |                                                                                     |
+| HAS_ALP_ULN_OF_AT_LEAST_X                                                                    | Alkaline phosphatase (ALKALINE_PHOSPHATASE) => X*ULN                                         |                                                                                     |
+| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X                                                         | Total Bilirubin (TOTAL_BILIRUBIN) <= X*ULN                                                   |                                                                                     |
+| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_Y_IF_GILBERT_DISEASE                                 | Total Bilirubin (TOTAL_BILIRUBIN) <= X*ULN or Y * ULN if Gilbert disease                     |                                                                                     |
+| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_Y_IF_GILBERT_DISEASE | Total Bilirubin (TOTAL_BILIRUBIN) <= X*ULN or Direct Bilirubin <= Y * ULN if Gilbert disease |                                                                                     |
+| HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X                                                  | Total Bilirubin (TOTAL_BILIRUBIN) in umol/L <= X                                             |                                                                                     |
+| HAS_TOTAL_BILIRUBIN_MG_PER_DL_OF_AT_MOST_X                                                   | Total Bilirubin (TOTAL_BILIRUBIN) in mg/dL <= X                                              |                                                                                     |
+| HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                                        | Direct Bilirubin (DIRECT_BILIRUBIN) <= X*ULN                                                 | Direct Bilirubin = Conjugated bilirubin                                             |
+| HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X                                        | Direct Bilirubin (DIRECT_BILIRUBIN) / Total Bilirubin (TOTAL_BILIRUBIN) * 100 <= X           |                                                                                     |
+| HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                                      | Total bilirubin (TOTAL_BILIRUBIN) - Direct Bilirubin (DIRECT_BILIRUBIN) <= X*ULN             | Indirect Bilirubin = Unconjugated bilirubin                                         |
 
 _Kidney function_
 
 | Rule                                            | When does a patient pass evaluation?                            | Note                                                                                            |
 |-------------------------------------------------|-----------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X           | Creatinine (CREA) in mg/dL <= X                                 | In case CREA is measured in umol/l, the value is converted using CREA[mg/dL]=CREA[umol/l]/88.42 |
-| HAS_CREATININE_ULN_OF_AT_MOST_X                 | Creatinine (CREA) <= X*ULN                                      |                                                                                                 |
+| HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X           | Creatinine (CREATININE) in mg/dL <= X                           | In case CREA is measured in umol/l, the value is converted using CREA[mg/dL]=CREA[umol/l]/88.42 |
+| HAS_CREATININE_ULN_OF_AT_MOST_X                 | Creatinine (CREATININE) <= X*ULN                                |                                                                                                 |
 | HAS_EGFR_CKD_EPI_OF_AT_LEAST_X                  | eGFR (CKD-EPI formula) => X.                                    | In case CrCl is measured in another unit, the value is converted                                |
 | HAS_EGFR_MDRD_OF_AT_LEAST_X                     | eGFR (MDRD formula) => X.                                       | In case CrCl is measured in another unit, the value is converted                                |
 | HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X       | Creatinine clearance (Cockcroft Gault formula) => X.            | In case CrCl is measured in another unit, the value is converted                                |
@@ -414,66 +414,66 @@ _Kidney function_
 
 _Cardiac / cardiovascular function_
 
-| Rule                                     | When does a patient pass evaluation?         | Note |
-|------------------------------------------|----------------------------------------------|------|
-| HAS_BNP_ULN_OF_AT_MOST_X                 | NT-pro-BNP (BNP) <= X*ULN                    |      |
-| HAS_TROPONIN_IT_ULN_OF_AT_MOST_X         | High-sensitivity Troponin T (HSTNT) <= X*ULN |      |
-| HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X | Triglyceride (TG) <= X                       |      |
+| Rule                                     | When does a patient pass evaluation?                             | Note |
+|------------------------------------------|------------------------------------------------------------------|------|
+| HAS_BNP_ULN_OF_AT_MOST_X                 | NT-pro-BNP (NT_PRO_BNP) <= X*ULN                                 |      |
+| HAS_TROPONIN_IT_ULN_OF_AT_MOST_X         | High-sensitivity Troponin T (HIGH_SENSITIVE_TROPONIN_T) <= X*ULN |      |
+| HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X | Triglyceride (TRIGLYCERIDE) <= X                                 |      |
 
 _Pancreas function_
 
 | Rule                         | When does a patient pass evaluation? | Note |
 |------------------------------|--------------------------------------|------|
-| HAS_AMYLASE_ULN_OF_AT_MOST_X | Amylase (AMYL) <= X*ULN              |      |
-| HAS_LIPASE_ULN_OF_AT_MOST_X  | Lipase (LIPA) <= X*ULN               |      |
+| HAS_AMYLASE_ULN_OF_AT_MOST_X | Amylase (AMYLASE) <= X*ULN           |      |
+| HAS_LIPASE_ULN_OF_AT_MOST_X  | Lipase (LIPASE) <= X*ULN             |      |
 
 _Minerals_
 
 | Rule                                                       | When does a patient pass evaluation?                                                                  | Note                                                                                                     |
 |------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
 | HAS_ABNORMAL_ELECTROLYTE_LEVELS                            | Calcium, Chloride, Bicarbonate, Phosphate, Magnesium, Potassium, or Sodium LLN<X<ULN (isOutsideRef=0) |
-| HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X                         | Calcium (Ca) in mg/dL <= X                                                                            | In case calcium is measured in mmol/L, the value is converted to mg/dL using Ca[mg/dL]=Ca[mmol/L]/0.2495 |
-| HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS             | Calcium (Ca) LLN<X<ULN (isOutsideRef=0)                                                               |                                                                                                          |
-| HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X                     | Calcium corrected (Ca_C) <= X*ULN                                                                     |                                                                                                          |
-| HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS   | Calcium corrected (Ca_C) LLN<X<ULN (isOutsideRef=0)                                                   |                                                                                                          |
-| HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X                | Iononized calcium (B_ICA) in mmol/L <= X                                                              |                                                                                                          |
+| HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X                         | Calcium (CALCIUM) in mg/dL <= X                                                                       | In case calcium is measured in mmol/L, the value is converted to mg/dL using Ca[mg/dL]=Ca[mmol/L]/0.2495 |
+| HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS             | Calcium (CALCIUM) LLN<X<ULN (isOutsideRef=0)                                                          |                                                                                                          |
+| HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X                     | Calcium corrected (CORRECTED_CALCIUM) <= X*ULN                                                        |                                                                                                          |
+| HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS   | Calcium corrected (CORRECTED_CALCIUM) LLN<X<ULN (isOutsideRef=0)                                      |                                                                                                          |
+| HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X                | Iononized calcium (IONIZED_CALCIUM) in mmol/L <= X                                                    |                                                                                                          |
 | HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA                    | `WARN` if calcium, ionized calcium or corrected calcium above ULN.                                    |
-| HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS           | Magnesium (MG) LLN<X<ULN (isOutsideRef=0)                                                             |                                                                                                          |
+| HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS           | Magnesium (MAGNESIUM) LLN<X<ULN (isOutsideRef=0)                                                      |                                                                                                          |
 | HAS_CORRECTED_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | T.B.D. LLN<X<ULN (isOutsideRef=0)                                                                     |                                                                                                          |
-| HAS_PHOSPHATE_MMOL_PER_L_OF_AT_MOST_X                      | Phosphate (Phos) in mmol/L <= X                                                                       |                                                                                                          |
-| HAS_PHOSPHATE_ULN_OF_AT_MOST_X                             | Phosphate (Phos) <= X*ULN                                                                             |                                                                                                          |
-| HAS_PHOSPHATE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS           | Phosphate (Phos) LLN<X<ULN (isOutsideRef=0)                                                           |                                                                                                          |
-| HAS_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X                     | Potassium (P) in mmol/l => X                                                                          |                                                                                                          |
-| HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS           | Potassium (P) LLN<X<ULN (isOutsideRef=0)                                                              |                                                                                                          |
+| HAS_PHOSPHATE_MMOL_PER_L_OF_AT_MOST_X                      | Phosphate (PHOSPHATE) in mmol/L <= X                                                                  |                                                                                                          |
+| HAS_PHOSPHATE_ULN_OF_AT_MOST_X                             | Phosphate (PHOSPHATE) <= X*ULN                                                                        |                                                                                                          |
+| HAS_PHOSPHATE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS           | Phosphate (PHOSPHATE) LLN<X<ULN (isOutsideRef=0)                                                      |                                                                                                          |
+| HAS_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X                     | Potassium (POTASSIUM) in mmol/l => X                                                                  |                                                                                                          |
+| HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS           | Potassium (POTASSIUM) LLN<X<ULN (isOutsideRef=0)                                                      |                                                                                                          |
 | HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | T.B.D. LLN<X<ULN (isOutsideRef=0)                                                                     |                                                                                                          |
-| HAS_POTENTIAL_HYPOKALEMIA                                  | Potassium (K) <= LLN, or history of specific condition with DOID 4500                                 |                                                                                                          |
-| HAS_POTENTIAL_HYPOMAGNESEMIA                               | Magnesium (MG) <= LLN, or history of specific condition with DOID 0060879                             |                                                                                                          |
-| HAS_POTENTIAL_HYPOCALCEMIA                                 | Calcium (Ca) <= LLN, or history of specific condition with DOID 0090109                               |                                                                                                          |
+| HAS_POTENTIAL_HYPOKALEMIA                                  | Potassium (POTASSIUM) <= LLN, or history of specific condition with DOID 4500                         |                                                                                                          |
+| HAS_POTENTIAL_HYPOMAGNESEMIA                               | Magnesium (MAGNESIUM) <= LLN, or history of specific condition with DOID 0060879                      |                                                                                                          |
+| HAS_POTENTIAL_HYPOCALCEMIA                                 | Calcium (CALCIUM) <= LLN, or history of specific condition with DOID 0090109                          |                                                                                                          |
 
 _Hormones_
 
-| Rule                                          | When does a patient pass evaluation?      | Note                                              |
-|-----------------------------------------------|-------------------------------------------|---------------------------------------------------|
-| HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X | Serum testosterone (T.B.D.) in ng/dL <= X |                                                   |
-| HAS_CORTISOL_LLN_OF_AT_LEAST_X                | Cortisol in nmol/L => X*LLN               | Cortisol values should be measured in the morning |
+| Rule                                          | When does a patient pass evaluation?            | Note                                                                                                                     |
+|-----------------------------------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X | Serum testosterone (TESTOSTERONE) in ng/dL <= X | In case TESTOSTERONE is measured in nmol/L, the value is converted using TESTOSTERONE[nmol/L]=TESTOSTERONE[ng/dL]/28.842 |
+| HAS_CORTISOL_LLN_OF_AT_LEAST_X                | Cortisol (CORTISOL) in nmol/L => X*LLN          | Cortisol values should be measured in the morning                                                                        |
 
 _Tumor markers_
 
-| Rule                           | When does a patient pass evaluation?     | Note |
-|--------------------------------|------------------------------------------|------|
-| HAS_AFP_ULN_OF_AT_LEAST_X      | Alpha fetoprotein (AFP) <= X*ULN         |      |
-| HAS_CA125_ULN_OF_AT_LEAST_X    | CA 125 (C125) <= X*ULN                   |      |
-| HAS_HCG_ULN_OF_AT_LEAST_X      | HCG + beta HCG (HCG) <= X*ULN            |      |
-| HAS_LDH_ULN_OF_AT_MOST_X       | Lactate dehydrogenase (LDH) <= X*ULN     |      |
-| HAS_PSA_UG_PER_L_OF_AT_LEAST_X | Prostate-specific antigen (PSA) => X     |      |
-| HAS_PSA_LLN_OF_AT_LEAST_X      | Prostate-specific antigen (PSA) => X*LLN |      |
+| Rule                           | When does a patient pass evaluation?                           | Note |
+|--------------------------------|----------------------------------------------------------------|------|
+| HAS_AFP_ULN_OF_AT_LEAST_X      | Alpha fetoprotein (ALPHA_FETOPROTEIN) <= X*ULN                 |      |
+| HAS_CA125_ULN_OF_AT_LEAST_X    | CA 125 (CARBOHYDRATE_ANTIGEN_125) <= X*ULN                     |      |
+| HAS_HCG_ULN_OF_AT_LEAST_X      | HCG + beta HCG (HUMAN_CHORIONIC_GONADOTROPIN) <= X*ULN         |      |
+| HAS_LDH_ULN_OF_AT_MOST_X       | Lactate dehydrogenase (LACTATE_DEHYDROGENASE) <= X*ULN         |      |
+| HAS_PSA_UG_PER_L_OF_AT_LEAST_X | Prostate-specific antigen (PROSTATE_SPECIFIC_ANTIGEN) => X     |      |
+| HAS_PSA_LLN_OF_AT_LEAST_X      | Prostate-specific antigen (PROSTATE_SPECIFIC_ANTIGEN) => X*LLN |      |
 
 _Urine measurements_
 
-| Rule                                                         | When does a patient pass evaluation?                    | Note |
-|--------------------------------------------------------------|---------------------------------------------------------|------|
-| HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X                     | Total protein in urine (TE_U) in g/L => X.              |      |
-| HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X                 | In g/24h. (T.B.D.) Currently resolves to `UNDETERMINED` |      |
+| Rule                                                         | When does a patient pass evaluation?                               | Note |
+|--------------------------------------------------------------|--------------------------------------------------------------------|------|
+| HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X                     | Total protein in urine (TOTAL_PROTEIN_URINE) in g/L => X.          |      |
+| HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X                 | Total protein in 24 hours urine (TOTAL_PROTEIN_24U) in g/24h => X. |      |
 
 _Other_
 
@@ -481,12 +481,12 @@ _Other_
 |---------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
 | HAS_ADEQUATE_ORGAN_FUNCTION                                   | `WARN` if (1) Hemoglobin, Neutrophils, Thrombocytes, or eGFR under LLN, (2) ASAT or ALAT >3*ULN, Bilirubin, or LD above ULN, or (3) cardiovascular disease in history. |
 | HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X            | (T.B.D.) Currently resolves to `UNDETERMINED`                                                                                                                          |      |
-| HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS              | Free T4 (FT4) LLN<X<ULN (isOutsideRef=0)                                                                                                                               |      |
-| HAS_FREE_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS  | Free T3 (FT3) LLN<X<ULN (isOutsideRef=0)                                                                                                                               |      |
-| HAS_BOUND_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Bound T3 (T3) LLN<X<ULN (isOutsideRef=0)                                                                                                                               |      |
-| HAS_TSH_WITHIN_INSTITUTIONAL_NORMAL_LIMITS                    | Thyroid Stimulating Hormone (TSH) LLN<X<ULN (isOutsideRef=0)                                                                                                           |      |
+| HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS              | Free T4 (FREE_THYROXINE) LLN<X<ULN (isOutsideRef=0)                                                                                                                    |      |
+| HAS_FREE_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS  | Free T3 (FREE_TRIIODOTHYRONINE) LLN<X<ULN (isOutsideRef=0)                                                                                                             |      |
+| HAS_BOUND_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Bound T3 (BOUND_TRIIODOTHYRONINE) LLN<X<ULN (isOutsideRef=0)                                                                                                           |      |
+| HAS_TSH_WITHIN_INSTITUTIONAL_NORMAL_LIMITS                    | Thyroid Stimulating Hormone (THYROID_STIMULATING_HORMONE) LLN<X<ULN (isOutsideRef=0)                                                                                   |      |
 | HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE                      | Resolves to `UNDETERMINED`                                                                                                                                             |      |
-| HAS_CD4_POSITIVE_CELLS_PER_MICROLITER_OF_AT_LEAST_X           | CD4 positive cells (CD4-PERC) in cells per microliter => X                                                                                                             |      |
+| HAS_CD4_POSITIVE_CELLS_PER_MICROLITER_OF_AT_LEAST_X           | CD4 positive cells (CD4_POSITIVE_CELLS_ABSOLUTE) in cells per microliter => X                                                                                          |      |
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 

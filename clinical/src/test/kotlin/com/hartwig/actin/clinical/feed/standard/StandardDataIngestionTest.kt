@@ -77,7 +77,7 @@ class StandardDataIngestionTest {
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
             bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
-            labValuesExtractor = StandardLabValuesExtractor(curationDatabase.laboratoryCuration),
+            labValuesExtractor = StandardLabValuesExtractor(curationDatabase.labMeasurementCuration),
             comorbidityExtractor = StandardComorbidityExtractor(
                 curationDatabase.comorbidityCuration
             ),
@@ -132,11 +132,11 @@ class StandardDataIngestionTest {
                 requirements = listOf(CurationRequirement(feedInput = "Pain", message = "Could not find toxicity config for input 'Pain'"))
             ),
             CurationResult(
-                categoryName = "Laboratory",
+                categoryName = "Lab measurement",
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "dc_NeutrGran | Neutrof. granulocyten",
-                        message = "Could not find laboratory config for input 'dc_NeutrGran | Neutrof. granulocyten'"
+                        message = "Could not find lab measurement config for input 'dc_NeutrGran | Neutrof. granulocyten'"
                     )
                 ),
             ),
