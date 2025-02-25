@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import java.time.LocalDate
@@ -37,25 +38,27 @@ class GeneHasVariantInExonRangeOfType(
                 .groupBy { variant ->
                     val hasCanonicalEffectInExonRange = hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon)
                     when {
-                        hasCanonicalEffectInExonRange && variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH  -> {
+                        hasCanonicalEffectInExonRange && variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH -> {
                             VariantClassification.CANONICAL_HIGH_DRIVER
                         }
+
                         hasCanonicalEffectInExonRange && variant.isReportable -> {
                             VariantClassification.CANONICAL_REPORTABLE_NON_HIGH_DRIVER
                         }
+
                         hasCanonicalEffectInExonRange -> {
                             VariantClassification.CANONICAL_UNREPORTABLE
                         }
+
                         variant.isReportable && variant.otherImpacts.any { hasEffectInExonRange(it.affectedExon, minExon, maxExon) } -> {
                             VariantClassification.REPORTABLE_OTHER
                         }
+
                         else -> VariantClassification.NONE
                     }
-                }.mapValues { (_, variants) -> variants.map { it.event }.toSet() }
-        val highDriverEvents= variantClassifications[VariantClassification.CANONICAL_HIGH_DRIVER]
-        val nonHighDriverEvents = variantClassifications[VariantClassification.CANONICAL_REPORTABLE_NON_HIGH_DRIVER]
+                }.mapValues { (_, variants) -> variants.map(Variant::event).toSet() }
+        val highDriverEvents = variantClassifications[VariantClassification.CANONICAL_HIGH_DRIVER]
         val reportableOtherVariantMatches = variantClassifications[VariantClassification.REPORTABLE_OTHER]
-        val canonicalUnreportableVariantMatches = variantClassifications[VariantClassification.CANONICAL_UNREPORTABLE]
 
         val (reportableExonSkips, unreportableExonSkips) =
             if (requiredVariantType == VariantTypeInput.DELETE || requiredVariantType == null)
@@ -97,10 +100,10 @@ class GeneHasVariantInExonRangeOfType(
 
             else -> {
                 evaluatePotentialWarns(
-                    canonicalUnreportableVariantMatches,
+                    variantClassifications[VariantClassification.CANONICAL_UNREPORTABLE],
                     reportableOtherVariantMatches,
                     unreportableExonSkips.map { it.event }.toSet(),
-                    nonHighDriverEvents,
+                    variantClassifications[VariantClassification.CANONICAL_REPORTABLE_NON_HIGH_DRIVER],
                     nonHighDriverExonSkips.map { it.event }.toSet(),
                     baseMessage
                 )
