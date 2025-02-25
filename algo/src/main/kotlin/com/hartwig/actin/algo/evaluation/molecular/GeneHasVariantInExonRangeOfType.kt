@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import java.time.LocalDate
@@ -53,39 +52,37 @@ class GeneHasVariantInExonRangeOfType(
                         else -> VariantClassification.NONE
                     }
                 }.mapValues { (_, variants) -> variants.map { it.event }.toSet() }
-        val highDriverEvents= variantClassifications[VariantClassification.CANONICAL_HIGH_DRIVER]?: emptySet()
+        val highDriverEvents= variantClassifications[VariantClassification.CANONICAL_HIGH_DRIVER]
         val nonHighDriverEvents = variantClassifications[VariantClassification.CANONICAL_REPORTABLE_NON_HIGH_DRIVER]
-        val reportableOtherVariantMatches = variantClassifications[VariantClassification.REPORTABLE_OTHER]?: emptySet()
+        val reportableOtherVariantMatches = variantClassifications[VariantClassification.REPORTABLE_OTHER]
         val canonicalUnreportableVariantMatches = variantClassifications[VariantClassification.CANONICAL_UNREPORTABLE]
 
         val (reportableExonSkips, unreportableExonSkips) =
             if (requiredVariantType == VariantTypeInput.DELETE || requiredVariantType == null)
-                test.drivers.fusions
-                    .filter { it.geneStart == gene && it.geneEnd == gene }
-                    .filter {
-                        exonsWithinRange(it)
-                    }.partition { it.isReportable }
+                test.drivers.fusions.filter {
+                    it.geneStart == gene && it.geneEnd == gene && exonsWithinRange(it)
+                }.partition { it.isReportable }
             else emptyList<Fusion>() to emptyList()
 
         val (highDriverExonSkips, nonHighDriverExonSkips) = reportableExonSkips.partition { it.driverLikelihood == DriverLikelihood.HIGH }
         val highDriverExonSkipEvents = highDriverExonSkips.map { it.event }.toSet()
 
         return when {
-            !highDriverEvents.isNullOrEmpty() && !reportableOtherVariantMatches.isNullOrEmpty() -> {
+            !highDriverEvents.isNullOrEmpty() && reportableOtherVariantMatches.isNullOrEmpty() -> {
                 EvaluationFactory.pass(
                     "Variant(s) $baseMessage in canonical transcript",
                     inclusionEvents = highDriverEvents
                 )
             }
 
-            highDriverExonSkipEvents.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
+            highDriverExonSkipEvents.isNotEmpty() && reportableOtherVariantMatches.isNullOrEmpty() -> {
                 EvaluationFactory.pass("Exon(s) skipped $baseMessage", inclusionEvents = highDriverExonSkipEvents)
             }
 
             !highDriverEvents.isNullOrEmpty() -> {
                 EvaluationFactory.warn(
                     "Variant(s) ${concat(highDriverEvents)} $baseMessage in canonical transcript together with " +
-                            "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
+                            "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches!!)}",
                     inclusionEvents = highDriverEvents + reportableOtherVariantMatches
                 )
             }
@@ -93,7 +90,7 @@ class GeneHasVariantInExonRangeOfType(
             highDriverExonSkipEvents.isNotEmpty() -> {
                 EvaluationFactory.warn(
                     "Exon(s) skipped $baseMessage due to ${concat(highDriverExonSkipEvents)} together with variant(s) in " +
-                            "non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
+                            "non-canonical transcript: ${concat(reportableOtherVariantMatches!!)}",
                     inclusionEvents = highDriverExonSkipEvents + reportableOtherVariantMatches
                 )
             }
