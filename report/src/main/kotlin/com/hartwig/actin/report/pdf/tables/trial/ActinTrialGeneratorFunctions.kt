@@ -40,8 +40,8 @@ object ActinTrialGeneratorFunctions {
         return source?.let { "$it trials" } ?: "Trials"
     }
 
-    fun partitionByLocation(cohorts: List<InterpretedCohort>, source: TrialSource?) =
-        cohorts.partition { source != TrialSource.NKI || it.source == source || it.source == null }
+    fun partitionBySource(cohorts: List<InterpretedCohort>, source: TrialSource?) =
+        cohorts.partition { it.source == source || it.source == null || source == null }
 
     private fun sortedCohortGroups(cohorts: List<InterpretedCohort>): List<List<InterpretedCohort>> {
         val sortedCohorts = cohorts.sortedWith(InterpretedCohortComparator())

@@ -30,21 +30,14 @@ class ActinTrialGeneratorFunctionsTest {
 
     @Test
     fun `Should return all cohorts in the own list when source is null`() {
-        val (own, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), null)
-        assertThat(own).size().isEqualTo(3)
-        assertThat(others).isEmpty()
-    }
-
-    @Test
-    fun `Should return all cohorts in the own list when source is EMC`() {
-        val (own, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), TrialSource.EMC)
+        val (own, others) = ActinTrialGeneratorFunctions.partitionBySource(listOf(cohort1, cohort2, cohort3), null)
         assertThat(own).size().isEqualTo(3)
         assertThat(others).isEmpty()
     }
 
     @Test
     fun `Should return all cohorts in the primary list when there are no other sources`() {
-        val (primary, others) = ActinTrialGeneratorFunctions.partitionByLocation(
+        val (primary, others) = ActinTrialGeneratorFunctions.partitionBySource(
             listOf(cohort1, cohort2, cohort3.copy(source = null)),
             TrialSource.NKI
         )
@@ -53,15 +46,8 @@ class ActinTrialGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should return all cohorts in the primary list when source is EMC`() {
-        val (primary, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), TrialSource.EMC)
-        assertThat(primary).size().isEqualTo(3)
-        assertThat(others).isEmpty()
-    }
-
-    @Test
     fun `Should return cohorts in both lists when there are other sources`() {
-        val (primary, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), TrialSource.NKI)
+        val (primary, others) = ActinTrialGeneratorFunctions.partitionBySource(listOf(cohort1, cohort2, cohort3), TrialSource.NKI)
         assertThat(primary).size().isEqualTo(2)
         assertThat(others).size().isEqualTo(1)
     }
