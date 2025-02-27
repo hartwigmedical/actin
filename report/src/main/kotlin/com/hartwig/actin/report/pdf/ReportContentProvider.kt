@@ -265,7 +265,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             cohorts, source?.description, contentWidth, slotsAvailable = false, includeLocation = includeLocation
         )
         val openCohortsWithMissingMolecularResultForEvaluationGenerator =
-            EligibleActinTrialsGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(cohorts, source?.description, contentWidth)
+            EligibleActinTrialsGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
+                cohorts,
+                source?.description,
+                contentWidth,
+                includeLocation = includeLocation
+            )
 
         val generators = listOfNotNull(openCohortsWithSlotsGenerator.takeIf {
             report.config.includeTrialMatchingInSummary
