@@ -3,7 +3,6 @@ package com.hartwig.actin.system.regression
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
 import com.hartwig.actin.system.example.LocalExampleReportApplication
-import java.time.LocalDate
 import org.apache.logging.log4j.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
@@ -12,6 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import java.time.LocalDate
 
 @RunWith(Parameterized::class)
 class ReportRegressionTest(private val exampleName: String) {
