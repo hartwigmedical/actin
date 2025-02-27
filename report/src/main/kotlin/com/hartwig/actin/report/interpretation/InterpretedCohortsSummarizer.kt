@@ -3,12 +3,14 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.approved
 
+data class TrialAcronymAndLocations(val trialAcronym: String, val locations: List<String>)
+
 class InterpretedCohortsSummarizer(
-    private val eligibleOpenTrialsByInclusionEvent: Map<String, List<String>>,
+    private val eligibleOpenTrialsByInclusionEvent: Map<String, List<TrialAcronymAndLocations>>,
     private val inclusionEventsOfOpenTrials: Set<String>
 ) {
 
-    fun trialsForDriver(driver: Driver): List<String> {
+    fun trialsForDriver(driver: Driver): List<TrialAcronymAndLocations> {
         return eligibleOpenTrialsByInclusionEvent[driver.event] ?: emptyList()
     }
 
@@ -23,9 +25,9 @@ class InterpretedCohortsSummarizer(
 
             val eligibleOpenTrialsByInclusionEvent = openCohorts
                 .filter(InterpretedCohort::isPotentiallyEligible)
-                .flatMap { cohort -> cohort.molecularEvents.map { it to cohort.acronym } }
+                .flatMap { cohort -> cohort.molecularEvents.map { it to TrialAcronymAndLocations(cohort.acronym, cohort.locations) } }
                 .groupBy({ it.first }, { it.second })
-                .mapValues { (_, acronyms) -> acronyms.sorted().distinct() }
+                .mapValues { (_, acronyms) -> acronyms.sortedBy { it.trialAcronym }.distinct() }
 
             val inclusionEventsOfNonIgnoredOpenTrials = openCohorts
                 .flatMap(InterpretedCohort::molecularEvents)

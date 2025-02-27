@@ -288,7 +288,7 @@
         "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
         "nctId": "NCT00000002",
         "phase": null,
-        "locations": []
+        "locations": ["Erasmus MC"]
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -717,7 +717,7 @@
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
         "phase": null,
-        "locations": []
+        "locations": ["NKI AvL"]
       },
       "isPotentiallyEligible": true,
       "evaluations": [

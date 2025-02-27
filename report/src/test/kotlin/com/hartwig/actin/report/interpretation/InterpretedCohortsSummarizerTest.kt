@@ -18,7 +18,10 @@ class InterpretedCohortsSummarizerTest {
     @Test
     fun `Should return all eligible and open cohorts for driver`() {
         val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
-        assertThat(matchingTrials).containsExactlyInAnyOrder(ELIGIBLE_COHORT, ELIGIBLE_COHORT_2)
+        assertThat(matchingTrials).containsExactlyInAnyOrder(
+            TrialAcronymAndLocations(ELIGIBLE_COHORT, emptyList()),
+            TrialAcronymAndLocations(ELIGIBLE_COHORT_2, emptyList())
+        )
     }
 
     @Test
