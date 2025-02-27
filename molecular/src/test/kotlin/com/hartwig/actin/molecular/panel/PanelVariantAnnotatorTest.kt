@@ -243,15 +243,7 @@ class PanelVariantAnnotatorTest {
     fun `Should exclude other transcript impacts from non canonical gene`() {
         val complexPaveAnnotation = PAVE_ANNOTATION.copy(
             transcriptImpact = listOf(
-                PaveTranscriptImpact(
-                    geneId = OTHER_GENE_ID,
-                    gene = OTHER_GENE,
-                    transcript = OTHER_GENE_TRANSCRIPT,
-                    effects = listOf(),
-                    spliceRegion = false,
-                    hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN_3LETTER
-                )
+                paveTranscriptImpact(OTHER_GENE_ID, OTHER_GENE, OTHER_GENE_TRANSCRIPT)
             )
         )
 
@@ -261,16 +253,20 @@ class PanelVariantAnnotatorTest {
 
     @Test
     fun `Should annotate valid other transcripts with paveLite`() {
+        val complexPaveAnnotation = PAVE_ANNOTATION.copy(transcriptImpact = listOf(paveTranscriptImpact()))
+
+        every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
+
+        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
+        assertThat(transcriptImpact).containsExactly(transcriptVariantImpact(emptySet(), CodingEffect.NONE))
+    }
+
+    @Test
+    fun `Should retain all effects data and have complete annotation of variants`() {
         val complexPaveAnnotation = PAVE_ANNOTATION.copy(
             transcriptImpact = listOf(
-                PaveTranscriptImpact(
-                    geneId = GENE_ID,
-                    gene = GENE,
-                    transcript = OTHER_TRANSCRIPT,
-                    effects = listOf(),
-                    spliceRegion = false,
-                    hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN_3LETTER
+                paveTranscriptImpact(
+                    effects = listOf(PaveVariantEffect.OTHER, PaveVariantEffect.MISSENSE, PaveVariantEffect.INTRONIC)
                 )
             )
         )
@@ -278,19 +274,8 @@ class PanelVariantAnnotatorTest {
         every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
 
         val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
-        assertThat(transcriptImpact).isEqualTo(
-            setOf(
-                TranscriptVariantImpact(
-                    transcriptId = OTHER_TRANSCRIPT,
-                    hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
-                    affectedCodon = 1,
-                    affectedExon = 1,
-                    isSpliceRegion = false,
-                    effects = emptySet(),
-                    codingEffect = CodingEffect.NONE
-                )
-            )
+        assertThat(transcriptImpact).containsExactly(
+            transcriptVariantImpact(setOf(VariantEffect.OTHER, VariantEffect.MISSENSE, VariantEffect.INTRONIC), CodingEffect.MISSENSE)
         )
     }
 
@@ -412,41 +397,6 @@ class PanelVariantAnnotatorTest {
         assertThat(isHotspot(null)).isFalse()
     }
 
-    @Test
-    fun `Should retain all effects data and have complete annotation of variants`() {
-        val complexPaveAnnotation = PAVE_ANNOTATION.copy(
-            transcriptImpact = listOf(
-                PaveTranscriptImpact(
-                    geneId = GENE_ID,
-                    gene = GENE,
-                    transcript = OTHER_TRANSCRIPT,
-                    effects = listOf(PaveVariantEffect.OTHER, PaveVariantEffect.MISSENSE, PaveVariantEffect.INTRONIC),
-                    spliceRegion = false,
-                    hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN_3LETTER
-                )
-            )
-        )
-
-        every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
-
-        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
-        assertThat(transcriptImpact).isEqualTo(
-            setOf(
-                TranscriptVariantImpact(
-                    transcriptId = OTHER_TRANSCRIPT,
-                    hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
-                    affectedCodon = 1,
-                    affectedExon = 1,
-                    isSpliceRegion = false,
-                    effects = setOf(VariantEffect.OTHER, VariantEffect.MISSENSE, VariantEffect.INTRONIC),
-                    codingEffect = CodingEffect.MISSENSE
-                )
-            )
-        )
-    }
-
     private fun minimalPaveImpact() = PaveImpact(
         gene = "",
         transcript = "",
@@ -458,5 +408,34 @@ class PanelVariantAnnotatorTest {
         otherReportableEffects = null,
         worstCodingEffect = PaveCodingEffect.NONE,
         genesAffected = 1
+    )
+
+    private fun paveTranscriptImpact(
+        geneId: String = GENE_ID,
+        gene: String = GENE,
+        transcript: String = OTHER_TRANSCRIPT,
+        effects: List<PaveVariantEffect> = emptyList()
+    ): PaveTranscriptImpact = PaveTranscriptImpact(
+        geneId = geneId,
+        gene = gene,
+        transcript = transcript,
+        effects = effects,
+        spliceRegion = false,
+        hgvsCodingImpact = HGVS_CODING,
+        hgvsProteinImpact = HGVS_PROTEIN_3LETTER
+    )
+
+    private fun transcriptVariantImpact(
+        effects: Set<VariantEffect>,
+        codingEffect: CodingEffect
+    ): TranscriptVariantImpact = TranscriptVariantImpact(
+        transcriptId = OTHER_TRANSCRIPT,
+        hgvsCodingImpact = HGVS_CODING,
+        hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
+        affectedCodon = 1,
+        affectedExon = 1,
+        isSpliceRegion = false,
+        effects = effects,
+        codingEffect = codingEffect
     )
 }
