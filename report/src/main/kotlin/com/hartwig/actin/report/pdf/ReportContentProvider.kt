@@ -277,11 +277,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             )
 
         val generators = listOfNotNull(openCohortsWithSlotsGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary
+            report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || requestingSource == source)
         }, openCohortsWithoutSlotsGenerator.takeIf {
             report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || (report.config.includeEligibleButNoSlotsTableIfEmpty && requestingSource == source))
         }, openCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary
+            report.config.includeTrialMatchingInSummary && (it?.getCohortSize()
+                ?.let { size -> size > 0 } ?: true || requestingSource == source)
         })
         return generators to evaluated
     }

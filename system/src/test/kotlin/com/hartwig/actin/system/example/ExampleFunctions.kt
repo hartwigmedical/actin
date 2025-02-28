@@ -14,7 +14,7 @@ private const val EXAMPLE_NAME_ = "<example_name>"
 
 object ExampleFunctions {
 
-    private const val REQUESTING_HOSPITAL = "NKI AvL"
+    private const val REQUESTING_HOSPITAL = "NKI-AvL"
 
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"
     private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
