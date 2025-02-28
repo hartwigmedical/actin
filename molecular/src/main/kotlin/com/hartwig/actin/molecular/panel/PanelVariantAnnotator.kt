@@ -234,6 +234,7 @@ class PanelVariantAnnotator(
             PaveCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
         }
     }
+
     private fun variantEffect(paveVariantEffect: PaveVariantEffect): VariantEffect {
         return when (paveVariantEffect) {
             PaveVariantEffect.STOP_GAINED -> VariantEffect.STOP_GAINED
