@@ -9,6 +9,7 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.time.LocalDate
+import java.util.Locale
 import kotlin.system.exitProcess
 
 class LocalExampleReportApplication {
@@ -44,6 +45,7 @@ private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
 
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
+    Locale.setDefault(Locale("en", "US"))
     val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
