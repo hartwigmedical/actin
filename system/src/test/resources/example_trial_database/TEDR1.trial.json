@@ -6,7 +6,9 @@
     "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
     "nctId": "NCT00000004",
     "phase": "2",
-    "locations": []
+    "locations": [
+      "NKI AvL"
+    ]
   },
   "generalEligibility": [
     {

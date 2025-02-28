@@ -42,7 +42,7 @@ class MolecularDriversInterpreter(
         return filteredVariants().any(ClonalityInterpreter::isPotentiallySubclonal)
     }
 
-    fun trialsForDriver(driver: Driver): List<String> {
+    fun trialsForDriver(driver: Driver): List<TrialAcronymAndLocations> {
         return interpretedCohortsSummarizer.trialsForDriver(driver)
     }
 
