@@ -2,9 +2,9 @@
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
   "referenceDate": {
-    "year": 2024,
-    "month": 11,
-    "day": 14
+    "year": 2025,
+    "month": 2,
+    "day": 25
   },
   "referenceDateIsLive": true,
   "trialMatches": [
@@ -16,10 +16,7 @@
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
         "phase": null,
-        "locations": [
-          "NKI"
-        ],
-        "source": "NKI"
+        "locations": []
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -189,7 +186,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L but measurement occurred before 16-Aug-2024"
+              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L"
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -261,7 +258,7 @@
             "cohortId": "A",
             "evaluable": true,
             "open": true,
-            "slotsAvailable": true,
+            "slotsAvailable": false,
             "ignore": false,
             "description": "Dose escalation - monotherapy"
           },
@@ -291,10 +288,7 @@
         "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
         "nctId": "NCT00000002",
         "phase": null,
-        "source": "EMC",
-        "locations": [
-          "EMC"
-        ]
+        "locations": ["Erasmus MC"]
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -551,12 +545,9 @@
         "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR with C797 mutations but not C797S in solid tumors",
         "nctId": "NCT00000003",
         "phase": null,
-        "locations": [
-          "NKI",
-          "EMC"
-        ]
+        "locations": []
       },
-      "isPotentiallyEligible": true,
+      "isPotentiallyEligible": false,
       "evaluations": [
         [
           {
@@ -657,7 +648,7 @@
             }
           },
           {
-            "result": "PASS",
+            "result": "FAIL",
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [
@@ -712,7 +703,7 @@
             "ignore": false,
             "description": "Dose escalation - monotherapy"
           },
-          "isPotentiallyEligible": true,
+          "isPotentiallyEligible": false,
           "evaluations": {}
         }
       ],
@@ -726,10 +717,7 @@
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
         "phase": null,
-        "source": "LKO",
-        "locations": [
-          "LUMC"
-        ]
+        "locations": ["NKI AvL"]
       },
       "isPotentiallyEligible": true,
       "evaluations": [
