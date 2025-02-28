@@ -137,7 +137,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val requestingSource = TrialSource.fromDescription(report.requestingHospital)
         val (primaryCohorts, otherSourceCohorts) = partitionBySource(cohorts, requestingSource)
 
-        val (primaryCohortsGenerators, evaluated) = getGeneratorsForSource(primaryCohorts, requestingSource, requestingSource, contentWidth)
+        val (primaryCohortsGenerators, evaluated) = getGeneratorsForSource(
+            primaryCohorts,
+            requestingSource = requestingSource,
+            contentWidth = contentWidth
+        )
             .let { it.first.filterNotNull() to it.second }
 
         val (otherCohortGenerators, otherEvaluated) = otherSourceCohorts.groupBy { it.source }
@@ -258,7 +262,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     private fun getGeneratorsForSource(
         cohorts: List<InterpretedCohort>,
         requestingSource: TrialSource?,
-        source: TrialSource?,
+        source: TrialSource? = requestingSource,
         contentWidth: Float,
         includeLocation: Boolean = false,
     ): Pair<List<EligibleActinTrialsGenerator?>, List<InterpretedCohort>> {
