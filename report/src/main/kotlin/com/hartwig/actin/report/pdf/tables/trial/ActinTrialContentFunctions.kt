@@ -24,19 +24,20 @@ object ActinTrialContentFunctions {
                     listOfNotNull(
                         "Applies to all cohorts below",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
-                        "".takeIf { includeLocation },
+                        cohorts.first().locations.joinToString("\n").takeIf { includeLocation },
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
                 )
             )
         }
+
         return prefix + cohorts.map { cohort: InterpretedCohort ->
             ContentDefinition(
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    if (includeLocation) cohort.locations.joinToString("\n") else null,
+                    if (includeLocation) "" else null,
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
