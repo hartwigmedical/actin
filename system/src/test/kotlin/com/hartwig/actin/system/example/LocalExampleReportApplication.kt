@@ -44,7 +44,7 @@ private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
 
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
-    val localOutputPath = System.getProperty("user.dir") 
+    val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
         val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(EXAMPLE_TO_RUN)
