@@ -56,8 +56,7 @@ fun main() {
             examplePatientRecordJson,
             exampleTreatmentMatchJson,
             localOutputPath,
-            //ExampleFunctions.createExampleEnvironmentConfiguration(LocalDate.now())
-            ExampleFunctions.createExhaustiveEnvironmentConfiguration(LocalDate.of(2024, 11, 7))
+            ExampleFunctions.createExampleEnvironmentConfiguration(LocalDate.now())
         )
     } catch (exception: ParseException) {
         LocalExampleReportApplication.LOGGER.warn(exception)
