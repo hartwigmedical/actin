@@ -81,17 +81,17 @@ class ActinTrialContentFunctionsTest {
     }
 
     @Test
-    fun `Should group common failures for multiple cohorts in trial showing location`() {
+    fun `Should group common failures for multiple cohorts in trial showing location in prefix`() {
         val cohorts = listOf(
-            cohort1.copy(warnings = emptySet(), fails = setOf("failure1")),
+            cohort1.copy(warnings = emptySet(), fails = setOf("failure1"), locations = cohort2.locations),
             cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
         )
 
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(cohorts, InterpretedCohort::fails, true, true)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "", "failure1"), false),
+                ContentDefinition(listOf("Applies to all cohorts below", "", "Erasmus\nNKI", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "Erasmus\nNKI", "failure2"), false)
+                ContentDefinition(listOf("cohort2", "None", "", "failure2"), false)
             )
         )
     }
