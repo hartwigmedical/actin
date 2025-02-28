@@ -16,7 +16,8 @@ class ActinTrialContentFunctionsTest {
         molecularEvents = setOf("MSI"),
         isPotentiallyEligible = true,
         warnings = setOf("warning1"),
-        fails = emptySet()
+        fails = emptySet(),
+        nctId = "nct01"
     )
     private val cohort2 =
         InterpretedCohort(
@@ -29,7 +30,8 @@ class ActinTrialContentFunctionsTest {
             warnings = setOf("warning1", "warning2"),
             fails = emptySet(),
             source = TrialSource.LKO,
-            locations = listOf("Erasmus", "NKI")
+            locations = listOf("Erasmus", "NKI"),
+            nctId = "nct02"
         )
 
     @Test
