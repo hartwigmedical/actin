@@ -12,6 +12,7 @@ private const val CLOSED_COHORT = "CLOSED"
 private const val ELIGIBLE_COHORT = "ELIGIBLE"
 private const val ELIGIBLE_COHORT_2 = "ELIGIBLE2"
 private const val ELIGIBLE_EVENT = "event"
+private const val LOCATION = "location"
 
 class InterpretedCohortsSummarizerTest {
 
@@ -19,7 +20,7 @@ class InterpretedCohortsSummarizerTest {
     fun `Should return all eligible and open cohorts for driver`() {
         val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
         assertThat(matchingTrials).containsExactlyInAnyOrder(
-            TrialAcronymAndLocations(ELIGIBLE_COHORT, emptyList()),
+            TrialAcronymAndLocations(ELIGIBLE_COHORT, listOf(LOCATION)),
             TrialAcronymAndLocations(ELIGIBLE_COHORT_2, emptyList())
         )
     }
@@ -64,12 +65,19 @@ class InterpretedCohortsSummarizerTest {
         return TestVariantFactory.createMinimal().copy(event = event)
     }
 
-    private fun interpretedCohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): InterpretedCohort {
+    private fun interpretedCohort(
+        name: String,
+        isEligible: Boolean,
+        isOpen: Boolean,
+        event: String = name,
+        locations: List<String> = emptyList()
+    ): InterpretedCohort {
         return InterpretedCohortTestFactory.interpretedCohort(
             acronym = name,
             isPotentiallyEligible = isEligible,
             isOpen = isOpen,
-            molecularEvents = setOf(event)
+            molecularEvents = setOf(event),
+            locations = locations
         )
     }
 
@@ -78,7 +86,7 @@ class InterpretedCohortsSummarizerTest {
             listOf(
                 interpretedCohort(INELIGIBLE_COHORT, isEligible = false, isOpen = true),
                 interpretedCohort(CLOSED_COHORT, isEligible = true, isOpen = false),
-                interpretedCohort(ELIGIBLE_COHORT, isEligible = true, isOpen = true, ELIGIBLE_EVENT),
+                interpretedCohort(ELIGIBLE_COHORT, isEligible = true, isOpen = true, ELIGIBLE_EVENT, listOf(LOCATION)),
                 interpretedCohort(ELIGIBLE_COHORT_2, isEligible = true, isOpen = true, ELIGIBLE_EVENT)
             )
         )
