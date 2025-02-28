@@ -101,7 +101,6 @@ class MolecularDetailsChapter(
             listOf(
                 PredictedTumorOriginGenerator(molecular, contentWidth()),
                 MolecularDriversGenerator(
-                    report.requestingHospital,
                     molecular,
                     evaluated,
                     trials,

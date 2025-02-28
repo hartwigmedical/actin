@@ -17,7 +17,6 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
-    private val hospital: String?,
     private val molecular: MolecularRecord,
     private val cohorts: List<InterpretedCohort>,
     private val externalTrials: Set<ExternalTrialSummary>,
@@ -61,10 +60,6 @@ class MolecularDriversGenerator(
 
     private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
         return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
-    }
-
-    private fun concat(treatments: Set<String>): String {
-        return treatments.joinToString(", ")
     }
 
     private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrialSummary>): String {
