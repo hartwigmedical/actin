@@ -1,14 +1,14 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -73,7 +73,7 @@ class MolecularDriverEntryFactoryTest {
             ?: throw IllegalStateException(
                 "Could not find molecular driver entry starting with driver: $driverToFind"
             )
-        assertThat(entry.actinTrials).containsExactly("trial 1")
+        assertThat(entry.actinTrials).containsExactly(TrialAcronymAndLocations("trial 1", emptyList()))
     }
 
     @Test

@@ -719,9 +719,9 @@
         "nctId": "NCT00000004",
         "phase": null,
         "locations": [
-          "Erasmus MC"
+          "NKI AvL"
         ],
-        "source": "EMC"
+        "source": "NKI"
       },
       "isPotentiallyEligible": true,
       "evaluations": [
