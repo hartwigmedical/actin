@@ -60,7 +60,7 @@ object ActinTrialGeneratorFunctions {
     }
 
     private fun renderTrialTitle(trialLabelText: List<Text>, cohort: InterpretedCohort, asClinicalTrialsGovLink: Boolean = false): Cell {
-        return if (asClinicalTrialsGovLink && cohort.nctId != null) {
+        return if (asClinicalTrialsGovLink && cohort.nctId?.isNotBlank() == true) {
             createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
                 PdfAction.createURI("https://clinicaltrials.gov/study/${cohort.nctId}")
             )
