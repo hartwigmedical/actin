@@ -29,7 +29,7 @@ class HasOnlyHadTreatmentWithCategoryOfTypesTest {
     }
 
     @Test
-    fun `Should warn if there are treatments of the wrong type`() {
+    fun `Should warn if there are treatments of the null type`() {
         assertEvaluation(EvaluationResult.WARN, function.evaluate(makeRecord(types = emptySet())))
     }
 
