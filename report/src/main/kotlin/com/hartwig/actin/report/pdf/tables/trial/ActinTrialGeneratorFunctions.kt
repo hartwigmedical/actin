@@ -68,11 +68,14 @@ object ActinTrialGeneratorFunctions {
                 cohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
                     ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
 
+
             table.addCell(
                 when (cohort.source) {
-                    TrialSource.LKO -> createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
-                        PdfAction.createURI(cohort.trialId.replace("LKO", "https://longkankeronderzoek.nl/studies/"))
-                    )
+                    TrialSource.LKO -> cohort.sourceId?.let {
+                        createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
+                            PdfAction.createURI(cohort.sourceId.replace("LKO", "https://longkankeronderzoek.nl/studies/"))
+                        )
+                    } ?: createContent(Paragraph().addAll(trialLabelText))
 
                     else -> createContent(Paragraph().addAll(trialLabelText))
                 }

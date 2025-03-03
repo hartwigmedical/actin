@@ -29,6 +29,7 @@ class ActinTrialContentFunctionsTest {
             warnings = setOf("warning1", "warning2"),
             fails = emptySet(),
             source = TrialSource.LKO,
+            sourceId = "LKO123",
             locations = listOf("Erasmus", "NKI")
         )
 
@@ -87,7 +88,14 @@ class ActinTrialContentFunctionsTest {
             cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
         )
 
-        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(cohorts, InterpretedCohort::fails, true, true)).isEqualTo(
+        assertThat(
+            ActinTrialContentFunctions.contentForTrialCohortList(
+                cohorts,
+                InterpretedCohort::fails,
+                includeLocation = true,
+                includeFeedback = true
+            )
+        ).isEqualTo(
             listOf(
                 ContentDefinition(listOf("Applies to all cohorts below", "", "", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
