@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.treatment
+package com.hartwig.actin.algo.evaluation.treatcment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
@@ -16,15 +16,15 @@ class HasOnlyHadTreatmentWithCategoryOfTypes(
         val (matchingTreatments, diffTreatments) = treatments.partition {
             it.categories().contains(category) && it.types().intersect(types).isNotEmpty()
         }
-        val (nullType, wrongTreatments) = diffTreatments.partition {
+        val (unknownType, wrongTreatments) = diffTreatments.partition {
             it.categories().contains(category) && it.types().isEmpty()
         }
         return when {
             wrongTreatments.isNotEmpty() -> {
                 EvaluationFactory.fail("There are treatments of the wrong category or type")
             }
-            nullType.isNotEmpty() -> {
-                EvaluationFactory.warn("There are treatments with null type")
+            unknownType.isNotEmpty() -> {
+                EvaluationFactory.warn("There are treatments with unknown type")
             }
             matchingTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass("There are only treatments with the correct category and types")
