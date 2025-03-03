@@ -73,7 +73,7 @@ object ActinTrialGeneratorFunctions {
                 when (cohort.source) {
                     TrialSource.LKO -> cohort.sourceId?.let {
                         createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
-                            PdfAction.createURI(cohort.sourceId.replace("LKO", "https://longkankeronderzoek.nl/studies/"))
+                            PdfAction.createURI("https://longkankeronderzoek.nl/studies/${cohort.sourceId}")
                         )
                     } ?: createContent(Paragraph().addAll(trialLabelText))
 
