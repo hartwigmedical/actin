@@ -7,7 +7,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionByLocation
+import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionBySource
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
@@ -51,33 +51,27 @@ class TrialMatchingChapter(
         val evaluableCohorts = InterpretedCohortFactory.createEvaluableCohorts(
             report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType
         )
-        val source = TrialSource.fromDescription(report.requestingHospital)
-        val (primaryEvaluableCohorts, otherEvaluableCohorts) = partitionByLocation(evaluableCohorts, source)
+        val requestingSource = TrialSource.fromDescription(report.requestingHospital)
+        val (primaryEvaluableCohorts, otherEvaluableCohorts) = partitionBySource(evaluableCohorts, requestingSource)
 
         val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(report.treatmentMatch)
-        val (primaryNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionByLocation(nonEvaluableCohorts, source)
+        val (primaryNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionBySource(nonEvaluableCohorts, requestingSource)
 
-        val primaryCohortGenerators =
-            createActinTrialGenerators(
-                primaryEvaluableCohorts,
-                primaryNonEvaluableCohorts,
-                report.requestingHospital,
-                false
-            )
+        val primaryCohortGenerators = createActinTrialGenerators(
+            primaryEvaluableCohorts, primaryNonEvaluableCohorts, report.requestingHospital, false
+        )
 
         val otherCohortGenerators =
-            otherEvaluableCohorts.takeIf { it.isNotEmpty() }
-                ?.groupBy { it.source }
-                ?.map { (source, cohortsPerSource) ->
-                    createActinTrialGenerators(
-                        cohortsPerSource,
-                        otherNonEvaluableCohorts.filter { it.source == source },
-                        source?.description,
-                        true
-                    )
+            otherEvaluableCohorts.takeIf { it.isNotEmpty() }?.groupBy { it.source }?.map { (source, cohortsPerSource) ->
+                source to createActinTrialGenerators(
+                    cohortsPerSource, otherNonEvaluableCohorts.filter { it.source == source }, source?.description, true
+                )
+            }
+                ?.flatMap { it.second.map { s -> it.first to s } }
+                ?.filter { (source, generator) ->
+                    (requestingSource == source) || (generator is EligibleActinTrialsGenerator && generator.getCohortSize() > 0) || (generator is IneligibleActinTrialsGenerator && generator.getCohortSize() > 0)
                 }
-                ?.flatten()
-                ?.filter { (it is EligibleActinTrialsGenerator && it.getCohortSize() > 0) || (it is IneligibleActinTrialsGenerator && it.getCohortSize() > 0) }
+                ?.map { it.second }
                 ?: emptyList()
 
         val (_, eligible) = EligibleActinTrialsGenerator.forOpenCohorts(
@@ -88,28 +82,19 @@ class TrialMatchingChapter(
         )
         val allEvidenceSources = report.patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
 
-        return primaryCohortGenerators + otherCohortGenerators +
-                listOfNotNull(
-                    filteredNationalTrials.takeIf { it.isNotEmpty() }?.let {
-                        EligibleExternalTrialsGenerator(
-                            allEvidenceSources, it, contentWidth(), it.size, report.config.countryOfReference, false
-                        )
-                    },
-                    filteredInternationalTrials.takeIf { it.isNotEmpty() }?.let {
-                        EligibleExternalTrialsGenerator(
-                            allEvidenceSources, it, contentWidth(), it.size, isFilteredTrialsTable = false
-                        )
-                    },
-                    localTrialGenerator.takeIf { externalTrialsOnly },
-                    nonLocalTrialGenerator.takeIf { externalTrialsOnly }
-                )
+        return primaryCohortGenerators + otherCohortGenerators + listOfNotNull(filteredNationalTrials.takeIf { it.isNotEmpty() }?.let {
+            EligibleExternalTrialsGenerator(
+                allEvidenceSources, it, contentWidth(), it.size, report.config.countryOfReference, false
+            )
+        }, filteredInternationalTrials.takeIf { it.isNotEmpty() }?.let {
+            EligibleExternalTrialsGenerator(
+                allEvidenceSources, it, contentWidth(), it.size, isFilteredTrialsTable = false
+            )
+        }, localTrialGenerator.takeIf { externalTrialsOnly }, nonLocalTrialGenerator.takeIf { externalTrialsOnly })
     }
 
     private fun createActinTrialGenerators(
-        cohorts: List<InterpretedCohort>,
-        nonEvaluableCohorts: List<InterpretedCohort>,
-        source: String?,
-        includeLocation: Boolean
+        cohorts: List<InterpretedCohort>, nonEvaluableCohorts: List<InterpretedCohort>, source: String?, includeLocation: Boolean
     ): List<TableGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
 
@@ -125,8 +110,7 @@ class TrialMatchingChapter(
         val ineligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator = IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
             ignoredCohorts, nonEvaluableCohorts, source, contentWidth(), includeLocation = includeLocation
         )
-        return listOfNotNull(
-            eligibleActinTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
+        return listOfNotNull(eligibleActinTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
             ineligibleActinTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
             ineligibleActinTrialsClosedCohortsGenerator.takeIf { !((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) },
             ineligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) })

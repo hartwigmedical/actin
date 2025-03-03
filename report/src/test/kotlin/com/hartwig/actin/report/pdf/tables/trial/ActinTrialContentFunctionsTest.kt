@@ -16,7 +16,8 @@ class ActinTrialContentFunctionsTest {
         molecularEvents = setOf("MSI"),
         isPotentiallyEligible = true,
         warnings = setOf("warning1"),
-        fails = emptySet()
+        fails = emptySet(),
+        nctId = "nct01"
     )
     private val cohort2 =
         InterpretedCohort(
@@ -29,8 +30,9 @@ class ActinTrialContentFunctionsTest {
             warnings = setOf("warning1", "warning2"),
             fails = emptySet(),
             source = TrialSource.LKO,
-            sourceId = "LKO123",
-            locations = listOf("Erasmus", "NKI")
+            sourceId = "123",
+            locations = listOf("Erasmus", "NKI"),
+            nctId = "nct02"
         )
 
     @Test
@@ -82,9 +84,9 @@ class ActinTrialContentFunctionsTest {
     }
 
     @Test
-    fun `Should group common failures for multiple cohorts in trial showing location`() {
+    fun `Should group common failures for multiple cohorts in trial showing location in prefix`() {
         val cohorts = listOf(
-            cohort1.copy(warnings = emptySet(), fails = setOf("failure1")),
+            cohort1.copy(warnings = emptySet(), fails = setOf("failure1"), locations = cohort2.locations),
             cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
         )
 
@@ -97,9 +99,9 @@ class ActinTrialContentFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "", "failure1"), false),
+                ContentDefinition(listOf("Applies to all cohorts below", "", "Erasmus\nNKI", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "Erasmus\nNKI", "failure2"), false)
+                ContentDefinition(listOf("cohort2", "None", "", "failure2"), false)
             )
         )
     }
