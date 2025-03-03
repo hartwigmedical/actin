@@ -65,7 +65,7 @@ object TestTreatmentMatchFactory {
                     open = true,
                     acronym = "TEST-2",
                     title = "Example test trial 2",
-                    nctId = "NCT00000002",
+                    nctId = "NCT00000002"
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),
