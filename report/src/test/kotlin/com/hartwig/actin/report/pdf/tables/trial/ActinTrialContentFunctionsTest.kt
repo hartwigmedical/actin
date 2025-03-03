@@ -156,7 +156,7 @@ class ActinTrialContentFunctionsTest {
     }
 
     @Test
-    fun `Should put locations for cohorts in prefix row if it is included`() {
+    fun `Should put locations for cohorts in prefix row if it is included due to commonalities between cohorts`() {
         assertThat(
             ActinTrialContentFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = listOf("site1")), cohort2.copy(locations = listOf("site1"))),
@@ -173,7 +173,7 @@ class ActinTrialContentFunctionsTest {
     }
 
     @Test
-    fun `Should include prefix row and put locations for cohorts there if there is more than one cohort`() {
+    fun `Should add prefix and put locations there when showing locations and more than one cohort but no commonalities between them`() {
         assertThat(
             ActinTrialContentFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = listOf("site1")), cohort2.copy(locations = listOf("site1"), warnings = setOf("warning2"))),
