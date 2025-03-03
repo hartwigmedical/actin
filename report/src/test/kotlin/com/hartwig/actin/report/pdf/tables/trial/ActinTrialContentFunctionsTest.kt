@@ -166,4 +166,40 @@ class ActinTrialContentFunctionsTest {
             )
         )
     }
+
+    @Test
+    fun `Should put locations for cohorts in prefix row if it is included`() {
+        assertThat(
+            ActinTrialContentFunctions.contentForTrialCohortList(
+                listOf(cohort1.copy(locations = listOf("site1")), cohort2.copy(locations = listOf("site1"))),
+                InterpretedCohort::warnings,
+                true
+            )
+        ).isEqualTo(
+            listOf(
+                ContentDefinition(listOf("Applies to all cohorts below", "", "site1", "warning1"), false),
+                ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
+                ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
+            )
+        )
+    }
+
+    @Test
+    fun `Should put locations for cohorts in first cohort row only if prefix row is not included`() {
+        assertThat(
+            ActinTrialContentFunctions.contentForTrialCohortList(
+                listOf(
+                    cohort1.copy(locations = listOf("site1"), warnings = emptySet()),
+                    cohort2.copy(locations = listOf("site1"), warnings = emptySet())
+                ),
+                InterpretedCohort::warnings,
+                true
+            )
+        ).isEqualTo(
+            listOf(
+                ContentDefinition(listOf("cohort1", "MSI", "site1", "None"), true),
+                ContentDefinition(listOf("cohort2", "None", "", "None"), false)
+            )
+        )
+    }
 }
