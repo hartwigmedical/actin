@@ -134,15 +134,19 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             PatientClinicalHistoryGenerator(report, false, keyWidth, valueWidth)
         }
 
-        val source = TrialSource.fromDescription(report.requestingHospital)
-        val (primaryCohorts, otherSourceCohorts) = partitionBySource(cohorts, source)
+        val requestingSource = TrialSource.fromDescription(report.requestingHospital)
+        val (primaryCohorts, otherSourceCohorts) = partitionBySource(cohorts, requestingSource)
 
-        val (primaryCohortsGenerators, evaluated) = getGeneratorsForSource(primaryCohorts, source, contentWidth)
+        val (primaryCohortsGenerators, evaluated) = getGeneratorsForSource(
+            primaryCohorts,
+            requestingSource = requestingSource,
+            contentWidth = contentWidth
+        )
             .let { it.first.filterNotNull() to it.second }
 
         val (otherCohortGenerators, otherEvaluated) = otherSourceCohorts.groupBy { it.source }
             .map { (source, cohortsPerSource) ->
-                getGeneratorsForSource(cohortsPerSource, source, contentWidth, true)
+                getGeneratorsForSource(cohortsPerSource, requestingSource, source, contentWidth, true)
             }
             .unzip()
             .let { (gens, eval) -> gens.flatten().filterNotNull() to eval.flatten() }
@@ -256,7 +260,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     private fun getGeneratorsForSource(
-        cohorts: List<InterpretedCohort>, source: TrialSource?, contentWidth: Float, includeLocation: Boolean = false,
+        cohorts: List<InterpretedCohort>,
+        requestingSource: TrialSource?,
+        source: TrialSource? = requestingSource,
+        contentWidth: Float,
+        includeLocation: Boolean = false,
     ): Pair<List<EligibleActinTrialsGenerator?>, List<InterpretedCohort>> {
         val (openCohortsWithSlotsGenerator, evaluated) = EligibleActinTrialsGenerator.forOpenCohorts(
             cohorts, source?.description, contentWidth, slotsAvailable = true, includeLocation = includeLocation
@@ -273,11 +281,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             )
 
         val generators = listOfNotNull(openCohortsWithSlotsGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary
+            report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || requestingSource == source)
         }, openCohortsWithoutSlotsGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || (report.config.includeEligibleButNoSlotsTableIfEmpty && source?.isHospital == true))
+            report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || (report.config.includeEligibleButNoSlotsTableIfEmpty && requestingSource == source))
         }, openCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary
+            report.config.includeTrialMatchingInSummary && (it?.getCohortSize()
+                ?.let { size -> size > 0 } ?: true || requestingSource == source)
         })
         return generators to evaluated
     }

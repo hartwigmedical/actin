@@ -51,11 +51,11 @@ class TrialMatchingChapter(
         val evaluableCohorts = InterpretedCohortFactory.createEvaluableCohorts(
             report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType
         )
-        val source = TrialSource.fromDescription(report.requestingHospital)
-        val (primaryEvaluableCohorts, otherEvaluableCohorts) = partitionBySource(evaluableCohorts, source)
+        val requestingSource = TrialSource.fromDescription(report.requestingHospital)
+        val (primaryEvaluableCohorts, otherEvaluableCohorts) = partitionBySource(evaluableCohorts, requestingSource)
 
         val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(report.treatmentMatch)
-        val (primaryNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionBySource(nonEvaluableCohorts, source)
+        val (primaryNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionBySource(nonEvaluableCohorts, requestingSource)
 
         val primaryCohortGenerators = createActinTrialGenerators(
             primaryEvaluableCohorts, primaryNonEvaluableCohorts, report.requestingHospital, false
@@ -69,8 +69,7 @@ class TrialMatchingChapter(
             }
                 ?.flatMap { it.second.map { s -> it.first to s } }
                 ?.filter { (source, generator) ->
-                    (source?.isHospital == true) ||
-                            (generator is EligibleActinTrialsGenerator && generator.getCohortSize() > 0) || (generator is IneligibleActinTrialsGenerator && generator.getCohortSize() > 0)
+                    (requestingSource == source) || (generator is EligibleActinTrialsGenerator && generator.getCohortSize() > 0) || (generator is IneligibleActinTrialsGenerator && generator.getCohortSize() > 0)
                 }
                 ?.map { it.second }
                 ?: emptyList()
