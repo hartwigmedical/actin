@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 data class InterpretedCohort(
     val trialId: String,
     val acronym: String,
+    val nctId: String?,
     val phase: TrialPhase? = null,
     val source: TrialSource? = null,
     val locations: List<String> = emptyList(),

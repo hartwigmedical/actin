@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.pdf.action.PdfAction
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
@@ -32,7 +33,7 @@ object ActinTrialGeneratorFunctions {
                 includeLocation = includeLocation,
                 includeFeedback = includeFeedback
             ).forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable, paddingDistance) }
-            insertTrialRow(cohortList, table, trialSubTable)
+            insertTrialRow(cohortList, table, trialSubTable, includeLocation)
         }
     }
 
@@ -58,7 +59,15 @@ object ActinTrialGeneratorFunctions {
         }.forEach(table::addCell)
     }
 
-    private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table) {
+    private fun renderTrialTitle(trialLabelText: List<Text>, cohort: InterpretedCohort, asClinicalTrialsGovLink: Boolean = false): Cell {
+        return if (asClinicalTrialsGovLink && cohort.nctId?.isNotBlank() == true) {
+            createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
+                PdfAction.createURI("https://clinicaltrials.gov/study/${cohort.nctId}")
+            )
+        } else createContent(Paragraph().addAll(trialLabelText))
+    }
+
+    private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table, includeLocation: Boolean = false) {
         if (cohortList.isNotEmpty()) {
             val cohort = cohortList.first()
             val trialLabelText = listOfNotNull(
@@ -74,7 +83,7 @@ object ActinTrialGeneratorFunctions {
                         PdfAction.createURI(cohort.trialId.replace("LKO", "https://longkankeronderzoek.nl/studies/"))
                     )
 
-                    else -> createContent(Paragraph().addAll(trialLabelText))
+                    else -> renderTrialTitle(trialLabelText, cohort, includeLocation)
                 }
             )
             val finalSubTable = if (trialSubTable.numberOfRows > 2) {

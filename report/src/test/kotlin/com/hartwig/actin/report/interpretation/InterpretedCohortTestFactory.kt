@@ -5,6 +5,7 @@ object InterpretedCohortTestFactory {
     fun interpretedCohort(
         trialId: String = "",
         acronym: String = "",
+        nctId: String = "",
         isPotentiallyEligible: Boolean = false,
         isOpen: Boolean = false,
         hasSlotsAvailable: Boolean = false,
@@ -24,7 +25,8 @@ object InterpretedCohortTestFactory {
             warnings = emptySet(),
             fails = emptySet(),
             ignore = false,
-            locations = locations
+            locations = locations,
+            nctId = nctId
         )
     }
 }
