@@ -31,6 +31,7 @@ object ActinTrialContentFunctions {
                 )
             )
         }
+
         return prefix + cohorts.map { cohort: InterpretedCohort ->
             ContentDefinition(
                 listOfNotNull(
