@@ -1,6 +1,6 @@
-package com.hartwig.actin.clinical.interpretation
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.clinical.interpretation.LabInterpretation.Companion.interpret
+import com.hartwig.actin.algo.evaluation.laboratory.LabInterpretation.Companion.interpret
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

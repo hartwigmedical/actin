@@ -53,6 +53,6 @@ internal object LabUnitConversionTable {
     }
 
     private fun createTestosteroneConversionMap(): Map<LabUnit, Map<LabUnit, Double>> {
-        return createConversionMap(LabUnit.NANOMOLES_PER_LITER, LabUnit.NANOGRAMS_PER_DELICILTER, 28.842)
+        return createConversionMap(LabUnit.NANOMOLES_PER_LITER, LabUnit.NANOGRAMS_PER_DECILITER, 28.842)
     }
 }

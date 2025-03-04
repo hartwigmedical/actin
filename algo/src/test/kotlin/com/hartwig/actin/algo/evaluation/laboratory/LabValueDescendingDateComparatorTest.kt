@@ -1,6 +1,5 @@
-package com.hartwig.actin.clinical.sort
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.clinical.interpretation.LabInterpretationTestFactory
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

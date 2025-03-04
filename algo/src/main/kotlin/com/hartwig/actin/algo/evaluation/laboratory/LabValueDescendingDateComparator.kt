@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.sort
+package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.datamodel.clinical.LabValue
 

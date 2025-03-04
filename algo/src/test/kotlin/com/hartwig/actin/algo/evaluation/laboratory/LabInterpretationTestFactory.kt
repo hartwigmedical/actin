@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.interpretation
+package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit

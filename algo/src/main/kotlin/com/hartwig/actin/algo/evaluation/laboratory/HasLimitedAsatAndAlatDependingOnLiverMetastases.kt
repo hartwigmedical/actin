@@ -9,7 +9,6 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationR
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvalidLabValue
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxULN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
-import com.hartwig.actin.clinical.interpretation.LabInterpretation
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabMeasurement.ALANINE_AMINOTRANSFERASE
 import com.hartwig.actin.datamodel.clinical.LabMeasurement.ASPARTATE_AMINOTRANSFERASE
