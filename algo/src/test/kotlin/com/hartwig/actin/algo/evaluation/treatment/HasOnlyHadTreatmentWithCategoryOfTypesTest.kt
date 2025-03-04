@@ -13,7 +13,7 @@ import org.junit.Test
 
 class HasOnlyHadTreatmentWithCategoryOfTypesTest {
     private val matchingCategory = TreatmentCategory.CHEMOTHERAPY
-    private val matchingTypes = setOf(DrugType.EGFR_INHIBITOR_GEN_3)
+    private val matchingTypes = setOf(DrugType.PLATINUM_COMPOUND)
 
     @Test
     fun `Should fail if there are no treatments`() {
