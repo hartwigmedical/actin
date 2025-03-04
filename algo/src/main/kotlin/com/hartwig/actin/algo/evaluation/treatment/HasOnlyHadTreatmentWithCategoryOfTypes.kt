@@ -13,7 +13,7 @@ class HasOnlyHadTreatmentWithCategoryOfTypes(
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatments = record.oncologicalHistory.flatMap { it.allTreatments() }
-        val treatmentMatch = treatments.groupBy {
+        val treatmentsByMatchEvaluation = treatments.groupBy {
             when {
                 it.categories().contains(category) && it.types().intersect(types).isNotEmpty() -> true
                 it.categories().contains(category) && it.types().isEmpty() -> null
@@ -21,15 +21,15 @@ class HasOnlyHadTreatmentWithCategoryOfTypes(
             }
         }
         return when {
-            !treatmentMatch[false].isNullOrEmpty() -> {
+            false in treatmentsByMatchEvaluation -> {
                 EvaluationFactory.fail("There are treatments of the wrong category or type")
             }
 
-            !treatmentMatch[null].isNullOrEmpty() -> {
+            null in treatmentsByMatchEvaluation -> {
                 EvaluationFactory.warn("There are treatments with unknown type")
             }
 
-            !treatmentMatch[true].isNullOrEmpty() -> {
+            true in treatmentsByMatchEvaluation -> {
                 EvaluationFactory.pass("There are only treatments with the correct category and types")
             }
 
