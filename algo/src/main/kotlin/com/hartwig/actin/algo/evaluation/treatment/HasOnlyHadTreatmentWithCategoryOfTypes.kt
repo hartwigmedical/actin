@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.treatcment
+package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
