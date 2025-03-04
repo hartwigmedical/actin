@@ -14,9 +14,10 @@ class HasOnlyHadTreatmentWithCategoryOfTypes(
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatments = record.oncologicalHistory.flatMap { it.allTreatments() }
         val treatmentsByMatchEvaluation = treatments.groupBy {
+            val matchesCategory = it.categories().contains(category)
             when {
-                it.categories().contains(category) && it.types().intersect(types).isNotEmpty() -> true
-                it.categories().contains(category) && it.types().isEmpty() -> null
+                matchesCategory && it.types().intersect(types).isNotEmpty() -> true
+                matchesCategory && it.types().isEmpty() -> null
                 else -> false
             }
         }
