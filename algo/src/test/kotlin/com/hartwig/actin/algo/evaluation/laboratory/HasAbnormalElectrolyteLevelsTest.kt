@@ -24,13 +24,13 @@ class HasAbnormalElectrolyteLevelsTest {
     @Test
     fun `Should pass if one or multiple electrolyte lab values are above ULN`() {
         labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = setOf(it)) }
-        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = labMeasurements.map { it }.toSet())
+        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = labMeasurements.toSet())
     }
 
     @Test
     fun `Should pass if one or multiple electrolyte lab values are under LLN`() {
         labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = setOf(it)) }
-        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = labMeasurements.map { it}.toSet())
+        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = labMeasurements.toSet())
     }
 
     @Test

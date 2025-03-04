@@ -30,7 +30,8 @@ class LabValueExtractor(private val labMeasurementCuration: CurationDatabase<Lab
                 patientId,
                 CurationCategory.LAB_MEASUREMENT,
                 inputText,
-                "lab measurement"
+                "lab measurement",
+                true
             )
             val curatedLab = curationResponse.config()?.takeIf { !it.ignore }?.let {
                 LabValue(

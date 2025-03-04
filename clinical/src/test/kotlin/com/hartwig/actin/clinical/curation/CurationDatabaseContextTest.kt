@@ -33,12 +33,12 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
-            mockk(),
-            mockk(),
-            mockk(),
-            mockk(),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
+            mockk(),
+            mockk(),
+            mockk(),
+            mockk(),
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
     }
@@ -59,12 +59,12 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
-            bloodTransfusionTranslation,
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
+            bloodTransfusionTranslation,
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { bloodTransfusionTranslation wasNot Called }

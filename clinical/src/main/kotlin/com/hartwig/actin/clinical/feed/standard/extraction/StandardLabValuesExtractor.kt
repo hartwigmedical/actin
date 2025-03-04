@@ -23,16 +23,17 @@ class StandardLabValuesExtractor(private val labMeasurementCuration: CurationDat
                 ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.LAB_MEASUREMENT,
                 inputText,
-                "lab measurement"
+                "lab measurement",
+                true
             )
             val labValue = curationResponse.config()?.takeIf { !it.ignore }?.let {
                 labValue(providedLabValue, it.labMeasurement)
             }
             ExtractionResult(listOfNotNull(labValue), curationResponse.extractionEvaluation)
-        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation()))
-        { acc, result ->
-            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            }
     }
 
     private fun labValue(it: ProvidedLabValue, labMeasurement: LabMeasurement) = LabValue(
