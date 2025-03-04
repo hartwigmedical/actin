@@ -18,7 +18,8 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(width)
         table.addHeaderCell(Cells.createHeader("Treatment"))
-        if (!report.treatmentMatch.standardOfCareMatches.isNullOrEmpty() ) {
+        val standardOfCareMatches = report.treatmentMatch.standardOfCareMatches
+        if (!standardOfCareMatches.isNullOrEmpty() ) {
             //INSERT CODE
         }
         val isCUP = TumorDetailsInterpreter.isCUP(report.patientRecord.tumor)
