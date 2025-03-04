@@ -2,9 +2,9 @@
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
   "referenceDate": {
-    "year": 2024,
-    "month": 11,
-    "day": 14
+    "year": 2025,
+    "month": 2,
+    "day": 25
   },
   "referenceDateIsLive": true,
   "trialMatches": [
@@ -16,7 +16,8 @@
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
         "phase": null,
-        "locations": []
+        "locations": [
+        ]
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -186,7 +187,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L but measurement occurred before 16-Aug-2024"
+              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L"
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -717,7 +718,10 @@
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
         "phase": null,
-        "locations": []
+        "locations": [
+          "NKI AvL"
+        ],
+        "source": "NKI"
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -868,7 +872,19 @@
             "open": true,
             "slotsAvailable": true,
             "ignore": false,
-            "description": "Lung cancer C797S cohort"
+            "description": "Lung cancer C797S cohort A"
+          },
+          "isPotentiallyEligible": true,
+          "evaluations": {}
+        },
+        {
+          "metadata": {
+            "cohortId": "B",
+            "evaluable": true,
+            "open": true,
+            "slotsAvailable": true,
+            "ignore": false,
+            "description": "Lung cancer C797S cohort B"
           },
           "isPotentiallyEligible": true,
           "evaluations": {}

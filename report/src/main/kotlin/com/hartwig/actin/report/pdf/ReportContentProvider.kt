@@ -30,7 +30,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerat
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionByLocation
+import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionBySource
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
@@ -134,18 +134,22 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             PatientClinicalHistoryGenerator(report, false, keyWidth, valueWidth)
         }
 
-        val source = TrialSource.fromDescription(report.requestingHospital)
-        val (primaryCohorts, otherSourceCohorts) = partitionByLocation(cohorts, source)
+        val requestingSource = TrialSource.fromDescription(report.requestingHospital)
+        val (primaryCohorts, otherSourceCohorts) = partitionBySource(cohorts, requestingSource)
 
-        val (primaryCohortsGenerators, evaluated) = getGeneratorsForSource(primaryCohorts, report.requestingHospital, contentWidth)
+        val (primaryCohortsGenerators, evaluated) = getGeneratorsForSource(
+            primaryCohorts,
+            requestingSource = requestingSource,
+            contentWidth = contentWidth
+        )
             .let { it.first.filterNotNull() to it.second }
 
         val (otherCohortGenerators, otherEvaluated) = otherSourceCohorts.groupBy { it.source }
             .map { (source, cohortsPerSource) ->
-                getGeneratorsForSource(cohortsPerSource, source?.description, contentWidth, true)
+                getGeneratorsForSource(cohortsPerSource, requestingSource, source, contentWidth, true)
             }
             .unzip()
-            .let { (gens, eval) -> gens.flatten().filterNotNull().filter { it.getCohortSize() > 0 } to eval.flatten() }
+            .let { (gens, eval) -> gens.flatten().filterNotNull() to eval.flatten() }
 
         val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTables(
             report.patientRecord, evaluated + otherEvaluated, contentWidth
@@ -256,23 +260,33 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     private fun getGeneratorsForSource(
-        cohorts: List<InterpretedCohort>, source: String?, contentWidth: Float, includeLocation: Boolean = false
+        cohorts: List<InterpretedCohort>,
+        requestingSource: TrialSource?,
+        source: TrialSource? = requestingSource,
+        contentWidth: Float,
+        includeLocation: Boolean = false,
     ): Pair<List<EligibleActinTrialsGenerator?>, List<InterpretedCohort>> {
         val (openCohortsWithSlotsGenerator, evaluated) = EligibleActinTrialsGenerator.forOpenCohorts(
-            cohorts, source, contentWidth, slotsAvailable = true, includeLocation = includeLocation
+            cohorts, source?.description, contentWidth, slotsAvailable = true, includeLocation = includeLocation
         )
         val (openCohortsWithoutSlotsGenerator, _) = EligibleActinTrialsGenerator.forOpenCohorts(
-            cohorts, source, contentWidth, slotsAvailable = false, includeLocation = includeLocation
+            cohorts, source?.description, contentWidth, slotsAvailable = false, includeLocation = includeLocation
         )
         val openCohortsWithMissingMolecularResultForEvaluationGenerator =
-            EligibleActinTrialsGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(cohorts, source, contentWidth)
+            EligibleActinTrialsGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
+                cohorts,
+                source?.description,
+                contentWidth,
+                includeLocation = includeLocation
+            )
 
         val generators = listOfNotNull(openCohortsWithSlotsGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary
+            report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || requestingSource == source)
         }, openCohortsWithoutSlotsGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || report.config.includeEligibleButNoSlotsTableIfEmpty)
+            report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || (report.config.includeEligibleButNoSlotsTableIfEmpty && requestingSource == source))
         }, openCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
-            report.config.includeTrialMatchingInSummary
+            report.config.includeTrialMatchingInSummary && (it?.getCohortSize()
+                ?.let { size -> size > 0 } ?: true || requestingSource == source)
         })
         return generators to evaluated
     }

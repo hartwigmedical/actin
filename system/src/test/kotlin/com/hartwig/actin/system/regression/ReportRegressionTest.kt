@@ -3,15 +3,18 @@ package com.hartwig.actin.system.regression
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
 import com.hartwig.actin.system.example.LocalExampleReportApplication
-import java.time.LocalDate
 import org.apache.logging.log4j.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
+import org.junit.AfterClass
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import java.time.LocalDate
+import java.util.Locale
 
 @RunWith(Parameterized::class)
 class ReportRegressionTest(private val exampleName: String) {
@@ -19,9 +22,19 @@ class ReportRegressionTest(private val exampleName: String) {
     private val logLevelRecorder = LogLevelRecorder()
 
     companion object {
+        private val originalLocale = Locale.getDefault()
+
         @Parameters
         @JvmStatic
         fun examples() = listOf(LUNG_01_EXAMPLE)
+
+        @BeforeClass
+        @JvmStatic
+        fun setReportLocale() = Locale.setDefault(Locale("en", "US"))
+
+        @AfterClass
+        @JvmStatic
+        fun revertReportLocale() = Locale.setDefault(originalLocale)
     }
 
     @Before

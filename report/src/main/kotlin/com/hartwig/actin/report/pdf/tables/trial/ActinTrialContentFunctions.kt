@@ -17,26 +17,30 @@ object ActinTrialContentFunctions {
         val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
         val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
 
-        val prefix = if (commonFeedback.isEmpty() && commonEvents.isEmpty()) emptyList() else {
+        val hidePrefix = commonFeedback.isEmpty() && commonEvents.isEmpty() && cohorts.size < 2
+        val locations = cohorts.first().locations.joinToString("\n")
+
+        val prefix = if (hidePrefix) emptyList() else {
             val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
             listOf(
                 ContentDefinition(
                     listOfNotNull(
                         "Applies to all cohorts below",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
-                        "".takeIf { includeLocation },
+                        locations.takeIf { includeLocation },
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
                 )
             )
         }
+
         return prefix + cohorts.map { cohort: InterpretedCohort ->
             ContentDefinition(
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    if (includeLocation) cohort.locations.joinToString("\n") else null,
+                    if (hidePrefix && includeLocation) locations else if (includeLocation) "" else null,
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
