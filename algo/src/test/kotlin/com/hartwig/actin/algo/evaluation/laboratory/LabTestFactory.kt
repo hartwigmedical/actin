@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.LabUnit
@@ -25,8 +25,7 @@ internal object LabTestFactory {
     ): LabValue {
         return LabValue(
             date = date,
-            name = "",
-            code = measurement?.code ?: "",
+            measurement = measurement ?: LabMeasurement.UNKNOWN,
             comparator = "",
             value = value,
             unit = measurement?.defaultUnit ?: LabUnit.NONE,

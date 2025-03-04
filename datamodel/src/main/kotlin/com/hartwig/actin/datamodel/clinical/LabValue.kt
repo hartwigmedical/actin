@@ -4,8 +4,7 @@ import java.time.LocalDate
 
 data class LabValue(
     val date: LocalDate,
-    val code: String,
-    val name: String,
+    val measurement: LabMeasurement,
     val comparator: String,
     val value: Double,
     val unit: LabUnit,

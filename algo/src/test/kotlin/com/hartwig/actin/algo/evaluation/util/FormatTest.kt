@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.util
 
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import java.time.LocalDate

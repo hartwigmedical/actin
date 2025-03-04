@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.Displayable
 enum class LabUnit(private val display: String) : Displayable {
     NANOGRAMS_PER_LITER("ng/L"),
     NANOGRAMS_PER_MILLILITER("ng/mL"),
+    NANOGRAMS_PER_DECILITER("ng/dL"),
     MICROGRAMS_PER_LITER("ug/L"),
     MICROGRAMS_PER_MICROLITER("µg/µL"),
     MILLIGRAMS_PER_DECILITER("mg/dL"),
@@ -16,6 +17,7 @@ enum class LabUnit(private val display: String) : Displayable {
     KILOGRAMS_PER_LITER("kg/L"),
     MICROGRAMS_PER_GRAM("µg/g"),
     GRAMS("g"),
+    FEMTOMOLES("fmol"),
     PICOMOLES_PER_LITER("pmol/L"),
     NANOMOLES_PER_LITER("nmol/L"),
     MICROMOLES_PER_LITER("umol/L"),
@@ -35,6 +37,7 @@ enum class LabUnit(private val display: String) : Displayable {
     UNITS_OF_INR("INR"),
     NANOMOLES_PER_DAY("nmol/24h"),
     MILLIMOLES_PER_DAY("mmol/24h"),
+    GRAMS_PER_DAY("g/24h"),
     MILLIMETERS_PER_HOUR("mm/hr"),
     MILLILITERS_PER_MINUTE("mL/min"),
     FEMTOLITERS("fL"),

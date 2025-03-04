@@ -1,11 +1,11 @@
-package com.hartwig.actin.clinical.interpretation
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 class LabInterpretation(private val measurements: Map<LabMeasurement, List<LabValue>>) {
-    
+
     fun mostRecentRelevantDate(): LocalDate? {
         return measurements.mapNotNull { (_, values) -> values.firstOrNull()?.date }.maxWithOrNull(LocalDate::compareTo)
     }
@@ -33,9 +33,11 @@ class LabInterpretation(private val measurements: Map<LabMeasurement, List<LabVa
     }
 
     companion object {
-        fun fromMeasurements(measurements: Map<LabMeasurement, List<LabValue>>): LabInterpretation {
+        fun interpret(labValues: List<LabValue>): LabInterpretation {
             return LabInterpretation(
-                measurements.mapValues { (_, values) -> values.sortedWith(LabValueDescendingDateComparator()) }.toSortedMap()
+                LabMeasurement.entries.associateWith { measurement ->
+                    labValues.filter { it.measurement == measurement }.sortedWith(LabValueDescendingDateComparator())
+                }.toSortedMap()
             )
         }
     }
