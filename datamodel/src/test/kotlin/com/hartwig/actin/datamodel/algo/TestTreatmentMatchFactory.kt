@@ -51,6 +51,7 @@ object TestTreatmentMatchFactory {
                     nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.NKI,
+                    sourceId = "Source ID 1",
                     locations = listOf("Antoni van Leeuwenhoek")
                 ),
                 isPotentiallyEligible = true,

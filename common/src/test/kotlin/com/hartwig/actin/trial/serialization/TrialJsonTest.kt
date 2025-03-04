@@ -10,6 +10,7 @@ import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.trial.serialization.TrialJson.fromJson
 import com.hartwig.actin.trial.serialization.TrialJson.readFromDir
 import com.hartwig.actin.trial.serialization.TrialJson.toJson
+import com.hartwig.actin.trial.serialization.TrialJson.trialFileId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -43,6 +44,14 @@ class TrialJsonTest {
         assertThat(testTrial2.identification.source).isNull()
         assertThat(testTrial2.identification.locations).isNull()
     }
+
+    @Test
+    fun `Should clean trial id to be used as filename`() {
+        assertThat(trialFileId("BMS-986449 +/- nivolumab")).isEqualTo("BMS-986449_+_-_nivolumab")
+        assertThat(trialFileId("TEST-TRIAL2")).isEqualTo("TEST-TRIAL2")
+        assertThat(trialFileId("TEST TRIAL 2")).isEqualTo("TEST_TRIAL_2")
+    }
+
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception when trying to read from regular file`() {
