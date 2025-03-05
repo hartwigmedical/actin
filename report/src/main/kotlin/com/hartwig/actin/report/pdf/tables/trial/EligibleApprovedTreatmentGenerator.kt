@@ -20,17 +20,16 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
         table.addHeaderCell(Cells.createHeader("Treatment"))
 
         val standardOfCareMatches = report.treatmentMatch.standardOfCareMatches
-        if (!standardOfCareMatches.isNullOrEmpty() ) {
-            val treatmentNames = standardOfCareMatches.map { it.treatmentCandidate.treatment.name }
-            treatmentNames.forEach{ table.addCell(Cells.createContent(it)) }
-        }
-
         val isCUP = TumorDetailsInterpreter.isCUP(report.patientRecord.tumor)
         val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val hasConfidentPrediction =
             molecular?.let { TumorOriginInterpreter(molecular.characteristics.predictedTumorOrigin).hasConfidentPrediction() } ?: false
+
         if (isCUP && hasConfidentPrediction) {
             table.addCell(Cells.createContent("Potential SOC for " + molecular!!.characteristics.predictedTumorOrigin!!.cancerType()))
+        } else if (!standardOfCareMatches.isNullOrEmpty()) {
+            val treatmentNames = standardOfCareMatches.map { it.treatmentCandidate.treatment.name }
+            treatmentNames.forEach{ table.addCell(Cells.createContent(it)) }
         } else {
             table.addCell(Cells.createContent("Not yet determined"))
         }
