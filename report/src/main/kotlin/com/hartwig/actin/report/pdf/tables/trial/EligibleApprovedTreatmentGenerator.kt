@@ -18,10 +18,13 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(width)
         table.addHeaderCell(Cells.createHeader("Treatment"))
+
         val standardOfCareMatches = report.treatmentMatch.standardOfCareMatches
         if (!standardOfCareMatches.isNullOrEmpty() ) {
-            //INSERT CODE
+            val treatmentNames = standardOfCareMatches.map { it.treatmentCandidate.treatment.name }
+            treatmentNames.forEach{ table.addCell(Cells.createContent(it)) }
         }
+
         val isCUP = TumorDetailsInterpreter.isCUP(report.patientRecord.tumor)
         val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val hasConfidentPrediction =
@@ -31,6 +34,7 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
         } else {
             table.addCell(Cells.createContent("Not yet determined"))
         }
+
         return makeWrapping(table)
     }
 }
