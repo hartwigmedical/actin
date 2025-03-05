@@ -1,8 +1,13 @@
 package com.hartwig.actin.molecular.evidence.matching
 
+import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.hotspot.VariantHotspot
 
 object HotspotMatching {
+
+    fun isMatch(h: ActionableHotspot, variantMatchCriteria: VariantMatchCriteria): Boolean {
+        return h.variants().any { variantHotspot -> isMatch(variantHotspot, variantMatchCriteria) }
+    }
 
     fun isMatch(hotspot: VariantHotspot, variant: VariantMatchCriteria): Boolean {
         val geneMatch = hotspot.gene() == variant.gene

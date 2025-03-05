@@ -3,10 +3,16 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 
 object ServeVerifier {
 
-    fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase) {
+    fun verifyServeDatabase(serveDatabase: ServeDatabase) {
+        verifyNoCombinedMolecularProfiles(serveDatabase)
+        verifyAllHotspotsHaveConsistentGenes(serveDatabase)
+    }
+
+    private fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase) {
         serveDatabase.records().values.forEach { verifyNoCombinedMolecularProfiles(it) }
     }
 
@@ -33,5 +39,32 @@ object ServeVerifier {
         }
 
         return criteriaCount > 1
+    }
+
+    private fun verifyAllHotspotsHaveConsistentGenes(serveDatabase: ServeDatabase) {
+        serveDatabase.records().values.forEach { verifyHotspotsInServeRecord(it) }
+    }
+
+    private fun verifyHotspotsInServeRecord(serveRecord: ServeRecord) {
+        serveRecord.evidences().forEach { evidence ->
+            evidence.molecularCriterium().hotspots().forEach { verifyHotspotGeneConsistency(it) }
+        }
+
+        serveRecord.trials().forEach { trial ->
+            trial.anyMolecularCriteria().forEach { molecularCriteria ->
+                molecularCriteria.hotspots().forEach { verifyHotspotGeneConsistency(it) }
+            }
+        }
+    }
+
+    private fun verifyHotspotGeneConsistency(actionableHotspot: ActionableHotspot) {
+        if (actionableHotspot.variants().isEmpty()) {
+            throw IllegalStateException("Hotspot contains no variant annotations: $actionableHotspot")
+        }
+
+        val gene = actionableHotspot.variants().first().gene()
+        if (actionableHotspot.variants().any { it.gene() != gene }) {
+            throw IllegalStateException("Hotspot contains variant annotations with different genes: $actionableHotspot")
+        }
     }
 }

@@ -17,16 +17,16 @@ class ActionableEventExtractionTest {
 
     @Test
     fun `Can extract actionable event for hotspot`() {
-        val actionableHotspot = ImmutableActionableHotspot.builder().from(TestServeMolecularFactory.createActionableEvent())
-            .gene("gene").chromosome("chromosome").position(0).ref("ref").alt("alt").build()
+
+        val variantAnnotation = TestServeMolecularFactory.createVariantAnnotation()
+        val actionableHotspot = ImmutableActionableHotspot.builder()
+            .from(TestServeMolecularFactory.createActionableEvent())
+            .addVariants(variantAnnotation)
+            .build()
 
         val molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
             baseActionableEvent = actionableHotspot,
-            gene = actionableHotspot.gene(),
-            chromosome = actionableHotspot.chromosome(),
-            position = actionableHotspot.position(),
-            ref = actionableHotspot.ref(),
-            alt = actionableHotspot.alt()
+            variants = setOf(variantAnnotation)
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(actionableHotspot)

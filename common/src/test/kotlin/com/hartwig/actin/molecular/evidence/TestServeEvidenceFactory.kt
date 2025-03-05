@@ -13,23 +13,18 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 
 object TestServeEvidenceFactory {
 
     fun createEvidenceForHotspot(
-        gene: String = "",
-        chromosome: String = "",
-        position: Int = 0,
-        ref: String = "",
-        alt: String = ""
+        variants: Set<VariantAnnotation> = emptySet()
     ): EfficacyEvidence {
         return create(
             molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                gene = gene,
-                chromosome = chromosome,
-                position = position,
-                ref = ref,
-                alt = alt
+                variants = if (variants.isNotEmpty()) variants else setOf(
+                    TestServeMolecularFactory.createVariantAnnotation()
+                )
             )
         )
     }
