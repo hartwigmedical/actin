@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.curation
+package com.hartwig.actin.datamodel.clinical.ingestion
 
 data class CurationWarning(val patientId: String, val category: CurationCategory, val feedInput: String, val message: String)
 

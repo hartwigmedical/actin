@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 
 class PrimaryTumorConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<PrimaryTumorConfig> {

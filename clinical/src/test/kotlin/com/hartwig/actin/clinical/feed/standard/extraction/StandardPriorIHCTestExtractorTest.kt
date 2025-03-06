@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64

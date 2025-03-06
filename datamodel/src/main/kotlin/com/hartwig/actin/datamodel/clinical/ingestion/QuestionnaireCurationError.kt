@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.emc.questionnaire
+package com.hartwig.actin.datamodel.clinical.ingestion
 
 data class QuestionnaireCurationError(val subject: String, val message: String) : Comparable<QuestionnaireCurationError> {
 

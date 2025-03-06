@@ -7,12 +7,13 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
-import com.hartwig.actin.clinical.PatientIngestionResult
-import com.hartwig.actin.clinical.PatientIngestionStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
+import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
@@ -128,7 +129,7 @@ class StandardDataIngestion(
                     record.patientId,
                     if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN_CURATION_REQUIRED,
                     record,
-                    PatientIngestionResult.curationResults(evaluation.warnings.toList()),
+                    curationResultsFromWarnings(evaluation.warnings),
                     emptySet(),
                     emptySet()
                 ),

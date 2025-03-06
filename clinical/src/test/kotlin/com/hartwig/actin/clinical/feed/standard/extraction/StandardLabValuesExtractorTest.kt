@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
