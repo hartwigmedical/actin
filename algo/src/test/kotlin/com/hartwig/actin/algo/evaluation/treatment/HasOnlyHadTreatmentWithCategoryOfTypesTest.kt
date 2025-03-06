@@ -41,11 +41,30 @@ class HasOnlyHadTreatmentWithCategoryOfTypesTest {
     @Test
     fun `Should pass by ignoring surgery and radiotherapy`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, matchingTypes)))
-        val surgery = treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment(name = "surgery", isSystemic = false, categories = setOf(matchingCategory), types = setOf(OtherTreatmentType.DEBULKING_SURGERY))))
+        val surgery = treatmentHistoryEntry(
+            setOf(
+                TreatmentTestFactory.treatment(
+                    name = "surgery",
+                    isSystemic = false,
+                    categories = setOf(TreatmentCategory.SURGERY),
+                    types = setOf(OtherTreatmentType.DEBULKING_SURGERY)
+                )
+            )
+        )
+        val radiotherapy = treatmentHistoryEntry(
+            setOf(
+                TreatmentTestFactory.treatment(
+                    name = "radiotherapy",
+                    isSystemic = false,
+                    categories = setOf(TreatmentCategory.RADIOTHERAPY),
+                    types = setOf(OtherTreatmentType.RADIOFREQUENCY)
+                )
+            )
+        )
         withTreatmentHistory(listOf(treatmentHistoryEntry, surgery))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, surgery)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, surgery, radiotherapy)))
         )
     }
 

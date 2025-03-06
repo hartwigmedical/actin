@@ -12,14 +12,16 @@ class HasOnlyHadTreatmentWithCategoryOfTypes(
     private val types: Set<TreatmentType>
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentsByMatchEvaluation = record.oncologicalHistory.flatMap { it.allTreatments() }.filter { it.isSystemic }.groupBy {
-            val matchesCategory = it.categories().contains(category)
-            when {
-                matchesCategory && it.types().intersect(types).isNotEmpty() -> true
-                matchesCategory && it.types().isEmpty() -> null
-                else -> false
+        val treatmentsByMatchEvaluation = record.oncologicalHistory.flatMap { it.allTreatments() }
+            .filter { it.isSystemic }
+            .groupBy {
+                val matchesCategory = it.categories().contains(category)
+                when {
+                    matchesCategory && it.types().intersect(types).isNotEmpty() -> true
+                    matchesCategory && it.types().isEmpty() -> null
+                    else -> false
+                }
             }
-        }
         return when {
             false in treatmentsByMatchEvaluation -> {
                 EvaluationFactory.fail("Did not only receive $types ${category.display()} treatment")
