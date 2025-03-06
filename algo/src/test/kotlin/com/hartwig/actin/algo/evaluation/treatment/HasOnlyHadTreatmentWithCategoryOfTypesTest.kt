@@ -20,33 +20,54 @@ class HasOnlyHadTreatmentWithCategoryOfTypesTest {
     }
 
     @Test
+    fun `Should fail if there are no treatments that are systemic`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.SURGERY, matchingTypes)))))
+            )
+        )
+    }
+
+    @Test
     fun `Should fail if there are treatments of the wrong category`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(makeRecord(category = TreatmentCategory.HORMONE_THERAPY)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(makeRecordWithMatchingAndAdditionalEntry(category = TreatmentCategory.HORMONE_THERAPY))
+        )
     }
 
     @Test
     fun `Should pass by ignoring surgery and radiotherapy`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(makeRecord(category = TreatmentCategory.SURGERY)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(makeRecordWithMatchingAndAdditionalEntry(category = TreatmentCategory.SURGERY))
+        )
     }
 
     @Test
     fun `Should fail if there are treatments of the wrong type`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(makeRecord(types = setOf(DrugType.HER2_ANTIBODY))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = setOf(DrugType.HER2_ANTIBODY)))
+        )
     }
 
     @Test
     fun `Should warn if there are treatments of the unknown type`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(makeRecord(types = emptySet())))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = emptySet())))
     }
 
     @Test
     fun `Should pass if all treatments are of the right category and type`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(makeRecord()))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(makeRecordWithMatchingAndAdditionalEntry()))
     }
 
     private val function = HasOnlyHadTreatmentWithCategoryOfTypes(matchingCategory, matchingTypes)
 
-    private fun makeRecord(category: TreatmentCategory = matchingCategory, types: Set<DrugType> = matchingTypes): PatientRecord {
+    private fun makeRecordWithMatchingAndAdditionalEntry(
+        category: TreatmentCategory = matchingCategory,
+        types: Set<DrugType> = matchingTypes
+    ): PatientRecord {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", category, types)))
         val matchingTreatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, matchingTypes)))
         return withTreatmentHistory(listOf(treatmentHistoryEntry, matchingTreatmentHistoryEntry))
