@@ -1,10 +1,9 @@
-package com.hartwig.actin.clinical.feed.standard
+package com.hartwig.actin.datamodel.clinical.provided
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -454,6 +453,3 @@ enum class ProvidedLabUnit(vararg val externalFormats: String) {
         }
     }
 }
-
-inline fun <reified T : Enum<T>> enumeratedInput(input: String) =
-    enumValues<T>().firstOrNull { it.name == input.uppercase().replace(" ", "_") } ?: { enumValueOf<T>("OTHER") }

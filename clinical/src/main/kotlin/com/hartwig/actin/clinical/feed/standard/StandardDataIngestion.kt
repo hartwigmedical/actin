@@ -30,6 +30,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsE
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.doid.DoidModel
 import java.nio.file.Files
 import java.nio.file.Paths

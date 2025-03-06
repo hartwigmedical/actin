@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.hartwig.actin.datamodel.clinical.provided.Description
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule

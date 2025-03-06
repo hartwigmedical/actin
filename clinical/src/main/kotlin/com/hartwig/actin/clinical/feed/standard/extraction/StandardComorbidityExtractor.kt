@@ -7,10 +7,10 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityCuration
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
-import com.hartwig.actin.clinical.feed.standard.ProvidedComorbidity
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
-import com.hartwig.actin.clinical.feed.standard.ProvidedToxicity
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedAllergy
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedComorbidity
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedToxicity
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance

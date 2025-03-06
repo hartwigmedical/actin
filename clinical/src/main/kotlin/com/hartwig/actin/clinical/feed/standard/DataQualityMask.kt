@@ -1,5 +1,8 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+
 val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1")
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 

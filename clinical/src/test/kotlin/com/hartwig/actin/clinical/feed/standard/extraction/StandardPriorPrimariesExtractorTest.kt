@@ -7,11 +7,11 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
-import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
-import com.hartwig.actin.clinical.feed.standard.ProvidedPriorPrimary
 import com.hartwig.actin.clinical.feed.standard.TREATMENT_HISTORY_INPUT
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPriorPrimary
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate

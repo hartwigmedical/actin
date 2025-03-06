@@ -14,7 +14,6 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-
 private const val PROVIDED_SURGERY_NAME = "surgery one"
 private const val CURATED_SURGERY_NAME = "surgery 1"
 private const val PROVIDED_SURGERY_NAME_TO_BE_IGNORED = "Geen ingreep- operatie uitgesteld"

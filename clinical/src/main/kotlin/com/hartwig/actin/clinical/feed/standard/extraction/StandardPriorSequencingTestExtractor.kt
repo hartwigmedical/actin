@@ -6,9 +6,9 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTest
-import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTestResult
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
@@ -103,15 +103,16 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
 
     private fun skippedExons(
         results: Set<ProvidedMolecularTestResult>
-    ) = results.filter { result -> result.exonSkipStart != null }
-        .map { result ->
+    ) = results.mapNotNull { result ->
+        result.exonSkipStart?.let { exonSkipStart ->
             SequencedSkippedExons(
                 result.gene!!,
                 result.exonSkipStart!!,
-                result.exonSkipEnd ?: result.exonSkipStart,
+                result.exonSkipEnd ?: exonSkipStart,
                 result.transcript
             )
-        }.toSet()
+        }
+    }.toSet()
 
     private fun amplifications(results: Set<ProvidedMolecularTestResult>) =
         results.mapNotNull { it.amplifiedGene?.let { gene -> SequencedAmplification(gene, it.transcript) } }.toSet()
