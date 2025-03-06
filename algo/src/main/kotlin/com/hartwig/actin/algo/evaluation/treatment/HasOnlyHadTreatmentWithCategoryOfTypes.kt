@@ -23,19 +23,19 @@ class HasOnlyHadTreatmentWithCategoryOfTypes(
         }
         return when {
             false in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.fail("There are treatments of the wrong category or type")
+                EvaluationFactory.fail("Did not only receive $types ${category.display()} treatment")
             }
 
             null in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.warn("There are treatments with unknown type")
+                EvaluationFactory.warn("Undetermined if received ${category.display()} is of type $types")
             }
 
             true in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.pass("There are only treatments with the correct category and types")
+                EvaluationFactory.pass("Has only had $types ${category.display()} treatment")
             }
 
             else -> {
-                EvaluationFactory.fail("No treatments found")
+                EvaluationFactory.fail("Has not had $types ${category.display()} treatment (no prior systemic treatment)")
             }
         }
     }
