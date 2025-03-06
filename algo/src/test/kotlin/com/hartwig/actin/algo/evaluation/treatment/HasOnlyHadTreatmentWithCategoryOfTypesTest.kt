@@ -21,7 +21,12 @@ class HasOnlyHadTreatmentWithCategoryOfTypesTest {
 
     @Test
     fun `Should fail if there are treatments of the wrong category`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(makeRecord(category = TreatmentCategory.SURGERY)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(makeRecord(category = TreatmentCategory.HORMONE_THERAPY)))
+    }
+
+    @Test
+    fun `Should pass by ignoring surgery and radiotherapy`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(makeRecord(category = TreatmentCategory.SURGERY)))
     }
 
     @Test
