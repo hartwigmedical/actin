@@ -3,10 +3,12 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
@@ -38,9 +40,12 @@ class HasOnlyHadTreatmentWithCategoryOfTypesTest {
 
     @Test
     fun `Should pass by ignoring surgery and radiotherapy`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, matchingTypes)))
+        val surgery = treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment(name = "surgery", isSystemic = false, categories = setOf(matchingCategory), types = setOf(OtherTreatmentType.DEBULKING_SURGERY))))
+        withTreatmentHistory(listOf(treatmentHistoryEntry, surgery))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(makeRecordWithMatchingAndAdditionalEntry(category = TreatmentCategory.SURGERY))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, surgery)))
         )
     }
 
