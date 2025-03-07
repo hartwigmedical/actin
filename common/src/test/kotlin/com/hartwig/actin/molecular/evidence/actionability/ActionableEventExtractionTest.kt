@@ -17,7 +17,6 @@ class ActionableEventExtractionTest {
 
     @Test
     fun `Can extract actionable event for hotspot`() {
-
         val variantAnnotation = TestServeMolecularFactory.createVariantAnnotation()
         val actionableHotspot = ImmutableActionableHotspot.builder()
             .from(TestServeMolecularFactory.createActionableEvent())

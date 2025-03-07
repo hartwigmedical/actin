@@ -14,17 +14,15 @@ class ApplicabilityFilteringTest {
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForHotspot(
-                    TestServeMolecularFactory.createVariantAnnotation(gene = nonApplicableGene)
-                ).molecularCriterium().hotspots().first()
+                TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = nonApplicableGene))
+                    .molecularCriterium().hotspots().first()
             )
         ).isFalse()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForHotspot(
-                    TestServeMolecularFactory.createVariantAnnotation(gene = "other")
-                ).molecularCriterium().hotspots().first()
+                TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = "other"))
+                    .molecularCriterium().hotspots().first()
             )
         ).isTrue()
     }

@@ -14,14 +14,10 @@ import org.junit.Test
 
 private val EVIDENCE_FOR_HOTSPOT =
     TestServeEvidenceFactory.createEvidenceForHotspot(
-        TestServeMolecularFactory.createVariantAnnotation(
-            gene = "gene 1",
-            chromosome = "1",
-            position = 5,
-            ref = "A",
-            alt = "T"
-        )
+        TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T"),
+        TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 6, ref = "G", alt = "C")
     )
+
 private val EVIDENCE_FOR_CODON = TestServeEvidenceFactory.createEvidenceForCodon(
     gene = "gene 1",
     chromosome = "1",
@@ -43,11 +39,7 @@ private val OTHER_EVIDENCE = TestServeEvidenceFactory.createEvidenceForHla()
 
 private val TRIAL_FOR_HOTSPOT =
     TestServeTrialFactory.createTrialForHotspot(
-        variants = setOf(
-            TestServeMolecularFactory.createVariantAnnotation(
-                gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T"
-            )
-        )
+        TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
     )
 private val TRIAL_FOR_CODON = TestServeTrialFactory.createTrialForCodon(
     gene = "gene 1",
@@ -123,6 +115,29 @@ class VariantEvidenceTest {
                 ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()
             )
         )
+    }
+
+    @Test
+    fun `Should determine evidence and trials for matching within hotspot group`() {
+        val matches = variantEvidence.findMatches(matchingVariant)
+        assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
+            EVIDENCE_FOR_HOTSPOT,
+            EVIDENCE_FOR_CODON,
+            EVIDENCE_FOR_EXON,
+            ACT_EVIDENCE_FOR_GENE,
+            ANY_EVIDENCE_FOR_GENE
+        )
+
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(
+            mapOf(
+                TRIAL_FOR_HOTSPOT to TRIAL_FOR_HOTSPOT.anyMolecularCriteria(),
+                TRIAL_FOR_CODON to TRIAL_FOR_CODON.anyMolecularCriteria(),
+                TRIAL_FOR_EXON to TRIAL_FOR_EXON.anyMolecularCriteria(),
+                ACT_TRIAL_FOR_GENE to ACT_TRIAL_FOR_GENE.anyMolecularCriteria(),
+                ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()
+            )
+        )
+
     }
 
     @Test

@@ -18,7 +18,7 @@ private val ANY_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene =
 private val AMP_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
 private val INACT_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.INACTIVATION)
 private val OTHER_TRIAL =
-    TestServeTrialFactory.createTrialForHotspot(setOf(TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1")))
+    TestServeTrialFactory.createTrialForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1"))
 
 class HomozygousDisruptionEvidenceTest {
 

@@ -14,11 +14,11 @@ import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 
 object TestServeTrialFactory {
 
-    fun createTrialForHotspot(variants: Set<VariantAnnotation> = emptySet()): ActionableTrial {
+    fun createTrialForHotspot(vararg variants: VariantAnnotation): ActionableTrial {
         return create(
             anyMolecularCriteria = setOf(
                 TestServeMolecularFactory.createHotspotCriterium(
-                    variants = if (variants.isNotEmpty()) variants else setOf(
+                    variants = if (variants.isNotEmpty()) variants.toSet() else setOf(
                         TestServeMolecularFactory.createVariantAnnotation()
                     )
                 )
