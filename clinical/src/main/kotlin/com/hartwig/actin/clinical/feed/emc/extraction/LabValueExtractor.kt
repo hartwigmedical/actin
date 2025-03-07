@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase

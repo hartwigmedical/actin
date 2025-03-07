@@ -5,13 +5,13 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.QtProlongatingDatabase
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig

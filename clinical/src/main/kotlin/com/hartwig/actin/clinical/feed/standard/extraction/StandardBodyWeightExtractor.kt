@@ -3,10 +3,9 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor.Companion.BODY_WEIGHT_EXPECTED_UNIT
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurementCategory
-import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurementUnit
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
-import com.hartwig.actin.clinical.feed.standard.enumeratedInput
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementCategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementUnit
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 
 

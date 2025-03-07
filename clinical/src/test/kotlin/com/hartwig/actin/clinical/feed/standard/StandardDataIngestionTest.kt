@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
-import com.hartwig.actin.clinical.CurationRequirement
-import com.hartwig.actin.clinical.CurationResult
-import com.hartwig.actin.clinical.PatientIngestionStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationRequirement
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator

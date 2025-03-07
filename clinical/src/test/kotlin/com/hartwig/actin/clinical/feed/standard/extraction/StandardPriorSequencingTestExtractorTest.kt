@@ -1,20 +1,20 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
-import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTest
-import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
