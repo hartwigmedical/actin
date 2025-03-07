@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
-class HasOnlyHadTreatmentWithCategoryOfTypesTest {
+class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
     private val matchingCategory = TreatmentCategory.CHEMOTHERAPY
     private val matchingTypes = setOf(DrugType.PLATINUM_COMPOUND)
 
@@ -86,7 +86,7 @@ class HasOnlyHadTreatmentWithCategoryOfTypesTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(makeRecordWithMatchingAndAdditionalEntry()))
     }
 
-    private val function = HasOnlyHadTreatmentWithCategoryOfTypes(matchingCategory, matchingTypes)
+    private val function = HasHadSystemicTreatmentOnlyOfCategoryOfTypes(matchingCategory, matchingTypes)
 
     private fun makeRecordWithMatchingAndAdditionalEntry(
         category: TreatmentCategory = matchingCategory,

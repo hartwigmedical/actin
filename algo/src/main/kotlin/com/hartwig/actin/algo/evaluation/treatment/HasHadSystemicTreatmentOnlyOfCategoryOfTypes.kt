@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
-class HasOnlyHadTreatmentWithCategoryOfTypes(
+class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>
 ) : EvaluationFunction {
