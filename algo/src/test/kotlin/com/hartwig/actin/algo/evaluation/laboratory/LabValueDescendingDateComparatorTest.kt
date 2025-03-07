@@ -8,7 +8,7 @@ import java.time.LocalDate
 class LabValueDescendingDateComparatorTest {
 
     @Test
-    fun `Should sort lab values`() {
+    fun `Should sort lab values on date putting the highest value first if the same measure is measured multiple times on the same day`() {
         val minimal = LabInterpretationTestFactory.createMinimal()
         val value1 = minimal.copy(date = LocalDate.of(2018, 1, 1), measurement = LabMeasurement.HEMOGLOBIN, value = 0.0)
         val value2 = minimal.copy(date = LocalDate.of(2019, 1, 1), measurement = LabMeasurement.CALCIUM, value = 0.0)

@@ -132,7 +132,7 @@ class StandardDataIngestionTest {
                 requirements = listOf(CurationRequirement(feedInput = "Pain", message = "Could not find toxicity config for input 'Pain'"))
             ),
             CurationResult(
-                categoryName = "Lab measurement",
+                categoryName = "Lab Measurement",
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "dc_NeutrGran | Neutrof. granulocyten",
