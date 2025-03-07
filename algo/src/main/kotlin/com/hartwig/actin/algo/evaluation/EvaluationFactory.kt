@@ -18,29 +18,29 @@ object EvaluationFactory {
         return pass(message, true)
     }
 
-    fun fail(message: String, recoverable: Boolean = false, missingGenesForEvaluation: Boolean = false): Evaluation {
+    fun fail(message: String, recoverable: Boolean = false, isMissingMolecularResultForEvaluation: Boolean = false): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.FAIL,
             failMessages = setOf(message),
-            isMissingGenesForSufficientEvaluation = missingGenesForEvaluation
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
 
-    fun recoverableFail(message: String, missingGenesForEvaluation: Boolean = false): Evaluation {
-        return fail(message, true, missingGenesForEvaluation)
+    fun recoverableFail(message: String, isMissingMolecularResultForEvaluation: Boolean = false): Evaluation {
+        return fail(message, true, isMissingMolecularResultForEvaluation)
     }
 
     fun undetermined(
         message: String,
         recoverable: Boolean = false,
-        missingGenesForEvaluation: Boolean = false
+        isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.UNDETERMINED,
             undeterminedMessages = setOf(message),
-            isMissingGenesForSufficientEvaluation = missingGenesForEvaluation
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
 
@@ -51,13 +51,15 @@ object EvaluationFactory {
     fun warn(
         message: String,
         recoverable: Boolean = false,
-        inclusionEvents: Set<String> = emptySet()
+        inclusionEvents: Set<String> = emptySet(),
+        isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.WARN,
             warnMessages = setOf(message),
-            inclusionMolecularEvents = inclusionEvents
+            inclusionMolecularEvents = inclusionEvents,
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
 

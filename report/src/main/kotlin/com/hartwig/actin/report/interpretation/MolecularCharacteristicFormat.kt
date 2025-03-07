@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.HrdType
-import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.HrdType
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.report.pdf.util.Formats
 
 object MolecularCharacteristicFormat {
@@ -39,10 +39,10 @@ object MolecularCharacteristicFormat {
             ?: Formats.VALUE_UNKNOWN
     }
 
-    fun formatHomologousRepair(molecularCharacteristics: MolecularCharacteristics, includeTypeInterpretation: Boolean = true): String {
-        return molecularCharacteristics.isHomologousRepairDeficient?.let { isDeficient ->
+    fun formatHomologousRecombination(molecularCharacteristics: MolecularCharacteristics, includeTypeInterpretation: Boolean = true): String {
+        return molecularCharacteristics.isHomologousRecombinationDeficient?.let { isDeficient ->
             val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
-            val scoreInterpretation = molecularCharacteristics.homologousRepairScore?.let { "(${Formats.twoDigitNumber(it)})" }
+            val scoreInterpretation = molecularCharacteristics.homologousRecombinationScore?.let { "(${Formats.twoDigitNumber(it)})" }
 
             val typeInterpretation = molecularCharacteristics.hrdType?.let { type ->
                 when (type) {

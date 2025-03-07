@@ -1,11 +1,12 @@
 package com.hartwig.actin.datamodel.molecular
 
-import com.hartwig.actin.datamodel.molecular.orange.immunology.MolecularImmunology
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 data class MolecularRecord(
-    val patientId: String,
     val sampleId: String,
     val refGenomeVersion: RefGenomeVersion,
     val externalTrialSource: String,

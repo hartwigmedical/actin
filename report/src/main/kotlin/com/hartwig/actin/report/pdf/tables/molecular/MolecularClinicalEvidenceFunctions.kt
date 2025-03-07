@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
@@ -28,8 +28,8 @@ object MolecularClinicalEvidenceFunctions {
         val allHRD =
             extractCharacteristics(
                 molecularHistory,
-                { "HR ${MolecularCharacteristicFormat.formatHomologousRepair(it, false)}" },
-                { it.homologousRepairEvidence })
+                { "HR ${MolecularCharacteristicFormat.formatHomologousRecombination(it, false)}" },
+                { it.homologousRecombinationEvidence })
         return allMSI + allTMB + allTML + allHRD + allDrivers.map { it.event to it.evidence }
     }
 

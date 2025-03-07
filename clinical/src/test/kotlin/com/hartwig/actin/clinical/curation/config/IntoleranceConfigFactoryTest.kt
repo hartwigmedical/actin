@@ -18,19 +18,30 @@ class IntoleranceConfigFactoryTest {
     private val icdTitle = "icdTitle"
     private val icdCode = IcdCode("main", null)
 
-    private val victim = IntoleranceConfigFactory(icdModel)
+    private val factory = IntoleranceConfigFactory(icdModel)
 
     @Test
     fun `Should return IntoleranceConfig from valid inputs`() {
+        assertConfigCreation("name", "name")
+    }
+
+    @Test
+    fun `Should return IntoleranceConfig with null name from valid inputs with empty curated name`() {
+        assertConfigCreation(" ", null)
+    }
+
+    private fun assertConfigCreation(curatedName: String, expectedName: String?) {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
         every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
-        val config = victim.create(fields, arrayOf("input", "name", icdTitle, TreatmentCategory.IMMUNOTHERAPY.display()))
+        val config = factory.create(fields, arrayOf("input", curatedName, icdTitle, TreatmentCategory.IMMUNOTHERAPY.display()))
         assertThat(config.errors).isEmpty()
-        assertThat(config.config.input).isEqualTo("input")
-        assertThat(config.config.ignore).isFalse()
-        assertThat(config.config.name).isEqualTo("name")
-        assertThat(config.config.icd).isEqualTo(setOf(icdCode))
+        with(config.config) {
+            assertThat(input).isEqualTo("input")
+            assertThat(ignore).isFalse()
+            assertThat(curated?.name).isEqualTo(expectedName)
+            assertThat(curated?.icdCodes).isEqualTo(setOf(icdCode))
+        }
     }
 
     @Test
@@ -38,14 +49,14 @@ class IntoleranceConfigFactoryTest {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
         every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
-        val config = victim.create(fields, arrayOf("input", "name", icdTitle, ""))
+        val config = factory.create(fields, arrayOf("input", "name", icdTitle, ""))
         assertThat(config.errors).isEmpty()
     }
 
     @Test
     fun `Should return validation error when ICD title cannot be resolved to any code`() {
         every { icdModel.resolveCodeForTitle(icdTitle) } returns null
-        val config = victim.create(fields, arrayOf("input", "name", icdTitle, ""))
+        val config = factory.create(fields, arrayOf("input", "name", icdTitle, ""))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.INTOLERANCE.categoryName,

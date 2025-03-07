@@ -18,16 +18,27 @@ class ToxicityConfigFactoryTest {
 
     @Test
     fun `Should return ToxicityConfig from valid inputs`() {
+        assertConfigCreation("name", "name")
+    }
+
+    @Test
+    fun `Should return ToxicityConfig with null name from valid inputs with empty curated name`() {
+        assertConfigCreation(" ", null)
+    }
+
+    private fun assertConfigCreation(curatedName: String, expectedName: String?) {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
         every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
-        val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "3", "$icdTitle;$icdTitle"))
+        val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", curatedName, "3", "$icdTitle;$icdTitle"))
 
         assertThat(config.errors).isEmpty()
-        assertThat(config.config.input).isEqualTo("input")
-        assertThat(config.config.name).isEqualTo("name")
-        assertThat(config.config.grade).isEqualTo(3)
-        assertThat(config.config.icdCodes).isEqualTo(setOf(icdCode))
+        with(config.config) {
+            assertThat(input).isEqualTo("input")
+            assertThat(curated?.name).isEqualTo(expectedName)
+            assertThat((curated as? ToxicityCuration)?.grade).isEqualTo(3)
+            assertThat(curated?.icdCodes).isEqualTo(setOf(icdCode))
+        }
     }
 
     @Test
@@ -37,13 +48,7 @@ class ToxicityConfigFactoryTest {
 
         val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "abc", icdTitle))
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(
-                CurationCategory.TOXICITY.categoryName,
-                "input",
-                "grade",
-                "abc",
-                "integer"
-            )
+            CurationConfigValidationError(CurationCategory.TOXICITY.categoryName, "input", "grade", "abc", "integer")
         )
     }
 

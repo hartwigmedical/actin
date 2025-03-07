@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.Driver
-import com.hartwig.actin.datamodel.molecular.Drivers
-import com.hartwig.actin.datamodel.molecular.Fusion
-import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.Virus
 
 class MolecularDriversInterpreter(
     private val drivers: Drivers,
@@ -42,7 +42,7 @@ class MolecularDriversInterpreter(
         return filteredVariants().any(ClonalityInterpreter::isPotentiallySubclonal)
     }
 
-    fun trialsForDriver(driver: Driver): List<String> {
+    fun trialsForDriver(driver: Driver): List<TrialAcronymAndLocations> {
         return interpretedCohortsSummarizer.trialsForDriver(driver)
     }
 

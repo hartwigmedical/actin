@@ -4,11 +4,31 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.fromJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.read
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.readFromDir
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.toJson
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion
+import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.Intolerance
+import com.hartwig.actin.datamodel.clinical.LabValue
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.OtherCondition
+import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createMinimalTestClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createProperTestClinicalRecord
+import com.hartwig.actin.datamodel.clinical.Toxicity
+import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.io.File
+import kotlin.reflect.KClass
+import kotlin.reflect.full.memberProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -46,17 +66,43 @@ class ClinicalRecordJsonTest {
     }
 
     private fun assertClinicalRecord(record: ClinicalRecord) {
+        assertRequiredFieldsForClass(record, ClinicalRecord::class)
         assertThat(record.patientId).isEqualTo("ACTN01029999")
-        assertThat(record.priorSecondPrimaries).hasSize(1)
-        assertThat(record.comorbidities).hasSize(6)
-        assertThat(record.otherConditions).hasSize(1)
-        assertThat(record.complications).hasSize(1)
-        assertThat(record.labValues).hasSize(2)
-        assertThat(record.toxicities).hasSize(2)
-        assertThat(record.intolerances).hasSize(2)
-        assertThat(record.surgeries).hasSize(1)
-        assertThat(record.vitalFunctions).hasSize(1)
-        assertThat(record.bloodTransfusions).hasSize(1)
-        assertThat(record.medications).hasSize(2)
+        assertRequiredFieldsForClass(record.patient, PatientDetails::class)
+        assertRequiredFieldsForClass(record.tumor, TumorDetails::class)
+        assertRequiredFieldsForClass(record.clinicalStatus, ClinicalStatus::class)
+
+        assertCollectionOfClassWithSize(record.priorSecondPrimaries, PriorSecondPrimary::class, 1)
+        assertCollectionOfClassWithSize(record.oncologicalHistory, TreatmentHistoryEntry::class, 1)
+        assertCollectionOfClassWithSize(
+            record.oncologicalHistory.flatMap(TreatmentHistoryEntry::allTreatments), Treatment::class, 1
+        )
+
+        assertThat(record.comorbidities).hasSize(7)
+        assertCollectionOfClassWithSize(record.otherConditions, OtherCondition::class, 1)
+        assertCollectionOfClassWithSize(record.complications, Complication::class, 1)
+        assertCollectionOfClassWithSize(record.toxicities, Toxicity::class, 2)
+        assertCollectionOfClassWithSize(record.intolerances, Intolerance::class, 2)
+        assertCollectionOfClassWithSize(record.ecgs, Ecg::class, 1)
+
+        assertCollectionOfClassWithSize(record.priorIHCTests, PriorIHCTest::class, 1)
+        assertCollectionOfClassWithSize(record.labValues, LabValue::class, 2)
+        assertCollectionOfClassWithSize(record.surgeries, Surgery::class, 1)
+        assertCollectionOfClassWithSize(record.bodyWeights, BodyWeight::class, 1)
+        assertCollectionOfClassWithSize(record.vitalFunctions, VitalFunction::class, 1)
+        assertCollectionOfClassWithSize(record.bloodTransfusions, BloodTransfusion::class, 1)
+        assertCollectionOfClassWithSize(record.medications, Medication::class, 2)
+    }
+
+    private fun <T : Any> assertCollectionOfClassWithSize(collection: List<T>?, kotlinClass: KClass<T>, expectedSize: Int) {
+        assertThat(collection).isNotNull
+        assertThat(collection).hasSize(expectedSize)
+        collection!!.forEach { assertRequiredFieldsForClass(it, kotlinClass) }
+    }
+
+    private fun <T : Any> assertRequiredFieldsForClass(instance: T, kotlinClass: KClass<T>) {
+        kotlinClass.memberProperties.filterNot { it.returnType.isMarkedNullable }.forEach {
+            assertThat(it.get(instance)).withFailMessage { "Field ${it.name} is null for ${kotlinClass.simpleName}" }.isNotNull
+        }
     }
 }

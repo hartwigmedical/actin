@@ -4,19 +4,21 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.icd.IcdModel
 
-class ToxicityConfigFactory(private val  icdModel: IcdModel) : CurationConfigFactory<ToxicityConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ToxicityConfig> {
+class ToxicityConfigFactory(private val  icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
         val input = parts[fields["input"]!!]
         val (icdCodes, icdValidationErrors) =
             validateIcd(CurationCategory.TOXICITY, input, "icd", fields, parts, icdModel)
         val (grade, gradeValidationError) = validateInteger(CurationCategory.TOXICITY, input, "grade", fields, parts)
         return ValidatedCurationConfig(
-            ToxicityConfig(
+            ComorbidityConfig(
                 input,
                 ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!]),
-                name = parts[fields["name"]!!],
-                grade = grade,
-                icdCodes = icdCodes
+                curated = ToxicityCuration(
+                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    grade = grade,
+                    icdCodes = icdCodes
+                )
             ), gradeValidationError + icdValidationErrors
         )
     }

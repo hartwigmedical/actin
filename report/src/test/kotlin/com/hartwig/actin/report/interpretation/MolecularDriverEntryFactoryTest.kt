@@ -1,14 +1,14 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -17,7 +17,7 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should created molecular driver entries`() {
-        val record = TestMolecularFactory.createExhaustiveTestMolecularRecord()
+        val record = TestMolecularFactory.createExhaustiveTestOrangeRecord()
         val factory = createFactoryForMolecularRecord(record)
         val entries = factory.create()
         assertThat(entries).hasSize(8)
@@ -64,7 +64,7 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should match actin trial to molecular drivers`() {
-        val record = TestMolecularFactory.createProperTestMolecularRecord()
+        val record = TestMolecularFactory.createProperTestOrangeRecord()
         assertThat(record.drivers.variants).isNotEmpty
         val firstVariant = record.drivers.variants.iterator().next()
         val driverToFind = firstVariant.event
@@ -73,7 +73,7 @@ class MolecularDriverEntryFactoryTest {
             ?: throw IllegalStateException(
                 "Could not find molecular driver entry starting with driver: $driverToFind"
             )
-        assertThat(entry.actinTrials).containsExactly("trial 1")
+        assertThat(entry.actinTrials).containsExactly(TrialAcronymAndLocations("trial 1", emptyList()))
     }
 
     @Test
@@ -87,7 +87,7 @@ class MolecularDriverEntryFactoryTest {
     private fun assertCopyNumberType(copyNumberType: CopyNumberType, expectedDriverType: String) {
         val copyNumber = TestMolecularFactory.createProperCopyNumber()
             .copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(copyNumberType))
-        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
+        val record = TestMolecularFactory.createProperTestOrangeRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(variants = emptyList(), copyNumbers = listOf(copyNumber))
         )
@@ -100,11 +100,11 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
-        return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
+        return TestMolecularFactory.createMinimalTestOrangeRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 
     private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
-        return TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
+        return TestMolecularFactory.createMinimalTestOrangeRecord().drivers.copy(
             viruses = listOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
         )
     }

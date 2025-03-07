@@ -17,21 +17,22 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
             IcdConstants.PD_L1_PD_1_DRUG_SET.map { extension -> IcdCode(mainCode, extension) }
         }.toSet()
 
-        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, targetCodes)
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetCodes)
 
-        val matchingIntolerancesByName =
-            record.intolerances.filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, INTOLERANCE_TERMS) }.toSet()
+        val matchingIntolerancesByName = record.intolerances.filter { intolerance ->
+            intolerance.name?.let { stringCaseInsensitivelyMatchesQueryCollection(it, INTOLERANCE_TERMS) } == true
+        }
 
         val matchingIntolerances = (icdMatches.fullMatches + matchingIntolerancesByName).toSet()
 
         val monoClonalAntibodyIntolerances = icdModel.findInstancesMatchingAnyIcdCode(
-            record.intolerances,
-            IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK) }.toSet()
+            record.comorbidities,
+            IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK) }
         ).fullMatches
 
         val autoImmuneHistory = icdModel.findInstancesMatchingAnyIcdCode(
             record.comorbidities,
-            IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
+            IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }
         ).fullMatches
 
         val undeterminedMessage = "intolerance in history - undetermined if PD-1/PD-L1 intolerance"

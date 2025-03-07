@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.labReference
+import com.hartwig.actin.algo.evaluation.util.Format.labReferenceWithLimit
 import com.hartwig.actin.algo.evaluation.util.Format.labValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
@@ -12,7 +12,7 @@ class HasSufficientLabValueLLN(private val minLLNFactor: Double) : LabEvaluation
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val labValueString = labValue(labMeasurement, labValue.value, labValue.unit)
-        val referenceString = labReference(minLLNFactor, "LLN", labValue.refLimitLow)
+        val referenceString = labReferenceWithLimit(minLLNFactor, "LLN", labValue.refLimitLow, labValue.unit)
 
         return when (LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {

@@ -45,9 +45,6 @@ class CurationDatabaseReader {
             LOGGER.info(" Read {} configs from {}", configs.size, filePath)
             return CurationDatabase.create(category, evaluatedInputFunction, configs)
         }
-
-
     }
-
 }
 

@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -26,7 +26,7 @@ class TumorOriginInterpreterTest {
     )
     private val inconclusiveInterpreter = TumorOriginInterpreter(PredictedTumorOrigin(inconclusivePredictions))
     private val conclusiveInterpreter =
-        TumorOriginInterpreter(TestMolecularFactory.createProperTestMolecularRecord().characteristics.predictedTumorOrigin)
+        TumorOriginInterpreter(TestMolecularFactory.createProperTestOrangeRecord().characteristics.predictedTumorOrigin)
 
     @Test
     fun `Should determine confidence of predicted tumor origin`() {

@@ -29,6 +29,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasHistologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_PATHOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasPathologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_ANY_STAGE_X to hasAnyTumorStageCreator(),
+            EligibilityRule.HAS_TNM_T_SCORE_X to hasSpecificTnmTScoreCreator(),
             EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER to hasLocallyAdvancedCancerCreator(),
             EligibilityRule.HAS_METASTATIC_CANCER to hasMetastaticCancerCreator(),
             EligibilityRule.HAS_UNRESECTABLE_CANCER to hasUnresectableCancerCreator(),
@@ -36,6 +37,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_RECURRENT_CANCER to hasRecurrentCancerCreator(),
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
+            EligibilityRule.HAS_AT_MOST_X_DISTANT_METASTASES to hasLimitedDistantMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES_ONLY to hasOnlyLiverMetastasesCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
@@ -57,6 +59,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
+            EligibilityRule.HAS_SYNCHRONOUS_METASTASTIC_DISEASE to { HasSynchronousMetastaticDisease() },
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
             EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY to meetsSpecificBiopsyRequirementsCreator(),
@@ -166,6 +169,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         }
     }
 
+    private fun hasSpecificTnmTScoreCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val score = functionInputResolver().createOneStringInput(function)
+            HasTnmTScore(score)
+        }
+    }
+
     private fun hasLocallyAdvancedCancerCreator(): FunctionCreator {
         return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer()) }
     }
@@ -190,8 +200,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasMinimumLesionsInSpecificBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasMinimumLesionsInSpecificBodyLocation(input.integer, input.string)
+            val input = functionInputResolver().createOneIntegerOneBodyLocationInput(function)
+            HasMinimumLesionsInSpecificBodyLocation(input.integer, input.bodyLocation)
         }
     }
 
@@ -209,6 +219,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasAnyLesionCreator(): FunctionCreator {
         return { HasAnyLesion() }
+    }
+
+    private fun hasLimitedDistantMetastasesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val maxDistantMetastases = functionInputResolver().createOneIntegerInput(function)
+            HasLimitedDistantMetastases(maxDistantMetastases)
+        }
     }
 
     private fun hasLiverMetastasesCreator(): FunctionCreator {

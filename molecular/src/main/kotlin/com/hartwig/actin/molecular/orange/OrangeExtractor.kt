@@ -1,15 +1,16 @@
 package com.hartwig.actin.molecular.orange
 
+import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
-import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
+import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentType
 
 class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<OrangeRecord, MolecularRecord> {
 
@@ -19,11 +20,10 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
 
     fun interpret(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
-        val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter)
+        val driverExtractor = DriverExtractor.create(geneFilter)
         val characteristicsExtractor = CharacteristicsExtractor()
 
         return MolecularRecord(
-            patientId = toPatientId(record.sampleId()),
             sampleId = record.sampleId(),
             experimentType = determineExperimentType(record.experimentType()),
             refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
@@ -57,31 +57,26 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
         return containsTumorCells(record) && !isContaminated(record)
     }
 
-    fun containsTumorCells(record: OrangeRecord): Boolean {
-        return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status()
-    }
-
-    fun isContaminated(record: OrangeRecord): Boolean {
-        return PurpleQCStatus.FAIL_CONTAMINATION in record.purple().fit().qc().status()
-    }
-
     fun hasSufficientPurity(record: OrangeRecord): Boolean {
         return PurpleQCStatus.WARN_LOW_PURITY !in record.purple().fit().qc().status() && containsTumorCells(record)
     }
 
-    internal fun toPatientId(sampleId: String): String {
-        require(sampleId.length >= 12) { "Cannot convert sampleId to patientId: $sampleId" }
-        return sampleId.substring(0, 12)
+    private fun containsTumorCells(record: OrangeRecord): Boolean {
+        return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status()
     }
 
-    fun determineExperimentType(experimentType: ExperimentType?): com.hartwig.actin.datamodel.molecular.ExperimentType {
+    private fun isContaminated(record: OrangeRecord): Boolean {
+        return PurpleQCStatus.FAIL_CONTAMINATION in record.purple().fit().qc().status()
+    }
+
+    private fun determineExperimentType(experimentType: OrangeExperimentType?): ExperimentType {
         return when (experimentType) {
-            ExperimentType.TARGETED -> {
-                com.hartwig.actin.datamodel.molecular.ExperimentType.HARTWIG_TARGETED
+            OrangeExperimentType.TARGETED -> {
+                ExperimentType.HARTWIG_TARGETED
             }
 
-            ExperimentType.WHOLE_GENOME -> {
-                com.hartwig.actin.datamodel.molecular.ExperimentType.HARTWIG_WHOLE_GENOME
+            OrangeExperimentType.WHOLE_GENOME -> {
+                ExperimentType.HARTWIG_WHOLE_GENOME
             }
 
             null -> throw IllegalStateException("Experiment type is required but was null")
@@ -98,10 +93,16 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
         val message =
             ("must be null or empty because ACTIN only accepts ORANGE output that has been " +
                     "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
+
+        val allGermlineVariants = orange.purple().allGermlineVariants()
+        check(allGermlineVariants.isNullOrEmpty()) { "allGermlineVariants $message" }
+
         val allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants()
         check(allGermlineStructuralVariants.isNullOrEmpty()) { "allGermlineStructuralVariants $message" }
+
         val allGermlineBreakends = orange.linx().allGermlineBreakends()
         check(allGermlineBreakends.isNullOrEmpty()) { "allGermlineBreakends $message" }
+
         val germlineHomozygousDisruptions = orange.linx().germlineHomozygousDisruptions()
         check(germlineHomozygousDisruptions.isNullOrEmpty()) { "germlineHomozygousDisruptions $message" }
     }

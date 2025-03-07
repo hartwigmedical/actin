@@ -60,6 +60,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                         nctId = trialState.nctId,
                         phase = trialState.phase,
                         source = trialState.source,
+                        sourceId = trialState.sourceId,
                         locations = trialState.locations
                     ),
                     generalEligibility = criteria,

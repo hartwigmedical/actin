@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -21,8 +21,8 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
     }
 
-    fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean): ClinicalEvidence {
-        return clinicalEvidenceMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
+    fun evidenceForHomologousRecombinationStatus(isHomologousRecombinationDeficient: Boolean): ClinicalEvidence {
+        return clinicalEvidenceMatcher.matchForHomologousRecombinationStatus(isHomologousRecombinationDeficient)
     }
 
     fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean): ClinicalEvidence {

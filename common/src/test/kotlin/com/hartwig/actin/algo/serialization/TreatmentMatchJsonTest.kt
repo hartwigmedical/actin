@@ -62,14 +62,14 @@ class TreatmentMatchJsonTest {
                 {
                     "identification":{
                         "trialId":"Test Trial 1","open":true,"acronym":"TEST-1","title":"Example test trial 1","nctId":"NCT00000010",
-                        "phase":"PHASE_1","source":"NKI","locations":["Antoni van Leeuwenhoek"]},
+                        "phase":"PHASE_1","source":"NKI","sourceId":"Source ID 1","locations":["Antoni van Leeuwenhoek"]},
                     "isPotentiallyEligible":true,
                     "evaluations":[
                         [{"references":[{"id":"I-01","text":"Patient must be an adult"}],
                         "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
                         "passMessages":["msg 1","msg 2","msg 3"],"warnMessages":[],"undeterminedMessages":[],
-                        "failMessages":[],"isMissingGenesForSufficientEvaluation":false}]],
+                        "failMessages":[],"isMissingMolecularResultForEvaluation":false}]],
                     "cohorts":[],
                     "nonEvaluableCohorts":[]
                 }],
@@ -82,7 +82,7 @@ class TreatmentMatchJsonTest {
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
                         "exclusionMolecularEvents":[],"passMessages":["Has active CNS metastases"],"warnMessages":[],
-                        "undeterminedMessages":[],"failMessages":[],"isMissingGenesForSufficientEvaluation":false}],
+                        "undeterminedMessages":[],"failMessages":[],"isMissingMolecularResultForEvaluation":false}],
                     "annotations":[
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",
                         "treatments":[

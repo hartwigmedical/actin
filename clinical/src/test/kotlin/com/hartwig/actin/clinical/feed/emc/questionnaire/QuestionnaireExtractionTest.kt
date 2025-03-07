@@ -209,9 +209,7 @@ class QuestionnaireExtractionTest {
         assertThat(infectionStatus).isNotNull()
         assertThat(infectionStatus!!.hasActiveInfection).isFalse
         val ecg = questionnaire.ecg
-        assertThat(ecg).isNotNull()
-        assertThat(ecg!!.hasSigAberrationLatestECG).isFalse
-        assertThat(ecg.aberrationDescription).isEqualTo("No")
+        assertThat(ecg).isNull()
         assertThat(questionnaire.complications).isNull()
     }
 
@@ -275,10 +273,7 @@ class QuestionnaireExtractionTest {
             assertThat(infectionStatus).isNotNull()
             assertThat(infectionStatus!!.hasActiveInfection).isFalse
 
-            val ecg = questionnaire.ecg
-            assertThat(ecg).isNotNull()
-            assertThat(ecg!!.hasSigAberrationLatestECG).isTrue
-            assertThat(ecg.aberrationDescription).isEqualTo("Sinus")
+            assertThat(questionnaire.ecg?.name).isEqualTo("Sinus")
 
             val complications = questionnaire.complications
             assertThat(complications!!).hasSize(1)
@@ -311,10 +306,7 @@ class QuestionnaireExtractionTest {
             assertThat(infectionStatus).isNotNull()
             assertThat(infectionStatus!!.hasActiveInfection).isFalse
 
-            val ecg = questionnaire.ecg
-            assertThat(ecg).isNotNull()
-            assertThat(ecg!!.hasSigAberrationLatestECG).isTrue
-            assertThat(ecg.aberrationDescription).isEqualTo("Sinus")
+            assertThat(questionnaire.ecg?.name).isEqualTo("Sinus")
 
             val complications = questionnaire.complications
             assertThat(complications!!).hasSize(1)

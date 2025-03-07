@@ -33,7 +33,6 @@ class OrangeExtractorTest {
     @Test
     fun `Should interpret proper orange record`() {
         val record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord())
-        assertThat(record.patientId).isEqualTo(TestPatientFactory.TEST_PATIENT)
         assertThat(record.sampleId).isEqualTo(TestPatientFactory.TEST_SAMPLE)
         assertThat(record.experimentType).isEqualTo(ExperimentType.HARTWIG_WHOLE_GENOME)
         assertThat(record.refGenomeVersion).isEqualTo(RefGenomeVersion.V37)
@@ -58,17 +57,6 @@ class OrangeExtractorTest {
         assertThat(immunology.isReliable).isTrue
         assertThat(immunology.hlaAlleles).hasSize(1)
         assertThat(record.pharmaco).hasSize(1)
-    }
-
-    @Test
-    fun `Should be able to convert sample id to patient id`() {
-        assertThat(interpreter.toPatientId("ACTN01029999T")).isEqualTo("ACTN01029999")
-        assertThat(interpreter.toPatientId("ACTN01029999T2")).isEqualTo("ACTN01029999")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `Should throw exception on invalid sample id`() {
-        interpreter.toPatientId("no sample")
     }
 
     @Test
@@ -120,6 +108,17 @@ class OrangeExtractorTest {
     }
 
     @Test(expected = IllegalStateException::class)
+    fun `Should throw exception on germline variant present`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record = ImmutableOrangeRecord.copyOf(proper)
+            .withPurple(
+                ImmutablePurpleRecord.copyOf(proper.purple())
+                    .withAllGermlineVariants(TestPurpleFactory.variantBuilder().gene("gene 1").build())
+            )
+        interpreter.interpret(record)
+    }
+
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline disruption present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
@@ -153,13 +152,18 @@ class OrangeExtractorTest {
     }
 
     @Test
+    fun `Should accept empty list as scrubbed for germline variant`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record = ImmutableOrangeRecord.copyOf(proper)
+            .withPurple(ImmutablePurpleRecord.copyOf(proper.purple()).withAllGermlineVariants(emptyList()))
+        interpreter.interpret(record)
+    }
+
+    @Test
     fun `Should accept empty list as scrubbed for germline disruption`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
-            .withLinx(
-                ImmutableLinxRecord.copyOf(proper.linx())
-                    .withGermlineHomozygousDisruptions(emptyList())
-            )
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx()).withGermlineHomozygousDisruptions(emptyList()))
         interpreter.interpret(record)
     }
 
@@ -167,10 +171,7 @@ class OrangeExtractorTest {
     fun `Should accept empty list as scrubbed for germline breakends`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
-            .withLinx(
-                ImmutableLinxRecord.copyOf(proper.linx())
-                    .withAllGermlineBreakends(emptyList())
-            )
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx()).withAllGermlineBreakends(emptyList()))
         interpreter.interpret(record)
     }
 
@@ -178,10 +179,7 @@ class OrangeExtractorTest {
     fun `Should accept empty list as for scrubbed germline SV`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
-            .withLinx(
-                ImmutableLinxRecord.copyOf(proper.linx())
-                    .withAllGermlineStructuralVariants(emptyList())
-            )
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx()).withAllGermlineStructuralVariants(emptyList()))
         interpreter.interpret(record)
     }
 

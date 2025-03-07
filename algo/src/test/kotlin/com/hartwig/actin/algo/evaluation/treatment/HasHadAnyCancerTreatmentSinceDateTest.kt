@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -26,12 +27,12 @@ val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
 class HasHadAnyCancerTreatmentSinceDateTest {
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
-    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter)
+    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, false)
+    private val functionOnlySystemic = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, true)
 
     @Test
     fun `Should fail when oncological history is empty`() {
-        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(emptyList())
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
+        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
     }
 
     @Test
@@ -45,7 +46,27 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
+        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+    }
+
+    @Test
+    fun `Should fail for non-systemic treatment given after the minimal allowed date when function is evaluating systemic treatments only`() {
+        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = listOf(
+                        TreatmentTestFactory.treatment(
+                            name = "Immunotherapy", isSystemic = false, categories = setOf(TreatmentCategory.IMMUNOTHERAPY)
+                        )
+                    ),
+                    stopYear = RECENT_DATE.year,
+                    stopMonth = RECENT_DATE.monthValue
+                )
+            )
+        )
+        val evaluation = functionOnlySystemic.evaluate(priorCancerTreatment)
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessages).containsExactly("Has not received systemic anti-cancer therapy within $MONTHS_AGO months")
     }
 
     @Test
@@ -64,7 +85,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(priorCancerTreatment))
+        evaluateFunctions(EvaluationResult.UNDETERMINED, priorCancerTreatment)
         assertThat(function.evaluate(priorCancerTreatment).undeterminedMessages).containsExactly(
             "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
@@ -73,10 +94,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
     @Test
     fun `Should evaluate to undetermined when medication entry with trial medication`() {
         val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true))
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(WashoutTestFactory.withMedications(medications))
-        )
+        evaluateFunctions(EvaluationResult.UNDETERMINED, WashoutTestFactory.withMedications(medications))
     }
 
     @Test
@@ -100,7 +118,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
+        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
         assertThat(function.evaluate(priorCancerTreatment).passMessages).containsExactly(
             "Received anti-cancer therapy within the last $MONTHS_AGO months"
         )
@@ -118,7 +136,11 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             ), listOf(WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1)))
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
+        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
     }
 
+    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
+        EvaluationAssert.assertEvaluation(expected, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(expected, functionOnlySystemic.evaluate(record))
+    }
 }

@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.Drivers
-import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -10,7 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val CLINICAL_EVIDENCE = TestClinicalEvidenceFactory.createEmpty()
-private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalTestMolecularRecord()
+private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalTestOrangeRecord()
 
 class MolecularClinicalEvidenceFunctionsTest {
 
@@ -60,9 +60,9 @@ class MolecularClinicalEvidenceFunctionsTest {
                     molecularTests = listOf(
                         BASE_MOLECULAR_TEST.copy(
                             characteristics = MolecularCharacteristics(
-                                isHomologousRepairDeficient = true,
-                                homologousRepairScore = 1.0,
-                                homologousRepairEvidence = CLINICAL_EVIDENCE
+                                isHomologousRecombinationDeficient = true,
+                                homologousRecombinationScore = 1.0,
+                                homologousRecombinationEvidence = CLINICAL_EVIDENCE
                             )
                         )
                     )

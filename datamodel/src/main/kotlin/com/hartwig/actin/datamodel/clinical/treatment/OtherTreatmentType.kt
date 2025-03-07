@@ -3,6 +3,7 @@ package com.hartwig.actin.datamodel.clinical.treatment
 enum class OtherTreatmentType(override val category: TreatmentCategory) : TreatmentType {
     ALLOGENIC(TreatmentCategory.TRANSPLANTATION),
     AUTOLOGOUS(TreatmentCategory.TRANSPLANTATION),
+    CRYOTHERAPY(TreatmentCategory.ABLATION),
     MICROWAVE(TreatmentCategory.ABLATION),
     RADIOFREQUENCY(TreatmentCategory.ABLATION),
     HYPERTHERMIA(TreatmentCategory.ABLATION),

@@ -22,8 +22,10 @@ object InterpretedCohortFactory {
             val acronym = identification.acronym
             val trialIsOpen = identification.open
             val phase = identification.phase
-            val missingGenesForTrial = trialMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation }
+            val nctId = identification.nctId
+            val isMissingMolecularResultForEvaluation = trialMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation }
             val source = identification.source
+            val sourceId = identification.sourceId
             val locations = identification.locations
 
             if (trialMatch.cohorts.isEmpty()) {
@@ -34,13 +36,15 @@ object InterpretedCohortFactory {
                         name = null,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
-                        isMissingGenesForSufficientEvaluation = missingGenesForTrial,
+                        isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
                         isOpen = trialIsOpen,
                         hasSlotsAvailable = trialIsOpen,
                         warnings = trialWarnings,
                         fails = trialFails,
                         phase = phase,
+                        nctId = nctId,
                         source = source,
+                        sourceId = sourceId,
                         locations = locations
                     )
                 )
@@ -54,15 +58,17 @@ object InterpretedCohortFactory {
                         name = cohortMatch.metadata.description,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
-                        isMissingGenesForSufficientEvaluation = missingGenesForTrial ||
-                                cohortMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation },
+                        isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation ||
+                                cohortMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation },
                         isOpen = trialIsOpen && cohortMatch.metadata.open,
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
                         fails = trialFails.union(extractFails(cohortMatch.evaluations)),
                         phase = phase,
+                        nctId = nctId,
                         ignore = cohortMatch.metadata.ignore,
                         source = source,
+                        sourceId = sourceId,
                         locations = locations
                     )
                 }
@@ -82,7 +88,9 @@ object InterpretedCohortFactory {
                     hasSlotsAvailable = cohortMetadata.slotsAvailable,
                     ignore = cohortMetadata.ignore,
                     phase = identification.phase,
+                    nctId = identification.nctId,
                     source = identification.source,
+                    sourceId = identification.sourceId,
                     locations = identification.locations
                 )
             }

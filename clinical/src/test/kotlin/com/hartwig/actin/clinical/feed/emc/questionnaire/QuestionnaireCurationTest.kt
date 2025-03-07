@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toECG
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toEcg
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toInfectionStatus
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toOption
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toBoolean
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toSecondaryPrimaries
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toStage
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toWHO
@@ -16,14 +16,14 @@ class QuestionnaireCurationTest {
 
     @Test
     fun `Should curate options when curation exists`() {
-        val curated = toOption(SUBJECT, "YES")
+        val curated = toBoolean(SUBJECT, "YES")
         assertThat(curated.curated).isTrue
         assertThat(curated.errors).isEmpty()
     }
 
     @Test
     fun `Should not curate options and return error when curation does not exist`() {
-        val curated = toOption(SUBJECT, "Not an option")
+        val curated = toBoolean(SUBJECT, "Not an option")
         assertThat(curated.curated).isNull()
         assertThat(curated.errors).containsExactly(
             QuestionnaireCurationError(
@@ -35,17 +35,15 @@ class QuestionnaireCurationTest {
 
     @Test
     fun `Should curate options without taking into account the case`() {
-        var curated = toOption(SUBJECT, "SusPectEd")
-        assertThat(curated.curated).isNull()
-        assertThat(curated.errors).isEmpty()
+        assertExpectedExtraction("SusPectEd", null)
+        assertExpectedExtraction("yEs", true)
+        assertExpectedExtraction("botaantasting BIJ weke DELEN massa", false)
+    }
 
-        curated = toOption(SUBJECT, "yEs")
-        assertThat(curated.curated).isTrue()
-        assertThat(curated.errors).isEmpty()
-
-        curated = toOption(SUBJECT, "botaantasting BIJ weke DELEN massa")
-        assertThat(curated.curated).isFalse()
-        assertThat(curated.errors).isEmpty()
+    private fun assertExpectedExtraction(input: String, expected: Boolean?) {
+        val (curated, errors) = toBoolean(SUBJECT, input)
+        assertThat(curated).isEqualTo(expected)
+        assertThat(errors).isEmpty()
     }
 
     @Test
@@ -100,21 +98,21 @@ class QuestionnaireCurationTest {
 
     @Test
     fun `Should return null for empty infection status`() {
-        val infectionStatus = toInfectionStatus(SUBJECT, "")
+        val infectionStatus = toInfectionStatus("")
         assertThat(infectionStatus.curated).isNull()
         assertThat(infectionStatus.errors).isEmpty()
     }
 
     @Test
     fun `Should return null for unknown infection status`() {
-        val infectionStatus = toInfectionStatus(SUBJECT, "unknown")
+        val infectionStatus = toInfectionStatus("unknown")
         assertThat(infectionStatus.curated).isNull()
         assertThat(infectionStatus.errors).isEmpty()
     }
 
     @Test
     fun `Should return description verbatim for when curation does not exist in infection status`() {
-        val infectionStatus = toInfectionStatus(SUBJECT, "new infection status")
+        val infectionStatus = toInfectionStatus("new infection status")
         val curated = infectionStatus.curated!!
         assertThat(curated.description).isEqualTo("new infection status")
         assertThat(curated.hasActiveInfection).isTrue
@@ -124,7 +122,7 @@ class QuestionnaireCurationTest {
     @Test
     fun `Should extract positive infection status`() {
         val infectionDescription = "yes"
-        val infectionStatus = toInfectionStatus(SUBJECT, infectionDescription)
+        val infectionStatus = toInfectionStatus(infectionDescription)
         assertThat(infectionStatus).isNotNull()
 
         val curated = infectionStatus.curated!!
@@ -135,7 +133,7 @@ class QuestionnaireCurationTest {
     @Test
     fun `Should extract negative infection status`() {
         val infectionDescription = "no"
-        val infectionStatus = toInfectionStatus(SUBJECT, infectionDescription)
+        val infectionStatus = toInfectionStatus(infectionDescription)
         assertThat(infectionStatus).isNotNull()
 
         val curated = infectionStatus.curated!!
@@ -146,7 +144,7 @@ class QuestionnaireCurationTest {
     @Test
     fun `Should extract infection description and set active`() {
         val infectionDescription = "infection"
-        val infectionStatus = toInfectionStatus(SUBJECT, infectionDescription)
+        val infectionStatus = toInfectionStatus(infectionDescription)
         assertThat(infectionStatus).isNotNull()
 
         val curated = infectionStatus.curated!!
@@ -156,57 +154,50 @@ class QuestionnaireCurationTest {
 
     @Test
     fun `Should return null for empty ECG`() {
-        val ecg = toECG(SUBJECT, "")
+        val ecg = toEcg("")
         assertThat(ecg.curated).isNull()
         assertThat(ecg.errors).isEmpty()
     }
 
     @Test
     fun `Should return null for unknown ECG`() {
-        val ecg = toECG(SUBJECT, "unknown")
+        val ecg = toEcg("unknown")
         assertThat(ecg.curated).isNull()
         assertThat(ecg.errors).isEmpty()
     }
 
     @Test
-    fun `Should return descrioption verbatim for when curation does not exist ECG`() {
-        val infectionStatus = toECG(SUBJECT, "new ECG value")
+    fun `Should return description verbatim for when curation does not exist ECG`() {
+        val infectionStatus = toEcg("new ECG value")
         val curated = infectionStatus.curated!!
-        assertThat(curated.aberrationDescription).isEqualTo("new ECG value")
-        assertThat(curated.hasSigAberrationLatestECG).isTrue
+        assertThat(curated.name).isEqualTo("new ECG value")
         assertThat(infectionStatus.errors).isEmpty()
     }
 
     @Test
     fun `Should extract positive ECG`() {
         val description = "yes"
-        val status = toECG(SUBJECT, description)
+        val status = toEcg(description)
         assertThat(status).isNotNull()
 
         val curated = status.curated!!
-        assertThat(curated.hasSigAberrationLatestECG).isTrue()
-        assertThat(curated.aberrationDescription).isEqualTo(description)
+        assertThat(curated.name).isEqualTo(description)
     }
 
     @Test
-    fun `Should extract negative ECG`() {
-        val description = "no"
-        val status = toECG(SUBJECT, description)
-        assertThat(status).isNotNull()
-
-        val curated = status.curated!!
-        assertThat(curated.hasSigAberrationLatestECG).isFalse()
-        assertThat(curated.aberrationDescription).isEqualTo(description)
+    fun `Should extract negative ECG to null`() {
+        val (curated, errors) = toEcg("no")
+        assertThat(curated).isNull()
+        assertThat(errors).isEmpty()
     }
 
     @Test
     fun `Should extract ECG description and indicate presence`() {
         val description = "ECG"
-        val status = toECG(SUBJECT, description)
+        val status = toEcg(description)
         assertThat(status).isNotNull()
 
         val curated = status.curated!!
-        assertThat(curated.hasSigAberrationLatestECG).isTrue()
-        assertThat(curated.aberrationDescription).isEqualTo(description)
+        assertThat(curated.name).isEqualTo(description)
     }
 }

@@ -18,13 +18,8 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all databases validation errors`() {
-        val expectedUnusedConfig = IntRange(0, 16).map {
-            CurationConfigValidationError(
-                NOT_IMPORTANT,
-                NOT_IMPORTANT,
-                NOT_IMPORTANT, it.toString(),
-                NOT_IMPORTANT
-            )
+        val expectedUnusedConfig = IntRange(0, 11).map {
+            CurationConfigValidationError(NOT_IMPORTANT, NOT_IMPORTANT, NOT_IMPORTANT, it.toString(), NOT_IMPORTANT)
         }
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
@@ -38,24 +33,19 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
             mockk(),
             mockk(),
             mockk(),
             mockk(),
             mockk(),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[16])
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[11])
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
     }
 
     @Test
     fun `Should combine all unused configs in curation databases, except blood transfusions`() {
-        val expectedUnusedConfig = IntRange(0, 20).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 15).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
@@ -69,17 +59,12 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[8]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[16]),
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[17]),
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[18]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
             bloodTransfusionTranslation,
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[19]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[20])
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[15])
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { bloodTransfusionTranslation wasNot Called }

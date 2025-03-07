@@ -3,11 +3,11 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import java.time.LocalDate
 
@@ -17,6 +17,14 @@ class GeneHasVariantInExonRangeOfType(
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(maxTestAge) {
 
+    private enum class VariantClassification {
+        CANONICAL_HIGH_DRIVER,
+        CANONICAL_REPORTABLE_NON_HIGH_DRIVER,
+        CANONICAL_UNREPORTABLE,
+        REPORTABLE_OTHER,
+        NONE
+    }
+
     override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
@@ -25,70 +33,59 @@ class GeneHasVariantInExonRangeOfType(
         val baseMessage = "in exon $exonRangeMessage in $gene$variantTypeMessage"
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
 
-        val (canonicalReportableVariantMatches, canonicalUnreportableVariantMatches, reportableOtherVariantMatches) =
+        val variantClassifications =
             test.drivers.variants.filter { it.gene == gene && allowedVariantTypes.contains(it.type) }
-                .map { variant ->
-                    val (reportableMatches, unreportableMatches) = listOf(variant)
-                        .filter { hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon) }
-                        .partition(Variant::isReportable)
-
-                    val otherImpactMatches = if (!variant.isReportable) emptySet() else {
-                        setOfNotNull(variant.otherImpacts.find {
-                            hasEffectInExonRange(
-                                it.affectedExon,
-                                minExon,
-                                maxExon
-                            )
+                .groupBy { variant ->
+                    val hasCanonicalEffectInExonRange = hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon)
+                    when {
+                        hasCanonicalEffectInExonRange && variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH -> {
+                            VariantClassification.CANONICAL_HIGH_DRIVER
                         }
-                            ?.let { variant.event })
-                    }
-                    Triple(
-                        reportableMatches,
-                        unreportableMatches.map(Variant::event).toSet(),
-                        otherImpactMatches
-                    )
-                }.fold(
-                    Triple(
-                        emptySet<Variant>(),
-                        emptySet<String>(),
-                        emptySet<String>()
-                    )
-                ) { (allReportable, allUnreportable, allOther), (reportable, unreportable, other) ->
-                    Triple(allReportable + reportable, allUnreportable + unreportable, allOther + other)
-                }
 
-        val (highDriverVariants, nonHighDriverVariants) =
-            canonicalReportableVariantMatches.partition { it.driverLikelihood == DriverLikelihood.HIGH }
-        val highDriverEvents = highDriverVariants.map(Variant::event).toSet()
+                        hasCanonicalEffectInExonRange && variant.isReportable -> {
+                            VariantClassification.CANONICAL_REPORTABLE_NON_HIGH_DRIVER
+                        }
+
+                        hasCanonicalEffectInExonRange -> {
+                            VariantClassification.CANONICAL_UNREPORTABLE
+                        }
+
+                        variant.isReportable && variant.otherImpacts.any { hasEffectInExonRange(it.affectedExon, minExon, maxExon) } -> {
+                            VariantClassification.REPORTABLE_OTHER
+                        }
+
+                        else -> VariantClassification.NONE
+                    }
+                }.mapValues { (_, variants) -> variants.map(Variant::event).toSet() }
+        val highDriverEvents = variantClassifications[VariantClassification.CANONICAL_HIGH_DRIVER]
+        val reportableOtherVariantMatches = variantClassifications[VariantClassification.REPORTABLE_OTHER]
 
         val (reportableExonSkips, unreportableExonSkips) =
             if (requiredVariantType == VariantTypeInput.DELETE || requiredVariantType == null)
-                test.drivers.fusions
-                    .filter { it.geneStart == gene && it.geneEnd == gene }
-                    .filter {
-                        exonsWithinRange(it)
-                    }.partition { it.isReportable }
+                test.drivers.fusions.filter {
+                    it.geneStart == gene && it.geneEnd == gene && exonsWithinRange(it)
+                }.partition { it.isReportable }
             else emptyList<Fusion>() to emptyList()
 
         val (highDriverExonSkips, nonHighDriverExonSkips) = reportableExonSkips.partition { it.driverLikelihood == DriverLikelihood.HIGH }
         val highDriverExonSkipEvents = highDriverExonSkips.map { it.event }.toSet()
 
         return when {
-            highDriverEvents.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
+            !highDriverEvents.isNullOrEmpty() && reportableOtherVariantMatches.isNullOrEmpty() -> {
                 EvaluationFactory.pass(
                     "Variant(s) $baseMessage in canonical transcript",
                     inclusionEvents = highDriverEvents
                 )
             }
 
-            highDriverExonSkipEvents.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
+            highDriverExonSkipEvents.isNotEmpty() && reportableOtherVariantMatches.isNullOrEmpty() -> {
                 EvaluationFactory.pass("Exon(s) skipped $baseMessage", inclusionEvents = highDriverExonSkipEvents)
             }
 
-            highDriverEvents.isNotEmpty() -> {
+            !highDriverEvents.isNullOrEmpty() -> {
                 EvaluationFactory.warn(
                     "Variant(s) ${concat(highDriverEvents)} $baseMessage in canonical transcript together with " +
-                            "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
+                            "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches!!)}",
                     inclusionEvents = highDriverEvents + reportableOtherVariantMatches
                 )
             }
@@ -96,17 +93,17 @@ class GeneHasVariantInExonRangeOfType(
             highDriverExonSkipEvents.isNotEmpty() -> {
                 EvaluationFactory.warn(
                     "Exon(s) skipped $baseMessage due to ${concat(highDriverExonSkipEvents)} together with variant(s) in " +
-                            "non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
+                            "non-canonical transcript: ${concat(reportableOtherVariantMatches!!)}",
                     inclusionEvents = highDriverExonSkipEvents + reportableOtherVariantMatches
                 )
             }
 
             else -> {
                 evaluatePotentialWarns(
-                    canonicalUnreportableVariantMatches,
+                    variantClassifications[VariantClassification.CANONICAL_UNREPORTABLE],
                     reportableOtherVariantMatches,
                     unreportableExonSkips.map { it.event }.toSet(),
-                    nonHighDriverVariants.map(Variant::event).toSet(),
+                    variantClassifications[VariantClassification.CANONICAL_REPORTABLE_NON_HIGH_DRIVER],
                     nonHighDriverExonSkips.map { it.event }.toSet(),
                     baseMessage
                 )
@@ -121,11 +118,11 @@ class GeneHasVariantInExonRangeOfType(
     }
 
     private fun evaluatePotentialWarns(
-        canonicalUnreportableVariantMatches: Set<String>,
-        reportableOtherVariantMatches: Set<String>,
-        unreportableFusions: Set<String>,
-        nonHighDriverVariants: Set<String>,
-        nonHighDriverExonSkips: Set<String>,
+        canonicalUnreportableVariantMatches: Set<String>?,
+        reportableOtherVariantMatches: Set<String>?,
+        unreportableFusions: Set<String>?,
+        nonHighDriverVariants: Set<String>?,
+        nonHighDriverExonSkips: Set<String>?,
         baseMessage: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(

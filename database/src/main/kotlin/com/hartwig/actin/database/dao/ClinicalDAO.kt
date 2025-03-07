@@ -7,7 +7,8 @@ import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -22,8 +23,8 @@ import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import java.util.Optional
 import org.jooq.DSLContext
+import kotlin.math.roundToInt
 
 internal class ClinicalDAO(private val context: DSLContext) {
 
@@ -52,7 +53,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         val patientId = record.patientId
         writePatientDetails(patientId, record.patient)
         writeTumorDetails(patientId, record.tumor)
-        writeClinicalStatus(patientId, record.clinicalStatus)
+        writeClinicalStatus(patientId, record.clinicalStatus, record.ecgs)
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries)
         writeOtherConditions(patientId, record.otherConditions)
@@ -149,11 +150,26 @@ internal class ClinicalDAO(private val context: DSLContext) {
             .execute()
     }
 
-    private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus) {
+    private fun ecgMeasure(ecgs: List<Ecg>, measure: (Ecg) -> EcgMeasure?): EcgMeasure? {
+        val ecgMeasures = ecgs.mapNotNull { ecg -> measure(ecg)?.let { ecg to it } }
+        return when {
+            ecgMeasures.isEmpty() -> null
+            ecgMeasures.size == 1 || ecgMeasures.all { with(it.first) { year != null && month != null } } -> {
+                ecgMeasures.maxBy { with(it.first) { "$year-$month" } }.second
+            }
+            ecgMeasures.map { it.second.unit }.toSet().size == 1 -> {
+                EcgMeasure(ecgMeasures.map { it.second.value }.average().roundToInt(), ecgMeasures.first().second.unit)
+            }
+            else -> {
+                ecgMeasures.maxBy { with(it.first) { "$year-$month" } }.second
+            }
+        }
+    }
+
+    private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus, ecgs: List<Ecg>) {
         val infectionStatus = clinicalStatus.infectionStatus
-        val ecg = Optional.ofNullable(clinicalStatus.ecg)
-        val qtcfMeasure = ecg.map(ECG::qtcfMeasure)
-        val jtcMeasure = ecg.map(ECG::jtcMeasure)
+        val qtcfMeasure = ecgMeasure(ecgs, Ecg::qtcfMeasure)
+        val jtcMeasure = ecgMeasure(ecgs, Ecg::jtcMeasure)
         context.insertInto(
             Tables.CLINICALSTATUS,
             Tables.CLINICALSTATUS.PATIENTID,
@@ -174,12 +190,12 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 clinicalStatus.who,
                 infectionStatus?.hasActiveInfection,
                 infectionStatus?.description,
-                ecg.map(ECG::hasSigAberrationLatestECG).orElse(null),
-                ecg.map(ECG::aberrationDescription).orElse(null),
-                qtcfMeasure.map { it?.value }.orElse(null),
-                qtcfMeasure.map { it?.unit }.orElse(null),
-                jtcMeasure.map { it?.value }.orElse(null),
-                jtcMeasure.map { it?.unit }.orElse(null),
+                ecgs.isNotEmpty(),
+                ecgs.mapNotNull(Ecg::name).joinToString(", ").ifEmpty { null },
+                qtcfMeasure?.value,
+                qtcfMeasure?.unit,
+                jtcMeasure?.value,
+                jtcMeasure?.unit,
                 clinicalStatus.lvef,
                 clinicalStatus.hasComplications
             )
@@ -338,7 +354,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
     private fun writeComplications(patientId: String, complications: List<Complication>?) {
         if (complications != null) {
             for (complication in complications) {
-                if (complication.name.isNotEmpty()) {
+                if (complication.name?.isNotEmpty() == true) {
                     context.insertInto(
                         Tables.COMPLICATION,
                         Tables.COMPLICATION.PATIENTID,

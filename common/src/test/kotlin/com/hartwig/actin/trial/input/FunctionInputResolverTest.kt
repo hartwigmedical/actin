@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
@@ -39,7 +40,7 @@ import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
-import com.hartwig.actin.trial.input.single.OneIntegerOneString
+import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
@@ -284,6 +285,41 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(category, "hello1;hello2")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one treatment category, many intents, and one integer input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER)
+        val category = TreatmentCategory.IMMUNOTHERAPY.display()
+        val intents = "${Intent.ADJUVANT};${Intent.PALLIATIVE}"
+        val valid = create(rule, listOf(category, intents, "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createOneTreatmentCategoryManyIntentsOneIntegerInput(valid)
+        assertThat(inputs.category).isEqualTo(TreatmentCategory.IMMUNOTHERAPY)
+        assertThat(inputs.intents).isEqualTo(setOf(Intent.ADJUVANT, Intent.PALLIATIVE))
+        assertThat(inputs.integer).isEqualTo(1)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "noIntent", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("no category", intents, "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category, intents, "noInteger")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one treatment type, one integer input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER)
+        val treatmentType = DrugType.PLATINUM_COMPOUND.display()
+        val valid = create(rule, listOf(treatmentType, "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createOneTreatmentTypeOneIntegerInput(valid)
+        assertThat(inputs.type).isEqualTo(DrugType.PLATINUM_COMPOUND)
+        assertThat(inputs.integer).isEqualTo(1)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment type", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentType, "not an integer")))!!).isFalse
     }
 
     @Test
@@ -568,14 +604,26 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one integer one string input`() {
-        val rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_STRING)
-        val valid = create(rule, listOf("2", "test"))
+    fun `Should resolve functions with many body location input`() {
+        val rule = firstOfType(FunctionInput.MANY_BODY_LOCATIONS)
+        val valid = create(rule, listOf("liver;lung"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
-        assertThat(resolver.createOneIntegerOneStringInput(valid)).isEqualTo(OneIntegerOneString(2, "test"))
+        val expected = setOf(BodyLocationCategory.LIVER, BodyLocationCategory.LUNG)
+        assertThat(resolver.createManyBodyLocationsInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("liver")))!!).isTrue
+        assertThat(resolver.hasValidInputs(create(rule, listOf("liver;not a body location")))!!).isFalse()
+    }
+
+    @Test
+    fun `Should resolve functions with one integer one body location input`() {
+        val rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION)
+        val valid = create(rule, listOf("2", "liver"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneIntegerOneBodyLocationInput(valid)).isEqualTo(OneIntegerOneBodyLocation(2, BodyLocationCategory.LIVER))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", BodyLocationCategory.LIVER)))!!).isFalse
     }
 
     @Test

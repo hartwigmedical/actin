@@ -120,7 +120,7 @@ DROP TABLE IF EXISTS `otherCondition`;
 CREATE TABLE `otherCondition`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `name` varchar(500) NOT NULL,
+    `name` varchar(500),
     `year` int,
     `month` int,
     `icdCodes` varchar(50) NOT NULL,
@@ -147,7 +147,7 @@ DROP TABLE IF EXISTS `complication`;
 CREATE TABLE `complication`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `name` varchar(150) NOT NULL,
+    `name` varchar(150),
     `icdCodes` varchar(50) NOT NULL,
     `year` int,
     `month` int,
@@ -174,7 +174,7 @@ DROP TABLE IF EXISTS `toxicity`;
 CREATE TABLE `toxicity`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `name` varchar(50) NOT NULL,
+    `name` varchar(50),
     `icdCodes` varchar(50) NOT NULL,
     `evaluatedDate` DATE NOT NULL,
     `source` varchar(50) NOT NULL,
@@ -186,7 +186,7 @@ DROP TABLE IF EXISTS `intolerance`;
 CREATE TABLE `intolerance`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `name` varchar(100) NOT NULL,
+    `name` varchar(100),
     `icdCodes` varchar(50) NOT NULL,
     `category` varchar(50) NOT NULL,
     `subcategories` varchar(100) NOT NULL,
@@ -286,8 +286,8 @@ CREATE TABLE `molecular`
     `predictedTumorType` varchar(50),
     `predictedTumorLikelihood` double precision,
     `isMicrosatelliteUnstable` BOOLEAN,
-    `homologousRepairScore` double precision,
-    `isHomologousRepairDeficient` BOOLEAN,
+    `homologousRecombinationScore` double precision,
+    `isHomologousRecombinationDeficient` BOOLEAN,
     `tumorMutationalBurden` double precision,
     `hasHighTumorMutationalBurden` BOOLEAN,
     `tumorMutationalLoad` int,
@@ -304,8 +304,8 @@ CREATE TABLE `microsatelliteEvidence`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `homologousRepairEvidence`;
-CREATE TABLE `homologousRepairEvidence`
+DROP TABLE IF EXISTS `homologousRecombinationEvidence`;
+CREATE TABLE `homologousRecombinationEvidence`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `molecularId` int NOT NULL,
     `treatment` varchar(500) NOT NULL,

@@ -6,8 +6,10 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 data class InterpretedCohort(
     val trialId: String,
     val acronym: String,
+    val nctId: String?,
     val phase: TrialPhase? = null,
     val source: TrialSource? = null,
+    val sourceId: String? = null,
     val locations: List<String> = emptyList(),
     val name: String?,
     val isOpen: Boolean,
@@ -15,7 +17,7 @@ data class InterpretedCohort(
     val ignore: Boolean = false,
     val molecularEvents: Set<String> = emptySet(),
     val isPotentiallyEligible: Boolean = false,
-    val isMissingGenesForSufficientEvaluation: Boolean? = null,
+    val isMissingMolecularResultForEvaluation: Boolean? = null,
     val warnings: Set<String> = emptySet(),
     val fails: Set<String> = emptySet()
 )

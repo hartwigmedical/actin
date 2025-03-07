@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import java.time.LocalDate
 
 class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalDate? = null) :

@@ -10,13 +10,13 @@ import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val TRIAL_ID = "trialId"
 private const val NCT_ID = "nctId"
+private const val SOURCE_ID = "sourceId"
 private const val ACRONYM = "acronym"
 private const val TITLE = "title"
 private const val IS_MALE = "IS_MALE"
@@ -37,6 +37,7 @@ class TrialIngestionTest {
                 TrialConfig(
                     trialId = TRIAL_ID,
                     source = TrialSource.NKI,
+                    sourceId = SOURCE_ID,
                     nctId = NCT_ID,
                     open = true,
                     acronym = ACRONYM,
@@ -69,7 +70,7 @@ class TrialIngestionTest {
                 )
             )
         ) as Either.Right
-        assertThat(result.right).containsExactly(
+        assertThat(result.value).containsExactly(
             Trial(
                 identification = TrialIdentification(
                     trialId = TRIAL_ID,
@@ -79,6 +80,7 @@ class TrialIngestionTest {
                     nctId = NCT_ID,
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.NKI,
+                    sourceId = SOURCE_ID,
                     locations = listOf(LOCATION)
                 ),
                 generalEligibility = listOf(

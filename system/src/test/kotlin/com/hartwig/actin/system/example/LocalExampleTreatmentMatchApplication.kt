@@ -76,7 +76,6 @@ class LocalExampleTreatmentMatchApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-
         LOGGER.info("Creating ICD-11 tree from file {}", icdTsv)
         val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(icdTsv))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.labReference
+import com.hartwig.actin.algo.evaluation.util.Format.labReferenceWithLimit
 import com.hartwig.actin.algo.evaluation.util.Format.labValue
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -23,7 +23,7 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
 
         val labValueString = labValue(LabMeasurement.INDIRECT_BILIRUBIN, mostRecentTotal!!.value - labValue.value, labValue.unit)
         val refLimit = labValue.refLimitUp?.let { mostRecentTotal.refLimitUp?.minus(it) }
-        val referenceString = labReference(maxULNFactor, "ULN", refLimit)
+        val referenceString = labReferenceWithLimit(maxULNFactor, "ULN", refLimit, labValue.unit)
 
         return when (LabEvaluation.evaluateDifferenceVersusMaxULN(mostRecentTotal, labValue, maxULNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {

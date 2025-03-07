@@ -7,17 +7,17 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 
 internal object TumorTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalTestOrangeRecord()
 
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))
@@ -276,8 +276,14 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions))
     }
 
-    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false): PatientRecord {
-        return withTumorDetails(TumorDetails(hasLungLesions = hasLungLesions, hasSuspectedLungLesions = hasSuspectedLungLesions))
+    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false, count: Int? = 1): PatientRecord {
+        return withTumorDetails(
+            TumorDetails(
+                hasLungLesions = hasLungLesions,
+                hasSuspectedLungLesions = hasSuspectedLungLesions,
+                lungLesionsCount = count
+            )
+        )
     }
 
     fun withLymphNodeLesions(hasLymphNodeLesions: Boolean?, hasSuspectedLymphNodeLesions: Boolean? = null): PatientRecord {

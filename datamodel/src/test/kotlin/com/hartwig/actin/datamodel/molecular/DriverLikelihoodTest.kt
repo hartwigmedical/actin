@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.molecular
 
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

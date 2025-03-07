@@ -1,30 +1,42 @@
 package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.datamodel.molecular.driver.CodingContext
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.DisruptionType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.ExtendedVariantDetails
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.Virus
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
-import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
-import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
-import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
-import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
-import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
-import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
-import com.hartwig.actin.datamodel.molecular.orange.immunology.MolecularImmunology
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.Haplotype
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
+import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -32,9 +44,34 @@ object TestMolecularFactory {
     private val TODAY = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
-    fun createMinimalTestMolecularRecord(): MolecularRecord {
+    fun createMinimalTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory(listOf(createMinimalTestOrangeRecord(), createMinimalTestPanelRecord()))
+    }
+
+    fun createProperTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory(listOf(createProperTestOrangeRecord(), createProperTestPanelRecord()))
+    }
+
+    fun createExhaustiveTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory(listOf(createExhaustiveTestOrangeRecord(), createExhaustiveTestPanelRecord()))
+    }
+
+    fun createMinimalTestPanelRecord(): PanelRecord {
+        return PanelRecord(
+            testedGenes = emptySet(),
+            experimentType = ExperimentType.PANEL,
+            testTypeDisplay = "minimal panel",
+            date = null,
+            drivers = Drivers(),
+            characteristics = MolecularCharacteristics(),
+            evidenceSource = "",
+            hasSufficientPurity = true,
+            hasSufficientQuality = true
+        )
+    }
+
+    fun createMinimalTestOrangeRecord(): MolecularRecord {
         return MolecularRecord(
-            patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
             experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
             refGenomeVersion = RefGenomeVersion.V37,
@@ -44,43 +81,51 @@ object TestMolecularFactory {
             isContaminated = false,
             hasSufficientPurity = true,
             hasSufficientQuality = true,
-            characteristics = createMinimalTestCharacteristics(),
             drivers = Drivers(),
+            characteristics = createMinimalTestCharacteristics(),
             immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
             date = null,
             pharmaco = emptySet()
         )
     }
 
-    fun createProperTestMolecularRecord(): MolecularRecord {
-        return createMinimalTestMolecularRecord().copy(
+    fun createProperTestPanelRecord(): PanelRecord {
+        return createMinimalTestPanelRecord().copy(
+            testedGenes = setOf("BRAF", "PTEN"),
+            testTypeDisplay = "proper panel",
+            date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
+            drivers = createProperTestDrivers(),
+            characteristics = createProperTestCharacteristics(),
+            evidenceSource = "kb",
+        )
+    }
+
+    fun createProperTestOrangeRecord(): MolecularRecord {
+        return createMinimalTestOrangeRecord().copy(
             date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
             evidenceSource = "kb",
             externalTrialSource = "trial kb",
-            characteristics = createProperTestCharacteristics(),
             drivers = createProperTestDrivers(),
+            characteristics = createProperTestCharacteristics(),
             immunology = createProperTestImmunology(),
             pharmaco = createProperTestPharmaco()
         )
     }
 
-    fun createExhaustiveTestMolecularRecord(): MolecularRecord {
-        return createProperTestMolecularRecord().copy(
-            characteristics = createExhaustiveTestCharacteristics(),
-            drivers = createExhaustiveTestDrivers()
+    fun createExhaustiveTestPanelRecord(): PanelRecord {
+        return createProperTestPanelRecord().copy(
+            testedGenes = setOf("BRAF", "PTEN", "MYC", "MET", "EML4", "ALK"),
+            testTypeDisplay = "exhaustive panel",
+            drivers = createExhaustiveTestDrivers(),
+            characteristics = createExhaustiveTestCharacteristics()
         )
     }
 
-    fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createMinimalTestMolecularRecord()))
-    }
-
-    fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createProperTestMolecularRecord()))
-    }
-
-    fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), TestPanelRecordFactory.empty()))
+    fun createExhaustiveTestOrangeRecord(): MolecularRecord {
+        return createProperTestOrangeRecord().copy(
+            drivers = createExhaustiveTestDrivers(),
+            characteristics = createExhaustiveTestCharacteristics()
+        )
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
@@ -93,8 +138,8 @@ object TestMolecularFactory {
             ploidy = 3.1,
             predictedTumorOrigin = createProperPredictedTumorOrigin(),
             isMicrosatelliteUnstable = false,
-            homologousRepairScore = 0.45,
-            isHomologousRepairDeficient = false,
+            homologousRecombinationScore = 0.45,
+            isHomologousRecombinationDeficient = false,
             tumorMutationalBurden = 13.71,
             hasHighTumorMutationalBurden = true,
             tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.withApprovedTreatment("Pembro"),
@@ -102,7 +147,7 @@ object TestMolecularFactory {
             hasHighTumorMutationalLoad = true,
             microsatelliteEvidence = null,
             tumorMutationalLoadEvidence = null,
-            homologousRepairEvidence = null
+            homologousRecombinationEvidence = null
         )
     }
 
@@ -137,7 +182,7 @@ object TestMolecularFactory {
     private fun createExhaustiveTestCharacteristics(): MolecularCharacteristics {
         return createProperTestCharacteristics().copy(
             microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            homologousRecombinationEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
         )

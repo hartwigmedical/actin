@@ -46,6 +46,7 @@ class HasSufficientLabValueTest {
         val actual = function.evaluate(record, measurement, LabTestFactory.create(measurement, 100.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
         assertThat(actual.recoverable).isTrue()
+        assertThat(actual.failMessages).containsExactly("Absolute thrombocyte count 100.0 10^9/L below min of 200.0 10^9/L")
     }
 
     @Test
@@ -63,7 +64,10 @@ class HasSufficientLabValueTest {
 
         // Different unit
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, measurement, offUnit.copy(value = 12.2)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, measurement, offUnit.copy(value = 8.2)))
+
+        val evaluation = function.evaluate(record, measurement, offUnit.copy(value = 8.2))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessages).containsExactly("Hemoglobin 5.1 mmol/L (converted from: 8.2 g/dL) below min of 7.5 mmol/L")
 
         // Works with other unit as target unit as well.
         val function2 = HasSufficientLabValue(7.5, measurement, LabUnit.GRAMS_PER_DECILITER)

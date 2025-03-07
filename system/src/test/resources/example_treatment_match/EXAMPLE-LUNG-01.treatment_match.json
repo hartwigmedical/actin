@@ -2,9 +2,9 @@
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
   "referenceDate": {
-    "year": 2024,
-    "month": 11,
-    "day": 14
+    "year": 2025,
+    "month": 2,
+    "day": 25
   },
   "referenceDateIsLive": true,
   "trialMatches": [
@@ -16,7 +16,8 @@
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
         "phase": null,
-        "locations": []
+        "locations": [
+        ]
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -46,7 +47,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -92,7 +93,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -129,7 +130,7 @@
             ],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -161,7 +162,7 @@
             ],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -186,11 +187,11 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L but measurement occurred before 16-Aug-2024"
+              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L"
             ],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -219,7 +220,7 @@
               "No measurement found for absolute neutrophil count"
             ],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -248,7 +249,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ]
       ],
@@ -318,7 +319,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -354,7 +355,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -384,7 +385,7 @@
               "ASAT and ALAT are not present or cannot be evaluated"
             ],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -416,7 +417,7 @@
             ],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -445,7 +446,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ]
       ],
@@ -487,7 +488,7 @@
                 "warnMessages": [],
                 "undeterminedMessages": [],
                 "failMessages": [],
-                "isMissingGenesForSufficientEvaluation": false
+                "isMissingMolecularResultForEvaluation": false
               }
             ]
           ]
@@ -529,7 +530,7 @@
                 "failMessages": [
                   "No colorectal cancer"
                 ],
-                "isMissingGenesForSufficientEvaluation": false
+                "isMissingMolecularResultForEvaluation": false
               }
             ]
           ]
@@ -575,7 +576,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -611,7 +612,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -660,7 +661,7 @@
             "failMessages": [
               "C797S in EGFR in canonical transcript"
             ],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -689,7 +690,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ]
       ],
@@ -717,7 +718,10 @@
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
         "phase": null,
-        "locations": []
+        "locations": [
+          "NKI AvL"
+        ],
+        "source": "NKI"
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -747,7 +751,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -795,7 +799,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -827,7 +831,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -856,7 +860,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ]
       ],
@@ -868,7 +872,19 @@
             "open": true,
             "slotsAvailable": true,
             "ignore": false,
-            "description": "Lung cancer C797S cohort"
+            "description": "Lung cancer C797S cohort A"
+          },
+          "isPotentiallyEligible": true,
+          "evaluations": {}
+        },
+        {
+          "metadata": {
+            "cohortId": "B",
+            "evaluable": true,
+            "open": true,
+            "slotsAvailable": true,
+            "ignore": false,
+            "description": "Lung cancer C797S cohort B"
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
@@ -914,7 +930,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -950,7 +966,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -980,7 +996,7 @@
               "ASAT and ALAT are not present or cannot be evaluated"
             ],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -1009,7 +1025,7 @@
             "failMessages": [
               "No PIK3CA activating mutation(s)"
             ],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -1042,7 +1058,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ],
         [
@@ -1071,7 +1087,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
-            "isMissingGenesForSufficientEvaluation": false
+            "isMissingMolecularResultForEvaluation": false
           }
         ]
       ],
@@ -1113,7 +1129,7 @@
                 "warnMessages": [],
                 "undeterminedMessages": [],
                 "failMessages": [],
-                "isMissingGenesForSufficientEvaluation": false
+                "isMissingMolecularResultForEvaluation": false
               }
             ]
           ]
@@ -1169,7 +1185,7 @@
                 "failMessages": [
                   "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
                 ],
-                "isMissingGenesForSufficientEvaluation": false
+                "isMissingMolecularResultForEvaluation": false
               }
             ]
           ]

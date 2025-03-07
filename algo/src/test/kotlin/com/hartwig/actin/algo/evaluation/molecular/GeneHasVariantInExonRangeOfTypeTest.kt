@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
@@ -317,6 +317,27 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         fusedExonUp = 2,
                         fusedExonDown = 3
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass for variant with matching canonical and non-canonical impact`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.DELETE,
+                        driverLikelihood = DriverLikelihood.HIGH,
+                        canonicalImpact = impactWithExon(MATCHING_EXON),
+                        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 
 object DPYDDeficiencyEvaluationFunctions {
 

@@ -1,11 +1,15 @@
 package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
-import com.hartwig.actin.datamodel.molecular.Driver
-import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.VariantEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
+import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
@@ -14,12 +18,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
-import com.hartwig.actin.datamodel.molecular.orange.immunology.MolecularImmunology
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import org.jooq.DSLContext
 import org.jooq.Record
 
@@ -33,7 +33,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         for (molecularResult in molecularResults) {
             val molecularId = molecularResult.getValue(Tables.MOLECULAR.ID)
             context.delete(Tables.MICROSATELLITEEVIDENCE).where(Tables.MICROSATELLITEEVIDENCE.MOLECULARID.eq(molecularId)).execute()
-            context.delete(Tables.HOMOLOGOUSREPAIREVIDENCE).where(Tables.HOMOLOGOUSREPAIREVIDENCE.MOLECULARID.eq(molecularId)).execute()
+            context.delete(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE).where(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.MOLECULARID.eq(molecularId)).execute()
             context.delete(Tables.TUMORMUTATIONALBURDENEVIDENCE).where(Tables.TUMORMUTATIONALBURDENEVIDENCE.MOLECULARID.eq(molecularId))
                 .execute()
             context.delete(Tables.TUMORMUTATIONALLOADEVIDENCE).where(Tables.TUMORMUTATIONALLOADEVIDENCE.MOLECULARID.eq(molecularId))
@@ -94,8 +94,8 @@ internal class MolecularDAO(private val context: DSLContext) {
         context.delete(Tables.MOLECULAR).where(Tables.MOLECULAR.SAMPLEID.eq(sampleId)).execute()
     }
 
-    fun writeMolecularRecord(record: MolecularRecord) {
-        writeMolecularDetails(record)
+    fun writeMolecularRecord(patientId: String, record: MolecularRecord) {
+        writeMolecularDetails(patientId, record)
         val sampleId = record.sampleId
         val drivers = record.drivers
         writeVariants(sampleId, drivers.variants)
@@ -108,8 +108,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         writePharmaco(sampleId, record.pharmaco)
     }
 
-    private fun writeMolecularDetails(record: MolecularRecord) {
-        val sampleId = record.sampleId
+    private fun writeMolecularDetails(patientId: String, record: MolecularRecord) {
         val predictedTumorOrigin = record.characteristics.predictedTumorOrigin
         val molecularId = context.insertInto(
             Tables.MOLECULAR,
@@ -127,16 +126,16 @@ internal class MolecularDAO(private val context: DSLContext) {
             Tables.MOLECULAR.PREDICTEDTUMORTYPE,
             Tables.MOLECULAR.PREDICTEDTUMORLIKELIHOOD,
             Tables.MOLECULAR.ISMICROSATELLITEUNSTABLE,
-            Tables.MOLECULAR.HOMOLOGOUSREPAIRSCORE,
-            Tables.MOLECULAR.ISHOMOLOGOUSREPAIRDEFICIENT,
+            Tables.MOLECULAR.HOMOLOGOUSRECOMBINATIONSCORE,
+            Tables.MOLECULAR.ISHOMOLOGOUSRECOMBINATIONDEFICIENT,
             Tables.MOLECULAR.TUMORMUTATIONALBURDEN,
             Tables.MOLECULAR.HASHIGHTUMORMUTATIONALBURDEN,
             Tables.MOLECULAR.TUMORMUTATIONALLOAD,
             Tables.MOLECULAR.HASHIGHTUMORMUTATIONALLOAD
         )
             .values(
-                record.patientId,
-                sampleId,
+                patientId,
+                record.sampleId,
                 record.experimentType.toString(),
                 record.refGenomeVersion.toString(),
                 record.date,
@@ -149,8 +148,8 @@ internal class MolecularDAO(private val context: DSLContext) {
                 predictedTumorOrigin?.cancerType(),
                 predictedTumorOrigin?.likelihood(),
                 record.characteristics.isMicrosatelliteUnstable,
-                record.characteristics.homologousRepairScore,
-                record.characteristics.isHomologousRepairDeficient,
+                record.characteristics.homologousRecombinationScore,
+                record.characteristics.isHomologousRecombinationDeficient,
                 record.characteristics.tumorMutationalBurden,
                 record.characteristics.hasHighTumorMutationalBurden,
                 record.characteristics.tumorMutationalLoad,
@@ -160,7 +159,7 @@ internal class MolecularDAO(private val context: DSLContext) {
             .fetchOne()!!
             .getValue(Tables.MOLECULAR.ID)
         writeMicrosatelliteEvidence(molecularId, record.characteristics.microsatelliteEvidence)
-        writeHomologousRepairEvidence(molecularId, record.characteristics.homologousRepairEvidence)
+        writeHomologousRecombinationEvidence(molecularId, record.characteristics.homologousRecombinationEvidence)
         writeTumorMutationalBurdenEvidence(molecularId, record.characteristics.tumorMutationalBurdenEvidence)
         writeTumorMutationalLoadEvidence(molecularId, record.characteristics.tumorMutationalLoadEvidence)
     }
@@ -181,16 +180,16 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeHomologousRepairEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
+    private fun writeHomologousRecombinationEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
         if (evidence == null) {
             return
         }
         val inserter = EvidenceInserter(
             context.insertInto(
-                Tables.HOMOLOGOUSREPAIREVIDENCE,
-                Tables.HOMOLOGOUSREPAIREVIDENCE.MOLECULARID,
-                Tables.HOMOLOGOUSREPAIREVIDENCE.TREATMENT,
-                Tables.HOMOLOGOUSREPAIREVIDENCE.TYPE
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE,
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.MOLECULARID,
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.TREATMENT,
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.TYPE
             )
         )
         writeEvidence(inserter, molecularId, evidence)

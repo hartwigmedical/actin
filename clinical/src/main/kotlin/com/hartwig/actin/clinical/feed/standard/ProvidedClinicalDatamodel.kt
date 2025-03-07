@@ -188,38 +188,46 @@ data class ProvidedPriorPrimary(
     val lastTreatmentDate: LocalDate? = null
 )
 
+interface ProvidedComorbidity {
+    val name: String
+    val startDate: LocalDate?
+}
+
 @JacksonSerializable
 data class ProvidedOtherCondition(
     @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
     @Description("Name of condition (eg. Pancreatis)")
-    val name: String,
+    override val name: String,
     @Description("Start date of condition")
-    val startDate: LocalDate? = null,
+    override val startDate: LocalDate? = null,
     @Description("End date of condition if applicable")
     val endDate: LocalDate? = null
-)
+) : ProvidedComorbidity
 
 @JacksonSerializable
 data class ProvidedComplication(
     @Description("Name of complication (eg. Ascites)")
-    val name: String,
+    override val name: String,
     @Description("Start date of complication")
-    val startDate: LocalDate,
+    override val startDate: LocalDate,
     @Description("End date of complication")
     val endDate: LocalDate?
-)
+) : ProvidedComorbidity
 
 @JacksonSerializable
 data class ProvidedToxicity(
     @Description("Name of toxicity (eg. Neuropathy)")
-    val name: String,
+    override val name: String,
     @Description("Date of evaluation")
     val evaluatedDate: LocalDate,
     @Description("Grade (eg. 2)")
     val grade: Int,
     @Description("End date")
     val endDate: LocalDate?
-)
+) : ProvidedComorbidity {
+    override val startDate: LocalDate
+        get() = evaluatedDate
+}
 
 @JacksonSerializable
 data class ProvidedMedication(
@@ -298,9 +306,9 @@ data class ProvidedMeasurement(
 @JacksonSerializable
 data class ProvidedAllergy(
     @Description("Name of allergy (eg. Pembrolizumab)")
-    val name: String,
+    override val name: String,
     @Description("Start date of appearance of allergy")
-    val startDate: LocalDate,
+    override val startDate: LocalDate,
     @Description("End date of appearance of allergy, if applicable")
     val endDate: LocalDate?,
     @Description("Category of allergy (eg. medication)")
@@ -311,7 +319,7 @@ data class ProvidedAllergy(
     val clinicalStatus: String,
     @Description("Verification status of allergy (eg. confirmed)")
     val verificationStatus: String
-)
+) : ProvidedComorbidity
 
 @JacksonSerializable
 data class ProvidedWhoEvaluation(

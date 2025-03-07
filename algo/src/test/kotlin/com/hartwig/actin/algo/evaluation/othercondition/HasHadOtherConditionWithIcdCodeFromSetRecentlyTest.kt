@@ -6,54 +6,64 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
+import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDate
 import org.junit.Test
 
 class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
 
-    private val minDate: LocalDate = LocalDate.of(2021, 8, 2)
+    private val referenceDate: LocalDate = LocalDate.of(2022, 2, 2)
+    private val maxMonthsAgo = 6
+    private val minDate: LocalDate = referenceDate.minusMonths(maxMonthsAgo.toLong())
     private val targetIcdCodes = IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet()
     private val icdModel = IcdModel.create(targetIcdCodes.map { IcdNode(it.mainCode, emptyList(), it.mainCode + "node") })
     private val function =
-        HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel, targetIcdCodes, "stroke", minDate)
+        HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel, targetIcdCodes, "stroke", minDate, maxMonthsAgo)
 
     @Test
     fun `Should warn if condition in history with correct ICD code and within first 2 months of specified time-frame`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
-                        year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
-                    )
+        val conditionDate = minDate.plusMonths(1)
+        val evaluation = function.evaluate(
+            ComorbidityTestFactory.withOtherCondition(
+                ComorbidityTestFactory.otherCondition(
+                    name = "cerebral bleeding",
+                    year = conditionDate.year,
+                    month = conditionDate.monthValue,
+                    icdMainCode = targetIcdCodes.first().mainCode
                 )
             )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnMessages).containsExactly(
+            "History of stroke within last $maxMonthsAgo months (cerebral bleeding (${conditionDate.year}-${conditionDate.monthValue}))"
         )
     }
 
     @Test
     fun `Should pass if condition in history with correct ICD code and within specified time-frame but not in first 2 months`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
-                        year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
-                    )
-                )
-            )
+        val bleeding = ComorbidityTestFactory.otherCondition(
+            name = "cerebral bleeding",
+            year = minDate.plusYears(1).year,
+            month = 1,
+            icdMainCode = targetIcdCodes.first().mainCode
         )
+        val infarction = bleeding.copy(name = "cerebral infarction")
+        val evaluation = function.evaluate(ComorbidityTestFactory.withOtherConditions(listOf(bleeding, infarction)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessages).containsExactly("Recent stroke (cerebral bleeding, cerebral infarction)")
     }
 
     @Test
     fun `Should pass if both pass and warn conditions are met - two conditions with correct ICD code in time-frame of which one in first 2 months`() {
-        val conditions = OtherConditionTestFactory.withOtherConditions(
+        val conditions = ComorbidityTestFactory.withOtherConditions(
             listOf(
-                OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.otherCondition(
                     year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                 ),
-                OtherConditionTestFactory.otherCondition(
-                    year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
+                ComorbidityTestFactory.otherCondition(
+                    year = minDate.plusMonths(1).year,
+                    month = minDate.plusMonths(1).monthValue,
+                    icdMainCode = targetIcdCodes.first().mainCode
                 )
             )
         )
@@ -61,12 +71,30 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
     }
 
     @Test
+    fun `Should warn if history contains condition with correct ICD code and date equal to minDate`() {
+        val evaluation = function.evaluate(
+            ComorbidityTestFactory.withOtherCondition(
+                ComorbidityTestFactory.otherCondition(
+                    name = "cerebral bleeding",
+                    year = minDate.year,
+                    month = minDate.monthValue,
+                    icdMainCode = targetIcdCodes.first().mainCode
+                )
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnMessages).containsExactly(
+            "History of stroke within last $maxMonthsAgo months (cerebral bleeding (${minDate.year}-${minDate.monthValue}))"
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined if condition in history with correct ICD code but unknown date`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = null, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
@@ -77,13 +105,13 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
     @Test
     fun `Should evaluate to undetermined if condition matches main ICD code but has unknown extension`() {
         val function = HasHadOtherConditionWithIcdCodeFromSetRecently(
-            icdModel, setOf(IcdCode(IcdConstants.STROKE_NOS_CODE, "extensionCode")), "stroke", minDate
+            icdModel, setOf(IcdCode(IcdConstants.STROKE_NOS_CODE, "extensionCode")), "stroke", minDate, maxMonthsAgo
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
                     )
                 )
@@ -96,8 +124,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = 2023, icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE
                     )
                 )
@@ -110,7 +138,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withOtherConditions(emptyList())
+                ComorbidityTestFactory.withOtherConditions(emptyList())
             )
         )
     }
@@ -120,8 +148,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = minDate.minusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )

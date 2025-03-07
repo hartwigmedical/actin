@@ -1,7 +1,8 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -76,14 +77,15 @@ class VariantEvidenceTest {
     )
 
     private val matchingVariant = VariantMatchCriteria(
-        isReportable = true,
         gene = "gene 1",
         codingEffect = CodingEffect.MISSENSE,
         type = VariantType.SNV,
         chromosome = "1",
         position = 5,
         ref = "A",
-        alt = "T"
+        alt = "T",
+        driverLikelihood = DriverLikelihood.HIGH,
+        isReportable = true
     )
 
     @Test
@@ -133,6 +135,15 @@ class VariantEvidenceTest {
         val nonReportable = matchingVariant.copy(isReportable = false)
 
         val matches = variantEvidence.findMatches(nonReportable)
+        assertThat(matches.evidenceMatches).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
+    }
+
+    @Test
+    fun `Should find no evidence for non high driver likelihood variants`() {
+        val lowDriver = matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
+
+        val matches = variantEvidence.findMatches(lowDriver)
         assertThat(matches.evidenceMatches).isEmpty()
         assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }

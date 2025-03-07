@@ -18,17 +18,21 @@ class HasLimitedLabValue(
             ?: return EvaluationFactory.recoverableUndetermined(
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
-
-        val labValueString = "${labValue(labMeasurement, convertedValue, labValue.unit)} ${targetUnit.display()}"
+        val labValueString = labValue(
+            labMeasurement,
+            convertedValue,
+            targetUnit
+        ) + (" (converted from: ${labValue.value} ${labValue.unit.display()})".takeIf { convertedValue != labValue.value } ?: "")
+        val refString = "$maxValue ${targetUnit.display()}"
 
         return when (evaluateVersusMaxValueWithMargin(convertedValue, labValue.comparator, maxValue)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
-                EvaluationFactory.recoverableFail("$labValueString exceeds max of $maxValue ${targetUnit.display()}")
+                EvaluationFactory.recoverableFail("$labValueString exceeds max of $refString")
             }
 
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "$labValueString exceeds max of $maxValue ${targetUnit.display()} but within margin of error"
+                    "$labValueString exceeds max of $refString but within margin of error"
                 )
             }
 
@@ -39,7 +43,7 @@ class HasLimitedLabValue(
             }
 
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
-                EvaluationFactory.recoverablePass("$labValueString below max of $maxValue ${targetUnit.display()}")
+                EvaluationFactory.recoverablePass("$labValueString below max of $refString")
             }
         }
     }

@@ -88,21 +88,21 @@ data class CurationResponse<T>(
                 CurationCategory.ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = evaluatedInputs)
                 CurationCategory.SECOND_PRIMARY -> CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = evaluatedInputs)
                 CurationCategory.LESION_LOCATION -> CurationExtractionEvaluation(lesionLocationEvaluatedInputs = evaluatedInputs)
-                CurationCategory.NON_ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(nonOncologicalHistoryEvaluatedInputs = evaluatedInputs)
-                CurationCategory.ECG -> CurationExtractionEvaluation(ecgEvaluatedInputs = evaluatedInputs)
-                CurationCategory.INFECTION -> CurationExtractionEvaluation(infectionEvaluatedInputs = evaluatedInputs)
+                CurationCategory.NON_ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
+                CurationCategory.ECG -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
+                CurationCategory.INFECTION -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION -> CurationExtractionEvaluation(
                     periodBetweenUnitEvaluatedInputs = evaluatedInputs
                 )
-
-                CurationCategory.COMPLICATION -> CurationExtractionEvaluation(complicationEvaluatedInputs = evaluatedInputs)
-                CurationCategory.TOXICITY -> CurationExtractionEvaluation(toxicityEvaluatedInputs = evaluatedInputs)
+                CurationCategory.COMORBIDITY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
+                CurationCategory.COMPLICATION -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
+                CurationCategory.TOXICITY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MOLECULAR_TEST_IHC -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MOLECULAR_TEST_PDL1 -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.SEQUENCING_TEST -> CurationExtractionEvaluation(sequencingTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_NAME -> CurationExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_DOSAGE -> CurationExtractionEvaluation(medicationDosageEvaluatedInputs = evaluatedInputs)
-                CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
+                CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.SURGERY_NAME -> CurationExtractionEvaluation(surgeryTranslationEvaluatedInputs = evaluatedInputs)
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }

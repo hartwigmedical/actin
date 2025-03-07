@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 object TestClinicalFactory {
@@ -113,8 +114,7 @@ object TestClinicalFactory {
     private fun createTestClinicalStatus(): ClinicalStatus {
         return ClinicalStatus(
             who = 1,
-            infectionStatus = InfectionStatus(hasActiveInfection = false, description = null),
-            ecg = ECG(hasSigAberrationLatestECG = false, aberrationDescription = null, jtcMeasure = null, qtcfMeasure = null)
+            infectionStatus = InfectionStatus(hasActiveInfection = false, description = null)
         )
     }
 
@@ -273,15 +273,13 @@ object TestClinicalFactory {
         return listOf(
             OtherCondition(
                 name = "pancreatitis",
-                year = null,
-                month = null,
                 icdCodes = setOf(IcdCode("DC31", null))
             ),
             OtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
+                icdCodes = setOf(IcdCode("QB50.1",  null)),
                 year = 2023,
-                month = 10,
-                icdCodes = setOf(IcdCode("QB50.1",  null))
+                month = 10
             )
         )
     }
@@ -309,9 +307,20 @@ object TestClinicalFactory {
             PriorIHCTest(
                 item = "PD-L1",
                 measure = null,
+                measureDate = LocalDate.of(2024, 10, 1),
                 scoreText = null,
                 scoreValuePrefix = null,
                 scoreValue = 90.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            ),
+            PriorIHCTest(
+                item = "PD-L1",
+                measure = null,
+                measureDate = LocalDate.of(2023, 10, 1),
+                scoreText = null,
+                scoreValuePrefix = null,
+                scoreValue = 80.0,
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
@@ -337,7 +346,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", year = null, month = null, icdCodes = setOf(IcdCode("1A01", null))))
+        return listOf(Complication(name = "Ascites", icdCodes = setOf(IcdCode("1A01", null))))
     }
 
     private fun createTestLabValues(): List<LabValue> {

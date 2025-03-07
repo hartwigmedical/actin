@@ -1,18 +1,17 @@
 package com.hartwig.actin.molecular.filter
 
-import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private val BASE_PANEL_TEST = TestPanelRecordFactory.empty()
-private val BASE_WGS_TEST = TestMolecularFactory.createMinimalTestMolecularRecord()
+private val BASE_PANEL_TEST = TestMolecularFactory.createMinimalTestPanelRecord()
+private val BASE_WGS_TEST = TestMolecularFactory.createMinimalTestOrangeRecord()
 private val ONE_YEAR_AGO = LocalDate.of(2023, 9, 9)
 
 class MolecularTestFilterTest {

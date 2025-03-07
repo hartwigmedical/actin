@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.Driver
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
@@ -15,7 +15,7 @@ import org.junit.Test
 
 class WGSSummaryGeneratorFunctionsTest {
 
-    private val molecularRecord = TestMolecularFactory.createProperTestMolecularRecord()
+    private val molecularRecord = TestMolecularFactory.createProperTestOrangeRecord()
     private val inconclusivePredictions = listOf(
         CupPrediction(
             cancerType = "Melanoma",
@@ -48,11 +48,11 @@ class WGSSummaryGeneratorFunctionsTest {
             TestFusionFactory.createMinimal().copy(event = "event 4", driverLikelihood = DriverLikelihood.MEDIUM),
             TestFusionFactory.createMinimal().copy(event = "event 5", driverLikelihood = DriverLikelihood.HIGH)
         )
-        val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers)
+        val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers, 2.5)
 
         assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo(
-                "event 1 (4 copies - no amplification or deletion), event 2 (dubious quality), event 3 (low driver likelihood), " +
+                "event 1 (4 copies - with tumor ploidy 2.5), event 2 (dubious quality), event 3 (low driver likelihood), " +
                         "event 4 (medium driver likelihood), event 5"
             )
     }

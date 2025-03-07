@@ -16,7 +16,7 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val receptorType = ReceptorType.HER2
-        val (indeterminateIhcTests, validIhcTests) = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, receptorType.name)
+        val (indeterminateIhcTests, validIhcTests) = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, receptorType.name)
             .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
         val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record, maxTestAge)
 
@@ -43,7 +43,7 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
                     }
 
                     else -> {
-                        EvaluationFactory.undetermined(undeterminedMessage, missingGenesForEvaluation = true)
+                        EvaluationFactory.undetermined(undeterminedMessage, isMissingMolecularResultForEvaluation = true)
                     }
                 }
             }

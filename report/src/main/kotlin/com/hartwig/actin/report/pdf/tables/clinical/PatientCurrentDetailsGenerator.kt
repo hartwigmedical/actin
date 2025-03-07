@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.sort.SurgeryDescendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -36,10 +36,9 @@ class PatientCurrentDetailsGenerator(
             val description = infectionStatus.description
             table.addCell(Cells.createValue(description ?: "Yes (infection details unknown)"))
         }
-        val ecg = record.clinicalStatus.ecg
-        if (ecg != null && ecg.hasSigAberrationLatestECG) {
+        record.ecgs.firstOrNull()?.let { ecg ->
             table.addCell(Cells.createKey("Significant aberration on latest ECG"))
-            val aberration = ecg.aberrationDescription
+            val aberration = ecg.name
             val description = aberration ?: "Yes (ECG aberration details unknown)"
             table.addCell(Cells.createValue(description))
 
@@ -67,7 +66,7 @@ class PatientCurrentDetailsGenerator(
         return table
     }
 
-    private fun createMeasureCells(table: Table, key: String, measure: ECGMeasure) {
+    private fun createMeasureCells(table: Table, key: String, measure: EcgMeasure) {
         table.addCell(Cells.createKey(key))
         table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value!!.toDouble())).toString() + " " + measure.unit)
     }
@@ -87,7 +86,7 @@ class PatientCurrentDetailsGenerator(
     }
 
     private fun formatToxicities(filteredToxicities: List<Toxicity>) =
-        filteredToxicities.map { it.name + (it.grade?.let { grade -> " ($grade)" } ?: "") }.distinct()
+        filteredToxicities.map { (it.name ?: "Unknown") + (it.grade?.let { grade -> " ($grade)" } ?: "") }.distinct()
             .joinToString(Formats.COMMA_SEPARATOR)
 
     private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
@@ -97,7 +96,7 @@ class PatientCurrentDetailsGenerator(
     }
 
     private fun complications(record: PatientRecord): String {
-        val complicationSummary = record.complications.joinToString(Formats.COMMA_SEPARATOR) { complication ->
+        val complicationSummary = record.complications.filter { it.name != null }.joinToString(Formats.COMMA_SEPARATOR) { complication ->
             complication.name + (toDateString(complication.year, complication.month)?.let { " ($it)" } ?: "")
         }
         val defaultValue = when (record.clinicalStatus.hasComplications) {
@@ -116,7 +115,7 @@ class PatientCurrentDetailsGenerator(
 
     private fun allergies(intolerances: List<Intolerance>): String {
         val intoleranceSummary = intolerances.filter { !it.name.equals("none", ignoreCase = true) }
-            .joinToString(Formats.COMMA_SEPARATOR) { it.name }
+            .joinToString(Formats.COMMA_SEPARATOR) { it.display() }
         return Formats.valueOrDefault(intoleranceSummary, "None")
     }
 

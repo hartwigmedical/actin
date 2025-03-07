@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.input
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
@@ -46,16 +47,19 @@ import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
+import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyIntents
+import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
+import com.hartwig.actin.trial.input.single.OneTreatmentTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoStrings
@@ -158,6 +162,16 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER -> {
+                    createOneTreatmentCategoryManyIntentsOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER -> {
+                    createOneTreatmentTypeOneIntegerInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_SPECIFIC_TREATMENT -> {
                     createOneSpecificTreatmentInput(function)
                     return true
@@ -253,8 +267,13 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                    createOneIntegerOneStringInput(function)
+                FunctionInput.MANY_BODY_LOCATIONS -> {
+                    createManyBodyLocationsInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION -> {
+                    createOneIntegerOneBodyLocationInput(function)
                     return true
                 }
 
@@ -473,6 +492,25 @@ class FunctionInputResolver(
         )
     }
 
+    fun createOneTreatmentCategoryManyIntentsOneIntegerInput(
+        function: EligibilityFunction
+    ): OneTreatmentCategoryManyIntentsOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER, 3)
+        return OneTreatmentCategoryManyIntentsOneInteger(
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
+            intents = toIntents(function.parameters[1]),
+            integer = parameterAsInt(function, 2)
+        )
+    }
+
+    fun createOneTreatmentTypeOneIntegerInput(function: EligibilityFunction): OneTreatmentTypeOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER, 2)
+        return OneTreatmentTypeOneInteger(
+            type = TreatmentCategoryInput.treatmentTypeFromString(parameterAsString(function, 0)),
+            integer = parameterAsInt(function, 1)
+        )
+    }
+
     fun createOneSpecificTreatmentInput(function: EligibilityFunction): Treatment {
         assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT, 1)
         return toTreatment(parameterAsString(function, 0))
@@ -638,11 +676,16 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneIntegerOneStringInput(function: EligibilityFunction): OneIntegerOneString {
-        assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2)
-        return OneIntegerOneString(
+    fun createManyBodyLocationsInput(function: EligibilityFunction): Set<BodyLocationCategory> {
+        assertParamConfig(function, FunctionInput.MANY_BODY_LOCATIONS, 1)
+        return toStringList(function.parameters.first()).map { BodyLocationCategory.valueOf(it.uppercase()) }.toSet()
+    }
+
+    fun createOneIntegerOneBodyLocationInput(function: EligibilityFunction): OneIntegerOneBodyLocation {
+        assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION, 2)
+        return OneIntegerOneBodyLocation(
             integer = parameterAsInt(function, 0),
-            string = parameterAsString(function, 1)
+            bodyLocation = BodyLocationCategory.valueOf(parameterAsString(function, 1).uppercase())
         )
     }
 

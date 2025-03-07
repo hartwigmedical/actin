@@ -4,4 +4,4 @@ ARG VERSION
 
 COPY target/trial-${VERSION}-jar-with-dependencies.jar /usr/local/actin.jar
 
-ENTRYPOINT ["java", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.trial.TrialCreatorApplicationKt" ]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=95", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.trial.TrialCreatorApplicationKt" ]

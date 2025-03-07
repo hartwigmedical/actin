@@ -77,7 +77,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
-        MolecularHistoryPrinter.printRecord(history)
+        MolecularHistoryPrinter.print(history)
 
         val patientRecord = PatientRecordFactory.fromInputs(clinical, history)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
@@ -118,7 +118,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
-                    + "assuming ref genome version \"$CLINICAL_TESTS_REF_GENOME_VERSION\""
+                    + "assuming ref genome version '$CLINICAL_TESTS_REF_GENOME_VERSION'"
         )
         val serveRecord = selectForRefGenomeVersion(serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
         val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
@@ -139,7 +139,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
         }
 
-        LOGGER.info("Interpreting {} prior sequencing tests", clinical.priorSequencingTests.size)
+        LOGGER.info("Interpreting {} prior sequencing test(s)", clinical.priorSequencingTests.size)
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
             ensemblRefGenomeVersion, config.referenceGenomeFastaPath, ensemblDataCache
@@ -167,7 +167,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelFusionAnnotator
         )
 
-        LOGGER.info(" Completed interpretation of {} clinical molecular tests", sequencingMolecularTests.size)
+        LOGGER.info("Completed interpretation of {} clinical molecular test(s)", sequencingMolecularTests.size)
         return sequencingMolecularTests + ihcMolecularTests
     }
 

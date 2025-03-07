@@ -3,27 +3,27 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.molecular.Driver
-import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.Fusion
-import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
-import com.hartwig.actin.datamodel.molecular.orange.immunology.MolecularImmunology
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
 
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalTestOrangeRecord()
 
     fun priorIHCTest(
         test: String = "",
@@ -192,50 +192,50 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withHomologousRepairDeficiencyAndVariant(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndVariant(
+        isHomologousRecombinationDeficient: Boolean?,
         variant: Variant
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), variant
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), variant
         )
     }
 
-    fun withHomologousRepairDeficiencyAndLoss(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndLoss(
+        isHomologousRecombinationDeficient: Boolean?,
         loss: CopyNumber
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), loss
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), loss
         )
     }
 
-    fun withHomologousRepairDeficiencyAndHomozygousDisruption(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndHomozygousDisruption(
+        isHomologousRecombinationDeficient: Boolean?,
         homozygousDisruption: HomozygousDisruption
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), homozygousDisruption
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), homozygousDisruption
         )
     }
 
-    fun withHomologousRepairDeficiencyAndDisruption(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndDisruption(
+        isHomologousRecombinationDeficient: Boolean?,
         disruption: Disruption
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), disruption
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), disruption
         )
     }
 
-    fun withHomologousRepairDeficiencyAndVariantAndDisruption(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndVariantAndDisruption(
+        isHomologousRecombinationDeficient: Boolean?,
         disruption: Disruption,
         variant: Variant
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient),
+                characteristics = baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient),
                 drivers = baseMolecular.drivers.copy(variants = listOf(variant), disruptions = listOf(disruption))
             )
         )

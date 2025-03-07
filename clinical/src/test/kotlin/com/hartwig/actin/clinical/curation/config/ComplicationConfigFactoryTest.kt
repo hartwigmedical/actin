@@ -19,8 +19,17 @@ class ComplicationConfigFactoryTest {
 
     @Test
     fun `Should return complication config from valid data`() {
+        assertConfigCreation("name", "name")
+    }
+
+    @Test
+    fun `Should return complication config with null name when configured name is empty`() {
+        assertConfigCreation(" ", null)
+    }
+
+    private fun assertConfigCreation(curatedName: String, expectedName: String?) {
         val configFactory = ComplicationConfigFactory(icdModel)
-        val data = arrayOf("input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2023", "12")
+        val data = arrayOf("input", "1", curatedName, "$icdMainTitle&$icdExtensionTitle", "2023", "12")
         val config = configFactory.create(fields, data)
 
         val errors = config.errors
@@ -32,9 +41,8 @@ class ComplicationConfigFactoryTest {
 
         assertThat(configObj.input).isEqualTo("input")
         assertThat(configObj.ignore).isEqualTo(false)
-        assertThat(configObj.impliesUnknownComplicationState).isTrue
 
-        assertThat(curated.name).isEqualTo("name")
+        assertThat(curated.name).isEqualTo(expectedName)
         assertThat(curatedIcd).isEqualTo(icdCodes)
         assertThat(curated.year).isEqualTo(2023)
         assertThat(curated.month).isEqualTo(12)
@@ -59,17 +67,6 @@ class ComplicationConfigFactoryTest {
             ).errors
         ).containsExactly(
             CurationConfigValidationError("Complication", "input", "month", "month", "integer")
-        )
-    }
-
-    @Test
-    fun `Should return validation error when impliesUnknownComplicationState is not boolean`() {
-        assertThat(
-            ComplicationConfigFactory(icdModel).create(
-                fields, arrayOf("input", "A", "name", icdExtensionTitle, "2023", "12")
-            ).errors
-        ).containsExactly(
-            CurationConfigValidationError("Complication", "input", "impliesUnknownComplicationState", "A", "boolean")
         )
     }
 

@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.interpretation
 
-import com.hartwig.actin.datamodel.molecular.Drivers
-import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
@@ -29,10 +29,10 @@ object AggregatedEvidenceFactory {
                 "microsatellite stability"
             ),
             aggregatedEvidenceForCharacteristic(
-                characteristics.isHomologousRepairDeficient,
-                MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT,
-                characteristics.homologousRepairEvidence,
-                "homologous repair deficiency"
+                characteristics.isHomologousRecombinationDeficient,
+                MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT,
+                characteristics.homologousRecombinationEvidence,
+                "homologous recombination deficiency"
             ),
             aggregatedEvidenceForCharacteristic(
                 characteristics.hasHighTumorMutationalBurden,

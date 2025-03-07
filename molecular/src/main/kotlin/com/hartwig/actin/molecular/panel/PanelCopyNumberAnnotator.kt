@@ -2,12 +2,12 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.GeneRole
-import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.orange.driver.TranscriptCopyNumberImpact
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
@@ -33,15 +33,15 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
     }
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumber)
-        val geneAlteration =
+        val alteration =
             GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
-        return copyNumber.copy(
-            evidence = evidence,
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        val copyNumberWithGeneAlteration = copyNumber.copy(
+            geneRole = alteration.geneRole,
+            proteinEffect = alteration.proteinEffect,
+            isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
+        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumberWithGeneAlteration)
+        return copyNumberWithGeneAlteration.copy(evidence = evidence)
     }
 
     private fun convertSequencedAmplifiedGene(sequencedAmplifiedGene: SequencedAmplification): CopyNumber {

@@ -1,9 +1,8 @@
 package com.hartwig.actin.datamodel.molecular
 
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import java.time.LocalDate
-
-// TODO (KD): Can be removed?
-const val NO_EVIDENCE_SOURCE = "none"
 
 interface MolecularTest {
     val experimentType: ExperimentType

@@ -9,7 +9,8 @@ data class InclusionCriterionReferenceConfig(val id: String, val text: String)
 
 data class TrialConfig(
     val trialId: String,
-    val source: TrialSource,
+    val source: TrialSource?,
+    val sourceId: String?,
     val nctId: String?,
     val open: Boolean,
     val acronym: String,

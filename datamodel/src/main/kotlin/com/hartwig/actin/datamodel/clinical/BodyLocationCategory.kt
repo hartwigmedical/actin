@@ -1,24 +1,34 @@
 package com.hartwig.actin.datamodel.clinical
 
-enum class BodyLocationCategory {
-    BLADDER,
-    BONE,
-    BRAIN,
-    BREAST,
-    CNS,
-    COLORECTUM,
-    ESOPHAGUS,
-    GALL_BLADDER,
-    HEAD_AND_NECK,
-    KIDNEY,
-    LIVER,
-    LUNG,
-    LYMPH_NODE,
-    OMENTUM,
-    PANCREAS,
-    PERITONEUM,
-    REPRODUCTIVE_SYSTEM,
-    SPLEEN,
-    STOMACH,
-    THYROID_GLAND,
+import com.hartwig.actin.datamodel.Displayable
+
+enum class BodyLocationCategory(private val display: String): Displayable {
+    BLADDER("bladder"),
+    BONE("bone"),
+    BONE_MARROW("bone marrow"),
+    BRAIN("brain"),
+    BREAST("breast"),
+    CNS("CNS"),
+    COLORECTUM("colorectum"),
+    ESOPHAGUS("esophagus"),
+    GALLBLADDER("gallbladder"),
+    HEAD_AND_NECK("head and neck"),
+    KIDNEY("kidney"),
+    LIVER("liver"),
+    LUNG("lung"),
+    LYMPH_NODE("lymph node"),
+    OMENTUM("omentum"),
+    PANCREAS("pancreas"),
+    PERITONEUM("peritoneum"),
+    PROSTATE("prostate"),
+    REPRODUCTIVE_SYSTEM("reproductive system"),
+    SPLEEN("spleen"),
+    STOMACH("stomach"),
+    THYROID_GLAND("thyroid gland"),
+    VASCULAR("vascular");
+
+    override fun display(): String {
+        return display
+    }
 }
+

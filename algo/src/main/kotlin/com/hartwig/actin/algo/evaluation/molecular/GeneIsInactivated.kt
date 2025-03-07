@@ -4,12 +4,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import java.time.LocalDate
 
 class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
@@ -90,7 +90,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
                     } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && extendedVariant?.isBiallelic == true) {
                         reportableNonDriverBiallelicVariantsOther.add(variant.event)
                     } else if (
-                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRepairDeficient == true)
+                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRecombinationDeficient == true)
                         || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.isMicrosatelliteUnstable == true)
                     ) {
                         reportableNonDriverNonBiallelicVariantsOther.add(variant.event)

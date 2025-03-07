@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import java.time.LocalDate
 
 class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalDate? = null, private val matchOnHlaGroup: Boolean = false) :
@@ -13,7 +13,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
     override fun evaluate(test: MolecularTest): Evaluation {
         val molecular = test as? MolecularRecord ?: return EvaluationFactory.undetermined(
             "Cannot evaluate HLA type without WGS",
-            missingGenesForEvaluation = true
+            isMissingMolecularResultForEvaluation = true
         )
         val immunology = molecular.immunology
         if (!immunology.isReliable) {
