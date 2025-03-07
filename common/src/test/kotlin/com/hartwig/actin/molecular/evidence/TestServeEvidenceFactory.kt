@@ -17,14 +17,10 @@ import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 
 object TestServeEvidenceFactory {
 
-    fun createEvidenceForHotspot(
-        variants: Set<VariantAnnotation> = emptySet()
-    ): EfficacyEvidence {
+    fun createEvidenceForHotspot(vararg variants: VariantAnnotation): EfficacyEvidence {
         return create(
             molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                variants = if (variants.isNotEmpty()) variants else setOf(
-                    TestServeMolecularFactory.createVariantAnnotation()
-                )
+                variants = if (variants.isNotEmpty()) variants.toSet() else setOf(TestServeMolecularFactory.createVariantAnnotation())
             )
         )
     }

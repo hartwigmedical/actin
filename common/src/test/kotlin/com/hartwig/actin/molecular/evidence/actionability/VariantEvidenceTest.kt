@@ -14,14 +14,12 @@ import org.junit.Test
 
 private val EVIDENCE_FOR_HOTSPOT =
     TestServeEvidenceFactory.createEvidenceForHotspot(
-        variants = setOf(
-            TestServeMolecularFactory.createVariantAnnotation(
-                gene = "gene 1",
-                chromosome = "1",
-                position = 5,
-                ref = "A",
-                alt = "T"
-            )
+        TestServeMolecularFactory.createVariantAnnotation(
+            gene = "gene 1",
+            chromosome = "1",
+            position = 5,
+            ref = "A",
+            alt = "T"
         )
     )
 private val EVIDENCE_FOR_CODON = TestServeEvidenceFactory.createEvidenceForCodon(

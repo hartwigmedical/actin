@@ -15,9 +15,7 @@ class ApplicabilityFilteringTest {
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForHotspot(
-                    variants = setOf(
-                        TestServeMolecularFactory.createVariantAnnotation(gene = nonApplicableGene)
-                    )
+                    TestServeMolecularFactory.createVariantAnnotation(gene = nonApplicableGene)
                 ).molecularCriterium().hotspots().first()
             )
         ).isFalse()
@@ -25,9 +23,7 @@ class ApplicabilityFilteringTest {
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForHotspot(
-                    variants = setOf(
-                        TestServeMolecularFactory.createVariantAnnotation(gene = "other")
-                    )
+                    TestServeMolecularFactory.createVariantAnnotation(gene = "other")
                 ).molecularCriterium().hotspots().first()
             )
         ).isTrue()

@@ -12,7 +12,7 @@ private val ANY_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGe
 private val AMP_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
 private val INACT_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.INACTIVATION)
 private val OTHER_EVIDENCE =
-    TestServeEvidenceFactory.createEvidenceForHotspot(variants = setOf(TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1")))
+    TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1"))
 
 private val ANY_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
 private val AMP_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
