@@ -46,15 +46,14 @@ object ServeVerifier {
     }
 
     private fun verifyHotspotsInServeRecord(serveRecord: ServeRecord) {
-        serveRecord.evidences().forEach { evidence ->
-            evidence.molecularCriterium().hotspots().forEach { verifyHotspotGeneConsistency(it) }
-        }
+        serveRecord.evidences()
+            .flatMap { it.molecularCriterium().hotspots() }
+            .forEach { verifyHotspotGeneConsistency(it) }
 
-        serveRecord.trials().forEach { trial ->
-            trial.anyMolecularCriteria().forEach { molecularCriteria ->
-                molecularCriteria.hotspots().forEach { verifyHotspotGeneConsistency(it) }
-            }
-        }
+        serveRecord.trials()
+            .flatMap { it.anyMolecularCriteria() }
+            .flatMap { it.hotspots() }
+            .forEach { verifyHotspotGeneConsistency(it) }
     }
 
     private fun verifyHotspotGeneConsistency(actionableHotspot: ActionableHotspot) {
