@@ -50,7 +50,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
     fun `Should fail if there are treatments of the wrong category`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(makeRecordWithMatchingAndAdditionalEntry(category = TreatmentCategory.HORMONE_THERAPY))
+            function.evaluate(makeRecordWithMatchingAndAdditionalEntry(category = TreatmentCategory.HORMONE_THERAPY, types = setOf(DrugType.ANTI_ANDROGEN)))
         )
     }
 
@@ -72,7 +72,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
     }
 
     @Test
-    fun `Should pass undetermined if there are treatments of unknown type`() {
+    fun `Should evaluate to undetermined if there are treatments of unknown type`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = emptySet())))
     }
 
