@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -22,21 +23,23 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
                     else -> false
                 }
             }
+
+        val typesList = concatItemsWithOr(types)
         return when {
             false in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.fail("Did not only receive $types ${category.display()} treatment")
+                EvaluationFactory.fail("Did not only receive $typesList ${category.display()} treatment")
             }
 
             null in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.undetermined("Undetermined if received ${category.display()} is of type $types")
+                EvaluationFactory.undetermined("Undetermined if received ${category.display()} is of type $typesList")
             }
 
             true in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.pass("Has only had $types ${category.display()} treatment")
+                EvaluationFactory.pass("Has only had $typesList ${category.display()} treatment")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had $types ${category.display()} treatment (no prior systemic treatment)")
+                EvaluationFactory.fail("Has not had $typesList ${category.display()} treatment (no prior systemic treatment)")
             }
         }
     }
