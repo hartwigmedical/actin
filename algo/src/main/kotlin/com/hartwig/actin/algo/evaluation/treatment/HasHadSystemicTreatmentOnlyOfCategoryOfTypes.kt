@@ -23,6 +23,10 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
                     else -> false
                 }
             }
+        val trialMedicationWithUnknownCategoryOrIntent = record.oncologicalHistory
+            .filter { it.isTrial }
+            .flatMap { it.allTreatments() }
+            .filter { it.isSystemic && (it.categories().isEmpty() || it.types().isEmpty()) }
 
         val typesList = concatItemsWithOr(types)
         return when {
@@ -36,6 +40,10 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
 
             true in treatmentsByMatchEvaluation -> {
                 EvaluationFactory.pass("Has only had $typesList ${category.display()} treatment")
+            }
+
+            trialMedicationWithUnknownCategoryOrIntent.isNotEmpty() -> {
+                EvaluationFactory.undetermined("Has had trial medication of unknown category or type")
             }
 
             else -> {
