@@ -28,7 +28,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
             }
 
             null in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.warn("Undetermined if received ${category.display()} is of type $types")
+                EvaluationFactory.undetermined("Undetermined if received ${category.display()} is of type $types")
             }
 
             true in treatmentsByMatchEvaluation -> {

@@ -77,8 +77,8 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
     }
 
     @Test
-    fun `Should warn if there are treatments of the unknown type`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = emptySet())))
+    fun `Should pass undetermined if there are treatments of the unknown type`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = emptySet())))
     }
 
     @Test
