@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate

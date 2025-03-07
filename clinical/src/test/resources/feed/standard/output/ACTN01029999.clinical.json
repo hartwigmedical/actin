@@ -233,23 +233,7 @@
         "month": 1,
         "day": 1
       },
-      "code": "dc_NeutrGran",
-      "name": "Neutrof. granulocyten",
-      "comparator": "",
-      "value": 3.7,
-      "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": 3.5,
-      "refLimitUp": 3.5,
-      "isOutsideRef": null
-    },
-    {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "code": "bg_O2Sgem",
-      "name": "O2-Saturatie gemeten",
+      "measurement": "O2_SATURATION_BG",
       "comparator": "",
       "value": 88.0,
       "unit": "PERCENTAGE",
@@ -263,8 +247,7 @@
         "month": 1,
         "day": 1
       },
-      "code": "Plt",
-      "name": "Trombocyten",
+      "measurement": "THROMBOCYTES_ABS",
       "comparator": "",
       "value": 252.0,
       "unit": "BILLIONS_PER_LITER",
@@ -278,8 +261,7 @@
         "month": 1,
         "day": 1
       },
-      "code": "dc_Lymfo",
-      "name": "Lymfocyten",
+      "measurement": "LYMPHOCYTES_ABS",
       "comparator": "",
       "value": 0.6,
       "unit": "BILLIONS_PER_LITER",
@@ -293,8 +275,7 @@
         "month": 1,
         "day": 1
       },
-      "code": "Hb",
-      "name": "Hemoglobine",
+      "measurement": "HEMOGLOBIN",
       "comparator": "",
       "value": 7.7,
       "unit": "MILLIMOLES_PER_LITER",
