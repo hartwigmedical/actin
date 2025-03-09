@@ -107,9 +107,8 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable hotspot in molecular history`() {
-        val hotspotWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForHotspot(
-            TestServeMolecularFactory.createVariantAnnotation("gene 1", "X", 2, "A", "G")
-        )
+        val hotspotWithResistanceEvidence =
+            TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation("gene 1", "X", 2, "A", "G"))
         val hasHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()
                 .copy(
