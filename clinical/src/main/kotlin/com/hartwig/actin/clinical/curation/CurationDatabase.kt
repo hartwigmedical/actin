@@ -1,10 +1,11 @@
 package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.UnusedCurationConfig
+import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 
 typealias InputText = String
 

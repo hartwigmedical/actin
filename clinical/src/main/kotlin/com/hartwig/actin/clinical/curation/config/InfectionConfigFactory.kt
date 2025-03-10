@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.icd.IcdModel

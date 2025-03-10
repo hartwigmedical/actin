@@ -12,10 +12,13 @@ import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.emc.FeedModel
-import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
+import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.icd.TestIcdFactory

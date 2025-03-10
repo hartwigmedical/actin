@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
 import com.hartwig.actin.clinical.feed.emc.lab.LabEntry

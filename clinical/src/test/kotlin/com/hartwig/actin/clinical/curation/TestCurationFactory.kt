@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.time.LocalDate
 

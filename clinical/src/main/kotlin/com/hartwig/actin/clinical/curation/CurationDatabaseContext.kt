@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.clinical.UnusedCurationConfig
+import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.EcgConfigFactory
@@ -38,6 +38,7 @@ import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFact
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.icd.IcdModel
 
 data class CurationDatabaseContext(
