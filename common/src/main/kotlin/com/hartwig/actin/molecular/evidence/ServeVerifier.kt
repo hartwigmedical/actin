@@ -45,27 +45,27 @@ object ServeVerifier {
     }
 
     private fun verifyHotspotsInServeRecord(serveRecord: ServeRecord) {
-        val allMolecularCriteria = serveRecord.evidences().asSequence().map { it.molecularCriterium() } +
-                serveRecord.trials().asSequence().flatMap { it.anyMolecularCriteria() }
-
-        val hotspotWithoutVariants = allMolecularCriteria.flatMap(MolecularCriterium::hotspots)
+        val hotspotWithoutVariants = allMolecularCriteria(serveRecord).flatMap(MolecularCriterium::hotspots)
             .find { it.variants().isEmpty() }
 
-        val inconsistentHotspot = allMolecularCriteria.flatMap(MolecularCriterium::hotspots)
+        val inconsistentHotspot = allMolecularCriteria(serveRecord).flatMap(MolecularCriterium::hotspots)
             .find {
-                it.variants().isNotEmpty() && it.variants().any { variant -> variant.gene() != it.variants().first().gene() }
+                val variants = it.variants()
+                variants.isNotEmpty() && variants.any { variant -> variant.gene() != variants.first().gene() }
             }
 
-        if (hotspotWithoutVariants != null || inconsistentHotspot != null) {
-            val message = buildString {
-                if (hotspotWithoutVariants != null) {
-                    append("Hotspot without variants: $hotspotWithoutVariants\n")
-                }
-                if (inconsistentHotspot != null) {
-                    append("Hotspot with mismatched genes: $inconsistentHotspot\n")
-                }
-            }
+        val message = listOfNotNull(
+            hotspotWithoutVariants?.let { "Hotspot without variants: $it" },
+            inconsistentHotspot?.let { "Hotspot with inconsistent genes: $it" })
+            .joinToString("\n")
+
+        if (message.isNotEmpty()) {
             throw IllegalStateException("SERVE record contains invalid hotspots:\n$message")
         }
+    }
+
+    private fun allMolecularCriteria(serveRecord: ServeRecord): Sequence<MolecularCriterium> {
+        return serveRecord.evidences().asSequence().map { it.molecularCriterium() } +
+                serveRecord.trials().asSequence().flatMap { it.anyMolecularCriteria() }
     }
 }
