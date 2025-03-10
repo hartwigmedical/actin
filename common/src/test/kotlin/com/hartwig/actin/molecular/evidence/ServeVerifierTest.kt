@@ -81,7 +81,7 @@ class ServeVerifierTest {
     }
 
     @Test
-    fun `Should throw exception for hotspot with not variants`() {
+    fun `Should throw exception for hotspot with no variants`() {
         val trial =
             TestServeTrialFactory.create(anyMolecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(variants = emptySet())))
 
