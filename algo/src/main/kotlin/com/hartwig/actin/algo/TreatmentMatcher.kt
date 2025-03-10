@@ -2,13 +2,16 @@ package com.hartwig.actin.algo
 
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evidence.TreatmentRanker
+import com.hartwig.actin.algo.evidence.saturatingDiminishingReturnsScore
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
+import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
-import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.datamodel.PatientRecord
-
+import com.hartwig.actin.datamodel.algo.RankedTreatment
+import com.hartwig.actin.datamodel.algo.TreatmentEvidenceRanking
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
@@ -21,7 +24,8 @@ class TreatmentMatcher(
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
     private val personalizationDataPath: String? = null,
-    private val maxMolecularTestAge: LocalDate?
+    private val maxMolecularTestAge: LocalDate?,
+    private val treatmentRanker: TreatmentRanker
 ) {
 
     fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
@@ -46,7 +50,10 @@ class TreatmentMatcher(
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
             personalizedDataAnalysis = personalizedDataAnalysis,
-            maxMolecularTestAge = maxMolecularTestAge
+            maxMolecularTestAge = maxMolecularTestAge,
+            treatmentEvidenceRanking = TreatmentEvidenceRanking(
+                treatmentRanker.rank(patient)
+                    .map { RankedTreatment(it.treatment, saturatingDiminishingReturnsScore(evidenceScores = it.scores)) })
         )
     }
 
@@ -65,7 +72,8 @@ class TreatmentMatcher(
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
                 resources.personalizationDataPath,
-                maxMolecularTestAge
+                maxMolecularTestAge,
+                TreatmentRanker()
             )
         }
     }

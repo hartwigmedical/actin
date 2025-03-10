@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
@@ -66,7 +66,7 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
     TestTreatmentEvidenceFactory.create(
         treatment = "treatment",
         evidenceLevel = EvidenceLevel.A,
-        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+        evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
         isOnLabel = true,
         isCategoryEvent = true
@@ -178,7 +178,7 @@ class PanelFusionAnnotatorTest {
                         isOnLabel = true,
                         isCategoryEvent = true,
                         evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+                        evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
                     )
                 )
@@ -210,7 +210,7 @@ class PanelFusionAnnotatorTest {
                     TestTreatmentEvidenceFactory.create(
                         treatment = "treatment",
                         evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+                        evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
                         isOnLabel = true,
                         isCategoryEvent = true

@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -16,15 +16,16 @@ import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.common.Indication
+import com.hartwig.serve.datamodel.efficacy.ApprovalPhase
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
-import java.time.LocalDate
+import com.hartwig.serve.datamodel.efficacy.ApprovalPhase as ServeApprovalPhase
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails as ServeEvidenceLevelDetails
 
 private val BASE_ACTIONABLE_EVENT = TestServeMolecularFactory.createActionableEvent()
 
@@ -43,7 +44,7 @@ class ClinicalEvidenceFactoryTest {
                         ),
                         molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(BASE_ACTIONABLE_EVENT),
                         evidenceLevel = ServeEvidenceLevel.D,
-                        evidenceLevelDetails = ServeEvidenceLevelDetails.CASE_REPORTS_SERIES,
+                        evidenceLevelDetails = ServeApprovalPhase.CASE_REPORTS_SERIES,
                         evidenceDirection = EvidenceDirection.NO_BENEFIT
                     )
                 ),
@@ -61,7 +62,7 @@ class ClinicalEvidenceFactoryTest {
                 matchedCancerType = "on-label type",
                 excludedCancerSubTypes = setOf("excluded 1", "excluded 2"),
                 evidenceLevel = EvidenceLevel.D,
-                evidenceLevelDetails = EvidenceLevelDetails.CASE_REPORTS_SERIES,
+                evidenceLevelDetails = EvidenceApprovalPhase.CASE_REPORTS_SERIES,
                 evidenceDirection = TestEvidenceDirectionFactory.noBenefit()
             )
         )
@@ -83,7 +84,7 @@ class ClinicalEvidenceFactoryTest {
                         ),
                         molecularCriterium = TestServeMolecularFactory.createCodonCriterium(baseActionableEvent = BASE_ACTIONABLE_EVENT),
                         evidenceLevel = ServeEvidenceLevel.B,
-                        evidenceLevelDetails = ServeEvidenceLevelDetails.CLINICAL_STUDY,
+                        evidenceLevelDetails = ApprovalPhase.CLINICAL_STUDY,
                         evidenceDirection = EvidenceDirection.RESPONSIVE
                     )
                 ),
@@ -100,7 +101,7 @@ class ClinicalEvidenceFactoryTest {
                 matchedCancerType = "off-label type",
                 excludedCancerSubTypes = emptySet(),
                 evidenceLevel = EvidenceLevel.B,
-                evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+                evidenceLevelDetails = EvidenceApprovalPhase.CLINICAL_STUDY,
                 evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
             )
         )

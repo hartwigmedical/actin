@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 object TreatmentEvidenceFunctions {
@@ -68,7 +68,7 @@ object TreatmentEvidenceFunctions {
     }
 
     private fun isPreclinical(evidence: TreatmentEvidence): Boolean {
-        return evidence.evidenceLevelDetails == EvidenceLevelDetails.PRECLINICAL
+        return evidence.evidenceLevelDetails == EvidenceApprovalPhase.PRECLINICAL
     }
 
     fun prioritizeNonCategoryEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {

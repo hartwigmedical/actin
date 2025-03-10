@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
@@ -63,7 +63,7 @@ object ClinicalEvidenceFactory {
                 excludedCancerSubTypes = evidence.indication().excludedSubTypes().map { ct -> ct.name() }.toSet()
             ),
             evidenceLevel = EvidenceLevel.valueOf(evidence.evidenceLevel().name),
-            evidenceLevelDetails = EvidenceLevelDetails.valueOf(evidence.evidenceLevelDetails().name),
+            evidenceLevelDetails = EvidenceApprovalPhase.valueOf(evidence.evidenceLevelDetails().name),
             evidenceDirection = EvidenceDirection(
                 hasPositiveResponse = evidence.evidenceDirection().hasPositiveResponse(),
                 hasBenefit = evidence.evidenceDirection().hasBenefit(),

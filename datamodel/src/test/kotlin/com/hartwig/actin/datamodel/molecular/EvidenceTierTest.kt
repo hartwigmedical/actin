@@ -3,7 +3,7 @@ package com.hartwig.actin.datamodel.molecular
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.evidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
@@ -48,7 +48,7 @@ class EvidenceTierTest {
     private fun driverWithEvidence(
         evidenceLevel: EvidenceLevel,
         isOnLabel: Boolean = true,
-        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+        evidenceLevelDetails: EvidenceApprovalPhase = EvidenceApprovalPhase.CLINICAL_STUDY,
         isCategoryEvent: Boolean = false
     ): Driver {
         return mockDriver(

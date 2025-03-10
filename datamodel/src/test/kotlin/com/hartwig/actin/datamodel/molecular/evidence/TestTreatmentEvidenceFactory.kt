@@ -9,7 +9,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "approved",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
         )
 
@@ -18,7 +18,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label experimental",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+            evidenceLevelDetails = EvidenceApprovalPhase.CLINICAL_STUDY,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
@@ -27,7 +27,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label experimental",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.B,
-            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+            evidenceLevelDetails = EvidenceApprovalPhase.CLINICAL_STUDY,
             evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
         )
 
@@ -36,7 +36,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label pre-clinical",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.C,
-            evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
+            evidenceLevelDetails = EvidenceApprovalPhase.PRECLINICAL,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
@@ -45,7 +45,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label pre-clinical",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.D,
-            evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
+            evidenceLevelDetails = EvidenceApprovalPhase.PRECLINICAL,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
@@ -54,7 +54,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label known resistant",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
         )
 
@@ -63,7 +63,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label known resistant",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
         )
 
@@ -72,7 +72,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label suspect resistant",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.C,
-            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
         )
 
@@ -81,7 +81,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label suspect resistant",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.C,
-            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
         )
 
@@ -94,7 +94,7 @@ object TestTreatmentEvidenceFactory {
         matchedCancerType: String = "",
         excludedCancerSubTypes: Set<String> = emptySet(),
         evidenceLevel: EvidenceLevel,
-        evidenceLevelDetails: EvidenceLevelDetails,
+        evidenceLevelDetails: EvidenceApprovalPhase,
         evidenceDirection: EvidenceDirection
     ) = TreatmentEvidence(
         treatment = treatment,

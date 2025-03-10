@@ -3,10 +3,10 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.common.Indication
+import com.hartwig.serve.datamodel.efficacy.ApprovalPhase
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
@@ -104,7 +104,7 @@ object TestServeEvidenceFactory {
         indication: Indication = TestServeFactory.createEmptyIndication(),
         molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium(),
         evidenceLevel: EvidenceLevel = EvidenceLevel.D,
-        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+        evidenceLevelDetails: ApprovalPhase = ApprovalPhase.GUIDELINE,
         evidenceDirection: EvidenceDirection = EvidenceDirection.NO_BENEFIT
     ): EfficacyEvidence {
         return ImmutableEfficacyEvidence.builder()

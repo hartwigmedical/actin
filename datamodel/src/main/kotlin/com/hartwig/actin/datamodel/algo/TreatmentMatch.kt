@@ -11,5 +11,6 @@ data class TreatmentMatch(
     val trialMatches: List<TrialMatch>,
     val standardOfCareMatches: List<AnnotatedTreatmentMatch>? = null,
     val personalizedDataAnalysis: PersonalizedDataAnalysis? = null,
-    val maxMolecularTestAge: LocalDate? = null
+    val maxMolecularTestAge: LocalDate? = null,
+    val treatmentEvidenceRanking: TreatmentEvidenceRanking? = null
 )

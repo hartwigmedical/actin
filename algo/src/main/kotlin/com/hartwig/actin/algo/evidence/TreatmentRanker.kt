@@ -1,24 +1,25 @@
-package com.hartwig.actin.evidence
+package com.hartwig.actin.algo.evidence
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.PatientRecord
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.math.exp
 
-data class RankResult(val treatment: String, val scores: List<Score>) : Comparable<RankResult> {
+data class RankResult(val treatment: String, val event: String, val scores: List<Score>) : Comparable<RankResult> {
     override fun compareTo(other: RankResult): Int {
         return Comparator.comparingDouble<RankResult> { it.scores.sumOf { s -> s.score }.toDouble() }.compare(this, other)
     }
 
 }
 
-class TreatmentRank {
+class TreatmentRanker {
 
     fun rank(record: PatientRecord): List<RankResult> {
         val scorer = TreatmentScorer()
         val treatments = record.molecularHistory.molecularTests.asSequence().flatMap {
             (it.drivers.fusions + it.drivers.variants).map { d -> d.evidence } +
-                    it.characteristics.microsatelliteEvidence + it.characteristics.homologousRepairEvidence + it.characteristics.tumorMutationalBurdenEvidence + it.characteristics.tumorMutationalLoadEvidence
+                    it.characteristics.microsatelliteEvidence + it.characteristics.homologousRecombinationEvidence + it.characteristics.tumorMutationalBurdenEvidence + it.characteristics.tumorMutationalLoadEvidence
         }.filterNotNull().flatMap { it.treatmentEvidence }.toSet()
 
         val scoredTreatmentEntries = treatments.map { it to scorer.score(it) }
@@ -28,13 +29,22 @@ class TreatmentRank {
             }.mapValues { entry ->
                 entry.value.map { it.second }.toList()
             }
-        return scoredTreatments.map { RankResult(it.key.first, it.value) }
+        return scoredTreatments.map { RankResult(it.key.first, it.key.second, it.value) }
     }
 }
 
+fun saturatingDiminishingReturnsScore(
+    evidenceScores: List<Score>,
+    slope: Double = 1.5,
+    midpoint: Double = 1.0
+) = evidenceScores.sortedDescending().withIndex().map { (index, score) ->
+    score.score() * (1.0 / (1.0 + exp(slope * (index - midpoint))))
+}.sumOf { it }
+
+
 fun main() {
     val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of("/Users/pwolfe/Code/actin/case_976.patient_record.json")))
-    val records = TreatmentRank().rank(patientRecord)
+    val records = TreatmentRanker().rank(patientRecord)
     var stringToWrite = "Treatment,Variant,Variant Match,Tumor Match,Approval,Factor,Score,Total Score,Description\n"
     for (record in records.sorted().reversed()) {
         var treatmentText = ""
@@ -42,7 +52,12 @@ fun main() {
         for (scoreObject in record.scores.sortedBy { it.score() }.reversed()) {
             with(scoreObject) {
                 val eventHeader =
-                    ",$variant,${scoringMatch.variantMatch},${scoringMatch.tumorMatch},${evidenceLevelDetails},$factor,$score,${score()},${evidenceDescription.replace(",","")}\n"
+                    ",$variant,${scoringMatch.variantMatch},${scoringMatch.tumorMatch},${evidenceLevelDetails},$factor,$score,${score()},${
+                        evidenceDescription.replace(
+                            ",",
+                            ""
+                        )
+                    }\n"
                 treatmentText += eventHeader
             }
             scoreSum += scoreObject.score()

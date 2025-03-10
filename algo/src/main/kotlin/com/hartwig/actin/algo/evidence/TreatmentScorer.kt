@@ -1,12 +1,12 @@
-package com.hartwig.actin.evidence
+package com.hartwig.actin.algo.evidence
 
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class Score(
     val variant: String,
     val scoringMatch: ScoringMatch,
-    val evidenceLevelDetails: EvidenceLevelDetails,
+    val evidenceLevelDetails: EvidenceApprovalPhase,
     val factor: Int,
     val score: Int,
     val evidenceDescription: String
@@ -27,8 +27,8 @@ class TreatmentScorer {
         val config = create()
         val scoringMatch = ScoringMatch(onLabel, exactVariant)
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
-        val factor = (config.levels[scoringMatch] ?: 0) * direction
-        val score = config.level.scoring[treatment.evidenceLevelDetails] ?: 0
+        val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
+        val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
         return Score(
             scoringMatch = scoringMatch,
             evidenceLevelDetails = treatment.evidenceLevelDetails,

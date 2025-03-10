@@ -3,7 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
@@ -83,7 +83,7 @@ class TreatmentEvidenceFunctionsTest {
             createTreatmentEvidence(
                 treatment = "preclinical",
                 evidenceLevel = EvidenceLevel.D,
-                evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL
+                evidenceLevelDetails = EvidenceApprovalPhase.PRECLINICAL
             )
         val evidence = setOf(onLabelCategoryLevelA, preclinicalEvidence)
         val result = TreatmentEvidenceFunctions.filterPreClinicalEvidence(evidence)
@@ -196,7 +196,7 @@ class TreatmentEvidenceFunctionsTest {
         evidenceYear: Int = 2024,
         isCategoryEvent: Boolean = true,
         sourceEvent: String = "sourceEvent",
-        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+        evidenceLevelDetails: EvidenceApprovalPhase = EvidenceApprovalPhase.CLINICAL_STUDY,
         cancerType: CancerType = CancerType("", emptySet())
     ): TreatmentEvidence {
         return TreatmentEvidence(

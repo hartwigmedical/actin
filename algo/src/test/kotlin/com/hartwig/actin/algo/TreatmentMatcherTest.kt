@@ -5,10 +5,11 @@ import com.hartwig.actin.algo.calendar.CurrentDateProvider
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evidence.TreatmentRanker
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
-import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
@@ -25,9 +26,9 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private val MAX_AGE = LocalDate.of(2023, 12, 10)
 
@@ -58,7 +59,8 @@ class TreatmentMatcherTest {
         CurrentDateProvider(),
         EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
         null,
-        MAX_AGE
+        MAX_AGE,
+        TreatmentRanker()
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
@@ -109,7 +111,8 @@ class TreatmentMatcherTest {
             CurrentDateProvider(),
             EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
             null,
-            MAX_AGE
+            MAX_AGE,
+            TreatmentRanker()
         )
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")
