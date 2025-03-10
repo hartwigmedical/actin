@@ -20,10 +20,10 @@ object TestServeMolecularFactory {
 
     fun createHotspotCriterium(
         baseActionableEvent: ActionableEvent = createActionableEvent(),
-        variants: Set<VariantAnnotation> = emptySet(),
+        variants: Set<VariantAnnotation> = setOf(createVariantAnnotation()),
     ): MolecularCriterium {
         val actionableHotspot = ImmutableActionableHotspot.builder().from(baseActionableEvent)
-            .addAllVariants(if (variants.isNotEmpty()) variants else setOf(createVariantAnnotation()))
+            .addAllVariants(variants)
             .build()
         return ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
     }

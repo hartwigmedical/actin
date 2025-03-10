@@ -80,6 +80,15 @@ class ServeVerifierTest {
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
     }
 
+    @Test
+    fun `Should throw exception for hotspot with not variants`() {
+        val trial =
+            TestServeTrialFactory.create(anyMolecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(variants = emptySet())))
+
+        val database = toServeDatabase(TestServeEvidenceFactory.create(), trial)
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+    }
+
     private fun toServeDatabase(evidence: EfficacyEvidence, trial: ActionableTrial): ServeDatabase {
         return ImmutableServeDatabase.builder()
             .version("test")
