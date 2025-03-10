@@ -50,7 +50,12 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
     fun `Should fail if there are treatments of the wrong category`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(makeRecordWithMatchingAndAdditionalEntry(category = TreatmentCategory.HORMONE_THERAPY, types = setOf(DrugType.ANTI_ANDROGEN)))
+            function.evaluate(
+                makeRecordWithMatchingAndAdditionalEntry(
+                    category = TreatmentCategory.HORMONE_THERAPY,
+                    types = setOf(DrugType.ANTI_ANDROGEN)
+                )
+            )
         )
     }
 
@@ -79,6 +84,14 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
     @Test
     fun `Should evaluate to undetermined if there is a trial medication of unknown category or type`() {
         val trialTreatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, emptySet())), isTrial = true)
+        val matchingTreatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, matchingTypes)))
+        val patientRecord = withTreatmentHistory(listOf(trialTreatmentHistoryEntry, matchingTreatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if there is a trial medication`() {
+        val trialTreatmentHistoryEntry = treatmentHistoryEntry(isTrial = true)
         val matchingTreatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, matchingTypes)))
         val patientRecord = withTreatmentHistory(listOf(trialTreatmentHistoryEntry, matchingTreatmentHistoryEntry))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
