@@ -58,12 +58,16 @@ class EligibleActinTrialsGenerator(
     }
 
     companion object {
-        fun forOpenCohorts(
-            cohorts: List<InterpretedCohort>, source: String?, width: Float, slotsAvailable: Boolean, includeLocation: Boolean = false
-        ): Pair<EligibleActinTrialsGenerator, List<InterpretedCohort>> {
-            val recruitingAndEligibleCohorts = cohorts.filter {
+        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean) : List<InterpretedCohort>{
+            return cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
             }
+        }
+
+        fun forOpenCohorts(
+            cohorts: List<InterpretedCohort>, source: String?, width: Float, slotsAvailable: Boolean, includeLocation: Boolean = false
+        ): EligibleActinTrialsGenerator {
+            val recruitingAndEligibleCohorts = filterCohortsAvailable(cohorts, slotsAvailable)
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
@@ -75,7 +79,7 @@ class EligibleActinTrialsGenerator(
 
             val title = "${createTableTitleStart(source)} that are open and potentially eligible$slotsText $cohortFromTrialsText"
 
-            return create(recruitingAndEligibleCohorts, title, width, null, includeLocation) to recruitingAndEligibleCohorts
+            return create(recruitingAndEligibleCohorts, title, width, null, includeLocation)
         }
 
         fun forOpenCohortsWithMissingMolecularResultsForEvaluation(
