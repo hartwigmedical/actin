@@ -56,8 +56,8 @@ object ServeVerifier {
 
         val message = listOfNotNull(
             hotspotWithoutVariants?.let { "Hotspot without variants: $it" },
-            inconsistentHotspot?.let { "Hotspot with inconsistent genes: $it" })
-            .joinToString("\n")
+            inconsistentHotspot?.let { "Hotspot with inconsistent genes: $it" }
+        ).joinToString("\n")
 
         if (message.isNotEmpty()) {
             throw IllegalStateException("SERVE record contains invalid hotspots:\n$message")
