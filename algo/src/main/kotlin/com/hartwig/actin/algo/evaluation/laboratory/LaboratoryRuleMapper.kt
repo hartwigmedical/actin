@@ -149,7 +149,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             ),
             EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE to undeterminedLabValueCreator("HLA-antibodies against PDC line"),
             EligibilityRule.HAS_CD4_POSITIVE_CELLS_MILLIONS_PER_LITER_OF_AT_LEAST_X to hasSufficientLabValueCreator(
-                LabMeasurement.CD4_POSITIVE_CELLS_ABSOLUTE,
+                LabMeasurement.CD4_POSITIVE_CELLS_ABS,
                 LabUnit.MILLIONS_PER_LITER
             )
         )
