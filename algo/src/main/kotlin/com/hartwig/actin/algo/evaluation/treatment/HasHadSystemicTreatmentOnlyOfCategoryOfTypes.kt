@@ -34,7 +34,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
                 EvaluationFactory.undetermined("Undetermined if received ${category.display()} is of type $typesList")
             }
 
-            record.oncologicalHistory.filter { it.isTrial }.isNotEmpty() -> {
+            record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() } -> {
                 EvaluationFactory.undetermined("Undetermined if treatment received in previous trial was $typesList ${category.display()}")
             }
 
