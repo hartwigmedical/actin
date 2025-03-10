@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
-import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
-import com.hartwig.actin.clinical.feed.standard.ProvidedWhoEvaluation
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedComplication
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedWhoEvaluation
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

@@ -109,9 +109,7 @@
       "name": "Rheumatoid arthritis",
       "year": 2023,
       "month": null,
-      "doids": [
-        "7148"
-      ],
+      "icdCodes": [],
       "category": "Autoimmune disease",
       "comorbidityClass": "OTHER_CONDITION"
     }

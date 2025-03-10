@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc
 
+import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
+
 class FeedModel(private val feed: EmcClinicalFeed) {
     fun read(): List<FeedRecord> {
         val patientEntries = feed.patientEntries.groupBy(FeedEntry::subject)

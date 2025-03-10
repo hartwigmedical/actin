@@ -1,10 +1,11 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.ObservedToxicity
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy

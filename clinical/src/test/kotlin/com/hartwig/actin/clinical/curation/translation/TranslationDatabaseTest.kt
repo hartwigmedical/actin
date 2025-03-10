@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.translation
 
-import com.hartwig.actin.clinical.UnusedCurationConfig
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

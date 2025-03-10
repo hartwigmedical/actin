@@ -1,28 +1,10 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.icd.IcdModel
-
-data class CurationConfigValidationError(
-    val categoryName: String,
-    val input: String,
-    val fieldName: String,
-    val invalidValue: String,
-    val validType: String,
-    val additionalMessage: String? = null
-) : Comparable<CurationConfigValidationError> {
-
-    override fun compareTo(other: CurationConfigValidationError): Int {
-        return Comparator.comparing(CurationConfigValidationError::categoryName)
-            .thenComparing(CurationConfigValidationError::fieldName)
-            .thenComparing(CurationConfigValidationError::input)
-            .thenComparing(CurationConfigValidationError::invalidValue)
-            .thenComparing(CurationConfigValidationError::validType)
-            .compare(this, other)
-    }
-}
 
 data class ValidatedCurationConfig<T : CurationConfig>(val config: T, val errors: List<CurationConfigValidationError> = emptyList())
 

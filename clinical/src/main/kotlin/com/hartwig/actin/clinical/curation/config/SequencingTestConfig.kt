@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTestResult
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 
 data class SequencingTestConfig(
     override val input: String,
