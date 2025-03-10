@@ -10,6 +10,6 @@ The m2 repository will get out of date over time. To update it perform the follo
 mkdir system/src/test/docker/.m2/repository
 mvn clean install -Dmaven.repo.local=system/src/test/docker/.m2/repository
 cd system/src/test/docker
-docker build . -t europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:<new_version> --platform=linux/amd64
+docker build . -t europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:<new_version> --platform=linux/amd64 -f buildagent.Dockerfile
 docker push europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:<new_version>
 ```
