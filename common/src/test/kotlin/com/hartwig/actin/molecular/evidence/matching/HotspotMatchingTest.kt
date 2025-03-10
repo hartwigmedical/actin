@@ -25,63 +25,39 @@ private val MATCHING_CRITERIA2 =
 class HotspotMatchingTest {
 
     @Test
-    fun `Should return true on matching known hotspot`() {
+    fun `Should return true on matching hotspot`() {
         assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA)).isTrue()
-    }
-
-    @Test
-    fun `Should return false on non-matching gene to known hotspot`() {
-        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(gene = "gene 2"))).isFalse()
-    }
-
-    @Test
-    fun `Should return false on non-matching chromosome to known hotspot`() {
-        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(chromosome = "13"))).isFalse()
-    }
-
-    @Test
-    fun `Should return false on non-matching position to known hotspot`() {
-        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(position = 12))).isFalse()
-    }
-
-    @Test
-    fun `Should return false on non-matching ref to known hotspot`() {
-        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(ref = "C"))).isFalse()
-    }
-
-    @Test
-    fun `Should return false on non-matching alt to known hotspot`() {
-        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(alt = "G"))).isFalse()
-    }
-
-    @Test
-    fun `Should return true on matching to actionable hotspot`() {
         assertThat(HotspotMatching.isMatch(ACTIONABLE_HOTSPOT, MATCHING_CRITERIA)).isTrue()
         assertThat(HotspotMatching.isMatch(ACTIONABLE_HOTSPOT, MATCHING_CRITERIA2)).isTrue()
     }
 
     @Test
-    fun `Should return false on non-matching gene to actionable hotspot`() {
+    fun `Should return false on non-matching gene to hotspot`() {
+        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(gene = "gene 2"))).isFalse()
         assertThat(HotspotMatching.isMatch(ACTIONABLE_HOTSPOT, MATCHING_CRITERIA.copy(gene = "gene 2"))).isFalse()
     }
 
     @Test
-    fun `Should return false on non-matching chromosome to actionable hotspot`() {
+    fun `Should return false on non-matching chromosome to hotspot`() {
+        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(chromosome = "13"))).isFalse()
         assertThat(HotspotMatching.isMatch(ACTIONABLE_HOTSPOT, MATCHING_CRITERIA.copy(chromosome = "13"))).isFalse()
     }
 
     @Test
-    fun `Should return false on non-matching position to actionable hotspot`() {
+    fun `Should return false on non-matching position to hotspot`() {
+        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(position = 12))).isFalse()
         assertThat(HotspotMatching.isMatch(ACTIONABLE_HOTSPOT, MATCHING_CRITERIA.copy(position = 12))).isFalse()
     }
 
     @Test
-    fun `Should return false on non-matching ref to actionable hotspot`() {
+    fun `Should return false on non-matching ref to hotspot`() {
+        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(ref = "C"))).isFalse()
         assertThat(HotspotMatching.isMatch(ACTIONABLE_HOTSPOT, MATCHING_CRITERIA.copy(ref = "C"))).isFalse()
     }
 
     @Test
-    fun `Should return false on non-matching alt to actionable hotspot`() {
+    fun `Should return false on non-matching alt to hotspot`() {
+        assertThat(HotspotMatching.isMatch(KNOWN_HOTSPOT, MATCHING_CRITERIA.copy(alt = "G"))).isFalse()
         assertThat(HotspotMatching.isMatch(ACTIONABLE_HOTSPOT, MATCHING_CRITERIA.copy(alt = "G"))).isFalse()
     }
 }

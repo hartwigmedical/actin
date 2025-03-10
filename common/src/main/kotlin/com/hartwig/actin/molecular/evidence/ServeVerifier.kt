@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
-import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 
 object ServeVerifier {
 
@@ -46,24 +45,52 @@ object ServeVerifier {
     }
 
     private fun verifyHotspotsInServeRecord(serveRecord: ServeRecord) {
-        serveRecord.evidences()
-            .flatMap { it.molecularCriterium().hotspots() }
-            .forEach { verifyHotspotGeneConsistency(it) }
+        val allMolecularCriteria = serveRecord.evidences().map { it.molecularCriterium() } +
+                serveRecord.trials().flatMap { it.anyMolecularCriteria() }
 
-        serveRecord.trials()
-            .flatMap { it.anyMolecularCriteria() }
-            .flatMap { it.hotspots() }
-            .forEach { verifyHotspotGeneConsistency(it) }
-    }
+        val (hotspotsWithoutVariants, hotspotsWithVariants) = allMolecularCriteria.flatMap(MolecularCriterium::hotspots)
+            .partition { it.variants().isEmpty() }
 
-    private fun verifyHotspotGeneConsistency(actionableHotspot: ActionableHotspot) {
-        if (actionableHotspot.variants().isEmpty()) {
-            throw IllegalStateException("Hotspot contains no variant annotations: $actionableHotspot")
+        val inconsistentHotspots = hotspotsWithVariants.filter { hotspot ->
+            val gene = hotspot.variants().first().gene()
+            hotspot.variants().any { it.gene() != gene }
         }
 
-        val gene = actionableHotspot.variants().first().gene()
-        if (actionableHotspot.variants().any { it.gene() != gene }) {
-            throw IllegalStateException("Hotspot contains variant annotations with different genes: $actionableHotspot")
+        if (hotspotsWithoutVariants.isNotEmpty() || inconsistentHotspots.isNotEmpty()) {
+            val message = buildString {
+                if (hotspotsWithoutVariants.isNotEmpty()) {
+                    append("Hotspots without variants: $hotspotsWithoutVariants\n")
+                }
+                if (inconsistentHotspots.isNotEmpty()) {
+                    append("Hotspot with mismatched genes: $inconsistentHotspots\n")
+                }
+            }
+            throw IllegalStateException("SERVE record contains invalid hotspots:\n$message")
+        }
+    }
+
+    private fun verifyHotspotsInServeRecordMine(serveRecord: ServeRecord) {
+        val allMolecularCriteria = serveRecord.evidences().map { it.molecularCriterium() } +
+                serveRecord.trials().flatMap { it.anyMolecularCriteria() }
+
+        val (hotspotsWithoutVariants, hotspotsWithVariants) = allMolecularCriteria.flatMap(MolecularCriterium::hotspots)
+            .partition { it.variants().isEmpty() }
+
+        val inconsistentHotspots = hotspotsWithVariants.filter { hotspot ->
+            val gene = hotspot.variants().first().gene()
+            hotspot.variants().any { it.gene() != gene }
+        }
+
+        if (hotspotsWithoutVariants.isNotEmpty() || inconsistentHotspots.isNotEmpty()) {
+            val message = buildString {
+                if (hotspotsWithoutVariants.isNotEmpty()) {
+                    append("Hotspots without variants: $hotspotsWithoutVariants\n")
+                }
+                if (inconsistentHotspots.isNotEmpty()) {
+                    append("Hotspot with mismatched genes: $inconsistentHotspots\n")
+                }
+            }
+            throw IllegalStateException("SERVE record contains invalid hotspots:\n$message")
         }
     }
 }

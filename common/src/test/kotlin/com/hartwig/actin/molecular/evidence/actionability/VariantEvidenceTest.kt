@@ -12,11 +12,14 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+
+private val MATCHING_VARIANT_ANNOTATION =
+    TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
+private val NON_MATCHING_VARIANT_ANNOTATION =
+    TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 6, ref = "G", alt = "C")
+
 private val EVIDENCE_FOR_HOTSPOT =
-    TestServeEvidenceFactory.createEvidenceForHotspot(
-        TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T"),
-        TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 6, ref = "G", alt = "C")
-    )
+    TestServeEvidenceFactory.createEvidenceForHotspot(MATCHING_VARIANT_ANNOTATION, NON_MATCHING_VARIANT_ANNOTATION)
 
 private val EVIDENCE_FOR_CODON = TestServeEvidenceFactory.createEvidenceForCodon(
     gene = "gene 1",
@@ -96,7 +99,7 @@ class VariantEvidenceTest {
     )
 
     @Test
-    fun `Should determine evidence and trials for exact matching hotpot`() {
+    fun `Should determine evidence and trials for matching hotpot`() {
         val matches = variantEvidence.findMatches(matchingVariant)
         assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
             EVIDENCE_FOR_HOTSPOT,
@@ -118,26 +121,10 @@ class VariantEvidenceTest {
     }
 
     @Test
-    fun `Should determine evidence and trials for matching within hotspot group`() {
-        val matches = variantEvidence.findMatches(matchingVariant)
-        assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
-            EVIDENCE_FOR_HOTSPOT,
-            EVIDENCE_FOR_CODON,
-            EVIDENCE_FOR_EXON,
-            ACT_EVIDENCE_FOR_GENE,
-            ANY_EVIDENCE_FOR_GENE
-        )
-
-        assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(
-            mapOf(
-                TRIAL_FOR_HOTSPOT to TRIAL_FOR_HOTSPOT.anyMolecularCriteria(),
-                TRIAL_FOR_CODON to TRIAL_FOR_CODON.anyMolecularCriteria(),
-                TRIAL_FOR_EXON to TRIAL_FOR_EXON.anyMolecularCriteria(),
-                ACT_TRIAL_FOR_GENE to ACT_TRIAL_FOR_GENE.anyMolecularCriteria(),
-                ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()
-            )
-        )
-
+    fun `Should find no evidence for non-matching hotspot`() {
+        val matches = variantEvidence.findMatches(matchingVariant.copy(gene = "different gene"))
+        assertThat(matches.evidenceMatches).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 
     @Test
