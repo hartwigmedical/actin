@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.datamodel.clinical.TumorStage
+import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.util.Either
 
 internal object QuestionnaireCuration {

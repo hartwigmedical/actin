@@ -1,5 +1,11 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientDetail
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedSurgery
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedTreatmentHistory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedTreatmentModification
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedTumorDetail
 import java.time.LocalDate
 
 const val HASHED_ID_IN_BASE64 = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0="

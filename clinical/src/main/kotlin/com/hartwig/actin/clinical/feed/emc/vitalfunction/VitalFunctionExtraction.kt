@@ -10,7 +10,7 @@ object VitalFunctionExtraction {
 
     fun toCategory(string: String): VitalFunctionCategory? {
         return when (string) {
-            "NIBP", "NIBPLILI", "NIBPLIRE" -> VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
+            "NIBP", "NIBPLILI", "NIBPLIRE", "NIBP LI", "NIBP ST 1m", "NIBP ST 3m", "NIBP ST 5m" -> VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
             "ABP" -> VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
             "HR" -> VitalFunctionCategory.HEART_RATE
             "SpO2" -> VitalFunctionCategory.SPO2
