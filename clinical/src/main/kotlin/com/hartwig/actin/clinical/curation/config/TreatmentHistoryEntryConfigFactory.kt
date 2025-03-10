@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.ObservedToxicity
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
@@ -27,7 +27,7 @@ class TreatmentHistoryEntryConfigFactory(
 
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<TreatmentHistoryEntryConfig> {
         val input = parts[fields["input"]!!]
-        val treatmentName = fields["treatment"]?.let { ResourceFile.optionalString(parts[it]) } ?: ""
+        val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) } ?: ""
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
         val (treatmentHistoryEntry, validationErrors) = if (ignore) null to emptyList() else curateObject(
             input,

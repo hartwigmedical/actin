@@ -24,7 +24,8 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED to { IsLegallyInstitutionalized() },
             EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES to { IsInvolvedInStudyProcedures() },
             EligibilityRule.USES_TOBACCO_PRODUCTS to { UsesTobaccoProducts() },
-            EligibilityRule.ADHERES_TO_BLOOD_DONATION_PRESCRIPTIONS to { AdheresToBloodDonationPrescriptions() }
+            EligibilityRule.ADHERES_TO_BLOOD_DONATION_PRESCRIPTIONS to { AdheresToBloodDonationPrescriptions() },
+            EligibilityRule.DEMO_RULE to { IntegrationTestDemoRule() }
         )
     }
 
