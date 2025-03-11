@@ -78,6 +78,12 @@ class IcdModel(
         )
     }
 
+    fun <T: Comorbidity> findInstancesMatchingAnyExtensionCode(instances: List<T>, targetExtensionCodes: Set<String>): List<Comorbidity> {
+        return instances.filter { entity ->
+            entity.icdCodes.flatMap { codeWithAllParents(it.extensionCode) }.toSet().any(targetExtensionCodes::contains)
+        }
+    }
+
     private fun allCodesForEntity(entity: Comorbidity): Set<IcdCode> {
         return entity.icdCodes.flatMap { code ->
             val extensionCodes = code.extensionCode?.let { codeWithAllParents(it) + null } ?: listOf(null)
