@@ -4,6 +4,10 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.algo.icd.IcdConstants.IDIOPATHIC_EOSINOPHILIC_PNEUMONITIS_CODE
+import com.hartwig.actin.algo.icd.IcdConstants.IDIOPATHIC_INTERSTITIAL_PNEUMONITIS_CODE
+import com.hartwig.actin.algo.icd.IcdConstants.INTERSTITIAL_LUNG_DISEASE_SET
+import com.hartwig.actin.algo.icd.IcdConstants.RADIATION_PNEUMONITIS_CODE
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -42,12 +46,9 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 setOf(IcdCode(IcdConstants.IMMUNE_SYSTEM_DISEASE_CHAPTER)),
                 "immune system disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
-                setOf(
-                    IcdCode(
-                        IcdConstants.LUNG_INTERSTITIAL_DISEASES_BLOCK
-                    )
-                ), "interstitial lung disease"
+            EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE_INCLUDING_PNEUMONITIS to hasOtherConditionWithIcdCodesFromSetCreator(
+                (INTERSTITIAL_LUNG_DISEASE_SET.map { IcdCode(it) } + IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK)).toSet(),
+                "interstitial lung disease"
             ),
             EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.LIVER_DISEASE_BLOCK)),
@@ -70,7 +71,12 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             ),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasRecentComorbidityWithConfiguredIcdCodeCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasOtherConditionWithIcdCodesFromSetCreator(
-                setOf(IcdCode(IcdConstants.PNEUMONITIS_BLOCK)),
+                setOf(
+                    IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK),
+                    IcdCode(IDIOPATHIC_INTERSTITIAL_PNEUMONITIS_CODE),
+                    IcdCode(IDIOPATHIC_EOSINOPHILIC_PNEUMONITIS_CODE),
+                    IcdCode(RADIATION_PNEUMONITIS_CODE)
+                ),
                 "pneumonitis"
             ),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
