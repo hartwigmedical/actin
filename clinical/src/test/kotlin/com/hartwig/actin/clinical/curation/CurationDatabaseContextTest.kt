@@ -20,7 +20,7 @@ class CurationDatabaseContextTest {
     @Test
     fun `Should combine all databases validation errors`() {
         val expectedUnusedConfig = IntRange(0, 12).map {
-            CurationConfigValidationError(NOT_IMPORTANT, NOT_IMPORTANT, NOT_IMPORTANT, it.toString(), NOT_IMPORTANT)
+            CurationConfigValidationError(CurationCategory.COMORBIDITY, NOT_IMPORTANT, NOT_IMPORTANT, it.toString(), NOT_IMPORTANT)
         }
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
@@ -46,7 +46,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all unused configs in curation databases, except blood transfusions`() {
-        val expectedUnusedConfig = IntRange(0, 15).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 15).map { UnusedCurationConfig(CurationCategory.TOXICITY, it.toString()) }
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),

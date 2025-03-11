@@ -35,7 +35,7 @@ class CurationDatabaseTest {
             mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY
         ) { it.comorbidityEvaluatedInputs }
         assertThat(database.reportUnusedConfig(emptyList()))
-            .containsExactly(UnusedCurationConfig(CurationCategory.COMORBIDITY.categoryName, INPUT))
+            .containsExactly(UnusedCurationConfig(CurationCategory.COMORBIDITY, INPUT))
     }
 
     @Test
@@ -104,5 +104,5 @@ class CurationDatabaseTest {
     }
 
     private fun error(value: Int): CurationConfigValidationError =
-        CurationConfigValidationError(CurationCategory.COMORBIDITY.categoryName, value.toString(), "", "", "")
+        CurationConfigValidationError(CurationCategory.COMORBIDITY, value.toString(), "", "", "")
 }

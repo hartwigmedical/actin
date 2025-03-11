@@ -76,7 +76,7 @@ class SecondPrimaryConfigFactoryTest {
         assertThat(config.errors)
             .containsExactly(
                 CurationConfigValidationError(
-                    CurationCategory.SECOND_PRIMARY.categoryName,
+                    CurationCategory.SECOND_PRIMARY,
                     "input",
                     "doids",
                     "[123]",
@@ -110,7 +110,7 @@ class SecondPrimaryConfigFactoryTest {
         assertThat(config.errors)
             .containsExactly(
                 CurationConfigValidationError(
-                    CurationCategory.SECOND_PRIMARY.categoryName,
+                    CurationCategory.SECOND_PRIMARY,
                     "input",
                     "status",
                     "not a status",

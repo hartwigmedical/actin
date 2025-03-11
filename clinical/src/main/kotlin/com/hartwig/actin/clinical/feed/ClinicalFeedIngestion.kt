@@ -14,10 +14,7 @@ interface ClinicalFeedIngestion {
 }
 
 fun curationResultsFromWarnings(curationWarnings: Iterable<CurationWarning>): Set<CurationResult> =
-    curationWarnings.groupBy { it.category.categoryName }
-        .map { (categoryName, warnings) ->
-            CurationResult(
-                categoryName,
-                warnings.map { CurationRequirement(it.feedInput, it.message) }
-            )
+    curationWarnings.groupBy { it.category }
+        .map { (category, warnings) ->
+            CurationResult(category, warnings.map { CurationRequirement(it.feedInput, it.message) })
         }.toSet()

@@ -41,6 +41,6 @@ class TranslationDatabaseTest {
                     )
                 )
             )
-        ).containsExactly(UnusedCurationConfig(CurationCategory.TOXICITY_TRANSLATION.categoryName, secondTranslation.input))
+        ).containsExactly(UnusedCurationConfig(CurationCategory.TOXICITY_TRANSLATION, secondTranslation.input))
     }
 }
