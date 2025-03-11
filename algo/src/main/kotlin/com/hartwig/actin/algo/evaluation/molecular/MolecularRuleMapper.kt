@@ -270,27 +270,27 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinIsLostByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsLostByIHC(functionInputResolver().createOneStringInput(function))
+            ProteinIsLostByIHC(functionInputResolver().createOneStringInput(function), maxMolecularTestAge())
         }
     }
 
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsExpressedByIHC(functionInputResolver().createOneStringInput(function))
+            ProteinIsExpressedByIHC(functionInputResolver().createOneStringInput(function), maxMolecularTestAge())
         }
     }
 
     private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(protein, expressionLevel)
+            ProteinHasExactExpressionByIHC(protein, expressionLevel, maxMolecularTestAge())
         }
     }
 
     private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasSufficientExpressionByIHC(protein, expressionLevel)
+            ProteinHasSufficientExpressionByIHC(protein, expressionLevel, maxMolecularTestAge())
         }
     }
 
@@ -307,7 +307,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasLimitedExpressionByIHC(protein, expressionLevel)
+            ProteinHasLimitedExpressionByIHC(protein, expressionLevel, maxMolecularTestAge())
         }
     }
 
