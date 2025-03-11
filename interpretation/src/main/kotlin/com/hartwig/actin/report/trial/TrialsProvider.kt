@@ -68,7 +68,7 @@ class TrialsProvider(
 
     fun allTrialsForOncoAct(): List<ExternalTrialSummary> {
         val summarizedExternalTrials = summarizeExternalTrials(allEvaluableCohorts())
-        return cohortsWithSlotsAvailableAsExternalTrialSummary() + summarizedExternalTrials.nationalTrials.filtered;
+        return cohortsWithSlotsAvailableAsExternalTrialSummary() + summarizedExternalTrials.nationalTrials.filtered
     }
 
     fun cohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
