@@ -18,19 +18,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
+private val IMMUNO_ICD_EXTENSION = IcdConstants.IMMUNOTHERAPY_DRUG_SET.first()
 private val IMMUNOTHERAPY_TOX_ENTRY = TreatmentTestFactory.treatmentHistoryEntry(
     treatments = setOf(TreatmentTestFactory.drugTreatment("immunoName", TreatmentCategory.IMMUNOTHERAPY)), stopReason = StopReason.TOXICITY
 )
 private val IMMUNOTHERAPY_PD_ENTRY =
     IMMUNOTHERAPY_TOX_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = StopReason.PROGRESSIVE_DISEASE))
-private val IMMUNOTHERAPY_ALLERGY_OTHER_CONDITION = OtherCondition(
-    name = "Nivolumab induced pneumonitis",
-    icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, IcdConstants.IMMUNOTHERAPY_DRUG_SET.first()))
-)
-private val IMMUNOTHERAPY_INTOLERANCE = Intolerance(
-    name = "Nivolumab intolerance",
-    icdCodes = setOf(IcdCode("random main code", IcdConstants.IMMUNOTHERAPY_DRUG_SET.first()))
-)
+private val IMMUNOTHERAPY_ALLERGY_OTHER_CONDITION =
+    OtherCondition(name = "Nivolumab induced pneumonitis", icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, IMMUNO_ICD_EXTENSION)))
+private val IMMUNOTHERAPY_INTOLERANCE =
+    Intolerance(name = "Nivolumab intolerance", icdCodes = setOf(IcdCode("random main code", IMMUNO_ICD_EXTENSION)))
 private val DATE = LocalDate.of(2025, 3, 1)
 
 class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
@@ -61,12 +58,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
 
     @Test
     fun `Should fail for immunotherapy without toxicity in history and no immunotherapy intolerance or toxicity or drug allergy comorbidity`() {
-        val icdCode = setOf(IcdCode("random main code", null))
         val record = createMinimalTestWGSPatientRecord().copy(
             comorbidities = listOf(
-                OtherCondition("name", icdCode),
-                Intolerance("name", icdCode),
-                Toxicity("name", icdCode, DATE, ToxicitySource.EHR, 3)
+                OtherCondition("name", setOf(IcdCode(IcdConstants.HAND_FRACTURE_CODE, IMMUNO_ICD_EXTENSION))),
+                Intolerance("name", setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, IcdConstants.TAXANE_CODE))),
+                Toxicity("name", setOf(IcdCode(IcdConstants.HAND_FRACTURE_CODE, null)), DATE, ToxicitySource.EHR, 3)
             ),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
