@@ -133,7 +133,7 @@ class LabEvaluationTest {
         val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(unit = LabUnit.GRAMS), minValidDate)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly(
-            "Unexpected unit specified for ${measurement.display}: ${LabUnit.GRAMS}"
+            "Unexpected unit specified for ${measurement.display}: ${LabUnit.GRAMS.display()}"
         )
     }
 
