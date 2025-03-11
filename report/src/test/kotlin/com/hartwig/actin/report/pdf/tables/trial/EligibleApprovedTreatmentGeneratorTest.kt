@@ -5,9 +5,7 @@ import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.ReportFactory
-import com.hartwig.actin.report.datamodel.TestReportFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
