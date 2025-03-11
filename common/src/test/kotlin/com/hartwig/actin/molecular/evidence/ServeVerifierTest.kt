@@ -82,8 +82,10 @@ class ServeVerifierTest {
 
     @Test
     fun `Should throw exception for hotspot with no variants`() {
-        val trial =
-            TestServeTrialFactory.create(anyMolecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(variants = emptySet())))
+        val trial = TestServeTrialFactory.create(
+            anyMolecularCriteria =
+            setOf(TestServeMolecularFactory.createHotspotCriterium(variants = emptySet()))
+        )
 
         val database = toServeDatabase(TestServeEvidenceFactory.create(), trial)
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
