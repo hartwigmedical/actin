@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -30,6 +31,7 @@ class CurationDatabaseReader {
         const val MEDICATION_DOSAGE_TSV = "medication_dosage.tsv"
         const val INTOLERANCE_TSV = "intolerance.tsv"
         const val SURGERY_NAME_TSV = "surgery_name.tsv"
+        const val LAB_MEASUREMENT_TSV = "lab_measurement.tsv"
 
         fun <T : CurationConfig> read(
             clinicalCurationDirectory: String,

@@ -1,7 +1,7 @@
 steps:
     
   - id: 'Compile, package, release'
-    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.1.3'
+    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.2.0'
     entrypoint: mvn
     args: [ 'test', '-B' ]
     env:

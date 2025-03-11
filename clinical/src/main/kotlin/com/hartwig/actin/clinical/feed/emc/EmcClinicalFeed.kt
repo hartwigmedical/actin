@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
+import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 
 data class EmcClinicalFeed(
     val validationWarnings: List<FeedValidationWarning> = emptyList(),

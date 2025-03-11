@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.t
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toStage
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toWHO
 import com.hartwig.actin.datamodel.clinical.TumorStage
+import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

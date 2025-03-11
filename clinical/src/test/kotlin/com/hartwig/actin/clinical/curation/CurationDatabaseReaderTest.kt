@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

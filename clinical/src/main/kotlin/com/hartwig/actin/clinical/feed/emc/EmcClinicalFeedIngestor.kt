@@ -4,13 +4,15 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
-import com.hartwig.actin.clinical.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
+import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.ComorbidityExtractor
@@ -21,9 +23,9 @@ import com.hartwig.actin.clinical.feed.emc.extraction.PriorMolecularTestsExtract
 import com.hartwig.actin.clinical.feed.emc.extraction.PriorSecondPrimaryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.TumorDetailsExtractor
-import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction
 import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
@@ -66,7 +68,7 @@ class EmcClinicalFeedIngestor(
             val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
-            val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries.map { LabExtraction.extract(it) })
+            val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries)
             val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusionEntries)
             val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries)
             val surgeryExtraction = surgeryExtractor.extract(patientId, feedRecord.uniqueSurgeryEntries)
@@ -102,15 +104,7 @@ class EmcClinicalFeedIngestor(
                 surgeryExtraction
             ).fold(CurationExtractionEvaluation()) { acc, current -> acc + current.evaluation }
 
-            Pair(
-                PatientIngestionResult.create(
-                    questionnaire,
-                    record,
-                    patientEvaluation.warnings.toList(),
-                    questionnaireCurationErrors.toSet(),
-                    feedRecord.validationWarnings
-                ), patientEvaluation
-            )
+            ingestionResult(questionnaire, record, patientEvaluation, questionnaireCurationErrors, feedRecord) to patientEvaluation
         }
     }
 
@@ -175,6 +169,31 @@ class EmcClinicalFeedIngestor(
 
     private fun safeQuantityValue(entry: VitalFunctionEntry) = (entry.quantityValue
         ?: Double.NaN)
+
+    private fun ingestionResult(
+        questionnaire: Questionnaire?,
+        record: ClinicalRecord,
+        patientEvaluation: CurationExtractionEvaluation,
+        questionnaireCurationErrors: List<QuestionnaireCurationError>,
+        feedRecord: FeedRecord
+    ): PatientIngestionResult {
+        val curationResults = curationResultsFromWarnings(patientEvaluation.warnings)
+
+        val ingestionStatus = when {
+            questionnaire == null -> PatientIngestionStatus.WARN_NO_QUESTIONNAIRE
+            curationResults.isNotEmpty() -> PatientIngestionStatus.WARN_CURATION_REQUIRED
+            else -> PatientIngestionStatus.PASS
+        }
+
+        return PatientIngestionResult(
+            record.patientId,
+            ingestionStatus,
+            record,
+            curationResults,
+            questionnaireCurationErrors.toSet(),
+            feedRecord.validationWarnings
+        )
+    }
 
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalIngestionFeedAdapter::class.java)
