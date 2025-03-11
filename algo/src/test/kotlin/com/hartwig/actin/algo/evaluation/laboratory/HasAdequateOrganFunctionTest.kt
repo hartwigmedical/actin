@@ -3,13 +3,13 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.icd.TestIcdFactory
-import java.time.LocalDate
 import org.junit.Test
+import java.time.LocalDate
 
 private val VALID_DATE = LocalDate.of(2024, 12, 1)
 
@@ -85,7 +85,7 @@ class HasAdequateOrganFunctionTest {
             EvaluationResult.WARN,
             function.evaluate(
                 ComorbidityTestFactory.withOtherCondition(
-                    ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)
+                    ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.HEART_DISEASE_SET.first())
                 )
             )
         )
