@@ -16,7 +16,7 @@ internal object LabUnitConverter {
         val conversionFactor = LabUnitConversionTable.findConversionFactor(measurement, labValue.unit, targetUnit)
         if (conversionFactor == null) {
             LOGGER.warn(
-                "No conversion factor defined for {} to go from '{}' to '{}'", measurement.display, labValue.unit, targetUnit
+                "No conversion factor defined for {} to go from '{}' to '{}'", measurement.display, labValue.unit.display(), targetUnit
             )
             return null
         }

@@ -64,7 +64,7 @@ internal object LabEvaluation {
 
             mostRecent.unit != measurement.defaultUnit -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit}"
+                    "Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit.display()}"
                 )
             }
 
