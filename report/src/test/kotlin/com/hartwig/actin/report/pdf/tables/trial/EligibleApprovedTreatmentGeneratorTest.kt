@@ -24,5 +24,16 @@ class EligibleApprovedTreatmentGeneratorTest {
         val contents = getWrappedTable(EligibleApprovedTreatmentGenerator(report, width))
         assertThat(getCellContents(contents, 0, 0)).isEqualTo("Pembrolizumab")
     }
+
+    @Test
+    fun `Should return Not Yet Determined if there are no approved treatments or cancer of unknown primary`() {
+        val report = ReportFactory.fromInputs(
+            PatientRecordFactory.fromInputs(TestClinicalFactory.createMinimalTestClinicalRecord(), MolecularHistory.empty()),
+            TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
+            EnvironmentConfiguration.create(null)
+        )
+        val contents = getWrappedTable(EligibleApprovedTreatmentGenerator(report, width))
+        assertThat(getCellContents(contents, 0, 0)).isEqualTo("Not yet determined")
+    }
 }
 
