@@ -4,8 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.clinical.interpretation.LabInterpreter
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -16,7 +15,7 @@ import java.time.LocalDate
 class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val interpretation = LabInterpreter.interpret(record.labValues)
+        val interpretation = LabInterpretation.interpret(record.labValues)
 
         val llnEvaluation = sequenceOf(
             LabMeasurement.HEMOGLOBIN,

@@ -353,8 +353,7 @@ object TestClinicalFactory {
         return listOf(
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
-                code = "ASAT",
-                name = "Aspartate aminotransferase",
+                measurement = LabMeasurement.ASPARTATE_AMINOTRANSFERASE,
                 comparator = "",
                 value = 36.0,
                 unit = LabUnit.UNITS_PER_LITER,
@@ -364,8 +363,7 @@ object TestClinicalFactory {
             ),
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
-                code = "Hb",
-                name = "Hemoglobin",
+                measurement = LabMeasurement.HEMOGLOBIN,
                 comparator = "",
                 value = 5.5,
                 unit = LabUnit.MILLIMOLES_PER_LITER,
@@ -375,8 +373,7 @@ object TestClinicalFactory {
             ),
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
-                code = "THROMBO-ABS",
-                name = "Thrombocytes",
+                measurement = LabMeasurement.THROMBOCYTES_ABS,
                 comparator = "",
                 value = 155.0,
                 unit = LabUnit.BILLIONS_PER_LITER,
@@ -386,8 +383,7 @@ object TestClinicalFactory {
             ),
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
-                code = "THROMBO-ABS",
-                name = "Thrombocytes",
+                measurement = LabMeasurement.THROMBOCYTES_ABS,
                 comparator = "",
                 value = 151.0,
                 unit = LabUnit.BILLIONS_PER_LITER,
@@ -397,8 +393,7 @@ object TestClinicalFactory {
             ),
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
-                code = "THROMBO-ABS",
-                name = "Thrombocytes",
+                measurement = LabMeasurement.THROMBOCYTES_ABS,
                 comparator = "",
                 value = 150.0,
                 unit = LabUnit.BILLIONS_PER_LITER,
@@ -408,8 +403,7 @@ object TestClinicalFactory {
             ),
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
-                code = "LEUKO-ABS",
-                name = "Leukocytes",
+                measurement = LabMeasurement.LEUKOCYTES_ABS,
                 comparator = "",
                 value = 6.5,
                 unit = LabUnit.BILLIONS_PER_LITER,
@@ -419,8 +413,7 @@ object TestClinicalFactory {
             ),
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
-                code = "CKD-EPIeGFR",
-                name = "CKD-EPI eGFR",
+                measurement = LabMeasurement.EGFR_CKD_EPI,
                 comparator = ">",
                 value = 100.0,
                 unit = LabUnit.MILLILITERS_PER_MINUTE,
@@ -430,8 +423,7 @@ object TestClinicalFactory {
             ),
             LabValue(
                 date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
-                code = "LDH",
-                name = "Lactate dehydrogenase",
+                measurement = LabMeasurement.LACTATE_DEHYDROGENASE,
                 comparator = "",
                 value = 240.0,
                 unit = LabUnit.UNITS_PER_LITER,

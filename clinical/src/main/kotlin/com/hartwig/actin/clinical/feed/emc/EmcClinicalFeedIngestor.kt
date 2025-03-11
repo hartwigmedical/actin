@@ -23,7 +23,6 @@ import com.hartwig.actin.clinical.feed.emc.extraction.PriorMolecularTestsExtract
 import com.hartwig.actin.clinical.feed.emc.extraction.PriorSecondPrimaryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.TumorDetailsExtractor
-import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction
 import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
@@ -69,7 +68,7 @@ class EmcClinicalFeedIngestor(
             val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
-            val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries.map { LabExtraction.extract(it) })
+            val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries)
             val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusionEntries)
             val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries)
             val surgeryExtraction = surgeryExtractor.extract(patientId, feedRecord.uniqueSurgeryEntries)
