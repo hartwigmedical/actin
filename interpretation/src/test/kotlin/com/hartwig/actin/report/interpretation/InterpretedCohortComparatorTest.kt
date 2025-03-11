@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class InterpretedCohortComparatorTest {
@@ -35,7 +35,7 @@ class InterpretedCohortComparatorTest {
         ).sortedWith(InterpretedCohortComparator())
 
         val cohortIterator = cohortList.iterator()
-        cohorts.forEach { assertThat(cohortIterator.next()).isEqualTo(it) }
+        cohorts.forEach { Assertions.assertThat(cohortIterator.next()).isEqualTo(it) }
     }
 
     @Test
@@ -69,11 +69,11 @@ class InterpretedCohortComparatorTest {
     }
 
     private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>) {
-        assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator())).isEqualTo(expectedCohorts)
+        Assertions.assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator())).isEqualTo(expectedCohorts)
     }
 
     private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): InterpretedCohort {
-        return InterpretedCohortTestFactory.interpretedCohort(
+        return com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort(
             trialId = trialId,
             acronym = "",
             molecularEvents = setOf(*molecularEvents),

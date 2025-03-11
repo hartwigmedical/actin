@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.trial
+package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
@@ -7,7 +7,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import java.time.LocalDate
-import java.util.SortedSet
+import java.util.*
+import kotlin.Comparator
 
 data class ExternalTrialSummary(
     val nctId: String,

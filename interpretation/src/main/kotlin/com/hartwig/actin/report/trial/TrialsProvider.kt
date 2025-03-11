@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.trial
+package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
@@ -7,6 +7,7 @@ import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.util.MapFunctions
+import java.util.Collections.emptySortedSet
 
 data class MolecularFilteredExternalTrials(
     private val original: Set<ExternalTrialSummary>,
@@ -48,11 +49,30 @@ class TrialsProvider(
     }
 
     fun cohortsWithSlotsAvailable(): List<InterpretedCohort> {
-        return EligibleActinTrialsGenerator.filterCohortsAvailable(cohorts, true)
+        return filterCohortsAvailable(cohorts, true)
+    }
+
+    private fun cohortsWithSlotsAvailableAsExternalTrialSummary(): List<ExternalTrialSummary> {
+        return filterCohortsAvailable(cohorts, true).map {
+            ExternalTrialSummary(
+                it.nctId ?: it.trialId,
+                it.name ?: it.acronym,
+                emptySortedSet(),
+                it.molecularEvents.toSortedSet(),
+                emptySortedSet(),
+                emptySortedSet(),
+                ""
+            )
+        }
+    }
+
+    fun allTrialsForOncoAct(): List<ExternalTrialSummary> {
+        val summarizedExternalTrials = summarizeExternalTrials(allEvaluableCohorts())
+        return cohortsWithSlotsAvailableAsExternalTrialSummary() + summarizedExternalTrials.nationalTrials.filtered;
     }
 
     fun cohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
-        return EligibleActinTrialsGenerator.filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
+        return filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
     }
 
     fun allEvidenceSources(): Set<String> {
@@ -105,5 +125,11 @@ class TrialsProvider(
             original,
             filtered
         )
+    }
+}
+
+fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean): List<InterpretedCohort> {
+    return cohorts.filter {
+        it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
     }
 }

@@ -7,6 +7,7 @@ import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.cr
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.filterCohortsAvailable
 import com.itextpdf.layout.element.Table
 
 class EligibleActinTrialsGenerator(
@@ -58,11 +59,6 @@ class EligibleActinTrialsGenerator(
     }
 
     companion object {
-        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean) : List<InterpretedCohort>{
-            return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
-            }
-        }
 
         fun forOpenCohorts(
             cohorts: List<InterpretedCohort>, source: String?, width: Float, slotsAvailable: Boolean, includeLocation: Boolean = false
