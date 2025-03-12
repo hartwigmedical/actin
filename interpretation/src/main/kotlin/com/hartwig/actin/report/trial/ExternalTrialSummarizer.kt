@@ -12,7 +12,6 @@ import kotlin.Comparator
 
 data class ExternalTrialSummary(
     val nctId: String,
-    val source: String,
     val title: String,
     val countries: SortedSet<CountryDetails>,
     val actinMolecularEvents: SortedSet<String>,
@@ -80,7 +79,6 @@ object ExternalTrialSummarizer {
             val trial = entry.value.first().trial
             ExternalTrialSummary(
                 nctId = entry.key,
-                source = "External",
                 title = trial.title,
                 countries = countries.toSortedSet(Comparator.comparing { c -> c.country }),
                 actinMolecularEvents = entry.value.map { ewt -> ewt.event }.toSortedSet(),

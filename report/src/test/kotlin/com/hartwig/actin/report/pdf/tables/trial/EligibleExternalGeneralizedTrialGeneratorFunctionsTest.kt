@@ -9,7 +9,6 @@ import org.junit.Test
 
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = "nct",
-    source = "source",
     title = "title",
     url = "url",
     actinMolecularEvents = sortedSetOf(),
@@ -18,7 +17,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     countries = sortedSetOf()
 )
 
-class EligibleExternalTrialGeneratorFunctionsTest {
+class EligibleExternalGeneralizedTrialGeneratorFunctionsTest {
 
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(

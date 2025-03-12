@@ -5,24 +5,27 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ActinTrialContentFunctionsTest {
+class ActinGeneralizedTrialContentFunctionsTest {
 
     private val cohort1 = InterpretedCohort(
         "trial1",
         "T1",
+        nctId = "nct01",
+        title = "title1",
         name = "cohort1",
         isOpen = true,
         hasSlotsAvailable = false,
         molecularEvents = setOf("MSI"),
         isPotentiallyEligible = true,
         warnings = setOf("warning1"),
-        fails = emptySet(),
-        nctId = "nct01"
+        fails = emptySet()
     )
     private val cohort2 =
         InterpretedCohort(
             "trial1",
             "T1",
+            nctId = "nct02",
+            title = "title2",
             name = "cohort2",
             isOpen = true,
             hasSlotsAvailable = true,
@@ -31,8 +34,7 @@ class ActinTrialContentFunctionsTest {
             fails = emptySet(),
             source = TrialSource.LKO,
             sourceId = "123",
-            locations = listOf("Erasmus", "NKI"),
-            nctId = "nct02"
+            locations = listOf("Erasmus", "NKI")
         )
 
     @Test
