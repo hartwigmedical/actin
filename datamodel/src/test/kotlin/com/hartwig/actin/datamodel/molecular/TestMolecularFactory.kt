@@ -128,7 +128,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun createMinimalTestCharacteristics(): MolecularCharacteristics {
+    private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
         return MolecularCharacteristics(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 
