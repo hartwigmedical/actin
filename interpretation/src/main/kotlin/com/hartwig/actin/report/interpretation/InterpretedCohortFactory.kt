@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 
 object InterpretedCohortFactory {
 
-    fun createEvaluableCohorts(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<com.hartwig.actin.report.interpretation.InterpretedCohort> {
+    fun createEvaluableCohorts(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<InterpretedCohort> {
         return filteredMatches(
             treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
         ).flatMap { trialMatch: TrialMatch ->
@@ -52,7 +52,7 @@ object InterpretedCohortFactory {
                 filteredMatches(
                     trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
                 ).map { cohortMatch: CohortMatch ->
-                    com.hartwig.actin.report.interpretation.InterpretedCohort(
+                    InterpretedCohort(
                         trialId = trialId,
                         acronym = acronym,
                         name = cohortMatch.metadata.description,
@@ -76,7 +76,7 @@ object InterpretedCohortFactory {
         }.sortedWith(InterpretedCohortComparator())
     }
 
-    fun createNonEvaluableCohorts(treatmentMatch: TreatmentMatch): List<com.hartwig.actin.report.interpretation.InterpretedCohort> {
+    fun createNonEvaluableCohorts(treatmentMatch: TreatmentMatch): List<InterpretedCohort> {
         return treatmentMatch.trialMatches.flatMap { trialMatch: TrialMatch ->
             val identification = trialMatch.identification
             trialMatch.nonEvaluableCohorts.map { cohortMetadata: CohortMetadata ->

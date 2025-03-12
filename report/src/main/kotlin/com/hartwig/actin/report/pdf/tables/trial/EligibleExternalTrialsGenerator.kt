@@ -76,58 +76,60 @@ class EligibleExternalTrialsGenerator(
 
         return makeWrapping(table)
     }
-}
 
-fun provideExternalTrialsTablesIncludedByFilter(
-    trialsProvider: TrialsProvider, evaluated: List<InterpretedCohort>, contentWidth: Float, homeCountry: Country?
-): Pair<TableGenerator?, TableGenerator?> {
-    val summarizedExternalTrials = trialsProvider.summarizeExternalTrials(evaluated)
-    val allEvidenceSources = trialsProvider.allEvidenceSources()
-    return Pair(
-        if (summarizedExternalTrials.nationalTrials.isNotEmpty()) {
-            EligibleExternalTrialsGenerator(
-                allEvidenceSources,
-                summarizedExternalTrials.nationalTrials.filtered,
-                contentWidth,
-                summarizedExternalTrials.nationalTrials.originalMinusFilteredSize(),
-                homeCountry
+    companion object {
+        fun provideExternalTrialsTablesIncludedByFilter(
+            trialsProvider: TrialsProvider, evaluated: List<InterpretedCohort>, contentWidth: Float, homeCountry: Country?
+        ): Pair<TableGenerator?, TableGenerator?> {
+            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials(evaluated)
+            val allEvidenceSources = trialsProvider.allEvidenceSources()
+            return Pair(
+                if (summarizedExternalTrials.nationalTrials.isNotEmpty()) {
+                    EligibleExternalTrialsGenerator(
+                        allEvidenceSources,
+                        summarizedExternalTrials.nationalTrials.filtered,
+                        contentWidth,
+                        summarizedExternalTrials.nationalTrials.originalMinusFilteredSize(),
+                        homeCountry
+                    )
+                } else null,
+                if (summarizedExternalTrials.internationalTrials.isNotEmpty()) {
+                    EligibleExternalTrialsGenerator(
+                        allEvidenceSources,
+                        summarizedExternalTrials.internationalTrials.filtered,
+                        contentWidth,
+                        summarizedExternalTrials.internationalTrials.originalMinusFilteredSize()
+                    )
+                } else null
             )
-        } else null,
-        if (summarizedExternalTrials.internationalTrials.isNotEmpty()) {
-            EligibleExternalTrialsGenerator(
-                allEvidenceSources,
-                summarizedExternalTrials.internationalTrials.filtered,
-                contentWidth,
-                summarizedExternalTrials.internationalTrials.originalMinusFilteredSize()
-            )
-        } else null
-    )
-}
+        }
 
-fun provideExternalTrialsTablesExcludedByFilter(
-    trialsProvider: TrialsProvider, evaluated: List<InterpretedCohort>, contentWidth: Float, homeCountry: Country?
-): Pair<TableGenerator?, TableGenerator?> {
-    val summarizedExternalTrials = trialsProvider.summarizeExternalTrials(evaluated)
-    val allEvidenceSources = trialsProvider.allEvidenceSources()
-    return Pair(
-        if (summarizedExternalTrials.nationalTrials.originalMinusFiltered().isNotEmpty()) {
-            EligibleExternalTrialsGenerator(
-                allEvidenceSources,
-                summarizedExternalTrials.nationalTrials.originalMinusFiltered(),
-                contentWidth,
-                summarizedExternalTrials.nationalTrials.originalMinusFilteredSize(),
-                homeCountry,
-                false
+        fun provideExternalTrialsTablesExcludedByFilter(
+            trialsProvider: TrialsProvider, evaluated: List<InterpretedCohort>, contentWidth: Float, homeCountry: Country?
+        ): Pair<TableGenerator?, TableGenerator?> {
+            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials(evaluated)
+            val allEvidenceSources = trialsProvider.allEvidenceSources()
+            return Pair(
+                if (summarizedExternalTrials.nationalTrials.originalMinusFiltered().isNotEmpty()) {
+                    EligibleExternalTrialsGenerator(
+                        allEvidenceSources,
+                        summarizedExternalTrials.nationalTrials.originalMinusFiltered(),
+                        contentWidth,
+                        summarizedExternalTrials.nationalTrials.originalMinusFilteredSize(),
+                        homeCountry,
+                        false
+                    )
+                } else null,
+                if (summarizedExternalTrials.internationalTrials.originalMinusFiltered().isNotEmpty()) {
+                    EligibleExternalTrialsGenerator(
+                        allEvidenceSources,
+                        summarizedExternalTrials.internationalTrials.originalMinusFiltered(),
+                        contentWidth,
+                        summarizedExternalTrials.internationalTrials.originalMinusFilteredSize(),
+                        isFilteredTrialsTable = false
+                    )
+                } else null
             )
-        } else null,
-        if (summarizedExternalTrials.internationalTrials.originalMinusFiltered().isNotEmpty()) {
-            EligibleExternalTrialsGenerator(
-                allEvidenceSources,
-                summarizedExternalTrials.internationalTrials.originalMinusFiltered(),
-                contentWidth,
-                summarizedExternalTrials.internationalTrials.originalMinusFilteredSize(),
-                isFilteredTrialsTable = false
-            )
-        } else null
-    )
+        }
+    }
 }

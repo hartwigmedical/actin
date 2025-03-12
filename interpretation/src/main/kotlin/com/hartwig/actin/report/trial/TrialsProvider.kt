@@ -9,7 +9,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.util.MapFunctions
 import java.util.Collections.emptySortedSet
 
-data class MolecularFilteredExternalTrials(
+class MolecularFilteredExternalTrials(
     private val original: Set<ExternalTrialSummary>,
     val filtered: Set<ExternalTrialSummary>
 ) {
@@ -18,7 +18,7 @@ data class MolecularFilteredExternalTrials(
     fun originalMinusFiltered() = original - filtered
 }
 
-data class SummarizedExternalTrials(
+class SummarizedExternalTrials(
     val nationalTrials: MolecularFilteredExternalTrials,
     val internationalTrials: MolecularFilteredExternalTrials
 ) {
@@ -127,10 +127,13 @@ class TrialsProvider(
             filtered
         )
     }
-}
 
-fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean): List<InterpretedCohort> {
-    return cohorts.filter {
-        it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
+    companion object {
+        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean): List<InterpretedCohort> {
+            return cohorts.filter {
+                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
+            }
+        }
     }
 }
+

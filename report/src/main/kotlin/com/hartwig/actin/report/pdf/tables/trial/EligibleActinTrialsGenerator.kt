@@ -7,7 +7,7 @@ import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.cr
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
-import com.hartwig.actin.report.trial.filterCohortsAvailable
+import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
 
 class EligibleActinTrialsGenerator(
@@ -63,7 +63,7 @@ class EligibleActinTrialsGenerator(
         fun forOpenCohorts(
             cohorts: List<InterpretedCohort>, source: String?, width: Float, slotsAvailable: Boolean, includeLocation: Boolean = false
         ): EligibleActinTrialsGenerator {
-            val recruitingAndEligibleCohorts = filterCohortsAvailable(cohorts, slotsAvailable)
+            val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts, slotsAvailable)
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {

@@ -64,11 +64,11 @@ class TrialMatchingChapter(
                 ?.map { it.second }
                 ?: emptyList()
 
-        val (localTrialGeneratorIncluded, nonLocalTrialGeneratorIncluded) = provideExternalTrialsTablesIncludedByFilter(
+        val (localTrialGeneratorIncluded, nonLocalTrialGeneratorIncluded) = EligibleExternalTrialsGenerator.provideExternalTrialsTablesIncludedByFilter(
             trialsProvider, trialsProvider.cohortsWithSlotsAvailableAndNotIgnore(), contentWidth(), report.config.countryOfReference
         )
 
-        val (localTrialGeneratorExcluded, nonLocalTrialGeneratorExcluded) = provideExternalTrialsTablesExcludedByFilter(
+        val (localTrialGeneratorExcluded, nonLocalTrialGeneratorExcluded) = EligibleExternalTrialsGenerator.provideExternalTrialsTablesExcludedByFilter(
             trialsProvider, trialsProvider.cohortsWithSlotsAvailable(), contentWidth(), report.config.countryOfReference
         )
 

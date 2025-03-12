@@ -136,7 +136,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 getGeneratorsForSource(cohortsPerSource, requestingSource, source, contentWidth, true).filterNotNull()
             }
 
-        val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTablesIncludedByFilter(
+        val (localTrialGenerator, nonLocalTrialGenerator) = EligibleExternalTrialsGenerator.provideExternalTrialsTablesIncludedByFilter(
             trialsProvider, trialsProvider.cohortsWithSlotsAvailable(), contentWidth, report.config.countryOfReference
         )
 
