@@ -13,8 +13,13 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Undetermined if patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles"
-        )
+        val currentMedications = record.medications?.filter { selector.isActive(it) || selector.isPlanned(it) }
+
+        return when {
+            currentMedications.isNullOrEmpty() -> EvaluationFactory.fail("No medications currently received")
+            else -> EvaluationFactory.undetermined(
+                "Undetermined if patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles"
+            )
+        }
     }
 }
