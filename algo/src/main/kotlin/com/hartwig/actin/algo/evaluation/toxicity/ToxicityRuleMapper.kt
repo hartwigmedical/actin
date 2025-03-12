@@ -26,7 +26,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
             EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
             EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
-            EligibilityRule.HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS to hasExperiencedImmuneRelatedAdverseEventsCreator(),
+            EligibilityRule.HAS_EXPERIENCED_IMMUNOTHERAPY_RELATED_ADVERSE_EVENTS to hasExperiencedImmunotherapyRelatedAdverseEventsCreator(),
             EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X to hasToxicityWithGradeCreator(),
             EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_WITH_ANY_ICD_TITLE_Y to hasToxicityWithGradeAndNameCreator(),
             EligibilityRule.HAS_TOXICITY_ASTCT_OF_AT_LEAST_GRADE_X_WITH_ANY_ICD_TITLE_Y to hasToxicityWithGradeAndNameCreator(),
@@ -59,8 +59,8 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         return { HasHistoryOfAnaphylaxis(icdModel()) }
     }
 
-    private fun hasExperiencedImmuneRelatedAdverseEventsCreator(): FunctionCreator {
-        return { HasExperiencedImmuneRelatedAdverseEvents(icdModel()) }
+    private fun hasExperiencedImmunotherapyRelatedAdverseEventsCreator(): FunctionCreator {
+        return { HasExperiencedImmunotherapyRelatedAdverseEvents(icdModel()) }
     }
 
     private fun hasToxicityWithGradeCreator(): FunctionCreator {

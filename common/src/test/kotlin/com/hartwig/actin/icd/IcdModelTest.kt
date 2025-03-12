@@ -7,10 +7,10 @@ import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
+import java.time.LocalDate
 
 class IcdModelTest {
 
@@ -106,33 +106,42 @@ class IcdModelTest {
 
     @Test
     fun `Should filter out condition not matching to requested main code`() {
-        evaluateCodeMatching(createIcdEntityList(setOf(IcdCode("wrongMainCode", null))), emptyList(), emptyList())
+        evaluateFullIcdCodeMatching(createIcdEntityList(setOf(IcdCode("wrongMainCode", null))), emptyList(), emptyList())
     }
 
     @Test
     fun `Should filter out condition not matching to requested extension code when extension code match is requested`() {
-        evaluateCodeMatching(createIcdEntityList(setOf(IcdCode(correctMainCode, "wrongExtensionCode"))), emptyList(), emptyList())
+        evaluateFullIcdCodeMatching(createIcdEntityList(setOf(IcdCode(correctMainCode, "wrongExtensionCode"))), emptyList(), emptyList())
     }
 
     @Test
     fun `Should add all conditions matching main code to full matches when extension code is not requested`() {
         listOf("random", null).map { createIcdEntityList(setOf(IcdCode(correctMainCode, it))) }
-            .forEach { evaluateCodeMatching(it, it, emptyList(), checkExtension = false) }
+            .forEach { evaluateFullIcdCodeMatching(it, it, emptyList(), checkExtension = false) }
     }
 
     @Test
     fun `Should add conditions matching main code but with unknown extension code to mainCodeMatchesWithUnknownExtension`() {
         val icdEntities = createIcdEntityList(setOf(IcdCode(correctMainCode, null)))
-        evaluateCodeMatching(icdEntities, emptyList(), icdEntities)
+        evaluateFullIcdCodeMatching(icdEntities, emptyList(), icdEntities)
     }
 
     @Test
     fun `Should match on correct child codes`() {
         val icdEntities = createIcdEntityList(setOf(IcdCode(childOfCorrectMainCode, childOfCorrectExtensionCode)))
-        evaluateCodeMatching(icdEntities, icdEntities, emptyList())
+        evaluateFullIcdCodeMatching(icdEntities, icdEntities, emptyList())
     }
 
-    private fun evaluateCodeMatching(
+    @Test
+    fun `Should identify icd extension code matches`() {
+        listOf(correctExtensionCode, childOfCorrectExtensionCode).forEach {
+            val icdEntities = createIcdEntityList(setOf(IcdCode("mainCode", it)))
+            assertThat(icdModel.findInstancesMatchingAnyExtensionCode(icdEntities, setOf(correctExtensionCode)))
+                .containsExactlyElementsOf(icdEntities)
+        }
+    }
+
+    private fun evaluateFullIcdCodeMatching(
         input: List<Comorbidity>,
         expectedFullMatches: List<Comorbidity>,
         expectedMainCodeMatchesWithUnknownExtension: List<Comorbidity>,
