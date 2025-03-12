@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.molecular.MutationType
@@ -11,8 +12,15 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+
+private val MATCHING_VARIANT_ANNOTATION =
+    TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
+private val NON_MATCHING_VARIANT_ANNOTATION =
+    TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 6, ref = "G", alt = "C")
+
 private val EVIDENCE_FOR_HOTSPOT =
-    TestServeEvidenceFactory.createEvidenceForHotspot(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
+    TestServeEvidenceFactory.createEvidenceForHotspot(MATCHING_VARIANT_ANNOTATION, NON_MATCHING_VARIANT_ANNOTATION)
+
 private val EVIDENCE_FOR_CODON = TestServeEvidenceFactory.createEvidenceForCodon(
     gene = "gene 1",
     chromosome = "1",
@@ -33,7 +41,9 @@ private val AMP_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGe
 private val OTHER_EVIDENCE = TestServeEvidenceFactory.createEvidenceForHla()
 
 private val TRIAL_FOR_HOTSPOT =
-    TestServeTrialFactory.createTrialForHotspot(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
+    TestServeTrialFactory.createTrialForHotspot(
+        TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
+    )
 private val TRIAL_FOR_CODON = TestServeTrialFactory.createTrialForCodon(
     gene = "gene 1",
     chromosome = "1",
@@ -89,7 +99,7 @@ class VariantEvidenceTest {
     )
 
     @Test
-    fun `Should determine evidence and trials for exact matching hotpot`() {
+    fun `Should determine evidence and trials for matching hotpot`() {
         val matches = variantEvidence.findMatches(matchingVariant)
         assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
             EVIDENCE_FOR_HOTSPOT,
@@ -108,6 +118,13 @@ class VariantEvidenceTest {
                 ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()
             )
         )
+    }
+
+    @Test
+    fun `Should find no evidence for non-matching hotspot`() {
+        val matches = variantEvidence.findMatches(matchingVariant.copy(gene = "different gene"))
+        assertThat(matches.evidenceMatches).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 
     @Test

@@ -10,6 +10,8 @@ import com.hartwig.serve.datamodel.molecular.fusion.ImmutableActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
+import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableVariantAnnotation
+import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import com.hartwig.serve.datamodel.molecular.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
 import java.time.LocalDate
@@ -18,20 +20,11 @@ object TestServeMolecularFactory {
 
     fun createHotspotCriterium(
         baseActionableEvent: ActionableEvent = createActionableEvent(),
-        gene: String = "",
-        chromosome: String = "",
-        position: Int = 0,
-        ref: String = "",
-        alt: String = ""
+        variants: Set<VariantAnnotation> = setOf(createVariantAnnotation()),
     ): MolecularCriterium {
         val actionableHotspot = ImmutableActionableHotspot.builder().from(baseActionableEvent)
-            .gene(gene)
-            .chromosome(chromosome)
-            .position(position)
-            .ref(ref)
-            .alt(alt)
+            .addAllVariants(variants)
             .build()
-
         return ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
     }
 
@@ -153,5 +146,15 @@ object TestServeMolecularFactory {
                 return sourceUrls
             }
         }
+    }
+
+    fun createVariantAnnotation(
+        gene: String = "",
+        chromosome: String = "",
+        position: Int = 0,
+        ref: String = "",
+        alt: String = ""
+    ): VariantAnnotation {
+        return ImmutableVariantAnnotation.builder().gene(gene).chromosome(chromosome).position(position).ref(ref).alt(alt).build()
     }
 }

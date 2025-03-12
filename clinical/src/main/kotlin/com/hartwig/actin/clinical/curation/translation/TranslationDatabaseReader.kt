@@ -8,7 +8,6 @@ class TranslationDatabaseReader {
 
     companion object {
         const val ADMINISTRATION_ROUTE_TRANSLATION_TSV = "administration_route_translation.tsv"
-        const val LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv"
         const val TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv"
         const val BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv"
         const val DOSAGE_UNIT_TRANSLATION_TSV = "dosage_unit_translation.tsv"

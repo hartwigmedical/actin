@@ -15,7 +15,7 @@ object ApplicabilityFiltering {
     val NON_APPLICABLE_AMPLIFICATIONS = setOf("VEGFA")
 
     fun isApplicable(actionableHotspot: ActionableHotspot): Boolean {
-        return eventIsApplicable(actionableHotspot.gene(), actionableHotspot)
+        return eventIsApplicable(actionableHotspot.variants().first().gene(), actionableHotspot)
     }
 
     fun isApplicable(actionableRange: ActionableRange): Boolean {

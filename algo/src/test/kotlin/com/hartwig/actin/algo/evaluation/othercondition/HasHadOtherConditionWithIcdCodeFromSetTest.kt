@@ -14,7 +14,7 @@ class HasHadOtherConditionWithIcdCodeFromSetTest {
 
     @Test
     fun `Should pass if condition with correct ICD code in history`() {
-        val conditions = ComorbidityTestFactory.otherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_BLOCK)
+        val conditions = ComorbidityTestFactory.otherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
     }
 
@@ -22,12 +22,12 @@ class HasHadOtherConditionWithIcdCodeFromSetTest {
     fun `Should evaluate to undetermined for condition with unknown extension`() {
         val function = HasHadOtherConditionWithIcdCodeFromSet(
             TestIcdFactory.createTestModel(),
-            setOf(IcdCode(IcdConstants.PNEUMONITIS_BLOCK, "extensionCode")),
+            setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, "extensionCode")),
             "respiratory compromise"
         )
         val conditions = ComorbidityTestFactory.otherCondition(
             "pneumonitis",
-            icdMainCode = IcdConstants.PNEUMONITIS_BLOCK,
+            icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
             icdExtensionCode = null
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
