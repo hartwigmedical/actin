@@ -18,15 +18,15 @@ import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.Either
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.system.exitProcess
 
 const val ERROR_JSON_FILE = "trial_ingestion_errors.json"
 
@@ -69,7 +69,6 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
                 )
             )
 
-
         LOGGER.info("Creating trial database")
         val objectMapper = ObjectMapper().apply {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -83,6 +82,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             is Either.Right -> {
                 LOGGER.info("Writing {} trials to {}", result.value.size, outputDirectory)
                 TrialJson.write(result.value, outputDirectory)
+                ProteinList(outputDirectory).writeListOfIhcProteins(result.value)
             }
 
             is Either.Left -> {
@@ -90,8 +90,6 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
                 exitProcess(1)
             }
         }
-
-
 
         LOGGER.info("Done!")
     }

@@ -96,7 +96,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createManyGenesInput(function)
-            AnyGeneHasDriverEventWithApprovedTherapy(input.geneNames, doidModel(), EvaluationFunctionFactory.create(resources), maxMolecularTestAge())
+            AnyGeneHasDriverEventWithApprovedTherapy(
+                input.geneNames,
+                doidModel(),
+                EvaluationFunctionFactory.create(resources),
+                maxMolecularTestAge()
+            )
         }
     }
 
@@ -270,33 +275,33 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinIsLostByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsLostByIHC(functionInputResolver().createOneStringInput(function))
+            ProteinIsLostByIHC(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsExpressedByIHC(functionInputResolver().createOneStringInput(function))
+            ProteinIsExpressedByIHC(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 
     private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(protein, expressionLevel)
+            val (expressionLevel, protein) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            ProteinHasExactExpressionByIHC(expressionLevel, protein)
         }
     }
 
     private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasSufficientExpressionByIHC(protein, expressionLevel)
+            val (expressionLevel, protein) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            ProteinHasSufficientExpressionByIHC(expressionLevel, protein)
         }
     }
 
     private fun proteinIsWildTypeByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsWildTypeByIHC(functionInputResolver().createOneStringInput(function))
+            ProteinIsWildTypeByIHC(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 
@@ -306,8 +311,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasLimitedExpressionByIHC(protein, expressionLevel)
+            val (expressionLevel, protein) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            ProteinHasLimitedExpressionByIHC(expressionLevel, protein)
         }
     }
 

@@ -50,6 +50,8 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
+import com.hartwig.actin.trial.input.single.OneProtein
+import com.hartwig.actin.trial.input.single.OneProteinOneInteger
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
@@ -64,9 +66,9 @@ import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoStrings
 import com.hartwig.actin.trial.input.single.TwoTreatmentCategoriesManyTypes
-import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
@@ -389,6 +391,16 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS -> {
                     createManyMedicationCategoriesTwoIntegersInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN -> {
+                    createOneProteinInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN_ONE_INTEGER -> {
+                    createOneProteinOneIntegerInput(function)
                     return true
                 }
 
@@ -945,6 +957,16 @@ class FunctionInputResolver(
             throw IllegalArgumentException("Not a proper transporter: $transporter")
         }
         return Transporter.valueOf(transporter)
+    }
+
+    fun createOneProteinInput(function: EligibilityFunction): OneProtein {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN, 1)
+        return OneProtein(parameterAsString(function, 0))
+    }
+
+    fun createOneProteinOneIntegerInput(function: EligibilityFunction): OneProteinOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_INTEGER, 2)
+        return OneProteinOneInteger(proteinName = parameterAsString(function, 0), integer = (function.parameters[1] as String).toInt())
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String

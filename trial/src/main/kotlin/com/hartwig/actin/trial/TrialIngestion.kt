@@ -26,7 +26,7 @@ data class EligibilityMappingError(val inclusionRule: String, val error: String)
 class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
     fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, List<Trial>> {
-        val trialsAndUnmappableTrial = config.map { trialState ->
+        val trialsAndUnmappableTrials = config.map { trialState ->
             val (trialErrors, criteria) = trialState.inclusionCriterion.map {
                 toEligibility(
                     inclusionCriterion = it
@@ -68,8 +68,8 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                 ).right()
             else UnmappableTrial(trialId = trialState.trialId, trialErrors, unmappableCohorts).left()
         }
-        return if (trialsAndUnmappableTrial.any { it.isLeft }) trialsAndUnmappableTrial.mapNotNull { it.leftOrNull() }
-            .left() else trialsAndUnmappableTrial.mapNotNull { it.getOrNull() }.right()
+        return if (trialsAndUnmappableTrials.any { it.isLeft }) trialsAndUnmappableTrials.mapNotNull { it.leftOrNull() }
+            .left() else trialsAndUnmappableTrials.mapNotNull { it.getOrNull() }.right()
     }
 
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =
