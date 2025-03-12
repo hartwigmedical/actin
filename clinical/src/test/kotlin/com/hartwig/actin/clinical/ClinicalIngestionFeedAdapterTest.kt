@@ -134,7 +134,11 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
             UnusedCurationConfig(categoryName = "Comorbidity", input = "morfine"),
             UnusedCurationConfig(categoryName = "Comorbidity", input = "nikkel"),
-            UnusedCurationConfig(categoryName = "Toxicity Translation", input = "Nausea")
+            UnusedCurationConfig(categoryName = "Toxicity Translation", input = "Nausea"),
+            UnusedCurationConfig(categoryName= "Lab Measurement", input= "hb | hemoglobine"),
+            UnusedCurationConfig(categoryName="Lab Measurement", input= "plt | trombocyten"),
+            UnusedCurationConfig(categoryName="Lab Measurement", input= "dc_lymfo | lymfocyten"),
+            UnusedCurationConfig(categoryName="Lab Measurement", input= "bg_o2sgem | o2-saturatie gemeten")
         )
 
         val gson = GsonSerializer.create()

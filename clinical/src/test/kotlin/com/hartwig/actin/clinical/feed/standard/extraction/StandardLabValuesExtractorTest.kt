@@ -2,11 +2,11 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
-import com.hartwig.actin.clinical.curation.translation.Translation
-import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedLabValue
@@ -17,10 +17,9 @@ import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-private const val LAB_CODE = "HGB"
-private const val LAB_NAME = "Hemoglobie"
-private val LAB_IDENTIFIERS = LaboratoryIdentifiers(LAB_CODE, LAB_NAME)
-private const val HEMOGLOBIN_TRANSLATED = "Hemoglobin"
+private const val LAB_CODE = "Hb"
+private const val LAB_NAME = "Hemoglobine"
+private val LAB_MEASUREMENT = LabMeasurement.HEMOGLOBIN
 
 private val EHR_LAB_VALUE = ProvidedLabValue(
     evaluationTime = LocalDateTime.of(2024, 2, 28, 0, 0),
@@ -33,12 +32,17 @@ private val EHR_LAB_VALUE = ProvidedLabValue(
     refUpperBound = 16.0
 )
 
+private val LAB_CONFIG = LabMeasurementConfig(
+    input = "$LAB_CODE | $LAB_NAME",
+    ignore = false,
+    labMeasurement = LAB_MEASUREMENT
+)
+
 private val LAB_VALUE = LabValue(
     date = LocalDate.of(2024, 2, 28),
-    name = HEMOGLOBIN_TRANSLATED,
+    measurement = LAB_MEASUREMENT,
     unit = LabUnit.GRAMS_PER_DECILITER,
     value = 12.0,
-    code = LAB_CODE,
     comparator = ">",
     refLimitUp = 16.0,
     refLimitLow = 12.0
@@ -46,12 +50,12 @@ private val LAB_VALUE = LabValue(
 
 class StandardLabValuesExtractorTest {
 
-    private val labTranslationDatabase = mockk<TranslationDatabase<LaboratoryIdentifiers>>()
-    private val extractor = StandardLabValuesExtractor(labTranslationDatabase)
+    private val labCuration = mockk<CurationDatabase<LabMeasurementConfig>>()
+    private val extractor = StandardLabValuesExtractor(labCuration)
 
     @Test
-    fun `Should extract and translate lab values with known units`() {
-        setupTranslation()
+    fun `Should extract and curate lab values with lab measurement and known units`() {
+        every { labCuration.find("$LAB_CODE | $LAB_NAME") } returns setOf(LAB_CONFIG)
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(
                 labValues = listOf(
@@ -67,7 +71,7 @@ class StandardLabValuesExtractorTest {
 
     @Test
     fun `Should default unit to NONE when null`() {
-        setupTranslation()
+        every { labCuration.find("$LAB_CODE | $LAB_NAME") } returns setOf(LAB_CONFIG)
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(
                 labValues = listOf(
@@ -82,8 +86,8 @@ class StandardLabValuesExtractorTest {
     }
 
     @Test
-    fun `Should return curation warning when translation not found`() {
-        every { labTranslationDatabase.find(LAB_IDENTIFIERS) } returns null
+    fun `Should return curation warning when curation not found`() {
+        every { labCuration.find("$LAB_CODE | $LAB_NAME") } returns emptySet()
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(
                 labValues = listOf(
@@ -94,19 +98,10 @@ class StandardLabValuesExtractorTest {
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 patientId = HASHED_ID_IN_BASE64,
-                category = CurationCategory.LABORATORY_TRANSLATION,
+                category = CurationCategory.LAB_MEASUREMENT,
                 feedInput = "$LAB_CODE | $LAB_NAME",
-                message = "Could not find laboratory translation for lab value with code '$LAB_CODE' and name '$LAB_NAME'"
+                message = "Could not find lab measurement config for input '$LAB_CODE | $LAB_NAME'"
             )
         )
     }
-
-    private fun setupTranslation() {
-        every {
-            labTranslationDatabase.find(
-                LAB_IDENTIFIERS
-            )
-        } returns Translation(LAB_IDENTIFIERS, LaboratoryIdentifiers(LAB_CODE, HEMOGLOBIN_TRANSLATED))
-    }
-
 }

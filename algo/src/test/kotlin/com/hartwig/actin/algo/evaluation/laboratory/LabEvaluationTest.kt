@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationR
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
@@ -91,9 +91,9 @@ class LabEvaluationTest {
 
     @Test
     fun `Should be able to use overrides for refLimitUp`() {
-        val firstCode = LabEvaluation.REF_LIMIT_UP_OVERRIDES.keys.iterator().next()
-        val overrideRefLimitUp: Double = LabEvaluation.REF_LIMIT_UP_OVERRIDES[firstCode]!!
-        val value: LabValue = LabTestFactory.create(value = 1.8 * overrideRefLimitUp).copy(code = firstCode)
+        val firstLabMeasurement = LabEvaluation.REF_LIMIT_UP_OVERRIDES.keys.iterator().next()
+        val overrideRefLimitUp: Double = LabEvaluation.REF_LIMIT_UP_OVERRIDES[firstLabMeasurement]!!
+        val value: LabValue = LabTestFactory.create(value = 1.8 * overrideRefLimitUp).copy(measurement = firstLabMeasurement)
         assertThat(LabEvaluation.evaluateVersusMaxULN(value, 2.0)).isEqualTo(WITHIN_THRESHOLD)
     }
 
@@ -133,7 +133,7 @@ class LabEvaluationTest {
         val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(unit = LabUnit.GRAMS), minValidDate)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly(
-            "Unexpected unit specified for ${measurement.display}: ${LabUnit.GRAMS}"
+            "Unexpected unit specified for ${measurement.display}: ${LabUnit.GRAMS.display()}"
         )
     }
 

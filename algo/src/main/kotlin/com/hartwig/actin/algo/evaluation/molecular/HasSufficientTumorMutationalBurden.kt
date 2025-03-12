@@ -18,7 +18,7 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
 
         if (tumorMutationalBurden >= minTumorMutationalBurden) {
             return EvaluationFactory.pass(
-                "TMB is sufficient (above $minTumorMutationalBurden)",
+                "TMB is above $minTumorMutationalBurden",
                 inclusionEvents = setOf(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_BURDEN)
             )
         }

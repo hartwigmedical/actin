@@ -6,7 +6,12 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 
 object ServeVerifier {
 
-    fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase) {
+    fun verifyServeDatabase(serveDatabase: ServeDatabase) {
+        verifyNoCombinedMolecularProfiles(serveDatabase)
+        verifyAllHotspotsHaveConsistentGenes(serveDatabase)
+    }
+
+    private fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase) {
         serveDatabase.records().values.forEach { verifyNoCombinedMolecularProfiles(it) }
     }
 
@@ -33,5 +38,34 @@ object ServeVerifier {
         }
 
         return criteriaCount > 1
+    }
+
+    private fun verifyAllHotspotsHaveConsistentGenes(serveDatabase: ServeDatabase) {
+        serveDatabase.records().values.forEach { verifyHotspotsInServeRecord(it) }
+    }
+
+    private fun verifyHotspotsInServeRecord(serveRecord: ServeRecord) {
+        val hotspotWithoutVariants = allMolecularCriteria(serveRecord).flatMap(MolecularCriterium::hotspots)
+            .find { it.variants().isEmpty() }
+
+        val inconsistentHotspot = allMolecularCriteria(serveRecord).flatMap(MolecularCriterium::hotspots)
+            .find {
+                val variants = it.variants()
+                variants.isNotEmpty() && variants.any { variant -> variant.gene() != variants.first().gene() }
+            }
+
+        val message = listOfNotNull(
+            hotspotWithoutVariants?.let { "Hotspot without variants: $it" },
+            inconsistentHotspot?.let { "Hotspot with inconsistent genes: $it" }
+        ).joinToString("\n")
+
+        if (message.isNotEmpty()) {
+            throw IllegalStateException("SERVE record contains invalid hotspots:\n$message")
+        }
+    }
+
+    private fun allMolecularCriteria(serveRecord: ServeRecord): Sequence<MolecularCriterium> {
+        return serveRecord.evidences().asSequence().map { it.molecularCriterium() } +
+                serveRecord.trials().asSequence().flatMap { it.anyMolecularCriteria() }
     }
 }

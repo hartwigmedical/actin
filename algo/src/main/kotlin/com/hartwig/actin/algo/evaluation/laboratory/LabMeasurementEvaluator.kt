@@ -3,8 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvalidLabValue
 import com.hartwig.actin.algo.evaluation.util.Format.date
-import com.hartwig.actin.clinical.interpretation.LabInterpreter
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -16,7 +15,7 @@ class LabMeasurementEvaluator(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val interpretation = LabInterpreter.interpret(record.labValues)
+        val interpretation = LabInterpretation.interpret(record.labValues)
         val mostRecent = interpretation.mostRecentValue(measurement)
         if (!LabEvaluation.isValid(mostRecent, measurement, minValidDate)) {
             return evaluateInvalidLabValue(measurement, mostRecent, minValidDate)

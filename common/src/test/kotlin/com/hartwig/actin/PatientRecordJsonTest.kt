@@ -2,7 +2,7 @@ package com.hartwig.actin
 
 import com.hartwig.actin.PatientRecordJson.fromJson
 import com.hartwig.actin.PatientRecordJson.toJson
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.LabValue
 import org.assertj.core.api.Assertions.assertThat
@@ -24,8 +24,7 @@ class PatientRecordJsonTest {
             labValues = listOf(
                 LabValue(
                     date = LocalDate.now(),
-                    code = LabMeasurement.ASPARTATE_AMINOTRANSFERASE.code,
-                    name = "Aspartate aminotransferase",
+                    measurement = LabMeasurement.ASPARTATE_AMINOTRANSFERASE,
                     comparator = "",
                     value = Double.NaN,
                     unit = LabMeasurement.ASPARTATE_AMINOTRANSFERASE.defaultUnit,

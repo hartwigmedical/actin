@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
 import org.apache.logging.log4j.LogManager
@@ -16,7 +16,7 @@ internal object LabUnitConverter {
         val conversionFactor = LabUnitConversionTable.findConversionFactor(measurement, labValue.unit, targetUnit)
         if (conversionFactor == null) {
             LOGGER.warn(
-                "No conversion factor defined for {} to go from '{}' to '{}'", measurement.display, labValue.unit, targetUnit
+                "No conversion factor defined for {} to go from '{}' to '{}'", measurement.display, labValue.unit.display(), targetUnit
             )
             return null
         }
