@@ -111,7 +111,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = listOf(
                 Toxicity(
                     "Nivolumab induced pneumonitis",
-                    setOf(IcdCode(IcdConstants.PNEUMONITIS_BLOCK, IcdConstants.IMMUNOTHERAPY_DRUG_SET.first())),
+                    setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, IcdConstants.IMMUNOTHERAPY_DRUG_SET.first())),
                     DATE,
                     ToxicitySource.EHR,
                     3

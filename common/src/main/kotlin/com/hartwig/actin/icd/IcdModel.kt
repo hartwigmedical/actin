@@ -80,7 +80,7 @@ class IcdModel(
 
     fun <T: Comorbidity> findInstancesMatchingAnyExtensionCode(instances: List<T>, targetExtensionCodes: Set<String>): List<Comorbidity> {
         return instances.filter { entity ->
-            entity.icdCodes.flatMap { codeWithAllParents(it.extensionCode) }.toSet().any(targetExtensionCodes::contains)
+            entity.icdCodes.any { codeWithAllParents(it.extensionCode).any(targetExtensionCodes::contains) }
         }
     }
 
