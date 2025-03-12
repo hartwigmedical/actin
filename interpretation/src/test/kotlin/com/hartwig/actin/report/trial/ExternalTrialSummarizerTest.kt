@@ -21,6 +21,7 @@ private const val TITLE = "title"
 private const val URL = "url"
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = NCT_01,
+    source = "source",
     title = "title",
     countries = sortedSetOf(),
     actinMolecularEvents = sortedSetOf(),
@@ -94,6 +95,7 @@ class ExternalTrialSummarizerTest {
         Assertions.assertThat(summarized).containsExactly(
             ExternalTrialSummary(
                 nctId = TRIAL_2.nctId,
+                source = "source",
                 title = TRIAL_2.title,
                 countries = countrySet(BELGIUM),
                 actinMolecularEvents = sortedSetOf(EGFR_TARGET, TMB_TARGET),
@@ -103,6 +105,7 @@ class ExternalTrialSummarizerTest {
             ),
             ExternalTrialSummary(
                 nctId = TRIAL_1.nctId,
+                source = "source",
                 title = TRIAL_1.title,
                 countries = countrySet(NETHERLANDS, BELGIUM),
                 actinMolecularEvents = sortedSetOf(TMB_TARGET),

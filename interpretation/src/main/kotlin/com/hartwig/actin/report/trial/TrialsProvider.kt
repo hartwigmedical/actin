@@ -56,6 +56,7 @@ class TrialsProvider(
         return filterCohortsAvailable(cohorts, true).map {
             ExternalTrialSummary(
                 it.nctId ?: it.trialId,
+                source = "Internal",
                 it.name ?: it.acronym,
                 emptySortedSet(),
                 it.molecularEvents.toSortedSet(),

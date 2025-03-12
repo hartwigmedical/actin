@@ -7,6 +7,7 @@ import org.junit.Test
 
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = "nct",
+    source = "source",
     title = "title",
     url = "url",
     actinMolecularEvents = sortedSetOf(),
