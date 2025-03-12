@@ -6,16 +6,16 @@ import com.hartwig.actin.datamodel.algo.ResistanceEvidence
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
@@ -107,7 +107,8 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable hotspot in molecular history`() {
-        val hotspotWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "G")
+        val hotspotWithResistanceEvidence =
+            TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation("gene 1", "X", 2, "A", "G"))
         val hasHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()
                 .copy(

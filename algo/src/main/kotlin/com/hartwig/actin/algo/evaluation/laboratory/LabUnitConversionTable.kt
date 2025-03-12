@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 
 internal object LabUnitConversionTable {
@@ -11,7 +11,8 @@ internal object LabUnitConversionTable {
         LabMeasurement.LYMPHOCYTES_ABS to createLymphocytesConversionMap(),
         LabMeasurement.HEMOGLOBIN to createHemoglobinConversionMap(),
         LabMeasurement.CALCIUM to createCalciumConversionMap(),
-        LabMeasurement.TOTAL_BILIRUBIN to createBilirubinConversionMap()
+        LabMeasurement.TOTAL_BILIRUBIN to createBilirubinConversionMap(),
+        LabMeasurement.TESTOSTERONE to createTestosteroneConversionMap()
     )
 
     fun findConversionFactor(measurement: LabMeasurement, fromUnit: LabUnit, toUnit: LabUnit): Double? {
@@ -49,5 +50,9 @@ internal object LabUnitConversionTable {
 
     private fun createBilirubinConversionMap(): Map<LabUnit, Map<LabUnit, Double>> {
         return createConversionMap(LabUnit.MICROMOLES_PER_LITER, LabUnit.MILLIGRAMS_PER_DECILITER, 0.0585)
+    }
+
+    private fun createTestosteroneConversionMap(): Map<LabUnit, Map<LabUnit, Double>> {
+        return createConversionMap(LabUnit.NANOMOLES_PER_LITER, LabUnit.NANOGRAMS_PER_DECILITER, 28.842)
     }
 }

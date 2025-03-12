@@ -11,7 +11,7 @@ object ServeLoader {
     fun loadServeDatabase(jsonFilePath: String): ServeDatabase {
         val serveDatabase = ServeJson.read(jsonFilePath)
 
-        ServeVerifier.verifyNoCombinedMolecularProfiles(serveDatabase)
+        ServeVerifier.verifyServeDatabase(serveDatabase)
 
         return serveDatabase
     }
