@@ -10,7 +10,7 @@ private fun ProvidedPatientRecord.scrubModifications() =
     this.copy(treatmentHistory = this.treatmentHistory.map { it.copy(modifications = emptyList()) })
 
 private fun ProvidedPatientRecord.scrubMedications() =
-    this.copy(medications = null)
+    this.copy(medications = this.medications)
 
 private fun ProvidedPatientRecord.addAlwaysTestedGenes() =
     this.copy(molecularTests = this.molecularTests.map {
