@@ -33,7 +33,7 @@ import org.junit.Test
 private const val PATIENT = "ACTN01029999"
 private val EXPECTED_CLINICAL_RECORD = "${resourceOnClasspath("clinical_record")}/$PATIENT.clinical.json"
 
-class S {
+class ClinicalIngestionFeedAdapterTest {
     lateinit var curationDatabase: CurationDatabaseContext
     private lateinit var adapter: ClinicalIngestionFeedAdapter
 
@@ -168,11 +168,6 @@ class S {
                     patientIngestionResult.feedValidationWarnings
                 )
             )
-    }
-
-    @Test
-    fun `Should contain validation warning if there is no questionnaire` () {
-
     }
 
     private fun assertQuestionnaireInFeedIsOfLatestVersion() {

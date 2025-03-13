@@ -19,7 +19,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Pass if there is a match` () {
+    fun `Should pass if there is a match` () {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(TreatmentTestFactory.drugTreatment("Alk Inhibitor",
                 TreatmentCategory.CHEMOTHERAPY,
