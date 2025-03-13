@@ -7,53 +7,77 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import java.time.LocalDate
 
 class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(maxTestAge) {
 
+    private enum class VariantClassification {
+        CANONICAL_REPORTABLE,
+        CANONICAL_REPORTABLE_SUBCLONAL,
+        CANONICAL_UNREPORTABLE,
+        REPORTABLE_OTHER,
+        NONE
+    }
+
     override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
-        val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
-        val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()
-        val canonicalCodonMatches: MutableSet<String> = mutableSetOf()
-        val canonicalReportableSubclonalCodonMatches: MutableSet<String> = mutableSetOf()
-        val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
-        val reportableOtherCodonMatches: MutableSet<String> = mutableSetOf()
-        for (variant in test.drivers.variants) {
-            if (variant.gene == gene) {
-                for (codon in codons) {
-                    if (isCodonMatch(variant.canonicalImpact.affectedCodon, codon)) {
+        val canonicalCodonMatches = mutableSetOf<String>()
+        val canonicalReportableSubclonalCodonMatches = mutableSetOf<String>()
+        val reportableOtherCodonMatches = mutableSetOf<String>()
+
+        val variantClassifications = test.drivers.variants.filter { it.gene == gene }
+            .onEach { variant ->
+                codons.forEach { codon ->
+                    val match = isCodonMatch(variant.canonicalImpact.affectedCodon, codon)
+                    if (match) {
                         canonicalCodonMatches.add(codon)
-                        if (variant.isReportable) {
-                            if (variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
-                                canonicalReportableSubclonalVariantMatches.add(variant.event)
-                                canonicalReportableSubclonalCodonMatches.add(codon)
-                            } else {
-                                canonicalReportableVariantMatches.add(variant.event)
-                            }
-                        } else {
-                            canonicalUnreportableVariantMatches.add(variant.event)
-                        }
+                    }
+                    if (match && variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
+                        canonicalReportableSubclonalCodonMatches.add(codon)
                     }
                     if (variant.isReportable) {
-                        for (otherImpact in variant.otherImpacts) {
-                            if (isCodonMatch(otherImpact.affectedCodon, codon)) {
-                                reportableOtherVariantMatches.add(variant.event)
-                                reportableOtherCodonMatches.add(codon)
-                            }
+                        variant.otherImpacts.forEach {
+                            if (isCodonMatch(it.affectedCodon, codon)) reportableOtherCodonMatches.add(codon)
                         }
                     }
                 }
             }
-        }
+            .groupBy { variant ->
+                when {
+                    canonicalCodonMatches.isNotEmpty() && variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true -> {
+                        VariantClassification.CANONICAL_REPORTABLE_SUBCLONAL
+                    }
+
+                    canonicalCodonMatches.isNotEmpty() && variant.isReportable -> {
+                        VariantClassification.CANONICAL_REPORTABLE
+                    }
+
+                    canonicalCodonMatches.isNotEmpty() -> {
+                        VariantClassification.CANONICAL_UNREPORTABLE
+                    }
+
+                    variant.isReportable && reportableOtherCodonMatches.isNotEmpty() -> {
+                        VariantClassification.REPORTABLE_OTHER
+                    }
+
+                    else -> VariantClassification.NONE
+                }
+            }.mapValues { (_, variants) -> variants.map(Variant::event).toSet() }
+
+        val canonicalReportableVariantMatches = variantClassifications[VariantClassification.CANONICAL_REPORTABLE] ?: emptySet()
+        val canonicalReportableSubclonalVariantMatches =
+            variantClassifications[VariantClassification.CANONICAL_REPORTABLE_SUBCLONAL] ?: emptySet()
+        val canonicalUnreportableVariantMatches = variantClassifications[VariantClassification.CANONICAL_UNREPORTABLE] ?: emptySet()
+        val reportableOtherVariantMatches = variantClassifications[VariantClassification.REPORTABLE_OTHER] ?: emptySet()
 
         return when {
             canonicalReportableVariantMatches.isNotEmpty() && reportableOtherVariantMatches.isEmpty() && canonicalReportableSubclonalVariantMatches.isEmpty() -> {
                 EvaluationFactory.pass(
-                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene in canonical transcript",
+                    "Variant(s) ${concatVariants(canonicalReportableVariantMatches, gene)} in codon(s) " +
+                            "${concat(canonicalCodonMatches)} in $gene in canonical transcript",
                     inclusionEvents = canonicalReportableVariantMatches
                 )
             }
