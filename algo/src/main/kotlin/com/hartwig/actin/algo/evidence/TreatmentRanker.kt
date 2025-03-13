@@ -10,7 +10,6 @@ data class RankResult(val treatment: String, val event: String, val scores: List
     override fun compareTo(other: RankResult): Int {
         return Comparator.comparingDouble<RankResult> { it.scores.sumOf { s -> s.score }.toDouble() }.compare(this, other)
     }
-
 }
 
 class TreatmentRanker {
@@ -19,7 +18,10 @@ class TreatmentRanker {
         val scorer = TreatmentScorer()
         val treatments = record.molecularHistory.molecularTests.asSequence().flatMap {
             (it.drivers.fusions + it.drivers.variants).map { d -> d.evidence } +
-                    it.characteristics.microsatelliteEvidence + it.characteristics.homologousRecombinationEvidence + it.characteristics.tumorMutationalBurdenEvidence + it.characteristics.tumorMutationalLoadEvidence
+                    it.characteristics.microsatelliteEvidence +
+                    it.characteristics.homologousRecombinationEvidence +
+                    it.characteristics.tumorMutationalBurdenEvidence +
+                    it.characteristics.tumorMutationalLoadEvidence
         }.filterNotNull().flatMap { it.treatmentEvidence }.toSet()
 
         val scoredTreatmentEntries = treatments.map { it to scorer.score(it) }
@@ -41,11 +43,12 @@ fun saturatingDiminishingReturnsScore(
     score.score() * (1.0 / (1.0 + exp(slope * (index - midpoint))))
 }.sumOf { it }
 
-
 fun main() {
-    val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of("/Users/pwolfe/Code/actin/case_976.patient_record.json")))
+    val patientRecordPath = System.getProperty("user.home") + "/Code/actin/case_976.patient_record.json"
+    val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of(patientRecordPath)))
     val records = TreatmentRanker().rank(patientRecord)
     var stringToWrite = "Treatment,Variant,Variant Match,Tumor Match,Approval,Factor,Score,Total Score,Description\n"
+
     for (record in records.sorted().reversed()) {
         var treatmentText = ""
         var scoreSum = 0
@@ -65,6 +68,6 @@ fun main() {
         stringToWrite += "${record.treatment},,,,,,,$scoreSum\n"
         stringToWrite += treatmentText
     }
-    Files.writeString(Path.of("case976_ranking.csv"), stringToWrite)
 
+    Files.writeString(Path.of("case976_ranking.csv"), stringToWrite)
 }
