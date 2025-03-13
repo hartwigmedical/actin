@@ -47,7 +47,7 @@ class MedicationExtractor(
 
                 val atcCode = entry.code5ATCCode
                 val atc = atcModel.resolveByCode(atcCode, entry.code5ATCDisplay)
-                val drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay)
+                val drug = treatmentDatabase.findDrugByAtcName(name)
                 val isSelfCare = entry.code5ATCDisplay.isEmpty() && atcCode.isEmpty()
                 val isTrialMedication =
                     entry.code5ATCDisplay.isEmpty() && atcCode.isNotEmpty() && atcCode[0].lowercaseChar() !in 'a'..'z'
