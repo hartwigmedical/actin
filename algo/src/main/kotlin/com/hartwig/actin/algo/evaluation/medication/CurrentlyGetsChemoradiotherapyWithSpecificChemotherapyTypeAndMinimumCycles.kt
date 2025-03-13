@@ -14,16 +14,23 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val currentMedications = record.medications?.filter {
+        val matchingMedications = record.medications?.filter {
             (selector.isActive(it) || selector.isPlanned(it)) &&
                     it.drug?.category in setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY) &&
                     it.drug?.drugTypes?.contains(type) == true  &&
                     it.dosage.frequency!= null && it.dosage.frequency!! > minCycles
         }
 
+        val matchingTreatments = record.oncologicalHistory.filter {
+            it.categories().intersect(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)).isNotEmpty() &&
+                    it.isOfType(type) == true &&
+                    it.treatmentHistoryDetails?.cycles != null &&
+                    it.treatmentHistoryDetails?.cycles!! > minCycles
+        }
+
         return when {
-            !currentMedications.isNullOrEmpty() -> EvaluationFactory.pass("Patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles")
-            currentMedications.isNullOrEmpty() -> EvaluationFactory.fail("No medications currently received")
+            matchingTreatments.isNotEmpty() -> EvaluationFactory.pass("Patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles")
+            matchingTreatments.isEmpty() -> EvaluationFactory.fail("No chemo radio therapy with $type with at least $minCycles is currently received")
             else -> EvaluationFactory.undetermined(
                 "Undetermined if patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles"
             )
