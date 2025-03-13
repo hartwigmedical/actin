@@ -31,12 +31,11 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
         val variantClassifications = test.drivers.variants.filter { it.gene == gene }
             .onEach { variant ->
                 codons.forEach { codon ->
-                    val match = isCodonMatch(variant.canonicalImpact.affectedCodon, codon)
-                    if (match) {
+                    if (isCodonMatch(variant.canonicalImpact.affectedCodon, codon)) {
                         canonicalCodonMatches.add(codon)
-                    }
-                    if (match && variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
-                        canonicalReportableSubclonalCodonMatches.add(codon)
+                        if (variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
+                            canonicalReportableSubclonalCodonMatches.add(codon)
+                        }
                     }
                     if (variant.isReportable) {
                         variant.otherImpacts.forEach {
@@ -46,20 +45,21 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                 }
             }
             .groupBy { variant ->
+                val hasCanonicalCodonMatch = containsCodon(variant.canonicalImpact.affectedCodon, canonicalCodonMatches)
                 when {
-                    canonicalCodonMatches.isNotEmpty() && variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true -> {
+                    hasCanonicalCodonMatch && variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true -> {
                         VariantClassification.CANONICAL_REPORTABLE_SUBCLONAL
                     }
 
-                    canonicalCodonMatches.isNotEmpty() && variant.isReportable -> {
+                    hasCanonicalCodonMatch && variant.isReportable -> {
                         VariantClassification.CANONICAL_REPORTABLE
                     }
 
-                    canonicalCodonMatches.isNotEmpty() -> {
+                    hasCanonicalCodonMatch -> {
                         VariantClassification.CANONICAL_UNREPORTABLE
                     }
 
-                    variant.isReportable && reportableOtherCodonMatches.isNotEmpty() -> {
+                    variant.isReportable && variant.otherImpacts.any { containsCodon(it.affectedCodon, reportableOtherCodonMatches) } -> {
                         VariantClassification.REPORTABLE_OTHER
                     }
 
@@ -160,14 +160,19 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
         return concat(message)
     }
 
+    private fun isCodonMatch(affectedCodon: Int?, codonToMatch: String): Boolean {
+        if (affectedCodon == null) {
+            return false
+        }
+        val codonIndexToMatch = codonToMatch.substring(1).toInt()
+        return codonIndexToMatch == affectedCodon
+    }
+
+    private fun containsCodon(affectedCodon: Int?, codonsToMatch: Set<String>): Boolean {
+        return codonsToMatch.any { it.substring(1).toInt() == affectedCodon }
+    }
+
     companion object {
         private const val CLONAL_CUTOFF = 0.5
-        private fun isCodonMatch(affectedCodon: Int?, codonToMatch: String): Boolean {
-            if (affectedCodon == null) {
-                return false
-            }
-            val codonIndexToMatch = codonToMatch.substring(1).toInt()
-            return codonIndexToMatch == affectedCodon
-        }
     }
 }
