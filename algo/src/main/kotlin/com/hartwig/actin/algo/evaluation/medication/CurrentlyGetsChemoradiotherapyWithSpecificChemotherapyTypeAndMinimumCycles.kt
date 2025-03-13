@@ -17,7 +17,8 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         val currentMedications = record.medications?.filter {
             (selector.isActive(it) || selector.isPlanned(it)) &&
                     it.drug?.category in setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY) &&
-                    it.dosage.frequency != null && it.dosage.frequency!! > minCycles
+                    it.drug?.drugTypes?.contains(type) == true  &&
+                    it.dosage.frequency!= null && it.dosage.frequency!! > minCycles
         }
 
         return when {
