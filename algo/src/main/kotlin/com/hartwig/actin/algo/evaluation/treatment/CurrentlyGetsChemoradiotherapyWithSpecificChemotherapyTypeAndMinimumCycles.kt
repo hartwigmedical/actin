@@ -15,7 +15,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val matchingTreatments = record.oncologicalHistory.filter {
-            it.categories().intersect(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)).isNotEmpty() &&
+            it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)) &&
                     it.isOfType(type) == true &&
                     it.treatmentHistoryDetails?.cycles != null &&
                     it.treatmentHistoryDetails?.cycles!! > minCycles

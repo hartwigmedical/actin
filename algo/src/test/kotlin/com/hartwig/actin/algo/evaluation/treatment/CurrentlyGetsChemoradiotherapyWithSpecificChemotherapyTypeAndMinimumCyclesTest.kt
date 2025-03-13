@@ -5,6 +5,8 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
@@ -21,9 +23,9 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     @Test
     fun `Should pass if there is a match` () {
         val matchingTreatment = TreatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.drugTreatment("Alk Inhibitor",
-                TreatmentCategory.CHEMOTHERAPY,
-                setOf(DrugType.ALK_INHIBITOR))
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10)
         )
