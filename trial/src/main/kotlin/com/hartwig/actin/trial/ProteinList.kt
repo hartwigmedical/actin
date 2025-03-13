@@ -9,6 +9,7 @@ class ProteinList(val outputDirectory: String) {
     fun writeListOfIhcProteins(trials: List<Trial>): Unit {
         var functions = trials.flatMap { it.generalEligibility }.map { it.function }
             .filter { it.rule.input in (listOf(FunctionInput.ONE_PROTEIN, FunctionInput.ONE_PROTEIN_ONE_INTEGER)) }
+        functions.forEach { f -> println("IHC: ${f.rule.name} params: ${f.parameters}") }
         Files.write(Path.of(outputDirectory, "ihc_proteins.list"), functions.map { it.parameters.first().toString() })
     }
 }
