@@ -7,10 +7,11 @@ import org.junit.Test
 
 private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
+private const val GENE = "gene 1"
 
 class ProteinIsLostByIHCTest {
 
-    private val function = ProteinIsLostByIHC(PROTEIN)
+    private val function = ProteinIsLostByIHC(PROTEIN, GENE)
     private val passingTest = priorIHCTest(test = IHC, item = PROTEIN, scoreText = "loss")
     private val wrongTest = priorIHCTest(test = IHC, item = PROTEIN, scoreText = "no loss")
     private val inconclusiveTest = priorIHCTest(test = IHC, item = PROTEIN, scoreText = "something")

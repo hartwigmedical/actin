@@ -64,7 +64,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
-            EligibilityRule.LOSS_OF_PROTEIN_X_BY_IHC to proteinIsLostByIHCCreator(),
+            EligibilityRule.LOSS_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsLostByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
@@ -270,7 +270,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinIsLostByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsLostByIHC(functionInputResolver().createOneStringInput(function), maxMolecularTestAge())
+            val (protein, gene) = functionInputResolver().createTwoStringsInput(function)
+            ProteinIsLostByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
