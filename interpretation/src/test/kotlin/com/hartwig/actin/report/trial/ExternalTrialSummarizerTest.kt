@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -80,7 +81,7 @@ private val TRIAL_MATCHES = setOf(
     )
 )
 
-class ExternalGeneralizedTrialSummarizerTest {
+class ExternalTrialSummarizerTest {
 
     @Test
     fun `Should summarize trials by aggregating events, source events and cancer types and sorting by event`() {
@@ -91,7 +92,7 @@ class ExternalGeneralizedTrialSummarizerTest {
             )
         )
 
-        Assertions.assertThat(summarized).containsExactly(
+        assertThat(summarized).containsExactly(
             ExternalTrialSummary(
                 nctId = TRIAL_2.nctId,
                 title = TRIAL_2.title,
@@ -116,7 +117,7 @@ class ExternalGeneralizedTrialSummarizerTest {
     @Test
     fun `Should filter internal trials`() {
         val notFiltered = BASE_EXTERNAL_TRIAL_SUMMARY.copy(nctId = "NCT00000002")
-        Assertions.assertThat(
+        assertThat(
             setOf(BASE_EXTERNAL_TRIAL_SUMMARY.copy(nctId = NCT_01), notFiltered).filterInternalTrials(TRIAL_MATCHES)
         ).containsExactly(notFiltered)
     }
@@ -134,7 +135,7 @@ class ExternalGeneralizedTrialSummarizerTest {
                 "Utrecht" to setOf(Hospital("Sophia KinderZiekenhuis", isChildrensHospital = true))
             )
         )
-        Assertions.assertThat(
+        assertThat(
             setOf(notFilteredHospital, filteredHospital)
                 .filterExclusivelyInChildrensHospitalsInReferenceCountry(
                     birthYear = 1960,
@@ -156,7 +157,7 @@ class ExternalGeneralizedTrialSummarizerTest {
             referenceDate = LocalDate.of(2021, 1, 1),
             countryOfReference = Country.NETHERLANDS
         )
-        Assertions.assertThat(result).containsExactly(notFilteredHospital)
+        assertThat(result).containsExactly(notFilteredHospital)
     }
 
     @Test
@@ -164,11 +165,11 @@ class ExternalGeneralizedTrialSummarizerTest {
         val country1Trial = BASE_EXTERNAL_TRIAL_SUMMARY.copy(countries = countrySet(NETHERLANDS))
         val country2Trial = BASE_EXTERNAL_TRIAL_SUMMARY.copy(countries = countrySet(BELGIUM))
 
-        Assertions.assertThat(
+        assertThat(
             setOf(country1Trial, country2Trial).filterInCountry(country1Trial.countries.first().country)
         ).containsExactly(country1Trial)
 
-        Assertions.assertThat(
+        assertThat(
             setOf(country1Trial, country2Trial).filterNotInCountry(country1Trial.countries.first().country)
         ).containsExactly(country2Trial)
     }
@@ -187,7 +188,7 @@ class ExternalGeneralizedTrialSummarizerTest {
             actinMolecularEvents = sortedSetOf(TMB_TARGET)
         )
         val result = setOf(filtered, notFiltered).filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(interpretedCohorts)
-        Assertions.assertThat(result).containsExactly(notFiltered)
+        assertThat(result).containsExactly(notFiltered)
     }
 
     @Test
@@ -202,7 +203,7 @@ class ExternalGeneralizedTrialSummarizerTest {
             actinMolecularEvents = sortedSetOf(TMB_TARGET)
         )
         val result = setOf(filtered, notFiltered).filterMolecularCriteriaAlreadyPresentInTrials(setOf(otherTrial))
-        Assertions.assertThat(result).containsExactly(notFiltered)
+        assertThat(result).containsExactly(notFiltered)
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)

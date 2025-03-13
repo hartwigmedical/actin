@@ -27,8 +27,11 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerat
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.*
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionBySource
+import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.apache.logging.log4j.LogManager
 

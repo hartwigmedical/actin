@@ -23,13 +23,6 @@
             <artifactId>kotlin-stdlib</artifactId>
         </dependency>
 
-        <!-- SLF4J implementation is required by iTextPDF -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-reload4j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
