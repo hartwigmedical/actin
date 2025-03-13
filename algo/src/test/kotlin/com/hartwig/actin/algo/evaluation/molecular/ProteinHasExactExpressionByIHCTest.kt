@@ -7,9 +7,10 @@ import org.junit.Test
 
 private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
+private const val GENE = "gene 1"
 
 class ProteinHasExactExpressionByIHCTest {
-    private val function = ProteinHasExactExpressionByIHC(PROTEIN, 2)
+    private val function = ProteinHasExactExpressionByIHC(PROTEIN, GENE,2)
 
     @Test
     fun `Should fail when there are no prior tests`() {

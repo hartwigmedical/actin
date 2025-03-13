@@ -9,13 +9,14 @@ import org.junit.Test
 
 private const val IHC = "IHC"
 private const val PROTEIN = "PD-L1"
+private const val GENE = "PD-L1"
 
 class ProteinExpressionByIHCFunctionsTest {
 
     private val referenceLevel = 2
-    private val limitedFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.LIMITED)
-    private val sufficientFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.SUFFICIENT)
-    private val exactFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.EXACT)
+    private val limitedFunction = ProteinExpressionByIHCFunctions(PROTEIN, GENE, referenceLevel, IhcExpressionComparisonType.LIMITED)
+    private val sufficientFunction = ProteinExpressionByIHCFunctions(PROTEIN, GENE, referenceLevel, IhcExpressionComparisonType.SUFFICIENT)
+    private val exactFunction = ProteinExpressionByIHCFunctions(PROTEIN, GENE, referenceLevel, IhcExpressionComparisonType.EXACT)
 
     @Test
     fun `Should evaluate to undetermined when no IHC tests present in record`() {

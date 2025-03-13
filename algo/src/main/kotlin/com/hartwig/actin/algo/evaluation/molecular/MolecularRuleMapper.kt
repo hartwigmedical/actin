@@ -65,7 +65,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
             EligibilityRule.LOSS_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsLostByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
@@ -277,21 +277,22 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsExpressedByIHC(functionInputResolver().createOneStringInput(function), maxMolecularTestAge())
+            val (protein, gene) = functionInputResolver().createTwoStringsInput(function)
+            ProteinIsExpressedByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
     private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(protein, expressionLevel, maxMolecularTestAge())
+            val (protein, gene, expressionLevel) = functionInputResolver().createTwoStringsOneIntegerInput(function)
+            ProteinHasExactExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 
     private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasSufficientExpressionByIHC(protein, expressionLevel, maxMolecularTestAge())
+            val (protein, gene, expressionLevel) = functionInputResolver().createTwoStringsOneIntegerInput(function)
+            ProteinHasSufficientExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 
@@ -307,8 +308,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasLimitedExpressionByIHC(protein, expressionLevel, maxMolecularTestAge())
+            val (protein, gene, expressionLevel) = functionInputResolver().createTwoStringsOneIntegerInput(function)
+            ProteinHasLimitedExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 

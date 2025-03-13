@@ -17,7 +17,7 @@ enum class IhcExpressionComparisonType {
 }
 
 class ProteinExpressionByIHCFunctions(
-    private val protein: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType, private val maxTestAge: LocalDate? = null
+    private val protein: String, private val gene: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType, private val maxTestAge: LocalDate? = null
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -37,8 +37,8 @@ class ProteinExpressionByIHCFunctions(
             IhcExpressionComparisonType.EXACT -> "exactly"
         }
 
-        val geneIsWildType = MolecularRuleEvaluator.geneIsWildTypeForPatient(protein, record, maxTestAge)
-        val additionalMessage = if (geneIsWildType) " though $protein is wild-type in recent molecular test" else ""
+        val geneIsWildType = MolecularRuleEvaluator.geneIsWildTypeForPatient(gene, record, maxTestAge)
+        val additionalMessage = if (geneIsWildType) " though $gene is wild-type in recent molecular test" else ""
 
         return when {
             EvaluationResult.PASS in evaluationsVersusReference -> {

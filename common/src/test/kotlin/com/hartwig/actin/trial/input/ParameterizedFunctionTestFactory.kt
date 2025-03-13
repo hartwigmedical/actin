@@ -174,6 +174,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("string1", "string2")
             }
 
+            FunctionInput.TWO_STRINGS_ONE_INTEGER -> {
+                listOf("string1", "string2", "1")
+            }
+
             FunctionInput.ONE_STRING_ONE_INTEGER -> {
                 listOf("string", "1")
             }

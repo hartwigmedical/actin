@@ -5,9 +5,9 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
 
-class ProteinHasExactExpressionByIHC(private val protein: String, private val expressionLevel: Int, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+class ProteinHasExactExpressionByIHC(private val protein: String, private val gene: String, private val expressionLevel: Int, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return ProteinExpressionByIHCFunctions(protein, expressionLevel, IhcExpressionComparisonType.EXACT, maxTestAge).evaluate(record)
+        return ProteinExpressionByIHCFunctions(protein, gene, expressionLevel, IhcExpressionComparisonType.EXACT, maxTestAge).evaluate(record)
     }
 }

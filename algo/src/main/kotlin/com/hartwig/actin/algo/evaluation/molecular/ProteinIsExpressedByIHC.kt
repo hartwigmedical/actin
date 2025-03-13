@@ -9,13 +9,13 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import java.time.LocalDate
 
-class ProteinIsExpressedByIHC(private val protein: String,  private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+class ProteinIsExpressedByIHC(private val protein: String,  private val gene: String, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, protein)
 
-        val geneIsWildType = MolecularRuleEvaluator.geneIsWildTypeForPatient(protein, record, maxTestAge)
-        val additionalMessage = if (geneIsWildType) " though $protein is wild-type in recent molecular test" else ""
+        val geneIsWildType = MolecularRuleEvaluator.geneIsWildTypeForPatient(gene, record, maxTestAge)
+        val additionalMessage = if (geneIsWildType) " though $gene is wild-type in recent molecular test" else ""
 
         return when {
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "positive" || testScoredAboveZero(ihcTest) } -> {

@@ -8,11 +8,12 @@ import org.junit.Test
 
 private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
+private const val GENE = "gene 1"
 private const val REFERENCE = 2
 
 class ProteinHasLimitedExpressionByIHCTest {
 
-    private val function = ProteinHasLimitedExpressionByIHC(PROTEIN, REFERENCE)
+    private val function = ProteinHasLimitedExpressionByIHC(PROTEIN, GENE, REFERENCE)
 
     @Test
     fun `Should evaluate to undetermined when no IHC tests present in record`() {
