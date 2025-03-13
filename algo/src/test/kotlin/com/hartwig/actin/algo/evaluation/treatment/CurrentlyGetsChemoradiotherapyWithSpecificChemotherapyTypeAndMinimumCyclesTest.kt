@@ -33,6 +33,19 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         assert(EvaluationResult.PASS, DrugType.ALK_INHIBITOR, 1, record)
     }
 
+    @Test
+    fun `Should fail if there is only radiotherapy` () {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10)
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
+        assert(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, 1, record)
+    }
+
+
     private fun assert(evaluationResult: EvaluationResult, type: TreatmentType, minCycles: Int, record: PatientRecord) {
         val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, minCycles).evaluate(record)
         return EvaluationAssert.assertEvaluation(evaluationResult, evaluation)
