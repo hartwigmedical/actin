@@ -80,8 +80,9 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val outputDirectory = config.outputDirectory
         when (result) {
             is Either.Right -> {
-                LOGGER.info("Writing {} trials to {}", result.value.size, outputDirectory)
+                LOGGER.info("Writing {} trials to [{}]", result.value.size, outputDirectory)
                 TrialJson.write(result.value, outputDirectory)
+                LOGGER.info("Writing list of proteins referenced in inclusion criteria to [{}]", outputDirectory)
                 ProteinList(outputDirectory).writeListOfIhcProteins(result.value)
             }
 
@@ -91,7 +92,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             }
         }
 
-        LOGGER.info("Done!")
+        LOGGER.info("{} done!", APPLICATION)
     }
 
     companion object {
