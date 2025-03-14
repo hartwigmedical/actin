@@ -3,6 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorIHCTest
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val IHC = "IHC"
@@ -27,6 +30,21 @@ class ProteinIsLostByIHCTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(MolecularTestFactory.withIHCTests(priorIHCTest(test = IHC, item = "No protein", scoreText = "loss")))
         )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if there are no tests for protein but gene is wild type in panel`() {
+        val evaluation = function.evaluate(
+            MolecularTestFactory.withIHCTests(priorIHCTest(test = IHC, item = "No protein", scoreText = "loss")).copy(
+                molecularHistory = MolecularHistory(
+                    listOf(
+                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf(GENE))
+                    )
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages).containsExactly("No $PROTEIN IHC test result though $GENE is wild-type in recent molecular test")
     }
 
     @Test

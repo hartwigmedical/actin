@@ -66,10 +66,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
             EligibilityRule.LOSS_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsLostByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsExpressedByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
-            EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_EXACTLY_Z to proteinHasExactExpressionByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_AT_LEAST_Z to proteinHasSufficientExpressionByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_AT_MOST_Z to proteinHasLimitedExpressionByIHCCreator(),
+            EligibilityRule.PROTEIN_X_OF_GENE_Y_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
             EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIHCCreator(),
@@ -298,7 +298,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinIsWildTypeByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsWildTypeByIHC(functionInputResolver().createOneStringInput(function))
+            val (protein, gene) = functionInputResolver().createTwoStringsInput(function)
+            ProteinIsWildTypeByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
