@@ -47,6 +47,7 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDru
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoStrings
+import com.hartwig.actin.trial.input.single.TwoStringsOneInteger
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
@@ -564,6 +565,18 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(1, 2)))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with two string one integer inputs`() {
+        val rule = firstOfType(FunctionInput.TWO_STRINGS_ONE_INTEGER)
+        val valid = create(rule, listOf("string1", "string2", "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createTwoStringsOneIntegerInput(valid)).isEqualTo(TwoStringsOneInteger("string1", "string2", 1))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("string1", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(1, 2)))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("string1", 1, "string2")))!!).isFalse
     }
 
     @Test
