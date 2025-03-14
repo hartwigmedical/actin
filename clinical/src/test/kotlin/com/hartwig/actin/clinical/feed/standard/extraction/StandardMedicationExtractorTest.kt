@@ -10,6 +10,8 @@ import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMedication
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientDetail
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
@@ -162,6 +164,36 @@ class StandardMedicationExtractorTest {
             providedMedication.copy(atcCode = null, isSelfCare = true),
             medication.copy(name = MEDICATION_NAME, atc = null, isSelfCare = true)
         )
+    }
+
+    @Test
+    fun `Should trigger warning when anticancer medication cannot be found in drug database`() {
+        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
+        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
+        every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
+        val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(name = "drug (STUDIE)", atcCode = "L01ZZ"))))
+        assertThat(result.evaluation.warnings).containsOnly(
+            CurationWarning(
+                "hashedId",
+                CurationCategory.MEDICATION_NAME,
+                "drug",
+                "Anti cancer medication or supportive trial medication drug with ATC code L01ZZ found which is not present in drug database. " +
+                        "Please add the missing drug to drug database"
+            )
+        )
+    }
+
+    @Test
+    fun `Should not trigger warning for unspecified trial medication`() {
+        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
+        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
+        every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
+        val result = extractor.extract(
+            ehrPatientRecord.copy(medications = listOf(providedMedication.copy(name = "orale studiemedicatie", atcCode = "L01ZZ")))
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {

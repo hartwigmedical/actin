@@ -23,9 +23,9 @@ class StandardMedicationExtractor(
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
         return ehrPatientRecord.medications?.map {
-            val isTrialMedication =
-                it.isTrial || it.name.contains("(studie)", ignoreCase = true) || it.name.contains("studiemedicatie", ignoreCase = true)
-            val atcClassification = if (!isTrialMedication && !it.isSelfCare) {
+            val isTrialMedication = it.isTrial || it.name.contains("(studie)", ignoreCase = true)
+            val isUnspecifiedTrialMedication = it.name.contains("studiemedicatie", ignoreCase = true) && !isTrialMedication
+            val atcClassification = if (!isTrialMedication && !isUnspecifiedTrialMedication && !it.isSelfCare) {
                 if (it.atcCode == null) {
                     logger.error(
                         "Patient '${ehrPatientRecord.patientDetails.hashedId}' had medication '${it.name}' with null atc code, " +
@@ -39,13 +39,13 @@ class StandardMedicationExtractor(
             val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
             val drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
 
-            val atcWarning = if (isAntiCancerMedication && drug == null) {
+            val atcWarning = if (isAntiCancerMedication && drug == null && !isUnspecifiedTrialMedication) {
                 CurationWarning(
                     ehrPatientRecord.patientDetails.hashedId,
                     CurationCategory.MEDICATION_NAME,
                     atcNameOrInput,
-                    "Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug database. " +
-                            "Please add the missing drug to drug database"
+                    "Anti cancer medication or supportive trial medication $atcNameOrInput with ATC code $atcCode found which is not " +
+                            "present in drug database. Please add the missing drug to drug database"
                 )
             } else null
 
