@@ -27,7 +27,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
                 Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
             ),
-            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10)
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = 10)
         )
         val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
         assert(EvaluationResult.PASS, DrugType.ALK_INHIBITOR, 1, record)
@@ -39,10 +39,10 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
             treatments = setOf(
                 Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
             ),
-            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10)
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = 10)
         )
         val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
-        assert(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, 1, record)
+        assert(EvaluationResult.FAIL, RadiotherapyType.CYBERKNIFE, 1, record)
     }
 
     @Test
@@ -52,7 +52,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, emptySet()),
                 Radiotherapy("Radiotherapy", radioType = null)
             ),
-            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10)
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = 10)
         )
         val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
         assert(EvaluationResult.UNDETERMINED, DrugType.ALK_INHIBITOR, 1, record)
