@@ -169,7 +169,6 @@ class StandardMedicationExtractorTest {
     @Test
     fun `Should trigger warning when anticancer medication cannot be found in drug database`() {
         every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
-        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
         every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
         every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
         val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(name = "drug (STUDIE)", atcCode = "L01ZZ"))))
@@ -187,7 +186,6 @@ class StandardMedicationExtractorTest {
     @Test
     fun `Should not trigger warning for unspecified trial medication`() {
         every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
-        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
         every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
         every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
         val result = extractor.extract(
@@ -197,7 +195,6 @@ class StandardMedicationExtractorTest {
     }
 
     private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {
-        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
         every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
         every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
         every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
