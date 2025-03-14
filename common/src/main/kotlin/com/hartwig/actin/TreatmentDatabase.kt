@@ -14,6 +14,6 @@ class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val 
     }
 
     fun findDrugByAtcName(atcName: String): Drug? {
-        return findDrugByName(atcName.replace(" AND ", "_").split(", ").first())
+        return findDrugByName(atcName.replace(" and ", "_").split(", ").first())
     }
 }
