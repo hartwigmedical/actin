@@ -13,7 +13,8 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
-import com.hartwig.actin.icd.TestIcdFactory
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.datamodel.IcdNode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -31,7 +32,21 @@ private val IMMUNOTHERAPY_INTOLERANCE =
 private val DATE = LocalDate.of(2025, 3, 1)
 
 class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
-    private val function = HasExperiencedImmunotherapyRelatedAdverseEvents(TestIcdFactory.createTestModel())
+    private val icdModel = IcdModel.create(
+        listOf(
+            IcdNode(
+                IcdConstants.DRUG_ALLERGY_CODE,
+                listOf(IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK),
+                "Drug allergy"
+            ),
+            IcdNode(
+                IMMUNO_ICD_EXTENSION,
+                listOf(IcdConstants.MONOCLONAL_ANTIBODY_BLOCK),
+                "Immunotherapy"
+            )
+        )
+    )
+    private val function = HasExperiencedImmunotherapyRelatedAdverseEvents(icdModel)
 
     @Test
     fun `Should fail with no treatmentHistory`() {
