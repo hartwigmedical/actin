@@ -23,7 +23,8 @@ class StandardMedicationExtractor(
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
         return ehrPatientRecord.medications?.map {
-            val isTrialMedication = it.isTrial || it.name.contains("(studie)", ignoreCase = true)
+            val isTrialMedication =
+                it.isTrial || it.name.contains("(studie)", ignoreCase = true) || it.name.contains("studiemedicatie", ignoreCase = true)
             val atcClassification = if (!isTrialMedication && !it.isSelfCare) {
                 if (it.atcCode == null) {
                     logger.error(
