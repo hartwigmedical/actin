@@ -27,4 +27,11 @@ class HasHeterozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEv
             }
         }
     }
+
+    override fun noMolecularRecordEvaluation(): Evaluation {
+        return EvaluationFactory.undetermined(
+            "No molecular data to determine heterozygous DPYD deficiency",
+            isMissingMolecularResultForEvaluation = true
+        )
+    }
 }

@@ -15,4 +15,11 @@ class AnyGeneFromSetIsOverexpressed(maxTestAge: LocalDate? = null, private val g
             isMissingMolecularResultForEvaluation = true
         )
     }
+
+    override fun noMolecularRecordEvaluation(): Evaluation {
+        return EvaluationFactory.undetermined(
+            "No molecular data to determine overexpression of ${concat(genes)} in RNA",
+            isMissingMolecularResultForEvaluation = true
+        )
+    }
 }

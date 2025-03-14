@@ -21,6 +21,12 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalD
         }
     }
 
+    override fun noMolecularRecordEvaluation(): Evaluation {
+        return EvaluationFactory.undetermined(
+            "No molecular data to determine UGT1A1 haplotype"
+        )
+    }
+
     private fun hasUGT1A1Type(pharmacoEntry: PharmacoEntry, hapolotypeToFind: String): Boolean {
         return pharmacoEntry.gene == PharmacoGene.UGT1A1 &&
                 pharmacoEntry.haplotypes.any { it.toHaplotypeString().lowercase() == hapolotypeToFind.lowercase() }
