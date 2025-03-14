@@ -3,6 +3,7 @@ package com.hartwig.actin.trial
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
@@ -19,20 +20,17 @@ object EligibilityRuleUsageEvaluator {
 
         val configuredUnusedRulesThatAreUsed = unusedRulesToKeep - unusedRules
         if (configuredUnusedRulesThatAreUsed.isNotEmpty()) {
-            LOGGER.warn(
-                " Found {} eligibility rules that are used while they are configured as unused.",
-                configuredUnusedRulesThatAreUsed.size
-            )
+            LOGGER.warn(" Found ${configuredUnusedRulesThatAreUsed.size} referenced eligibility rules that are configured as unused.")
             for (rule in configuredUnusedRulesThatAreUsed) {
-                LOGGER.warn("  '{}' used in at least one trial or cohort but configured as unused", rule.toString())
+                LOGGER.warn("  '${rule}' used in at least one trial or cohort but configured as unused")
             }
         }
 
         val unexpectedUnusedRules = unusedRules - unusedRulesToKeep
         if (unexpectedUnusedRules.isNotEmpty()) {
-            LOGGER.warn(" Found {} unused eligibility rules.", unexpectedUnusedRules.size)
+            LOGGER.warn(" Found ${unexpectedUnusedRules.size} unused eligibility rules.")
             for (rule in unexpectedUnusedRules) {
-                LOGGER.warn("  '{}' not used in any trial or cohort", rule.toString())
+                LOGGER.warn("  '${rule}' not used in any trial or cohort")
             }
         } else {
             LOGGER.info(" Found no unused eligibility rules to curate.")
@@ -40,9 +38,21 @@ object EligibilityRuleUsageEvaluator {
         return unexpectedUnusedRules
     }
 
-    private tailrec fun extractRules(
-        functions: List<EligibilityFunction>, accumulated: List<EligibilityRule> = emptyList()
+    fun extractIhcProteinParameters(trials: List<Trial>): Set<String> {
+        return collectFunctions(trials.flatMap { it.generalEligibility }.map { it.function })
+            .filter { it.rule.input in (listOf(FunctionInput.ONE_PROTEIN, FunctionInput.ONE_PROTEIN_ONE_INTEGER)) }
+            .map { it.parameters.first().toString() }.toSet()
+    }
+
+    private fun extractRules(
+        functions: List<EligibilityFunction>
     ): List<EligibilityRule> {
+        return collectFunctions(functions).map { it.rule }
+    }
+
+    private tailrec fun collectFunctions(
+        functions: List<EligibilityFunction>, accumulated: List<EligibilityFunction> = emptyList()
+    ): List<EligibilityFunction> {
         if (functions.isEmpty()) {
             return accumulated
         }
@@ -51,6 +61,6 @@ object EligibilityRuleUsageEvaluator {
             function.parameters.map { it as EligibilityFunction }
         } else emptyList()
 
-        return extractRules(functionsToAdd + functions.drop(1), accumulated + function.rule)
+        return collectFunctions(functionsToAdd + functions.drop(1), accumulated + function)
     }
 }

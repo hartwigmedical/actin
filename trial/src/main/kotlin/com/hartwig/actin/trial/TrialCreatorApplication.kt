@@ -33,27 +33,27 @@ const val ERROR_JSON_FILE = "trial_ingestion_errors.json"
 class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
     fun run() {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        LOGGER.info("Running $APPLICATION v$VERSION")
 
-        LOGGER.info("Loading DOID tree from {}", config.doidJson)
+        LOGGER.info("Loading DOID tree from ${config.doidJson}")
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+        LOGGER.info(" Loaded ${doidEntry.nodes.size} nodes")
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
+        LOGGER.info("Creating ICD-11 tree from file ${config.icdTsv}")
         val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
-        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        LOGGER.info(" Loaded ${icdNodes.size} nodes")
         val icdModel = IcdModel.create(icdNodes)
 
-        LOGGER.info("Loading SERVE known genes from {}", config.serveDbJson)
+        LOGGER.info("Loading SERVE known genes from ${config.serveDbJson}")
         val knownGenes = ServeLoader.loadServe37Record(config.serveDbJson).knownEvents().genes()
-        LOGGER.info(" Loaded {} known genes", knownGenes.size)
+        LOGGER.info(" Loaded ${knownGenes.size} known genes")
 
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
+        LOGGER.info("Creating ATC tree from file ${config.atcTsv}")
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
         val trialIngestion =
@@ -80,10 +80,10 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val outputDirectory = config.outputDirectory
         when (result) {
             is Either.Right -> {
-                LOGGER.info("Writing {} trials to [{}]", result.value.size, outputDirectory)
+                LOGGER.info("Writing ${result.value.size} trials to [$outputDirectory]")
                 TrialJson.write(result.value, outputDirectory)
-                LOGGER.info("Writing list of proteins referenced in inclusion criteria to [{}]", outputDirectory)
-                ProteinList(outputDirectory).writeListOfIhcProteins(result.value)
+                LOGGER.info("Writing list of proteins referenced in inclusion criteria to [$outputDirectory]")
+                Files.write(Path.of(outputDirectory, "ihc_proteins.list"), IhcProteinEnumeration().enumerate(result.value))
             }
 
             is Either.Left -> {
@@ -92,7 +92,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             }
         }
 
-        LOGGER.info("{} done!", APPLICATION)
+        LOGGER.info("$APPLICATION done!")
     }
 
     companion object {

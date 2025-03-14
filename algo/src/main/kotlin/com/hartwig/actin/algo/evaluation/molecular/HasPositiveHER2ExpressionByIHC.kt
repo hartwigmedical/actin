@@ -10,8 +10,11 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.molecular.UnparameterisedIhcRule
+import com.hartwig.actin.molecular.UnparameterisedIhcRule.Companion.HER2
 import java.time.LocalDate
 
+@UnparameterisedIhcRule(HER2)
 class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -65,7 +68,7 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
 
             her2ReceptorIsPositive == null -> {
                 return if (!(positiveArguments || negativeArguments)) {
-                    EvaluationFactory.undetermined( "IHC HER2 expression not deterministic by IHC")
+                    EvaluationFactory.undetermined("IHC HER2 expression not deterministic by IHC")
                 } else {
                     EvaluationFactory.warn("Conflicting IHC HER2 expression test results")
                 }
