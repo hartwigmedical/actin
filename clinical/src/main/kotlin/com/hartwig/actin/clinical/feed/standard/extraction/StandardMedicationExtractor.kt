@@ -5,12 +5,12 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.QtProlongatingDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.medication.MedicationCategories
 import org.apache.logging.log4j.LogManager
 
@@ -23,7 +23,8 @@ class StandardMedicationExtractor(
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
         return ehrPatientRecord.medications?.map {
-            val atcClassification = if (!it.isTrial && !it.isSelfCare) {
+            val isTrialMedication = it.isTrial || it.name.contains("(studie)", ignoreCase = true)
+            val atcClassification = if (!isTrialMedication && !it.isSelfCare) {
                 if (it.atcCode == null) {
                     logger.error(
                         "Patient '${ehrPatientRecord.patientDetails.hashedId}' had medication '${it.name}' with null atc code, " +
@@ -32,7 +33,7 @@ class StandardMedicationExtractor(
                 }
                 it.atcCode?.let { atcCode -> atcModel.resolveByCode(atcCode, "") }
             } else null
-            val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
+            val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: trimmedName(it.name)
             val atcCode = it.atcCode
             val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
             val drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
@@ -62,7 +63,7 @@ class StandardMedicationExtractor(
                 qtProlongatingRisk = qtProlongatingDatabase.annotateWithQTProlongating(atcNameOrInput),
                 cypInteractions = drugInteractionsDatabase.annotateWithCypInteractions(atcNameOrInput),
                 transporterInteractions = drugInteractionsDatabase.annotateWithTransporterInteractions(atcNameOrInput),
-                isTrialMedication = it.isTrial,
+                isTrialMedication = isTrialMedication,
                 isSelfCare = it.isSelfCare,
                 drug = drug
             )
@@ -70,6 +71,10 @@ class StandardMedicationExtractor(
         }?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
             ExtractionResult((acc.extracted ?: emptyList()) + result.extracted, acc.evaluation + result.evaluation)
         } ?: ExtractionResult(null, CurationExtractionEvaluation())
+    }
+
+    private fun trimmedName(name: String): String {
+        return name.removeSuffix(" (STUDIE)").trim()
     }
 
     companion object {

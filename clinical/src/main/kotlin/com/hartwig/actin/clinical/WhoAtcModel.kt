@@ -49,12 +49,7 @@ class WhoAtcModel(private val atcMap: Map<String, String>, private val atcOverri
 
     private fun atcLevel(levelCode: String) = AtcLevel(code = levelCode, name = lookup(levelCode))
 
-    private fun lookup(level: String) =
-        if (level == "L01Z" || level == "L01ZZ") {
-            "L01X"
-        } else {
-            atcMap[level] ?: throw IllegalArgumentException("ATC code [$level] not found in tree")
-        }
+    private fun lookup(level: String) = atcMap[level] ?: throw IllegalArgumentException("ATC code [$level] not found in tree")
 
     companion object {
         private val LOGGER = LogManager.getLogger(WhoAtcModel::class.java)
