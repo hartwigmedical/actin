@@ -13,13 +13,11 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentMatches = record.oncologicalHistory.groupBy {
+        val treatmentMatches = record.oncologicalHistory.groupBy { it ->
             when {
                 (it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)) &&
                         it.isOfType(type) == true &&
-                        it.treatmentHistoryDetails != null &&
-                        it.treatmentHistoryDetails?.cycles != null &&
-                        it.treatmentHistoryDetails?.cycles!! > minCycles) -> {
+                        it.treatmentHistoryDetails?.cycles?.let { it > minCycles } == true) -> {
                     true
                 }
                 (it.categories().isNotEmpty() &&
