@@ -23,7 +23,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <serve.version>local-SNAPSHOT</serve.version>
+        <serve.version>8.1.0</serve.version>
         <actin-personalization.version>0.26.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
         <actin-transvar.version>0.6.0</actin-transvar.version>
