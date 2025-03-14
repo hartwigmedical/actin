@@ -16,6 +16,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
@@ -31,15 +32,17 @@ import org.junit.Test
 class IsEligibleForOnLabelTreatmentTest {
 
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
-    private val standardOfCareEvaluatorFactory = mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
+    private val standardOfCareEvaluatorFactory =
+        mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
     private val targetTreatment = treatment("PEMBROLIZUMAB", true)
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function = IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel)
-    private val functionEvaluatingOsimertinib = IsEligibleForOnLabelTreatment(treatment("OSIMERTINIB", true), standardOfCareEvaluatorFactory, doidModel)
+    private val functionEvaluatingOsimertinib =
+        IsEligibleForOnLabelTreatment(treatment("OSIMERTINIB", true), standardOfCareEvaluatorFactory, doidModel)
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
-    fun `Should pass for NSCLC patient eligible for on label treatment osimertinib`() {
+    fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion`() {
         standardOfCareCannotBeEvaluatedForPatient()
         val record = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
@@ -68,6 +71,35 @@ class IsEligibleForOnLabelTreatmentTest {
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
+    }
+
+    @Test
+    fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR T790M mutation and prior TKI`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = "EGFR",
+                isReportable = true,
+                type = VariantType.SNV,
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = "T790M"),
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
+                driverLikelihood = DriverLikelihood.HIGH
+            )
+        ).copy(
+            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            oncologicalHistory = listOf(
+                treatmentHistoryEntry(
+                    treatments = setOf(
+                        TreatmentTestFactory.drugTreatment(
+                            "TKI gen 2",
+                            TreatmentCategory.TARGETED_THERAPY,
+                            setOf(DrugType.TYROSINE_KINASE_INHIBITOR_GEN_2)
+                        )
+                    )
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
     }
 
     @Test
@@ -110,7 +142,8 @@ class IsEligibleForOnLabelTreatmentTest {
         standardOfCareCannotBeEvaluatedForPatient()
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true)))))
+            function.evaluate(
+                withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true)))))
             )
         )
     }
