@@ -13,20 +13,30 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
-        val (knowableTreatments, undeterminedTreatments) = record.oncologicalHistory.filter {
-            it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)) &&
-                    it.isOfType(type) == true
-        }.partition {
-            it.treatmentHistoryDetails?.cycles != null
-        }
-        val matchingTreatments = knowableTreatments.filter {
-            it.treatmentHistoryDetails?.cycles!! > minCycles
+        val treatmentMatches = record.oncologicalHistory.groupBy {
+            when {
+                (it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)) &&
+                        it.isOfType(type) == true &&
+                        it.treatmentHistoryDetails != null &&
+                        it.treatmentHistoryDetails?.cycles != null &&
+                        it.treatmentHistoryDetails?.cycles!! > minCycles) -> {
+                    true
+                }
+                (it.categories().isNotEmpty() &&
+                        it.isOfType(type) == false &&
+                        it.treatmentHistoryDetails?.cycles != null) -> {
+                    false
+                }
+                else -> {
+                    null
+                }
+            }
         }
 
         return when {
-            matchingTreatments.isNotEmpty() -> EvaluationFactory.pass("Patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles")
-            undeterminedTreatments.isNotEmpty() -> EvaluationFactory.undetermined("Undetermined if patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles" )
+            treatmentMatches.isEmpty() -> EvaluationFactory.fail("No treatments received")
+            true in treatmentMatches -> EvaluationFactory.pass("Patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles")
+            null in treatmentMatches -> EvaluationFactory.undetermined("Undetermined if patient is currently getting chemoradiotherapy with $type chemotherapy and at least $minCycles cycles")
             else -> EvaluationFactory.fail("No chemo radio therapy with $type with at least $minCycles is currently received")
         }
     }
