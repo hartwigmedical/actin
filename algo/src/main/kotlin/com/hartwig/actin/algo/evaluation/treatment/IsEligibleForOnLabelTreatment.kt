@@ -3,7 +3,10 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.algo.evaluation.composite.Not
+import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantInExonRangeOfType
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantWithProteinImpact
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
@@ -12,7 +15,9 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import java.time.LocalDate
@@ -79,8 +84,8 @@ class IsEligibleForOnLabelTreatment(
         return tumor.primaryTumorLocation == "Unknown" && tumor.primaryTumorSubLocation == "CUP"
     }
 
-    private fun evaluate(record: PatientRecord, evaluationFunctions: List<EvaluationFunction>): Evaluation {
-        val evaluation = Or(evaluationFunctions).evaluate(record)
+    private fun evaluate(record: PatientRecord, evaluationFunctions: EvaluationFunction): Evaluation {
+        val evaluation = evaluationFunctions.evaluate(record)
         return evaluation.copy(
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
@@ -88,10 +93,28 @@ class IsEligibleForOnLabelTreatment(
         )
     }
 
-    private val treatmentNameToEvaluationFunctionsForNSCLC: Map<String, List<EvaluationFunction>> = mapOf(
-        "Osimertinib" to listOf(
-            GeneHasVariantInExonRangeOfType("EGFR", 19, 19, VariantTypeInput.DELETE, maxTestAge),
-            GeneHasVariantWithProteinImpact("EGFR", setOf("L858R"), maxTestAge)
+    private val treatmentNameToEvaluationFunctionsForNSCLC: Map<String, EvaluationFunction> = mapOf(
+        "Osimertinib" to Or(
+            listOf(
+                GeneHasVariantInExonRangeOfType("EGFR", 19, 19, VariantTypeInput.DELETE, maxTestAge),
+                GeneHasVariantWithProteinImpact("EGFR", setOf("L858R"), maxTestAge),
+                And(
+                    listOf(
+                        GeneHasActivatingMutation("EGFR", null, maxTestAge),
+                        Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT, maxTestAge))
+                    )
+                ),
+                And(
+                    listOf(
+                        GeneHasVariantWithProteinImpact("EGFR", setOf("T790M"), maxTestAge),
+                        HasHadSomeTreatmentsWithCategoryOfTypes(
+                            TreatmentCategory.TARGETED_THERAPY,
+                            setOf(DrugType.TYROSINE_KINASE_INHIBITOR_GEN_1, DrugType.TYROSINE_KINASE_INHIBITOR_GEN_2),
+                            1
+                        )
+                    )
+                )
+            )
         )
     )
 }
