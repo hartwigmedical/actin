@@ -63,4 +63,6 @@ enum class FunctionInput {
     ONE_CYP,
     ONE_CYP_ONE_INTEGER,
     ONE_TRANSPORTER,
+    ONE_PROTEIN,
+    ONE_PROTEIN_ONE_INTEGER
 }
