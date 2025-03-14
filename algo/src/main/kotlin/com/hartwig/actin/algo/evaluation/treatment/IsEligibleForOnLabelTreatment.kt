@@ -111,7 +111,8 @@ class IsEligibleForOnLabelTreatment(
                             TreatmentCategory.TARGETED_THERAPY,
                             setOf(DrugType.TYROSINE_KINASE_INHIBITOR_GEN_1, DrugType.TYROSINE_KINASE_INHIBITOR_GEN_2),
                             1
-                        )
+                        ),
+                        HasHadLimitedSystemicTreatments(1)
                     )
                 )
             )
