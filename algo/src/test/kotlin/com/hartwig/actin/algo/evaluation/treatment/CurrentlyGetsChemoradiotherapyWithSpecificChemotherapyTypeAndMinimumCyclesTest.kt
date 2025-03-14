@@ -45,6 +45,18 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         assert(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, 1, record)
     }
 
+    @Test
+    fun `Should be undetermined if there are no explicit fails`() {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, emptySet()),
+                Radiotherapy("Radiotherapy", radioType = null)
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10)
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
+        assert(EvaluationResult.UNDETERMINED, DrugType.ALK_INHIBITOR, 1, record)
+    }
 
     private fun assert(evaluationResult: EvaluationResult, type: TreatmentType, minCycles: Int, record: PatientRecord) {
         val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, minCycles).evaluate(record)
