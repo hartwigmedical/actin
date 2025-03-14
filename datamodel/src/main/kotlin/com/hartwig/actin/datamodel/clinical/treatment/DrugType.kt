@@ -192,6 +192,8 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     TRK_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "TRK TKI"),
     TROP2_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "TROP2 antibody"),
     TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
+    TYROSINE_KINASE_INHIBITOR_GEN_1(TreatmentCategory.TARGETED_THERAPY),
+    TYROSINE_KINASE_INHIBITOR_GEN_2(TreatmentCategory.TARGETED_THERAPY),
     VACCINE(TreatmentCategory.IMMUNOTHERAPY),
     VEGF_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "VEGF antibody"),
     VEGF_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGF TKI"),
