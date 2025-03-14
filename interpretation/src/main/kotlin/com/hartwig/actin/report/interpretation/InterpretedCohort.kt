@@ -7,6 +7,7 @@ data class InterpretedCohort(
     val trialId: String,
     val acronym: String,
     val nctId: String?,
+    val title: String,
     val phase: TrialPhase? = null,
     val source: TrialSource? = null,
     val sourceId: String? = null,

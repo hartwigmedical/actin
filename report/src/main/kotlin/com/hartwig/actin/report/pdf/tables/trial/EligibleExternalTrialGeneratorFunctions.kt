@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 
 private const val MANY_PLEASE_CHECK_LINK = "Many, please check link"
 

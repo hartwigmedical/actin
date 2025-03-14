@@ -20,9 +20,10 @@ object InterpretedCohortFactory {
             val identification = trialMatch.identification
             val trialId = identification.trialId
             val acronym = identification.acronym
+            val nctId = identification.nctId
+            val title = identification.title
             val trialIsOpen = identification.open
             val phase = identification.phase
-            val nctId = identification.nctId
             val isMissingMolecularResultForEvaluation = trialMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation }
             val source = identification.source
             val sourceId = identification.sourceId
@@ -33,6 +34,8 @@ object InterpretedCohortFactory {
                     InterpretedCohort(
                         trialId = trialId,
                         acronym = acronym,
+                        nctId = nctId,
+                        title = title,
                         name = null,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
@@ -42,7 +45,6 @@ object InterpretedCohortFactory {
                         warnings = trialWarnings,
                         fails = trialFails,
                         phase = phase,
-                        nctId = nctId,
                         source = source,
                         sourceId = sourceId,
                         locations = locations
@@ -55,6 +57,8 @@ object InterpretedCohortFactory {
                     InterpretedCohort(
                         trialId = trialId,
                         acronym = acronym,
+                        nctId = nctId,
+                        title = title,
                         name = cohortMatch.metadata.description,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
@@ -65,7 +69,6 @@ object InterpretedCohortFactory {
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
                         fails = trialFails.union(extractFails(cohortMatch.evaluations)),
                         phase = phase,
-                        nctId = nctId,
                         ignore = cohortMatch.metadata.ignore,
                         source = source,
                         sourceId = sourceId,
@@ -83,12 +86,13 @@ object InterpretedCohortFactory {
                 InterpretedCohort(
                     trialId = identification.trialId,
                     acronym = identification.acronym,
+                    nctId = identification.nctId,
+                    title = identification.title,
                     name = cohortMetadata.description,
                     isOpen = identification.open && cohortMetadata.open,
                     hasSlotsAvailable = cohortMetadata.slotsAvailable,
                     ignore = cohortMetadata.ignore,
                     phase = identification.phase,
-                    nctId = identification.nctId,
                     source = identification.source,
                     sourceId = identification.sourceId,
                     locations = identification.locations

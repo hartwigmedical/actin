@@ -6,6 +6,7 @@ object InterpretedCohortTestFactory {
         trialId: String = "",
         acronym: String = "",
         nctId: String = "",
+        title: String = "",
         isPotentiallyEligible: Boolean = false,
         isOpen: Boolean = false,
         hasSlotsAvailable: Boolean = false,
@@ -16,6 +17,8 @@ object InterpretedCohortTestFactory {
         return InterpretedCohort(
             trialId = trialId,
             acronym = acronym,
+            nctId = nctId,
+            title =  title,
             name = cohort,
             isPotentiallyEligible = isPotentiallyEligible,
             isMissingMolecularResultForEvaluation = false,
@@ -25,8 +28,7 @@ object InterpretedCohortTestFactory {
             warnings = emptySet(),
             fails = emptySet(),
             ignore = false,
-            locations = locations,
-            nctId = nctId
+            locations = locations
         )
     }
 }

@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,7 +17,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     countries = sortedSetOf()
 )
 
-class EligibleExternalTrialGeneratorFunctionsTest {
+class EligibleExternalGeneralizedTrialGeneratorFunctionsTest {
 
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(

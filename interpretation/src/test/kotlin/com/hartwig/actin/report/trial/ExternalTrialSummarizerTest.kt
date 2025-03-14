@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.trial
+package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -19,7 +20,6 @@ private const val NCT_01 = "NCT00000001"
 private const val NCT_02 = "NCT00000002"
 private const val TITLE = "title"
 private const val URL = "url"
-
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = NCT_01,
     title = "title",
@@ -29,10 +29,8 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     applicableCancerTypes = sortedSetOf(),
     url = URL
 )
-
 private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = emptyMap())
 private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
-
 private val TRIAL_1 = ExternalTrial(
     nctId = NCT_01,
     title = TITLE,
@@ -52,7 +50,6 @@ private val TRIAL_1 = ExternalTrial(
     applicableCancerTypes = setOf(CancerType("cancer type 1", emptySet()), CancerType("cancer type 2", emptySet())),
     url = URL
 )
-
 private val TRIAL_2 = ExternalTrial(
     nctId = NCT_02,
     title = TITLE,
@@ -67,7 +64,6 @@ private val TRIAL_2 = ExternalTrial(
     applicableCancerTypes = setOf(CancerType("cancer type 3", emptySet())),
     url = URL
 )
-
 private val TRIAL_MATCHES = setOf(
     TrialMatch(
         identification = TrialIdentification("TRIAL-1", open = true, "TR-1", "Different title of same trial 1", NCT_01),
