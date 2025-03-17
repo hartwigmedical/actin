@@ -45,7 +45,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         }
     }
 
-    fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, record: PatientRecord): Boolean? {
+    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, record: PatientRecord): Boolean? {
         val referenceDateProvider = ReferenceDateProviderFactory.create(record, true).date()
 
         if (treatmentHistoryDetails == null)
@@ -53,12 +53,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 
         return treatmentHistoryDetails.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
-                val month = if (stopMonth == null) {
-                    12
-                } else {
-                    stopMonth
-                }
-                DateComparison.isAfterDate(referenceDateProvider, stopYear, month) != false
+                DateComparison.isAfterDate(referenceDateProvider, stopYear, stopMonth) != false
             }
             cycles >= minCycles && appearsOngoing
         }
