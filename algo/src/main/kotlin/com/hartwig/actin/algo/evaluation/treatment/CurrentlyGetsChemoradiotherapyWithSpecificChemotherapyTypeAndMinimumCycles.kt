@@ -53,9 +53,6 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 
         return treatmentHistoryDetails.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
-                if (stopYear == null) {
-                    true
-                }
                 val month = if (stopMonth == null) {
                     12
                 } else {
