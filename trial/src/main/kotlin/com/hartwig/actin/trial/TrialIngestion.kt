@@ -7,9 +7,7 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.util.Either
-import com.hartwig.actin.util.getOrNull
 import com.hartwig.actin.util.left
-import com.hartwig.actin.util.leftOrNull
 import com.hartwig.actin.util.partitionAndJoin
 import com.hartwig.actin.util.right
 
@@ -68,8 +66,8 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                 ).right()
             else UnmappableTrial(trialId = trialState.trialId, trialErrors, unmappableCohorts).left()
         }
-        return if (trialsAndUnmappableTrials.any { it.isLeft }) trialsAndUnmappableTrials.mapNotNull { it.leftOrNull() }
-            .left() else trialsAndUnmappableTrials.mapNotNull { it.getOrNull() }.right()
+        val (errors, trials) = trialsAndUnmappableTrials.partitionAndJoin()
+        return if (errors.isNotEmpty()) errors.left() else trials.right()
     }
 
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =

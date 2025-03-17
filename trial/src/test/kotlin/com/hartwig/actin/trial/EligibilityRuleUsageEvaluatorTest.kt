@@ -20,4 +20,10 @@ class EligibilityRuleUsageEvaluatorTest {
         val unusedRulesToKeep = EligibilityRule.values().toSet() - expectedUnusedRule - expectedUsedRules
         assertThat(EligibilityRuleUsageEvaluator.evaluate(trials, unusedRulesToKeep)).containsExactly(expectedUnusedRule)
     }
+
+    @Test
+    fun `Should generate list of IHC-adjacent proteins based on parameters and IHC metadata`() {
+        val trials = listOf(TestTrialFactory.createTrialWithIhcRules())
+        assertThat(EligibilityRuleUsageEvaluator.extractIhcProteins(trials)).containsOnly("ABC", "DEF", "PD_L1")
+    }
 }
