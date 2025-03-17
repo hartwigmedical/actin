@@ -9,6 +9,13 @@ import java.time.LocalDate
 
 class HasHomozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, true) {
 
+    override fun noMolecularRecordEvaluation(): Evaluation {
+        return EvaluationFactory.undetermined(
+            "No molecular data to determine homozygous DPYD deficiency",
+            isMissingMolecularResultForEvaluation = true
+        )
+    }
+
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.DPYD }
             ?: return EvaluationFactory.undetermined("DPYD haplotype undetermined")
@@ -25,12 +32,5 @@ class HasHomozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEval
                 EvaluationFactory.fail("Is not homozygous DPYD deficient")
             }
         }
-    }
-
-    override fun noMolecularRecordEvaluation(): Evaluation {
-        return EvaluationFactory.undetermined(
-            "No molecular data to determine homozygous DPYD deficiency",
-            isMissingMolecularResultForEvaluation = true
-        )
     }
 }

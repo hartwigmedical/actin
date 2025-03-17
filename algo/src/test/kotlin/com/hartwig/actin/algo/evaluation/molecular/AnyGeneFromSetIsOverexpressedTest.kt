@@ -19,7 +19,7 @@ class AnyGeneFromSetIsOverexpressedTest {
     }
 
     @Test
-    fun `Should return undetermined when molecular record not available`() {
+    fun `Should evaluate to undetermined when molecular record not available`() {
         val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(evaluation.undeterminedMessages).containsExactly("No molecular data to determine overexpression of gene a, gene b and gene c in RNA")

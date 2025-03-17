@@ -10,6 +10,13 @@ import java.time.LocalDate
 class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(maxTestAge, true) {
 
+    override fun noMolecularRecordEvaluation(): Evaluation {
+        return EvaluationFactory.undetermined(
+            "No molecular data to determine UGT1A1 haplotype",
+            isMissingMolecularResultForEvaluation = true
+        )
+    }
+
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.UGT1A1 }
             ?: return EvaluationFactory.undetermined("UGT1A1 haplotype undetermined")
@@ -19,12 +26,6 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalD
         } else {
             EvaluationFactory.fail("Does not have required UGT1A1 type $haplotypeToFind")
         }
-    }
-
-    override fun noMolecularRecordEvaluation(): Evaluation {
-        return EvaluationFactory.undetermined(
-            "No molecular data to determine UGT1A1 haplotype"
-        )
     }
 
     private fun hasUGT1A1Type(pharmacoEntry: PharmacoEntry, hapolotypeToFind: String): Boolean {

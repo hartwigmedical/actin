@@ -9,16 +9,16 @@ import java.time.LocalDate
 class AnyGeneFromSetIsOverexpressed(maxTestAge: LocalDate? = null, private val genes: Set<String>) :
     MolecularEvaluationFunction(maxTestAge) {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun noMolecularRecordEvaluation(): Evaluation {
         return EvaluationFactory.undetermined(
-            "Overexpression of ${concat(genes)} in RNA undetermined",
+            "No molecular data to determine overexpression of ${concat(genes)} in RNA",
             isMissingMolecularResultForEvaluation = true
         )
     }
 
-    override fun noMolecularRecordEvaluation(): Evaluation {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "No molecular data to determine overexpression of ${concat(genes)} in RNA",
+            "Overexpression of ${concat(genes)} in RNA undetermined",
             isMissingMolecularResultForEvaluation = true
         )
     }
