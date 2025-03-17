@@ -161,5 +161,22 @@ class GeneHasVariantInCodonTest {
         )
     }
 
+    @Test
+    fun `Should pass for a variant with matching canonical and non-canonical impact`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        otherImpacts = setOf(impactWithCodon(MATCHING_CODON))
+                    )
+                )
+            )
+        )
+    }
+
     private fun impactWithCodon(affectedCodon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 }
