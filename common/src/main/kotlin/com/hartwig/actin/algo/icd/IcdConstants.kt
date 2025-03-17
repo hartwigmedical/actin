@@ -121,6 +121,7 @@ object IcdConstants {
     const val DURVALUMAB_CODE = "XM7NY5"
     const val AVELUMAB_CODE = "XM2065"
     const val CEMIPLIMAB_CODE = "XM9Z80"
+    const val CEFAMYCIN_ANTIBIOTIC = "XM8J52"
     const val MONOCLONAL_ANTIBODY_BLOCK = "http://id.who.int/icd/release/11/mms/252952104"
     const val MONOCLONAL_ANTIBODY_AND_ANTIBODY_DRUG_CONJUGATE_CODE = "XM1JG6"
     const val INTERLEUKIN_INHIBITOR_CODE = "XM5ZL1"

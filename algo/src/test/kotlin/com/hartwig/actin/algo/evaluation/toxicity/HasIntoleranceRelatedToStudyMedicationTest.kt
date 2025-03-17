@@ -52,6 +52,16 @@ class HasIntoleranceRelatedToStudyMedicationTest {
     }
 
     @Test
+    fun `Should fail when allergy is not to anti-cancer agent`() {
+        val intolerance = ComorbidityTestFactory.intolerance(
+            icdMainCode = matchingIcdCodes.first(),
+            icdExtensionCode = IcdConstants.CEFAMYCIN_ANTIBIOTIC,
+            clinicalStatus = HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)))
+    }
+
+    @Test
     fun `Should evaluate to undetermined when active intolerance has matching ICD code`() {
         val intolerance = ComorbidityTestFactory.intolerance(
             icdMainCode = matchingIcdCodes.first(),
