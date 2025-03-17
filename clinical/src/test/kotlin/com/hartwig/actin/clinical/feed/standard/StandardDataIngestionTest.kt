@@ -77,7 +77,7 @@ class StandardDataIngestionTest {
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
             bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
-            labValuesExtractor = StandardLabValuesExtractor(curationDatabase.laboratoryTranslation),
+            labValuesExtractor = StandardLabValuesExtractor(curationDatabase.labMeasurementCuration),
             comorbidityExtractor = StandardComorbidityExtractor(
                 curationDatabase.comorbidityCuration
             ),
@@ -132,27 +132,11 @@ class StandardDataIngestionTest {
                 requirements = listOf(CurationRequirement(feedInput = "Pain", message = "Could not find toxicity config for input 'Pain'"))
             ),
             CurationResult(
-                categoryName = "Laboratory Translation",
+                categoryName = "Lab Measurement",
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "dc_NeutrGran | Neutrof. granulocyten",
-                        message = "Could not find laboratory translation for lab value with code 'dc_NeutrGran' and name 'Neutrof. granulocyten'"
-                    ),
-                    CurationRequirement(
-                        feedInput = "bg_O2Sgem | O2-Saturatie gemeten",
-                        message = "Could not find laboratory translation for lab value with code 'bg_O2Sgem' and name 'O2-Saturatie gemeten'"
-                    ),
-                    CurationRequirement(
-                        feedInput = "Plt | Trombocyten",
-                        message = "Could not find laboratory translation for lab value with code 'Plt' and name 'Trombocyten'"
-                    ),
-                    CurationRequirement(
-                        feedInput = "dc_Lymfo | Lymfocyten",
-                        message = "Could not find laboratory translation for lab value with code 'dc_Lymfo' and name 'Lymfocyten'"
-                    ),
-                    CurationRequirement(
-                        feedInput = "Hb | Hemoglobine",
-                        message = "Could not find laboratory translation for lab value with code 'Hb' and name 'Hemoglobine'"
+                        message = "Could not find lab measurement config for input 'dc_NeutrGran | Neutrof. granulocyten'"
                     )
                 ),
             ),

@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
@@ -10,12 +11,14 @@ import org.junit.Test
 private val ANY_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
 private val AMP_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
 private val INACT_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.INACTIVATION)
-private val OTHER_EVIDENCE = TestServeEvidenceFactory.createEvidenceForHotspot(gene = "gene 1")
+private val OTHER_EVIDENCE =
+    TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1"))
 
 private val ANY_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
 private val AMP_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
 private val INACT_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.INACTIVATION)
-private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHotspot(gene = "gene 1")
+private val OTHER_TRIAL =
+    TestServeTrialFactory.createTrialForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = "gene 1"))
 
 class HomozygousDisruptionEvidenceTest {
 
