@@ -15,13 +15,13 @@ import org.junit.Test
 
 class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
     @Test
-    fun `Fail if there is no treatments`() {
+    fun `Should fail if there are no treatments`() {
         val record = TreatmentTestFactory.withTreatmentHistory(emptyList())
         assert(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, 10, record)
     }
 
     @Test
-    fun `Should pass if there is a match` () {
+    fun `Should pass if there is a chemotherapy of matching type with sufficient cycles`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
@@ -34,7 +34,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Should fail if there is only radiotherapy` () {
+    fun `Should fail if there is only radiotherapy`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
