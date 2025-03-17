@@ -83,7 +83,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
                 LOGGER.info("Writing ${result.value.size} trials to [$outputDirectory]")
                 TrialJson.write(result.value, outputDirectory)
                 LOGGER.info("Writing list of proteins referenced in inclusion criteria to [$outputDirectory]")
-                Files.write(Path.of(outputDirectory, "ihc_proteins.list"), IhcProteinEnumeration().enumerate(result.value))
+                Files.write(Path.of(outputDirectory, "ihc_proteins.list"), EligibilityRuleUsageEvaluator.extractIhcProteins(result.value))
             }
 
             is Either.Left -> {

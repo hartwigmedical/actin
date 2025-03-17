@@ -38,10 +38,12 @@ object EligibilityRuleUsageEvaluator {
         return unexpectedUnusedRules
     }
 
-    fun extractIhcProteinParameters(trials: List<Trial>): Set<String> {
-        return collectFunctions(trials.flatMap { it.generalEligibility }.map { it.function })
-            .filter { it.rule.input in (listOf(FunctionInput.ONE_PROTEIN, FunctionInput.ONE_PROTEIN_ONE_INTEGER)) }
-            .map { it.parameters.first().toString() }.toSet()
+    fun extractIhcProteins(trials: List<Trial>): Set<String> {
+        val allFunctions = collectFunctions(trials.flatMap { it.generalEligibility }.map { it.function })
+        val parameterised =
+            allFunctions.filter { it.rule.input in (listOf(FunctionInput.ONE_PROTEIN, FunctionInput.ONE_PROTEIN_ONE_INTEGER)) }
+                .map { it.parameters.first().toString() }.toSet()
+        return (parameterised + allFunctions.mapNotNull { it.rule.ihcProtein }).toSet()
     }
 
     private fun extractRules(
