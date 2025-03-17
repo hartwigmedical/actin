@@ -59,11 +59,13 @@ class TrialsProvider(
     private fun cohortsWithSlotsAvailableAsGeneralizedTrial(): List<GeneralizedTrial> {
         return filterCohortsAvailable(cohorts, true).map {
             GeneralizedTrial(
-                it.nctId ?: it.trialId,
+                it.trialId,
+                it.nctId,
                 sourceFromTrailSource(it.source),
                 it.acronym,
                 it.title,
-                it.isOpen && it.hasSlotsAvailable,
+                it.isOpen,
+                it.hasSlotsAvailable,
                 locationsToCountryDetails(it.locations),
                 emptySortedSet(),
                 it.molecularEvents.toSortedSet(),
@@ -79,9 +81,11 @@ class TrialsProvider(
         return summarizedExternalTrials.nationalTrials.filtered.map {
             GeneralizedTrial(
                 it.nctId,
+                it.nctId,
                 "CKB",
                 null,
                 it.title,
+                null,
                 null,
                 it.countries,
                 emptySortedSet(),
