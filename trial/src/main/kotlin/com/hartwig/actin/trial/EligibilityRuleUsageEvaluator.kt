@@ -16,13 +16,13 @@ object EligibilityRuleUsageEvaluator {
         val usedRules = trials.flatMap { it.generalEligibility + it.cohorts.flatMap(Cohort::eligibility) }
             .flatMap { extractRules(listOf(it.function)) }
             .toSet()
-        val unusedRules = EligibilityRule.values().toSet() - usedRules
+        val unusedRules = EligibilityRule.entries.toSet() - usedRules
 
         val configuredUnusedRulesThatAreUsed = unusedRulesToKeep - unusedRules
         if (configuredUnusedRulesThatAreUsed.isNotEmpty()) {
             LOGGER.warn(" Found ${configuredUnusedRulesThatAreUsed.size} referenced eligibility rules that are configured as unused.")
             for (rule in configuredUnusedRulesThatAreUsed) {
-                LOGGER.warn("  '${rule}' used in at least one trial or cohort but configured as unused")
+                LOGGER.warn("  '$rule' used in at least one trial or cohort but configured as unused")
             }
         }
 
@@ -30,7 +30,7 @@ object EligibilityRuleUsageEvaluator {
         if (unexpectedUnusedRules.isNotEmpty()) {
             LOGGER.warn(" Found ${unexpectedUnusedRules.size} unused eligibility rules.")
             for (rule in unexpectedUnusedRules) {
-                LOGGER.warn("  '${rule}' not used in any trial or cohort")
+                LOGGER.warn("  '$rule' not used in any trial or cohort")
             }
         } else {
             LOGGER.info(" Found no unused eligibility rules to curate.")
@@ -42,7 +42,7 @@ object EligibilityRuleUsageEvaluator {
         val allFunctions = collectFunctions(trials.flatMap { it.generalEligibility }.map { it.function })
         val parameterised =
             allFunctions.filter { it.rule.input in (listOf(FunctionInput.ONE_PROTEIN, FunctionInput.ONE_PROTEIN_ONE_INTEGER)) }
-                .map { it.parameters.first().toString() }.toSet()
+                .map { it.parameters.first().toString() }
         return (parameterised + allFunctions.mapNotNull { it.rule.ihcProtein }).toSet()
     }
 

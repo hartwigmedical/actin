@@ -32,35 +32,6 @@ object TestTrialFactory {
         )
     }
 
-    fun createTrialWithIhcRules(): Trial {
-        val minimal = createMinimalTestTrial()
-        return createMinimalTestTrial().copy(
-            identification = minimal.identification.copy(
-                acronym = "TEST-TRIAL",
-                title = "This is an ACTIN test trial",
-                locations = listOf("Amsterdam UMC", "Antoni van Leeuwenhoek")
-            ),
-            cohorts = createTestCohorts(),
-            generalEligibility = listOf(
-                Eligibility(
-                    function = EligibilityFunction(rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC, parameters = listOf("ABC")),
-                    references = setOf(CriterionReference(id = "I-01", text = "ref 01"))
-                ),
-                Eligibility(
-                    function = EligibilityFunction(
-                        rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y,
-                        parameters = listOf("DEF", "1")
-                    ),
-                    references = setOf(CriterionReference(id = "I-02", text = "ref 02"))
-                ),
-                Eligibility(
-                    function = EligibilityFunction(rule = EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, parameters = listOf("1")),
-                    references = setOf(CriterionReference(id = "I-03", text = "ref 03"))
-                )
-            )
-        )
-    }
-
     private fun createGeneralEligibility(): List<Eligibility> {
         return listOf(
             Eligibility(

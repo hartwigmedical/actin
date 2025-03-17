@@ -103,7 +103,6 @@
                         <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
-                            <goal>kapt</goal>
                         </goals>
                     </execution>
                     <execution>
