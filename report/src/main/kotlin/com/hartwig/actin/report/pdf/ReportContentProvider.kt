@@ -63,7 +63,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }
         }
 
-        val summarizedExternalTrials = trialsProvider.summarizeExternalTrials(trialsProvider.cohortsWithSlotsAvailable())
+        val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
 
         return listOf(
             SummaryChapter(report, this, trialsProvider.allEvaluableCohorts()),
@@ -78,7 +78,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeRawPathologyReport,
                 summarizedExternalTrials.allFiltered()
             ),
-            LongitudinalMolecularHistoryChapter(report, trialsProvider.allEvaluableCohorts(), include = report.config.includeLongitudinalMolecularChapter),
+            LongitudinalMolecularHistoryChapter(
+                report,
+                trialsProvider.allEvaluableCohorts(),
+                include = report.config.includeLongitudinalMolecularChapter
+            ),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
@@ -139,8 +143,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 getGeneratorsForSource(cohortsPerSource, requestingSource, source, contentWidth, true).filterNotNull()
             }
 
-        val (localTrialGenerator, nonLocalTrialGenerator) = EligibleExternalTrialsGenerator.provideExternalTrialsTablesIncludedByFilter(
-            trialsProvider, trialsProvider.cohortsWithSlotsAvailable(), contentWidth, report.config.countryOfReference
+        val (localTrialGenerator, nonLocalTrialGenerator) = EligibleExternalTrialsGenerator.provideExternalTrialsGenerators(
+            trialsProvider, contentWidth, report.config.countryOfReference, true
         )
 
         return listOfNotNull(

@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
@@ -78,58 +78,47 @@ class EligibleExternalTrialsGenerator(
     }
 
     companion object {
-        fun provideExternalTrialsTablesIncludedByFilter(
-            trialsProvider: TrialsProvider, evaluated: List<InterpretedCohort>, contentWidth: Float, homeCountry: Country?
+        fun provideExternalTrialsGenerators(
+            trialsProvider: TrialsProvider, contentWidth: Float, homeCountry: Country?, filtered: Boolean
         ): Pair<TableGenerator?, TableGenerator?> {
-            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials(evaluated)
+            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
             val allEvidenceSources = trialsProvider.allEvidenceSources()
             return Pair(
-                if (summarizedExternalTrials.nationalTrials.isNotEmpty()) {
-                    EligibleExternalTrialsGenerator(
-                        allEvidenceSources,
-                        summarizedExternalTrials.nationalTrials.filtered,
-                        contentWidth,
-                        summarizedExternalTrials.nationalTrials.originalMinusFilteredSize(),
-                        homeCountry
-                    )
-                } else null,
-                if (summarizedExternalTrials.internationalTrials.isNotEmpty()) {
-                    EligibleExternalTrialsGenerator(
-                        allEvidenceSources,
-                        summarizedExternalTrials.internationalTrials.filtered,
-                        contentWidth,
-                        summarizedExternalTrials.internationalTrials.originalMinusFilteredSize()
-                    )
-                } else null
+                provideExternalTrialsGenerator(
+                    allEvidenceSources,
+                    summarizedExternalTrials.nationalTrials,
+                    contentWidth,
+                    homeCountry,
+                    filtered
+                ),
+                provideExternalTrialsGenerator(
+                    allEvidenceSources,
+                    summarizedExternalTrials.internationalTrials,
+                    contentWidth,
+                    homeCountry,
+                    filtered
+                )
             )
         }
 
-        fun provideExternalTrialsTablesExcludedByFilter(
-            trialsProvider: TrialsProvider, evaluated: List<InterpretedCohort>, contentWidth: Float, homeCountry: Country?
-        ): Pair<TableGenerator?, TableGenerator?> {
-            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials(evaluated)
-            val allEvidenceSources = trialsProvider.allEvidenceSources()
-            return Pair(
-                if (summarizedExternalTrials.nationalTrials.originalMinusFiltered().isNotEmpty()) {
-                    EligibleExternalTrialsGenerator(
-                        allEvidenceSources,
-                        summarizedExternalTrials.nationalTrials.originalMinusFiltered(),
-                        contentWidth,
-                        summarizedExternalTrials.nationalTrials.originalMinusFilteredSize(),
-                        homeCountry,
-                        false
-                    )
-                } else null,
-                if (summarizedExternalTrials.internationalTrials.originalMinusFiltered().isNotEmpty()) {
-                    EligibleExternalTrialsGenerator(
-                        allEvidenceSources,
-                        summarizedExternalTrials.internationalTrials.originalMinusFiltered(),
-                        contentWidth,
-                        summarizedExternalTrials.internationalTrials.originalMinusFilteredSize(),
-                        isFilteredTrialsTable = false
-                    )
-                } else null
-            )
+        private fun provideExternalTrialsGenerator(
+            allEvidenceSources: Set<String>,
+            molecularFilteredTrials: MolecularFilteredExternalTrials,
+            contentWidth: Float,
+            homeCountry: Country?,
+            filtered: Boolean
+        ): TableGenerator? {
+            val trials = if (filtered) molecularFilteredTrials.filtered else molecularFilteredTrials.originalMinusFiltered()
+            return if (trials.isNotEmpty()) {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    trials,
+                    contentWidth,
+                    molecularFilteredTrials.originalMinusFilteredSize(),
+                    homeCountry,
+                    filtered
+                )
+            } else null
         }
     }
 }
