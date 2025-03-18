@@ -15,11 +15,11 @@ object TrialFunctions {
 
     fun treatmentMayMatchAsTrial(
         treatmentHistoryEntry: TreatmentHistoryEntry,
-        category: TreatmentCategory,
+        categories: Iterable<TreatmentCategory>,
         treatmentCannotBeMatchedSpecifically: (Treatment) -> Boolean = { it.types().isEmpty() }
     ): Boolean {
-        return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial && treatmentHistoryEntry.allTreatments().any {
-            (it.categories().isEmpty() || category in it.categories()) && treatmentCannotBeMatchedSpecifically(it)
+        return categories.any(::categoryAllowsTrialMatches) && treatmentHistoryEntry.isTrial && treatmentHistoryEntry.allTreatments().any {
+            (it.categories().isEmpty() || categories.intersect(it.categories()).isNotEmpty()) && treatmentCannotBeMatchedSpecifically(it)
         }
     }
 

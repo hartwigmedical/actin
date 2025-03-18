@@ -33,12 +33,12 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
     private fun evaluateTreatmentHistory(record: PatientRecord, treatmentNamesToMatch: Set<String>): TreatmentHistoryEvaluation {
         val treatmentHistory = record.oncologicalHistory
-        val treatmentCategoriesToMatch = treatments.flatMap { it.categories() }.toSet()
+        val treatmentCategoriesToMatch = treatments.flatMap { it.categories() }.filter(TrialFunctions::categoryAllowsTrialMatches).toSet()
 
         return treatmentHistory.map { entry ->
             val isPD = treatmentResultedInPD(entry)
             val treatmentsMatchingNames = treatmentsMatchingNameListExactly(entry.allTreatments(), treatmentNamesToMatch)
-            val includesTrial = treatmentCategoriesToMatch.any { TrialFunctions.treatmentMayMatchAsTrial(entry, it) }
+            val includesTrial = TrialFunctions.treatmentMayMatchAsTrial(entry, treatmentCategoriesToMatch)
             if (treatmentsMatchingNames.isNotEmpty()) {
                 TreatmentHistoryEvaluation(
                     matchingTreatmentsWithPD = if (isPD == true) treatmentsMatchingNames else emptySet(),
