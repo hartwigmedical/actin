@@ -30,7 +30,7 @@ class CurrentlyGetsTransporterInteractingMedication(
             }
 
             transporterInteractingMedicationPlanned.isNotEmpty() -> {
-                EvaluationFactory.recoverableWarn(
+                EvaluationFactory.warn(
                     "Planned $termToFind $typeText medication use (${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationPlanned)})"
                 )
             }
