@@ -1,16 +1,9 @@
 package com.hartwig.actin.molecular.hotspotcomparison
 
-import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.ServeLoader
-import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.actin.molecular.panel.isHotspot
 import com.hartwig.actin.util.Paths
 import com.hartwig.hmftools.datamodel.OrangeJson
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
-import com.hartwig.hmftools.datamodel.purple.HotspotType
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
@@ -36,8 +29,8 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
         LOGGER.info("Loaded evidence and known events from SERVE version {}", serveDatabase.version())
 
         val orange = OrangeJson.getInstance().read(config.orangeJson)
-        val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
-        val hotspots = annotateHotspots(orange, serveRecord)
+        val serveRecord = selectForRefGenomeVersion(serveDatabase, orange.refGenomeVersion())
+        val hotspots = HotspotComparator.annotateHotspots(orange, serveRecord)
 
         LOGGER.info("Hotspot comparison DONE!")
         LOGGER.info(
@@ -48,43 +41,6 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
         )
         write(config.outputDirectory, orange.sampleId(), hotspots)
     }
-
-    fun annotateHotspots(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedHotspot> {
-        return orange.purple().allSomaticVariants().mapNotNull { variant ->
-            val criteria = createVariantCriteria(variant)
-            val knownEventResolver = KnownEventResolverFactory.create(serveRecord.knownEvents())
-            val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
-            val isHotspotServe = isHotspot(serveGeneAlteration)
-            val isHotspotOrange = variant.hotspot() == HotspotType.HOTSPOT
-            if (isHotspotServe || isHotspotOrange) {
-                AnnotatedHotspot(
-                    gene = variant.gene(),
-                    chromosome = variant.chromosome(),
-                    position = variant.position(),
-                    ref = variant.ref(),
-                    alt = variant.alt(),
-                    codingImpact = variant.canonicalImpact().hgvsCodingImpact(),
-                    proteinImpact = variant.canonicalImpact().hgvsProteinImpact(),
-                    isHotspotOrange = isHotspotOrange,
-                    isHotspotServe = isHotspotServe,
-                )
-            } else {
-                null
-            }
-        }
-    }
-
-    private fun createVariantCriteria(variant: PurpleVariant) =
-        VariantMatchCriteria(
-            gene = variant.gene(),
-            chromosome = variant.chromosome(),
-            position = variant.position(),
-            ref = variant.ref(),
-            alt = variant.alt(),
-            type = null,
-            codingEffect = null,
-            isReportable = variant.reported()
-        )
 
     private fun write(directory: String, sampleId: String, hotspots: List<AnnotatedHotspot>) {
         val path = Paths.forceTrailingFileSeparator(directory)
@@ -110,30 +66,18 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
         ).joinToString("\t")
     }
 
-    private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, refGenomeVersion: RefGenomeVersion): ServeRecord {
-        return serveDatabase.records()[toServeRefGenomeVersion(refGenomeVersion)]
-            ?: throw IllegalStateException("No serve record for ref genome version $refGenomeVersion")
+    private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, orangeRefGenomeVersion: OrangeRefGenomeVersion): ServeRecord {
+        return serveDatabase.records()[toServeRefGenomeVersion(orangeRefGenomeVersion)]
+            ?: throw IllegalStateException("No serve record for orange ref genome version $orangeRefGenomeVersion")
     }
 
-    private fun fromOrangeRefGenomeVersion(orangeRefGenomeVersion: OrangeRefGenomeVersion): RefGenomeVersion {
+    private fun toServeRefGenomeVersion(orangeRefGenomeVersion: OrangeRefGenomeVersion): ServeRefGenome {
         return when (orangeRefGenomeVersion) {
             OrangeRefGenomeVersion.V37 -> {
-                RefGenomeVersion.V37
-            }
-
-            OrangeRefGenomeVersion.V38 -> {
-                RefGenomeVersion.V38
-            }
-        }
-    }
-
-    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): ServeRefGenome {
-        return when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
                 ServeRefGenome.V37
             }
 
-            RefGenomeVersion.V38 -> {
+            OrangeRefGenomeVersion.V38 -> {
                 ServeRefGenome.V38
             }
         }

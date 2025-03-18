@@ -11,7 +11,7 @@ import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.common.GeneRole
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
-import junit.framework.TestCase.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val HOTSPOT_SERVE = TestServeKnownFactory.hotspotBuilder().gene("gene1").chromosome("1").position(1).ref("ref1").alt("alt1")
@@ -58,13 +58,13 @@ private val ORANGE_RECORD = ImmutableOrangeRecord.builder()
     .from(createMinimalTestOrangeRecord())
     .purple(PURPLE_RECORD).build()
 
-class HotspotComparisonApplicationTest {
+class HotspotComparatorTest {
 
     @Test
     fun `Should compare hotspots between ORANGE and SERVE`() {
-        val hotspots = HotspotComparisonApplication(HotspotComparisonConfig("", "", "")).annotateHotspots(ORANGE_RECORD, SERVE_RECORD)
-        assertEquals(hotspots.count { it.isHotspotOrange }, 2)
-        assertEquals(hotspots.count { it.isHotspotServe }, 1)
-        assertEquals(hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }, 1)
+        val hotspots = HotspotComparator.annotateHotspots(ORANGE_RECORD, SERVE_RECORD)
+        assertThat(hotspots.count { it.isHotspotOrange }).isEqualTo(2)
+        assertThat(hotspots.count { it.isHotspotServe }).isEqualTo(1)
+        assertThat(hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }).isEqualTo(1)
     }
 }
