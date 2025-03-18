@@ -36,7 +36,7 @@ class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : Evalua
             }
 
             WARN_DOIDS_SET.any { (isOfDoidType(doidModel, tumorDoids, it)) } -> {
-                EvaluationFactory.warn("Neuroendocrine tumor type but undetermined if tumor has a small cell component")
+                EvaluationFactory.warn("Possible cancer with small cell component (neuroendocrine tumor type)")
             }
 
             else -> {

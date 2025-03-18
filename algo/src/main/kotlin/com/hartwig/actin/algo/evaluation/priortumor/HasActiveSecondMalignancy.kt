@@ -12,7 +12,7 @@ class HasActiveSecondMalignancy: EvaluationFunction {
         return if (record.priorSecondPrimaries.any { it.status == TumorStatus.ACTIVE }) {
             EvaluationFactory.pass("Presence of active second malignancy")
         } else if (record.priorSecondPrimaries.any { it.status == TumorStatus.EXPECTATIVE }) {
-            EvaluationFactory.warn("Presence of expected second malignancy")
+            EvaluationFactory.warn("Presence second malignancy with expectative status")
         } else {
             EvaluationFactory.fail("No active second malignancy")
         }
