@@ -37,7 +37,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
         return {
             Or(
                 listOf(
-                    HasEcgAberration(),
+                    HasEcgAberration(icdModel()),
                     HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                         icdModel(),
                         IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
@@ -50,7 +50,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasECGAberrationCreator(): FunctionCreator {
-        return { HasEcgAberration() }
+        return { HasEcgAberration(icdModel()) }
     }
 
     private fun hasSufficientLVEFCreator(): FunctionCreator {
