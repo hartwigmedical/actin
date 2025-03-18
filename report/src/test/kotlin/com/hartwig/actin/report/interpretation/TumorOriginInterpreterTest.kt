@@ -106,14 +106,8 @@ class TumorOriginInterpreterTest {
 
     @Test
     fun `Should display at most three predictions in summary`() {
-        assertThat(
-            withPredictions(
-                0.4,
-                0.12,
-                0.15,
-                0.25
-            ).generateSummaryString()
-        ).isEqualTo("Inconclusive (type 1 40%, type 4 25%, type 3 15%)")
+        assertThat(withPredictions(0.4, 0.12, 0.15, 0.25).generateSummaryString())
+            .isEqualTo("Inconclusive (type 1 40%, type 4 25%, type 3 15%)")
     }
 
     @Test
@@ -122,7 +116,7 @@ class TumorOriginInterpreterTest {
     }
 
     @Test
-    fun `Should return 'unknown' predicted tumor origin when inconclusive with insufficient quality and purity`() {
+    fun `Should return 'unknown' predicted tumor origin when inconclusive with insufficient quality`() {
         assertThat(insufficientQualityInconclusiveInterpreter.generateSummaryString()).isEqualTo("Unknown")
     }
 

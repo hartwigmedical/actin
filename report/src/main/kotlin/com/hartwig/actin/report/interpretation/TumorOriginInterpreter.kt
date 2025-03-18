@@ -13,13 +13,7 @@ private const val MAX_PREDICTIONS_TO_DISPLAY = 3
 class TumorOriginInterpreter(private val hasSufficientQuality: Boolean?, private val predictedTumorOrigin: PredictedTumorOrigin?) {
 
     fun hasConfidentPrediction(): Boolean {
-        return when {
-            hasSufficientQuality != true -> false
-
-            predictedTumorOrigin?.likelihood()?.let { it >= LIKELIHOOD_CONFIDENCE_THRESHOLD } == true -> true
-
-            else -> false
-        }
+        return hasSufficientQuality == true && predictedTumorOrigin?.likelihood()?.let { it >= LIKELIHOOD_CONFIDENCE_THRESHOLD } == true
     }
 
     fun generateSummaryString(): String {
