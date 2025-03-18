@@ -1,7 +1,5 @@
 package com.hartwig.actin.datamodel.clinical.ingestion
 
-import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-
 data class IngestionResult(
     val configValidationErrors: Set<CurationConfigValidationError> = emptySet(),
     val patientResults: List<PatientIngestionResult> = emptyList(),
@@ -17,7 +15,6 @@ enum class PatientIngestionStatus {
 data class PatientIngestionResult(
     val patientId: String,
     val status: PatientIngestionStatus,
-    @Transient val clinicalRecord: ClinicalRecord,
     val curationResults: Set<CurationResult>,
     val questionnaireCurationErrors: Set<QuestionnaireCurationError>,
     val feedValidationWarnings: Set<FeedValidationWarning>

@@ -83,14 +83,9 @@ class ClinicalIngestionFeedAdapterTest {
     @Test
     fun `Output should not have changed`() {
         val jsonMapper = ObjectMapper()
-        val ingestionResult = adapter.run()
-        assertThat(
-            jsonMapper.readTree(
-                ClinicalRecordJson.toJson(
-                    ingestionResult.patientResults[0].clinicalRecord
-                )
-            )
-        ).isEqualTo(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText()))
+        val ingestionResult = adapter.run().second
+        assertThat(jsonMapper.readTree(ClinicalRecordJson.toJson(ingestionResult.first())))
+            .isEqualTo(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText()))
     }
 
     @Test
@@ -100,14 +95,12 @@ class ClinicalIngestionFeedAdapterTest {
         val validationErrors = curationDatabase.validate()
         assertThat(validationErrors).isEmpty()
 
-        val ingestionResult = adapter.run()
+        val (ingestionResult, clinicalRecords) = adapter.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
         assertThat(patientResults).hasSize(1)
         assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
-        assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
-        assertThat(patientResults[0].clinicalRecord.surgeries.size).isEqualTo(1)
         assertThat(patientResults[0].questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probbly'"))
         assertThat(patientResults[0].feedValidationWarnings).containsExactly(
@@ -116,6 +109,8 @@ class ClinicalIngestionFeedAdapterTest {
                 "Empty vital function value"
             )
         )
+        assertThat(clinicalRecords.first()).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
+        assertThat(clinicalRecords.first().surgeries.size).isEqualTo(1)
 
         assertThat(ingestionResult.unusedConfigs).containsExactlyInAnyOrder(
             UnusedCurationConfig(category = CurationCategory.ONCOLOGICAL_HISTORY, input = "capecitabine and oxi"),
@@ -154,7 +149,6 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(deserialized.patientResults).extracting(
             PatientIngestionResult::patientId,
             PatientIngestionResult::status,
-            PatientIngestionResult::clinicalRecord,
             PatientIngestionResult::curationResults,
             PatientIngestionResult::questionnaireCurationErrors,
             PatientIngestionResult::feedValidationWarnings
@@ -163,7 +157,6 @@ class ClinicalIngestionFeedAdapterTest {
                 tuple(
                     patientIngestionResult.patientId,
                     patientIngestionResult.status,
-                    null,
                     patientIngestionResult.curationResults,
                     patientIngestionResult.questionnaireCurationErrors,
                     patientIngestionResult.feedValidationWarnings

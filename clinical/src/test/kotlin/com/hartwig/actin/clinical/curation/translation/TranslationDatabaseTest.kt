@@ -33,13 +33,7 @@ class TranslationDatabaseTest {
         ) { it.toxicityTranslationEvaluatedInputs }
         assertThat(
             translationDatabase.reportUnusedTranslations(
-                listOf(
-                    CurationExtractionEvaluation(
-                        toxicityTranslationEvaluatedInputs = setOf(
-                            firstTranslation
-                        )
-                    )
-                )
+                CurationExtractionEvaluation(toxicityTranslationEvaluatedInputs = setOf(firstTranslation))
             )
         ).containsExactly(UnusedCurationConfig(CurationCategory.TOXICITY_TRANSLATION, secondTranslation.input))
     }

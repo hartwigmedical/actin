@@ -88,12 +88,9 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 curationDatabaseContext
             )
 
-        val ingestionResult = clinicalIngestionAdapter.run()
-        LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
-        ClinicalRecordJson.write(
-            ingestionResult.patientResults.map { it.clinicalRecord },
-            outputDirectory
-        )
+        val (ingestionResult, clinicalRecords) = clinicalIngestionAdapter.run()
+        LOGGER.info("Writing {} clinical records to {}", clinicalRecords.size, outputDirectory)
+        ClinicalRecordJson.write(clinicalRecords, outputDirectory)
         LOGGER.info("Done!")
 
         writeIngestionResults(outputDirectory, ingestionResult)

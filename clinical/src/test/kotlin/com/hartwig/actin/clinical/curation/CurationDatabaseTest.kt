@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import org.assertj.core.api.Assertions.assertThat
@@ -34,7 +35,7 @@ class CurationDatabaseTest {
         val database = CurationDatabase(
             mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY
         ) { it.comorbidityEvaluatedInputs }
-        assertThat(database.reportUnusedConfig(emptyList()))
+        assertThat(database.reportUnusedConfig(CurationExtractionEvaluation()))
             .containsExactly(UnusedCurationConfig(CurationCategory.COMORBIDITY, INPUT))
     }
 

@@ -67,7 +67,7 @@ class CurationDatabaseContextTest {
             bloodTransfusionTranslation,
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
         )
-        assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
+        assertThat(context.allUnusedConfig(CurationExtractionEvaluation())).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { bloodTransfusionTranslation wasNot Called }
     }
 

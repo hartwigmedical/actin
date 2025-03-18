@@ -34,6 +34,7 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.doid.DoidModel
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Collectors
 import kotlin.io.path.name
@@ -63,79 +64,82 @@ class StandardDataIngestion(
         registerModule(KotlinModule.Builder().build())
     }
 
-    override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
-        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map { file ->
-            val ehrPatientRecord = dataQualityMask.apply(mapper.readValue(Files.readString(file), ProvidedPatientRecord::class.java))
-            val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
-            val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
-            val secondPrimaries = secondPrimaryExtractor.extract(ehrPatientRecord)
-            val clinicalStatus = clinicalStatusExtractor.extract(ehrPatientRecord)
-            val treatmentHistory = treatmentHistoryExtractor.extract(ehrPatientRecord)
-            val comorbidities = comorbidityExtractor.extract(ehrPatientRecord)
-            val medications = medicationExtractor.extract(ehrPatientRecord)
-            val labValues = labValuesExtractor.extract(ehrPatientRecord)
-            val bloodTransfusions = bloodTransfusionExtractor.extract(ehrPatientRecord)
-            val vitalFunctions = vitalFunctionsExtractor.extract(ehrPatientRecord)
-            val surgeries = surgeryExtractor.extract(ehrPatientRecord)
-            val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
-            val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
-            val ihcTests = ihcTestExtractor.extract(ehrPatientRecord)
-            val sequencingTests = sequencingTestExtractor.extract(ehrPatientRecord)
-
-            val patientEvaluation = listOf(
-                patientDetails,
-                tumorDetails,
-                clinicalStatus,
-                treatmentHistory,
-                comorbidities,
-                medications,
-                labValues,
-                bloodTransfusions,
-                vitalFunctions,
-                surgeries,
-                bodyWeights,
-                bodyHeights,
-                secondPrimaries,
-                ihcTests,
-                sequencingTests
-            )
-                .map { e -> e.evaluation }
-                .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
-
-            Pair(
-                patientEvaluation,
-                ClinicalRecord(
-                    patientId = ehrPatientRecord.patientDetails.hashedId,
-                    patient = patientDetails.extracted,
-                    tumor = tumorDetails.extracted,
-                    clinicalStatus = clinicalStatus.extracted,
-                    oncologicalHistory = treatmentHistory.extracted,
-                    comorbidities = comorbidities.extracted,
-                    medications = medications.extracted,
-                    labValues = labValues.extracted,
-                    bloodTransfusions = bloodTransfusions.extracted,
-                    vitalFunctions = vitalFunctions.extracted,
-                    surgeries = surgeries.extracted,
-                    bodyWeights = bodyWeights.extracted,
-                    bodyHeights = bodyHeights.extracted,
-                    priorSecondPrimaries = secondPrimaries.extracted,
-                    priorIHCTests = ihcTests.extracted,
-                    priorSequencingTests = sequencingTests.extracted
-                )
-            )
-        }.map { (evaluation, record) ->
-            Pair(
-                PatientIngestionResult(
-                    record.patientId,
-                    if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN_CURATION_REQUIRED,
+    override fun ingest(): List<Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation>> {
+        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }
+            .map(::recordAndEvaluationFromPath)
+            .map { (record, evaluation) ->
+                Triple(
                     record,
-                    curationResultsFromWarnings(evaluation.warnings),
-                    emptySet(),
-                    emptySet()
-                ),
-                evaluation
-            )
-        }.collect(Collectors.toList())
+                    PatientIngestionResult(
+                        record.patientId,
+                        if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN_CURATION_REQUIRED,
+                        curationResultsFromWarnings(evaluation.warnings),
+                        emptySet(),
+                        emptySet()
+                    ),
+                    evaluation
+                )
+            }
+            .collect(Collectors.toList())
+    }
+
+    private fun recordAndEvaluationFromPath(file: Path): Pair<ClinicalRecord, CurationExtractionEvaluation> {
+        val ehrPatientRecord = dataQualityMask.apply(mapper.readValue(Files.readString(file), ProvidedPatientRecord::class.java))
+
+        val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
+        val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
+        val secondPrimaries = secondPrimaryExtractor.extract(ehrPatientRecord)
+        val clinicalStatus = clinicalStatusExtractor.extract(ehrPatientRecord)
+        val treatmentHistory = treatmentHistoryExtractor.extract(ehrPatientRecord)
+        val comorbidities = comorbidityExtractor.extract(ehrPatientRecord)
+        val medications = medicationExtractor.extract(ehrPatientRecord)
+        val labValues = labValuesExtractor.extract(ehrPatientRecord)
+        val bloodTransfusions = bloodTransfusionExtractor.extract(ehrPatientRecord)
+        val vitalFunctions = vitalFunctionsExtractor.extract(ehrPatientRecord)
+        val surgeries = surgeryExtractor.extract(ehrPatientRecord)
+        val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
+        val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
+        val ihcTests = ihcTestExtractor.extract(ehrPatientRecord)
+        val sequencingTests = sequencingTestExtractor.extract(ehrPatientRecord)
+
+        val patientEvaluation = listOf(
+            patientDetails,
+            tumorDetails,
+            clinicalStatus,
+            treatmentHistory,
+            comorbidities,
+            medications,
+            labValues,
+            bloodTransfusions,
+            vitalFunctions,
+            surgeries,
+            bodyWeights,
+            bodyHeights,
+            secondPrimaries,
+            ihcTests,
+            sequencingTests
+        )
+            .map { e -> e.evaluation }
+            .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
+
+        return ClinicalRecord(
+            patientId = ehrPatientRecord.patientDetails.hashedId,
+            patient = patientDetails.extracted,
+            tumor = tumorDetails.extracted,
+            clinicalStatus = clinicalStatus.extracted,
+            oncologicalHistory = treatmentHistory.extracted,
+            comorbidities = comorbidities.extracted,
+            medications = medications.extracted,
+            labValues = labValues.extracted,
+            bloodTransfusions = bloodTransfusions.extracted,
+            vitalFunctions = vitalFunctions.extracted,
+            surgeries = surgeries.extracted,
+            bodyWeights = bodyWeights.extracted,
+            bodyHeights = bodyHeights.extracted,
+            priorSecondPrimaries = secondPrimaries.extracted,
+            priorIHCTests = ihcTests.extracted,
+            priorSequencingTests = sequencingTests.extracted
+        ) to patientEvaluation
     }
 
     companion object {

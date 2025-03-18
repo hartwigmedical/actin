@@ -17,9 +17,8 @@ class CurationDatabase<T : CurationConfig>(
 ) {
     fun find(input: InputText) = configs[input.lowercase()] ?: emptySet()
 
-    fun reportUnusedConfig(evaluations: List<CurationExtractionEvaluation>): List<UnusedCurationConfig> {
-        val evaluatedInputs = evaluations.flatMap(evaluatedInputFunction).toSet()
-        return (configs.keys - evaluatedInputs).map { UnusedCurationConfig(category, it) }
+    fun reportUnusedConfig(evaluation: CurationExtractionEvaluation): List<UnusedCurationConfig> {
+        return (configs.keys - evaluatedInputFunction(evaluation)).map { UnusedCurationConfig(category, it) }
     }
 
     operator fun plus(other: CurationDatabase<T>): CurationDatabase<T> {
