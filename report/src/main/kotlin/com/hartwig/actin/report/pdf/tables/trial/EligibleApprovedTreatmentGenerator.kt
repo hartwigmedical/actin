@@ -24,10 +24,7 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
         val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val hasConfidentPrediction =
             molecular?.let {
-                TumorOriginInterpreter(
-                    molecular.hasSufficientQuality,
-                    molecular.characteristics.predictedTumorOrigin
-                ).hasConfidentPrediction()
+                TumorOriginInterpreter.create(molecular).hasConfidentPrediction()
             } ?: false
 
         when {

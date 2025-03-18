@@ -123,10 +123,9 @@ object WGSSummaryGeneratorFunctions {
     }
 
     fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
-        val wgsMolecular = molecular as? MolecularRecord
-        val originSummary = TumorOriginInterpreter(wgsMolecular?.hasSufficientQuality, molecular.characteristics.predictedTumorOrigin)
-            .generateSummaryString()
+        val originSummary = TumorOriginInterpreter.create(molecular).generateSummaryString()
 
+        val wgsMolecular = molecular as? MolecularRecord
         val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
         if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {
             paragraph.add(Text(" (low purity)").addStyle(Styles.tableNoticeStyle()))

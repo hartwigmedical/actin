@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.pdf.util.Formats
@@ -52,4 +54,15 @@ class TumorOriginInterpreter(private val hasSufficientQuality: Boolean?, private
     private fun bestNPredictions(limit: Int): List<CupPrediction>? = predictedTumorOrigin?.predictions
         ?.sortedWith(compareByDescending(CupPrediction::likelihood))
         ?.take(limit)
+
+    companion object {
+        fun create(molecular: MolecularTest): TumorOriginInterpreter {
+            val wgsMolecular = molecular as? MolecularRecord
+
+            return TumorOriginInterpreter(
+                hasSufficientQuality = wgsMolecular?.hasSufficientQuality,
+                predictedTumorOrigin = wgsMolecular?.characteristics?.predictedTumorOrigin
+            )
+        }
+    }
 }
