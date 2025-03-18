@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.createTableTitleStart
 import com.hartwig.actin.report.pdf.util.Cells
@@ -19,7 +18,7 @@ class EligibleActinTrialsGenerator(
     private val molecularEventColWidth: Float,
     private val locationColWidth: Float?,
     private val checksColWidth: Float
-) : TableGenerator {
+) : ActinTrialsGenerator {
 
     private val includeLocation = locationColWidth != null
 
@@ -54,7 +53,7 @@ class EligibleActinTrialsGenerator(
         return makeWrapping(table)
     }
 
-    fun getCohortSize(): Int {
+    override fun getCohortSize(): Int {
         return cohorts.size
     }
 

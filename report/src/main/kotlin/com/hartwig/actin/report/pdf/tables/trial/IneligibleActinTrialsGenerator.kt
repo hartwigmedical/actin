@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.createTableTitleStart
 import com.hartwig.actin.report.pdf.util.Cells
@@ -20,7 +19,7 @@ class IneligibleActinTrialsGenerator(
     private val includeIneligibilityReasonCol: Boolean,
     private val paddingDistance: Float,
     private val includeLocationColumn: Boolean = false
-) : TableGenerator {
+) : ActinTrialsGenerator {
 
     override fun title(): String {
         return title
@@ -59,7 +58,7 @@ class IneligibleActinTrialsGenerator(
         return makeWrapping(table)
     }
 
-    fun getCohortSize(): Int {
+    override fun getCohortSize(): Int {
         return cohorts.size
     }
 

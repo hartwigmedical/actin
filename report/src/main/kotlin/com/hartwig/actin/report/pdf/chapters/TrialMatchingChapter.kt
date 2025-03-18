@@ -51,18 +51,12 @@ class TrialMatchingChapter(
             primaryEvaluableCohorts, primaryNonEvaluableCohorts, report.requestingHospital, false
         )
 
-        val otherCohortGenerators =
-            otherEvaluableCohorts.takeIf { it.isNotEmpty() }?.groupBy { it.source }?.map { (source, cohortsPerSource) ->
-                source to createActinTrialGenerators(
+        val otherCohortGenerators = otherEvaluableCohorts.groupBy { it.source }
+            .flatMap { (source, cohortsPerSource) ->
+                createActinTrialGenerators(
                     cohortsPerSource, otherNonEvaluableCohorts.filter { it.source == source }, source?.description, true
                 )
-            }
-                ?.flatMap { it.second.map { s -> it.first to s } }
-                ?.filter { (_, generator) ->
-                     (generator is EligibleActinTrialsGenerator && generator.getCohortSize() > 0) || (generator is IneligibleActinTrialsGenerator && generator.getCohortSize() > 0)
-                }
-                ?.map { it.second }
-                ?: emptyList()
+            }.filter { generator -> generator.getCohortSize() > 0 }
 
         val (localTrialGeneratorIncluded, nonLocalTrialGeneratorIncluded) = EligibleExternalTrialsGenerator.provideExternalTrialsGenerators(
             trialsProvider, contentWidth(), report.config.countryOfReference, true
@@ -80,7 +74,7 @@ class TrialMatchingChapter(
 
     private fun createActinTrialGenerators(
         cohorts: List<InterpretedCohort>, nonEvaluableCohorts: List<InterpretedCohort>, source: String?, includeLocation: Boolean
-    ): List<TableGenerator> {
+    ): List<ActinTrialsGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
 
         val eligibleActinTrialsClosedCohortsGenerator = EligibleActinTrialsGenerator.forClosedCohorts(
