@@ -26,7 +26,8 @@ class IsEligibleForOnLabelTreatment(
     private val treatment: Treatment,
     private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory,
     private val doidModel: DoidModel,
-    maxTestAge: LocalDate? = null
+    private val minTreatmentDate: LocalDate,
+    maxTestAge: LocalDate? = null,
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -50,7 +51,7 @@ class IsEligibleForOnLabelTreatment(
             }
 
             isNSCLC && treatmentNameToEvaluationFunctionsForNSCLC.containsKey(treatmentDisplay) -> {
-                when (treatmentNameToEvaluationFunctionsForNSCLC[treatmentDisplay]!!.evaluate(record).result) {
+                when (evaluate(record, treatmentNameToEvaluationFunctionsForNSCLC[treatmentDisplay]!!).result) {
                     EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED -> {
                         EvaluationFactory.pass("Eligible for on-label treatment $treatmentDisplay")
                     }
@@ -79,6 +80,22 @@ class IsEligibleForOnLabelTreatment(
 
     private fun tumorIsCUP(tumor: TumorDetails): Boolean {
         return tumor.primaryTumorLocation == "Unknown" && tumor.primaryTumorSubLocation == "CUP"
+    }
+
+    private fun evaluate(record: PatientRecord, evaluationFunctions: EvaluationFunction): Evaluation {
+        return And(
+            listOf(
+                evaluationFunctions,
+                Not(
+                    Or(
+                        listOf(
+                            HasHadSpecificTreatmentSinceDate(treatment, minTreatmentDate),
+                            HasHadPDFollowingSpecificTreatment(listOf(treatment))
+                        )
+                    )
+                )
+            )
+        ).evaluate(record)
     }
 
     private val treatmentNameToEvaluationFunctionsForNSCLC: Map<String, EvaluationFunction> = mapOf(

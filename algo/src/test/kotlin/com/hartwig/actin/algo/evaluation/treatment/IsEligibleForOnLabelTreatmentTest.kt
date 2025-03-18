@@ -18,6 +18,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
@@ -28,6 +29,10 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
+import java.time.LocalDate
+
+private val MIN_DATE = LocalDate.of(2020, 6, 6)
+private val OSIMERTINIB = treatment("OSIMERTINIB", true)
 
 class IsEligibleForOnLabelTreatmentTest {
 
@@ -36,9 +41,15 @@ class IsEligibleForOnLabelTreatmentTest {
         mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
     private val targetTreatment = treatment("PEMBROLIZUMAB", true)
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val function = IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel)
+    val function =
+        IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE)
     private val functionEvaluatingOsimertinib =
-        IsEligibleForOnLabelTreatment(treatment("OSIMERTINIB", true), standardOfCareEvaluatorFactory, doidModel)
+        IsEligibleForOnLabelTreatment(
+            OSIMERTINIB,
+            standardOfCareEvaluatorFactory,
+            doidModel,
+            MIN_DATE
+        )
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
@@ -68,6 +79,35 @@ class IsEligibleForOnLabelTreatmentTest {
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 20),
                 extendedVariantDetails = TestVariantFactory.createMinimalExtended(),
                 driverLikelihood = DriverLikelihood.HIGH
+            )
+        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for NSCLC patient who previously progressed on osimertinib`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    treatments = setOf(OSIMERTINIB),
+                    stopReason = StopReason.PROGRESSIVE_DISEASE
+                )
+            )
+        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for NSCLC patient who recently received osimertinib`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    treatments = setOf(OSIMERTINIB),
+                    stopYear = MIN_DATE.year,
+                    stopMonth = MIN_DATE.monthValue + 3
+                )
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
