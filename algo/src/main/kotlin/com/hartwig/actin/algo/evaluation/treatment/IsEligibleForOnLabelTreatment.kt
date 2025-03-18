@@ -32,10 +32,7 @@ class IsEligibleForOnLabelTreatment(
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
         val treatmentDisplay = treatment.display()
-        val isNSCLC = DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID in DoidEvaluationFunctions.createFullExpandedDoidTree(
-            doidModel,
-            record.tumor.doids
-        )
+        val isNSCLC = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
 
         return when {
             tumorIsCUP(record.tumor) -> {
@@ -53,17 +50,17 @@ class IsEligibleForOnLabelTreatment(
             }
 
             isNSCLC && treatmentNameToEvaluationFunctionsForNSCLC.containsKey(treatmentDisplay) -> {
-                when (evaluate(record, treatmentNameToEvaluationFunctionsForNSCLC[treatmentDisplay]!!).result) {
-                    EvaluationResult.PASS -> {
+                when (treatmentNameToEvaluationFunctionsForNSCLC[treatmentDisplay]!!.evaluate(record).result) {
+                    EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED -> {
                         EvaluationFactory.pass("Eligible for on-label treatment $treatmentDisplay")
                     }
 
-                    EvaluationResult.WARN -> {
-                        EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment $treatmentDisplay")
+                    EvaluationResult.FAIL -> {
+                        EvaluationFactory.fail("Not eligible for on-label treatment $treatmentDisplay")
                     }
 
                     else -> {
-                        EvaluationFactory.fail("Not eligible for on-label treatment $treatmentDisplay")
+                        EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment $treatmentDisplay")
                     }
                 }
             }
@@ -84,15 +81,6 @@ class IsEligibleForOnLabelTreatment(
         return tumor.primaryTumorLocation == "Unknown" && tumor.primaryTumorSubLocation == "CUP"
     }
 
-    private fun evaluate(record: PatientRecord, evaluationFunctions: EvaluationFunction): Evaluation {
-        val evaluation = evaluationFunctions.evaluate(record)
-        return evaluation.copy(
-            inclusionMolecularEvents = emptySet(),
-            exclusionMolecularEvents = emptySet(),
-            isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
-        )
-    }
-
     private val treatmentNameToEvaluationFunctionsForNSCLC: Map<String, EvaluationFunction> = mapOf(
         "Osimertinib" to Or(
             listOf(
@@ -111,8 +99,7 @@ class IsEligibleForOnLabelTreatment(
                             TreatmentCategory.TARGETED_THERAPY,
                             setOf(DrugType.TYROSINE_KINASE_INHIBITOR_GEN_1, DrugType.TYROSINE_KINASE_INHIBITOR_GEN_2),
                             1
-                        ),
-                        HasHadLimitedSystemicTreatments(1)
+                        )
                     )
                 )
             )
