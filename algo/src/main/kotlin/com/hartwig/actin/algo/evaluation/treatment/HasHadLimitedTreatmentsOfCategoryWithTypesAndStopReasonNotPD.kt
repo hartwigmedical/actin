@@ -16,7 +16,7 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentEvaluations = record.oncologicalHistory.map { treatmentHistoryEntry ->
-            val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
+            val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
             val categoryMatches = treatmentHistoryEntry.categories().contains(category)
 
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
