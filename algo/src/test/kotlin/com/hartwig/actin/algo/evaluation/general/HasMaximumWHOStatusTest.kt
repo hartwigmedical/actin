@@ -21,8 +21,12 @@ class HasMaximumWHOStatusTest {
     }
 
     @Test
-    fun `Should fail when WHO is greater than maximum`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(3)))
+    fun `Should warn when WHO difference is exactly one`() {
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(GeneralTestFactory.withWHO(3)))
+    }
+
+    @Test
+    fun `Should fail when WHO difference is greater than one`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(4)))
     }
 }

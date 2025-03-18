@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasWHOStatusTest {
@@ -21,14 +20,12 @@ class HasWHOStatusTest {
     }
 
     @Test
-    fun `Should return recoverable fail when WHO difference is exactly one`() {
+    fun `Should warn when WHO difference is exactly one`() {
         val evaluationFor1 = function.evaluate(GeneralTestFactory.withWHO(1))
-        assertEvaluation(EvaluationResult.FAIL, evaluationFor1)
-        assertThat(evaluationFor1.recoverable).isTrue
+        assertEvaluation(EvaluationResult.WARN, evaluationFor1)
 
         val evaluationFor3 = function.evaluate(GeneralTestFactory.withWHO(3))
-        assertEvaluation(EvaluationResult.FAIL, evaluationFor3)
-        assertThat(evaluationFor3.recoverable).isTrue
+        assertEvaluation(EvaluationResult.WARN, evaluationFor3)
     }
 
     @Test
