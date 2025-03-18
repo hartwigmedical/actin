@@ -95,7 +95,7 @@ class EligibleExternalTrialsGenerator(
                     allEvidenceSources,
                     summarizedExternalTrials.internationalTrials,
                     contentWidth,
-                    homeCountry,
+                    null,
                     filtered
                 )
             )
