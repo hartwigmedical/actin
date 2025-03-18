@@ -4,14 +4,14 @@
     "gender": "FEMALE",
     "birthYear": 1975,
     "registrationDate": {
-      "year": 2024,
-      "month": 10,
-      "day": 1
+      "year": 2025,
+      "month": 2,
+      "day": 20
     },
     "questionnaireDate": {
-      "year": 2024,
-      "month": 10,
-      "day": 1
+      "year": 2025,
+      "month": 2,
+      "day": 20
     },
     "hasHartwigSequencing": true
   },
@@ -83,13 +83,13 @@
         }
       ],
       "startYear": 2023,
-      "startMonth": 1,
+      "startMonth": 6,
       "intents": null,
       "isTrial": false,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": 2024,
-        "stopMonth": 9,
+        "stopYear": 2025,
+        "stopMonth": 1,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": "PARTIAL_RESPONSE",
@@ -107,11 +107,9 @@
   "comorbidities": [
     {
       "name": "Rheumatoid arthritis",
-      "year": 2022,
+      "year": 2023,
       "month": null,
-      "doids": [
-        "7148"
-      ],
+      "icdCodes": [],
       "category": "Autoimmune disease",
       "comorbidityClass": "OTHER_CONDITION"
     }
@@ -119,9 +117,9 @@
   "labValues": [
     {
       "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 9
+        "year": 2025,
+        "month": 1,
+        "day": 15
       },
       "code": "ALAT",
       "name": "Alanine aminotransferase",
@@ -134,9 +132,9 @@
     },
     {
       "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 9
+        "year": 2025,
+        "month": 1,
+        "day": 15
       },
       "code": "ASAT",
       "name": "Aspartate aminotransferase",
@@ -149,9 +147,9 @@
     },
     {
       "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 9
+        "year": 2025,
+        "month": 1,
+        "day": 15
       },
       "code": "TOTAL_BILIRUBIN",
       "name": "total bilirubin",
@@ -164,9 +162,9 @@
     },
     {
       "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 9
+        "year": 2025,
+        "month": 1,
+        "day": 15
       },
       "code": "Hb",
       "name": "hemoglobin",
@@ -179,9 +177,9 @@
     },
     {
       "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 9
+        "year": 2025,
+        "month": 1,
+        "day": 15
       },
       "code": "THROMBOCYTES_ABS",
       "name": "absolute thrombocyte count",
@@ -194,9 +192,9 @@
     },
     {
       "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 9
+        "year": 2025,
+        "month": 1,
+        "day": 15
       },
       "code": "LYMPHOCYTES_ABS_EDA",
       "name": "absolute lymphocyte count eDA",
@@ -389,9 +387,9 @@
         "testTypeDisplay": null,
         "experimentType": "HARTWIG_WHOLE_GENOME",
         "date": {
-          "year": 2024,
-          "month": 9,
-          "day": 1
+          "year": 2025,
+          "month": 2,
+          "day": 22
         },
         "drivers": {
           "variants": [
@@ -872,9 +870,9 @@
             "treatmentEvidence": [],
             "eligibleTrials": []
           },
-          "homologousRepairScore": 0.0,
-          "isHomologousRepairDeficient": false,
-          "homologousRepairEvidence": {
+          "homologousRecombinationScore": 0.0,
+          "isHomologousRecombinationDeficient": false,
+          "homologousRecombinationEvidence": {
             "treatmentEvidence": [],
             "eligibleTrials": []
           },

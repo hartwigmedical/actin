@@ -138,8 +138,8 @@ object TestMolecularFactory {
             ploidy = 3.1,
             predictedTumorOrigin = createProperPredictedTumorOrigin(),
             isMicrosatelliteUnstable = false,
-            homologousRepairScore = 0.45,
-            isHomologousRepairDeficient = false,
+            homologousRecombinationScore = 0.45,
+            isHomologousRecombinationDeficient = false,
             tumorMutationalBurden = 13.71,
             hasHighTumorMutationalBurden = true,
             tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.withApprovedTreatment("Pembro"),
@@ -147,7 +147,7 @@ object TestMolecularFactory {
             hasHighTumorMutationalLoad = true,
             microsatelliteEvidence = null,
             tumorMutationalLoadEvidence = null,
-            homologousRepairEvidence = null
+            homologousRecombinationEvidence = null
         )
     }
 
@@ -182,7 +182,7 @@ object TestMolecularFactory {
     private fun createExhaustiveTestCharacteristics(): MolecularCharacteristics {
         return createProperTestCharacteristics().copy(
             microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            homologousRecombinationEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
         )

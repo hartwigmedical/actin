@@ -1,10 +1,11 @@
 package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.UnusedCurationConfig
+import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
@@ -34,19 +35,18 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
             mockk(),
             mockk(),
             mockk(),
             mockk(),
-            mockk(),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12])
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
     }
 
     @Test
     fun `Should combine all unused configs in curation databases, except blood transfusions`() {
-        val expectedUnusedConfig = IntRange(0, 16).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 15).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
@@ -61,12 +61,11 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[9]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[10]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
             bloodTransfusionTranslation,
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[16])
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { bloodTransfusionTranslation wasNot Called }

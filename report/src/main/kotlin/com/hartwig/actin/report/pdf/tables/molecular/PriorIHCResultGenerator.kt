@@ -24,7 +24,7 @@ class PriorIHCResultGenerator(
                 table.addCell(Cells.createSubTitle(priorMolecularTestInterpretation.type + " results"))
                 table.addCell(Cells.createValue(priorMolecularTestInterpretation.results.sortedBy { it.sortPrecedence }
                     .groupBy { it.grouping }
-                    .map { Paragraph("${it.key}: ${it.value.joinToString { i -> i.details }}") }))
+                    .map { Paragraph("${it.key}: ${it.value.joinToString { i -> i.date?.let { d -> "${i.details} ($d)" } ?: i.details }}") }))
             }
         }
         return table

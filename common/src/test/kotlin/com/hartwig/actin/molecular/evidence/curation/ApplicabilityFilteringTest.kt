@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.curation
 
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -13,13 +14,15 @@ class ApplicabilityFilteringTest {
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForHotspot(nonApplicableGene).molecularCriterium().hotspots().first()
+                TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = nonApplicableGene))
+                    .molecularCriterium().hotspots().first()
             )
         ).isFalse()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForHotspot("other").molecularCriterium().hotspots().first()
+                TestServeEvidenceFactory.createEvidenceForHotspot(TestServeMolecularFactory.createVariantAnnotation(gene = "other"))
+                    .molecularCriterium().hotspots().first()
             )
         ).isTrue()
     }

@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -18,7 +19,15 @@ class EvidenceDatabaseTest {
 
     @Test
     fun `Should match evidence for variants`() {
-        val variant = VariantMatchCriteria(isReportable = true, gene = "", chromosome = "", position = 0, ref = "", alt = "")
+        val variant = VariantMatchCriteria(
+            gene = "",
+            chromosome = "",
+            position = 0,
+            ref = "",
+            alt = "",
+            driverLikelihood = DriverLikelihood.HIGH,
+            isReportable = true
+        )
         assertThat(database.geneAlterationForVariant(variant)).isNotNull()
         assertEvidence(database.evidenceForVariant(variant), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
@@ -79,8 +88,8 @@ class EvidenceDatabaseTest {
     fun `Should match evidence for signatures`() {
         assertEvidence(database.evidenceForMicrosatelliteStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
         assertEvidence(database.evidenceForMicrosatelliteStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
-        assertEvidence(database.evidenceForHomologousRepairStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
-        assertEvidence(database.evidenceForHomologousRepairStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForHomologousRecombinationStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForHomologousRecombinationStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
         assertEvidence(database.evidenceForTumorMutationalBurdenStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
         assertEvidence(database.evidenceForTumorMutationalBurdenStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
         assertEvidence(database.evidenceForTumorMutationalLoadStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)

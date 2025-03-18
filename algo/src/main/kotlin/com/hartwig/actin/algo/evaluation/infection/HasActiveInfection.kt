@@ -18,7 +18,7 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
         val antimicrobialsAtcLevels = MedicationCategories.create(atcTree).resolve("Systemic antimicrobials")
         val currentlyUsesAntimicrobials = record.medications?.any {
             medicationSelector.isActive(it) && (it.allLevels() intersect antimicrobialsAtcLevels).isNotEmpty()
-        } ?: false
+        } == true
 
         val infection = record.clinicalStatus.infectionStatus
 

@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 
 data class CurationResponse<T>(
     val configs: Set<T> = emptySet(), val extractionEvaluation: CurationExtractionEvaluation = CurationExtractionEvaluation()
@@ -89,8 +91,8 @@ data class CurationResponse<T>(
                 CurationCategory.SECOND_PRIMARY -> CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = evaluatedInputs)
                 CurationCategory.LESION_LOCATION -> CurationExtractionEvaluation(lesionLocationEvaluatedInputs = evaluatedInputs)
                 CurationCategory.NON_ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
-                CurationCategory.ECG -> CurationExtractionEvaluation(ecgEvaluatedInputs = evaluatedInputs)
-                CurationCategory.INFECTION -> CurationExtractionEvaluation(infectionEvaluatedInputs = evaluatedInputs)
+                CurationCategory.ECG -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
+                CurationCategory.INFECTION -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION -> CurationExtractionEvaluation(
                     periodBetweenUnitEvaluatedInputs = evaluatedInputs
                 )
@@ -103,7 +105,8 @@ data class CurationResponse<T>(
                 CurationCategory.MEDICATION_NAME -> CurationExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_DOSAGE -> CurationExtractionEvaluation(medicationDosageEvaluatedInputs = evaluatedInputs)
                 CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
-                CurationCategory.SURGERY_NAME -> CurationExtractionEvaluation(surgeryTranslationEvaluatedInputs = evaluatedInputs)
+                CurationCategory.SURGERY_NAME -> CurationExtractionEvaluation(surgeryCurationEvaluatedInputs = evaluatedInputs)
+                CurationCategory.LAB_MEASUREMENT -> CurationExtractionEvaluation(labMeasurementEvaluatedInputs = evaluatedInputs)
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(

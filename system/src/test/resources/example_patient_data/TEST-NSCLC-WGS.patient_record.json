@@ -917,9 +917,9 @@
             "treatmentEvidence": [],
             "eligibleTrials": []
           },
-          "homologousRepairScore": 0.0,
-          "isHomologousRepairDeficient": false,
-          "homologousRepairEvidence": {
+          "homologousRecombinationScore": 0.0,
+          "isHomologousRecombinationDeficient": false,
+          "homologousRecombinationEvidence": {
             "eligibleTrials": [],
             "treatmentEvidence": []
           },

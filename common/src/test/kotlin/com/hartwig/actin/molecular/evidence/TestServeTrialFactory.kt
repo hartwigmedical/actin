@@ -7,27 +7,20 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.Country
 import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 
 object TestServeTrialFactory {
 
-    fun createTrialForHotspot(
-        gene: String = "",
-        chromosome: String = "",
-        position: Int = 0,
-        ref: String = "",
-        alt: String = ""
-    ): ActionableTrial {
+    fun createTrialForHotspot(vararg variants: VariantAnnotation): ActionableTrial {
         return create(
             anyMolecularCriteria = setOf(
                 TestServeMolecularFactory.createHotspotCriterium(
-                    gene = gene,
-                    chromosome = chromosome,
-                    position = position,
-                    ref = ref,
-                    alt = alt
+                    variants = if (variants.isNotEmpty()) variants.toSet() else setOf(
+                        TestServeMolecularFactory.createVariantAnnotation()
+                    )
                 )
             )
         )

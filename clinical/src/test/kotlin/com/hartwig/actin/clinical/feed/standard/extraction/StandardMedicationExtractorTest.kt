@@ -4,21 +4,23 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.QtProlongatingDatabase
-import com.hartwig.actin.clinical.feed.standard.ProvidedMedication
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientDetail
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
-import com.hartwig.actin.clinical.feed.standard.ProvidedTumorDetail
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMedication
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientDetail
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedTumorDetail
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val MEDICATION_NAME = "medication_name"
 private const val ATC_NAME = "atc_name"
@@ -150,6 +152,10 @@ class StandardMedicationExtractorTest {
             providedMedication.copy(atcCode = null, isTrial = true),
             medication.copy(name = MEDICATION_NAME, atc = null, isTrialMedication = true)
         )
+        noAtcLookupTest(
+            providedMedication.copy(name = "drug (STUDIE)", atcCode = "TRIAL_CODE", isTrial = false),
+            medication.copy(name = "drug", atc = null, isTrialMedication = true)
+        )
     }
 
     @Test
@@ -160,10 +166,38 @@ class StandardMedicationExtractorTest {
         )
     }
 
+    @Test
+    fun `Should trigger warning when anticancer medication cannot be found in drug database`() {
+        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
+        every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
+        val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(name = "drug (STUDIE)", atcCode = "L01ZZ"))))
+        assertThat(result.evaluation.warnings).containsOnly(
+            CurationWarning(
+                "hashedId",
+                CurationCategory.MEDICATION_NAME,
+                "drug",
+                "Anti cancer medication or supportive trial medication drug with ATC code L01ZZ found which is not present in drug database. " +
+                        "Please add the missing drug to drug database"
+            )
+        )
+    }
+
+    @Test
+    fun `Should not trigger warning for unspecified trial medication`() {
+        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
+        every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
+        val result = extractor.extract(
+            ehrPatientRecord.copy(medications = listOf(providedMedication.copy(name = "orale studiemedicatie", atcCode = "L01ZZ")))
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
     private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {
-        every { qtProlongatingDatabase.annotateWithQTProlongating(MEDICATION_NAME) } returns QTProlongatingRisk.NONE
-        every { drugInteractionsDatabase.annotateWithCypInteractions(MEDICATION_NAME) } returns emptyList()
-        every { drugInteractionsDatabase.annotateWithTransporterInteractions(MEDICATION_NAME) } returns emptyList()
+        every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
+        every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
         val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(modifiedMedication)))
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).containsExactly(expected)

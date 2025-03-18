@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomologousRepairDeficiencyAndVariant
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicrosatelliteInstabilityAndVariant
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -237,7 +237,7 @@ class GeneIsInactivatedTest {
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                withHomologousRepairDeficiencyAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
+                withHomologousRecombinationDeficiencyAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
             )
         )
     }
@@ -248,7 +248,7 @@ class GeneIsInactivatedTest {
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                withHomologousRepairDeficiencyAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
+                withHomologousRecombinationDeficiencyAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
             )
         )
     }

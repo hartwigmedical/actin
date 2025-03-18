@@ -80,25 +80,25 @@ by the molecular record and the panel record.
 Note that all individual characteristics (and their evidence if applicable) are expected to be null for tests that don't determine the
 specific characteristic.
 
-| Field                         | Example Value      | Details                                                                                 |
-|-------------------------------|--------------------|-----------------------------------------------------------------------------------------|
-| purity                        | 0.78               | The percentage of cells in the sequenced biopsy that originated from the tumor          |
-| ploidy                        | 3.1                | The average number of copies of any chromosome in the tumor                             |
-| predictedTumorOrigin          | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood  |
-| isMicrosatelliteUnstable      | false              | If true, sample is considered microsatellite unstable                                   |
-| microsatelliteEvidence        | See evidence below | The evidence determined for the microsatellite status of specific tumor sample          |                                        
-| homologousRepairScore         | 0.5                | The probability of this sample being HR deficient                                       |
-| isHomologousRepairDeficient   | false              | If true, sample is considered homologous repair deficient                               |
-| brca1Value                    | 0.3                | Part of the total homologous repair score attributed to BRCA1                           |
-| brca2Value                    | 0.2                | Part of the total homologous repair score attributed to BRCA2                           |
-| hrdType                       | BRCA1_TYPE         | Type of HRD (`BRCA1_TYPE`, ` BRCA2_TYPE`, `NONE`, `CANNOT_BE_DETERMINED`)               |  
-| homologousRepairEvidence      | See evidence below | The evidence determined for the homologous repair status of specific tumor sample       |
-| tumorMutationalBurden         | 14.2               | Number of mutations in the genome per Mb                                                |
-| hasHighTumorMutationalBurden  | true               | If true, sample is considered to have a high tumor mutational burden (otherwise, low)   |
-| tumorMutationalBurdenEvidence | See evidence below | The evidence determined for the tumor mutational burden status of specific tumor sample |
-| tumorMutationalLoad           | 115                | Number of missense mutations across the genome                                          |
-| hasHighTumorMutationalLoad    | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)     |
-| tumorMutationalLoadEvidence   | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample          |
+| Field                              | Example Value      | Details                                                                                  |
+|------------------------------------|--------------------|------------------------------------------------------------------------------------------|
+| purity                             | 0.78               | The percentage of cells in the sequenced biopsy that originated from the tumor           |
+| ploidy                             | 3.1                | The average number of copies of any chromosome in the tumor                              |
+| predictedTumorOrigin               | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood   |
+| isMicrosatelliteUnstable           | false              | If true, sample is considered microsatellite unstable                                    |
+| microsatelliteEvidence             | See evidence below | The evidence determined for the microsatellite status of specific tumor sample           |                                        
+| homologousRecombinationScore       | 0.5                | The probability of this sample being HR deficient                                        |
+| isHomologousRecombinationDeficient | false              | If true, sample is considered homologous recombination deficient                         |
+| brca1Value                         | 0.3                | Part of the total homologous recombination score attributed to BRCA1                     |
+| brca2Value                         | 0.2                | Part of the total homologous recombination score attributed to BRCA2                     |
+| hrdType                            | BRCA1_TYPE         | Type of HRD (`BRCA1_TYPE`, ` BRCA2_TYPE`, `NONE`, `CANNOT_BE_DETERMINED`)                |  
+| homologousRecombinationEvidence    | See evidence below | The evidence determined for the homologous recombination status of specific tumor sample |
+| tumorMutationalBurden              | 14.2               | Number of mutations in the genome per Mb                                                 |
+| hasHighTumorMutationalBurden       | true               | If true, sample is considered to have a high tumor mutational burden (otherwise, low)    |
+| tumorMutationalBurdenEvidence      | See evidence below | The evidence determined for the tumor mutational burden status of specific tumor sample  |
+| tumorMutationalLoad                | 115                | Number of missense mutations across the genome                                           |
+| hasHighTumorMutationalLoad         | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)      |
+| tumorMutationalLoadEvidence        | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample           |
 
 ### N molecular drivers
 
@@ -341,21 +341,21 @@ The base molecular properties are extracted as follows:
 
 The molecular characteristics are extracted as follows:
 
-| Field                        | Mapped from                                                                            |
-|------------------------------|----------------------------------------------------------------------------------------|
-| purity                       | The PURPLE fit field `purity`                                                          |
-| ploidy                       | The PURPLE fit field `ploidy`                                                          | 
-| predictedTumorOrigin         | All CUPPA cancer-type predictions along with the likelihood and individual classifiers |
-| isMicrosatelliteUnstable     | The interpretation of PURPLE `microsatelliteStabilityStatus`                           |
-| homologousRepairScore        | The CHORD field `hrdValue`                                                             |
-| isHomologousRepairDeficient  | The interpretation of CHORD `hrStatus`                                                 |
-| brca1Value                   | The CHORD field `brca1Value`                                                           |
-| brca22Value                  | The CHORD field `brca2Value`                                                           |
-| hrdType                      | Trivially derived from the CHORD field `hrdType`                                       |
-| tumorMutationalBurden        | The PURPLE characteristics field `tumorMutationalBurden`                               |
-| hasHighTumorMutationalBurden | The interpretation of PURPLE `tumorMutationalBurdenStatus`                             |
-| tumorMutationalLoad          | The PURPLE characteristics field `tumorMutationalLoad`                                 |
-| hasHighTumorMutationalLoad   | The interpretation of PURPLE `tumorMutationalLoadStatus`                               |
+| Field                              | Mapped from                                                                            |
+|------------------------------------|----------------------------------------------------------------------------------------|
+| purity                             | The PURPLE fit field `purity`                                                          |
+| ploidy                             | The PURPLE fit field `ploidy`                                                          | 
+| predictedTumorOrigin               | All CUPPA cancer-type predictions along with the likelihood and individual classifiers |
+| isMicrosatelliteUnstable           | The interpretation of PURPLE `microsatelliteStabilityStatus`                           |
+| homologousRecombinationScore       | The CHORD field `hrdValue`                                                             |
+| isHomologousRecombinationDeficient | The interpretation of CHORD `hrStatus`                                                 |
+| brca1Value                         | The CHORD field `brca1Value`                                                           |
+| brca22Value                        | The CHORD field `brca2Value`                                                           |
+| hrdType                            | Trivially derived from the CHORD field `hrdType`                                       |
+| tumorMutationalBurden              | The PURPLE characteristics field `tumorMutationalBurden`                               |
+| hasHighTumorMutationalBurden       | The interpretation of PURPLE `tumorMutationalBurdenStatus`                             |
+| tumorMutationalLoad                | The PURPLE characteristics field `tumorMutationalLoad`                                 |
+| hasHighTumorMutationalLoad         | The interpretation of PURPLE `tumorMutationalLoadStatus`                               |
 
 The molecular drivers are extracted as follows:
 
@@ -475,18 +475,18 @@ a parent of the patient's tumor doids, and none of the patient's tumor DOIDs (or
 
 A molecular match is made between treatment evidence or trial and driver / characteristics as follows.
 
-| Driver / Characteristic        | Evidence collected                                                                                                                                                                                                                                        |
-|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| microsatellite status          | All signature evidence of type `MICROSATELLITE_UNSTABLE` in case tumor has MSI                                                                                                                                                                            |
-| homologous repair status       | All signature evidence of type `HOMOLOGOUS_RECOMBINATION_DEFICIENT` in case tumor is HRD                                                                                                                                                                  |
-| tumor mutational burden status | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                                  |
-| tumor mutational load status   | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                                    |
-| variant                        | In case the variant has `HIGH` driver likelihood and is reported: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
-| copy number                    | In case of a (partial) amplification, all gene level events of type `AMPLIFICATION`. In case of a loss, all gene level events of type `DELETION`                                                                                                          |
-| homozygous disruption          | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                                              | 
-| disruption                     | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported                                                                                                                                                                         | 
-| fusion                         | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                                    | 
-| virus                          | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                                         | 
+| Driver / Characteristic         | Evidence collected                                                                                                                                                                                                                                        |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| microsatellite status           | All signature evidence of type `MICROSATELLITE_UNSTABLE` in case tumor has MSI                                                                                                                                                                            |
+| homologous recombination status | All signature evidence of type `HOMOLOGOUS_RECOMBINATION_DEFICIENT` in case tumor is HRD                                                                                                                                                                  |
+| tumor mutational burden status  | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                                  |
+| tumor mutational load status    | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                                    |
+| variant                         | In case the variant has `HIGH` driver likelihood and is reported: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
+| copy number                     | In case of a (partial) amplification, all gene level events of type `AMPLIFICATION`. In case of a loss, all gene level events of type `DELETION`                                                                                                          |
+| homozygous disruption           | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                                              | 
+| disruption                      | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported and geneRole is not TSG                                                                                                                                                 | 
+| fusion                          | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                                    | 
+| virus                           | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                                         | 
 
 ## Note on test data
 

@@ -9,12 +9,15 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import org.junit.Test
+import java.time.LocalDate
 
 class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
 
     private val matchingCategory = TreatmentCategory.TARGETED_THERAPY
     private val matchingIntents = setOf(Intent.PALLIATIVE)
+    private val minDate = LocalDate.of(2022, 4, 1)
     private val function = HasHadSomeTreatmentsWithCategoryWithIntents(matchingCategory, matchingIntents)
+    private val functionWithDate = HasHadSomeTreatmentsWithCategoryWithIntents(matchingCategory, matchingIntents, minDate)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -73,7 +76,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
 
     @Test
     fun `Should return undetermined when trial treatments`() {
-        val treatment = treatment("trial", isSystemic = true, categories = setOf(matchingCategory))
+        val treatment = treatment("trial", isSystemic = true, categories = emptySet())
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
@@ -95,5 +98,49 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
             )
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should fail when date is too old`() {
+        val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = matchingIntents,
+                    startYear = minDate.year - 1
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should pass when date is new enough`() {
+        val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = matchingIntents,
+                    startYear = minDate.year + 1
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, functionWithDate.evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should return undetermined when treatments with correct category and intent but unknown date`() {
+        val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = matchingIntents
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(patientRecord))
     }
 }

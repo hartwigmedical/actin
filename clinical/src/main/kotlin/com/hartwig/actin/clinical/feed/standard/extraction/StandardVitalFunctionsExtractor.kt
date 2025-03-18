@@ -2,11 +2,10 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurement
-import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurementCategory
-import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurementSubcategory
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
-import com.hartwig.actin.clinical.feed.standard.enumeratedInput
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurement
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementCategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementSubcategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 

@@ -1,15 +1,16 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.clinical.UnusedCurationConfig
+import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.EcgConfigFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.config.IHCTestConfigFactory
-import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
+import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
+import com.hartwig.actin.clinical.curation.config.LabMeasurementConfigFactory
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
@@ -34,11 +35,10 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
-import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.icd.IcdModel
 
 data class CurationDatabaseContext(
@@ -47,19 +47,18 @@ data class CurationDatabaseContext(
     val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>,
     val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
     val comorbidityCuration: CurationDatabase<ComorbidityConfig>,
-    val infectionCuration: CurationDatabase<InfectionConfig>,
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
     val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
     val molecularTestPdl1Curation: CurationDatabase<IHCTestConfig>,
     val sequencingTestCuration: CurationDatabase<SequencingTestConfig>,
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
+    val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>,
+    val labMeasurementCuration: CurationDatabase<LabMeasurementConfig>,
     val administrationRouteTranslation: TranslationDatabase<String>,
-    val laboratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>,
     val toxicityTranslation: TranslationDatabase<String>,
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
-    val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>,
 ) {
     fun allUnusedConfig(extractionEvaluations: List<CurationExtractionEvaluation>): Set<UnusedCurationConfig> {
         val unusedCurationConfigs = listOf(
@@ -68,18 +67,17 @@ data class CurationDatabaseContext(
             secondPrimaryCuration,
             lesionLocationCuration,
             comorbidityCuration,
-            infectionCuration,
             periodBetweenUnitCuration,
             molecularTestIhcCuration,
             molecularTestPdl1Curation,
             sequencingTestCuration,
             medicationNameCuration,
             medicationDosageCuration,
-            surgeryNameCuration
+            surgeryNameCuration,
+            labMeasurementCuration
         ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet()
 
         val unusedTranslations = listOf(
-            laboratoryTranslation,
             administrationRouteTranslation,
             toxicityTranslation,
             dosageUnitTranslation
@@ -94,14 +92,14 @@ data class CurationDatabaseContext(
         secondPrimaryCuration.validationErrors,
         lesionLocationCuration.validationErrors,
         comorbidityCuration.validationErrors,
-        infectionCuration.validationErrors,
         periodBetweenUnitCuration.validationErrors,
         molecularTestIhcCuration.validationErrors,
         molecularTestPdl1Curation.validationErrors,
         sequencingTestCuration.validationErrors,
         medicationNameCuration.validationErrors,
         medicationDosageCuration.validationErrors,
-        surgeryNameCuration.validationErrors
+        surgeryNameCuration.validationErrors,
+        labMeasurementCuration.validationErrors
     ).flatten().toSet()
 
 
@@ -137,9 +135,6 @@ data class CurationDatabaseContext(
                 CurationCategory.LESION_LOCATION
             ) { it.lesionLocationEvaluatedInputs },
             comorbidityCuration = createComorbidityCurationDatabase(curationDir, icdModel),
-            infectionCuration = CurationDatabaseReader.read(
-                curationDir, CurationDatabaseReader.INFECTION_TSV, InfectionConfigFactory(), CurationCategory.INFECTION
-            ) { it.infectionEvaluatedInputs },
             periodBetweenUnitCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.PERIOD_BETWEEN_UNIT_TSV,
@@ -176,18 +171,24 @@ data class CurationDatabaseContext(
                 MedicationDosageConfigFactory(),
                 CurationCategory.MEDICATION_DOSAGE
             ) { it.medicationDosageEvaluatedInputs },
+            surgeryNameCuration = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.SURGERY_NAME_TSV,
+                SurgeryNameConfigFactory(),
+                CurationCategory.SURGERY_NAME
+            ) { it.surgeryCurationEvaluatedInputs },
+            labMeasurementCuration = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.LAB_MEASUREMENT_TSV,
+                LabMeasurementConfigFactory(),
+                CurationCategory.LAB_MEASUREMENT
+            ) { it.labMeasurementEvaluatedInputs },
             administrationRouteTranslation = TranslationDatabaseReader.read(
                 curationDir,
                 TranslationDatabaseReader.ADMINISTRATION_ROUTE_TRANSLATION_TSV,
                 AdministrationRouteTranslationFactory(),
                 CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION
             ) { it.administrationRouteEvaluatedInputs },
-            laboratoryTranslation = TranslationDatabaseReader.read(
-                curationDir,
-                TranslationDatabaseReader.LABORATORY_TRANSLATION_TSV,
-                LaboratoryTranslationFactory(),
-                CurationCategory.LABORATORY_TRANSLATION
-            ) { it.laboratoryEvaluatedInputs },
             toxicityTranslation = TranslationDatabaseReader.read(
                 curationDir,
                 TranslationDatabaseReader.TOXICITY_TRANSLATION_TSV,
@@ -206,57 +207,22 @@ data class CurationDatabaseContext(
                 DosageUnitTranslationFactory(),
                 CurationCategory.DOSAGE_UNIT_TRANSLATION
             ) { it.dosageUnitEvaluatedInputs },
-            surgeryNameCuration = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.SURGERY_NAME_TSV,
-                SurgeryNameConfigFactory(),
-                CurationCategory.SURGERY_NAME
-            ) { it.surgeryTranslationEvaluatedInputs }
         )
 
         private fun createComorbidityCurationDatabase(curationDir: String, icdModel: IcdModel): CurationDatabase<ComorbidityConfig> {
-            val otherConditionDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV,
-                OtherConditionConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            val complicationCurationDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.COMPLICATION_TSV,
-                ComplicationConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            val intoleranceCurationDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.INTOLERANCE_TSV,
-                IntoleranceConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            val toxicityCurationDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.TOXICITY_TSV,
-                ToxicityConfigFactory(icdModel),
-                CurationCategory.COMORBIDITY
-            ) { it.comorbidityEvaluatedInputs }
-
-            val ecgCurationDatabase = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.ECG_TSV,
-                EcgConfigFactory(),
-                CurationCategory.ECG
-            ) { it.comorbidityEvaluatedInputs }
-
             return listOf(
-                otherConditionDatabase,
-                complicationCurationDatabase,
-                intoleranceCurationDatabase,
-                toxicityCurationDatabase,
-                ecgCurationDatabase
-            ).reduce(CurationDatabase<ComorbidityConfig>::plus)
+                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV to OtherConditionConfigFactory(icdModel),
+                CurationDatabaseReader.COMPLICATION_TSV to ComplicationConfigFactory(icdModel),
+                CurationDatabaseReader.INTOLERANCE_TSV to IntoleranceConfigFactory(icdModel),
+                CurationDatabaseReader.TOXICITY_TSV to ToxicityConfigFactory(icdModel),
+                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(icdModel),
+                CurationDatabaseReader.INFECTION_TSV to InfectionConfigFactory(icdModel)
+            )
+                .map { (tsv, factory) ->
+                    CurationDatabaseReader.read(curationDir, tsv, factory, CurationCategory.COMORBIDITY) { it.comorbidityEvaluatedInputs }
+                }
+                .reduce(CurationDatabase<ComorbidityConfig>::plus)
         }
+
     }
 }

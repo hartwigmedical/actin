@@ -1,10 +1,11 @@
 package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.UnusedCurationConfig
+import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
-import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.datamodel.clinical.Intolerance
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
@@ -32,13 +33,9 @@ class CurationDatabaseTest {
     fun `Should return all unused curation inputs`() {
         val database = CurationDatabase(
             mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY
-        ) { it.ecgEvaluatedInputs }
-        assertThat(database.reportUnusedConfig(emptyList())).containsExactly(
-            UnusedCurationConfig(
-                CurationCategory.COMORBIDITY.categoryName,
-                INPUT
-            )
-        )
+        ) { it.comorbidityEvaluatedInputs }
+        assertThat(database.reportUnusedConfig(emptyList()))
+            .containsExactly(UnusedCurationConfig(CurationCategory.COMORBIDITY.categoryName, INPUT))
     }
 
     @Test

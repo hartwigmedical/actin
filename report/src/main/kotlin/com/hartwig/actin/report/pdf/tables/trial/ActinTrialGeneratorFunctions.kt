@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.pdf.action.PdfAction
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
@@ -32,7 +33,7 @@ object ActinTrialGeneratorFunctions {
                 includeLocation = includeLocation,
                 includeFeedback = includeFeedback
             ).forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable, paddingDistance) }
-            insertTrialRow(cohortList, table, trialSubTable)
+            insertTrialRow(cohortList, table, trialSubTable, includeLocation)
         }
     }
 
@@ -40,8 +41,8 @@ object ActinTrialGeneratorFunctions {
         return source?.let { "$it trials" } ?: "Trials"
     }
 
-    fun partitionByLocation(cohorts: List<InterpretedCohort>, source: TrialSource?) =
-        cohorts.partition { source != TrialSource.NKI || it.source == source || it.source == null }
+    fun partitionBySource(cohorts: List<InterpretedCohort>, source: TrialSource?) =
+        cohorts.partition { it.source == source || it.source == null || source == null }
 
     private fun sortedCohortGroups(cohorts: List<InterpretedCohort>): List<List<InterpretedCohort>> {
         val sortedCohorts = cohorts.sortedWith(InterpretedCohortComparator())
@@ -58,23 +59,34 @@ object ActinTrialGeneratorFunctions {
         }.forEach(table::addCell)
     }
 
-    private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table) {
+    private fun renderTrialTitle(trialLabelText: List<Text>, cohort: InterpretedCohort, asClinicalTrialsGovLink: Boolean = false): Cell {
+        return if (asClinicalTrialsGovLink && cohort.nctId?.isNotBlank() == true) {
+            createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
+                PdfAction.createURI("https://clinicaltrials.gov/study/${cohort.nctId}")
+            )
+        } else createContent(Paragraph().addAll(trialLabelText))
+    }
+
+    private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table, includeLocation: Boolean = false) {
         if (cohortList.isNotEmpty()) {
             val cohort = cohortList.first()
             val trialLabelText = listOfNotNull(
                 Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
-                Text("\n"),
-                Text(cohort.acronym).addStyle(Styles.tableContentStyle()),
+                if (trialIdIsNotAcronym(cohort)) Text("\n") else null,
+                if (trialIdIsNotAcronym(cohort)) Text(cohort.acronym).addStyle(Styles.tableContentStyle()) else null,
                 cohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
                     ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
 
+
             table.addCell(
                 when (cohort.source) {
-                    TrialSource.LKO -> createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
-                        PdfAction.createURI(cohort.trialId.replace("LKO", "https://longkankeronderzoek.nl/studies/"))
-                    )
+                    TrialSource.LKO -> cohort.sourceId?.let {
+                        createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
+                            PdfAction.createURI("https://longkankeronderzoek.nl/studies/${cohort.sourceId}")
+                        )
+                    } ?: createContent(Paragraph().addAll(trialLabelText))
 
-                    else -> createContent(Paragraph().addAll(trialLabelText))
+                    else -> renderTrialTitle(trialLabelText, cohort, includeLocation)
                 }
             )
             val finalSubTable = if (trialSubTable.numberOfRows > 2) {
@@ -85,4 +97,6 @@ object ActinTrialGeneratorFunctions {
             table.addCell(createContent(finalSubTable))
         }
     }
+
+    private fun trialIdIsNotAcronym(cohort: InterpretedCohort) = cohort.trialId.trimIndent() != cohort.acronym
 }

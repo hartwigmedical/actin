@@ -24,7 +24,7 @@ class ServeVerifierTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
 
         val database = toServeDatabase(evidence, trial)
-        assertThatCode { ServeVerifier.verifyNoCombinedMolecularProfiles(database) }.doesNotThrowAnyException()
+        assertThatCode { ServeVerifier.verifyServeDatabase(database) }.doesNotThrowAnyException()
     }
 
     @Test
@@ -34,7 +34,7 @@ class ServeVerifierTest {
 
         val database = toServeDatabase(evidence, trial)
 
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyNoCombinedMolecularProfiles(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
     }
 
     @Test
@@ -44,7 +44,51 @@ class ServeVerifierTest {
 
         val database = toServeDatabase(evidence, trial)
 
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyNoCombinedMolecularProfiles(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+    }
+
+    @Test
+    fun `Should throw exception for hotspot with inconsistent genes in efficacy evidence`() {
+        val evidence = TestServeEvidenceFactory.create(
+            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
+                variants = setOf(
+                    TestServeMolecularFactory.createVariantAnnotation(gene = "gene1"),
+                    TestServeMolecularFactory.createVariantAnnotation(gene = "gene2")
+                )
+            )
+        )
+
+        val database = toServeDatabase(evidence, TestServeTrialFactory.create())
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+    }
+
+
+    @Test
+    fun `Should throw exception for hotspot with inconsistent genes in actionable trial`() {
+        val trial = TestServeTrialFactory.create(
+            anyMolecularCriteria = setOf(
+                TestServeMolecularFactory.createHotspotCriterium(
+                    variants = setOf(
+                        TestServeMolecularFactory.createVariantAnnotation(gene = "gene1"),
+                        TestServeMolecularFactory.createVariantAnnotation(gene = "gene2")
+                    )
+                )
+            )
+        )
+
+        val database = toServeDatabase(TestServeEvidenceFactory.create(), trial)
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+    }
+
+    @Test
+    fun `Should throw exception for hotspot with no variants`() {
+        val trial = TestServeTrialFactory.create(
+            anyMolecularCriteria =
+            setOf(TestServeMolecularFactory.createHotspotCriterium(variants = emptySet()))
+        )
+
+        val database = toServeDatabase(TestServeEvidenceFactory.create(), trial)
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
     }
 
     private fun toServeDatabase(evidence: EfficacyEvidence, trial: ActionableTrial): ServeDatabase {

@@ -38,19 +38,9 @@
   },
   "clinicalStatus": {
     "who": 0,
-    "infectionStatus": {
-      "hasActiveInfection": false,
-      "description": ""
-    },
-    "ecg": {
-      "hasSigAberrationLatestECG": false,
-      "aberrationDescription": "",
-      "qtcfValue": null,
-      "qtcfUnit": null
-    },
     "lvef": null
   },
-  "treatmentHistory": [
+  "oncologicalHistory": [
     {
       "treatments": [
         {
@@ -112,19 +102,23 @@
   "comorbidities": [
     {
       "name": "Liver cirrhosis",
+      "icdCodes": [
+        {
+          "mainCode": "DB93.1",
+          "extensionCode": null
+        }
+      ],
       "year": null,
       "month": null,
-      "doids": [
-        "11335",
-        "5082"
-      ],
-      "category": "Liver disease",
       "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Nausea",
-      "categories": [
-        "Other"
+      "icdCodes": [
+        {
+          "mainCode": "1A01.3",
+          "extensionCode": null
+        }
       ],
       "year": 2020,
       "month": null,
@@ -132,8 +126,11 @@
     },
     {
       "name": "Neuropathy",
-      "categories": [
-        "Neuropathy"
+      "icdCodes": [
+        {
+          "mainCode": "8D43.2",
+          "extensionCode": null
+        }
       ],
       "evaluatedDate": {
         "year": 2019,
@@ -146,7 +143,12 @@
     },
     {
       "name": "Hand skin reaction",
-      "categories": [],
+      "icdCodes": [
+        {
+          "mainCode": "NE60",
+          "extensionCode": null
+        }
+      ],
       "evaluatedDate": {
         "year": 2020,
         "month": 3,
@@ -158,12 +160,11 @@
     },
     {
       "name": "Drug",
-      "doids": [
-        "123"
-      ],
-      "category": "medication",
-      "subcategories": [
-        "Drug category"
+      "icdCodes": [
+        {
+            "mainCode": "4A8Z",
+            "extensionCode": null
+        }
       ],
       "type": "allergy",
       "clinicalStatus": "Active",
@@ -173,17 +174,27 @@
     },
     {
       "name": "Condition",
-      "doids": [],
-      "category": "environment",
-      "subcategories": [],
+      "icdCodes": [
+        {
+          "mainCode": "4A8Z",
+          "extensionCode": null
+        }
+      ],
       "type": "allergy",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "unable-to-assess",
       "comorbidityClass": "INTOLERANCE"
+    },
+    {
+      "name": null,
+      "icdCodes": [],
+      "qtcfValue": null,
+      "qtcfUnit": null,
+      "comorbidityClass": "ECG"
     }
   ],
-  "priorMolecularTests": [
+  "priorIHCTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -195,6 +206,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
+  "priorSequencingTests": [],
   "labValues": [
     {
       "date": {
@@ -202,8 +214,7 @@
         "month": 8,
         "day": 8
       },
-      "code": "Code1",
-      "name": "Code 1",
+      "measurement": "CREATININE_CLEARANCE_CG",
       "comparator": "",
       "value": 11,
       "unit": "NONE",
@@ -217,8 +228,7 @@
         "month": 8,
         "day": 8
       },
-      "code": "Code2",
-      "name": "Code 2",
+      "measurement": "HEMOGLOBIN",
       "comparator": "",
       "value": 8.8,
       "unit": "MILLIMOLES_PER_LITER",
@@ -244,6 +254,7 @@
       "unit": "kilogram"
     }
   ],
+  "bodyHeights": [],
   "vitalFunctions": [
     {
       "date": "2020-06-15T00:00:00",
