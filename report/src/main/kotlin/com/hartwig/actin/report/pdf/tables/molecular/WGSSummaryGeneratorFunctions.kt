@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.molecular.driver.Driver
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -124,8 +124,8 @@ object WGSSummaryGeneratorFunctions {
 
     fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
         val wgsMolecular = molecular as? MolecularRecord
-        val originSummary = TumorOriginInterpreter(molecular.characteristics.predictedTumorOrigin)
-            .generateSummaryString(wgsMolecular?.hasSufficientQuality)
+        val originSummary = TumorOriginInterpreter(wgsMolecular?.hasSufficientQuality, molecular.characteristics.predictedTumorOrigin)
+            .generateSummaryString()
 
         val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
         if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {

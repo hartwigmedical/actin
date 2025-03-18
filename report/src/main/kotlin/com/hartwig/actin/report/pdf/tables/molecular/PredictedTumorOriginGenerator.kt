@@ -20,8 +20,10 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
     }
 
     override fun contents(): Table {
+        val wgsMolecular = molecular as? MolecularRecord
         val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        val tumorOriginInterpreter = TumorOriginInterpreter(predictedTumorOrigin)
+        val tumorOriginInterpreter =
+            TumorOriginInterpreter(hasSufficientQuality = wgsMolecular?.hasSufficientQuality, predictedTumorOrigin = predictedTumorOrigin)
         val predictions = tumorOriginInterpreter.topPredictionsToDisplay()
         return if (predictions.isEmpty()) {
             val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else String.format(

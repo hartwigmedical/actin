@@ -8,20 +8,28 @@ private const val LIKELIHOOD_CONFIDENCE_THRESHOLD = 0.8
 private const val LIKELIHOOD_DISPLAY_THRESHOLD = 0.1
 private const val MAX_PREDICTIONS_TO_DISPLAY = 3
 
-class TumorOriginInterpreter(private val predictedTumorOrigin: PredictedTumorOrigin?) {
+class TumorOriginInterpreter(private val hasSufficientQuality: Boolean?, private val predictedTumorOrigin: PredictedTumorOrigin?) {
 
     fun hasConfidentPrediction(): Boolean {
-        return predictedTumorOrigin?.likelihood()?.let { it >= LIKELIHOOD_CONFIDENCE_THRESHOLD } == true
+        return when {
+            hasSufficientQuality != true -> false
+
+            predictedTumorOrigin?.likelihood()?.let { it >= LIKELIHOOD_CONFIDENCE_THRESHOLD } == true -> true
+
+            else -> false
+        }
     }
 
-    fun generateSummaryString(hasSufficientQuality: Boolean?): String {
+    fun generateSummaryString(): String {
         return when {
             predictedTumorOrigin == null || hasSufficientQuality != true -> {
                 Formats.VALUE_UNKNOWN
             }
+
             hasConfidentPrediction() -> {
                 "${predictedTumorOrigin.cancerType()} (${Formats.percentage(predictedTumorOrigin.likelihood())})"
             }
+
             else -> {
                 val predictionsMeetingThreshold = topPredictionsToDisplay().map { it.cancerType to it.likelihood }
                     .ifEmpty { listOf(predictedTumorOrigin.cancerType() to predictedTumorOrigin.likelihood()) }

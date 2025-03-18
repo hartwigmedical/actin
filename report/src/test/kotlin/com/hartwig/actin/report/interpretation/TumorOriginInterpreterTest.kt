@@ -24,21 +24,36 @@ class TumorOriginInterpreterTest {
             featureClassifier = 0.0102
         ),
     )
-    private val inconclusiveInterpreter = TumorOriginInterpreter(PredictedTumorOrigin(inconclusivePredictions))
+
+    private val conclusivePredictedTumorOrigin = TestMolecularFactory.createProperTestOrangeRecord().characteristics.predictedTumorOrigin
+    private val inconclusivePredictedTumorOrigin = PredictedTumorOrigin(inconclusivePredictions)
+
     private val conclusiveInterpreter =
-        TumorOriginInterpreter(TestMolecularFactory.createProperTestOrangeRecord().characteristics.predictedTumorOrigin)
+        TumorOriginInterpreter(hasSufficientQuality = true, predictedTumorOrigin = conclusivePredictedTumorOrigin)
+
+    private val inconclusiveInterpreter =
+        TumorOriginInterpreter(hasSufficientQuality = true, predictedTumorOrigin = inconclusivePredictedTumorOrigin)
+
+    private val insufficientQualityConclusiveInterpreter =
+        TumorOriginInterpreter(hasSufficientQuality = false, predictedTumorOrigin = conclusivePredictedTumorOrigin)
+
+    private val insufficientQualityInconclusiveInterpreter =
+        TumorOriginInterpreter(hasSufficientQuality = false, predictedTumorOrigin = inconclusivePredictedTumorOrigin)
+
+    private val nullInterpreter = TumorOriginInterpreter(hasSufficientQuality = null, predictedTumorOrigin = null)
 
     @Test
     fun `Should determine confidence of predicted tumor origin`() {
-        assertThat(TumorOriginInterpreter(null).hasConfidentPrediction()).isFalse
-        assertThat(inconclusiveInterpreter.hasConfidentPrediction()).isFalse
-        assertThat(withPredictions(0.8).hasConfidentPrediction()).isTrue
-        assertThat(conclusiveInterpreter.hasConfidentPrediction()).isTrue
+        assertThat(nullInterpreter.hasConfidentPrediction()).isFalse()
+        assertThat(inconclusiveInterpreter.hasConfidentPrediction()).isFalse()
+        assertThat(insufficientQualityConclusiveInterpreter.hasConfidentPrediction()).isFalse()
+        assertThat(insufficientQualityInconclusiveInterpreter.hasConfidentPrediction()).isFalse()
+        assertThat(conclusiveInterpreter.hasConfidentPrediction()).isTrue()
     }
 
     @Test
     fun `Should return empty list for display when predicted tumor origin is null`() {
-        assertThat(TumorOriginInterpreter(null).topPredictionsToDisplay()).isEmpty()
+        assertThat(nullInterpreter.topPredictionsToDisplay()).isEmpty()
     }
 
     @Test
@@ -71,48 +86,49 @@ class TumorOriginInterpreterTest {
 
     @Test
     fun `Should return one predicted tumor origin when conclusive with sufficient quality and purity`() {
-        assertThat(conclusiveInterpreter.generateSummaryString(true)).isEqualTo("Melanoma (100%)")
+        assertThat(conclusiveInterpreter.generateSummaryString()).isEqualTo("Melanoma (100%)")
     }
 
     @Test
     fun `Should add 'inconclusive' and show multiple tumor origins when inconclusive with sufficient quality and purity`() {
-        assertThat(inconclusiveInterpreter.generateSummaryString(hasSufficientQuality = true))
-            .isEqualTo("Inconclusive (Melanoma 60%, Lung 20%)")
+        assertThat(inconclusiveInterpreter.generateSummaryString()).isEqualTo("Inconclusive (Melanoma 60%, Lung 20%)")
     }
 
     @Test
     fun `Should add 'inconclusive' and show only predictions above threshold when inconclusive with sufficient quality and purity`() {
-        assertThat(withPredictions(0.4, 0.02, 0.05, 0.08).generateSummaryString(true))
-            .isEqualTo("Inconclusive (type 1 40%)")
+        assertThat(withPredictions(0.4, 0.02, 0.05, 0.08).generateSummaryString()).isEqualTo("Inconclusive (type 1 40%)")
     }
 
     @Test
     fun `Should add 'inconclusive' and show only top prediction when all predictions are below threshold`() {
-        assertThat(withPredictions(0.09, 0.02, 0.05, 0.08).generateSummaryString(true))
-            .isEqualTo("Inconclusive (type 1 9%)")
+        assertThat(withPredictions(0.09, 0.02, 0.05, 0.08).generateSummaryString()).isEqualTo("Inconclusive (type 1 9%)")
     }
 
     @Test
     fun `Should display at most three predictions in summary`() {
-        assertThat(withPredictions(0.4, 0.12, 0.15, 0.25).generateSummaryString(true))
-            .isEqualTo("Inconclusive (type 1 40%, type 4 25%, type 3 15%)")
+        assertThat(
+            withPredictions(
+                0.4,
+                0.12,
+                0.15,
+                0.25
+            ).generateSummaryString()
+        ).isEqualTo("Inconclusive (type 1 40%, type 4 25%, type 3 15%)")
     }
 
     @Test
     fun `Should return 'unknown' predicted tumor origin when conclusive with insufficient quality`() {
-        assertThat(conclusiveInterpreter.generateSummaryString(hasSufficientQuality = false))
-            .isEqualTo("Unknown")
+        assertThat(insufficientQualityConclusiveInterpreter.generateSummaryString()).isEqualTo("Unknown")
     }
 
     @Test
     fun `Should return 'unknown' predicted tumor origin when inconclusive with insufficient quality and purity`() {
-        assertThat(inconclusiveInterpreter.generateSummaryString(hasSufficientQuality = false))
-            .isEqualTo("Unknown")
+        assertThat(insufficientQualityInconclusiveInterpreter.generateSummaryString()).isEqualTo("Unknown")
     }
 
     @Test
     fun `Should return 'unknown' predicted tumor origin when there is no prediction in molecular record`() {
-        assertThat(TumorOriginInterpreter(null).generateSummaryString(true)).isEqualTo("Unknown")
+        assertThat(nullInterpreter.generateSummaryString()).isEqualTo("Unknown")
     }
 
     private fun withPredictions(vararg likelihoods: Double): TumorOriginInterpreter {
@@ -125,6 +141,6 @@ class TumorOriginInterpreterTest {
                 featureClassifier = likelihood
             )
         }
-        return TumorOriginInterpreter(PredictedTumorOrigin(predictions))
+        return TumorOriginInterpreter(hasSufficientQuality = true, PredictedTumorOrigin(predictions))
     }
 }

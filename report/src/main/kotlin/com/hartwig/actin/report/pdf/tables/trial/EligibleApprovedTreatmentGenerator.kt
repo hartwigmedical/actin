@@ -23,7 +23,12 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
         val isCUP = TumorDetailsInterpreter.isCUP(report.patientRecord.tumor)
         val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val hasConfidentPrediction =
-            molecular?.let { TumorOriginInterpreter(molecular.characteristics.predictedTumorOrigin).hasConfidentPrediction() } ?: false
+            molecular?.let {
+                TumorOriginInterpreter(
+                    molecular.hasSufficientQuality,
+                    molecular.characteristics.predictedTumorOrigin
+                ).hasConfidentPrediction()
+            } ?: false
 
         when {
             !standardOfCareMatches.isNullOrEmpty() -> {
