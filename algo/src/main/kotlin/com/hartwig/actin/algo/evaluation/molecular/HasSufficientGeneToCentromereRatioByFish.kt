@@ -8,6 +8,9 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasSufficientGeneToCentromereRatioByFish(private val gene: String, private val chromosome: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined("$gene to centromere of chromosome $chromosome ratio by FISH undetermined")
+        return EvaluationFactory.undetermined(
+            "$gene to centromere of chromosome $chromosome ratio by FISH undetermined",
+            isMissingMolecularResultForEvaluation = true
+        )
     }
 }
