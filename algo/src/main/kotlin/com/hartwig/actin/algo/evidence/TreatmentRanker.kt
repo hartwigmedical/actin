@@ -2,17 +2,16 @@ package com.hartwig.actin.algo.evidence
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.algo.RankedTreatment
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.math.exp
 
-data class RankResult(override val treatment: String, override val event: String, val scores: List<Score>) : RankedTreatment {
+data class RankResult(val treatment: String, val event: String, val scores: List<Score>) : Comparable<RankResult> {
 
-    override val score = scores.sumOf { it.score() }
+    val score = scores.sumOf { it.score() }
 
-    override fun compareTo(other: RankedTreatment): Int {
-        return Comparator.comparingDouble<RankedTreatment> { it.score }.reversed().compare(this, other)
+    override fun compareTo(other: RankResult): Int {
+        return Comparator.comparingDouble<RankResult> { it.score }.reversed().compare(this, other)
     }
 }
 

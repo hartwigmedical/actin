@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.RankedTreatment
 import com.hartwig.actin.datamodel.algo.TreatmentEvidenceRanking
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
@@ -50,7 +51,7 @@ class TreatmentMatcher(
             personalizedDataAnalysis = personalizedDataAnalysis,
             maxMolecularTestAge = maxMolecularTestAge,
             treatmentEvidenceRanking = TreatmentEvidenceRanking(
-                treatmentRanker.rank(patient)
+                treatmentRanker.rank(patient).map { RankedTreatment(it.treatment, it.event, it.score) }
             )
         )
     }
