@@ -53,10 +53,17 @@ data class PriorSequencingTest(
     val date: LocalDate? = null,
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
-    val testedGenes: Set<String>? = null,
     val variants: Set<SequencedVariant> = emptySet(),
     val amplifications: Set<SequencedAmplification> = emptySet(),
     val skippedExons: Set<SequencedSkippedExons> = emptySet(),
     val fusions: Set<SequencedFusion> = emptySet(),
-    val deletedGenes: Set<SequencedDeletedGene> = emptySet()
-)
+    val deletedGenes: Set<SequencedDeletedGene> = emptySet(),
+    val noMutationGenes: Set<String> = emptySet()
+) {
+    val testedGenes = (variants.map { it.gene } + amplifications.map { it.gene } + skippedExons.map { it.gene } + fusions.flatMap {
+        listOf(
+            it.geneUp,
+            it.geneDown
+        )
+    } + deletedGenes.map { it.gene } + noMutationGenes).toSet()
+}
