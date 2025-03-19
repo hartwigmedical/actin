@@ -14,7 +14,7 @@ import org.junit.Test
 
 private const val KEY_FOR_URI_IN_CELL = 1
 
-class ActinGeneralizedTrialGeneratorFunctionsTest {
+class ActinTrialGeneratorFunctionsTest {
 
     private val cohort1 = InterpretedCohortTestFactory.interpretedCohort(
         "trial1",

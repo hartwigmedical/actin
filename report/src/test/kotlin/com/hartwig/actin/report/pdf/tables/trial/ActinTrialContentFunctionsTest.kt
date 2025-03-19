@@ -5,7 +5,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ActinGeneralizedTrialContentFunctionsTest {
+class ActinTrialContentFunctionsTest {
 
     private val cohort1 = InterpretedCohort(
         "trial1",
