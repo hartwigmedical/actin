@@ -17,7 +17,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     countries = sortedSetOf()
 )
 
-class EligibleExternalGeneralizedTrialGeneratorFunctionsTest {
+class EligibleExternalTrialGeneratorFunctionsTest {
 
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
