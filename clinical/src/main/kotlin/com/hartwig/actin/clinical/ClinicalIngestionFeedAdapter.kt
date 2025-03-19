@@ -8,14 +8,12 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
 
-typealias IngestionResultWithClinicalRecords = Pair<IngestionResult, List<ClinicalRecord>>
-
 class ClinicalIngestionFeedAdapter(
     private val clinicalDataFeed: ClinicalFeedIngestion,
     private val curationDatabaseContext: CurationDatabaseContext
 ) {
 
-    fun run(): IngestionResultWithClinicalRecords {
+    fun run(): Pair<IngestionResult, List<ClinicalRecord>> {
         val (clinicalRecords, patientResults, evaluation) = clinicalDataFeed.ingest()
             .sortedWith { (record1, _, _), (record2, _, _) -> ClinicalRecordComparator().compare(record1, record2) }
             .fold(
