@@ -7,15 +7,12 @@ data class Score(
     val variant: String,
     val scoringMatch: ScoringMatch,
     val evidenceLevelDetails: EvidenceApprovalPhase,
-    val factor: Int,
     val score: Double,
     val evidenceDescription: String
 ) : Comparable<Score> {
 
-    fun score() = factor * score
-
     override fun compareTo(other: Score): Int {
-        return score().compareTo(other.score)
+        return score.compareTo(other.score)
     }
 }
 
@@ -32,8 +29,7 @@ class TreatmentScorer {
         return Score(
             scoringMatch = scoringMatch,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
-            factor = factor,
-            score = score.toDouble(),
+            score = factor * score.toDouble(),
             variant = treatment.molecularMatch.sourceEvent,
             evidenceDescription = treatment.efficacyDescription
         )
