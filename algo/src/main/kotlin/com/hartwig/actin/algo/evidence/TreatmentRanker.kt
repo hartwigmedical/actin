@@ -48,32 +48,37 @@ fun saturatingDiminishingReturnsScore(
 }.map { it.first.copy(score = it.second, factor = 1) }
 
 fun main() {
-    val patientRecordPath = System.getProperty("user.home") + "/Code/actin/case_976.patient_record.json"
-    val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of(patientRecordPath)))
-    val records = TreatmentRanker().rank(patientRecord)
+
+    for (s in listOf("5", "6", "957", "958", "974", "976")) {
+        val case = "case_$s"
+        val patientRecordPath = System.getProperty("user.home") + "/Code/actin/$case.patient_record.json"
+        val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of(patientRecordPath)))
+        val records = TreatmentRanker().rank(patientRecord)
 
 
-    var stringToWrite = "Treatment,Variant,Variant Match,Tumor Match,Approval,Factor,Score,Total Score,Description\n"
+        var stringToWrite = "Treatment,Variant,Variant Match,Tumor Match,Approval,Factor,Score,Total Score,Description\n"
 
-    for (record in records.sorted().reversed()) {
-        var treatmentText = ""
-        var scoreSum = 0.0
-        for (scoreObject in record.scores.sortedBy { it.score() }.reversed()) {
-            with(scoreObject) {
-                val eventHeader =
-                    ",$variant,${scoringMatch.variantMatch},${scoringMatch.tumorMatch},${evidenceLevelDetails},$factor,$score,${score()},${
-                        evidenceDescription.replace(
-                            ",",
-                            ""
-                        )
-                    }\n"
-                treatmentText += eventHeader
+        for (record in records.sorted()) {
+            var treatmentText = ""
+            var scoreSum = 0.0
+            for (scoreObject in record.scores.sortedBy { it.score() }.reversed()) {
+                with(scoreObject) {
+                    val eventHeader =
+                        ",$variant,${scoringMatch.variantMatch},${scoringMatch.tumorMatch},${evidenceLevelDetails},$factor,$score,${score()},${
+                            evidenceDescription.replace(
+                                ",",
+                                ""
+                            )
+                        }\n"
+                    treatmentText += eventHeader
+                }
+                scoreSum += scoreObject.score()
             }
-            scoreSum += scoreObject.score()
+            stringToWrite += "${record.treatment},,,,,,,$scoreSum\n"
+            stringToWrite += treatmentText
         }
-        stringToWrite += "${record.treatment},,,,,,,$scoreSum\n"
-        stringToWrite += treatmentText
+        Files.writeString(Path.of("${case}_ranking.csv"), stringToWrite)
     }
 
-    Files.writeString(Path.of("case976_ranking.csv"), stringToWrite)
+
 }
