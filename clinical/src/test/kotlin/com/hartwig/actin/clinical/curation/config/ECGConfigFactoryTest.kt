@@ -68,7 +68,7 @@ class ECGConfigFactoryTest {
         val config = createConfig(isQTCF = "1", qtcfValue = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.ECG.categoryName,
+                CurationCategory.ECG,
                 INPUT,
                 "qtcfValue",
                 "invalid",
@@ -82,7 +82,7 @@ class ECGConfigFactoryTest {
         val config = createConfig(isJTC = "1", jtcValue = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.ECG.categoryName,
+                CurationCategory.ECG,
                 INPUT,
                 "jtcValue",
                 "invalid",
@@ -96,7 +96,7 @@ class ECGConfigFactoryTest {
         val config = createConfig(icd = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "ECG",
+                CurationCategory.ECG,
                 INPUT,
                 "icd",
                 "invalid",
