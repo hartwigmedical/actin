@@ -8,17 +8,18 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import java.time.LocalDate
 
 class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
     private val type: TreatmentType,
     private val minCycles: Int,
-    private val referenceDate: java.time.LocalDate
+    private val referenceDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentMatches = record.oncologicalHistory.groupBy {
             val matchingCategories = it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY))
-            val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it.treatmentHistoryDetails)
+            val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it.treatmentHistoryDetails, record)
             when {
                 (matchingCategories &&
                         it.isOfType(type) == true &&
@@ -47,10 +48,15 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         }
     }
 
-    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?): Boolean? {
+    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, record: PatientRecord): Boolean? {
         return treatmentHistoryDetails?.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
-                DateComparison.isAfterDate(referenceDate, stopYear ?: 2200, stopMonth ?: 12) != false
+                val startYear = record.oncologicalHistory.maxOfOrNull { it.startYear ?: 0 }
+                val startMonth = record.oncologicalHistory.maxOfOrNull { it.startMonth ?: 1 }
+                val latestStart = LocalDate.of(startYear ?: 0, startMonth ?: 0, 1)
+
+                DateComparison.isAfterDate(referenceDate, stopYear, stopMonth) != false &&
+                        (latestStart?.let { DateComparison.isAfterDate(latestStart, startYear, startMonth) }) != false
             }
             cycles >= minCycles && appearsOngoing
         }
