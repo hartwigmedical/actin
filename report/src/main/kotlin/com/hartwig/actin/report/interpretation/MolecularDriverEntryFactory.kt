@@ -1,20 +1,20 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.approved
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.experimental
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 
@@ -46,7 +46,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val (variantCopyString, totalCopyString) = variantAndTotalCopies.map(::formatCopyNumberString)
 
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
-        val name = "${variant.event} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
+        val name =
+            "${variant.event} (${variant.canonicalImpact.hgvsCodingImpact}), $variantCopyString/$totalCopyString copies$subClonalIndicator"
 
         return driverEntryForGeneAlteration(driverType, name, variant)
     }
