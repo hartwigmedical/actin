@@ -15,12 +15,11 @@ enum class VariantMatch {
 
 data class ScoringMatch(val tumorMatch: TumorMatch, val variantMatch: VariantMatch)
 
-data class ScoringConfig(val duplicateFactor: Double, val categoryMatchLevels: Map<ScoringMatch, Int>, val approvalPhaseLevel: ScoringLevel)
+data class ScoringConfig(val categoryMatchLevels: Map<ScoringMatch, Int>, val approvalPhaseLevel: ScoringLevel)
 
 data class ScoringLevel(val scoring: Map<EvidenceApprovalPhase, Int>)
 
 fun create() = ScoringConfig(
-    0.1,
     mapOf(
         ScoringMatch(TumorMatch.ON_LABEL, VariantMatch.EXACT) to 20,
         ScoringMatch(TumorMatch.ON_LABEL, VariantMatch.CATEGORY) to 19,

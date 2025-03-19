@@ -126,7 +126,7 @@
                     </compilerPlugins>
 
                     <pluginOptions>
-                        <option>no-arg:annotation=com.hartwig.actin.clinical.feed.JacksonSerializable</option>
+                        <option>no-arg:annotation=com.hartwig.actin.datamodel.clinical.provided.JacksonSerializable</option>
                     </pluginOptions>
                 </configuration>
                 <dependencies>

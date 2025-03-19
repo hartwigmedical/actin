@@ -2,9 +2,8 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.standard.ProvidedBloodTransfusionProduct
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
-import com.hartwig.actin.clinical.feed.standard.enumeratedInput
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedBloodTransfusionProduct
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 
 class StandardBloodTransfusionExtractor : StandardDataExtractor<List<BloodTransfusion>> {

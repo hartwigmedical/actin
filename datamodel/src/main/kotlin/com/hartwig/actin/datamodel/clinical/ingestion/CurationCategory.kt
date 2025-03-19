@@ -1,6 +1,4 @@
-package com.hartwig.actin.clinical.curation
-
-data class CurationWarning(val patientId: String, val category: CurationCategory, val feedInput: String, val message: String)
+package com.hartwig.actin.datamodel.clinical.ingestion
 
 enum class CurationCategory(val categoryName: String) {
     PRIMARY_TUMOR("Primary Tumor"),
@@ -12,7 +10,7 @@ enum class CurationCategory(val categoryName: String) {
     ECG("ECG"),
     INFECTION("Infection"),
     INTOLERANCE("Intolerance"),
-    LABORATORY_TRANSLATION("Laboratory Translation"),
+    LAB_MEASUREMENT("Lab Measurement"),
     LESION_LOCATION("Lesion Location"),
     MEDICATION_DOSAGE("Medication Dosage"),
     MEDICATION_NAME("Medication Name"),

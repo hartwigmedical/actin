@@ -16,15 +16,14 @@ import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.common.Indication
-import com.hartwig.serve.datamodel.efficacy.ApprovalPhase
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
-import com.hartwig.serve.datamodel.efficacy.ApprovalPhase as ServeApprovalPhase
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
 
 private val BASE_ACTIONABLE_EVENT = TestServeMolecularFactory.createActionableEvent()
@@ -44,7 +43,7 @@ class ClinicalEvidenceFactoryTest {
                         ),
                         molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(BASE_ACTIONABLE_EVENT),
                         evidenceLevel = ServeEvidenceLevel.D,
-                        evidenceLevelDetails = ServeApprovalPhase.CASE_REPORTS_SERIES,
+                        evidenceLevelDetails = EvidenceLevelDetails.CASE_REPORTS_SERIES,
                         evidenceDirection = EvidenceDirection.NO_BENEFIT
                     )
                 ),
@@ -84,7 +83,7 @@ class ClinicalEvidenceFactoryTest {
                         ),
                         molecularCriterium = TestServeMolecularFactory.createCodonCriterium(baseActionableEvent = BASE_ACTIONABLE_EVENT),
                         evidenceLevel = ServeEvidenceLevel.B,
-                        evidenceLevelDetails = ApprovalPhase.CLINICAL_STUDY,
+                        evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
                         evidenceDirection = EvidenceDirection.RESPONSIVE
                     )
                 ),

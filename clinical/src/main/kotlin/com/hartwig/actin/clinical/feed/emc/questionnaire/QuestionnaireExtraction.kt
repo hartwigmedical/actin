@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
+import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import org.apache.logging.log4j.LogManager
 
 object QuestionnaireExtraction {

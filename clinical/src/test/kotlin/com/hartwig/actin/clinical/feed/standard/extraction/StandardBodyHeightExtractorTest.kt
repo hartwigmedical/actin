@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
-import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurement
-import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurementCategory
 import com.hartwig.actin.datamodel.clinical.BodyHeight
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurement
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementCategory
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

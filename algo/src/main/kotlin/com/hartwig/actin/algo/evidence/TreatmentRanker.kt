@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evidence
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.RankedTreatment
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.math.exp
 
-data class RankResult(val treatment: String, val event: String, val scores: List<Score>) : Comparable<RankResult> {
-    override fun compareTo(other: RankResult): Int {
-        return Comparator.comparingDouble<RankResult> { it.scores.sumOf { s -> s.score }.toDouble() }.compare(this, other)
+data class RankResult(override val treatment: String, override val event: String, val scores: List<Score>) : RankedTreatment {
+
+    override val score = scores.sumOf { it.score() }
+
+    override fun compareTo(other: RankedTreatment): Int {
+        return Comparator.comparingDouble<RankedTreatment> { it.score }.reversed().compare(this, other)
     }
 }
 
@@ -31,7 +35,8 @@ class TreatmentRanker {
             }.mapValues { entry ->
                 entry.value.map { it.second }.toList()
             }
-        return scoredTreatments.map { RankResult(it.key.first, it.key.second, it.value) }
+        val originalScores = scoredTreatments.map { RankResult(it.key.first, it.key.second, it.value) }
+        return originalScores.map { it.copy(scores = saturatingDiminishingReturnsScore(it.scores)) }
     }
 }
 
@@ -40,18 +45,20 @@ fun saturatingDiminishingReturnsScore(
     slope: Double = 1.5,
     midpoint: Double = 1.0
 ) = evidenceScores.sortedDescending().withIndex().map { (index, score) ->
-    score.score() * (1.0 / (1.0 + exp(slope * (index - midpoint))))
-}.sumOf { it }
+    score to if (index >= 1) score.score() * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score()
+}.map { it.first.copy(score = it.second, factor = 1) }
 
 fun main() {
     val patientRecordPath = System.getProperty("user.home") + "/Code/actin/case_976.patient_record.json"
     val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of(patientRecordPath)))
     val records = TreatmentRanker().rank(patientRecord)
+
+
     var stringToWrite = "Treatment,Variant,Variant Match,Tumor Match,Approval,Factor,Score,Total Score,Description\n"
 
     for (record in records.sorted().reversed()) {
         var treatmentText = ""
-        var scoreSum = 0
+        var scoreSum = 0.0
         for (scoreObject in record.scores.sortedBy { it.score() }.reversed()) {
             with(scoreObject) {
                 val eventHeader =

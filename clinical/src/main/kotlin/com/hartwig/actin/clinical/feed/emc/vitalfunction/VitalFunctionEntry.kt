@@ -2,12 +2,12 @@ package com.hartwig.actin.clinical.feed.emc.vitalfunction
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.hartwig.actin.clinical.feed.JacksonSerializable
+import com.hartwig.actin.datamodel.clinical.provided.JacksonSerializable
 import com.hartwig.actin.clinical.feed.emc.EuropeanDecimalDeserializer
 import com.hartwig.actin.clinical.feed.emc.FeedEntry
 import com.hartwig.actin.clinical.feed.emc.FeedSubjectDeserializer
 import com.hartwig.actin.clinical.feed.emc.FeedValidation
-import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.emc.FeedValidator
 import java.time.LocalDateTime
 

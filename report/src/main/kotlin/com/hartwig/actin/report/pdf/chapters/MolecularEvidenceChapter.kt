@@ -5,13 +5,15 @@ import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerato
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularEfficacyDescriptionGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OffLabelMolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OnLabelMolecularClinicalEvidenceGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.TreatmentRankingGenerator
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class MolecularEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+class MolecularEvidenceChapter(val report: Report, override val include: Boolean) : ReportChapter {
 
     private val molecularHistory = report.patientRecord.molecularHistory
+    private val ranking = report.treatmentMatch.treatmentEvidenceRanking
 
     override fun name(): String {
         return "Molecular Evidence"
@@ -25,6 +27,7 @@ class MolecularEvidenceChapter(private val report: Report, override val include:
         addChapterTitle(document)
         addMolecularEvidenceTable(document)
         addEfficacyDescriptionTable(document)
+        if (report.config.includeTreatmentEvidenceRanking) addTreatmentRankingTable(document)
     }
 
     private fun addMolecularEvidenceTable(document: Document) {
@@ -38,6 +41,13 @@ class MolecularEvidenceChapter(private val report: Report, override val include:
     private fun addEfficacyDescriptionTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generator = MolecularEfficacyDescriptionGenerator(molecularHistory, contentWidth())
+        addGenerators(listOf(generator), table, true)
+        document.add(table)
+    }
+
+    private fun addTreatmentRankingTable(document: Document) {
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        val generator = TreatmentRankingGenerator(ranking)
         addGenerators(listOf(generator), table, true)
         document.add(table)
     }

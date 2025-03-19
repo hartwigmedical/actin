@@ -3,14 +3,12 @@ package com.hartwig.actin.algo
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evidence.TreatmentRanker
-import com.hartwig.actin.algo.evidence.saturatingDiminishingReturnsScore
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.algo.RankedTreatment
 import com.hartwig.actin.datamodel.algo.TreatmentEvidenceRanking
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
@@ -53,7 +51,7 @@ class TreatmentMatcher(
             maxMolecularTestAge = maxMolecularTestAge,
             treatmentEvidenceRanking = TreatmentEvidenceRanking(
                 treatmentRanker.rank(patient)
-                    .map { RankedTreatment(it.treatment, saturatingDiminishingReturnsScore(evidenceScores = it.scores)) })
+            )
         )
     }
 

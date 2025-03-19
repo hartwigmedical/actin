@@ -1,14 +1,14 @@
 steps:
 
   - id: 'Set version for maven'
-    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.1.3'
+    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.2.0'
     entrypoint: mvn
     args: [ 'versions:set', '-DnewVersion=$TAG_NAME', '--batch-mode' ]
     env:
       - MAVEN_OPTS=-Dmaven.repo.local=/.m2/repository
 
   - id: 'Maven build, test and deploy'
-    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.1.3'
+    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.2.0'
     entrypoint: mvn
     args: [ '-T', '2', 'deploy', '--batch-mode' ]
     env:

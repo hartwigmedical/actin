@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTestResult
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.util.ResourceFile
 
 class SequencingTestConfigFactory : CurationConfigFactory<SequencingTestConfig> {

@@ -8,7 +8,7 @@ data class Score(
     val scoringMatch: ScoringMatch,
     val evidenceLevelDetails: EvidenceApprovalPhase,
     val factor: Int,
-    val score: Int,
+    val score: Double,
     val evidenceDescription: String
 ) : Comparable<Score> {
 
@@ -33,7 +33,7 @@ class TreatmentScorer {
             scoringMatch = scoringMatch,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             factor = factor,
-            score = score,
+            score = score.toDouble(),
             variant = treatment.molecularMatch.sourceEvent,
             evidenceDescription = treatment.efficacyDescription
         )

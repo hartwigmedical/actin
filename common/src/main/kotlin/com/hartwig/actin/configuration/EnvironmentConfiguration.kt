@@ -47,6 +47,7 @@ data class ReportConfiguration(
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
+    val includeTreatmentEvidenceRanking: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS,
     val reportDate: LocalDate? = null
 )

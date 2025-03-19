@@ -3,33 +3,24 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.common.Indication
-import com.hartwig.serve.datamodel.efficacy.ApprovalPhase
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 
 object TestServeEvidenceFactory {
 
-    fun createEvidenceForHotspot(
-        gene: String = "",
-        chromosome: String = "",
-        position: Int = 0,
-        ref: String = "",
-        alt: String = ""
-    ): EfficacyEvidence {
+    fun createEvidenceForHotspot(vararg variants: VariantAnnotation): EfficacyEvidence {
         return create(
             molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                gene = gene,
-                chromosome = chromosome,
-                position = position,
-                ref = ref,
-                alt = alt
+                variants = if (variants.isNotEmpty()) variants.toSet() else setOf(TestServeMolecularFactory.createVariantAnnotation())
             )
         )
     }
@@ -104,7 +95,7 @@ object TestServeEvidenceFactory {
         indication: Indication = TestServeFactory.createEmptyIndication(),
         molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium(),
         evidenceLevel: EvidenceLevel = EvidenceLevel.D,
-        evidenceLevelDetails: ApprovalPhase = ApprovalPhase.GUIDELINE,
+        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection: EvidenceDirection = EvidenceDirection.NO_BENEFIT
     ): EfficacyEvidence {
         return ImmutableEfficacyEvidence.builder()

@@ -121,7 +121,8 @@ class TreatmentMatchJsonTest {
                         "isTested":null,"isFound":false,"evidenceUrls":["website"]}]}
                     ],
                 "personalizedDataAnalysis":null,
-                "maxMolecularTestAge":null}
+                "maxMolecularTestAge":null,
+                "treatmentEvidenceRanking":{"ranking":[]}}
                 """).lineSequence().joinToString("") { it.trim() }
         //@formatter:on
 

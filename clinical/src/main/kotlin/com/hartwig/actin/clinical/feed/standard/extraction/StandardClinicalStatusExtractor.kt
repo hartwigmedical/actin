@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 
 class StandardClinicalStatusExtractor() : StandardDataExtractor<ClinicalStatus> {
