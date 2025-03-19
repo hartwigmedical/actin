@@ -65,5 +65,5 @@ data class PriorSequencingTest(
             it.geneUp,
             it.geneDown
         )
-    } + deletedGenes.map { it.gene } + noMutationGenes).toSet()
+    } + deletedGenes.map { it.gene } + noMutationGenes).filterNotNull().toSet()
 }
