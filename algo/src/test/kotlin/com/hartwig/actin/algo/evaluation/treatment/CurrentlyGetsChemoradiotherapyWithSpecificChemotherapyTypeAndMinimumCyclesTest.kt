@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -59,7 +60,11 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     private fun assert(evaluationResult: EvaluationResult, type: TreatmentType, minCycles: Int, record: PatientRecord) {
-        val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, minCycles).evaluate(record)
+        val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
+            type,
+            minCycles,
+            ReferenceDateProviderFactory.create(record, true).date()
+        ).evaluate(record)
         return EvaluationAssert.assertEvaluation(evaluationResult, evaluation)
     }
 }

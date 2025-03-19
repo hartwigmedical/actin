@@ -126,7 +126,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (chemotherapyType, minCycles) = functionInputResolver().createOneTreatmentTypeOneIntegerInput(function)
-            CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(chemotherapyType, minCycles)
+            CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(chemotherapyType, minCycles, referenceDate)
         }
     }
 
