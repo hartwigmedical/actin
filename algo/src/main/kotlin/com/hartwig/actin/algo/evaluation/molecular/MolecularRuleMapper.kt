@@ -89,8 +89,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable(maxMolecularTestAge()) },
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable() },
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
-            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator(),
-            EligibilityRule.HAS_GENE_X_TO_CENTROMERE_OF_CHROMOSOME_Y_RATIO_OF_AT_LEAST_Z_BY_FISH to hasSufficientGeneToCentromereRatioByFish()
+            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
         )
     }
 
@@ -374,13 +373,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
             IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
-        }
-    }
-
-    private fun hasSufficientGeneToCentromereRatioByFish(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val (gene, chromosome, _) = functionInputResolver().createOneGeneTwoIntegersInput(function)
-            HasSufficientGeneToCentromereRatioByFish(gene, chromosome)
         }
     }
 }
