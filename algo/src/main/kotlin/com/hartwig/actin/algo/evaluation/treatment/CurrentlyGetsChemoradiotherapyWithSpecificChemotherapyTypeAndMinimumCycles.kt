@@ -48,7 +48,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         }
     }
 
-    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, record: PatientRecord): Boolean? {
+    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, record: PatientRecord, latestStart: LocalDate): Boolean? {
         return treatmentHistoryDetails?.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
                 val startYear = record.oncologicalHistory.maxOfOrNull { it.startYear ?: 0 }
