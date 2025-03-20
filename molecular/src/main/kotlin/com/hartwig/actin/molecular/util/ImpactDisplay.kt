@@ -11,7 +11,8 @@ object ImpactDisplay {
         effects: String
     ): String {
         if (hgvsProteinImpact.isNotEmpty() && hgvsProteinImpact != "p.?") {
-            return forceSingleLetterAminoAcids(hgvsProteinImpact.removePrefix("p."))
+            val codingImpact = if (hgvsCodingImpact.isNotEmpty()) " ($hgvsCodingImpact)" else ""
+            return forceSingleLetterAminoAcids(hgvsProteinImpact.removePrefix("p.")) + codingImpact
         }
 
         if (hgvsCodingImpact.isNotEmpty()) {
