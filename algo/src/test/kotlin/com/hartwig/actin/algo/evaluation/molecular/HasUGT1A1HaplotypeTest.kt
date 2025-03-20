@@ -1,11 +1,13 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasUGT1A1HaplotypeTest {
@@ -61,5 +63,12 @@ class HasUGT1A1HaplotypeTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when molecular record not available`() {
+        val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(evaluation.undeterminedMessages).containsExactly("No molecular data to determine UGT1A1 haplotype")
     }
 }
