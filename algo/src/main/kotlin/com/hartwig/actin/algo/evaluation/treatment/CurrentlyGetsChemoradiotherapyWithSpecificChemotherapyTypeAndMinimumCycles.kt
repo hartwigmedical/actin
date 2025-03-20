@@ -19,7 +19,10 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentMatches = record.oncologicalHistory.groupBy {
             val matchingCategories = it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY))
-            val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it.treatmentHistoryDetails, record)
+
+            val latestStart = record.oncologicalHistory.maxOfOrNull { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
+            val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it.treatmentHistoryDetails, latestStart)
+
             when {
                 (matchingCategories &&
                         it.isOfType(type) == true &&
@@ -48,15 +51,12 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         }
     }
 
-    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, record: PatientRecord, latestStart: LocalDate): Boolean? {
+    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, latestStart: LocalDate?): Boolean? {
         return treatmentHistoryDetails?.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
-                val startYear = record.oncologicalHistory.maxOfOrNull { it.startYear ?: 0 }
-                val startMonth = record.oncologicalHistory.maxOfOrNull { it.startMonth ?: 1 }
-                val latestStart = LocalDate.of(startYear ?: 0, startMonth ?: 0, 1)
 
                 DateComparison.isAfterDate(referenceDate, stopYear, stopMonth) != false &&
-                        (latestStart?.let { DateComparison.isAfterDate(latestStart, startYear, startMonth) }) != false
+                        (latestStart?.let { DateComparison.isAfterDate(latestStart, stopYear, stopMonth) }) != false
             }
             cycles >= minCycles && appearsOngoing
         }
