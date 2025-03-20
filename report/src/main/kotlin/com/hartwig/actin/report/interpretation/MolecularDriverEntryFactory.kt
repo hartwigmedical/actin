@@ -46,7 +46,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val (variantCopyString, totalCopyString) = variantAndTotalCopies.map(::formatCopyNumberString)
 
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
-        val name = "${variant.event}, $variantCopyString/$totalCopyString copies$subClonalIndicator"
+        val codingImpactAnnotation = variant.canonicalImpact.hgvsCodingImpact.takeIf { it.isNotEmpty() }?.let { " ($it)" } ?: ""
+        val name = "${variant.event}$codingImpactAnnotation, $variantCopyString/$totalCopyString copies$subClonalIndicator"
 
         return driverEntryForGeneAlteration(driverType, name, variant)
     }
