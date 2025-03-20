@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
@@ -21,7 +21,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
             val matchingCategories = it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY))
 
             val latestStart = record.oncologicalHistory.maxOfOrNull { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
-            val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it.treatmentHistoryDetails, latestStart)
+            val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it, latestStart)
 
             when {
                 (matchingCategories &&
@@ -51,12 +51,13 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         }
     }
 
-    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryDetails: TreatmentHistoryDetails?, latestStart: LocalDate?): Boolean? {
+    private fun enoughCyclesAndOngoingTreatment(treatmentHistoryEntry: TreatmentHistoryEntry, latestStart: LocalDate?): Boolean? {
+        val treatmentHistoryDetails = treatmentHistoryEntry.treatmentHistoryDetails
         return treatmentHistoryDetails?.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
 
                 DateComparison.isAfterDate(referenceDate, stopYear, stopMonth) != false &&
-                        (latestStart?.let { DateComparison.isAfterDate(latestStart, stopYear, stopMonth) }) != false
+                        (latestStart?.let { DateComparison.isAfterDate(latestStart, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startYear) }) != false
             }
             cycles >= minCycles && appearsOngoing
         }
