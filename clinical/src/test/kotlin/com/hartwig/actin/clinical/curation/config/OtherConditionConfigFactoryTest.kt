@@ -65,8 +65,8 @@ class OtherConditionConfigFactoryTest {
             arrayOf("input", "name", "year", "month", icdTitle, "0", "", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName, "input", "year", "year", "integer"),
-            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName, "input", "month", "month", "integer")
+            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY, "input", "year", "year", "integer"),
+            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY, "input", "month", "month", "integer")
         )
     }
 
@@ -77,7 +77,7 @@ class OtherConditionConfigFactoryTest {
             arrayOf("input", "name", "2023", "12", icdTitle, "1", "invalid", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName, "input", "lvefValue", "invalid", "double")
+            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY, "input", "lvefValue", "invalid", "double")
         )
     }
 
@@ -89,7 +89,7 @@ class OtherConditionConfigFactoryTest {
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 "input",
                 "icd",
                 "unknown title",
@@ -107,7 +107,7 @@ class OtherConditionConfigFactoryTest {
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 "input",
                 "icd",
                 "$icdTitle&unknownExtension",

@@ -29,7 +29,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathway : EvaluationFunction
                 EvaluationFactory.warn("Has had targeted therapy ($treatmentDisplay) indirectly $interferenceMessage")
             }
 
-            record.oncologicalHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, TreatmentCategory.TARGETED_THERAPY) } -> {
+            record.oncologicalHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, setOf(TreatmentCategory.TARGETED_THERAPY)) } -> {
                 EvaluationFactory.undetermined("Has had trial drug - $undeterminedInterferenceMessage")
             }
 

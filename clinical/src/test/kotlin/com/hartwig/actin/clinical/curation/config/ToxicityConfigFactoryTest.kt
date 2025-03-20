@@ -49,7 +49,7 @@ class ToxicityConfigFactoryTest {
 
         val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "abc", icdTitle))
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(CurationCategory.TOXICITY.categoryName, "input", "grade", "abc", "integer")
+            CurationConfigValidationError(CurationCategory.TOXICITY, "input", "grade", "abc", "integer")
         )
     }
 
@@ -59,7 +59,7 @@ class ToxicityConfigFactoryTest {
         val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "3", icdTitle))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.TOXICITY.categoryName,
+                CurationCategory.TOXICITY,
                 "input",
                 "icd",
                 "icdTitle",

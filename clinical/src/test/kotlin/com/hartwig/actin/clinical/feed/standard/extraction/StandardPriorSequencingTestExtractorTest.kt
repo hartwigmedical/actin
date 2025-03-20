@@ -1,9 +1,7 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
@@ -13,6 +11,8 @@ import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import io.mockk.every
@@ -136,6 +136,28 @@ class StandardPriorSequencingTestExtractorTest {
                 deletedGenes = setOf(SequencedDeletedGene(GENE))
             )
         )
+    }
+
+    @Test
+    fun `Should combine test result genes with provided tested genes`() {
+        val variantGene = "variantGene"
+        val noMutationsGene = "noMutationsGene"
+        val impliedNoMutationGene = "impliedNoMutationGene"
+        val result = extractor.extract(
+            EhrTestData.createEhrPatientRecord().copy(
+                molecularTests = listOf(
+                    BASE_MOLECULAR_TEST.copy(
+                        testedGenes = setOf(impliedNoMutationGene),
+                        results = setOf(
+                            ProvidedMolecularTestResult(gene = variantGene, hgvsProteinImpact = "proteinImpact"),
+                            ProvidedMolecularTestResult(gene = noMutationsGene, noMutationsFound = true)
+                        )
+                    )
+                )
+            )
+        )
+        assertThat(result.extracted[0].testedGenes).containsExactlyInAnyOrder(variantGene, noMutationsGene, impliedNoMutationGene)
+        assertThat(result.extracted[0].noMutationGenes).containsExactlyInAnyOrder(noMutationsGene, impliedNoMutationGene)
     }
 
     @Test

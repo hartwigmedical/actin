@@ -1,21 +1,21 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val PRIOR_IHC_TEST =
@@ -159,7 +159,7 @@ class StandardPriorIHCTestExtractorTest {
     }
 
     @Test
-    fun `Should extract and curate IHC lines from molecular test list (new)`() {
+    fun `Should extract and curate IHC lines from molecular test ihc result`() {
         every { molecularTestCuration.find(IHC_LINE) } returns setOf(
             IHCTestConfig(
                 input = IHC_LINE,
@@ -174,13 +174,17 @@ class StandardPriorIHCTestExtractorTest {
                         results = setOf(ProvidedMolecularTestResult(ihcResult = IHC_LINE))
                     ),
                     ProvidedMolecularTest(
+                        test = "IHC",
+                        results = setOf(ProvidedMolecularTestResult(freeText = IHC_LINE))
+                    ),
+                    ProvidedMolecularTest(
                         test = "NGS",
                         results = setOf(ProvidedMolecularTestResult(hgvsCodingImpact = "codingImpact"))
                     ),
                 )
             )
         )
-        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST)
+        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST, PRIOR_IHC_TEST)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 }
