@@ -50,7 +50,7 @@ class IHCTestConfigFactoryTest {
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.MOLECULAR_TEST_IHC.categoryName,
+                CurationCategory.MOLECULAR_TEST_IHC,
                 "input",
                 "impliesPotentialIndeterminateStatus",
                 "invalid",

@@ -24,6 +24,7 @@ enum class LabUnit(private val display: String) : Displayable {
     MICROMOLES_PER_LITER("umol/L"),
     MILLI_OSMOLE_PER_KILOGRAM("mOsm/kg"),
     MILLIGRAMS_PER_DECILITER("mg/dL"),
+    MILLIGRAMS_PER_GRAM("mg/g"),
     MILLIGRAMS_PER_LITER("mg/L"),
     MILLIGRAMS_PER_MILLIMOLE("mg/mmol"),
     MILLILITERS_PER_MINUTE("mL/min"),

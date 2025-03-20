@@ -54,7 +54,7 @@ class EmcClinicalFeedIngestor(
     private val surgeryExtractor: SurgeryExtractor
 ) : ClinicalFeedIngestion {
 
-    override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
+    override fun ingest(): List<Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation>> {
         LOGGER.info("Creating clinical model")
         return feed.read().map { feedRecord ->
             val patientId = feedRecord.patientEntry.subject
@@ -104,7 +104,11 @@ class EmcClinicalFeedIngestor(
                 surgeryExtraction
             ).fold(CurationExtractionEvaluation()) { acc, current -> acc + current.evaluation }
 
-            ingestionResult(questionnaire, record, patientEvaluation, questionnaireCurationErrors, feedRecord) to patientEvaluation
+            Triple(
+                record,
+                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
+                patientEvaluation
+            )
         }
     }
 
@@ -171,8 +175,8 @@ class EmcClinicalFeedIngestor(
         ?: Double.NaN)
 
     private fun ingestionResult(
+        patientId: String,
         questionnaire: Questionnaire?,
-        record: ClinicalRecord,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
         feedRecord: FeedRecord
@@ -186,9 +190,8 @@ class EmcClinicalFeedIngestor(
         }
 
         return PatientIngestionResult(
-            record.patientId,
+            patientId,
             ingestionStatus,
-            record,
             curationResults,
             questionnaireCurationErrors.toSet(),
             feedRecord.validationWarnings
