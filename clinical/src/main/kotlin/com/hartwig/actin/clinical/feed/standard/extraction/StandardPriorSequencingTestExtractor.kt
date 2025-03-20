@@ -65,7 +65,8 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
 
     private fun noMutations(providedTestedGenes: Set<String>, allResults: Set<ProvidedMolecularTestResult>): Set<String> {
         val impliedNoMutations =
-            providedTestedGenes - (allResults.map { it.gene } + allResults.map { it.deletedGene } + allResults.map { it.fusionGeneUp } + allResults.map { it.fusionGeneDown } + allResults.map { it.amplifiedGene }).filterNotNull()
+            providedTestedGenes - (allResults.filter { it.noMutationsFound != true }
+                .map { it.gene } + allResults.map { it.deletedGene } + allResults.map { it.fusionGeneUp } + allResults.map { it.fusionGeneDown } + allResults.map { it.amplifiedGene }).filterNotNull()
                 .toSet()
         val explicitNoMutations = allResults.filter { it.noMutationsFound == true }.mapNotNull { it.gene }
         return impliedNoMutations + explicitNoMutations

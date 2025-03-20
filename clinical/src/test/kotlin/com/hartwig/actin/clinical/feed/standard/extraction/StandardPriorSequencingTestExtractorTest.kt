@@ -142,11 +142,12 @@ class StandardPriorSequencingTestExtractorTest {
     fun `Should combine test result genes with provided tested genes`() {
         val variantGene = "variantGene"
         val noMutationsGene = "noMutationsGene"
+        val impliedNoMutationGene = "impliedNoMutationGene"
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(
                 molecularTests = listOf(
                     BASE_MOLECULAR_TEST.copy(
-                        testedGenes = setOf(GENE),
+                        testedGenes = setOf(impliedNoMutationGene),
                         results = setOf(
                             ProvidedMolecularTestResult(gene = variantGene, hgvsProteinImpact = "proteinImpact"),
                             ProvidedMolecularTestResult(gene = noMutationsGene, noMutationsFound = true)
@@ -155,7 +156,8 @@ class StandardPriorSequencingTestExtractorTest {
                 )
             )
         )
-        assertThat(result.extracted[0].testedGenes).containsExactlyInAnyOrder(GENE, variantGene, noMutationsGene)
+        assertThat(result.extracted[0].testedGenes).containsExactlyInAnyOrder(variantGene, noMutationsGene, impliedNoMutationGene)
+        assertThat(result.extracted[0].noMutationGenes).containsExactlyInAnyOrder(noMutationsGene, impliedNoMutationGene)
     }
 
     @Test
