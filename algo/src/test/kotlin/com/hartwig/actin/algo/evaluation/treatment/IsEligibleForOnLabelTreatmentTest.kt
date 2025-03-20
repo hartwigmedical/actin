@@ -20,6 +20,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
@@ -61,8 +62,9 @@ class IsEligibleForOnLabelTreatmentTest {
                 isReportable = true,
                 type = VariantType.DELETE,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 19),
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended(),
-                driverLikelihood = DriverLikelihood.HIGH
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
+                driverLikelihood = DriverLikelihood.HIGH,
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))

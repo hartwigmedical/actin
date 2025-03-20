@@ -101,8 +101,6 @@ class IsEligibleForOnLabelTreatment(
     private val treatmentNameToEvaluationFunctionsForNSCLC: Map<String, EvaluationFunction> = mapOf(
         "Osimertinib" to Or(
             listOf(
-                GeneHasVariantInExonRangeOfType("EGFR", 19, 19, VariantTypeInput.DELETE, maxTestAge),
-                GeneHasVariantWithProteinImpact("EGFR", setOf("L858R"), maxTestAge),
                 And(
                     listOf(
                         GeneHasActivatingMutation("EGFR", null, maxTestAge),
