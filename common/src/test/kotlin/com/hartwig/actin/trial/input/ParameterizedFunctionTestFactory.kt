@@ -174,10 +174,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("string1", "string2")
             }
 
-            FunctionInput.TWO_STRINGS_ONE_INTEGER -> {
-                listOf("string1", "string2", "1")
-            }
-
             FunctionInput.ONE_STRING_ONE_INTEGER -> {
                 listOf("string", "1")
             }
@@ -308,6 +304,14 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
 
             FunctionInput.ONE_PROTEIN_ONE_INTEGER -> {
                 listOf("FGFR2b", "1")
+            }
+
+            FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER -> {
+                listOf("FGFR2b", "FGFR2", "1")
+            }
+
+            FunctionInput.ONE_PROTEIN_ONE_GENE -> {
+                listOf("FGFR2b", "FGFR2")
             }
         }
     }

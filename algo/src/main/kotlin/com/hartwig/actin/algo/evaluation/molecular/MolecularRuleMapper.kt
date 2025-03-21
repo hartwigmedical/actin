@@ -275,35 +275,35 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinIsLostByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene) = functionInputResolver().createTwoStringsInput(function)
+            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
             ProteinIsLostByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene) = functionInputResolver().createTwoStringsInput(function)
+            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
             ProteinIsExpressedByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
     private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene, expressionLevel) = functionInputResolver().createTwoStringsOneIntegerInput(function)
+            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
             ProteinHasExactExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 
     private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene, expressionLevel) = functionInputResolver().createTwoStringsOneIntegerInput(function)
+            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
             ProteinHasSufficientExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 
     private fun proteinIsWildTypeByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene) = functionInputResolver().createTwoStringsInput(function)
+            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
             ProteinIsWildTypeByIHC(protein, gene, maxMolecularTestAge())
         }
     }
@@ -314,7 +314,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene, expressionLevel) = functionInputResolver().createTwoStringsOneIntegerInput(function)
+            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
             ProteinHasLimitedExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
