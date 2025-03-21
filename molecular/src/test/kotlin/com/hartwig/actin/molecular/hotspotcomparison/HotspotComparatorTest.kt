@@ -17,8 +17,14 @@ import org.junit.Test
 private val HOTSPOT_SERVE = TestServeKnownFactory.hotspotBuilder().gene("gene1").chromosome("1").position(1).ref("ref1").alt("alt1")
     .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION).geneRole(GeneRole.ONCO).sources(setOf(ActionabilityConstants.EVIDENCE_SOURCE)).build()
 
+private val GENE_1_SERVE = TestServeKnownFactory.geneBuilder().gene("gene1").build()
+private val GENE_2_SERVE = TestServeKnownFactory.geneBuilder().gene("gene2").build()
+private val GENE_3_SERVE = TestServeKnownFactory.geneBuilder().gene("gene3").build()
+
 private val SERVE_RECORD = ImmutableServeRecord.builder()
-    .knownEvents(ImmutableKnownEvents.builder().addHotspots(HOTSPOT_SERVE).build())
+    .knownEvents(
+        ImmutableKnownEvents.builder().addHotspots(HOTSPOT_SERVE).addAllGenes(listOf(GENE_1_SERVE, GENE_2_SERVE, GENE_3_SERVE)).build()
+    )
     .evidences(emptyList())
     .trials(emptyList())
     .build()
