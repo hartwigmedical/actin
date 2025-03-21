@@ -22,7 +22,7 @@ class HasTumorMutationalLoadWithinRange(
         val meetsMinTumorLoad = tumorMutationalLoad >= minTumorMutationalLoad
         val meetsMaxTumorLoad = maxTumorMutationalLoad == null || tumorMutationalLoad <= maxTumorMutationalLoad
         val message = if (maxTumorMutationalLoad == null) {
-            "above min TML $minTumorMutationalLoad"
+            "above $minTumorMutationalLoad"
         } else {
             "between $minTumorMutationalLoad and $maxTumorMutationalLoad"
         }

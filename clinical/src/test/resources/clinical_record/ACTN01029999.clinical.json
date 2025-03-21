@@ -369,7 +369,12 @@
         "month": 6,
         "day": 7
       },
-      "drug": null,
+      "drug": {
+        "name": "PEMBROLIZUMAB",
+        "drugTypes": ["TOPO1_INHIBITOR"],
+        "category": "IMMUNOTHERAPY",
+        "displayOverride": null
+      },
       "cypInteractions": [],
       "transporterInteractions": [],
       "qtProlongatingRisk": "NONE",

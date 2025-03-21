@@ -28,7 +28,7 @@ class PanelAnnotator(
         val hasHighTumorMutationalBurden = input.tumorMutationalBurden?.let { it > TMB_HIGH_CUTOFF }
 
         return PanelRecord(
-            testedGenes = input.testedGenes ?: emptySet(),
+            testedGenes = input.testedGenes,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
             date = input.date,

@@ -96,7 +96,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createManyGenesInput(function)
-            AnyGeneHasDriverEventWithApprovedTherapy(input.geneNames, doidModel(), EvaluationFunctionFactory.create(resources), maxMolecularTestAge())
+            AnyGeneHasDriverEventWithApprovedTherapy(
+                input.geneNames,
+                doidModel(),
+                EvaluationFunctionFactory.create(resources),
+                maxMolecularTestAge()
+            )
         }
     }
 

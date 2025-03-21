@@ -78,7 +78,13 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || foundTrialMedication -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${concatLowercaseWithAnd(categoryNames)}")
+                EvaluationFactory.undetermined(
+                    "Undetermined if treatment received in previous trial included ${
+                        concatLowercaseWithAnd(
+                            categoryNames
+                        )
+                    }"
+                )
             }
 
             else -> {
@@ -118,10 +124,10 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             TreatmentAssessmentExtended(
                 hasHadValidTreatment = isMatch && startedPastMinDate == true,
                 hasInconclusiveDate = isMatch && startedPastMinDate == null,
-                hasHadTrialAfterMinDate = startedPastMinDate == true &&
-                        (drugTypesToFind.map(DrugType::category) + treatmentCategoriesToFind).any {
-                            TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, it)
-                        },
+                hasHadTrialAfterMinDate = startedPastMinDate == true && TrialFunctions.treatmentMayMatchAsTrial(
+                    treatmentHistoryEntry,
+                    (drugTypesToFind.map(DrugType::category) + treatmentCategoriesToFind)
+                ),
                 matchingMedicationCategories = if (!isMatch || startedPastMinDate != true) emptySet() else {
                     val matchingBasedOnDrugType =
                         categoryToDrugTypes.filter { (_, drugTypes) -> matchingTypes.intersect(drugTypes).isNotEmpty() }.keys

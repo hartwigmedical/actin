@@ -80,7 +80,7 @@ class GeneHasActivatingMutation(
 
             activatingVariants.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$gene activating mutation(s): $variantsString" +
+                    "$gene activating mutation(s): $variantsString " +
                             "together with potentially activating mutation(s) " +
                             concat(potentiallyActivatingWarnings.map { (event, type) -> "$event (${type.description})" }),
                     inclusionEvents = activatingVariants + potentiallyActivatingWarnings.map { (event, _) -> event }

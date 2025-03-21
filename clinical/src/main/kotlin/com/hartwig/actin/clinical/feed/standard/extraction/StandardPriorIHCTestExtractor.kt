@@ -1,13 +1,13 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 
 private const val IHC_STRING = "immunohistochemie"
 
@@ -30,7 +30,7 @@ class StandardPriorIHCTestExtractor(
 
         val extractedIHCTests = ehrPatientRecord.molecularTests.asSequence()
             .flatMap { it.results }
-            .mapNotNull { it.ihcResult }
+            .flatMap { listOfNotNull(it.ihcResult, it.freeText) }
             .map {
                 CurationResponse.createFromConfigs(
                     molecularTestCuration.find(it),
