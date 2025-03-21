@@ -7,7 +7,12 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasTnmTScore(private val score: String): EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val metastases = record.tumor.hasConfirmedLesions()
-        return EvaluationFactory.undetermined("Undetermined if tumor is TNM $score")
+        val tnm = if (record.tumor.hasConfirmedLesions()) "M" else ""
+        return if (score.contains(tnm)){
+            return EvaluationFactory.pass("Tumor is TNM $score")
+        }
+        else {
+            return EvaluationFactory.undetermined("Undetermined if tumor is TNM $score")
+        }
     }
 }
