@@ -14,7 +14,7 @@ class HasSevereConcomitantIllness: EvaluationFunction {
             return EvaluationFactory.warn("Potential severe concomitant illnesses (WHO $whoStatus)")
         }
         return if (whoStatus == 5) {
-            EvaluationFactory.pass("Has severe concomitant illness (WHO 5)")
+            EvaluationFactory.pass("WHO 5")
         } else
             EvaluationFactory.notEvaluated("Assumed that severe concomitant illnesses are not present")
     }

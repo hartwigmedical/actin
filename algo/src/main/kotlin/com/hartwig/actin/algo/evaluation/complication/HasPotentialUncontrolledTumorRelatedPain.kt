@@ -43,14 +43,14 @@ class HasPotentialUncontrolledTumorRelatedPain(
             }
 
             activePainMedications.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
+                EvaluationFactory.warn(
                     "Possible uncontrolled tumor related pain "
                             + "(${Format.concatLowercaseWithCommaAndAnd(activePainMedications)} usage)"
                 )
             }
 
             plannedPainMedications.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
+                EvaluationFactory.warn(
                     "Possible uncontrolled tumor related pain "
                             + "(planned ${Format.concatLowercaseWithCommaAndAnd(plannedPainMedications)} usage)"
                 )

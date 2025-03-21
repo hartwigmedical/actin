@@ -28,15 +28,15 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
 
         return when {
             bodyMassIndex != null && (bodyMassIndex <= maximumBMI) -> {
-                EvaluationFactory.pass("BMI (${bodyMassIndex.roundToInt()}) under limit of $maximumBMI")
+                EvaluationFactory.recoverablePass("BMI (${bodyMassIndex.roundToInt()}) under limit of $maximumBMI")
             }
 
             bodyMassIndex != null && (bodyMassIndex > maximumBMI) -> {
-                EvaluationFactory.fail("BMI (${bodyMassIndex.roundToInt()}) above limit of $maximumBMI")
+                EvaluationFactory.recoverableFail("BMI (${bodyMassIndex.roundToInt()}) above limit of $maximumBMI")
             }
 
             minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES -> {
-                EvaluationFactory.pass(
+                EvaluationFactory.recoverablePass(
                     String.format(
                         ApplicationConfig.LOCALE,
                         "Median weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m", median, maximumBMI,
@@ -46,7 +46,7 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
             }
 
             minimumRequiredHeight > MAX_EXPECTED_HEIGHT_METRES -> {
-                EvaluationFactory.fail(
+                EvaluationFactory.recoverableFail(
                     String.format(
                         ApplicationConfig.LOCALE,
                         "Median weight %.1f kg will exceed BMI limit of %d for height < %.2f m", median, maximumBMI,

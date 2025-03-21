@@ -20,7 +20,7 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
             }
 
             abs(who - requiredWHO) == 1 -> {
-                EvaluationFactory.recoverableFail("WHO status is $who but should be $requiredWHO")
+                EvaluationFactory.warn("WHO status is $who but should be $requiredWHO")
             }
 
             else -> {

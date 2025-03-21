@@ -30,17 +30,17 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
         HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysPlanned(), setOf(OPIOIDS_ATC_LEVEL), icdModel)
 
     @Test
-    fun `Should evaluate to undetermined if patient uses severe pain medication`() {
+    fun `Should warn if patient uses severe pain medication`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             alwaysActiveFunction.evaluate(ComplicationTestFactory.withMedication(PAIN_MEDICATION))
         )
     }
 
     @Test
-    fun `Should evaluate to undetermined if patient has planned severe pain medication`() {
+    fun `Should warn if patient has planned severe pain medication`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             alwaysPlannedFunction.evaluate(ComplicationTestFactory.withMedication(PAIN_MEDICATION))
         )
     }

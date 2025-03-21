@@ -26,7 +26,7 @@ class HasPotentialSymptomaticHypercalcemia(private val minValidDate: LocalDate) 
 
         return when {
             EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN in evaluations || EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN in evaluations -> {
-                EvaluationFactory.recoverableWarn("Possible symptomatic hypercalcemia (calcium above ULN)")
+                EvaluationFactory.warn("Possible symptomatic hypercalcemia (calcium above ULN)")
             }
             CANNOT_BE_DETERMINED in evaluations -> {
                 EvaluationFactory.recoverableUndetermined("Symptomatic hypercalcemia undetermined")

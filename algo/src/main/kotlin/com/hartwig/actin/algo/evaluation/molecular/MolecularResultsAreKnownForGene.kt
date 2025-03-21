@@ -55,7 +55,7 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
             }
 
             indeterminatePriorIHCTestsForGene.isNotEmpty() -> {
-                EvaluationFactory.undetermined("$gene tested before in IHC test but indeterminate status")
+                EvaluationFactory.undetermined("$gene IHC result available but indeterminate status")
             }
 
             else -> {

@@ -8,31 +8,26 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluation: Evaluation = function.evaluate(record)
-        if (evaluation.result == EvaluationResult.PASS) {
-            return Evaluation(
-                result = EvaluationResult.WARN,
-                recoverable = evaluation.recoverable,
-                inclusionMolecularEvents = emptySet(),
-                exclusionMolecularEvents = emptySet(),
-                warnMessages = evaluation.passMessages,
-                isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
-            )
-        } else if (evaluation.result == EvaluationResult.WARN) {
-            return evaluation.copy(
-                inclusionMolecularEvents = emptySet(),
-                exclusionMolecularEvents = emptySet(),
-                isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
-            )
-        }
+        val evaluation = function.evaluate(record)
+        return when (evaluation.result) {
+            EvaluationResult.PASS -> {
+                Evaluation(
+                    result = EvaluationResult.WARN,
+                    recoverable = evaluation.recoverable,
+                    warnMessages = evaluation.passMessages
+                )
+            }
 
-        return Evaluation(
-            result = EvaluationResult.PASS,
-            recoverable = evaluation.recoverable,
-            inclusionMolecularEvents = emptySet(),
-            exclusionMolecularEvents = emptySet(),
-            passMessages = (evaluation.passMessages + evaluation.warnMessages + evaluation.undeterminedMessages + evaluation.failMessages),
-            isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
-        )
+            EvaluationResult.WARN -> evaluation.copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
+
+            else -> {
+                Evaluation(
+                    result = EvaluationResult.PASS,
+                    recoverable = evaluation.recoverable,
+                    passMessages = (evaluation.passMessages + evaluation.warnMessages + evaluation.undeterminedMessages + evaluation.failMessages),
+                    isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
+                )
+            }
+        }
     }
 }

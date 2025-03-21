@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import java.time.LocalDate
 
 class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, private val minPassLabDate: LocalDate): EvaluationFunction {
@@ -26,11 +26,11 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
 
         return when {
             outsideRef.isNotEmpty() -> {
-                EvaluationFactory.pass("Abnormalities detected in electrolyte levels ($measurementString outside reference range)")
+                EvaluationFactory.recoverablePass("Abnormalities detected in electrolyte levels ($measurementString outside reference range)")
             }
 
             else -> {
-                EvaluationFactory.fail("Electrolyte levels within reference range")
+                EvaluationFactory.recoverableFail("Electrolyte levels within reference range")
             }
         }
     }

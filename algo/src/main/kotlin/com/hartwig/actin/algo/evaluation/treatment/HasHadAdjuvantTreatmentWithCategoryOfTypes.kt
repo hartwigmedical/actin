@@ -33,7 +33,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.warn("Undetermined if treatment received in previous trial included adjuvant $categoryString")
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included adjuvant $categoryString")
             }
 
             else -> {

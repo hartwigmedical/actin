@@ -31,7 +31,7 @@ class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelec
             }
 
             cypSubstratesPlanned.isNotEmpty() -> {
-                EvaluationFactory.recoverableWarn(
+                EvaluationFactory.warn(
                     "Planned CYP$termToFind substrate medication use (${concatLowercaseWithCommaAndAnd(cypSubstratesPlanned)})"
                 )
             }

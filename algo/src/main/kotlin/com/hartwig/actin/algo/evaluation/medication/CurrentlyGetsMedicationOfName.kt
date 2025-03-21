@@ -20,7 +20,7 @@ class CurrentlyGetsMedicationOfName(private val selector: MedicationSelector, pr
             }
 
             hasPlannedMedicationWithName -> {
-                EvaluationFactory.recoverableWarn("Planned " + concatLowercaseWithCommaAndOr(termsToFind) + " medication use")
+                EvaluationFactory.warn("Planned " + concatLowercaseWithCommaAndOr(termsToFind) + " medication use")
             }
 
             else -> {

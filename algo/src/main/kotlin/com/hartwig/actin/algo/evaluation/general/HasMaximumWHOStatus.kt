@@ -16,7 +16,7 @@ class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
 
             who <= maximumWHO -> EvaluationFactory.pass("WHO $who is within requested max WHO $maximumWHO")
 
-            who - maximumWHO == 1 -> EvaluationFactory.recoverableFail("WHO $who exceeds max WHO $maximumWHO")
+            who - maximumWHO == 1 -> EvaluationFactory.warn("WHO $who exceeds max WHO $maximumWHO")
 
             else -> EvaluationFactory.fail("WHO $who exceeds max WHO $maximumWHO")
         }

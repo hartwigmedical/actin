@@ -19,13 +19,16 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
             }
 
             invalidOncoPanelOrWGSList.isNotEmpty() -> {
-                EvaluationFactory.recoverableFail("NSCLC driver gene statuses unknown (sequencing data of insufficient quality)")
+                EvaluationFactory.recoverableFail(
+                    "NSCLC driver gene statuses unknown (sequencing data of insufficient quality)",
+                    isMissingMolecularResultForEvaluation = true
+                )
             }
 
             else -> {
                 val missingGenes = NSCLC_DRIVER_GENE_SET.filterNot { it in panelGenes }.joinToString(", ")
                 EvaluationFactory.recoverableFail(
-                    "NSCLC driver gene statuses not available (missing: $missingGenes)"
+                    "NSCLC driver gene statuses not available (missing: $missingGenes)", isMissingMolecularResultForEvaluation = true
                 )
             }
         }

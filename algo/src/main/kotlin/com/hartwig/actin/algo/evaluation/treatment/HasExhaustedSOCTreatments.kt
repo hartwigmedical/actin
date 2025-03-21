@@ -55,12 +55,8 @@ class HasExhaustedSOCTreatments(
                 }
             }
 
-            record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined("Exhaustion of SOC undetermined (no prior cancer treatment)")
-            }
-
             else -> {
-                EvaluationFactory.notEvaluated("Assumed that SOC is exhausted (had prior cancer treatment)")
+                EvaluationFactory.undetermined("Exhaustion of SOC undetermined")
             }
         }
     }

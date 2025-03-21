@@ -78,7 +78,7 @@ class TrialMatcherTest {
             val cohortB = findCohort(trialMatch.cohorts, "B")
             assertThat(cohortB.isPotentiallyEligible).isTrue
             assertThat(findEvaluationResultForRule(cohortB.evaluations, EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS)).isEqualTo(
-                EvaluationResult.NOT_EVALUATED
+                EvaluationResult.UNDETERMINED
             )
 
             val cohortC = findCohort(trialMatch.cohorts, "C")

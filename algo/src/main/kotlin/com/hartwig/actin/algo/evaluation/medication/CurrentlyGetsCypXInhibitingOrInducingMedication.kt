@@ -29,7 +29,7 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
             }
 
             plannedCypMedications.isNotEmpty() -> {
-                EvaluationFactory.recoverableWarn(
+                EvaluationFactory.warn(
                     "Planned CYP$termToFind inhibiting or inducing medication use (${concatLowercaseWithCommaAndAnd(plannedCypMedications)})"
                 )
             }

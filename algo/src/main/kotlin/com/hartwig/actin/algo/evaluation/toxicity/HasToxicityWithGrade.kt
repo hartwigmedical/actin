@@ -51,7 +51,7 @@ class HasToxicityWithGrade(
 
             matchingToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(matchingToxicities)
-                EvaluationFactory.recoverableWarn("Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire")
+                EvaluationFactory.warn("Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire")
             }
 
             unresolvableToxicities.isNotEmpty() -> {

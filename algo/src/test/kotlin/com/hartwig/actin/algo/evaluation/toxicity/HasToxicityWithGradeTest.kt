@@ -9,9 +9,9 @@ import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.icd.datamodel.IcdNode
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val referenceDate: LocalDate = LocalDate.of(2024, 10, 1)
 private val icdModel = TestIcdFactory.createTestModel()
@@ -112,7 +112,7 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should return recoverable warning when questionnaire is not source`() {
+    fun `Should warn when questionnaire is not source`() {
         val toxicities = listOf(
             toxicity(
                 source = ToxicitySource.EHR, grade = DEFAULT_QUESTIONNAIRE_GRADE + 1, name = "toxicity 1",
@@ -120,7 +120,6 @@ class HasToxicityWithGradeTest {
         )
         val evaluation = function().evaluate(ComorbidityTestFactory.withToxicities(toxicities))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.recoverable).isTrue
     }
 
     @Test
