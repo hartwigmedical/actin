@@ -37,9 +37,6 @@ class ProteinExpressionByIHCFunctions(
             IhcExpressionComparisonType.EXACT -> "exactly"
         }
 
-        val geneIsWildType = MolecularRuleEvaluator.geneIsWildTypeForPatient(gene, record, maxTestAge)
-        val additionalMessage = if (geneIsWildType) " though $gene is wild-type in recent molecular test" else ""
-
         return when {
             EvaluationResult.PASS in evaluationsVersusReference -> {
                 EvaluationFactory.pass("$protein has expression of $comparisonText $referenceExpressionLevel by IHC")
@@ -50,6 +47,7 @@ class ProteinExpressionByIHCFunctions(
             }
 
             ihcTests.isEmpty() -> {
+                val additionalMessage = IHCMessagesFunctions.additionalMessageWhenGeneIsWildType(gene, record, maxTestAge)
                 EvaluationFactory.undetermined("No $protein IHC test result$additionalMessage", isMissingMolecularResultForEvaluation = true)
             }
 

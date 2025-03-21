@@ -14,12 +14,11 @@ class ProteinIsWildTypeByIHC(private val protein: String, private val gene: Stri
         val hasOnlyWildTypeResults = allIHCTestsForProtein.isNotEmpty() && allIHCTestsForProtein.all { test ->
             WILD_TYPE_QUERY_STRINGS.any { it.equals(test.scoreText, ignoreCase = true) }
         }
-        val geneIsWildType = MolecularRuleEvaluator.geneIsWildTypeForPatient(gene, record, maxTestAge)
-        val additionalMessage = if (geneIsWildType) " though $gene is wild-type in recent molecular test" else ""
 
         return if (hasOnlyWildTypeResults) {
             EvaluationFactory.pass("$protein is wild type by IHC")
         } else {
+            val additionalMessage = IHCMessagesFunctions.additionalMessageWhenGeneIsWildType(gene, record, maxTestAge)
             EvaluationFactory.undetermined("$protein wild type status by IHC unknown$additionalMessage")
         }
     }

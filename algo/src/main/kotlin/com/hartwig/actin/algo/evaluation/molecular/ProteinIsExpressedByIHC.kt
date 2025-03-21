@@ -14,9 +14,6 @@ class ProteinIsExpressedByIHC(private val protein: String,  private val gene: St
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, protein)
 
-        val geneIsWildType = MolecularRuleEvaluator.geneIsWildTypeForPatient(gene, record, maxTestAge)
-        val additionalMessage = if (geneIsWildType) " though $gene is wild-type in recent molecular test" else ""
-
         return when {
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "positive" || testScoredAboveZero(ihcTest) } -> {
                 EvaluationFactory.pass("$protein has expression by IHC")
@@ -27,6 +24,7 @@ class ProteinIsExpressedByIHC(private val protein: String,  private val gene: St
             }
 
             else -> {
+                val additionalMessage = IHCMessagesFunctions.additionalMessageWhenGeneIsWildType(gene, record, maxTestAge)
                 EvaluationFactory.undetermined("No $protein IHC test result$additionalMessage", isMissingMolecularResultForEvaluation = true)
             }
         }

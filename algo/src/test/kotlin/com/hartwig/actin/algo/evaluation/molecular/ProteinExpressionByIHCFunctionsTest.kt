@@ -11,8 +11,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val IHC = "IHC"
-private const val PROTEIN = "PD-L1"
-private const val GENE = "PD-L1"
+private const val PROTEIN = "protein 1"
+private const val GENE = "gene 1"
 
 class ProteinExpressionByIHCFunctionsTest {
 
