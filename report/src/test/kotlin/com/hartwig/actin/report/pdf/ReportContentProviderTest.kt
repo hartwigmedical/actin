@@ -24,6 +24,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerat
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.trial.ActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
@@ -214,11 +215,10 @@ class ReportContentProviderTest {
     private fun assertReportCohortSizeMatchesInput(report: Report, eligibleActinTrialsGenerators: List<EligibleActinTrialsGenerator>) {
         val trialMatchingChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
         val generators = trialMatchingChapter.createGenerators()
-        val eligibleGenerators = generators.filterIsInstance<EligibleActinTrialsGenerator>()
-        val ineligibleGenerators = generators.filterIsInstance<IneligibleActinTrialsGenerator>()
+        val actinTrialsGenerators = generators.filterIsInstance<ActinTrialsGenerator>()
         
         val totalCohortSizeOnReport =
-            eligibleActinTrialsGenerators.sumOf { it.getCohortSize() } + eligibleGenerators.sumOf { it.getCohortSize() } + ineligibleGenerators.sumOf { it.getCohortSize() }
+            eligibleActinTrialsGenerators.sumOf { it.getCohortSize() } + actinTrialsGenerators.sumOf { it.getCohortSize() }
         val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
 
         assertEquals(totalCohortSizeOnReport, totalCohortSizeInput)

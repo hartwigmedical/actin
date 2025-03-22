@@ -8,10 +8,10 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>report</artifactId>
+    <artifactId>interpretation</artifactId>
     <packaging>jar</packaging>
     <version>local-SNAPSHOT</version>
-    <name>Hartwig ACTIN - Report</name>
+    <name>Hartwig ACTIN - Interpretation</name>
 
     <dependencies>
         <dependency>
@@ -19,31 +19,8 @@
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>interpretation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>kernel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>layout</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>io</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-        </dependency>
-
-        <!-- SLF4J implementation is required by iTextPDF -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-reload4j</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -73,12 +50,6 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>interpretation</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
     </dependencies>
 
     <build>
@@ -86,32 +57,6 @@
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.report.ReporterApplication</mainClass>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -133,7 +78,28 @@
                 </executions>
                 <configuration>
                     <jvmTarget>${kotlin.jvm.target}</jvmTarget>
+                    <compilerPlugins>
+                        <plugin>no-arg</plugin>
+                    </compilerPlugins>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-noarg</artifactId>
+                        <version>${kotlin.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

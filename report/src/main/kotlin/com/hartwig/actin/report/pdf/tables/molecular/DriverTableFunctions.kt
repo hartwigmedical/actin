@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 
 object DriverTableFunctions {
 

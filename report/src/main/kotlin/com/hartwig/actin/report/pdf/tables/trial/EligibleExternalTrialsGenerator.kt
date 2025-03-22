@@ -6,6 +6,9 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
+import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
@@ -72,5 +75,50 @@ class EligibleExternalTrialsGenerator(
             )
 
         return makeWrapping(table)
+    }
+
+    companion object {
+        fun provideExternalTrialsGenerators(
+            trialsProvider: TrialsProvider, contentWidth: Float, homeCountry: Country?, filtered: Boolean
+        ): Pair<TableGenerator?, TableGenerator?> {
+            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
+            val allEvidenceSources = trialsProvider.allEvidenceSources()
+            return Pair(
+                provideExternalTrialsGenerator(
+                    allEvidenceSources,
+                    summarizedExternalTrials.nationalTrials,
+                    contentWidth,
+                    homeCountry,
+                    filtered
+                ),
+                provideExternalTrialsGenerator(
+                    allEvidenceSources,
+                    summarizedExternalTrials.internationalTrials,
+                    contentWidth,
+                    null,
+                    filtered
+                )
+            )
+        }
+
+        private fun provideExternalTrialsGenerator(
+            allEvidenceSources: Set<String>,
+            molecularFilteredTrials: MolecularFilteredExternalTrials,
+            contentWidth: Float,
+            homeCountry: Country?,
+            filtered: Boolean
+        ): TableGenerator? {
+            val trials = if (filtered) molecularFilteredTrials.filtered else molecularFilteredTrials.originalMinusFiltered()
+            return if (trials.isNotEmpty()) {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    trials,
+                    contentWidth,
+                    molecularFilteredTrials.originalMinusFilteredSize(),
+                    homeCountry,
+                    filtered
+                )
+            } else null
+        }
     }
 }
