@@ -79,7 +79,7 @@ class EligibleExternalTrialsGenerator(
 
     companion object {
         fun provideExternalTrialsGenerators(
-            trialsProvider: TrialsProvider, contentWidth: Float, homeCountry: Country?, filtered: Boolean
+            trialsProvider: TrialsProvider, contentWidth: Float, homeCountry: Country?, isFilteredTrialsTable: Boolean
         ): Pair<TableGenerator?, TableGenerator?> {
             val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
             val allEvidenceSources = trialsProvider.allEvidenceSources()
@@ -89,14 +89,14 @@ class EligibleExternalTrialsGenerator(
                     summarizedExternalTrials.nationalTrials,
                     contentWidth,
                     homeCountry,
-                    filtered
+                    isFilteredTrialsTable
                 ),
                 provideExternalTrialsGenerator(
                     allEvidenceSources,
                     summarizedExternalTrials.internationalTrials,
                     contentWidth,
                     null,
-                    filtered
+                    isFilteredTrialsTable
                 )
             )
         }
@@ -106,9 +106,9 @@ class EligibleExternalTrialsGenerator(
             molecularFilteredTrials: MolecularFilteredExternalTrials,
             contentWidth: Float,
             homeCountry: Country?,
-            filtered: Boolean
+            isFilteredTrialsTable: Boolean
         ): TableGenerator? {
-            val trials = if (filtered) molecularFilteredTrials.filtered else molecularFilteredTrials.originalMinusFiltered()
+            val trials = if (isFilteredTrialsTable) molecularFilteredTrials.filtered else molecularFilteredTrials.originalMinusFiltered()
             return if (trials.isNotEmpty()) {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,
@@ -116,7 +116,7 @@ class EligibleExternalTrialsGenerator(
                     contentWidth,
                     molecularFilteredTrials.originalMinusFilteredSize(),
                     homeCountry,
-                    filtered
+                    isFilteredTrialsTable
                 )
             } else null
         }
