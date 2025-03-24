@@ -10,8 +10,8 @@ import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.util.MapFunctions
-import java.util.*
 import java.util.Collections.emptySortedSet
+import java.util.SortedSet
 
 class MolecularFilteredExternalTrials(
     private val original: Set<ExternalTrialSummary>,

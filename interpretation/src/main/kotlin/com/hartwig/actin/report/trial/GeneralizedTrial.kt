@@ -2,7 +2,7 @@ package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import java.util.*
+import java.util.SortedSet
 
 data class GeneralizedTrial(
     val trialId: String,
