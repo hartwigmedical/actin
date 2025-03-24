@@ -4,8 +4,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import java.time.LocalDate
 
-class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
+class ProteinIsWildTypeByIHC(private val protein: String, private val gene: String, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val allIHCTestsForProtein =
@@ -17,7 +18,8 @@ class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
         return if (hasOnlyWildTypeResults) {
             EvaluationFactory.pass("$protein is wild type by IHC")
         } else {
-            EvaluationFactory.undetermined("$protein wild type status by IHC unknown")
+            val additionalMessage = IHCMessagesFunctions.additionalMessageWhenGeneIsWildType(gene, record, maxTestAge)
+            EvaluationFactory.undetermined("$protein wild type status by IHC unknown$additionalMessage")
         }
     }
 

@@ -297,6 +297,22 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
             FunctionInput.ONE_TRANSPORTER -> {
                 listOf("OATP1B1")
             }
+
+            FunctionInput.ONE_PROTEIN -> {
+                listOf("FGFR2b")
+            }
+
+            FunctionInput.ONE_PROTEIN_ONE_INTEGER -> {
+                listOf("FGFR2b", "1")
+            }
+
+            FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER -> {
+                listOf("FGFR2b", "FGFR2", "1")
+            }
+
+            FunctionInput.ONE_PROTEIN_ONE_GENE -> {
+                listOf("FGFR2b", "FGFR2")
+            }
         }
     }
 

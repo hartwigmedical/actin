@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -56,7 +57,7 @@ class ComplicationConfigFactoryTest {
                 fields, arrayOf("input", "1", "name", icdExtensionTitle, "year", "12")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("Complication", "input", "year", "year", "integer")
+            CurationConfigValidationError(CurationCategory.COMPLICATION, "input", "year", "year", "integer")
         )
     }
 
@@ -67,7 +68,7 @@ class ComplicationConfigFactoryTest {
                 fields, arrayOf("input", "1", "name", icdExtensionTitle, "2023", "month")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("Complication", "input", "month", "month", "integer")
+            CurationConfigValidationError(CurationCategory.COMPLICATION, "input", "month", "month", "integer")
         )
     }
 
@@ -79,7 +80,7 @@ class ComplicationConfigFactoryTest {
             ).errors
         ).containsExactly(
             CurationConfigValidationError(
-                "Complication",
+                CurationCategory.COMPLICATION,
                 "input",
                 "icd",
                 "unknown title",

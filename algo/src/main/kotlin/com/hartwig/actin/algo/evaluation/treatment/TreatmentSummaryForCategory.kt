@@ -42,7 +42,7 @@ data class TreatmentSummaryForCategory(
                     matchesCategory && classification == null -> TreatmentSummaryForCategory(numApproximateMatches = 1)
                     else -> {
                         val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(
-                            treatmentHistoryEntry, category, treatmentEligibleToMatchTrials
+                            treatmentHistoryEntry, setOf(category), treatmentEligibleToMatchTrials
                         ) && treatmentHistoryEntryMayMatchTrials(treatmentHistoryEntry)
 
                         TreatmentSummaryForCategory(numPossibleTrialMatches = if (mayMatchAsTrial) 1 else 0)

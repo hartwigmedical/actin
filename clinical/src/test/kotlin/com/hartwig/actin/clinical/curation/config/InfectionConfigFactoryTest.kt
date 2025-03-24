@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -28,7 +29,7 @@ class InfectionConfigFactoryTest {
         val config = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("input", "interpretation", "invalid"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "Infection",
+                CurationCategory.INFECTION,
                 "input",
                 "icd",
                 "invalid",
