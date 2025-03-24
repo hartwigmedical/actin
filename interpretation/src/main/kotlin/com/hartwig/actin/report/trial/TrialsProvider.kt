@@ -56,53 +56,8 @@ class TrialsProvider(
         return nonEvaluableCohorts
     }
 
-    private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
+    fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
         return filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
-    }
-
-    private fun cohortsWithSlotsAvailableAsGeneralizedTrial(): List<GeneralizedTrial> {
-        return eligibleCohortsWithSlotsAvailableAndNotIgnore().map {
-            GeneralizedTrial(
-                trialId = it.trialId,
-                nctId = it.nctId,
-                source = sourceFromTrialSource(it.source),
-                acronym = it.acronym,
-                title = it.title,
-                isOpen = it.isOpen,
-                hasSlots = it.hasSlotsAvailable,
-                countries = locationsToCountryDetails(it.locations),
-                therapyNames = emptySortedSet(),
-                actinMolecularEvents = it.molecularEvents.toSortedSet(),
-                sourceMolecularEvents = emptySortedSet(),
-                applicableCancerTypes = emptySortedSet(),
-                url = ""
-            )
-        }
-    }
-
-    private fun summarizedNationalTrialsAsGeneralizedTrial(): List<GeneralizedTrial> {
-        val summarizedExternalTrials = summarizeExternalTrials()
-        return summarizedExternalTrials.nationalTrials.filtered.map {
-            GeneralizedTrial(
-                trialId = it.nctId,
-                nctId = it.nctId,
-                source = "CKB",
-                acronym = null,
-                title = it.title,
-                isOpen = null,
-                hasSlots = null,
-                countries = it.countries,
-                therapyNames = emptySortedSet(),
-                actinMolecularEvents = it.actinMolecularEvents,
-                sourceMolecularEvents = it.sourceMolecularEvents,
-                applicableCancerTypes = it.applicableCancerTypes,
-                url = it.url
-            )
-        }
-    }
-
-    fun allTrialsForOncoAct(): List<GeneralizedTrial> {
-        return cohortsWithSlotsAvailableAsGeneralizedTrial() + summarizedNationalTrialsAsGeneralizedTrial()
     }
 
     fun allEvidenceSources(): Set<String> {
@@ -161,15 +116,6 @@ class TrialsProvider(
             return cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
             }
-        }
-
-        fun locationsToCountryDetails(location: List<String>): SortedSet<CountryDetails> {
-            return location.map { l -> CountryDetails(Country.NETHERLANDS, mapOf(Pair("", setOf(Hospital(l, false))))) }
-                .toSortedSet(Comparator.comparing { c -> c.country })
-        }
-
-        fun sourceFromTrialSource(source: TrialSource?): String {
-            return source?.name ?: "ACTIN"
         }
     }
 }
