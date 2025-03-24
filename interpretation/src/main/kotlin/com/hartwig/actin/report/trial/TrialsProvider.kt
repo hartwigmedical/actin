@@ -48,6 +48,10 @@ class TrialsProvider(
         return cohorts
     }
 
+    fun allEvaluableCohortsAndNotIgnore(): List<InterpretedCohort> {
+        return cohorts.filter { !it.ignore }
+    }
+
     fun allNonEvaluableCohorts(): List<InterpretedCohort> {
         return nonEvaluableCohorts
     }
