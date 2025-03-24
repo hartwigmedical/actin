@@ -12,11 +12,13 @@ private enum class CopyNumberEvaluation {
     REPORTABLE_SUFFICIENT_COPY_NUMBER,
     SUFFICIENT_COPY_NUMBER_WITH_LOSS_OF_FUNCTION,
     SUFFICIENT_COPY_NUMBER_ON_NON_ONCOGENE,
-    UNREPORTABLE_SUFFICIENT_COPY_NUMBER;
+    UNREPORTABLE_SUFFICIENT_COPY_NUMBER,
+    INSUFFICIENT_COPY_NUMBER;
 
     companion object {
-        fun fromCopyNumber(copyNumber: CopyNumber): CopyNumberEvaluation {
-            return when {
+        fun fromCopyNumber(copyNumber: CopyNumber, requestedMinCopyNumber: Int): CopyNumberEvaluation {
+            return if (copyNumber.canonicalImpact.minCopies >= requestedMinCopyNumber) {
+                when {
                     copyNumber.geneRole == GeneRole.TSG -> {
                         SUFFICIENT_COPY_NUMBER_ON_NON_ONCOGENE
                     }
@@ -34,8 +36,11 @@ private enum class CopyNumberEvaluation {
                         REPORTABLE_SUFFICIENT_COPY_NUMBER
                     }
                 }
+            } else {
+                INSUFFICIENT_COPY_NUMBER
             }
         }
+    }
 }
 
 class GeneHasSufficientCopyNumber(private val gene: String, private val requestedMinCopyNumber: Int, maxTestAge: LocalDate? = null) :
@@ -44,29 +49,32 @@ class GeneHasSufficientCopyNumber(private val gene: String, private val requeste
     override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = test.drivers.copyNumbers.filter { copyNumber ->
-            copyNumber.gene == gene && (copyNumber.canonicalImpact.minCopies >= requestedMinCopyNumber)
-        }
-            .groupBy({ copyNumber ->
-                CopyNumberEvaluation.fromCopyNumber(copyNumber)
-            }, valueTransform = CopyNumber::event)
-            .mapValues { (_, copyNumberEvents) -> copyNumberEvents.toSet() }
+        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = test.drivers.copyNumbers
+            .filter { it.gene == gene }
+            .groupingBy { CopyNumberEvaluation.fromCopyNumber(it, requestedMinCopyNumber) }
+            .fold(emptySet()) { acc, copyNumber -> acc + copyNumber.event }
 
         val eventsOnNonCanonical = test.drivers.copyNumbers.filter { copyNumber ->
             copyNumber.gene == gene && copyNumber.otherImpacts.any { it.minCopies >= requestedMinCopyNumber }
         }.map { it.event }.toSet()
 
-        return evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_SUFFICIENT_COPY_NUMBER]?.let { reportableSufficientCN ->
-            EvaluationFactory.pass("$gene copy number is above requested $requestedMinCopyNumber", inclusionEvents = reportableSufficientCN)
-        }
-            ?: evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER]?.let { unreportableSufficientCN ->
+        return when {
+            evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_SUFFICIENT_COPY_NUMBER] != null -> {
+                val reportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_SUFFICIENT_COPY_NUMBER]!!
+                EvaluationFactory.pass("$gene copy number is above requested $requestedMinCopyNumber", inclusionEvents = reportableSufficientCN)
+            }
+
+            evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER] != null -> {
+                val unreportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER]!!
                 EvaluationFactory.pass(
                     "$gene has a copy number >$requestedMinCopyNumber copies but is considered not reportable",
                     inclusionEvents = unreportableSufficientCN
                 )
             }
-            ?: evaluatePotentialWarns(evaluatedCopyNumbers, eventsOnNonCanonical, test.evidenceSource)
-            ?: EvaluationFactory.fail("Insufficient copies of $gene")
+
+            else -> evaluatePotentialWarns(evaluatedCopyNumbers, eventsOnNonCanonical, test.evidenceSource)
+                ?: EvaluationFactory.fail("Insufficient copies of $gene")
+        }
     }
 
     private fun evaluatePotentialWarns(
