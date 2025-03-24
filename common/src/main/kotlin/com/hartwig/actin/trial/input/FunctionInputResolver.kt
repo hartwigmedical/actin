@@ -51,6 +51,7 @@ import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneProtein
+import com.hartwig.actin.trial.input.single.OneProteinOneGene
 import com.hartwig.actin.trial.input.single.OneProteinOneInteger
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
@@ -65,6 +66,7 @@ import com.hartwig.actin.trial.input.single.OneTreatmentTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoStrings
+import com.hartwig.actin.trial.input.single.OneProteinOneGeneOneInteger
 import com.hartwig.actin.trial.input.single.TwoTreatmentCategoriesManyTypes
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -401,6 +403,16 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_PROTEIN_ONE_INTEGER -> {
                     createOneProteinOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER -> {
+                    createOneProteinOneGeneOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN_ONE_GENE -> {
+                    createOneProteinOneGeneInput(function)
                     return true
                 }
 
@@ -760,18 +772,18 @@ class FunctionInputResolver(
 
     fun createOneGeneInput(function: EligibilityFunction): OneGene {
         assertParamConfig(function, FunctionInput.ONE_GENE, 1)
-        return OneGene(firstParameterAsGene(function))
+        return OneGene(parameterAsGene(function, 0))
     }
 
     fun createOneGeneOneIntegerInput(function: EligibilityFunction): OneGeneOneInteger {
         assertParamConfig(function, FunctionInput.ONE_GENE_ONE_INTEGER, 2)
-        return OneGeneOneInteger(geneName = firstParameterAsGene(function), integer = (function.parameters[1] as String).toInt())
+        return OneGeneOneInteger(geneName = parameterAsGene(function, 0), integer = (function.parameters[1] as String).toInt())
     }
 
     fun createOneGeneOneIntegerOneVariantTypeInput(function: EligibilityFunction): OneGeneOneIntegerOneVariantType {
         assertParamConfig(function, FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE, 3)
         return OneGeneOneIntegerOneVariantType(
-            geneName = firstParameterAsGene(function),
+            geneName = parameterAsGene(function, 0),
             integer = (function.parameters[1] as String).toInt(),
             variantType = VariantTypeInput.valueOf(function.parameters[2] as String)
         )
@@ -780,7 +792,7 @@ class FunctionInputResolver(
     fun createOneGeneTwoIntegersInput(function: EligibilityFunction): OneGeneTwoIntegers {
         assertParamConfig(function, FunctionInput.ONE_GENE_TWO_INTEGERS, 3)
         return OneGeneTwoIntegers(
-            geneName = firstParameterAsGene(function),
+            geneName = parameterAsGene(function, 0),
             integer1 = (function.parameters[1] as String).toInt(),
             integer2 = (function.parameters[2] as String).toInt()
         )
@@ -794,12 +806,12 @@ class FunctionInputResolver(
                 throw IllegalStateException("Not a valid codon: $codon")
             }
         }
-        return OneGeneManyCodons(geneName = firstParameterAsGene(function), codons = codons)
+        return OneGeneManyCodons(geneName = parameterAsGene(function, 0), codons = codons)
     }
 
     fun createOneGeneManyProteinImpactsInput(function: EligibilityFunction): OneGeneManyProteinImpacts {
         assertParamConfig(function, FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS, 2)
-        val gene = firstParameterAsGene(function)
+        val gene = parameterAsGene(function, 0)
         val proteinImpacts = toStringList(function.parameters[1]).toSet()
         for (proteinImpact in proteinImpacts) {
             if (!MolecularInputChecker.isProteinImpact(proteinImpact)) {
@@ -969,12 +981,26 @@ class FunctionInputResolver(
         return OneProteinOneInteger(proteinName = parameterAsString(function, 0), integer = (function.parameters[1] as String).toInt())
     }
 
+    fun createOneProteinOneGeneOneIntegerInput(function: EligibilityFunction): OneProteinOneGeneOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER, 3)
+        return OneProteinOneGeneOneInteger(
+            proteinName = parameterAsString(function, 0),
+            geneName = parameterAsGene(function, 1),
+            integer = parameterAsInt(function, 2)
+        )
+    }
+
+    fun createOneProteinOneGeneInput(function: EligibilityFunction): OneProteinOneGene {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_GENE, 2)
+        return OneProteinOneGene(proteinName = parameterAsString(function, 0), geneName = parameterAsGene(function, 1))
+    }
+
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String
 
     private fun parameterAsInt(function: EligibilityFunction, i: Int) = parameterAsString(function, i).toInt()
 
-    private fun firstParameterAsGene(function: EligibilityFunction): String {
-        val gene = parameterAsString(function, 0)
+    private fun parameterAsGene(function: EligibilityFunction, i: Int): String {
+        val gene = parameterAsString(function, i)
         if (!molecularInputChecker.isGene(gene)) {
             throw IllegalStateException("Not a valid gene: $gene")
         }
