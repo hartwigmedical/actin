@@ -11,12 +11,12 @@ import java.time.LocalDate
 
 class LabMeasurementEvaluator(
     private val measurement: LabMeasurement, private val function: LabEvaluationFunction,
-    private val minValidDate: LocalDate, private val minPassDate: LocalDate
+    private val minValidDate: LocalDate, private val minPassDate: LocalDate, private val highestFirst: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpretation.interpret(record.labValues)
-        val mostRecent = interpretation.mostRecentValue(measurement)
+        val mostRecent = interpretation.mostRecentValue(measurement, highestFirst)
         if (!LabEvaluation.isValid(mostRecent, measurement, minValidDate)) {
             return evaluateInvalidLabValue(measurement, mostRecent, minValidDate)
         }

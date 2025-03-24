@@ -327,8 +327,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { HasPotentialSymptomaticHypercalcemia(minValidLabDate()) }
     }
 
-    private fun createLabEvaluator(measurement: LabMeasurement, function: LabEvaluationFunction): EvaluationFunction {
-        return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate())
+    private fun createLabEvaluator(measurement: LabMeasurement, highestFirst: Boolean, function: LabEvaluationFunction): EvaluationFunction {
+        return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate(), highestFirst)
     }
 
     private fun minValidLabDate(): LocalDate {
