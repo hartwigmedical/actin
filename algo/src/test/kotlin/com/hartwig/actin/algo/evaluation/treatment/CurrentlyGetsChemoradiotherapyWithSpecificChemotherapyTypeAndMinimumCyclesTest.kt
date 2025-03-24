@@ -59,6 +59,70 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         assertResultForPatient(EvaluationResult.UNDETERMINED, DrugType.ALK_INHIBITOR, 1, record)
     }
 
+    @Test
+    fun `Should FAIL for matching treatment with insufficient cycles`() {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = 10)
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
+        assertResultForPatient(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, 20, record)
+    }
+
+    @Test
+    fun `Should FAIL if the end date is null but there is a newer treatment`() {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
+            startYear = 2020
+        )
+        val newerTreatment = TreatmentHistoryEntry(
+            treatments = setOf(TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.ABLATION)),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
+            startYear = 2022
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment, newerTreatment))
+        assertResultForPatient(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, 1, record)
+    }
+
+    @Test
+    fun `Should PASS if the end date is null but there is another treatment with an unknown start date`() {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
+            startYear = 2020
+        )
+        val newerTreatment = TreatmentHistoryEntry(
+            treatments = setOf(TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.ABLATION)),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
+            startYear = null
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment, newerTreatment))
+        assertResultForPatient(EvaluationResult.PASS, DrugType.ALK_INHIBITOR, 1, record)
+    }
+
+    @Test
+    fun `Should be UNDETERMINED if there is a chemotherapy of unknown type with sufficient cycles`() {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                Radiotherapy("Radiotherapy", radioType = null)
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = 10)
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
+        assertResultForPatient(EvaluationResult.UNDETERMINED, DrugType.ALK_INHIBITOR, 1, record)
+    }
+
     private fun assertResultForPatient(evaluationResult: EvaluationResult, type: TreatmentType, minCycles: Int, record: PatientRecord) {
         val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
             type, minCycles, LocalDate.of(1900, 1, 1)
