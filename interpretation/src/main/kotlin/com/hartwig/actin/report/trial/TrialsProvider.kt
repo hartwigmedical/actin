@@ -56,12 +56,12 @@ class TrialsProvider(
         return nonEvaluableCohorts
     }
 
-    fun cohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
+    private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
         return filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
     }
 
     private fun cohortsWithSlotsAvailableAsGeneralizedTrial(): List<GeneralizedTrial> {
-        return cohortsWithSlotsAvailableAndNotIgnore().map {
+        return eligibleCohortsWithSlotsAvailableAndNotIgnore().map {
             GeneralizedTrial(
                 it.trialId,
                 it.nctId,
@@ -110,7 +110,7 @@ class TrialsProvider(
     }
 
     fun summarizeExternalTrials(): SummarizedExternalTrials {
-        val evaluated = cohortsWithSlotsAvailableAndNotIgnore()
+        val evaluated = eligibleCohortsWithSlotsAvailableAndNotIgnore()
         val externalEligibleTrials =
             MapFunctions.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
                 AggregatedEvidenceFactory.create(it).eligibleTrialsPerEvent
