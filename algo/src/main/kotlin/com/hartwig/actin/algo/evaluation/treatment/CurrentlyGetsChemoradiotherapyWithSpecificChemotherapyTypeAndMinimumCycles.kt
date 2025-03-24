@@ -24,6 +24,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         else{
             latestStartAll
         }
+
         val treatmentMatches = record.oncologicalHistory.groupBy {
             val matchingCategories = it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY))
 
