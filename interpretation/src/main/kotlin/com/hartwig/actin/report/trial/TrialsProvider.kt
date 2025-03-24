@@ -63,19 +63,19 @@ class TrialsProvider(
     private fun cohortsWithSlotsAvailableAsGeneralizedTrial(): List<GeneralizedTrial> {
         return eligibleCohortsWithSlotsAvailableAndNotIgnore().map {
             GeneralizedTrial(
-                it.trialId,
-                it.nctId,
-                sourceFromTrialSource(it.source),
-                it.acronym,
-                it.title,
-                it.isOpen,
-                it.hasSlotsAvailable,
-                locationsToCountryDetails(it.locations),
-                emptySortedSet(),
-                it.molecularEvents.toSortedSet(),
-                emptySortedSet(),
-                emptySortedSet(),
-                ""
+                trialId = it.trialId,
+                nctId = it.nctId,
+                source = sourceFromTrialSource(it.source),
+                acronym = it.acronym,
+                title = it.title,
+                isOpen = it.isOpen,
+                hasSlots = it.hasSlotsAvailable,
+                countries = locationsToCountryDetails(it.locations),
+                therapyNames = emptySortedSet(),
+                actinMolecularEvents = it.molecularEvents.toSortedSet(),
+                sourceMolecularEvents = emptySortedSet(),
+                applicableCancerTypes = emptySortedSet(),
+                url = ""
             )
         }
     }
@@ -84,19 +84,19 @@ class TrialsProvider(
         val summarizedExternalTrials = summarizeExternalTrials()
         return summarizedExternalTrials.nationalTrials.filtered.map {
             GeneralizedTrial(
-                it.nctId,
-                it.nctId,
-                "CKB",
-                null,
-                it.title,
-                null,
-                null,
-                it.countries,
-                emptySortedSet(),
-                it.actinMolecularEvents,
-                it.sourceMolecularEvents,
-                it.applicableCancerTypes,
-                it.url
+                trialId = it.nctId,
+                nctId = it.nctId,
+                source = "CKB",
+                acronym = null,
+                title = it.title,
+                isOpen = null,
+                hasSlots = null,
+                countries = it.countries,
+                therapyNames = emptySortedSet(),
+                actinMolecularEvents = it.actinMolecularEvents,
+                sourceMolecularEvents = it.sourceMolecularEvents,
+                applicableCancerTypes = it.applicableCancerTypes,
+                url = it.url
             )
         }
     }
