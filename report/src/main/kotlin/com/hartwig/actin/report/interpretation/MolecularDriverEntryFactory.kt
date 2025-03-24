@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
@@ -46,7 +47,9 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val (variantCopyString, totalCopyString) = variantAndTotalCopies.map(::formatCopyNumberString)
 
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
-        val codingImpactAnnotation = variant.canonicalImpact.hgvsCodingImpact.takeIf { it.isNotEmpty() }?.let { " ($it)" } ?: ""
+        val codingImpactAnnotation = with(variant.canonicalImpact) {
+            hgvsCodingImpact.takeIf { it.isNotEmpty() && this.codingEffect != CodingEffect.SPLICE }?.let { " ($it)" } ?: ""
+        }
         val name = "${variant.event}$codingImpactAnnotation, $variantCopyString/$totalCopyString copies$subClonalIndicator"
 
         return driverEntryForGeneAlteration(driverType, name, variant)
