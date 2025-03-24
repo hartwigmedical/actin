@@ -44,8 +44,8 @@ class TrialMatchingChapter(
 
         val requestingSource = TrialSource.fromDescription(report.requestingHospital)
 
-        val (primaryEvaluableCohorts, otherEvaluableCohorts) = partitionBySource(trialsProvider.allEvaluableCohorts(), requestingSource)
-        val (primaryNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionBySource(trialsProvider.allNonEvaluableCohorts(), requestingSource)
+        val (primaryEvaluableCohorts, otherEvaluableCohorts) = partitionBySource(trialsProvider.evaluableCohorts(), requestingSource)
+        val (primaryNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionBySource(trialsProvider.nonEvaluableCohorts(), requestingSource)
 
         val primaryCohortGenerators = createActinTrialGenerators(
             primaryEvaluableCohorts, primaryNonEvaluableCohorts, report.requestingHospital, false

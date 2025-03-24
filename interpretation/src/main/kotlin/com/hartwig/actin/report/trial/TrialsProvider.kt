@@ -44,15 +44,15 @@ class TrialsProvider(
     )
     private val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
 
-    fun allEvaluableCohorts(): List<InterpretedCohort> {
+    fun evaluableCohorts(): List<InterpretedCohort> {
         return cohorts
     }
 
-    fun allEvaluableCohortsAndNotIgnore(): List<InterpretedCohort> {
+    fun evaluableCohortsAndNotIgnore(): List<InterpretedCohort> {
         return cohorts.filter { !it.ignore }
     }
 
-    fun allNonEvaluableCohorts(): List<InterpretedCohort> {
+    fun nonEvaluableCohorts(): List<InterpretedCohort> {
         return nonEvaluableCohorts
     }
 

@@ -66,7 +66,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
 
         return listOf(
-            SummaryChapter(report, this, trialsProvider.allEvaluableCohortsAndNotIgnore()),
+            SummaryChapter(report, this, trialsProvider.evaluableCohortsAndNotIgnore()),
             PersonalizedEvidenceChapter(
                 report,
                 include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
@@ -80,7 +80,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             ),
             LongitudinalMolecularHistoryChapter(
                 report,
-                trialsProvider.allEvaluableCohortsAndNotIgnore(),
+                trialsProvider.evaluableCohortsAndNotIgnore(),
                 include = report.config.includeLongitudinalMolecularChapter
             ),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
