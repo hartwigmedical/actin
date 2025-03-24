@@ -117,11 +117,11 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should return undetermined non empty treatment list when SOC exhaustion cannot be evaluated`() {
+    fun `Should return not evaluated for non empty treatment list when SOC cannot be evaluated`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(nonEmptyTreatmentList)
         val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
     }
 
     private fun setStandardOfCareCanBeEvaluatedForPatient(canBeEvaluated: Boolean) {

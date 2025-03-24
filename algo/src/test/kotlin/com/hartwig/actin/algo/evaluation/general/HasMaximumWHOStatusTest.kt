@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasMaximumWHOStatusTest {
@@ -21,8 +22,10 @@ class HasMaximumWHOStatusTest {
     }
 
     @Test
-    fun `Should warn when WHO difference is exactly one`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(GeneralTestFactory.withWHO(3)))
+    fun `Should return recoverable fail when WHO difference is exactly one`() {
+        val evaluation = function.evaluate(GeneralTestFactory.withWHO(3))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
