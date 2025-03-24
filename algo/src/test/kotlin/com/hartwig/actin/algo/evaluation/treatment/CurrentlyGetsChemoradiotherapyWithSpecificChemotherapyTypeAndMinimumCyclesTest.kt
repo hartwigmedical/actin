@@ -60,7 +60,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Should FAIL for matching treatment with insufficient cycles`() {
+    fun `Should fail for matching treatment with insufficient cycles`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
@@ -73,7 +73,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Should FAIL if the end date is null but there is a newer treatment`() {
+    fun `Should fail if the end date is null but there is a newer treatment`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
@@ -92,7 +92,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Should PASS if the end date is null but there is another treatment with an unknown start date`() {
+    fun `Should pass if the end date is null but there is another treatment with an unknown start date`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
@@ -111,7 +111,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Should be UNDETERMINED if there is a chemotherapy of unknown type with sufficient cycles`() {
+    fun `Should be undetermined if there is a chemotherapy of unknown type with sufficient cycles`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
