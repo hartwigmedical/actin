@@ -57,7 +57,7 @@ class PrimaryTumorConfigFactoryTest {
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.PRIMARY_TUMOR.categoryName,
+                CurationCategory.PRIMARY_TUMOR,
                 "input",
                 "doids",
                 "[123]",

@@ -77,6 +77,7 @@ enum class LabMeasurement(val display: String, val defaultUnit: LabUnit) : Displ
     DIRECT_BILIRUBIN("direct bilirubin", LabUnit.MICROMOLES_PER_LITER),
     DNA_CONC_A("DNA concentration A", LabUnit.MICROGRAMS_PER_MICROLITER),
     DNA_CONC_B("DNA concentration B", LabUnit.MICROGRAMS_PER_MICROLITER),
+    ELASTASE_FAECES("Elastase in faeces", LabUnit.GRAMS),
     ELEVEN_DESOXYCORTISOL("DOC", LabUnit.NANOMOLES_PER_LITER),
     DSDNA_ANTIBODIES("dsDNA antibodies", LabUnit.INTERNATIONAL_UNITS_PER_MILLILITER),
     EGFR_CKD_EPI("estimated GFR (CKD-EPI)", LabUnit.MILLILITERS_PER_MINUTE),

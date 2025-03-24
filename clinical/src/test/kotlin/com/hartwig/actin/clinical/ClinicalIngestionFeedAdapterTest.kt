@@ -16,6 +16,7 @@ import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.UnusedCurationConfig
@@ -82,14 +83,9 @@ class ClinicalIngestionFeedAdapterTest {
     @Test
     fun `Output should not have changed`() {
         val jsonMapper = ObjectMapper()
-        val ingestionResult = adapter.run()
-        assertThat(
-            jsonMapper.readTree(
-                ClinicalRecordJson.toJson(
-                    ingestionResult.patientResults[0].clinicalRecord
-                )
-            )
-        ).isEqualTo(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText()))
+        val ingestionResult = adapter.run().second
+        assertThat(jsonMapper.readTree(ClinicalRecordJson.toJson(ingestionResult.first())))
+            .isEqualTo(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText()))
     }
 
     @Test
@@ -99,14 +95,12 @@ class ClinicalIngestionFeedAdapterTest {
         val validationErrors = curationDatabase.validate()
         assertThat(validationErrors).isEmpty()
 
-        val ingestionResult = adapter.run()
+        val (ingestionResult, clinicalRecords) = adapter.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
         assertThat(patientResults).hasSize(1)
         assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
-        assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
-        assertThat(patientResults[0].clinicalRecord.surgeries.size).isEqualTo(1)
         assertThat(patientResults[0].questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probbly'"))
         assertThat(patientResults[0].feedValidationWarnings).containsExactly(
@@ -115,30 +109,32 @@ class ClinicalIngestionFeedAdapterTest {
                 "Empty vital function value"
             )
         )
+        assertThat(clinicalRecords.first()).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
+        assertThat(clinicalRecords.first().surgeries.size).isEqualTo(1)
 
         assertThat(ingestionResult.unusedConfigs).containsExactlyInAnyOrder(
-            UnusedCurationConfig(categoryName = "Oncological History", input = "capecitabine and oxi"),
-            UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
-            UnusedCurationConfig(categoryName = "Primary Tumor", input = "carcinoma | unknown"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "pijn bij maligne neoplasma van longen"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "sarcoidose"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "overige"),
-            UnusedCurationConfig(categoryName = "Lesion Location", input = "brain"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "dysphagia"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "neuropathy gr3"),
-            UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "immunohistochemie erbb2 3+"),
-            UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
-            UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
-            UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
-            UnusedCurationConfig(categoryName = "Surgery Name", input = "surgery1"),
-            UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "morfine"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "nikkel"),
-            UnusedCurationConfig(categoryName = "Toxicity Translation", input = "Nausea"),
-            UnusedCurationConfig(categoryName= "Lab Measurement", input= "hb | hemoglobine"),
-            UnusedCurationConfig(categoryName="Lab Measurement", input= "plt | trombocyten"),
-            UnusedCurationConfig(categoryName="Lab Measurement", input= "dc_lymfo | lymfocyten"),
-            UnusedCurationConfig(categoryName="Lab Measurement", input= "bg_o2sgem | o2-saturatie gemeten")
+            UnusedCurationConfig(category = CurationCategory.ONCOLOGICAL_HISTORY, input = "capecitabine and oxi"),
+            UnusedCurationConfig(category = CurationCategory.PRIMARY_TUMOR, input = "long | metastase adenocarcinoom"),
+            UnusedCurationConfig(category = CurationCategory.PRIMARY_TUMOR, input = "carcinoma | unknown"),
+            UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "pijn bij maligne neoplasma van longen"),
+            UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "sarcoidose"),
+            UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "overige"),
+            UnusedCurationConfig(category = CurationCategory.LESION_LOCATION, input = "brain"),
+            UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "dysphagia"),
+            UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "neuropathy gr3"),
+            UnusedCurationConfig(category = CurationCategory.MOLECULAR_TEST_IHC, input = "immunohistochemie erbb2 3+"),
+            UnusedCurationConfig(category = CurationCategory.MOLECULAR_TEST_PDL1, input = "cps pd l1 > 20"),
+            UnusedCurationConfig(category = CurationCategory.DOSAGE_UNIT_TRANSLATION, input = "stuk"),
+            UnusedCurationConfig(category = CurationCategory.SEQUENCING_TEST, input = "kras g12f"),
+            UnusedCurationConfig(category = CurationCategory.SURGERY_NAME, input = "surgery1"),
+            UnusedCurationConfig(category = CurationCategory.LESION_LOCATION, input = "and possibly lymph nodes"),
+            UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "morfine"),
+            UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "nikkel"),
+            UnusedCurationConfig(category = CurationCategory.TOXICITY_TRANSLATION, input = "Nausea"),
+            UnusedCurationConfig(category = CurationCategory.LAB_MEASUREMENT, input = "hb | hemoglobine"),
+            UnusedCurationConfig(category = CurationCategory.LAB_MEASUREMENT, input = "plt | trombocyten"),
+            UnusedCurationConfig(category = CurationCategory.LAB_MEASUREMENT, input = "dc_lymfo | lymfocyten"),
+            UnusedCurationConfig(category = CurationCategory.LAB_MEASUREMENT, input = "bg_o2sgem | o2-saturatie gemeten")
         )
 
         val gson = GsonSerializer.create()
@@ -153,7 +149,6 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(deserialized.patientResults).extracting(
             PatientIngestionResult::patientId,
             PatientIngestionResult::status,
-            PatientIngestionResult::clinicalRecord,
             PatientIngestionResult::curationResults,
             PatientIngestionResult::questionnaireCurationErrors,
             PatientIngestionResult::feedValidationWarnings
@@ -162,7 +157,6 @@ class ClinicalIngestionFeedAdapterTest {
                 tuple(
                     patientIngestionResult.patientId,
                     patientIngestionResult.status,
-                    null,
                     patientIngestionResult.curationResults,
                     patientIngestionResult.questionnaireCurationErrors,
                     patientIngestionResult.feedValidationWarnings

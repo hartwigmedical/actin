@@ -7,9 +7,7 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.util.Either
-import com.hartwig.actin.util.getOrNull
 import com.hartwig.actin.util.left
-import com.hartwig.actin.util.leftOrNull
 import com.hartwig.actin.util.partitionAndJoin
 import com.hartwig.actin.util.right
 
@@ -26,7 +24,7 @@ data class EligibilityMappingError(val inclusionRule: String, val error: String)
 class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
     fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, List<Trial>> {
-        val trialsAndUnmappableTrial = config.map { trialState ->
+        val trialsAndUnmappableTrials = config.map { trialState ->
             val (trialErrors, criteria) = trialState.inclusionCriterion.map {
                 toEligibility(
                     inclusionCriterion = it
@@ -68,8 +66,8 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                 ).right()
             else UnmappableTrial(trialId = trialState.trialId, trialErrors, unmappableCohorts).left()
         }
-        return if (trialsAndUnmappableTrial.any { it.isLeft }) trialsAndUnmappableTrial.mapNotNull { it.leftOrNull() }
-            .left() else trialsAndUnmappableTrial.mapNotNull { it.getOrNull() }.right()
+        val (errors, trials) = trialsAndUnmappableTrials.partitionAndJoin()
+        return if (errors.isNotEmpty()) errors.left() else trials.right()
     }
 
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =

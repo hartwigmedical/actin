@@ -66,9 +66,9 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
 
     private fun hadCombinationWithTrialWithUnknownType(record: PatientRecord): Boolean {
         return containsCategoryOfTypes(record, category1, types1, true).any {
-            TrialFunctions.treatmentMayMatchAsTrial(it, category2)
+            TrialFunctions.treatmentMayMatchAsTrial(it, setOf(category2))
         } || containsCategoryOfTypes(record, category2, types2, true).any {
-            TrialFunctions.treatmentMayMatchAsTrial(it, category1)
+            TrialFunctions.treatmentMayMatchAsTrial(it, setOf(category1))
         }
     }
 }

@@ -60,7 +60,7 @@ data class CurationDatabaseContext(
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
 ) {
-    fun allUnusedConfig(extractionEvaluations: List<CurationExtractionEvaluation>): Set<UnusedCurationConfig> {
+    fun allUnusedConfig(extractionEvaluation: CurationExtractionEvaluation): Set<UnusedCurationConfig> {
         val unusedCurationConfigs = listOf(
             primaryTumorCuration,
             treatmentHistoryEntryCuration,
@@ -75,13 +75,13 @@ data class CurationDatabaseContext(
             medicationDosageCuration,
             surgeryNameCuration,
             labMeasurementCuration
-        ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet()
+        ).flatMap { it.reportUnusedConfig(extractionEvaluation) }.toSet()
 
         val unusedTranslations = listOf(
             administrationRouteTranslation,
             toxicityTranslation,
             dosageUnitTranslation
-        ).flatMap { it.reportUnusedTranslations(extractionEvaluations) }
+        ).flatMap { it.reportUnusedTranslations(extractionEvaluation) }
 
         return unusedCurationConfigs + unusedTranslations
     }

@@ -65,7 +65,7 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
 
             her2ReceptorIsPositive == null -> {
                 return if (!(positiveArguments || negativeArguments)) {
-                    EvaluationFactory.undetermined( "IHC HER2 expression not deterministic by IHC")
+                    EvaluationFactory.undetermined("IHC HER2 expression not deterministic by IHC")
                 } else {
                     EvaluationFactory.warn("Conflicting IHC HER2 expression test results")
                 }

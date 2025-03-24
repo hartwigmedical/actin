@@ -4,8 +4,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import java.time.LocalDate
 
-class ProteinIsLostByIHC(private val protein: String) : EvaluationFunction {
+class ProteinIsLostByIHC(private val protein: String, private val gene: String, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, protein)
@@ -24,7 +25,8 @@ class ProteinIsLostByIHC(private val protein: String) : EvaluationFunction {
             }
 
             else -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
+                val additionalMessage = IHCMessagesFunctions.additionalMessageWhenGeneIsWildType(gene, record, maxTestAge)
+                EvaluationFactory.undetermined("No $protein IHC test result$additionalMessage", isMissingMolecularResultForEvaluation = true)
             }
         }
     }

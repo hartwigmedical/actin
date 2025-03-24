@@ -1,20 +1,20 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import kotlin.reflect.full.memberProperties
 
 class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<SequencingTestConfig>) :
@@ -32,24 +32,26 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                 val allResults =
                     removeCurated(removeCurated(nonIHCTestResults, mandatoryCurationTestResults), optionalCurationTestResults) +
                             extract(mandatoryCurationTestResults) + extract(optionalCurationTestResults)
-                if (allResults.isNotEmpty()) ExtractionResult(
-                    listOf(
-                        PriorSequencingTest(
-                            test = test.test,
-                            date = test.date,
-                            testedGenes = test.testedGenes,
-                            variants = variants(allResults),
-                            fusions = fusions(allResults),
-                            amplifications = amplifications(allResults),
-                            skippedExons = skippedExons(allResults),
-                            deletedGenes = geneDeletions(allResults),
-                            isMicrosatelliteUnstable = msi(allResults),
-                            tumorMutationalBurden = tmb(allResults),
-                        )
-                    ),
-                    mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
-                        .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
-                ) else null
+                if (allResults.isNotEmpty()) {
+                    ExtractionResult(
+                        listOf(
+                            PriorSequencingTest(
+                                test = test.test,
+                                date = test.date,
+                                variants = variants(allResults),
+                                fusions = fusions(allResults),
+                                amplifications = amplifications(allResults),
+                                skippedExons = skippedExons(allResults),
+                                deletedGenes = geneDeletions(allResults),
+                                isMicrosatelliteUnstable = msi(allResults),
+                                tumorMutationalBurden = tmb(allResults),
+                                noMutationGenes = noMutations(test.testedGenes ?: emptySet(), allResults)
+                            )
+                        ),
+                        mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
+                            .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
+                    )
+                } else null
             } else {
                 null
             }
@@ -59,6 +61,15 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         ) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }
+    }
+
+    private fun noMutations(providedTestedGenes: Set<String>, allResults: Set<ProvidedMolecularTestResult>): Set<String> {
+        val impliedNoMutations =
+            providedTestedGenes - (allResults.filter { it.noMutationsFound != true }
+                .map { it.gene } + allResults.map { it.deletedGene } + allResults.map { it.fusionGeneUp } + allResults.map { it.fusionGeneDown } + allResults.map { it.amplifiedGene }).filterNotNull()
+                .toSet()
+        val explicitNoMutations = allResults.filter { it.noMutationsFound == true }.mapNotNull { it.gene }
+        return impliedNoMutations + explicitNoMutations
     }
 
     private fun patientQualifiedTestName(patientId: String, test: ProvidedMolecularTest) = "$patientId | ${test.test}"
