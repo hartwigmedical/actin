@@ -65,7 +65,7 @@ class TrialsProvider(
             GeneralizedTrial(
                 it.trialId,
                 it.nctId,
-                sourceFromTrailSource(it.source),
+                sourceFromTrialSource(it.source),
                 it.acronym,
                 it.title,
                 it.isOpen,
@@ -168,7 +168,7 @@ class TrialsProvider(
                 .toSortedSet(Comparator.comparing { c -> c.country })
         }
 
-        fun sourceFromTrailSource(source: TrialSource?): String {
+        fun sourceFromTrialSource(source: TrialSource?): String {
             return source?.name ?: "ACTIN"
         }
     }
