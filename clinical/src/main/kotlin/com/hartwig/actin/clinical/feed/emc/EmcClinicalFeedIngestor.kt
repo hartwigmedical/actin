@@ -181,8 +181,8 @@ class EmcClinicalFeedIngestor(
         val curationResults = curationResultsFromWarnings(patientEvaluation.warnings)
 
         val ingestionStatus = when {
-            questionnaire == null -> PatientIngestionStatus.WARN_NO_QUESTIONNAIRE
-            curationResults.isNotEmpty() -> PatientIngestionStatus.WARN_CURATION_REQUIRED
+            questionnaire == null -> PatientIngestionStatus.WARN
+            curationResults.isNotEmpty() -> PatientIngestionStatus.WARN
             else -> PatientIngestionStatus.PASS
         }
 

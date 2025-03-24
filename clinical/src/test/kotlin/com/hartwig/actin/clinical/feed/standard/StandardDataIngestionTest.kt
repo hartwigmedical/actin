@@ -107,7 +107,7 @@ class StandardDataIngestionTest {
         assertThat(result.size).isEqualTo(1)
         val patientResult = result.first()
         assertThat(patientResult.first.clinicalRecord).isEqualTo(expected)
-        assertThat(patientResult.first.status).isEqualTo(PatientIngestionStatus.WARN_CURATION_REQUIRED)
+        assertThat(patientResult.first.status).isEqualTo(PatientIngestionStatus.WARN)
         assertThat(patientResult.first.curationResults).containsExactlyInAnyOrder(
             CurationResult(
                 categoryName = "Non Oncological History",

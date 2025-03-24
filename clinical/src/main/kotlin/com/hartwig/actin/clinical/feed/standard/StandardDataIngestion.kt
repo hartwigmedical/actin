@@ -127,7 +127,7 @@ class StandardDataIngestion(
             Pair(
                 PatientIngestionResult(
                     record.patientId,
-                    if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN_CURATION_REQUIRED,
+                    if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN,
                     record,
                     curationResultsFromWarnings(evaluation.warnings),
                     emptySet(),
