@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
@@ -74,7 +74,7 @@ class MolecularDetailsChapter(
         } ?: orangeMolecularTable.addCell(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
         document.add(orangeMolecularTable)
 
-        val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filterIsInstance<PanelRecord>()
+        val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         for (panel in externalPanelResults) {
             WGSSummaryGenerator(
                 true,
