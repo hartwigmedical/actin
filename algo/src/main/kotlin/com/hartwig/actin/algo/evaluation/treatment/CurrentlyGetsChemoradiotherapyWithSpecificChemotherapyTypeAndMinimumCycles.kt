@@ -17,29 +17,18 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val latestStart = record.oncologicalHistory.maxOfOrNull { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
         val treatmentMatches = record.oncologicalHistory.groupBy {
             val matchingCategories = it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY))
 
-            val latestStart = record.oncologicalHistory.maxOfOrNull { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
             val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it, latestStart)
 
             when {
-                (matchingCategories &&
-                        it.isOfType(type) == true &&
-                        enoughCyclesAndOngoingTreatment == true) -> {
-                    true
-                }
+                matchingCategories && it.isOfType(type) == true && enoughCyclesAndOngoingTreatment == true -> true
+                !matchingCategories && it.categories().isNotEmpty() ||
+                        it.isOfType(type) == false || enoughCyclesAndOngoingTreatment == false -> false
 
-                (!matchingCategories &&
-                        it.categories().isNotEmpty() ||
-                        it.isOfType(type) == false ||
-                        enoughCyclesAndOngoingTreatment == false) -> {
-                    false
-                }
-
-                else -> {
-                    null
-                }
+                else -> null
             }
         }
 
@@ -55,9 +44,10 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         val treatmentHistoryDetails = treatmentHistoryEntry.treatmentHistoryDetails
         return treatmentHistoryDetails?.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
-
-                DateComparison.isAfterDate(referenceDate, stopYear, stopMonth) != false &&
-                        (latestStart?.let { DateComparison.isAfterDate(latestStart, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startYear) }) != false
+                DateComparison.isAfterDate(referenceDate, stopYear, stopMonth) != false ||
+                        (DateComparison.isAfterDate(referenceDate, stopYear, stopMonth) == null && (latestStart?.let {
+                            DateComparison.isAfterDate(latestStart, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
+                        }) != false)
             }
             cycles >= minCycles && appearsOngoing
         }
