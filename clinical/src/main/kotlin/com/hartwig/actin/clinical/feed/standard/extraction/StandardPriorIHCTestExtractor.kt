@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 
 private const val IHC_STRING = "immunohistochemie"
@@ -28,9 +29,31 @@ class StandardPriorIHCTestExtractor(
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
 
-        val extractedIHCTests = ehrPatientRecord.molecularTests.asSequence()
+        val extractedIHCTestsFromIHCResults = extractFromMolecularTests(ehrPatientRecord, { it.ihcResult }, includeWarnings = true)
+        val extractedIHCTestsFromFreetext = extractFromMolecularTests(ehrPatientRecord, { it.freeText }, includeWarnings = false)
+        val extractedIHCTests = (extractedIHCTestsFromFreetext + extractedIHCTestsFromIHCResults).fold(
+            ExtractionResult(
+                emptyList<PriorIHCTest>(),
+                CurationExtractionEvaluation()
+            )
+        ) { acc, result ->
+            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+        }
+
+        return ExtractionResult(
+            curatedMolecularTestExtraction.extracted + extractedIHCTests.extracted,
+            curatedMolecularTestExtraction.evaluation + extractedIHCTests.evaluation
+        )
+    }
+
+    private fun extractFromMolecularTests(
+        ehrPatientRecord: ProvidedPatientRecord,
+        extractionFunction: (ProvidedMolecularTestResult) -> String?,
+        includeWarnings: Boolean
+    ) =
+        ehrPatientRecord.molecularTests.asSequence()
             .flatMap { it.results }
-            .flatMap { listOfNotNull(it.ihcResult, it.freeText) }
+            .mapNotNull(extractionFunction)
             .map {
                 CurationResponse.createFromConfigs(
                     molecularTestCuration.find(it),
@@ -41,16 +64,12 @@ class StandardPriorIHCTestExtractor(
                     false
                 )
             }
-            .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
-            .fold(ExtractionResult(emptyList<PriorIHCTest>(), CurationExtractionEvaluation())) { acc, result ->
-                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            .map {
+                ExtractionResult(
+                    it.configs.mapNotNull { config -> config.curated },
+                    if (includeWarnings) it.extractionEvaluation else CurationExtractionEvaluation()
+                )
             }
-
-        return ExtractionResult(
-            curatedMolecularTestExtraction.extracted + extractedIHCTests.extracted,
-            curatedMolecularTestExtraction.evaluation + extractedIHCTests.evaluation
-        )
-    }
 
     private fun extractFromTumorDifferentiation(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorIHCTest>>> =
         ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")?.asSequence()

@@ -159,13 +159,14 @@ class StandardPriorIHCTestExtractorTest {
     }
 
     @Test
-    fun `Should extract and curate IHC lines from molecular test ihc result`() {
+    fun `Should extract and curate IHC lines from molecular test ihc result and free text`() {
         every { molecularTestCuration.find(IHC_LINE) } returns setOf(
             IHCTestConfig(
                 input = IHC_LINE,
                 curated = PRIOR_IHC_TEST
             )
         )
+        val uncuratedInput = "uncurated"
         val result = extractor.extract(
             EHR_PATIENT_RECORD.copy(
                 molecularTests = listOf(
@@ -175,7 +176,15 @@ class StandardPriorIHCTestExtractorTest {
                     ),
                     ProvidedMolecularTest(
                         test = "IHC",
+                        results = setOf(ProvidedMolecularTestResult(ihcResult = uncuratedInput))
+                    ),
+                    ProvidedMolecularTest(
+                        test = "IHC",
                         results = setOf(ProvidedMolecularTestResult(freeText = IHC_LINE))
+                    ),
+                    ProvidedMolecularTest(
+                        test = "IHC",
+                        results = setOf(ProvidedMolecularTestResult(freeText = "uncuratedFreeTextShouldNotWarn"))
                     ),
                     ProvidedMolecularTest(
                         test = "NGS",
@@ -185,6 +194,13 @@ class StandardPriorIHCTestExtractorTest {
             )
         )
         assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST, PRIOR_IHC_TEST)
-        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.evaluation.warnings).containsExactly(
+            CurationWarning(
+                patientId = HASHED_ID_IN_BASE64,
+                category = CurationCategory.MOLECULAR_TEST_IHC,
+                feedInput = uncuratedInput,
+                message = "Could not find molecular test config for input 'uncurated'"
+            )
+        )
     }
 }
