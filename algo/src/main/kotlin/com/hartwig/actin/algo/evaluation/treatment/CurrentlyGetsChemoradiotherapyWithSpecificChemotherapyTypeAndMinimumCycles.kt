@@ -17,13 +17,9 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val latestStartAll = record.oncologicalHistory.maxOfOrNull { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
-        val latestStart = if (latestStartAll?.let { DateComparison.isAfterDate(it, referenceDate.year, referenceDate.monthValue) } == true){
-            referenceDate
-        }
-        else{
-            latestStartAll
-        }
+        val latestStart = record.oncologicalHistory.map { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
+            .sortedDescending()
+            .firstOrNull { !it.isAfter(referenceDate) }
 
         val treatmentMatches = record.oncologicalHistory.groupBy {
             val matchingCategories = it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY))
