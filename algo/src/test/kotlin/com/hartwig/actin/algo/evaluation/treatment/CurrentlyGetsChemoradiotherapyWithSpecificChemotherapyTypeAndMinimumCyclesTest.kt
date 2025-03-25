@@ -17,6 +17,7 @@ import org.junit.Test
 class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
     private val MIN_CYCLES = 5
     private val RADIOTHERAPY = Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+    private val REFERENCE_YEAR = 2024
 
     @Test
     fun `Should fail if there are no treatments`() {
@@ -83,12 +84,12 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
                 RADIOTHERAPY
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
-            startYear = 2020
+            startYear = REFERENCE_YEAR - 1
         )
         val newerTreatment = TreatmentHistoryEntry(
             treatments = setOf(TreatmentTestFactory.drugTreatment("Ablation", TreatmentCategory.ABLATION)),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
-            startYear = 2022
+            startYear = REFERENCE_YEAR
         )
         val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment, newerTreatment))
         assertResultForPatient(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, record)
@@ -102,7 +103,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
                 RADIOTHERAPY
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES),
-            startYear = 2020
+            startYear = REFERENCE_YEAR - 1
         )
         val treatmentUnknownStartDate = TreatmentHistoryEntry(
             treatments = setOf(TreatmentTestFactory.drugTreatment("Ablation", TreatmentCategory.ABLATION)),
@@ -127,7 +128,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 
     private fun assertResultForPatient(evaluationResult: EvaluationResult, type: TreatmentType, record: PatientRecord) {
         val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
-            type, MIN_CYCLES, LocalDate.of(2024, 1, 1)
+            type, MIN_CYCLES, LocalDate.of(REFERENCE_YEAR, 1, 1)
         ).evaluate(record)
         return EvaluationAssert.assertEvaluation(evaluationResult, evaluation)
     }
