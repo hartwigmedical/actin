@@ -86,7 +86,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
             startYear = 2020
         )
         val newerTreatment = TreatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.ABLATION)),
+            treatments = setOf(TreatmentTestFactory.drugTreatment("Ablation", TreatmentCategory.ABLATION)),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
             startYear = 2022
         )
@@ -104,12 +104,11 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES),
             startYear = 2020
         )
-        val newerTreatment = TreatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.ABLATION)),
-            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES),
-            startYear = null
+        val treatmentUnknownStartDate = TreatmentHistoryEntry(
+            treatments = setOf(TreatmentTestFactory.drugTreatment("Ablation", TreatmentCategory.ABLATION)),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES)
         )
-        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment, newerTreatment))
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment, treatmentUnknownStartDate))
         assertResultForPatient(EvaluationResult.PASS, DrugType.ALK_INHIBITOR, record)
     }
 
