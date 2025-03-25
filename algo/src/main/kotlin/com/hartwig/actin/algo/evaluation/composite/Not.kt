@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 class Not(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluation: Evaluation = function.evaluate(record)
+        val evaluation = function.evaluate(record)
 
         return when (evaluation.result) {
             EvaluationResult.PASS -> swapEvaluationMessagesAndMolecularEventsWithResult(evaluation, EvaluationResult.FAIL)

@@ -50,21 +50,16 @@ object EvaluationFactory {
 
     fun warn(
         message: String,
-        recoverable: Boolean = false,
         inclusionEvents: Set<String> = emptySet(),
         isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
-            recoverable = recoverable,
+            recoverable = false,
             result = EvaluationResult.WARN,
             warnMessages = setOf(message),
             inclusionMolecularEvents = inclusionEvents,
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
-    }
-
-    fun recoverableWarn(message: String): Evaluation {
-        return warn(message, true)
     }
 
     fun notEvaluated(message: String): Evaluation {

@@ -24,11 +24,11 @@ class HasWHOStatusTest {
     fun `Should return recoverable fail when WHO difference is exactly one`() {
         val evaluationFor1 = function.evaluate(GeneralTestFactory.withWHO(1))
         assertEvaluation(EvaluationResult.FAIL, evaluationFor1)
-        assertThat(evaluationFor1.recoverable).isTrue
+        assertThat(evaluationFor1.recoverable).isTrue()
 
         val evaluationFor3 = function.evaluate(GeneralTestFactory.withWHO(3))
         assertEvaluation(EvaluationResult.FAIL, evaluationFor3)
-        assertThat(evaluationFor3.recoverable).isTrue
+        assertThat(evaluationFor3.recoverable).isTrue()
     }
 
     @Test

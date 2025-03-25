@@ -24,7 +24,7 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
 
         return when {
             infection?.hasActiveInfection == true -> {
-                EvaluationFactory.pass("Has active infection '${description(infection)}'")
+                EvaluationFactory.recoverablePass("Has active infection '${description(infection)}'")
             }
 
             currentlyUsesAntimicrobials -> {
