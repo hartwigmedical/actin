@@ -51,7 +51,7 @@ class TreatmentMatcher(
             personalizedDataAnalysis = personalizedDataAnalysis,
             maxMolecularTestAge = maxMolecularTestAge,
             treatmentEvidenceRanking = TreatmentEvidenceRanking(
-                treatmentRanker.rank(patient).map { RankedTreatment(it.treatment, it.event, it.score) }
+                treatmentRanker.rank(patient).map { RankedTreatment(it.treatment, it.scores.map { s -> s.event }, it.score) }
             )
         )
     }

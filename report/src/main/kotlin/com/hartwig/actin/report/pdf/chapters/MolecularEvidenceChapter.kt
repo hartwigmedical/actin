@@ -47,7 +47,7 @@ class MolecularEvidenceChapter(val report: Report, override val include: Boolean
 
     private fun addTreatmentRankingTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = TreatmentRankingGenerator(ranking)
+        val generator = TreatmentRankingGenerator(ranking, contentWidth())
         addGenerators(listOf(generator), table, true)
         document.add(table)
     }

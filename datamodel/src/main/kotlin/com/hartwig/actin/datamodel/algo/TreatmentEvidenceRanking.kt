@@ -2,7 +2,7 @@ package com.hartwig.actin.datamodel.algo
 
 data class RankedTreatment(
     val treatment: String,
-    val event: String,
+    val events: List<String>,
     val score: Double,
 )
 

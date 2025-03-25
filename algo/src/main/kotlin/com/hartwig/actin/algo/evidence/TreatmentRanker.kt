@@ -6,7 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.math.exp
 
-data class RankResult(val treatment: String, val event: String, val scores: List<Score>) : Comparable<RankResult> {
+data class RankResult(val treatment: String, val scores: List<Score>) : Comparable<RankResult> {
 
     val score = scores.sumOf { it.score }
 
@@ -25,12 +25,16 @@ class TreatmentRanker {
 
         val scoredTreatmentEntries = treatments.map { it to scorer.score(it) }
         val scoredTreatments = scoredTreatmentEntries.groupBy {
-            it.first.treatment to it.first.molecularMatch.sourceEvent
+            it.first.treatment
         }.mapValues { entry ->
             entry.value.map { it.second }.toList()
         }
-        val originalScores = scoredTreatments.map { RankResult(it.key.first, it.key.second, it.value) }
-        return originalScores.map { it.copy(scores = saturatingDiminishingReturnsScore(it.scores)) }
+        val originalScores = scoredTreatments.map { RankResult(it.key, it.value) }
+        return originalScores.map {
+            val diminishedScores = it.scores.groupBy { s -> s.scoringMatch.tumorMatch to s.event }
+                .mapValues { v -> saturatingDiminishingReturnsScore(v.value) }.flatMap { g -> g.value }
+            it.copy(scores = diminishedScores)
+        }
     }
 }
 
@@ -56,7 +60,7 @@ fun main() {
             var scoreSum = 0.0
             for (scoreObject in record.scores.sortedBy { it.score }.reversed()) {
                 with(scoreObject) {
-                    val eventHeader = ",$variant,${scoringMatch.variantMatch},${scoringMatch.tumorMatch},${evidenceLevelDetails},$score,${
+                    val eventHeader = ",$event,${scoringMatch.variantMatch},${scoringMatch.tumorMatch},${evidenceLevelDetails},$score,${
                         evidenceDescription.replace(
                             ",", ""
                         )

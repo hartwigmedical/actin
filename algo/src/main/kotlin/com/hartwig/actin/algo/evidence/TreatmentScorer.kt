@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class Score(
-    val variant: String,
+    val event: String,
     val scoringMatch: ScoringMatch,
     val evidenceLevelDetails: EvidenceApprovalPhase,
     val score: Double,
@@ -30,7 +30,7 @@ class TreatmentScorer {
             scoringMatch = scoringMatch,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             score = factor * score.toDouble(),
-            variant = treatment.molecularMatch.sourceEvent,
+            event = treatment.molecularMatch.sourceEvent,
             evidenceDescription = treatment.efficacyDescription
         )
     }
