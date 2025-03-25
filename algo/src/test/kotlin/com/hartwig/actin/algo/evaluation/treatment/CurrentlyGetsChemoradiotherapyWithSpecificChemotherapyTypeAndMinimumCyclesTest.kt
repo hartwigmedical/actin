@@ -16,6 +16,8 @@ import org.junit.Test
 
 class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
     private val MIN_CYCLES = 5
+    private val RADIOTHERAPY = Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+
     @Test
     fun `Should fail if there are no treatments`() {
         val record = TreatmentTestFactory.withTreatmentHistory(emptyList())
@@ -27,7 +29,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
-                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+                RADIOTHERAPY
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = MIN_CYCLES)
         )
@@ -39,7 +41,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     fun `Should fail if there is only radiotherapy`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
-                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+                RADIOTHERAPY
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = MIN_CYCLES)
         )
@@ -48,7 +50,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Should be undetermined if there are no explicit fails`() {
+    fun `Should be undetermined if there are no explicit fails but the types is undetermined`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, emptySet()),
@@ -65,7 +67,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
-                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+                RADIOTHERAPY
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = MIN_CYCLES - 1)
         )
@@ -78,7 +80,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
-                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+                RADIOTHERAPY
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = 10),
             startYear = 2020
@@ -97,7 +99,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
-                Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+                RADIOTHERAPY
             ),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES),
             startYear = 2020
@@ -112,7 +114,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     }
 
     @Test
-    fun `Should be undetermined if there is a chemotherapy of unknown type with sufficient cycles`() {
+    fun `Should be undetermined if there is a radiotherapy of unknown type with sufficient cycles`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
