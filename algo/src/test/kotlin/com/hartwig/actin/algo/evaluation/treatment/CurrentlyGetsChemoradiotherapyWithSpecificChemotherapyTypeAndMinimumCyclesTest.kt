@@ -139,6 +139,51 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         assertResultForPatient(EvaluationResult.UNDETERMINED, DrugType.ALK_INHIBITOR, record)
     }
 
+    @Test
+    fun `Should fail for matching treatment with an end date before the reference date`() {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                RADIOTHERAPY
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2022, cycles = MIN_CYCLES)
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
+        assertResultForPatient(EvaluationResult.FAIL, DrugType.ALK_INHIBITOR, record)
+    }
+
+    @Test
+    fun `Should fail if the category matches but the type is wrong`() {
+        val matchingTreatment = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                RADIOTHERAPY
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = MIN_CYCLES)
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
+        assertResultForPatient(EvaluationResult.FAIL, DrugType.ABL_INHIBITOR, record)
+    }
+
+    @Test
+    fun `Should pass if there is a matching treatment with a null end date and a newer treatment that hasn't started as of the reference date`() {
+        val matchingTreatmentNullEndDate = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                RADIOTHERAPY
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES),
+            startYear = REFERENCE_YEAR - 1
+        )
+        val treatmentStartDateAfterReferenceDate = TreatmentHistoryEntry(
+            treatments = setOf(TreatmentTestFactory.drugTreatment("Ablation", TreatmentCategory.ABLATION)),
+            treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES),
+            startYear = REFERENCE_YEAR + 1
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatmentNullEndDate, treatmentStartDateAfterReferenceDate))
+        assertResultForPatient(EvaluationResult.PASS, DrugType.ALK_INHIBITOR, record)
+    }
+
     private fun assertResultForPatient(evaluationResult: EvaluationResult, type: TreatmentType, record: PatientRecord) {
         val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
             type, MIN_CYCLES, LocalDate.of(REFERENCE_YEAR, 1, 1)
