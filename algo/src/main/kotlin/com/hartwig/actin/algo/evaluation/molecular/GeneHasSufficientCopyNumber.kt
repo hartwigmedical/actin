@@ -49,23 +49,27 @@ class GeneHasSufficientCopyNumber(private val gene: String, private val requeste
     override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = test.drivers.copyNumbers
-            .filter { it.gene == gene }
+        val targetCopyNumbers = test.drivers.copyNumbers.filter { it.gene == gene }
+
+        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = targetCopyNumbers
             .groupingBy { CopyNumberEvaluation.fromCopyNumber(it, requestedMinCopyNumber) }
             .fold(emptySet()) { acc, copyNumber -> acc + copyNumber.event }
 
-        val eventsOnNonCanonical = test.drivers.copyNumbers.filter { copyNumber ->
-            copyNumber.gene == gene && copyNumber.otherImpacts.any { it.minCopies >= requestedMinCopyNumber }
-        }.map { it.event }.toSet()
+        val eventsOnNonCanonical =
+            targetCopyNumbers.filter { copyNumber -> copyNumber.otherImpacts.any { it.minCopies >= requestedMinCopyNumber } }
+                .map { it.event }.toSet()
 
+        val reportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_SUFFICIENT_COPY_NUMBER]
+        val unreportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER]
         return when {
-            evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_SUFFICIENT_COPY_NUMBER] != null -> {
-                val reportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_SUFFICIENT_COPY_NUMBER]!!
-                EvaluationFactory.pass("$gene copy number is above requested $requestedMinCopyNumber", inclusionEvents = reportableSufficientCN)
+            reportableSufficientCN != null -> {
+                EvaluationFactory.pass(
+                    "$gene copy number is above requested $requestedMinCopyNumber",
+                    inclusionEvents = reportableSufficientCN
+                )
             }
 
-            evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER] != null -> {
-                val unreportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER]!!
+            unreportableSufficientCN != null -> {
                 EvaluationFactory.pass(
                     "$gene has a copy number >$requestedMinCopyNumber copies but is considered not reportable",
                     inclusionEvents = unreportableSufficientCN
@@ -90,10 +94,6 @@ class GeneHasSufficientCopyNumber(private val gene: String, private val requeste
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.SUFFICIENT_COPY_NUMBER_ON_NON_ONCOGENE],
                 "$gene has sufficient copies but gene known as TSG in $evidenceSource"
-            ),
-            EventsWithMessages(
-                evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER],
-                "$gene has sufficient copies but not considered reportable"
             ),
             EventsWithMessages(
                 eventsOnNonCanonical,

@@ -19,11 +19,7 @@ class GeneHasSufficientCopyNumberTest {
         isReportable = true,
         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40)
     )
-    private val passingSufficientCopiesOnNonCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
-        gene = "gene A",
-        geneRole = GeneRole.ONCO,
-        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-        isReportable = true,
+    private val passingSufficientCopiesOnNonCanonicalTranscript = passingSufficientCopiesOnCanonicalTranscript.copy(
         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
         otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40))
     )
