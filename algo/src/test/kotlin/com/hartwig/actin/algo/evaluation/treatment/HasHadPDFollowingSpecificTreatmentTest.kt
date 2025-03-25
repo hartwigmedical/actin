@@ -71,7 +71,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
     }
 
     companion object {
-        private val MATCHING_TREATMENTS = listOf(treatment("treatment", true))
+        private val MATCHING_TREATMENTS = listOf(treatment("treatment", true, setOf(TreatmentCategory.IMMUNOTHERAPY)))
         private val NON_MATCHING_TREATMENTS = setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY))
         private val FUNCTION = HasHadPDFollowingSpecificTreatment(MATCHING_TREATMENTS)
     }

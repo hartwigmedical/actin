@@ -174,7 +174,7 @@ class TreatmentHistoryEntryConfigFactory(
     private fun missingTreatmentException(treatments: Set<String>, input: String, nameField: String): List<CurationConfigValidationError> {
         return treatments.map { it.replace(" ", "_").uppercase() }.map {
             CurationConfigValidationError(
-                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                CurationCategory.ONCOLOGICAL_HISTORY,
                 input,
                 nameField,
                 it,

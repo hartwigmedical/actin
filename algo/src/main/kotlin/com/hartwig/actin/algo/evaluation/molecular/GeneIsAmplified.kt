@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 private const val PLOIDY_FACTOR = 3.0
 
-private enum class CopyNumberEvaluation {
+private enum class AmplificationEvaluation {
     REPORTABLE_FULL_AMP,
     REPORTABLE_PARTIAL_AMP,
     AMP_WITH_LOSS_OF_FUNCTION,
@@ -19,7 +19,7 @@ private enum class CopyNumberEvaluation {
     NON_AMP_WITH_SUFFICIENT_COPY_NUMBER;
 
     companion object {
-        fun fromCopyNumber(copyNumber: CopyNumber, relativeMinCopies: Double, relativeMaxCopies: Double): CopyNumberEvaluation {
+        fun fromCopyNumber(copyNumber: CopyNumber, relativeMinCopies: Double, relativeMaxCopies: Double): AmplificationEvaluation {
             return if (relativeMaxCopies >= PLOIDY_FACTOR) {
                 when {
                     copyNumber.geneRole == GeneRole.TSG -> {
@@ -58,11 +58,11 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
     override fun evaluate(test: MolecularTest): Evaluation {
         val ploidy = test.characteristics.ploidy ?: return EvaluationFactory.fail("Amplification for $gene undetermined (ploidy missing)")
 
-        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = test.drivers.copyNumbers.filter { copyNumber ->
+        val evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>> = test.drivers.copyNumbers.filter { copyNumber ->
             copyNumber.gene == gene && (requestedMinCopyNumber == null || copyNumber.canonicalImpact.minCopies >= requestedMinCopyNumber)
         }
             .groupBy({ copyNumber ->
-                CopyNumberEvaluation.fromCopyNumber(
+                AmplificationEvaluation.fromCopyNumber(
                     copyNumber, copyNumber.canonicalImpact.minCopies / ploidy,
                     copyNumber.canonicalImpact.maxCopies / ploidy
                 )
@@ -74,10 +74,10 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
         }.map { it.event }.toSet()
 
         val minCopyMessage = requestedMinCopyNumber?.let { " with >=$requestedMinCopyNumber copies" } ?: ""
-        return evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_FULL_AMP]?.let { reportableFullAmps ->
+        return evaluatedCopyNumbers[AmplificationEvaluation.REPORTABLE_FULL_AMP]?.let { reportableFullAmps ->
             EvaluationFactory.pass("$gene is amplified$minCopyMessage", inclusionEvents = reportableFullAmps)
         }
-            ?: requestedMinCopyNumber?.let { evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_AMP] }?.let { ampsThatAreUnreportable ->
+            ?: requestedMinCopyNumber?.let { evaluatedCopyNumbers[AmplificationEvaluation.UNREPORTABLE_AMP] }?.let { ampsThatAreUnreportable ->
                 EvaluationFactory.pass(
                     "$gene has a copy number >$requestedMinCopyNumber copies but is considered not reportable",
                     inclusionEvents = ampsThatAreUnreportable
@@ -90,26 +90,26 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
     }
 
     private fun evaluatePotentialWarns(
-        evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>>,
+        evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>>,
         eventsOnNonCanonical: Set<String>,
         evidenceSource: String
     ): Evaluation? {
         val eventGroupsWithMessages = listOf(
-            EventsWithMessages(evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_PARTIAL_AMP], "$gene partially amplified"),
+            EventsWithMessages(evaluatedCopyNumbers[AmplificationEvaluation.REPORTABLE_PARTIAL_AMP], "$gene partially amplified"),
             EventsWithMessages(
-                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_WITH_LOSS_OF_FUNCTION],
+                evaluatedCopyNumbers[AmplificationEvaluation.AMP_WITH_LOSS_OF_FUNCTION],
                 "$gene is amplified but gene associated with loss-of-function protein impact in $evidenceSource"
             ),
             EventsWithMessages(
-                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_ON_NON_ONCOGENE],
+                evaluatedCopyNumbers[AmplificationEvaluation.AMP_ON_NON_ONCOGENE],
                 "$gene is amplified but gene known as TSG in $evidenceSource"
             ),
             EventsWithMessages(
-                evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_AMP],
+                evaluatedCopyNumbers[AmplificationEvaluation.UNREPORTABLE_AMP],
                 "$gene is amplified but not considered reportable"
             ),
             EventsWithMessages(
-                requestedMinCopyNumber?.let { evaluatedCopyNumbers[CopyNumberEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER] },
+                requestedMinCopyNumber?.let { evaluatedCopyNumbers[AmplificationEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER] },
                 "$gene does not meet cut-off for amplification but has sufficient copy number > $requestedMinCopyNumber"
             ),
             EventsWithMessages(

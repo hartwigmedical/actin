@@ -29,7 +29,7 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
 
             hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined("Complication(s) present but unknown if $icdTitleText")
 
-            record.clinicalStatus.hasComplications == null -> EvaluationFactory.undetermined(
+            record.clinicalStatus.hasComplications == null -> EvaluationFactory.recoverableUndetermined(
                 "Undetermined presence of complication $icdTitleText (complication data missing)"
             )
 

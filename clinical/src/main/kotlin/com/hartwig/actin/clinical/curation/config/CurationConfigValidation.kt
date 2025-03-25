@@ -22,7 +22,7 @@ fun validateDoids(
     } else {
         null to listOf(
             CurationConfigValidationError(
-                curationCategory.categoryName,
+                curationCategory,
                 input,
                 fieldName,
                 doids.toString(),
@@ -43,7 +43,7 @@ fun validateIcd(
     val titlesByCode = CurationUtil.toIcdTitles(parts[fields["icd"]!!]).groupBy(icdModel::resolveCodeForTitle)
     val errors = titlesByCode[null]?.map { title ->
         CurationConfigValidationError(
-            curationCategory.categoryName,
+            curationCategory,
             input,
             fieldName,
             title,
@@ -126,7 +126,7 @@ inline fun <reified T : Enum<T>> validateEnum(
     } else {
         return null to listOf(
             CurationConfigValidationError(
-                curationCategory.categoryName,
+                curationCategory,
                 input,
                 fieldName,
                 fieldValue,
@@ -164,7 +164,7 @@ private fun <T> validate(
     return if (fieldValue.isNotEmpty()) {
         extractionFunction.invoke(fieldValue)?.let { it to emptyList() }
             ?: (null to listOf(
-                CurationConfigValidationError(curationCategory.categoryName, input, fieldName, fieldValue, validType.lowercase())
+                CurationConfigValidationError(curationCategory, input, fieldName, fieldValue, validType.lowercase())
             ))
     } else {
         null to emptyList()

@@ -27,6 +27,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsE
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.icd.TestIcdFactory
@@ -106,11 +107,11 @@ class StandardDataIngestionTest {
 
         assertThat(result.size).isEqualTo(1)
         val patientResult = result.first()
-        assertThat(patientResult.first.clinicalRecord).isEqualTo(expected)
-        assertThat(patientResult.first.status).isEqualTo(PatientIngestionStatus.WARN_CURATION_REQUIRED)
-        assertThat(patientResult.first.curationResults).containsExactlyInAnyOrder(
+        assertThat(patientResult.first).isEqualTo(expected)
+        assertThat(patientResult.second.status).isEqualTo(PatientIngestionStatus.WARN_CURATION_REQUIRED)
+        assertThat(patientResult.second.curationResults).containsExactlyInAnyOrder(
             CurationResult(
-                categoryName = "Non Oncological History",
+                category = CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "aandoening van mitralis-, aorta- en tricuspidalisklep",
@@ -119,7 +120,7 @@ class StandardDataIngestionTest {
                 )
             ),
             CurationResult(
-                categoryName = "Complication",
+                category = CurationCategory.COMPLICATION,
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "Uncurateable",
@@ -128,11 +129,11 @@ class StandardDataIngestionTest {
                 )
             ),
             CurationResult(
-                categoryName = "Toxicity",
+                category = CurationCategory.TOXICITY,
                 requirements = listOf(CurationRequirement(feedInput = "Pain", message = "Could not find toxicity config for input 'Pain'"))
             ),
             CurationResult(
-                categoryName = "Lab Measurement",
+                category = CurationCategory.LAB_MEASUREMENT,
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "dc_NeutrGran | Neutrof. granulocyten",
@@ -141,7 +142,7 @@ class StandardDataIngestionTest {
                 ),
             ),
             CurationResult(
-                categoryName = "Surgery Name",
+                category = CurationCategory.SURGERY_NAME,
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "<CRYO Skelet door Radioloog",

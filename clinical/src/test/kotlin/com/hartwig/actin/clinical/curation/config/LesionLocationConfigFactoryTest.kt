@@ -28,7 +28,7 @@ class LesionLocationConfigFactoryTest {
         val lesionConfig = LesionLocationConfigFactory().create(fields, arrayOf("input", "location", "hair", "", ""))
         assertThat(lesionConfig.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.LESION_LOCATION.categoryName,
+                CurationCategory.LESION_LOCATION,
                 "input",
                 "category",
                 "hair",

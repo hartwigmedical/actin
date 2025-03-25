@@ -25,7 +25,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val config = factory.create(fields, parts)
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                CurationCategory.ONCOLOGICAL_HISTORY,
                 input,
                 "treatmentName",
                 "UNKNOWN_THERAPY",
@@ -114,7 +114,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val config = factory.create(fields, parts)
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                CurationCategory.ONCOLOGICAL_HISTORY,
                 input,
                 "treatmentName",
                 "TRIAL_NAME",

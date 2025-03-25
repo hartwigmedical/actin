@@ -60,7 +60,7 @@ class IntoleranceConfigFactoryTest {
         val config = factory.create(fields, arrayOf("input", "name", icdTitle, ""))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.INTOLERANCE.categoryName,
+                CurationCategory.INTOLERANCE,
                 "input",
                 "icd",
                 "icdTitle",

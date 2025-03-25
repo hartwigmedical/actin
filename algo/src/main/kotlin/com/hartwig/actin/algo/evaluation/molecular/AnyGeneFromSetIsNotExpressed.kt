@@ -8,6 +8,13 @@ import java.time.LocalDate
 
 class AnyGeneFromSetIsNotExpressed(maxTestAge: LocalDate? = null, private val genes: Set<String>) : MolecularEvaluationFunction(maxTestAge){
 
+    override fun noMolecularRecordEvaluation(): Evaluation {
+        return EvaluationFactory.undetermined(
+            "No molecular data to determine non-expression of ${concat(genes)} in RNA",
+            isMissingMolecularResultForEvaluation = true
+        )
+    }
+
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         return EvaluationFactory.undetermined(
             "Non-expression of ${concat(genes)} in RNA undetermined",

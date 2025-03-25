@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import java.time.LocalDate
 
 enum class IhcExpressionComparisonType {
     LIMITED,
@@ -16,7 +17,7 @@ enum class IhcExpressionComparisonType {
 }
 
 class ProteinExpressionByIHCFunctions(
-    private val protein: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType
+    private val protein: String, private val gene: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType, private val maxTestAge: LocalDate? = null
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -46,7 +47,8 @@ class ProteinExpressionByIHCFunctions(
             }
 
             ihcTests.isEmpty() -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
+                val additionalMessage = IHCMessagesFunctions.additionalMessageWhenGeneIsWildType(gene, record, maxTestAge)
+                EvaluationFactory.undetermined("No $protein IHC test result$additionalMessage", isMissingMolecularResultForEvaluation = true)
             }
 
             else -> {
