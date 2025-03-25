@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-//TODO: Implement according to README
+//TODO: Implement Treatment history > Treatment with radioType like '%TACE%' or '%TARE%' and date within X weeks. `UNDETERMINED` In case of Radiotherapy treatment without type or date specified
 class HasHadLocalHepaticTherapyWithinWeeks() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
