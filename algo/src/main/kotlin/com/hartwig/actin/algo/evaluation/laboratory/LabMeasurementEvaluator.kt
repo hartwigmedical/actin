@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 class LabMeasurementEvaluator(
     private val measurement: LabMeasurement, private val function: LabEvaluationFunction,
-    private val minValidDate: LocalDate, private val minPassDate: LocalDate, private val highestFirst: Boolean
+    private val minValidDate: LocalDate, private val minPassDate: LocalDate, private val highestFirst: Boolean = true
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
