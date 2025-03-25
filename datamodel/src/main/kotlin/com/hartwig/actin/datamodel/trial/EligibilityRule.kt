@@ -221,6 +221,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     UTR_3_LOSS_IN_GENE_X(FunctionInput.ONE_GENE),
     AMPLIFICATION_OF_GENE_X(FunctionInput.ONE_GENE),
     AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES(FunctionInput.ONE_GENE_ONE_INTEGER),
+    COPY_NUMBER_OF_GENE_X_OF_AT_LEAST_Y(FunctionInput.ONE_GENE_ONE_INTEGER),
     FUSION_IN_GENE_X(FunctionInput.ONE_GENE),
     WILDTYPE_OF_GENE_X(FunctionInput.ONE_GENE),
     EXON_SKIPPING_GENE_X_EXON_Y(FunctionInput.ONE_GENE_ONE_INTEGER),

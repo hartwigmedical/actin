@@ -45,6 +45,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.UTR_3_LOSS_IN_GENE_X to geneHasUTR3LossCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X to geneIsAmplifiedCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES to geneIsAmplifiedMinCopiesCreator(),
+            EligibilityRule.COPY_NUMBER_OF_GENE_X_OF_AT_LEAST_Y to geneHasSufficientCopyNumber(),
             EligibilityRule.FUSION_IN_GENE_X to hasFusionInGeneCreator(),
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
@@ -195,6 +196,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
             GeneIsAmplified(input.geneName, input.integer, maxMolecularTestAge())
+        }
+    }
+
+    private fun geneHasSufficientCopyNumber(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneGeneOneIntegerInput(function)
+            GeneHasSufficientCopyNumber(input.geneName, input.integer, maxMolecularTestAge())
         }
     }
 
