@@ -126,6 +126,19 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         assertResultForPatient(EvaluationResult.UNDETERMINED, DrugType.ALK_INHIBITOR, record)
     }
 
+    @Test
+    fun `Should be undetermined if there is a matching treatment with unknown cycles`() {
+        val matchingTreatmentNullCycles = TreatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.drugTreatment("Alk Inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALK_INHIBITOR)),
+                RADIOTHERAPY
+            ),
+            treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030)
+        )
+        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatmentNullCycles))
+        assertResultForPatient(EvaluationResult.UNDETERMINED, DrugType.ALK_INHIBITOR, record)
+    }
+
     private fun assertResultForPatient(evaluationResult: EvaluationResult, type: TreatmentType, record: PatientRecord) {
         val evaluation = CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
             type, MIN_CYCLES, LocalDate.of(REFERENCE_YEAR, 1, 1)
