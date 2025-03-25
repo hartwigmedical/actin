@@ -249,7 +249,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val minCreatinineClearance = functionInputResolver().createOneDoubleInput(function)
             val measurement = retrieveForMethod(method)
             val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
-            val main = createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit), false)
+            val main =
+                createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit), false)
 
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
@@ -290,7 +291,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasPotentialHypokalemiaCreator(): FunctionCreator {
         return {
-            val potassiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0), false))
+            val potassiumBelowLLN: EvaluationFunction =
+                Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0), false))
             val hasHadPriorHypokalemia =
                 OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                     icdModel(),
@@ -303,7 +305,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasPotentialHypomagnesemiaCreator(): FunctionCreator {
         return {
-            val magnesiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0), false))
+            val magnesiumBelowLLN: EvaluationFunction =
+                Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0), false))
             val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
                 setOf(IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)),
@@ -329,7 +332,11 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { HasPotentialSymptomaticHypercalcemia(minValidLabDate()) }
     }
 
-    private fun createLabEvaluator(measurement: LabMeasurement, function: LabEvaluationFunction, highestFirst: Boolean = true): EvaluationFunction {
+    private fun createLabEvaluator(
+        measurement: LabMeasurement,
+        function: LabEvaluationFunction,
+        highestFirst: Boolean = true
+    ): EvaluationFunction {
         return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate(), highestFirst)
     }
 

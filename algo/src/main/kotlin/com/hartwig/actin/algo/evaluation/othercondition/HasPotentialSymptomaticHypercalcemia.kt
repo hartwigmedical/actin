@@ -21,7 +21,7 @@ class HasPotentialSymptomaticHypercalcemia(private val minValidDate: LocalDate) 
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpretation.interpret(record.labValues)
         val evaluations = sequenceOf(CALCIUM, IONIZED_CALCIUM, CORRECTED_CALCIUM)
-            .map { evaluateLabValue(interpretation.mostRecentValue(it, true), it) }
+            .map { evaluateLabValue(interpretation.mostRecentValue(it), it) }
             .toSet()
 
         return when {
