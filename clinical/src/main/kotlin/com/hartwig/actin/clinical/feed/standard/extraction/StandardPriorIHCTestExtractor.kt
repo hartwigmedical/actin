@@ -30,13 +30,17 @@ class StandardPriorIHCTestExtractor(
 
         val extractedIHCTests = ehrPatientRecord.molecularTests.asSequence()
             .flatMap { it.results }
-            .flatMap { listOfNotNull(it.ihcResult, it.freeText) }
-            .map {
+            .filterNot { it.ihcResult.isNullOrEmpty() }
+            .flatMap { listOfNotNull(it.ihcResult to it.freeText) }
+            .map { (ihcResult, freeText) ->
+                val curation = molecularTestCuration.find(ihcResult?: "").takeIf { it.isNotEmpty() }
+                    ?: molecularTestCuration.find(freeText ?: "")
+
                 CurationResponse.createFromConfigs(
-                    molecularTestCuration.find(it),
+                    curation,
                     ehrPatientRecord.patientDetails.hashedId,
                     CurationCategory.MOLECULAR_TEST_IHC,
-                    it,
+                    freeText?.let { "{ihcResult} $ihcResult with {freeText} $it" } ?: ihcResult!!,
                     "molecular test",
                     false
                 )
