@@ -188,7 +188,7 @@ class EmcClinicalFeedIngestor(
             if (questionnaire == null || curationResults.isNotEmpty()) PatientIngestionStatus.WARN else PatientIngestionStatus.PASS
 
         val validationWarnings = if (questionnaire == null) {
-            feedRecord.validationWarnings + (FeedValidationWarning(patientId, "No Questionnaire found"))
+            feedRecord.validationWarnings + FeedValidationWarning(patientId, "No Questionnaire found")
         } else {
             feedRecord.validationWarnings
         }
