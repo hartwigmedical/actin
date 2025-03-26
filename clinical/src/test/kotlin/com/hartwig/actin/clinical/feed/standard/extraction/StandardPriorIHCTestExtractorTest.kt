@@ -203,4 +203,28 @@ class StandardPriorIHCTestExtractorTest {
             )
         )
     }
+
+    @Test
+    fun `Should ignore lines if ignored in curation using ihc result`() {
+        val ihcResultWithFreeText = ProvidedMolecularTestResult(ihcResult = IHC_LINE, freeText = "some text")
+        val record = EHR_PATIENT_RECORD.copy(
+            molecularTests = listOf(
+                ProvidedMolecularTest(
+                    test = "test",
+                    results = setOf(ihcResultWithFreeText)
+                )
+            )
+        )
+
+        every { molecularTestCuration.find(IHC_LINE) } returns setOf(
+            IHCTestConfig(
+                input = "some text",
+                ignore = true
+            )
+        )
+
+        val result = extractor.extract(record)
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
 }
