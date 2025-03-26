@@ -133,7 +133,7 @@ object TestQuestionnaireFactory {
                Liver lesions: NO
                Other lesions (e.g. lymph node, pulmonal): pulmonal
                Measurable disease (RECIST): YES
-               Previous Molecular tests: IHC ERBB2 3+
+               Previous Molecular tests: positive for KRAS; p.G12D, CCND1, APC exon 16; TP53; p.D259Y
                
                Clinical details
                WHO status: 0
