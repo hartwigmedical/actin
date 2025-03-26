@@ -52,7 +52,8 @@ object TestQuestionnaireFactory {
                Measurable disease: YES
                
                Previous Molecular tests
-               - IHC test results: ERBB2 3+
+               - IHC test results: 
+               ERBB2 3+
                - PD L1 test results: Positive
                
                Clinical details

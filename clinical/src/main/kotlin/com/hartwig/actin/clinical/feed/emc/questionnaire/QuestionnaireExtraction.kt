@@ -41,7 +41,7 @@ object QuestionnaireExtraction {
             otherOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY])),
             secondaryPrimaries = secondaryPrimaries(lines, mapping[QuestionnaireKey.SECONDARY_PRIMARY]),
             nonOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY])),
-            ihcTestResults = value(lines, mapping[QuestionnaireKey.IHC_TEST_RESULTS])?.let { listOf(cleanAndTrim(it)) },
+            ihcTestResults = value(lines, mapping[QuestionnaireKey.IHC_TEST_RESULTS])?.let { listOf(trimWhitespaceAndCommas(it)) },
             pdl1TestResults = toList(value(lines, mapping[QuestionnaireKey.PDL1_TEST_RESULTS])),
             hasMeasurableDisease = hasMeasurableDisease.curated,
             hasBrainLesions = brainLesionData.curated?.present(),
@@ -120,7 +120,7 @@ object QuestionnaireExtraction {
         return trimmed
     }
 
-    private fun cleanAndTrim(value: String): String {
+    private fun trimWhitespaceAndCommas(value: String): String {
         return value.trim { it <= ' ' || it == ',' }
     }
 
