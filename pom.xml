@@ -15,6 +15,7 @@
         <module>molecular</module>
         <module>trial</module>
         <module>algo</module>
+        <module>interpretation</module>
         <module>report</module>
         <module>database</module>
         <module>system</module>
@@ -191,6 +192,11 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>algo</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>interpretation</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -372,6 +378,13 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
+                <version>local-SNAPSHOT</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>interpretation</artifactId>
                 <version>local-SNAPSHOT</version>
                 <scope>test</scope>
                 <type>test-jar</type>

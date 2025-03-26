@@ -14,7 +14,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
