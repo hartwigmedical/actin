@@ -41,6 +41,7 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 class EmcClinicalFeedIngestor(
     private val feed: FeedModel,
@@ -107,7 +108,7 @@ class EmcClinicalFeedIngestor(
 
             Triple(
                 record,
-                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
+                ingestionResult(record, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
                 patientEvaluation
             )
         }
@@ -176,7 +177,7 @@ class EmcClinicalFeedIngestor(
         ?: Double.NaN)
 
     private fun ingestionResult(
-        patientId: String,
+        record: ClinicalRecord,
         questionnaire: Questionnaire?,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
@@ -187,14 +188,14 @@ class EmcClinicalFeedIngestor(
         val ingestionStatus =
             if (questionnaire == null || curationResults.isNotEmpty()) PatientIngestionStatus.WARN else PatientIngestionStatus.PASS
 
-        val validationWarnings = if (questionnaire == null) {
-            feedRecord.validationWarnings + FeedValidationWarning(patientId, "No Questionnaire found")
+        val validationWarnings = if (questionnaire == null && record.patient.registrationDate.isAfter(LocalDate.now().minusYears(1))) {
+            feedRecord.validationWarnings + FeedValidationWarning(record.patientId, "No Questionnaire found")
         } else {
             feedRecord.validationWarnings
         }
 
         return PatientIngestionResult(
-            patientId,
+            record.patientId,
             ingestionStatus,
             curationResults,
             questionnaireCurationErrors.toSet(),
