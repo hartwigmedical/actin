@@ -47,7 +47,7 @@ data class FeedRecord(
                 medicationEntries,
                 intoleranceEntries,
                 allBodyWeightEntries.distinct(),
-                questionnaireEntries.maxByOrNull(QuestionnaireEntry::authored),
+                questionnaireEntries.filter { it.text.isNotEmpty() }.maxByOrNull(QuestionnaireEntry::authored),
                 digitalFileEntries.filter(DigitalFileEntry::isToxicityEntry),
                 digitalFileEntries.filter(DigitalFileEntry::isBloodTransfusionEntry),
                 allValidationWarnings.filter { it.subject == patientId }.toSet(),
