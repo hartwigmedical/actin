@@ -27,6 +27,7 @@ object InterpretedCohortFactory {
             val isMissingMolecularResultForEvaluation = trialMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation }
             val source = identification.source
             val sourceId = identification.sourceId
+            val link = identification.link
             val locations = identification.locations
 
             if (trialMatch.cohorts.isEmpty()) {
@@ -47,6 +48,7 @@ object InterpretedCohortFactory {
                         phase = phase,
                         source = source,
                         sourceId = sourceId,
+                        link = link,
                         locations = locations
                     )
                 )
@@ -72,6 +74,7 @@ object InterpretedCohortFactory {
                         ignore = cohortMatch.metadata.ignore,
                         source = source,
                         sourceId = sourceId,
+                        link = link,
                         locations = locations
                     )
                 }
@@ -95,6 +98,7 @@ object InterpretedCohortFactory {
                     phase = identification.phase,
                     source = identification.source,
                     sourceId = identification.sourceId,
+                    link = identification.link,
                     locations = identification.locations
                 )
             }

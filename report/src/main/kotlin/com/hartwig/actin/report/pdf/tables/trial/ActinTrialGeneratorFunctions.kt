@@ -62,7 +62,7 @@ object ActinTrialGeneratorFunctions {
     private fun renderTrialTitle(trialLabelText: List<Text>, cohort: InterpretedCohort, asClinicalTrialsGovLink: Boolean = false): Cell {
         return if (asClinicalTrialsGovLink && cohort.nctId?.isNotBlank() == true) {
             createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
-                PdfAction.createURI("https://clinicaltrials.gov/study/${cohort.nctId}")
+                PdfAction.createURI(cohort.link)
             )
         } else createContent(Paragraph().addAll(trialLabelText))
     }
@@ -82,7 +82,7 @@ object ActinTrialGeneratorFunctions {
                 when (cohort.source) {
                     TrialSource.LKO -> cohort.sourceId?.let {
                         createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
-                            PdfAction.createURI("https://longkankeronderzoek.nl/studies/${cohort.sourceId}")
+                            PdfAction.createURI(cohort.link)
                         )
                     } ?: createContent(Paragraph().addAll(trialLabelText))
 
