@@ -18,11 +18,11 @@ class EligibleExternalTrialsGenerator(
     private val width: Float,
     private val filteredCount: Int,
     private val homeCountry: Country? = null,
-    private val isFilteredTrialsTable: Boolean = true
+    private val isFilteredTrialsTable: Boolean
 ) : TableGenerator {
 
     override fun title() =
-        "${if (isFilteredTrialsTable) "" else "Filtered"} ${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
+        "${if (isFilteredTrialsTable) "Filtered" else ""} ${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
                 "recruiting ${homeCountry?.let { "locally in ${it.display()}" } ?: "internationally"} (${trials.size})"
 
     override fun contents(): Table {
@@ -61,7 +61,7 @@ class EligibleExternalTrialsGenerator(
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
-        if (filteredCount > 0 && isFilteredTrialsTable)
+        if (filteredCount > 0 && !isFilteredTrialsTable)
             table.addCell(
                 Cells.createSpanningSubNote(
                     homeCountry?.let {
@@ -108,7 +108,7 @@ class EligibleExternalTrialsGenerator(
             homeCountry: Country?,
             isFilteredTrialsTable: Boolean
         ): TableGenerator? {
-            val trials = if (isFilteredTrialsTable) molecularFilteredTrials.filtered else molecularFilteredTrials.originalMinusFiltered()
+            val trials = if (isFilteredTrialsTable) molecularFilteredTrials.originalMinusFiltered() else molecularFilteredTrials.filtered
             return if (trials.isNotEmpty()) {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,

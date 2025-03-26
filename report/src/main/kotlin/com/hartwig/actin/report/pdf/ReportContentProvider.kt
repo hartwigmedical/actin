@@ -144,7 +144,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }
 
         val (localTrialGenerator, nonLocalTrialGenerator) = EligibleExternalTrialsGenerator.provideExternalTrialsGenerators(
-            trialsProvider, contentWidth, report.config.countryOfReference, true
+            trialsProvider, contentWidth, report.config.countryOfReference, false
         )
 
         return listOfNotNull(

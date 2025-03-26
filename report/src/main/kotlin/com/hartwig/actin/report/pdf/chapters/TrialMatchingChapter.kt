@@ -59,11 +59,11 @@ class TrialMatchingChapter(
             }.filter { generator -> generator.getCohortSize() > 0 }
 
         val (localTrialGeneratorIncluded, nonLocalTrialGeneratorIncluded) = EligibleExternalTrialsGenerator.provideExternalTrialsGenerators(
-            trialsProvider, contentWidth(), report.config.countryOfReference, true
+            trialsProvider, contentWidth(), report.config.countryOfReference, false
         )
 
         val (localTrialGeneratorExcluded, nonLocalTrialGeneratorExcluded) = EligibleExternalTrialsGenerator.provideExternalTrialsGenerators(
-            trialsProvider, contentWidth(), report.config.countryOfReference, false
+            trialsProvider, contentWidth(), report.config.countryOfReference, true
         )
 
         return primaryCohortGenerators + otherCohortGenerators + listOfNotNull(localTrialGeneratorExcluded,
