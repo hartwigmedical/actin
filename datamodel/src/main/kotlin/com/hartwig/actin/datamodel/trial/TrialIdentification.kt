@@ -10,5 +10,6 @@ data class TrialIdentification(
     val source: TrialSource? = null,
     val sourceId: String? = null,
     val locations: List<String> = emptyList(),
+    val tier: TrialTier = TrialTier.TIER_II,
     val link : String? = null
 )

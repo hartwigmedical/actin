@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialSource
+import com.hartwig.actin.datamodel.trial.TrialTier
 import com.hartwig.actin.util.Either
 import com.hartwig.actin.util.left
 import com.hartwig.actin.util.partitionAndJoin
@@ -61,6 +62,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                         source = trialState.source,
                         sourceId = trialState.sourceId,
                         locations = trialState.locations,
+                        tier = TrialTier.TIER_I,
                         link = createTrialLink(trialState)
                     ),
                     generalEligibility = criteria,
