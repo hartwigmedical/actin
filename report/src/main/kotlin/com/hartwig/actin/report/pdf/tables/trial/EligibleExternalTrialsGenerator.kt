@@ -108,8 +108,9 @@ class EligibleExternalTrialsGenerator(
             homeCountry: Country?,
             isFilteredTrialsTable: Boolean
         ): TableGenerator? {
+            val hasTrials = if (isFilteredTrialsTable) molecularFilteredTrials.originalMinusFiltered().isNotEmpty() else molecularFilteredTrials.isNotEmpty()
             val trials = if (isFilteredTrialsTable) molecularFilteredTrials.originalMinusFiltered() else molecularFilteredTrials.filtered
-            return if (trials.isNotEmpty()) {
+            return if (hasTrials) {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,
                     trials,
