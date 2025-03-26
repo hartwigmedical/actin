@@ -71,12 +71,7 @@ class StandardPriorIHCTestExtractorTest {
 
     @Test
     fun `Should ignore lines if ignored in curation`() {
-        every { molecularTestCuration.find(IHC_LINE) } returns setOf(
-            IHCTestConfig(
-                input = IHC_LINE,
-                ignore = true
-            )
-        )
+        returnIgnoreFromCurationDB(IHC_LINE)
         val result =
             extractor.extract(EHR_PATIENT_RECORD_WITH_PATHOLOGY)
         assertThat(result.extracted).isEmpty()
@@ -159,7 +154,7 @@ class StandardPriorIHCTestExtractorTest {
     }
 
     @Test
-    fun `Should extract and curate IHC lines from molecular test ihc result and free text`() {
+    fun `Should extract and curate IHC lines from molecular test ihc result`() {
         every { molecularTestCuration.find(IHC_LINE) } returns setOf(
             IHCTestConfig(
                 input = IHC_LINE,
@@ -179,21 +174,13 @@ class StandardPriorIHCTestExtractorTest {
                         results = setOf(ProvidedMolecularTestResult(ihcResult = uncuratedInput))
                     ),
                     ProvidedMolecularTest(
-                        test = "IHC",
-                        results = setOf(ProvidedMolecularTestResult(freeText = IHC_LINE))
-                    ),
-                    ProvidedMolecularTest(
-                        test = "IHC",
-                        results = setOf(ProvidedMolecularTestResult(freeText = "uncuratedFreeTextShouldNotWarn"))
-                    ),
-                    ProvidedMolecularTest(
                         test = "NGS",
                         results = setOf(ProvidedMolecularTestResult(hgvsCodingImpact = "codingImpact"))
                     ),
                 )
             )
         )
-        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST, PRIOR_IHC_TEST)
+        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST)
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 patientId = HASHED_ID_IN_BASE64,
@@ -205,26 +192,35 @@ class StandardPriorIHCTestExtractorTest {
     }
 
     @Test
-    fun `Should ignore lines if ignored in curation using ihc result`() {
-        val ihcResultWithFreeText = ProvidedMolecularTestResult(ihcResult = IHC_LINE, freeText = "some text")
+    fun `Should ignore lines if ignored in curation using ihc result alone or combined with patient id`() {
+        val firstIHC = ProvidedMolecularTestResult(ihcResult = "first IHC")
+        val secondIHC = ProvidedMolecularTestResult(ihcResult = "second IHC")
         val record = EHR_PATIENT_RECORD.copy(
             molecularTests = listOf(
                 ProvidedMolecularTest(
                     test = "test",
-                    results = setOf(ihcResultWithFreeText)
+                    results = setOf(firstIHC, secondIHC)
                 )
             )
         )
 
-        every { molecularTestCuration.find(IHC_LINE) } returns setOf(
-            IHCTestConfig(
-                input = "some text",
-                ignore = true
-            )
-        )
+        val inputWithPatientAndIHC = "$HASHED_ID_IN_BASE64 | ${firstIHC.ihcResult}"
+        returnIgnoreFromCurationDB(inputWithPatientAndIHC)
+
+        val inputWithIHCOnly = secondIHC.ihcResult!!
+        returnIgnoreFromCurationDB(inputWithIHCOnly)
 
         val result = extractor.extract(record)
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    private fun returnIgnoreFromCurationDB(inputWithPatientAndIHC: String) {
+        every { molecularTestCuration.find(inputWithPatientAndIHC) } returns setOf(
+            IHCTestConfig(
+                input = inputWithPatientAndIHC,
+                ignore = true
+            )
+        )
     }
 }
