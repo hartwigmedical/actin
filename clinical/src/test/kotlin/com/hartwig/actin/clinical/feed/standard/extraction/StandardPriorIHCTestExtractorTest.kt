@@ -13,9 +13,9 @@ import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val PRIOR_IHC_TEST =
@@ -84,6 +84,30 @@ class StandardPriorIHCTestExtractorTest {
     }
 
     @Test
+    fun `Should ignore lines if ignored in curation using free text`() {
+        val ihcResultWithFreeText = ProvidedMolecularTestResult(ihcResult = IHC_LINE, freeText = "some text")
+        val record = EHR_PATIENT_RECORD.copy(
+            molecularTests = listOf(
+                ProvidedMolecularTest(
+                    test = "test",
+                    results = setOf(ihcResultWithFreeText)
+                )
+            )
+        )
+
+        every { molecularTestCuration.find("some text") } returns setOf(
+            IHCTestConfig(
+                input = "some text",
+                ignore = true
+            )
+        )
+
+        val result = extractor.extract(record)
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
     fun `Should give curation warnings for uncurated lines`() {
         every { molecularTestCuration.find(IHC_LINE) } returns emptySet()
         val result =
@@ -95,6 +119,38 @@ class StandardPriorIHCTestExtractorTest {
                 category = CurationCategory.MOLECULAR_TEST_IHC,
                 feedInput = "HER2 immunohistochemie: negative",
                 message = "Could not find molecular test ihc config for input 'HER2 immunohistochemie: negative'"
+            )
+        )
+    }
+
+    @Test
+    fun `Should only give curation warnings for uncurated IHC lines when ihcResult is not null`() {
+        every { molecularTestCuration.find(any()) } returns emptySet()
+        val freeTextOnlyResult = ProvidedMolecularTestResult(ihcResult = null, freeText = "I'm not an IHC result")
+        val ihcResultWithFreeText = ProvidedMolecularTestResult(ihcResult = IHC_LINE, freeText = "some text")
+        val ihcResultWithoutFreeText = ProvidedMolecularTestResult(ihcResult = "Other IHC result")
+        val record = EHR_PATIENT_RECORD.copy(
+            molecularTests = listOf(
+                ProvidedMolecularTest(
+                    test = "test",
+                    results = setOf(freeTextOnlyResult, ihcResultWithoutFreeText, ihcResultWithFreeText)
+                )
+            )
+        )
+        val result = extractor.extract(record)
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).containsExactlyInAnyOrder(
+            CurationWarning(
+                patientId = HASHED_ID_IN_BASE64,
+                category = CurationCategory.MOLECULAR_TEST_IHC,
+                feedInput = "{ihcResult} $IHC_LINE with {freeText} some text",
+                message = "Could not find molecular test config for input '{ihcResult} $IHC_LINE with {freeText} some text'"
+            ),
+            CurationWarning(
+                patientId = HASHED_ID_IN_BASE64,
+                category = CurationCategory.MOLECULAR_TEST_IHC,
+                feedInput = "Other IHC result",
+                message = "Could not find molecular test config for input 'Other IHC result'"
             )
         )
     }
@@ -175,7 +231,7 @@ class StandardPriorIHCTestExtractorTest {
                     ),
                     ProvidedMolecularTest(
                         test = "IHC",
-                        results = setOf(ProvidedMolecularTestResult(freeText = IHC_LINE))
+                        results = setOf(ProvidedMolecularTestResult(freeText = "free text"))
                     ),
                     ProvidedMolecularTest(
                         test = "NGS",
@@ -184,7 +240,7 @@ class StandardPriorIHCTestExtractorTest {
                 )
             )
         )
-        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST, PRIOR_IHC_TEST)
+        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 }
