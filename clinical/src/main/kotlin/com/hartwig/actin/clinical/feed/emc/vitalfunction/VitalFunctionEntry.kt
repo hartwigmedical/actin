@@ -54,7 +54,7 @@ class VitalFunctionFeedValidator : FeedValidator<VitalFunctionEntry> {
             if (feed.codeDisplayOriginal.isNotEmpty() && VitalFunctionExtraction.toCategory(feed.codeDisplayOriginal) == null) listOf(
                 FeedValidationWarning(
                     feed.subject,
-                    "Invalid vital function category ${feed.codeDisplayOriginal}"
+                    "Invalid vital function category: ${feed.codeDisplayOriginal}"
                 )
             ) else emptyList()
 
