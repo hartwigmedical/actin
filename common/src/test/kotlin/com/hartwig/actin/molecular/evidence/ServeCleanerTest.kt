@@ -6,6 +6,7 @@ import org.junit.Test
 
 
 class ServeCleanerTest {
+    
     @Test
     fun `Should remove evidences with combined criteria`() {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
