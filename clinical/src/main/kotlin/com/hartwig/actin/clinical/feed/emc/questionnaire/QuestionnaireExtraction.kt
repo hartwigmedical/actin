@@ -11,7 +11,10 @@ object QuestionnaireExtraction {
     private const val ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire"
     private const val ACTIVE_LINE_OFFSET = 1
 
-    fun extract(entry: QuestionnaireEntry?): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
+    fun extract(entryList: List<QuestionnaireEntry>): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
+        val entry = entryList.sortedByDescending ( QuestionnaireEntry::authored ).first()
+        //Add filtering here
+
         if (entry == null || !isActualQuestionnaire(entry)) {
             return null to emptyList()
         }
