@@ -169,14 +169,14 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     ): FunctionCreator {
         return { function: EligibilityFunction ->
             val minValue = functionInputResolver().createOneDoubleInput(function)
-            createLabEvaluator(measurement, HasSufficientLabValue(minValue, measurement, targetUnit))
+            createLabEvaluator(measurement, HasSufficientLabValue(minValue, measurement, targetUnit), false)
         }
     }
 
     private fun hasSufficientLabValueLLNCreator(measurement: LabMeasurement): FunctionCreator {
         return { function: EligibilityFunction ->
             val minLLNFactor = functionInputResolver().createOneDoubleInput(function)
-            createLabEvaluator(measurement, HasSufficientLabValueLLN(minLLNFactor))
+            createLabEvaluator(measurement, HasSufficientLabValueLLN(minLLNFactor), false)
         }
     }
 
@@ -249,13 +249,15 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val minCreatinineClearance = functionInputResolver().createOneDoubleInput(function)
             val measurement = retrieveForMethod(method)
             val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
-            val main = createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit))
+            val main =
+                createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit), false)
 
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
                 HasSufficientDerivedCreatinineClearance(
                     referenceDateProvider().year(), method, minCreatinineClearance, minimalDateWeightMeasurements
-                )
+                ),
+                false
             )
             Fallback(main, fallback)
         }
@@ -268,7 +270,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val mininumDateForBodyWeights = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val minFunction = createLabEvaluator(
                 measurement,
-                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1, mininumDateForBodyWeights)
+                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1, mininumDateForBodyWeights),
+                false
             )
             val maxFunction = createLabEvaluator(
                 measurement,
@@ -288,7 +291,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasPotentialHypokalemiaCreator(): FunctionCreator {
         return {
-            val potassiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0)))
+            val potassiumBelowLLN: EvaluationFunction =
+                Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0), false))
             val hasHadPriorHypokalemia =
                 OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                     icdModel(),
@@ -301,7 +305,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasPotentialHypomagnesemiaCreator(): FunctionCreator {
         return {
-            val magnesiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0)))
+            val magnesiumBelowLLN: EvaluationFunction =
+                Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0), false))
             val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
                 setOf(IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)),
@@ -313,7 +318,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasPotentialHypocalcemiaCreator(): FunctionCreator {
         return {
-            val calciumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.CALCIUM, HasSufficientLabValueLLN(1.0)))
+            val calciumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.CALCIUM, HasSufficientLabValueLLN(1.0), false))
             val hasHadPriorHypocalcemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
                 setOf(IcdCode(IcdConstants.CALCIUM_DEFICIENCY_CODE)),
@@ -327,8 +332,12 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { HasPotentialSymptomaticHypercalcemia(minValidLabDate()) }
     }
 
-    private fun createLabEvaluator(measurement: LabMeasurement, function: LabEvaluationFunction): EvaluationFunction {
-        return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate())
+    private fun createLabEvaluator(
+        measurement: LabMeasurement,
+        function: LabEvaluationFunction,
+        highestFirst: Boolean = true
+    ): EvaluationFunction {
+        return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate(), highestFirst)
     }
 
     private fun minValidLabDate(): LocalDate {
