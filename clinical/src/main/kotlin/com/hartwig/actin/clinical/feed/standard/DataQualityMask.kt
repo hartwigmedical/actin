@@ -12,9 +12,9 @@ private fun ProvidedPatientRecord.scrubModifications() =
 private fun ProvidedPatientRecord.scrubMedications() =
     this.copy(medications = null)
 
-private fun ProvidedPatientRecord.addAlwaysTestedGenes() =
+private fun ProvidedPatientRecord.addAlwaysTestedGenes(panelGeneList: PanelGeneList) =
     this.copy(molecularTests = this.molecularTests.map {
-        it.copy(testedGenes = knownGenes(it))
+        it.copy(testedGenes = panelGeneList[it.test] + (it.testedGenes ?: emptySet()))
     })
 
 fun knownGenes(test: ProvidedMolecularTest): Set<String>? {
@@ -28,8 +28,8 @@ fun knownGenes(test: ProvidedMolecularTest): Set<String>? {
     }
 }
 
-class DataQualityMask {
+class DataQualityMask(private val panelGeneList: PanelGeneList) {
     fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
-        return ehrPatientRecord.scrubMedications().scrubModifications().addAlwaysTestedGenes()
+        return ehrPatientRecord.scrubMedications().scrubModifications().addAlwaysTestedGenes(panelGeneList)
     }
 } 
