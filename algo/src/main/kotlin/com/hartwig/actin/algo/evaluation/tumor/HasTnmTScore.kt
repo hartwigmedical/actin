@@ -47,7 +47,7 @@ class HasTnmTScore(private val score: String): EvaluationFunction {
         val stage = record.tumor.stage
         return when {
             stageMap[stage]?.contains(TnmT.M1) == true -> EvaluationFactory.undetermined("Cancer is metastatic. Primary tumor stage is unknown")
-            stageMap[stage]?.contains(scoreTnmT) == true -> EvaluationFactory.pass("Tumor is of stage $score with potential T scores of $stageMap")
+            stageMap[stage]?.contains(scoreTnmT) == true -> EvaluationFactory.pass("Tumor is of stage $score with potential T scores of ${stageMap[stage]}")
             else -> EvaluationFactory.fail("Tumor is of stage $score")
         }
     }
