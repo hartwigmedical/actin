@@ -27,17 +27,14 @@ class DataQualityMaskTest {
     fun `Should add always tested genes for archer and ngs panels`() {
         val ehrPatientRecord = EHR_PATIENT_RECORD.copy(
             molecularTests = listOf(
-               ProvidedMolecularTest(
+                ProvidedMolecularTest(
                     test = "NGS panel", date = LocalDate.now(), testedGenes = setOf("additional_gene"), results = emptySet()
                 )
             )
         )
-        every { panelGeneList["NGS panel"] } returns setOf("ALK")
+        every { panelGeneList["NGS panel"] } returns setOf("EGFR")
         val result = DataQualityMask(panelGeneList).apply(ehrPatientRecord)
         val ngsTest = result.molecularTests[0]
-        assertThat(archerTest.testedGenes).containsExactly(
-            "ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1", "additional_gene"
-        )
-        assertThat(ngsTest.testedGenes).containsExactly("EGFR", "BRAF", "KRAS", "additional_gene")
+        assertThat(ngsTest.testedGenes).containsExactly("EGFR", "additional_gene")
     }
 }

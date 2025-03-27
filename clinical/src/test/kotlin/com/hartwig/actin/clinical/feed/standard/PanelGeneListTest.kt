@@ -14,5 +14,4 @@ class PanelGeneListTest {
         val avlPanelGenes = geneList["an ngs test"]
         assertThat(avlPanelGenes).containsExactly("EGFR")
     }
-    
 }
