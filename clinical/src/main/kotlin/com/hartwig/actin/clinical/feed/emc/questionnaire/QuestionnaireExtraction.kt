@@ -15,7 +15,7 @@ object QuestionnaireExtraction {
         val extracted = entryList.sortedByDescending(QuestionnaireEntry::authored).firstNotNullOfOrNull { it ->
             extractQuestionnaire(it)
         }
-        return if (extracted != null){
+        return if (extracted != null) {
             extracted
         } else {
             null to emptyList()
@@ -68,30 +68,36 @@ object QuestionnaireExtraction {
             ecg = ecg.curated,
             complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
         )
-        return if (with (questionnaire) {
-                tumorLocation.isNullOrEmpty() &&
-                        tumorType.isNullOrEmpty() &&
-                        biopsyLocation.isNullOrEmpty() &&
-                        stage.curated == null &&
-                        treatmentHistoryCurrentTumor.isNullOrEmpty() &&
-                        otherOncologicalHistory.isNullOrEmpty() &&
-                        secondaryPrimaries.isNullOrEmpty() &&
-                        nonOncologicalHistory.isNullOrEmpty() &&
-                        hasMeasurableDisease.curated == null &&
-                        hasBrainLesions == null &&
-                        hasActiveBrainLesions == null &&
-                        hasCnsLesions == null &&
-                        hasActiveCnsLesions == null &&
-                        hasBoneLesions.curated == null &&
-                        hasLiverLesions.curated == null &&
-                        otherLesions.isNullOrEmpty() &&
-                        ihcTestResults.isNullOrEmpty() &&
-                        pdl1TestResults.isNullOrEmpty() &&
-                        whoStatus.curated == null &&
-                        unresolvedToxicities.isNullOrEmpty() &&
-                        infectionStatus.curated == null &&
-                        ecg.curated == null &&
-                        complications.isNullOrEmpty()
+        return if (with(questionnaire) {
+                listOf(
+                    tumorLocation,
+                    tumorType,
+                    biopsyLocation
+                ).all { it.isNullOrEmpty() } &&
+                        listOf(
+                            treatmentHistoryCurrentTumor,
+                            otherOncologicalHistory,
+                            secondaryPrimaries,
+                            nonOncologicalHistory,
+                            otherLesions,
+                            ihcTestResults,
+                            pdl1TestResults,
+                            unresolvedToxicities,
+                            complications
+                        ).all { it.isNullOrEmpty() } &&
+                        listOf(
+                            stage.curated,
+                            hasMeasurableDisease.curated,
+                            hasBrainLesions,
+                            hasActiveBrainLesions,
+                            hasCnsLesions,
+                            hasActiveCnsLesions,
+                            hasBoneLesions.curated,
+                            hasLiverLesions.curated,
+                            whoStatus.curated,
+                            infectionStatus.curated,
+                            ecg.curated
+                        ).all { it == null }
             }) {
             null
         } else {
