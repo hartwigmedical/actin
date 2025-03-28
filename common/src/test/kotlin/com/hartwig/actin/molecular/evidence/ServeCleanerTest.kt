@@ -6,7 +6,7 @@ import org.junit.Test
 
 
 class ServeCleanerTest {
-    
+
     @Test
     fun `Should remove evidences with combined criteria`() {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
@@ -20,6 +20,6 @@ class ServeCleanerTest {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = SINGLE_PROFILE_1)
         val database = createServeDatabase(evidence, TestServeTrialFactory.createTrialForGene())
         val cleanDatabase = ServeCleaner.cleanServeDatabase(database)
-        cleanDatabase.records().values.forEach { assertThat(it.evidences()).containsExactly(evidence) }
+        assertThat(cleanDatabase).isEqualTo(database)
     }
 }
