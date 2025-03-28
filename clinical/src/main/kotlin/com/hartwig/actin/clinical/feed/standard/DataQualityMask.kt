@@ -11,7 +11,7 @@ private fun ProvidedPatientRecord.scrubMedications() =
 
 private fun ProvidedPatientRecord.addAlwaysTestedGenes(panelGeneList: PanelGeneList) =
     this.copy(molecularTests = this.molecularTests.map {
-        it.copy(testedGenes = panelGeneList[it.test] + (it.testedGenes ?: emptySet()))
+        it.copy(testedGenes = panelGeneList.matchGenesForTest(it.test) + (it.testedGenes ?: emptySet()))
     })
 
 class DataQualityMask(private val panelGeneList: PanelGeneList) {

@@ -32,7 +32,7 @@ class DataQualityMaskTest {
                 )
             )
         )
-        every { panelGeneList["NGS panel"] } returns setOf("EGFR")
+        every { panelGeneList.matchGenesForTest("NGS panel") } returns setOf("EGFR")
         val result = DataQualityMask(panelGeneList).apply(ehrPatientRecord)
         val ngsTest = result.molecularTests[0]
         assertThat(ngsTest.testedGenes).containsExactly("EGFR", "additional_gene")

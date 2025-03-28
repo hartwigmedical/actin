@@ -5,13 +5,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PanelGeneListTest {
-    
+
     @Test
     fun `Should read from panel gene list TSV and match gene lists on test name regex`() {
         val geneList = PanelGeneList.create(ResourceLocator.resourceOnClasspath("panel_gene_list/panel_gene_list.tsv"))
-        val oncoPanel = geneList["HMF oncopanel "]
+        val oncoPanel = geneList.matchGenesForTest("HMF oncopanel ")
         assertThat(oncoPanel).containsExactly("ABCB1", "ABL1")
-        val avlPanelGenes = geneList["an ngs test"]
+        val avlPanelGenes = geneList.matchGenesForTest("an ngs test")
         assertThat(avlPanelGenes).containsExactly("EGFR")
     }
 }
