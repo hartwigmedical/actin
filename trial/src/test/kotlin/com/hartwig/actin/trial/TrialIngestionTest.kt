@@ -81,7 +81,8 @@ class TrialIngestionTest {
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.NKI,
                     sourceId = SOURCE_ID,
-                    locations = listOf(LOCATION)
+                    locations = listOf(LOCATION),
+                    link = "https://clinicaltrials.gov/study/$NCT_ID"
                 ),
                 generalEligibility = listOf(
                     Eligibility(

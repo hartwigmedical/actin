@@ -3,15 +3,10 @@ package com.hartwig.actin.report.trial
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.util.MapFunctions
-import java.util.Collections.emptySortedSet
-import java.util.SortedSet
 
 class MolecularFilteredExternalTrials(
     private val original: Set<ExternalTrialSummary>,
@@ -56,7 +51,7 @@ class TrialsProvider(
         return nonEvaluableCohorts
     }
 
-    fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
+    private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
         return filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
     }
 
