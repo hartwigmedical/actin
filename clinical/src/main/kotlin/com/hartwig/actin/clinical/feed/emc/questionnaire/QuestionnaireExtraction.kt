@@ -72,18 +72,25 @@ object QuestionnaireExtraction {
                 tumorLocation.isNullOrEmpty() &&
                         tumorType.isNullOrEmpty() &&
                         biopsyLocation.isNullOrEmpty() &&
+                        stage.curated == null &&
                         treatmentHistoryCurrentTumor.isNullOrEmpty() &&
                         otherOncologicalHistory.isNullOrEmpty() &&
                         secondaryPrimaries.isNullOrEmpty() &&
                         nonOncologicalHistory.isNullOrEmpty() &&
+                        hasMeasurableDisease.curated == null &&
                         hasBrainLesions == null &&
                         hasActiveBrainLesions == null &&
                         hasCnsLesions == null &&
                         hasActiveCnsLesions == null &&
+                        hasBoneLesions.curated == null &&
+                        hasLiverLesions.curated == null &&
                         otherLesions.isNullOrEmpty() &&
                         ihcTestResults.isNullOrEmpty() &&
                         pdl1TestResults.isNullOrEmpty() &&
+                        whoStatus.curated == null &&
                         unresolvedToxicities.isNullOrEmpty() &&
+                        infectionStatus.curated == null &&
+                        ecg.curated == null &&
                         complications.isNullOrEmpty()
             }) {
             null
