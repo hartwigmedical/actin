@@ -12,7 +12,7 @@ object QuestionnaireExtraction {
     private const val ACTIVE_LINE_OFFSET = 1
 
     fun extract(entryList: List<QuestionnaireEntry>): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
-        val entry = entryList.sortedByDescending ( QuestionnaireEntry::authored ).first()
+        val entry = entryList.sortedByDescending ( QuestionnaireEntry::authored ).firstOrNull()
         //Add filtering here
 
         if (entry == null || !isActualQuestionnaire(entry)) {

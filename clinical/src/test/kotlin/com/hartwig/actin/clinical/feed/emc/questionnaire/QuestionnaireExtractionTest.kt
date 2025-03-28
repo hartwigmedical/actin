@@ -215,10 +215,10 @@ class QuestionnaireExtractionTest {
 
     @Test
     fun `Should extract from missing or invalid entry`() {
-        val nullEntry = QuestionnaireExtraction.extract(null)
+        val nullEntry = QuestionnaireExtraction.extract(emptyList())
         assertThat(nullEntry.first).isNull()
         assertThat(nullEntry.second).isEmpty()
-        val invalidEntry = QuestionnaireExtraction.extract(entryWithText("Does not exist"))
+        val invalidEntry = QuestionnaireExtraction.extract(listOf(entryWithText("Does not exist")))
         assertThat(invalidEntry.first).isNull()
         assertThat(invalidEntry.second).isEmpty()
     }
@@ -323,7 +323,7 @@ class QuestionnaireExtractionTest {
         }
 
         private fun questionnaire(text: String): Questionnaire {
-            return QuestionnaireExtraction.extract(entryWithText(text.replace("\n", "\\n"))).first!!
+            return QuestionnaireExtraction.extract(listOf(entryWithText(text.replace("\n", "\\n")))).first!!
         }
 
         private fun assertExtractionForQuestionnaireV1_5(rawQuestionnaire: String) {
