@@ -12,10 +12,12 @@ object QuestionnaireExtraction {
     private const val ACTIVE_LINE_OFFSET = 1
 
     fun extract(entryList: List<QuestionnaireEntry>): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
-        val entry = entryList.sortedByDescending ( QuestionnaireEntry::authored ).firstOrNull()
-        //Add filtering here
+        val entry = entryList.sortedByDescending ( QuestionnaireEntry::authored ).firstOrNull{ it ->
+            isActualQuestionnaire(it) &&
+            !QuestionnaireMapping.mapping(it).values.all { it.isNullOrEmpty() }
+        }
 
-        if (entry == null || !isActualQuestionnaire(entry)) {
+        if (entry == null) {
             return null to emptyList()
         }
         val mapping = QuestionnaireMapping.mapping(entry)
