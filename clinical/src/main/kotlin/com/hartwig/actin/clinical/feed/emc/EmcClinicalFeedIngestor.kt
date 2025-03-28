@@ -61,7 +61,7 @@ class EmcClinicalFeedIngestor(
             val patientId = feedRecord.patientEntry.subject
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.latestQuestionnaireEntry)
+            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.questionnaireEntries)
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val comorbidityExtraction =
                 comorbidityExtractor.extract(patientId, questionnaire, feedRecord.toxicityEntries, feedRecord.intoleranceEntries)

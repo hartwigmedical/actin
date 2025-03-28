@@ -11,9 +11,20 @@ object QuestionnaireExtraction {
     private const val ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire"
     private const val ACTIVE_LINE_OFFSET = 1
 
-    fun extract(entry: QuestionnaireEntry?): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
+    fun extract(entryList: List<QuestionnaireEntry>): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
+        val extracted = entryList.sortedByDescending(QuestionnaireEntry::authored).firstNotNullOfOrNull { it ->
+            extractQuestionnaire(it)
+        }
+        return if (extracted != null) {
+            extracted
+        } else {
+            null to emptyList()
+        }
+    }
+
+    fun extractQuestionnaire(entry: QuestionnaireEntry?): Pair<Questionnaire, List<QuestionnaireCurationError>>? {
         if (entry == null || !isActualQuestionnaire(entry)) {
-            return null to emptyList()
+            return null
         }
         val mapping = QuestionnaireMapping.mapping(entry)
         val lines = QuestionnaireReader.read(entry.text, QuestionnaireMapping.keyStrings(entry), QuestionnaireMapping.SECTION_HEADERS)
@@ -28,7 +39,7 @@ object QuestionnaireExtraction {
             QuestionnaireCuration.toInfectionStatus(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION]))
         val ecg = QuestionnaireCuration.toEcg(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG]))
         val stage = QuestionnaireCuration.toStage(entry.subject, value(lines, mapping[QuestionnaireKey.STAGE]))
-        return Questionnaire(
+        val questionnaire = Questionnaire(
             date = entry.authored,
             tumorLocation = value(lines, mapping[QuestionnaireKey.PRIMARY_TUMOR_LOCATION]),
             tumorType = if (QuestionnaireVersion.version(entry) == QuestionnaireVersion.V0_1) "Unknown" else value(
@@ -56,7 +67,43 @@ object QuestionnaireExtraction {
             infectionStatus = infectionStatus.curated,
             ecg = ecg.curated,
             complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
-        ) to hasBoneLesions.errors + hasLiverLesions.errors + hasMeasurableDisease.errors + whoStatus.errors + infectionStatus.errors + ecg.errors + stage.errors
+        )
+        return if (with(questionnaire) {
+                listOf(
+                    tumorLocation,
+                    tumorType,
+                    biopsyLocation
+                ).all { it.isNullOrEmpty() } &&
+                        listOf(
+                            treatmentHistoryCurrentTumor,
+                            otherOncologicalHistory,
+                            secondaryPrimaries,
+                            nonOncologicalHistory,
+                            otherLesions,
+                            ihcTestResults,
+                            pdl1TestResults,
+                            unresolvedToxicities,
+                            complications
+                        ).all { it.isNullOrEmpty() } &&
+                        listOf(
+                            stage.curated,
+                            hasMeasurableDisease.curated,
+                            hasBrainLesions,
+                            hasActiveBrainLesions,
+                            hasCnsLesions,
+                            hasActiveCnsLesions,
+                            hasBoneLesions.curated,
+                            hasLiverLesions.curated,
+                            whoStatus.curated,
+                            infectionStatus.curated,
+                            ecg.curated
+                        ).all { it == null }
+            }) {
+            null
+        } else {
+            questionnaire to hasBoneLesions.errors + hasLiverLesions.errors + hasMeasurableDisease.errors + whoStatus.errors + infectionStatus.errors + ecg.errors + stage.errors
+
+        }
     }
 
     fun isActualQuestionnaire(entry: QuestionnaireEntry): Boolean {
