@@ -5,6 +5,7 @@ import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
@@ -55,7 +56,7 @@ class MolecularClinicalEvidenceGenerator(
                             val evidenceCellContents = TreatmentEvidenceFunctions.generateEvidenceCellContents(perLevelEvidences)
 
                             evidenceCellContents.forEach { (treatment, cancerTypes, resistance) ->
-                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f).setItalic().setFontSize(5.5f)
+                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f).setFont(Styles.fontItalic()).setFontSize(5.5f)
                                 val treatmentContent = Paragraph(treatment)
 
                                 if (resistance) {
