@@ -7,8 +7,8 @@ import java.io.File
 
 class PanelGeneList(private val panelRegexToGenes: Map<Regex, List<String>>) {
 
-    fun matchGenesForTest(testName: String): Set<String> {
-        return panelRegexToGenes.filterKeys { it.containsMatchIn(testName.lowercase()) }.values.flatten().toSet()
+    fun listGenesForPanel(panelName: String): Set<String> {
+        return panelRegexToGenes.filterKeys { it.containsMatchIn(panelName.lowercase()) }.values.flatten().toSet()
     }
 
     companion object {
