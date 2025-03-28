@@ -114,16 +114,15 @@ object ClinicalEvidenceFactory {
             )
         }.toSet()
 
-        val url = trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
-            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
-
         return ExternalTrial(
             nctId = trial.nctId(),
-            title = trial.acronym() ?: trial.title(),
+            title = trial.title(),
+            acronym = trial.acronym(),
+            source = trial.source().display(),
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            url = url
+            therapyNames = trial.therapyNames(),
         )
     }
 

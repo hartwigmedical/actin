@@ -179,8 +179,7 @@ class ClinicalEvidenceFactoryTest {
                 applicableCancerTypes = setOf(
                     CancerType(matchedCancerType = "matched 1", excludedCancerSubTypes = emptySet()),
                     CancerType(matchedCancerType = "matched 2", excludedCancerSubTypes = setOf("excluded"))
-                ),
-                url = "https://clinicaltrials.gov/study/NCT00000001"
+                )
             )
         )
 
@@ -224,8 +223,7 @@ class ClinicalEvidenceFactoryTest {
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 1", excludedCancerSubTypes = emptySet()),
-                    ),
-                    url = "https://clinicaltrials.gov/study/NCT00000001"
+                    )
                 ),
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000002",
@@ -234,8 +232,7 @@ class ClinicalEvidenceFactoryTest {
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 2", excludedCancerSubTypes = emptySet())
-                    ),
-                    url = "https://clinicaltrials.gov/study/NCT00000002"
+                    )
                 )
             )
         )

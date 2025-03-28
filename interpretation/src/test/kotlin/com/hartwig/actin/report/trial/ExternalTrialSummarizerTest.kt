@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -19,21 +18,23 @@ private const val EGFR_TARGET = "EGFR"
 private const val NCT_01 = "NCT00000001"
 private const val NCT_02 = "NCT00000002"
 private const val TITLE = "title"
-private const val URL = "url"
+private const val SOURCE = "source"
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = NCT_01,
-    title = "title",
+    title = TITLE,
+    source = SOURCE,
     countries = sortedSetOf(),
     actinMolecularEvents = sortedSetOf(),
     sourceMolecularEvents = sortedSetOf(),
     applicableCancerTypes = sortedSetOf(),
-    url = URL
+    therapyNames = sortedSetOf(),
 )
 private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = emptyMap())
 private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
 private val TRIAL_1 = ExternalTrial(
     nctId = NCT_01,
     title = TITLE,
+    source = SOURCE,
     countries = setOf(NETHERLANDS, BELGIUM),
     molecularMatches = setOf(
         MolecularMatchDetails(
@@ -48,11 +49,12 @@ private val TRIAL_1 = ExternalTrial(
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 1", emptySet()), CancerType("cancer type 2", emptySet())),
-    url = URL
+    therapyNames = emptySet(),
 )
 private val TRIAL_2 = ExternalTrial(
     nctId = NCT_02,
     title = TITLE,
+    source = SOURCE,
     countries = setOf(BELGIUM),
     molecularMatches = setOf(
         MolecularMatchDetails(
@@ -62,7 +64,7 @@ private val TRIAL_2 = ExternalTrial(
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 3", emptySet())),
-    url = URL
+    therapyNames = emptySet()
 )
 private val TRIAL_MATCHES = setOf(
     TrialMatch(
@@ -96,20 +98,22 @@ class ExternalTrialSummarizerTest {
             ExternalTrialSummary(
                 nctId = TRIAL_2.nctId,
                 title = TRIAL_2.title,
+                source = TRIAL_2.source,
                 countries = countrySet(BELGIUM),
                 actinMolecularEvents = sortedSetOf(EGFR_TARGET, TMB_TARGET),
                 sourceMolecularEvents = TRIAL_2.molecularMatches.map { it.sourceEvent }.toSortedSet(),
                 applicableCancerTypes = TRIAL_2.applicableCancerTypes.toSortedSet(Comparator.comparing { it.matchedCancerType }),
-                url = TRIAL_2.url
+                therapyNames = TRIAL_2.therapyNames.toSortedSet()
             ),
             ExternalTrialSummary(
                 nctId = TRIAL_1.nctId,
                 title = TRIAL_1.title,
+                source = TRIAL_1.source,
                 countries = countrySet(NETHERLANDS, BELGIUM),
                 actinMolecularEvents = sortedSetOf(TMB_TARGET),
                 sourceMolecularEvents = TRIAL_1.molecularMatches.map { it.sourceEvent }.toSortedSet(),
                 applicableCancerTypes = TRIAL_1.applicableCancerTypes.toSortedSet(Comparator.comparing { it.matchedCancerType }),
-                url = TRIAL_1.url
+                therapyNames = TRIAL_1.therapyNames.toSortedSet()
             )
         )
     }

@@ -9,26 +9,27 @@ object TestExternalTrialFactory {
             countries = setOf(
                 CountryDetails(Country.NETHERLANDS, mapOf("Leiden" to setOf(Hospital("LUMC", false)))),
                 CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet()))
-            ),
-            url = "https://clinicaltrials.gov/study/NCT00000001"
+            )
         )
     }
 
     fun create(
         nctId: String = "",
         title: String = "",
+        source: String = "",
         countries: Set<CountryDetails> = emptySet(),
         molecularMatches: Set<MolecularMatchDetails> = emptySet(),
         applicableCancerTypes: Set<CancerType> = emptySet(),
-        url: String = ""
+        therapyNames: Set<String> = emptySet()
     ): ExternalTrial {
         return ExternalTrial(
             nctId = nctId,
             title = title,
+            source = source,
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            url = url
+            therapyNames = therapyNames,
         )
     }
 }

@@ -12,11 +12,13 @@ import java.util.SortedSet
 data class ExternalTrialSummary(
     val nctId: String,
     val title: String,
+    val acronym: String? = null,
+    val source: String,
     val countries: SortedSet<CountryDetails>,
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,
     val applicableCancerTypes: SortedSet<CancerType>,
-    val url: String
+    val therapyNames: SortedSet<String>
 )
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
@@ -79,12 +81,14 @@ object ExternalTrialSummarizer {
             ExternalTrialSummary(
                 nctId = entry.key,
                 title = trial.title,
+                acronym = trial.acronym,
+                source = trial.source,
                 countries = countries.toSortedSet(Comparator.comparing { c -> c.country }),
                 actinMolecularEvents = entry.value.map { ewt -> ewt.event }.toSortedSet(),
                 sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),
                 applicableCancerTypes = entry.value.flatMap { ewt -> ewt.trial.applicableCancerTypes }
                     .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType }),
-                url = trial.url
+                therapyNames = entry.value.flatMap { ewt -> ewt.trial.therapyNames }.toSortedSet()
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }

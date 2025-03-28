@@ -7,6 +7,7 @@ import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.GeneralizedTrialProvider
 import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.pdf.action.PdfAction
@@ -44,7 +45,7 @@ class EligibleExternalTrialsGenerator(
         trials.forEach { trial ->
             table.addCell(
                 Cells.createContent(EligibleExternalTrialGeneratorFunctions.shortenTitle(trial.title))
-                    .setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle())
+                    .setAction(PdfAction.createURI(GeneralizedTrialProvider.url(trial.nctId))).addStyle(Styles.urlStyle())
             )
             table.addCell(Cells.createContent(trial.actinMolecularEvents.joinToString(",\n")))
             table.addCell(Cells.createContent(trial.sourceMolecularEvents.joinToString(",\n")))

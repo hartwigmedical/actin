@@ -208,8 +208,7 @@ object TestMolecularFactory {
                 countries = setOf(
                     CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet())),
                     CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
-                ),
-                url = "https://clinicaltrials.gov/study/NCT00000020"
+                )
             )
         ),
         gene = "PTEN",
@@ -314,8 +313,7 @@ object TestMolecularFactory {
                                         "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
                                     )
                                 )
-                            ),
-                            url = "https://clinicaltrials.gov/study/NCT00000003"
+                            )
                         ),
                         TestExternalTrialFactory.create(
                             nctId = "NCT00000011",
@@ -327,8 +325,7 @@ object TestMolecularFactory {
                                         "Leuven" to setOf(Hospital("hospital", null))
                                     )
                                 )
-                            ),
-                            url = "https://clinicaltrials.gov/study/NCT00000011"
+                            )
                         )
                     )
                 ),
