@@ -24,7 +24,8 @@ data class ClinicalIngestionConfig(
     val atcOverridesTsv: String,
     val treatmentDirectory: String,
     val outputDirectory: String,
-    val feedFormat: FeedFormat
+    val feedFormat: FeedFormat,
+    val panelGeneListTsv: String?,
 ) {
 
     companion object {
@@ -42,6 +43,7 @@ data class ClinicalIngestionConfig(
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val LOG_DEBUG = "log_debug"
         private const val FEED_FORMAT = "feed_format"
+        private const val PANEL_GENE_LIST_TSV = "panel_gene_list_tsv"
 
         fun createOptions(): Options {
             val options = Options()
@@ -55,6 +57,11 @@ data class ClinicalIngestionConfig(
             options.addOption(ATC_OVERRIDES_TSV, true, "Path to TSV file containing ATC code overrides")
             options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment data")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to")
+            options.addOption(
+                PANEL_GENE_LIST_TSV,
+                true,
+                "Path to TSV file containing panel test names and their corresponding tested genes"
+            )
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(
                 FEED_FORMAT,
@@ -80,7 +87,8 @@ data class ClinicalIngestionConfig(
                 atcOverridesTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_OVERRIDES_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
-                feedFormat = ApplicationConfig.optionalValue(cmd, FEED_FORMAT)?.let { FeedFormat.valueOf(it) } ?: FeedFormat.EMC_TSV
+                feedFormat = ApplicationConfig.optionalValue(cmd, FEED_FORMAT)?.let { FeedFormat.valueOf(it) } ?: FeedFormat.EMC_TSV,
+                panelGeneListTsv = ApplicationConfig.optionalFile(cmd, PANEL_GENE_LIST_TSV)
             )
         }
     }
