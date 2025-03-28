@@ -223,6 +223,17 @@ class QuestionnaireExtractionTest {
         assertThat(invalidEntry.second).isEmpty()
     }
 
+    @Test
+    fun `Should reject new empty questionnaire in favor of an old one`() {
+        val newInvalidEntry = entryWithText("Does not exist").copy(authored = LocalDate.now())
+        val oldValidEntry = TestQuestionnaireFactory.createTestQuestionnaireEntry().copy(
+            authored = LocalDate.now().minusDays(1),
+            text = TestQuestionnaireFactory.createTestQuestionnaireValueV1_7().replace("\n", "\\n")
+        )
+        val extractedEntry = QuestionnaireExtraction.extract(listOf(newInvalidEntry, oldValidEntry))
+        assertThat(extractedEntry.first).isNotNull
+    }
+
     companion object {
         private fun assertPatientHistory(questionnaire: Questionnaire) {
             assertThat(questionnaire.date).isEqualTo(LocalDate.of(2020, 8, 28))

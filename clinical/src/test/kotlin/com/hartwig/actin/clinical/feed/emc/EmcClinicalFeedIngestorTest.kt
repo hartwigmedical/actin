@@ -48,9 +48,4 @@ class EmcClinicalFeedIngestorTest {
         assertThat(patientIngestionResult.feedValidationWarnings.map { it.message }).contains("No Questionnaire found")
 
     }
-
-    @Test
-    fun `Should reject new empty questionnaire in favor of an old one`() {
-
-    }
 }
