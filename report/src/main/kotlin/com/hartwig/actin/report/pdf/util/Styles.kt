@@ -28,13 +28,19 @@ object Styles {
 
     private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
     private const val FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf"
+    private const val FONT_ITALIC_PATH = "fonts/nimbus-sans/NimbusSansL-Italic.ttf"
+    private const val FONT_ITALIC_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold Italic.ttf"
     private var fontRegular = createFont(FONT_REGULAR_PATH)
     private var fontBold = createFont(FONT_BOLD_PATH)
+    private var fontItalic = createFont(FONT_ITALIC_PATH)
+    private var fontItalicBold = createFont(FONT_ITALIC_BOLD_PATH)
 
     fun initialize() {
         // Fonts must be re-initialized for each report
         fontRegular = createFont(FONT_REGULAR_PATH)
         fontBold = createFont(FONT_BOLD_PATH)
+        fontItalic = createFont(FONT_ITALIC_PATH)
+        fontItalicBold = createFont(FONT_ITALIC_BOLD_PATH)
     }
 
     fun reportTitleStyle(): Style {
@@ -117,6 +123,14 @@ object Styles {
     fun fontBold(): PdfFont {
         // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
         return fontBold
+    }
+
+    fun fontItalic(): PdfFont {
+        return fontItalic
+    }
+
+    fun fontItalicBold() : PdfFont {
+        return fontItalicBold
     }
 
     private fun createFont(fontPath: String): PdfFont {
