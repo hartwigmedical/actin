@@ -226,12 +226,17 @@ class QuestionnaireExtractionTest {
     @Test
     fun `Should reject new empty questionnaire in favor of an old one`() {
         val newInvalidEntry = entryWithText("Does not exist").copy(authored = LocalDate.now())
+        val newEmptyEntry =
+            entryWithText("\"ACTIN Questionnaire V1.5\\nImportant: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!\\n\\nRelevant patient history\\nTreatment history current tumor: \\nOther oncological history (e.g. radiotherapy, surgery): \\nSecondary primary: \\n- Last date of active treatment: \\nNon-oncological history: \\n\\nTumor details\\nPrimary tumor location: \\nPrimary tumor type: \\nBiopsy location: \\nStage: \\nCNS lesions: \\n-Active: \\nBrain lesions: \\n-Active: \\nBone lesions: \\nLiver lesions: \\nOther lesions (e.g. lymph node, pulmonal):\\nMeasurable disease: \\n\\nPrevious Molecular tests\\n- IHC test results: \\n- PD L1 test results:\\n\\nClinical details\\nWHO status: \\nUnresolved toxicities grade => 2: \\nSignificant current infection: \\nSignificant aberration on latest ECG: \\nCancer-related complications (e.g. pleural effusion):\\n\\n\"").copy(
+                authored = LocalDate.now()
+            )
         val oldValidEntry = TestQuestionnaireFactory.createTestQuestionnaireEntry().copy(
             authored = LocalDate.now().minusDays(1),
             text = TestQuestionnaireFactory.createTestQuestionnaireValueV1_7().replace("\n", "\\n")
         )
-        val extractedEntry = QuestionnaireExtraction.extract(listOf(newInvalidEntry, oldValidEntry))
+        val extractedEntry = QuestionnaireExtraction.extract(listOf(newInvalidEntry, newEmptyEntry, oldValidEntry))
         assertThat(extractedEntry.first).isNotNull
+        assertThat(extractedEntry.first!!.hasActiveBrainLesions!!).isEqualTo(true)
     }
 
     companion object {

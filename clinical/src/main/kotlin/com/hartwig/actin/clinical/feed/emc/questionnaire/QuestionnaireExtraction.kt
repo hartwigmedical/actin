@@ -12,14 +12,42 @@ object QuestionnaireExtraction {
     private const val ACTIVE_LINE_OFFSET = 1
 
     fun extract(entryList: List<QuestionnaireEntry>): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
-        val entry = entryList.sortedByDescending ( QuestionnaireEntry::authored ).firstOrNull{ it ->
-            isActualQuestionnaire(it) &&
-            !QuestionnaireMapping.mapping(it).values.all { it.isNullOrEmpty() }
+        val entry = entryList.sortedByDescending(QuestionnaireEntry::authored).firstOrNull { it ->
+            isActualQuestionnaire(it) && !with(extractQuestionnaire(it).first!!) {
+                tumorLocation.isNullOrEmpty() &&
+                tumorType.isNullOrEmpty() &&
+                biopsyLocation.isNullOrEmpty() &&
+                stage == null &&
+                treatmentHistoryCurrentTumor.isNullOrEmpty() &&
+                otherOncologicalHistory.isNullOrEmpty() &&
+                secondaryPrimaries.isNullOrEmpty() &&
+                nonOncologicalHistory.isNullOrEmpty() &&
+                hasMeasurableDisease == null &&
+                hasBrainLesions == null &&
+                hasActiveBrainLesions == null &&
+                hasCnsLesions == null &&
+                hasActiveCnsLesions == null &&
+                hasBoneLesions == null &&
+                hasLiverLesions == null &&
+                otherLesions.isNullOrEmpty() &&
+                ihcTestResults.isNullOrEmpty() &&
+                pdl1TestResults.isNullOrEmpty() &&
+                whoStatus == null &&
+                unresolvedToxicities.isNullOrEmpty() &&
+                infectionStatus == null &&
+                ecg == null &&
+                complications.isNullOrEmpty()
+            }
         }
 
         if (entry == null) {
             return null to emptyList()
+        } else {
+            return extractQuestionnaire(entry)
         }
+    }
+
+    fun extractQuestionnaire(entry: QuestionnaireEntry): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
         val mapping = QuestionnaireMapping.mapping(entry)
         val lines = QuestionnaireReader.read(entry.text, QuestionnaireMapping.keyStrings(entry), QuestionnaireMapping.SECTION_HEADERS)
         val brainLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_BRAIN_LESIONS]!!)
