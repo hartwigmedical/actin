@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -671,6 +672,11 @@ class FunctionInputResolver(
         return parameterAsString(function, 0)
     }
 
+    fun createOneTnmTInput(function: EligibilityFunction): TnmT {
+        assertParamConfig(function, FunctionInput.ONE_TNM_T, 1)
+        return toTnmT(parameterAsString(function, 0))
+    }
+
     fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {
         assertParamConfig(function, FunctionInput.TWO_STRINGS, 2)
         return TwoStrings(
@@ -926,6 +932,14 @@ class FunctionInputResolver(
             return Gender.valueOf(genderName.uppercase(Locale.getDefault()))
         } catch (e: Exception) {
             throw IllegalStateException("Gender name not found: $genderName")
+        }
+    }
+
+    private fun toTnmT(tnmT: String): TnmT {
+        try {
+            return TnmT.valueOf(tnmT.uppercase(Locale.getDefault()))
+        } catch (e: Exception) {
+            throw IllegalStateException("TNM T not found: $tnmT")
         }
     }
 
