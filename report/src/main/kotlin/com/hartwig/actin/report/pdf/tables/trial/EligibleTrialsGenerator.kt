@@ -1,51 +1,54 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.addTrialsToTable
-import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.createTableTitleStart
+import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
 
-class EligibleActinTrialsGenerator(
+class EligibleTrialsGenerator(
     private val cohorts: List<InterpretedCohort>,
+    private val externalTrials: Set<ExternalTrialSummary>,
+    private val requestingSource: TrialSource?,
+    private val homeCountry: Country? = null,
     private val title: String,
     private val footNote: String?,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
-    private val locationColWidth: Float?,
+    private val locationColWidth: Float,
     private val checksColWidth: Float
 ) : ActinTrialsGenerator {
-
-    private val includeLocation = locationColWidth != null
 
     override fun title(): String {
         return title
     }
 
     override fun contents(): Table {
-
         val table = Tables.createFixedWidthCols(
-            trialColWidth, cohortColWidth + molecularEventColWidth + (locationColWidth ?: 0f) + checksColWidth
+            trialColWidth, cohortColWidth + molecularEventColWidth + locationColWidth + checksColWidth
         )
         val widths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth).toFloatArray()
 
-        if (cohorts.isNotEmpty()) {
+        if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val headerSubTable = Tables.createFixedWidthCols(*widths)
-            sequenceOf("Cohort", "Molecular", "Hospitals".takeIf { includeLocation }, "Warnings").filterNotNull()
-                .map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
+            sequenceOf("Cohort", "Molecular", "Sites", "Warnings").map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
         addTrialsToTable(
             cohorts = cohorts,
+            externalTrials = externalTrials,
+            requestingSource = requestingSource,
+            homeCountry = homeCountry,
             table = table,
             tableWidths = widths,
-            feedbackFunction = InterpretedCohort::warnings,
-            includeLocation = includeLocation
+            feedbackFunction = InterpretedCohort::warnings
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -60,26 +63,31 @@ class EligibleActinTrialsGenerator(
     companion object {
 
         fun forOpenCohorts(
-            cohorts: List<InterpretedCohort>, source: String?, width: Float, slotsAvailable: Boolean, includeLocation: Boolean = false
-        ): EligibleActinTrialsGenerator {
-            val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts, slotsAvailable)
+            cohorts: List<InterpretedCohort>,
+            externalTrials: Set<ExternalTrialSummary>,
+            requestingSource: TrialSource?,
+            homeCountry: Country,
+            width: Float
+        ): EligibleTrialsGenerator {
+            val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts)
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
-            val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
-            val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
-                "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")} " +
-                        "from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
+            val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
+                "(${formatCountWithLabel(recruitingAndEligibleCohorts.size + externalTrials.size, "cohort")} " +
+                        "from ${formatCountWithLabel(recruitingAndEligibleTrials.size + externalTrials.size, "trial")})"
             } else {
                 "(0)"
             }
 
-            val title = "${createTableTitleStart(source)} that are open and potentially eligible$slotsText $cohortFromTrialsText"
+            val title = "Trials that are open and potentially eligible $cohortFromTrialsText"
+            val footNote = "Open cohorts with no slots available are shown in grey.\n" +
+                    "Trials matched on molecular event and tumor type only (i.e. no clinical data used) are displayed in italic."
 
-            return create(recruitingAndEligibleCohorts, title, width, null, includeLocation)
+            return create(recruitingAndEligibleCohorts, externalTrials, requestingSource, homeCountry, title, width, footNote)
         }
 
         fun forOpenCohortsWithMissingMolecularResultsForEvaluation(
-            cohorts: List<InterpretedCohort>, source: String?, width: Float, includeLocation: Boolean = false
-        ): EligibleActinTrialsGenerator? {
+            cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, width: Float
+        ): EligibleTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.isMissingMolecularResultForEvaluation!!
             }
@@ -95,13 +103,12 @@ class EligibleActinTrialsGenerator(
                 else -> "(0)"
             }
 
-            val title =
-                "${createTableTitleStart(source)} that are open but additional molecular tests needed to evaluate eligibility $cohortFromTrialsText"
+            val title = "Trials that are open but additional molecular tests needed to evaluate eligibility $cohortFromTrialsText"
             val footNote = "Open cohorts with no slots available are shown in grey."
 
-            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(
-                recruitingAndEligibleCohorts, title, width, footNote, includeLocation
-            ) else null
+            return if (recruitingAndEligibleCohorts.isNotEmpty()) {
+                create(recruitingAndEligibleCohorts, externalTrials = emptySet(), requestingSource, null, title, width, footNote)
+            } else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {
@@ -109,30 +116,39 @@ class EligibleActinTrialsGenerator(
         }
 
         fun forClosedCohorts(
-            cohorts: List<InterpretedCohort>, source: String?, contentWidth: Float, includeLocation: Boolean = false
-        ): EligibleActinTrialsGenerator {
+            cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, contentWidth: Float
+        ): EligibleTrialsGenerator {
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title =
-                "${createTableTitleStart(source)} and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
-            return create(unavailableAndEligible, title, contentWidth, null, includeLocation)
+                "Trials and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
+            return create(unavailableAndEligible, emptySet(), requestingSource, null, title, contentWidth, null)
         }
 
         private fun create(
-            cohorts: List<InterpretedCohort>, title: String, width: Float, footNote: String? = null, includeLocation: Boolean
-        ): EligibleActinTrialsGenerator {
+            cohorts: List<InterpretedCohort>,
+            externalTrials: Set<ExternalTrialSummary>,
+            requestingSource: TrialSource?,
+            homeCountry: Country?,
+            title: String,
+            width: Float,
+            footNote: String? = null
+        ): EligibleTrialsGenerator {
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
-            val locationColWidth = if (includeLocation) width / 7 else 0f
+            val locationColWidth = width / 7
             val checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth)
-            return EligibleActinTrialsGenerator(
+            return EligibleTrialsGenerator(
                 cohorts,
+                externalTrials,
+                requestingSource,
+                homeCountry,
                 title,
                 footNote,
                 trialColWidth,
                 cohortColWidth,
                 molecularColWidth,
-                locationColWidth.takeIf { includeLocation },
+                locationColWidth,
                 checksColWidth
             )
         }

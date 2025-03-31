@@ -34,16 +34,15 @@ class ActinTrialContentFunctionsTest {
             fails = emptySet(),
             source = TrialSource.LKO,
             sourceId = "123",
-            locations = listOf("Erasmus", "NKI")
         )
 
     @Test
     fun `Should group common warnings for multiple cohorts in trial`() {
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "warning1"), false),
-                ContentDefinition(listOf("cohort1", "MSI", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "warning2"), false)
+                ContentDefinition(listOf("Applies to all cohorts below", "", "", "warning1"), false),
+                ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
+                ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
             )
         )
     }
@@ -52,7 +51,7 @@ class ActinTrialContentFunctionsTest {
     fun `Should not group warnings for trial with single cohort`() {
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("cohort1", "MSI", "warning1"), true),
+                ContentDefinition(listOf("cohort1", "MSI", "", "warning1"), true),
             )
         )
     }
@@ -66,30 +65,7 @@ class ActinTrialContentFunctionsTest {
 
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(cohorts, InterpretedCohort::fails)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "failure1"), false),
-                ContentDefinition(listOf("cohort1", "MSI", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "failure2"), false)
-            )
-        )
-    }
-
-    @Test
-    fun `Should group common failures for multiple cohorts in trial showing location in prefix`() {
-        val cohorts = listOf(
-            cohort1.copy(warnings = emptySet(), fails = setOf("failure1"), locations = cohort2.locations),
-            cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
-        )
-
-        assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(
-                cohorts,
-                InterpretedCohort::fails,
-                includeLocation = true,
-                includeFeedback = true
-            )
-        ).isEqualTo(
-            listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "Erasmus\nNKI", "failure1"), false),
+                ContentDefinition(listOf("Applies to all cohorts below", "", "", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
                 ContentDefinition(listOf("cohort2", "None", "", "failure2"), false)
             )
@@ -120,9 +96,9 @@ class ActinTrialContentFunctionsTest {
         val cohort3 = cohort1.copy(name = "cohort3")
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort3), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "MSI", "warning1"), true),
-                ContentDefinition(listOf("cohort1", "", ""), true),
-                ContentDefinition(listOf("cohort3", "", ""), true)
+                ContentDefinition(listOf("Applies to all cohorts below", "MSI", "", "warning1"), true),
+                ContentDefinition(listOf("cohort1", "", "", ""), true),
+                ContentDefinition(listOf("cohort3", "", "", ""), true)
             )
         )
     }
@@ -138,9 +114,9 @@ class ActinTrialContentFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "None", "warning1"), true),
-                ContentDefinition(listOf("cohort1", "", ""), true),
-                ContentDefinition(listOf("cohort3", "", ""), true)
+                ContentDefinition(listOf("Applies to all cohorts below", "None", "", "warning1"), true),
+                ContentDefinition(listOf("cohort1", "", "", ""), true),
+                ContentDefinition(listOf("cohort3", "", "", ""), true)
             )
         )
     }
@@ -149,7 +125,7 @@ class ActinTrialContentFunctionsTest {
     fun `Should not group molecular events for trials with single cohort`() {
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("cohort1", "MSI", "warning1"), true),
+                ContentDefinition(listOf("cohort1", "MSI", "", "warning1"), true),
             )
         )
     }
@@ -158,18 +134,18 @@ class ActinTrialContentFunctionsTest {
     fun `Should not create group row for multiple cohorts in trial with no common molecular events`() {
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "warning1"), false),
-                ContentDefinition(listOf("cohort1", "MSI", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "warning2"), false)
+                ContentDefinition(listOf("Applies to all cohorts below", "", "", "warning1"), false),
+                ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
+                ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
             )
         )
     }
 
     @Test
-    fun `Should put locations for cohorts in prefix row if it is included due to commonalities between cohorts`() {
+    fun `Should group locations for cohorts if there are commonalities in locations between cohorts`() {
         assertThat(
             ActinTrialContentFunctions.contentForTrialCohortList(
-                listOf(cohort1.copy(locations = listOf("site1")), cohort2.copy(locations = listOf("site1"))),
+                listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site1"))),
                 InterpretedCohort::warnings,
                 true
             )
@@ -183,27 +159,26 @@ class ActinTrialContentFunctionsTest {
     }
 
     @Test
-    fun `Should add prefix and put locations there when showing locations and more than one cohort but no commonalities between them`() {
+    fun `Should not create group row for multiple cohorts in trial with no common locations`() {
         assertThat(
             ActinTrialContentFunctions.contentForTrialCohortList(
-                listOf(cohort1.copy(locations = listOf("site1")), cohort2.copy(locations = listOf("site1"), warnings = setOf("warning2"))),
+                listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"), warnings = emptySet())),
                 InterpretedCohort::warnings,
                 true
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "site1", "None"), false),
-                ContentDefinition(listOf("cohort1", "MSI", "", "warning1"), true),
-                ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
+                ContentDefinition(listOf("cohort1", "MSI", "site1", "warning1"), true),
+                ContentDefinition(listOf("cohort2", "None", "site2", "None"), false)
             )
         )
     }
 
     @Test
-    fun `Should omit prefix row and put locations for cohorts on cohort row if there is only one cohort`() {
+    fun `Should put locations for cohorts on cohort row if there is only one cohort`() {
         assertThat(
             ActinTrialContentFunctions.contentForTrialCohortList(
-                listOf(cohort1.copy(locations = listOf("site1"), warnings = emptySet())),
+                listOf(cohort1.copy(locations = setOf("site1"), warnings = emptySet())),
                 InterpretedCohort::warnings,
                 true
             )

@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.actin.datamodel.trial.TrialTier
 import com.hartwig.actin.util.Either
 import com.hartwig.actin.util.left
 import com.hartwig.actin.util.partitionAndJoin
@@ -61,9 +60,8 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                         phase = trialState.phase,
                         source = trialState.source,
                         sourceId = trialState.sourceId,
-                        locations = trialState.locations,
-                        tier = TrialTier.TIER_I,
-                        link = createTrialLink(trialState)
+                        locations = trialState.locations.toSet(),
+                        url = createTrialUrl(trialState)
                     ),
                     generalEligibility = criteria,
                     cohorts = mappedCohorts
@@ -84,7 +82,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
             EligibilityMappingError(inclusionCriterion.inclusionRule, e.message ?: "Unknown").left()
         }
 
-    private fun createTrialLink(trialConfig: TrialConfig): String? {
+    private fun createTrialUrl(trialConfig: TrialConfig): String? {
         return if (trialConfig.source == TrialSource.LKO) {
             trialConfig.sourceId?.let { "https://longkankeronderzoek.nl/studies/$it" }
         } else {

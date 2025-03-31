@@ -52,7 +52,7 @@ class TrialsProvider(
     }
 
     private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
-        return filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
+        return filterCohortsAvailable(cohorts.filter { !it.ignore })
     }
 
     fun allEvidenceSources(): Set<String> {
@@ -107,9 +107,9 @@ class TrialsProvider(
     }
 
     companion object {
-        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean): List<InterpretedCohort> {
+        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
+                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation!!
             }
         }
     }

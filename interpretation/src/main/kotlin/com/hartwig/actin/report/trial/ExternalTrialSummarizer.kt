@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import java.time.LocalDate
-import java.util.SortedSet
+import java.util.*
 
 data class ExternalTrialSummary(
     val nctId: String,

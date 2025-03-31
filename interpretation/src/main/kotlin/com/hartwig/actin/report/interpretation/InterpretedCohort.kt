@@ -2,7 +2,6 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.actin.datamodel.trial.TrialTier
 
 data class InterpretedCohort(
     val trialId: String,
@@ -12,9 +11,8 @@ data class InterpretedCohort(
     val phase: TrialPhase? = null,
     val source: TrialSource? = null,
     val sourceId: String? = null,
-    val tier: TrialTier = TrialTier.TIER_I,
-    val link: String? = null,
-    val locations: List<String> = emptyList(),
+    val url: String? = null,
+    val locations: Set<String> = emptySet(),
     val name: String?,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,

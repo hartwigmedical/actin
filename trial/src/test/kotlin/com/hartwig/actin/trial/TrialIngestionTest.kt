@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.actin.datamodel.trial.TrialTier
 import com.hartwig.actin.util.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -82,9 +81,8 @@ class TrialIngestionTest {
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.NKI,
                     sourceId = SOURCE_ID,
-                    locations = listOf(LOCATION),
-                    tier = TrialTier.TIER_I,
-                    link = "https://clinicaltrials.gov/study/$NCT_ID"
+                    locations = setOf(LOCATION),
+                    url = "https://clinicaltrials.gov/study/$NCT_ID"
                 ),
                 generalEligibility = listOf(
                     Eligibility(

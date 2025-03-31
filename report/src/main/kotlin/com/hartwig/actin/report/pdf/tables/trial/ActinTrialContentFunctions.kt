@@ -10,15 +10,14 @@ object ActinTrialContentFunctions {
     fun contentForTrialCohortList(
         cohorts: List<InterpretedCohort>,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        includeLocation: Boolean = false,
         includeFeedback: Boolean = true
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
+        val commonLocations = findCommonMembersInCohorts(cohorts, InterpretedCohort::locations)
         val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
 
-        val hidePrefix = commonFeedback.isEmpty() && commonEvents.isEmpty() && cohorts.size < 2
-        val locations = cohorts.first().locations.joinToString("\n")
+        val hidePrefix = commonFeedback.isEmpty() && commonEvents.isEmpty() && commonLocations.isEmpty()
 
         val prefix = if (hidePrefix) emptyList() else {
             val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
@@ -27,7 +26,7 @@ object ActinTrialContentFunctions {
                     listOfNotNull(
                         "Applies to all cohorts below",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
-                        locations.takeIf { includeLocation },
+                        concat(commonLocations, false),
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
@@ -40,7 +39,7 @@ object ActinTrialContentFunctions {
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    if (hidePrefix && includeLocation) locations else if (includeLocation) "" else null,
+                    concat(cohort.locations - commonLocations, false),
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
