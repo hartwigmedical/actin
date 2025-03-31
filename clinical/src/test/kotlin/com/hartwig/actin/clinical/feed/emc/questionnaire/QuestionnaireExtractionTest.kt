@@ -66,7 +66,7 @@ class QuestionnaireExtractionTest {
         assertClinicalBeforeV1_5(questionnaire)
         val ihcTestResults = questionnaire.ihcTestResults
         assertThat(ihcTestResults!!).hasSize(1)
-        assertThat(ihcTestResults).contains("IHC ERBB2 3+")
+        assertThat(ihcTestResults).contains("positive for KRAS; p.G12D, CCND1, APC exon 16; TP53; p.D259Y")
         assertThat(questionnaire.pdl1TestResults).isNull()
     }
 

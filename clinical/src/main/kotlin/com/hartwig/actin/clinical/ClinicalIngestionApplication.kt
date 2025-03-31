@@ -4,6 +4,7 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
+import com.hartwig.actin.clinical.feed.standard.PanelGeneList
 import com.hartwig.actin.clinical.feed.standard.StandardDataIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
@@ -80,7 +81,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             drugInteractionsDatabase,
             qtProlongatingDatabase,
             doidModel,
-            treatmentDatabase
+            treatmentDatabase,
+            PanelGeneList.create(
+                config.panelGeneListTsv ?: throw IllegalStateException("Panel gene list is required when running in standard feed format")
+            )
         )
         val clinicalIngestionAdapter =
             ClinicalIngestionFeedAdapter(

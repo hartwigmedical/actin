@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 object QuestionnaireCorrection {
+
     val LOGGER: Logger = LogManager.getLogger(QuestionnaireCorrection::class.java)
 
     fun correctQuestionnaires(

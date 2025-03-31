@@ -34,7 +34,11 @@ data class TreatmentHistoryEntry(
     }
 
     fun matchesTypeFromSet(types: Set<TreatmentType>): Boolean? {
-        return if (hasTypeConfigured()) isTypeFromCollection(types) else null
+        return when {
+            isTypeFromCollection(types) -> true
+            hasTypeConfigured() -> false
+            else -> null
+        }
     }
 
     fun hasTypeConfigured(): Boolean {

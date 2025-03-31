@@ -71,12 +71,7 @@ class StandardPriorIHCTestExtractorTest {
 
     @Test
     fun `Should ignore lines if ignored in curation`() {
-        every { molecularTestCuration.find(IHC_LINE) } returns setOf(
-            IHCTestConfig(
-                input = IHC_LINE,
-                ignore = true
-            )
-        )
+        returnIgnoreFromCurationDB(IHC_LINE)
         val result =
             extractor.extract(EHR_PATIENT_RECORD_WITH_PATHOLOGY)
         assertThat(result.extracted).isEmpty()
@@ -166,6 +161,7 @@ class StandardPriorIHCTestExtractorTest {
                 curated = PRIOR_IHC_TEST
             )
         )
+        val uncuratedInput = "uncurated"
         val result = extractor.extract(
             EHR_PATIENT_RECORD.copy(
                 molecularTests = listOf(
@@ -175,7 +171,7 @@ class StandardPriorIHCTestExtractorTest {
                     ),
                     ProvidedMolecularTest(
                         test = "IHC",
-                        results = setOf(ProvidedMolecularTestResult(freeText = IHC_LINE))
+                        results = setOf(ProvidedMolecularTestResult(ihcResult = uncuratedInput))
                     ),
                     ProvidedMolecularTest(
                         test = "NGS",
@@ -184,7 +180,47 @@ class StandardPriorIHCTestExtractorTest {
                 )
             )
         )
-        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST, PRIOR_IHC_TEST)
+        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST)
+        assertThat(result.evaluation.warnings).containsExactly(
+            CurationWarning(
+                patientId = HASHED_ID_IN_BASE64,
+                category = CurationCategory.MOLECULAR_TEST_IHC,
+                feedInput = uncuratedInput,
+                message = "Could not find molecular test config for input 'uncurated'"
+            )
+        )
+    }
+
+    @Test
+    fun `Should ignore lines if ignored in curation using ihc result alone or combined with patient id`() {
+        val firstIHC = ProvidedMolecularTestResult(ihcResult = "first IHC")
+        val secondIHC = ProvidedMolecularTestResult(ihcResult = "second IHC")
+        val record = EHR_PATIENT_RECORD.copy(
+            molecularTests = listOf(
+                ProvidedMolecularTest(
+                    test = "test",
+                    results = setOf(firstIHC, secondIHC)
+                )
+            )
+        )
+
+        val inputWithPatientAndIHC = "$HASHED_ID_IN_BASE64 | ${firstIHC.ihcResult}"
+        returnIgnoreFromCurationDB(inputWithPatientAndIHC)
+
+        val inputWithIHCOnly = secondIHC.ihcResult!!
+        returnIgnoreFromCurationDB(inputWithIHCOnly)
+
+        val result = extractor.extract(record)
+        assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    private fun returnIgnoreFromCurationDB(inputWithPatientAndIHC: String) {
+        every { molecularTestCuration.find(inputWithPatientAndIHC) } returns setOf(
+            IHCTestConfig(
+                input = inputWithPatientAndIHC,
+                ignore = true
+            )
+        )
     }
 }
