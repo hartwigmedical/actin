@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.datamodel.Displayable
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
+import com.hartwig.actin.datamodel.clinical.TnmT
+
 
 class HasTnmTScore(private val score: String): EvaluationFunction {
 
@@ -50,26 +51,5 @@ class HasTnmTScore(private val score: String): EvaluationFunction {
             stageMap[stage]?.contains(scoreTnmT) == true -> EvaluationFactory.pass("Tumor is of stage $score with potential T scores of ${stageMap[stage]}")
             else -> EvaluationFactory.fail("Tumor is of stage $score")
         }
-    }
-}
-
-enum class TnmT(val category: TnmT?) : Displayable {
-    T0(null),
-    T1(null),
-    T1A(T1),
-    T1B(T1),
-    T1C(T1),
-    T2(null),
-    T2A(T2),
-    T2B(T2),
-    T3(null),
-    T4(null),
-    M1(null),
-    M1A(M1),
-    M1B(M1),
-    M1C(M1);
-
-    override fun display(): String {
-        return this.toString()
     }
 }
