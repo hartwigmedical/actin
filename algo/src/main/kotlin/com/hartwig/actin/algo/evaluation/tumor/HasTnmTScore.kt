@@ -7,12 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.TnmT
 
-
 class HasTnmTScore(private val score: String): EvaluationFunction {
-
-
-
-
     override fun evaluate(record: PatientRecord): Evaluation {
         val T1 = setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C)
         val T2 = setOf(TnmT.T2, TnmT.T2A, TnmT.T2B)
