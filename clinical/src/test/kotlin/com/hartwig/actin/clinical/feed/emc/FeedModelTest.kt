@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.feed.emc
 import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class FeedModelTest {
 
@@ -20,13 +19,6 @@ class FeedModelTest {
         val toxicities = feedRecord.toxicityEntries
         assertThat(toxicities.size).isEqualTo(3)
     }
-
-    /*@Test
-    fun `Should be able to determine latest questionnaire`() {
-        val latest = feedRecord.latestQuestionnaireEntry
-        assertThat(latest).isNotNull()
-        assertThat(latest!!.authored).isEqualTo(LocalDate.of(2021, 8, 1))
-    }*/
 
     @Test
     fun `Should be able to retrieve unique surgery entries`() {
