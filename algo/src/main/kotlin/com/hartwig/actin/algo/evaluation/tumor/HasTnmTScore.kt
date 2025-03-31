@@ -13,7 +13,7 @@ class HasTnmTScore(private val score: TnmT): EvaluationFunction {
     private val t2A = setOf(TnmT.T2, TnmT.T2A)
     private val t2B = setOf(TnmT.T2, TnmT.T2B)
     private val t123 = t1 + t2 + TnmT.T3
-    private val allT = t1 + t2 + TnmT.T3 + TnmT.T4
+    private val allT = t123 + TnmT.T4
     private val M1 = setOf(TnmT.M1, TnmT.M1A, TnmT.M1B, TnmT.M1C)
     private val M1AB = setOf(TnmT.M1, TnmT.M1A, TnmT.M1B)
     private val M1C = setOf(TnmT.M1, TnmT.M1C)
