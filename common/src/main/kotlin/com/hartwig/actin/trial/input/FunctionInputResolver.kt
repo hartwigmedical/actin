@@ -417,8 +417,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_TNM_T -> {
-                    createOneTnmTInput(function)
+                FunctionInput.MANY_TNM_T -> {
+                    createManyTnmTInput(function)
                     return true
                 }
 
@@ -677,9 +677,9 @@ class FunctionInputResolver(
         return parameterAsString(function, 0)
     }
 
-    fun createOneTnmTInput(function: EligibilityFunction): TnmT {
-        assertParamConfig(function, FunctionInput.ONE_TNM_T, 1)
-        return toTnmT(parameterAsString(function, 0))
+    fun createManyTnmTInput(function: EligibilityFunction): Set<TnmT> {
+        assertParamConfig(function, FunctionInput.MANY_TNM_T, 1)
+        return toTnmTs(function.parameters.first())
     }
 
     fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {
@@ -938,6 +938,10 @@ class FunctionInputResolver(
         } catch (e: Exception) {
             throw IllegalStateException("Gender name not found: $genderName")
         }
+    }
+
+    private fun toTnmTs(input: Any): Set<TnmT>{
+        return toStringList(input).map(::toTnmT).toSet()
     }
 
     private fun toTnmT(tnmT: String): TnmT {

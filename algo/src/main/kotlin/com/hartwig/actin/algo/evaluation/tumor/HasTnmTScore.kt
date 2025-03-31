@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.TnmT
 
-class HasTnmTScore(private val scores: set<TnmT>): EvaluationFunction {
+class HasTnmTScore(private val scores: Set<TnmT>): EvaluationFunction {
     private val t1 = setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C)
     private val t2 = setOf(TnmT.T2, TnmT.T2A, TnmT.T2B)
     private val t2A = setOf(TnmT.T2, TnmT.T2A)
@@ -44,7 +44,7 @@ class HasTnmTScore(private val scores: set<TnmT>): EvaluationFunction {
         return when {
             possibleTnmTs.contains(TnmT.M1) -> EvaluationFactory.undetermined("Cancer is metastatic. Primary tumor stage is unknown")
             possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be of stages $scores with potential T scores of $possibleTnmTs")
-            possibleTnmTs.contains(scores) -> EvaluationFactory.undetermined("Tumor could be of $possibleTnmTs but can't be of ${scores.subtract(possibleTnmTs)}")
+            possibleTnmTs.intersect(scores).isNotEmpty() -> EvaluationFactory.undetermined("Tumor could be of $possibleTnmTs but can't be of ${scores.subtract(possibleTnmTs)}")
             else -> EvaluationFactory.fail("Tumor is not of stage $scores")
         }
     }

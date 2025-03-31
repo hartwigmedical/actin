@@ -314,7 +314,7 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("FGFR2b", "FGFR2")
             }
 
-            FunctionInput.ONE_TNM_T -> {
+            FunctionInput.MANY_TNM_T -> {
                 listOf("T2A")
             }
         }
