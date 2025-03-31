@@ -313,6 +313,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
             FunctionInput.ONE_PROTEIN_ONE_GENE -> {
                 listOf("FGFR2b", "FGFR2")
             }
+
+            FunctionInput.ONE_TNM_T -> {
+                listOf("T2A")
+            }
         }
     }
 

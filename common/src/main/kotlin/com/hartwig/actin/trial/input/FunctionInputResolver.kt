@@ -417,6 +417,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_TNM_T -> {
+                    createOneTnmTInput(function)
+                    return true
+                }
+
                 else -> {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
