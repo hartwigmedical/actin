@@ -18,10 +18,7 @@ class EmcClinicalFeedIngestorTest {
 
     @Test
     fun `Should add feed validation warning for missing questionnaires`() {
-        val emcClinicalFeed = createTestClinicalFeed().copy(
-            questionnaireEntries = emptyList(),
-            patientEntries = listOf(PatientEntry("", 1990, Gender.FEMALE, LocalDate.now(), null))
-        )
+        val emcClinicalFeed = createTestClinicalFeed().copy(questionnaireEntries = emptyList(),)
         val feed = FeedModel(emcClinicalFeed)
 
         val emcClinicalFeedIngestor = EmcClinicalFeedIngestor(

@@ -12,17 +12,12 @@ object QuestionnaireExtraction {
     private const val ACTIVE_LINE_OFFSET = 1
 
     fun extract(entryList: List<QuestionnaireEntry>): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
-        val extracted = entryList.sortedByDescending(QuestionnaireEntry::authored).firstNotNullOfOrNull { it ->
-            extractQuestionnaire(it)
-        }
-        return if (extracted != null) {
-            extracted
-        } else {
-            null to emptyList()
-        }
+        return entryList.asSequence().sortedByDescending(QuestionnaireEntry::authored)
+            .firstNotNullOfOrNull(::extractQuestionnaire)
+            ?: (null to emptyList())
     }
 
-    fun extractQuestionnaire(entry: QuestionnaireEntry?): Pair<Questionnaire, List<QuestionnaireCurationError>>? {
+    private fun extractQuestionnaire(entry: QuestionnaireEntry?): Pair<Questionnaire, List<QuestionnaireCurationError>>? {
         if (entry == null || !isActualQuestionnaire(entry)) {
             return null
         }
