@@ -8,23 +8,23 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.TnmT
 
 class HasTnmTScore(private val score: TnmT): EvaluationFunction {
-    private val T1 = setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C)
-    private val T2 = setOf(TnmT.T2, TnmT.T2A, TnmT.T2B)
-    private val T2A = setOf(TnmT.T2, TnmT.T2A)
-    private val T2B = setOf(TnmT.T2, TnmT.T2B)
-    private val T123 = T1 + T2 + TnmT.T3
-    private val allT = T1 + T2 + TnmT.T3 + TnmT.T4
+    private val t1 = setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C)
+    private val t2 = setOf(TnmT.T2, TnmT.T2A, TnmT.T2B)
+    private val t2A = setOf(TnmT.T2, TnmT.T2A)
+    private val t2B = setOf(TnmT.T2, TnmT.T2B)
+    private val t123 = t1 + t2 + TnmT.T3
+    private val allT = t1 + t2 + TnmT.T3 + TnmT.T4
     private val M1 = setOf(TnmT.M1, TnmT.M1A, TnmT.M1B, TnmT.M1C)
     private val M1AB = setOf(TnmT.M1, TnmT.M1A, TnmT.M1B)
     private val M1C = setOf(TnmT.M1, TnmT.M1C)
 
     private val stageMap = mapOf(
-        TumorStage.I to T1 + T2A,
-        TumorStage.IA to T1,
-        TumorStage.IB to T2A,
-        TumorStage.II to T123,
-        TumorStage.IIA to T1 + T2B,
-        TumorStage.IIB to T123,
+        TumorStage.I to t1 + t2A,
+        TumorStage.IA to t1,
+        TumorStage.IB to t2A,
+        TumorStage.II to t123,
+        TumorStage.IIA to t1 + t2B,
+        TumorStage.IIB to t123,
         //TumorStage.IIC to T123,
         TumorStage.III to allT,
         TumorStage.IIIA to allT,
