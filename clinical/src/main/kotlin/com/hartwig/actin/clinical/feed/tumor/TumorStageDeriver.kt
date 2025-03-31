@@ -8,6 +8,7 @@ import com.hartwig.actin.doid.DoidModel
 import java.util.function.Predicate
 
 class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>, Set<TumorStage>>) {
+
     fun derive(tumor: TumorDetails): Set<TumorStage>? {
         return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids) && hasNoTumorStage(tumor)) {
             derivationRules.entries.firstOrNull { it.key.test(tumor) }
