@@ -15,6 +15,7 @@
         <module>molecular</module>
         <module>trial</module>
         <module>algo</module>
+        <module>interpretation</module>
         <module>report</module>
         <module>database</module>
         <module>system</module>
@@ -23,7 +24,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <serve.version>8.0.0</serve.version>
+        <serve.version>8.2.0</serve.version>
         <actin-personalization.version>0.26.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
         <actin-transvar.version>0.6.0</actin-transvar.version>
@@ -45,7 +46,7 @@
 
         <jooq.version>3.15.5</jooq.version>
         <mysqlconnector.version>8.0.31</mysqlconnector.version>
-        <itext.version>7.2.4</itext.version>
+        <itext.version>9.1.0</itext.version>
 
         <kotlin.version>2.0.0</kotlin.version>
         <kotlin.compiler.apiVersion>2.0</kotlin.compiler.apiVersion>
@@ -191,6 +192,11 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>algo</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>interpretation</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -372,6 +378,13 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
+                <version>local-SNAPSHOT</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>interpretation</artifactId>
                 <version>local-SNAPSHOT</version>
                 <scope>test</scope>
                 <type>test-jar</type>

@@ -33,7 +33,7 @@ class CurrentlyGetsCypXInducingMedication(private val selector: MedicationSelect
             }
 
             cypInducersPlanned.isNotEmpty() -> {
-                EvaluationFactory.recoverableWarn(
+                EvaluationFactory.warn(
                     "Planned CYP$termToFind inducing medication use (${concatLowercaseWithCommaAndAnd(cypInducersPlanned)})"
                 )
             }

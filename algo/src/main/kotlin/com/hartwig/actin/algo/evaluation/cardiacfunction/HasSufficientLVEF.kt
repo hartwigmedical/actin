@@ -12,8 +12,8 @@ class HasSufficientLVEF(private val minLVEF: Double) : EvaluationFunction {
 
         return when {
             lvef == null -> EvaluationFactory.recoverableUndetermined("LVEF unknown")
-            lvef >= minLVEF -> EvaluationFactory.pass("LVEF of $lvef exceeds $minLVEF")
-            else -> EvaluationFactory.fail("LVEF of $lvef below $minLVEF")
+            lvef >= minLVEF -> EvaluationFactory.recoverablePass("LVEF of $lvef exceeds $minLVEF")
+            else -> EvaluationFactory.recoverableFail("LVEF of $lvef below $minLVEF")
         }
     }
 }

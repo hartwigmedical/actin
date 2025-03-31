@@ -15,6 +15,9 @@ class TreatmentHistoryEntryTest {
 
     private val treatmentHistoryEntryWithoutType = treatmentHistoryEntryWithDrugTypes(emptySet())
     private val treatmentHistoryEntryWithDrugType = treatmentHistoryEntryWithDrugTypes(setOf(DrugType.PLATINUM_COMPOUND))
+    private val treatmentHistoryEntryWithKnownAndUnknownType = treatmentHistoryEntry(
+        setOf(drugTreatment("known", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.PLATINUM_COMPOUND)), Radiotherapy("unknown"))
+    )
     private val switchTreatmentStage = treatmentStage(
         drugTreatment("SWITCH TREATMENT", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
     )
@@ -196,6 +199,16 @@ class TreatmentHistoryEntryTest {
         assertThat(
             treatmentHistoryEntryWithDrugType.matchesTypeFromSet(setOf(DrugType.ANTIMETABOLITE, DrugType.ANTHRACYCLINE))
         ).isFalse()
+    }
+
+    @Test
+    fun `Should return true for entry with matching and unknown types`() {
+        assertThat(treatmentHistoryEntryWithKnownAndUnknownType.isOfType(DrugType.PLATINUM_COMPOUND)).isTrue
+    }
+
+    @Test
+    fun `Should return null for entry with non-matching and unknown types`() {
+        assertThat(treatmentHistoryEntryWithKnownAndUnknownType.isOfType(DrugType.ANTIMETABOLITE)).isNull()
     }
 
     private fun treatmentHistoryEntryWithDrugTypes(types: Set<DrugType>): TreatmentHistoryEntry {

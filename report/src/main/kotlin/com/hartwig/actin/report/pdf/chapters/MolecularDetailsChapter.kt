@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
@@ -14,7 +14,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -74,7 +74,7 @@ class MolecularDetailsChapter(
         } ?: orangeMolecularTable.addCell(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
         document.add(orangeMolecularTable)
 
-        val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filterIsInstance<PanelRecord>()
+        val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         for (panel in externalPanelResults) {
             WGSSummaryGenerator(
                 true,

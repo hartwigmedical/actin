@@ -30,9 +30,9 @@ class IsEligibleForLocalLiverTreatmentTest {
     }
 
     @Test
-    fun `Should warn when patient has liver cancer but no liver lesions`() {
+    fun `Should evaluate to undetermined when patient has liver cancer but no liver lesions`() {
         val patientRecord = TumorTestFactory.withDoidsAndLiverLesions(setOf(DoidConstants.LIVER_CANCER_DOID), false)
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
     @Test

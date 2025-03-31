@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.trial
+package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType

@@ -50,22 +50,22 @@ object BodyWeightFunctions {
             comparisonWithoutMargin < 0 -> {
                 val message = "Median body weight ($median kg) below $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
-                    EvaluationFactory.fail(message)
+                    EvaluationFactory.recoverableFail(message)
                 } else {
-                    EvaluationFactory.pass(message)
+                    EvaluationFactory.recoverablePass(message)
                 }
             }
 
             comparisonWithoutMargin == 0 -> {
-                return EvaluationFactory.pass("Median body weight ($median kg) equal to $referenceBodyWeight kg")
+                return EvaluationFactory.recoverablePass("Median body weight ($median kg) equal to $referenceBodyWeight kg")
             }
 
             else -> {
                 val message = "Median body weight ($median kg) above $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
-                    EvaluationFactory.pass(message)
+                    EvaluationFactory.recoverablePass(message)
                 } else {
-                    EvaluationFactory.fail(message)
+                    EvaluationFactory.recoverableFail(message)
                 }
             }
         }

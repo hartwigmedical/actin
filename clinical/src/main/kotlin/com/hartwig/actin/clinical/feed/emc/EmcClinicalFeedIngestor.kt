@@ -38,6 +38,7 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.ARTERIAL_BLOOD
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.HEART_RATE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
+import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
@@ -183,10 +184,13 @@ class EmcClinicalFeedIngestor(
     ): PatientIngestionResult {
         val curationResults = curationResultsFromWarnings(patientEvaluation.warnings)
 
-        val ingestionStatus = when {
-            questionnaire == null -> PatientIngestionStatus.WARN_NO_QUESTIONNAIRE
-            curationResults.isNotEmpty() -> PatientIngestionStatus.WARN_CURATION_REQUIRED
-            else -> PatientIngestionStatus.PASS
+        val ingestionStatus =
+            if (questionnaire == null || curationResults.isNotEmpty()) PatientIngestionStatus.WARN else PatientIngestionStatus.PASS
+
+        val validationWarnings = if (questionnaire == null) {
+            feedRecord.validationWarnings + FeedValidationWarning(patientId, "No Questionnaire found")
+        } else {
+            feedRecord.validationWarnings
         }
 
         return PatientIngestionResult(
@@ -194,7 +198,7 @@ class EmcClinicalFeedIngestor(
             ingestionStatus,
             curationResults,
             questionnaireCurationErrors.toSet(),
-            feedRecord.validationWarnings
+            validationWarnings
         )
     }
 

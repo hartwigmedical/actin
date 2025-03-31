@@ -24,7 +24,7 @@ object ServeVerifier {
         }
     }
 
-    private fun isCombinedProfile(molecularCriterium: MolecularCriterium): Boolean {
+    fun isCombinedProfile(molecularCriterium: MolecularCriterium): Boolean {
         val criteriaCount = molecularCriterium.hotspots().size +
                 molecularCriterium.codons().size +
                 molecularCriterium.exons().size +
