@@ -63,37 +63,7 @@ object QuestionnaireExtraction {
             ecg = ecg.curated,
             complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
         )
-        return if (with(questionnaire) {
-                listOf(
-                    tumorLocation,
-                    tumorType,
-                    biopsyLocation
-                ).all { it.isNullOrEmpty() } &&
-                        listOf(
-                            treatmentHistoryCurrentTumor,
-                            otherOncologicalHistory,
-                            secondaryPrimaries,
-                            nonOncologicalHistory,
-                            otherLesions,
-                            ihcTestResults,
-                            pdl1TestResults,
-                            unresolvedToxicities,
-                            complications
-                        ).all { it.isNullOrEmpty() } &&
-                        listOf(
-                            stage.curated,
-                            hasMeasurableDisease.curated,
-                            hasBrainLesions,
-                            hasActiveBrainLesions,
-                            hasCnsLesions,
-                            hasActiveCnsLesions,
-                            hasBoneLesions.curated,
-                            hasLiverLesions.curated,
-                            whoStatus.curated,
-                            infectionStatus.curated,
-                            ecg.curated
-                        ).all { it == null }
-            }) {
+        return if (questionnaire.isEmpty()) {
             null
         } else {
             questionnaire to hasBoneLesions.errors + hasLiverLesions.errors + hasMeasurableDisease.errors + whoStatus.errors + infectionStatus.errors + ecg.errors + stage.errors

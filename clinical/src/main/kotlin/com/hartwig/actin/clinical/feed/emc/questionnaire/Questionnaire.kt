@@ -30,4 +30,36 @@ data class Questionnaire(
     val infectionStatus: InfectionStatus?,
     val ecg: Ecg?,
     val complications: List<String>?
-)
+) {
+    fun isEmpty(): Boolean {
+        return listOf(
+            tumorLocation,
+            tumorType,
+            biopsyLocation
+        ).all { it.isNullOrEmpty() } &&
+                listOf(
+                    treatmentHistoryCurrentTumor,
+                    otherOncologicalHistory,
+                    secondaryPrimaries,
+                    nonOncologicalHistory,
+                    otherLesions,
+                    ihcTestResults,
+                    pdl1TestResults,
+                    unresolvedToxicities,
+                    complications
+                ).all { it.isNullOrEmpty() } &&
+                listOf(
+                    stage,
+                    hasMeasurableDisease,
+                    hasBrainLesions,
+                    hasActiveBrainLesions,
+                    hasCnsLesions,
+                    hasActiveCnsLesions,
+                    hasBoneLesions,
+                    hasLiverLesions,
+                    whoStatus,
+                    infectionStatus,
+                    ecg
+                ).all { it == null }
+    }
+}
