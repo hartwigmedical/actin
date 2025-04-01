@@ -15,7 +15,6 @@ enum class PatientIngestionStatus {
 
 data class PatientIngestionResult(
     val patientId: String,
-    val patientRegistrationDate: LocalDate,
     val status: PatientIngestionStatus,
     val curationResults: Set<CurationResult>,
     val questionnaireCurationErrors: Set<QuestionnaireCurationError>,
