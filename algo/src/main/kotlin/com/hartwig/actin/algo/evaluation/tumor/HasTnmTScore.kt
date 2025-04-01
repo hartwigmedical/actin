@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
@@ -34,12 +35,16 @@ class HasTnmTScore(private val scores: Set<TnmT>) : EvaluationFunction {
 
         return when {
             stage == TumorStage.IV || stage == TumorStage.IVA || stage == TumorStage.IVB || stage == TumorStage.IVC ->
-                EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification $scores")
-            possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be of TNM T-classification $scores with potential T scores of $possibleTnmTs")
+                EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification ${show(scores)}")
+            possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be T scores of ${show(possibleTnmTs)}")
             possibleTnmTs.intersect(scores).isNotEmpty() ->
-                EvaluationFactory.undetermined("Tumor could be of $possibleTnmTs but can't be of ${scores.subtract(possibleTnmTs)}")
+                EvaluationFactory.undetermined("Tumor could be of ${show(possibleTnmTs)} but can't be of ${show(scores.subtract(possibleTnmTs))}")
 
-            else -> EvaluationFactory.fail("Tumor is not of stage $scores")
+            else -> EvaluationFactory.fail("Tumor is not of stage ${show(scores)}")
         }
+    }
+
+    private fun show(set: Set<TnmT>): String{
+        return Format.concatWithCommaAndOr(set.map { it.toString() })
     }
 }
