@@ -30,4 +30,4 @@ class HasTnmTScoreTest {
     }
 }
 
-fun function(scores: Set<TnmT>, record: PatientRecord) = HasTnmTScore(scores).evaluate(record)
+private fun function(scores: Set<TnmT>, record: PatientRecord) = HasTnmTScore(scores).evaluate(record)

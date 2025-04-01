@@ -25,16 +25,13 @@ class HasTnmTScore(private val scores: Set<TnmT>): EvaluationFunction {
         TumorStage.II to t123,
         TumorStage.IIA to t1 + t2B,
         TumorStage.IIB to t123,
-        //TumorStage.IIC to T123,
         TumorStage.III to allT,
         TumorStage.IIIA to allT,
         TumorStage.IIIB to allT,
         TumorStage.IIIC to setOf(TnmT.T3, TnmT.T4),
-        //TumorStage.IIID to setOf(TnmT.T3, TnmT.T4),
         TumorStage.IV to M1,
         TumorStage.IVA to M1AB,
-        TumorStage.IVB to M1C,
-        //TumorStage.IVC to M1c
+        TumorStage.IVB to M1C
     )
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -42,8 +39,8 @@ class HasTnmTScore(private val scores: Set<TnmT>): EvaluationFunction {
         val possibleTnmTs = stageMap[stage]?: emptySet()
 
         return when {
-            possibleTnmTs.contains(TnmT.M1) -> EvaluationFactory.undetermined("Cancer is metastatic. Primary tumor stage is unknown")
-            possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be of stages $scores with potential T scores of $possibleTnmTs")
+            possibleTnmTs.contains(TnmT.M1) -> EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification $scores")
+            possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be of TNM T-classification $scores with potential T scores of $possibleTnmTs")
             possibleTnmTs.intersect(scores).isNotEmpty() -> EvaluationFactory.undetermined("Tumor could be of $possibleTnmTs but can't be of ${scores.subtract(possibleTnmTs)}")
             else -> EvaluationFactory.fail("Tumor is not of stage $scores")
         }
