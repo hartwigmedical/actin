@@ -13,10 +13,7 @@ enum class TnmT(val category: TnmT?) : Displayable {
     T2B(T2),
     T3(null),
     T4(null),
-    M1(null),
-    M1A(M1),
-    M1B(M1),
-    M1C(M1);
+    M1(null);
 
     override fun display(): String {
         return this.toString()
