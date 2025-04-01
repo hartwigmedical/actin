@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabValue
+import kotlinx.serialization.internal.throwMissingFieldException
 import java.time.LocalDate
 
 class HasLimitedDerivedCreatinineClearance internal constructor(
@@ -21,6 +22,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
             CreatinineClearanceMethod.EGFR_CKD_EPI -> evaluateCKDEPI(record, labValue)
             CreatinineClearanceMethod.COCKCROFT_GAULT -> evaluateCockcroftGault(record, labValue)
+            else -> throw IllegalStateException("Derived creatinine clearance evaluation not implemented for method $method")
         }
     }
 

@@ -84,7 +84,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD),
             EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
             EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y to hasCreatinineClearanceBetweenValuesCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
-            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientMeasuredCreatinineClearanceCreator(),
+            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientMeasuredCreatinineClearanceCreator(CreatinineClearanceMethod.MEASURED),
             EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP),
             EligibilityRule.HAS_TROPONIN_I_OR_T_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.HIGH_SENSITIVITY_TROPONIN_T),
             EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE),
@@ -281,8 +281,16 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
-    private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
-        return { HasSufficientMeasuredCreatinineClearance() }
+    private fun hasSufficientMeasuredCreatinineClearanceCreator(method: CreatinineClearanceMethod): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val minCreatinineClearance = functionInputResolver().createOneDoubleInput(function)
+            val measurement = retrieveForMethod(method)
+            val main =
+                createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit), false)
+
+            val fallback = HasSufficientMeasuredCreatinineClearance(minCreatinineClearance, minValidLabDate(), minPassLabDate())
+            Fallback(main, fallback)
+        }
     }
 
     private fun hasPotentialLeukocytosisCreator(): FunctionCreator {
@@ -357,6 +365,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 CreatinineClearanceMethod.EGFR_MDRD -> LabMeasurement.EGFR_MDRD
                 CreatinineClearanceMethod.EGFR_CKD_EPI -> LabMeasurement.EGFR_CKD_EPI
                 CreatinineClearanceMethod.COCKCROFT_GAULT -> LabMeasurement.CREATININE_CLEARANCE_CG
+                CreatinineClearanceMethod.MEASURED -> LabMeasurement.CREATININE_CLEARANCE_24H
             }
         }
 

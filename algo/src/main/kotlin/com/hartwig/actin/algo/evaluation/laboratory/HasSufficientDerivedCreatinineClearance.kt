@@ -15,12 +15,12 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
     private val minCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate
 ) : LabEvaluationFunction {
 
-    //TODO: Implement logics for method = "measured"
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         return when (method) {
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
             CreatinineClearanceMethod.EGFR_CKD_EPI -> evaluateCKDEPI(record, labValue)
             CreatinineClearanceMethod.COCKCROFT_GAULT -> evaluateCockcroftGault(record, labValue)
+            else -> throw IllegalStateException("Derived creatinine clearance evaluation not implemented for method $method")
         }
     }
 
