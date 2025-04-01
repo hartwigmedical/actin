@@ -38,7 +38,7 @@ class HasTnmTScore(private val scores: Set<TnmT>) : EvaluationFunction {
                 EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification ${show(scores)}")
             possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be T scores of ${show(possibleTnmTs)}")
             possibleTnmTs.intersect(scores).isNotEmpty() ->
-                EvaluationFactory.undetermined("Tumor could be of ${show(possibleTnmTs)} but can't be of ${show(scores.subtract(possibleTnmTs))}")
+                EvaluationFactory.undetermined("Undetermined if TNM T-classification is of ${show(scores)}- derived T's based on tumor stage are ${show(possibleTnmTs)}")
             else -> EvaluationFactory.fail("Tumor is not of stage ${show(scores)}")
         }
     }
