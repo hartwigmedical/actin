@@ -41,6 +41,7 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 class EmcClinicalFeedIngestor(
     private val feed: FeedModel,
@@ -107,7 +108,7 @@ class EmcClinicalFeedIngestor(
 
             Triple(
                 record,
-                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
+                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord, record.patient.registrationDate),
                 patientEvaluation
             )
         }
@@ -180,7 +181,8 @@ class EmcClinicalFeedIngestor(
         questionnaire: Questionnaire?,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
-        feedRecord: FeedRecord
+        feedRecord: FeedRecord,
+        registrationDate: LocalDate? = null,
     ): PatientIngestionResult {
         val curationResults = curationResultsFromWarnings(patientEvaluation.warnings)
 
@@ -188,7 +190,7 @@ class EmcClinicalFeedIngestor(
             if (questionnaire == null || curationResults.isNotEmpty()) PatientIngestionStatus.WARN else PatientIngestionStatus.PASS
 
         val validationWarnings = if (questionnaire == null) {
-            feedRecord.validationWarnings + FeedValidationWarning(patientId, "No Questionnaire found")
+            feedRecord.validationWarnings + FeedValidationWarning(patientId, "No Questionnaire found", registrationDate)
         } else {
             feedRecord.validationWarnings
         }
