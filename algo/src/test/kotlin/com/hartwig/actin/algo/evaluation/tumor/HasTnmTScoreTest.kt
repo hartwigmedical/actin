@@ -11,7 +11,7 @@ class HasTnmTScoreTest {
     @Test
     fun `Should be undetermined if the tumor is TNM M`(){
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1), TumorTestFactory.withTumorStage(TumorStage.IV))
+            EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1), TumorTestFactory.withTumorStage(TumorStage.IVA))
         )
     }
 
