@@ -39,7 +39,6 @@ class HasTnmTScore(private val scores: Set<TnmT>) : EvaluationFunction {
             possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be T scores of ${show(possibleTnmTs)}")
             possibleTnmTs.intersect(scores).isNotEmpty() ->
                 EvaluationFactory.undetermined("Tumor could be of ${show(possibleTnmTs)} but can't be of ${show(scores.subtract(possibleTnmTs))}")
-
             else -> EvaluationFactory.fail("Tumor is not of stage ${show(scores)}")
         }
     }
