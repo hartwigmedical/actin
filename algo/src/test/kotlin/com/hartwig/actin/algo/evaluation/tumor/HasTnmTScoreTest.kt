@@ -28,6 +28,20 @@ class HasTnmTScoreTest {
             EvaluationResult.FAIL, function(setOf(TnmT.T2A) , TumorTestFactory.withTumorStage(TumorStage.IIA))
         )
     }
+
+    @Test
+    fun `Should pass if the stage contains all the scores as possibilities`() {
+        assertEvaluation(
+            EvaluationResult.PASS, function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B) , TumorTestFactory.withTumorStage(TumorStage.IIIA))
+        )
+    }
+
+    @Test
+    fun `Should be undetermined if only some of the scores are possible with the stage`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B) , TumorTestFactory.withTumorStage(TumorStage.IIB))
+        )
+    }
 }
 
 private fun function(scores: Set<TnmT>, record: PatientRecord) = HasTnmTScore(scores).evaluate(record)
