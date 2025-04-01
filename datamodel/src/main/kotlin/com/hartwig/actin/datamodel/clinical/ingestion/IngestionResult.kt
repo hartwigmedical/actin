@@ -72,7 +72,7 @@ data class QuestionnaireCurationError(val subject: String, val message: String) 
     }
 }
 
-data class FeedValidationWarning(val subject: String, val message: String) : Comparable<FeedValidationWarning> {
+data class FeedValidationWarning(val subject: String, val message: String, val registrationDate: LocalDate? = null) : Comparable<FeedValidationWarning> {
 
     override fun compareTo(other: FeedValidationWarning): Int {
         return Comparator.comparing(FeedValidationWarning::subject)
