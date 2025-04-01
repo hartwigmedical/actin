@@ -109,8 +109,7 @@ class TreatmentHistoryEntryConfigFactory(
             bodyLocationCategories = bodyLocationCategories,
             bodyLocations = entriesFromColumn(parts, fields, "bodyLocations"),
             maintenanceTreatment = maintenanceTreatmentStage,
-            switchToTreatments = switchToTreatments?.let(::listOf),
-            ongoingAsOf = null
+            switchToTreatments = switchToTreatments?.let(::listOf)
         )
 
         return TreatmentHistoryEntry(

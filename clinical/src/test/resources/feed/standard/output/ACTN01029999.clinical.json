@@ -84,7 +84,7 @@
       "treatmentHistoryDetails": {
         "stopYear": 2020,
         "stopMonth": 1,
-        "ongoingAsOf": null,
+        "isAssumedMaxStopDate": false,
         "cycles": 5,
         "bestResponse": null,
         "stopReason": null,

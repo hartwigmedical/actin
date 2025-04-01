@@ -231,7 +231,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
                     "radioType" to radiotherapy?.radioType,
                     "stopYear" to details?.stopYear,
                     "stopMonth" to details?.stopMonth,
-                    "ongoingAsOf" to details?.ongoingAsOf,
                     "cycles" to details?.cycles,
                     "bestResponse" to details?.bestResponse,
                     "stopReason" to details?.stopReason,

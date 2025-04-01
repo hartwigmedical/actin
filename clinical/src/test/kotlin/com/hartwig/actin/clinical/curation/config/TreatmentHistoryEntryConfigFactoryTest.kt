@@ -85,11 +85,11 @@ class TreatmentHistoryEntryConfigFactoryTest {
                     bestResponse = null,
                     stopYear = null,
                     stopMonth = null,
+                    isAssumedMaxStopDate = false,
                     cycles = null,
                     switchToTreatments = null,
                     maintenanceTreatment = null,
-                    stopReasonDetail = null,
-                    ongoingAsOf = null
+                    stopReasonDetail = null
                 ),
                 intents = null
             )

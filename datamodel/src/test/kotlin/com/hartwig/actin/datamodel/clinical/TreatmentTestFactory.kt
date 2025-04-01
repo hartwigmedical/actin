@@ -75,13 +75,13 @@ object TreatmentTestFactory {
                 bestResponse = bestResponse,
                 stopYear = stopYear,
                 stopMonth = stopMonth,
+                isAssumedMaxStopDate = false,
                 cycles = numCycles,
                 bodyLocations = bodyLocations,
                 bodyLocationCategories = bodyLocationCategory,
                 switchToTreatments = switchToTreatments,
                 maintenanceTreatment = maintenanceTreatment,
-                stopReasonDetail = stopReasonDetail,
-                ongoingAsOf = null,
+                stopReasonDetail = stopReasonDetail
             )
         } else null
         return TreatmentHistoryEntry(

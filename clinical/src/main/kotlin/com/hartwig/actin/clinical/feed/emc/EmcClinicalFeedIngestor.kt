@@ -4,12 +4,14 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
+import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
@@ -30,6 +32,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.PatientDetails
@@ -39,6 +42,8 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.HEART_RATE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
@@ -80,7 +85,7 @@ class EmcClinicalFeedIngestor(
                 tumor = tumorExtraction.extracted,
                 comorbidities = comorbidities,
                 clinicalStatus = clinicalStatus,
-                oncologicalHistory = oncologicalHistoryExtraction.extracted,
+                oncologicalHistory = setStopDate(oncologicalHistoryExtraction.extracted),
                 priorSecondPrimaries = priorSecondPrimaryExtraction.extracted,
                 priorIHCTests = priorMolecularTestsExtraction.extracted,
                 priorSequencingTests = emptyList(),
@@ -132,6 +137,21 @@ class EmcClinicalFeedIngestor(
                 valid = bodyWeightIsValid(entry)
             )
         }
+    }
+
+    private fun setStopDate(l: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
+        val sorted = l.sortedWith(TreatmentHistoryAscendingDateComparator())
+        val (systemic, nonSystemic) = sorted.partition { it.categories().all { category -> TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES.contains(category) } }
+        val newList = mutableListOf<TreatmentHistoryEntry>()
+        for (i in systemic.indices) {
+            val current = systemic[i]
+            if (current.treatmentHistoryDetails?.stopYear == null && i < systemic.size - 1) {
+                val next = systemic[i + 1]
+                newList.add(current.copy(treatmentHistoryDetails = current.treatmentHistoryDetails?.copy(stopYear = next.startYear, stopMonth = next.startMonth, isAssumedMaxStopDate = true)))
+            }
+            else newList.add(current)
+        }
+        return newList + nonSystemic
     }
 
     private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {

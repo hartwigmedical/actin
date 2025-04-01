@@ -98,7 +98,6 @@ object TreatmentHistoryEntryFunctions {
         ) ?: TreatmentHistoryDetails(
             stopYear = stopYearMonth.year,
             stopMonth = stopYearMonth.month,
-            ongoingAsOf = null,
             cycles = cycles,
             bestResponse = null,
             stopReason = null,

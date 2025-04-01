@@ -70,7 +70,7 @@
       "treatmentHistoryDetails": {
         "stopYear": 2020,
         "stopMonth": null,
-        "ongoingAsOf": null,
+        "isAssumedMaxStopDate": false,
         "cycles": null,
         "bestResponse": "PROGRESSIVE_DISEASE",
         "stopReason": "TOXICITY",

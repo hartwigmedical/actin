@@ -2,12 +2,11 @@ package com.hartwig.actin.datamodel.clinical.treatment.history
 
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.ObservedToxicity
-import java.time.LocalDate
 
 data class TreatmentHistoryDetails(
     val stopYear: Int? = null,
     val stopMonth: Int? = null,
-    val ongoingAsOf: LocalDate? = null,
+    val isAssumedMaxStopDate: Boolean = false,
     val cycles: Int? = null,
     val bestResponse: TreatmentResponse? = null,
     val stopReason: StopReason? = null,

@@ -82,7 +82,6 @@ CREATE TABLE `treatmentHistoryEntry`
     `radioType` varchar(100),
     `stopYear` int,
     `stopMonth` int,
-    `ongoingAsOf` date,
     `cycles` int,
     `bestResponse` varchar(50),
     `stopReason` varchar(50),

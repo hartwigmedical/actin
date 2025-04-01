@@ -90,7 +90,7 @@
       "treatmentHistoryDetails": {
         "stopYear": 2025,
         "stopMonth": 1,
-        "ongoingAsOf": null,
+        "isAssumedMaxStopDate": false,
         "cycles": null,
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",

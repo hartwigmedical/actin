@@ -102,7 +102,7 @@
       "treatmentHistoryDetails": {
         "stopYear": 2024,
         "stopMonth": 6,
-        "ongoingAsOf": null,
+        "isAssumedMaxStopDate": false,
         "cycles": null,
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",
@@ -168,7 +168,7 @@
       "treatmentHistoryDetails": {
         "stopYear": 2024,
         "stopMonth": 8,
-        "ongoingAsOf": null,
+        "isAssumedMaxStopDate": false,
         "cycles": null,
         "bestResponse": "STABLE_DISEASE",
         "stopReason": "TOXICITY",
