@@ -59,7 +59,7 @@ class TrialMatchingChapter(
             emptyList(),
             externalTrials.internationalTrials.filtered,
             requestingSource,
-            homeCountry,
+            null,
             contentWidth()
         ).takeIf { externalTrialsOnly }
 

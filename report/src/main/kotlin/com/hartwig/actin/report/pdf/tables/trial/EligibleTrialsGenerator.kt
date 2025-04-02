@@ -66,7 +66,7 @@ class EligibleTrialsGenerator(
             cohorts: List<InterpretedCohort>,
             externalTrials: Set<ExternalTrialSummary>,
             requestingSource: TrialSource?,
-            homeCountry: Country,
+            homeCountry: Country? = null,
             width: Float
         ): EligibleTrialsGenerator {
             val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts)
