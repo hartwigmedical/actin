@@ -20,8 +20,10 @@ import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
 
     override fun annotate(input: MolecularRecord): MolecularRecord {
-        // TODO (KZ) Implement
-        val matches: Map<EfficacyEvidence, Set<Or<Driver, Characteristic>>> = evidenceDatabase.findAllEvidence(input)
+        // TODO (KZ) Add "Actionable" interface and add data classes for characteristics that implement Actionable.
+        // TODO (KZ) Drivers extend Actionable interface
+        // TODO (KZ) Implement below
+        val matches: Map<EfficacyEvidence, Set<Actionable>> = evidenceDatabase.findAllEvidence(input)
 
         return input.copy(
             characteristics = annotateCharacteristics(input.characteristics, matches),
