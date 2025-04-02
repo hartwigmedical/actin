@@ -15,6 +15,7 @@ enum class PatientIngestionStatus {
 
 data class PatientIngestionResult(
     val patientId: String,
+    val registrationDate: LocalDate,
     val status: PatientIngestionStatus,
     val curationResults: Set<CurationResult>,
     val questionnaireCurationErrors: Set<QuestionnaireCurationError>,
@@ -71,7 +72,7 @@ data class QuestionnaireCurationError(val subject: String, val message: String) 
     }
 }
 
-data class FeedValidationWarning(val subject: String, val message: String, val registrationDate: LocalDate? = null) : Comparable<FeedValidationWarning> {
+data class FeedValidationWarning(val subject: String, val message: String) : Comparable<FeedValidationWarning> {
 
     override fun compareTo(other: FeedValidationWarning): Int {
         return Comparator.comparing(FeedValidationWarning::subject)
