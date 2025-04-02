@@ -108,7 +108,7 @@ class EmcClinicalFeedIngestor(
 
             Triple(
                 record,
-                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord, record.patient.registrationDate),
+                ingestionResult(record.patientId, record.patient.registrationDate, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
                 patientEvaluation
             )
         }
@@ -178,11 +178,11 @@ class EmcClinicalFeedIngestor(
 
     private fun ingestionResult(
         patientId: String,
+        registrationDate: LocalDate,
         questionnaire: Questionnaire?,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
         feedRecord: FeedRecord,
-        registrationDate: LocalDate,
     ): PatientIngestionResult {
         val curationResults = curationResultsFromWarnings(patientEvaluation.warnings)
 
