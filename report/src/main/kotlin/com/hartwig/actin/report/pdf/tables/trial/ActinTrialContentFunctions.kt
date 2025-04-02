@@ -17,7 +17,7 @@ object ActinTrialContentFunctions {
         val commonLocations = findCommonMembersInCohorts(cohorts, InterpretedCohort::locations)
         val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
 
-        val hidePrefix = commonFeedback.isEmpty() && commonEvents.isEmpty() && commonLocations.isEmpty()
+        val hidePrefix = (commonFeedback.isEmpty() && commonEvents.isEmpty() && commonLocations.isEmpty()) || cohorts.size == 1
 
         val prefix = if (hidePrefix) emptyList() else {
             val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
