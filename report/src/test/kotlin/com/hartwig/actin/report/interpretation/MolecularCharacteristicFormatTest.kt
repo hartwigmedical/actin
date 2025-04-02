@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.characteristics.HrdType
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
@@ -102,7 +102,7 @@ class MolecularCharacteristicFormatTest {
                 MolecularCharacteristics(
                     isHomologousRecombinationDeficient = true,
                     homologousRecombinationScore = 1.0,
-                    hrdType = HrdType.BRCA1_TYPE,
+                    homologousRecombinationType = HomologousRecombinationType.BRCA1_TYPE,
                     brca1Value = 2.0
                 )
             )
@@ -122,7 +122,7 @@ class MolecularCharacteristicFormatTest {
                 MolecularCharacteristics(
                     isHomologousRecombinationDeficient = true,
                     homologousRecombinationScore = 1.0,
-                    hrdType = HrdType.BRCA2_TYPE,
+                    homologousRecombinationType = HomologousRecombinationType.BRCA2_TYPE,
                     brca2Value = 2.0
                 )
             )

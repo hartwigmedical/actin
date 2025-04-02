@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
-import com.hartwig.actin.datamodel.molecular.characteristics.HrdType
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.molecular.util.ExtractionUtil
@@ -30,7 +30,7 @@ internal class CharacteristicsExtractor {
             isHomologousRecombinationDeficient = chord?.let { isHRD(it.hrStatus()) },
             brca1Value = chord?.brca1Value(),
             brca2Value = chord?.brca2Value(),
-            hrdType = chord?.hrdType()?.let { HrdType.valueOf(it.uppercase()) },
+            homologousRecombinationType = chord?.hrdType()?.let { HomologousRecombinationType.valueOf(it.uppercase()) },
             homologousRecombinationEvidence = ExtractionUtil.noEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
             hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus()),

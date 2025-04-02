@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.characteristics.HrdType
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.report.pdf.util.Formats
 
@@ -44,17 +44,17 @@ object MolecularCharacteristicFormat {
             val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
             val scoreInterpretation = molecularCharacteristics.homologousRecombinationScore?.let { "(${Formats.twoDigitNumber(it)})" }
 
-            val typeInterpretation = molecularCharacteristics.hrdType?.let { type ->
+            val typeInterpretation = molecularCharacteristics.homologousRecombinationType?.let { type ->
                 when (type) {
-                    HrdType.BRCA1_TYPE -> {
+                    HomologousRecombinationType.BRCA1_TYPE -> {
                         "- BRCA1-type (BRCA1 value: ${molecularCharacteristics.brca1Value?.let { Formats.twoDigitNumber(it) }})"
                     }
 
-                    HrdType.BRCA2_TYPE -> {
+                    HomologousRecombinationType.BRCA2_TYPE -> {
                         "- BRCA2-type (BRCA2 value: ${molecularCharacteristics.brca2Value?.let { Formats.twoDigitNumber(it) }})"
                     }
 
-                    HrdType.NONE, HrdType.CANNOT_BE_DETERMINED -> null
+                    HomologousRecombinationType.NONE, HomologousRecombinationType.CANNOT_BE_DETERMINED -> null
                 }
             }?.takeIf { isDeficient }
 
