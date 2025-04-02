@@ -15,13 +15,17 @@ import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
 
     override fun annotate(input: MolecularRecord): MolecularRecord {
+        // TODO (KZ) Implement
+        val matches: Map<EfficacyEvidence, Set<Or<Driver, Characteristic>>> = evidenceDatabase.findAllEvidence(input)
+
         return input.copy(
-            characteristics = annotateCharacteristics(input.characteristics),
-            drivers = annotateDrivers(input.drivers)
+            characteristics = annotateCharacteristics(input.characteristics, matches),
+            drivers = annotateDrivers(input.drivers, matches)
         )
     }
 
