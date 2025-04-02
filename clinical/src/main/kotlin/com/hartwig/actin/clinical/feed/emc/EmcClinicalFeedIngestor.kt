@@ -182,7 +182,7 @@ class EmcClinicalFeedIngestor(
         questionnaire: Questionnaire?,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
-        feedRecord: FeedRecord,
+        feedRecord: FeedRecord
     ): PatientIngestionResult {
         val curationResults = curationResultsFromWarnings(patientEvaluation.warnings)
 
