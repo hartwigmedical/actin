@@ -41,6 +41,7 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 class EmcClinicalFeedIngestor(
     private val feed: FeedModel,
@@ -107,7 +108,7 @@ class EmcClinicalFeedIngestor(
 
             Triple(
                 record,
-                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
+                ingestionResult(record.patientId, record.patient.registrationDate, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
                 patientEvaluation
             )
         }
@@ -177,6 +178,7 @@ class EmcClinicalFeedIngestor(
 
     private fun ingestionResult(
         patientId: String,
+        registrationDate: LocalDate,
         questionnaire: Questionnaire?,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
@@ -195,6 +197,7 @@ class EmcClinicalFeedIngestor(
 
         return PatientIngestionResult(
             patientId,
+            registrationDate,
             ingestionStatus,
             curationResults,
             questionnaireCurationErrors.toSet(),
