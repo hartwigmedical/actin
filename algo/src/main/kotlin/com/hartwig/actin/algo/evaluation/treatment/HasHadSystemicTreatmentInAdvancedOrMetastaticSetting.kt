@@ -52,7 +52,8 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             nonCurativeTreatments.size > 1 -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had more than one systemic lines with unknown or non-curative intent - presumably at least one in metastatic or advanced setting",
+                        "Has had more than one systemic lines with unknown or non-curative intent " +
+                                "- presumably at least one in metastatic or advanced setting",
                         nonCurativeTreatments
                     )
                 )
@@ -64,7 +65,8 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             ) -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had a systemic line with unknown or non-curative intent not followed by radiotherapy or surgery - thus presumably in metastatic or advanced setting",
+                        "Has had a systemic line with unknown or non-curative intent not followed by radiotherapy or surgery " +
+                                "- thus presumably in metastatic or advanced setting",
                         nonCurativeTreatments
                     )
                 )
