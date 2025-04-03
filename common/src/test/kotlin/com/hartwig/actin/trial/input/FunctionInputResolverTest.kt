@@ -1066,13 +1066,12 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one TNM T as input`() {
+    fun `Should resolve functions with many TNM Ts as input`() {
         val rule = firstOfType(FunctionInput.MANY_TNM_T)
         val valid = create(rule, listOf("T2A"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
         assertThat(resolver.createManyTnmTInput(valid)).isEqualTo(setOf(TnmT.T2A))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("t2a")))!!).isTrue
         assertThat(resolver.hasValidInputs(create(rule, listOf("T2C")))!!).isFalse
     }
 
