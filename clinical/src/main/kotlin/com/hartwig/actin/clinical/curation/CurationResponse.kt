@@ -22,7 +22,6 @@ data class CurationResponse<T>(
     }
 
     companion object {
-
         fun <T : CurationConfig> createFromConfigs(
             configs: Set<T>,
             patientId: String,

@@ -18,25 +18,29 @@ class LabInterpretation(private val measurements: Map<LabMeasurement, List<LabVa
         return measurements[measurement]?.ifEmpty { null }
     }
 
-    fun mostRecentValue(measurement: LabMeasurement): LabValue? {
-        val values = measurements[measurement]
-        return if (!values.isNullOrEmpty()) values[0] else null
+    fun mostRecentValue(measurement: LabMeasurement, highestFirst: Boolean = true): LabValue? {
+        val values = sort(measurements[measurement] ?: emptyList(), highestFirst)
+        return if (values.isNotEmpty()) values[0] else null
     }
 
-    fun secondMostRecentValue(measurement: LabMeasurement): LabValue? {
-        val values = measurements[measurement]
-        return if (values != null && values.size >= 2) values[1] else null
+    fun secondMostRecentValue(measurement: LabMeasurement, highestFirst: Boolean = true): LabValue? {
+        val values = sort(measurements[measurement] ?: emptyList(), highestFirst)
+        return if (values.size >= 2) values[1] else null
     }
 
     fun valuesOnDate(measurement: LabMeasurement, dateToFind: LocalDate): List<LabValue> {
         return measurements[measurement]?.filter { it.date == dateToFind } ?: emptyList()
     }
 
+    private fun sort(labValues: List<LabValue>, highestFirst: Boolean): List<LabValue> {
+        return labValues.sortedWith(LabValueDescendingDateComparator(highestFirst))
+    }
+
     companion object {
         fun interpret(labValues: List<LabValue>): LabInterpretation {
             return LabInterpretation(
                 LabMeasurement.entries.associateWith { measurement ->
-                    labValues.filter { it.measurement == measurement }.sortedWith(LabValueDescendingDateComparator())
+                    labValues.filter { it.measurement == measurement }
                 }.toSortedMap()
             )
         }

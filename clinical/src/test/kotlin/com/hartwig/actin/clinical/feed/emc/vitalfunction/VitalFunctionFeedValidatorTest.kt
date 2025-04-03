@@ -46,7 +46,7 @@ class VitalFunctionFeedValidatorTest {
 
         assertThat(result.valid).isFalse
         assertThat(result.warnings).hasSize(1)
-        assertThat(result.warnings[0].message).isEqualTo("Invalid vital function category")
+        assertThat(result.warnings[0].message).isEqualTo("Invalid vital function category: Invalid")
     }
 
     private fun validEntry() = VitalFunctionEntry(

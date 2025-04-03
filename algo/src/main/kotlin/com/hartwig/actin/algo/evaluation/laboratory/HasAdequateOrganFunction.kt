@@ -27,7 +27,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
         ).map {
             it to evaluateVersusLimit(
                 isMaxUln = false,
-                interpretation.mostRecentValue(it),
+                interpretation.mostRecentValue(it, false),
                 it
             )
         }.toSet()

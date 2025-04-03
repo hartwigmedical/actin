@@ -150,7 +150,8 @@ class StandardDataIngestion(
             drugInteractionDatabase: DrugInteractionsDatabase,
             qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
-            treatmentDatabase: TreatmentDatabase
+            treatmentDatabase: TreatmentDatabase,
+            panelGeneList: PanelGeneList
         ) = StandardDataIngestion(
             directory,
             StandardMedicationExtractor(atcModel, drugInteractionDatabase, qtProlongatingDatabase, treatmentDatabase),
@@ -172,7 +173,7 @@ class StandardDataIngestion(
             StandardBodyHeightExtractor(),
             StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
-            DataQualityMask()
+            DataQualityMask(panelGeneList)
         )
     }
 }

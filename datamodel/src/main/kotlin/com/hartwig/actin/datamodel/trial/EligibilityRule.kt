@@ -97,6 +97,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU(FunctionInput.NONE),
 
     // Rules related to previous cancer treatments
+    CURRENTLY_GETS_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES(FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER),
     IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT(FunctionInput.NONE),
     IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X(FunctionInput.ONE_SPECIFIC_TREATMENT),
     IS_ELIGIBLE_FOR_RADIOTHERAPY(FunctionInput.NONE),
@@ -267,6 +268,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES(FunctionInput.NONE),
     HAS_EGFR_PACC_MUTATION(FunctionInput.NONE),
     HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y(FunctionInput.TWO_STRINGS),
+    HAS_PROTEIN_X_POLYMORPHISM_Y(FunctionInput.ONE_PROTEIN_ONE_STRING),
 
     // Rules related to recent laboratory measurements
     HAS_ADEQUATE_ORGAN_FUNCTION(FunctionInput.NONE),
@@ -431,7 +433,6 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     // Rules depending on current medication
     CURRENTLY_GETS_NAME_X_MEDICATION(FunctionInput.ONE_STRING),
     CURRENTLY_GETS_CATEGORY_X_MEDICATION(FunctionInput.ONE_MEDICATION_CATEGORY),
-    CURRENTLY_GETS_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES(FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER),
     HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS(FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER),
     CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION(FunctionInput.NONE),
     CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP(FunctionInput.NONE),

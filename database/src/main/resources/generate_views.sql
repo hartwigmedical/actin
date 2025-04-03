@@ -13,7 +13,7 @@ SELECT  trial.code AS trialId, acronym AS trialAcronym, cohort.code AS cohortId,
 CREATE OR REPLACE VIEW molecularDetails
 AS (
 SELECT * FROM (
-SELECT  x.sampleId, IF(isHotspot,"Mutation (Hotspot)",IF(isBiallelic,"Mutation (Biallelic VUS)", "Mutation (VUS)")) AS type, x.event, concat(round(variantCopyNumber,1),"/",round(totalCopyNumber,1), " copies") AS details, driverLikelihood,
+SELECT  x.sampleId, IF(isHotspot,"Mutation (Hotspot)",IF(isBiallelic,"Mutation (No known hotspot, biallelic)", "Mutation (No known hotspot)")) AS type, x.event, concat(round(variantCopyNumber,1),"/",round(totalCopyNumber,1), " copies") AS details, driverLikelihood,
 		group_concat(DISTINCT et.treatment) AS externalTrials,
 	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
 		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
