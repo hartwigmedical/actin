@@ -3,8 +3,10 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
@@ -12,6 +14,7 @@ import java.time.LocalDate
 class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val referenceDate: LocalDate) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorSystemicTreatments = record.oncologicalHistory.filter { entry -> entry.treatments.any { it.isSystemic } }
+            .sortedWith(TreatmentHistoryAscendingDateComparator())
         val (curativeTreatments, nonCurativeTreatments) = priorSystemicTreatments.partition { it.intents?.contains(Intent.CURATIVE) == true }
         val (recentNonCurativeTreatments, nonRecentNonCurativeTreatments) = nonCurativeTreatments
             .partition { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, referenceDate.minusMonths(6), false) }
@@ -46,10 +49,13 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 )
             }
 
-            nonCurativeTreatments.size > 2 -> {
+            (nonCurativeTreatments.size > 1 || nonCurativeTreatments.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
+                priorSystemicTreatments,
+                nonCurativeTreatments.first()
+            )) -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had more than two systemic lines with unknown or non-curative intent - presumably at least one in metastatic setting",
+                        "Has had more than one systemic lines with unknown or non-curative intent - presumably at least one in metastatic setting",
                         nonCurativeTreatments
                     )
                 )
@@ -74,6 +80,17 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             }
 
             else -> EvaluationFactory.fail("No prior systemic treatment in advanced or metastatic setting")
+        }
+    }
+
+    private fun hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
+        priorSystemicTreatments: List<TreatmentHistoryEntry>,
+        nonCurativeTreatment: TreatmentHistoryEntry
+    ): Boolean {
+        return priorSystemicTreatments.drop(priorSystemicTreatments.indexOf(nonCurativeTreatment) + 1).any { entry ->
+            entry.treatments.any {
+                it.categories().contains(TreatmentCategory.RADIOTHERAPY) || it.categories().contains(TreatmentCategory.SURGERY)
+            }
         }
     }
 
