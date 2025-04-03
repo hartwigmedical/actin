@@ -32,12 +32,12 @@ data class Questionnaire(
     val complications: List<String>?
 ) {
     fun isEmpty(): Boolean {
-        return listOf(
+        val allStringsEmpty = listOf(
             tumorLocation,
             tumorType,
             biopsyLocation
-        ).all { it.isNullOrEmpty() } &&
-                listOf(
+        ).all { it.isNullOrEmpty() }
+        val allListEmpty = listOf(
                     treatmentHistoryCurrentTumor,
                     otherOncologicalHistory,
                     secondaryPrimaries,
@@ -47,8 +47,8 @@ data class Questionnaire(
                     pdl1TestResults,
                     unresolvedToxicities,
                     complications
-                ).all { it.isNullOrEmpty() } &&
-                listOf(
+                ).all { it.isNullOrEmpty() }
+        val allBooleanAndObjectFieldsNull = listOf(
                     stage,
                     hasMeasurableDisease,
                     hasBrainLesions,
@@ -61,5 +61,6 @@ data class Questionnaire(
                     infectionStatus,
                     ecg
                 ).all { it == null }
+        return allStringsEmpty && allListEmpty && allBooleanAndObjectFieldsNull
     }
 }
