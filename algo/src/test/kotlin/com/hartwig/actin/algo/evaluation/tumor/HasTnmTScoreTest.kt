@@ -18,7 +18,7 @@ class HasTnmTScoreTest {
     @Test
     fun `Should pass if the score matches the tumor stage`(){
         assertEvaluation(
-            EvaluationResult.PASS, function(setOf(TnmT.T4), TumorTestFactory.withTumorStage(TumorStage.IIIA))
+            EvaluationResult.PASS, function(setOf(TnmT.T2A, TnmT.T2), TumorTestFactory.withTumorStage(TumorStage.IB))
         )
     }
 
@@ -30,14 +30,14 @@ class HasTnmTScoreTest {
     }
 
     @Test
-    fun `Should pass if the stage contains all the scores as possibilities`() {
+    fun `Should pass if the targets contains all possible TnmTs of the target`() {
         assertEvaluation(
-            EvaluationResult.PASS, function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B) , TumorTestFactory.withTumorStage(TumorStage.IIIA))
+            EvaluationResult.PASS, function(setOf(TnmT.T2, TnmT.T4, TnmT.T2A) , TumorTestFactory.withTumorStage(TumorStage.IB))
         )
     }
 
     @Test
-    fun `Should be undetermined if only some of the scores are possible with the stage`() {
+    fun `Should be undetermined if only some of the stages are possible with the targets`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B) , TumorTestFactory.withTumorStage(TumorStage.IIB))
         )
