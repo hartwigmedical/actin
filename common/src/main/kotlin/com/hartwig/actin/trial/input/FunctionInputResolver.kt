@@ -39,6 +39,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
+import com.hartwig.actin.trial.input.single.OneGeneOneString
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
@@ -313,6 +314,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_GENE -> {
                     createOneGeneInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_GENE_ONE_STRING -> {
+                    createOneGeneOneStringInput(function)
                     return true
                 }
 
@@ -773,6 +779,11 @@ class FunctionInputResolver(
     fun createOneGeneInput(function: EligibilityFunction): OneGene {
         assertParamConfig(function, FunctionInput.ONE_GENE, 1)
         return OneGene(parameterAsGene(function, 0))
+    }
+
+    fun createOneGeneOneStringInput(function: EligibilityFunction): OneGeneOneString {
+        assertParamConfig(function, FunctionInput.ONE_GENE_ONE_STRING, 2)
+        return OneGeneOneString(geneName = parameterAsGene(function, 0), string = parameterAsString(function, 1))
     }
 
     fun createOneGeneOneIntegerInput(function: EligibilityFunction): OneGeneOneInteger {

@@ -32,6 +32,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
+import com.hartwig.actin.trial.input.single.OneGeneOneString
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
@@ -732,6 +733,22 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a gene")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("gene", "gene")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one gene one string input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
+        val rule = firstOfType(FunctionInput.ONE_GENE_ONE_STRING)
+        val valid = create(rule, listOf("gene", "string"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneGeneOneString("gene", "string")
+        assertThat(resolver.createOneGeneOneStringInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("gene")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a gene", "string")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("string", "gene")))!!).isFalse
     }
 
     @Test

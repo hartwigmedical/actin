@@ -222,6 +222,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("gene")
             }
 
+            FunctionInput.ONE_GENE_ONE_STRING -> {
+                listOf("gene", "string")
+            }
+
             FunctionInput.ONE_GENE_ONE_INTEGER -> {
                 listOf("gene", "1")
             }
