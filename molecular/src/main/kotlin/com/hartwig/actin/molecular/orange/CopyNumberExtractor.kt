@@ -68,6 +68,8 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                                 gainLoss.maxCopies().roundToInt()
                             )
                         }.toSet(),
+                        chromosome = geneCopyNumber.chromosome(),
+                        region = geneCopyNumber.chromosomeBand()
                     )
                 } else {
                     val event =
@@ -97,7 +99,9 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                                 gainLoss.minCopies().roundToInt(),
                                 gainLoss.maxCopies().roundToInt()
                             )
-                        }.toSet()
+                        }.toSet(),
+                        chromosome = geneCopyNumber.chromosome(),
+                        region = geneCopyNumber.chromosomeBand()
                     )
                 }
             }.sorted()

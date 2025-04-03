@@ -9,6 +9,8 @@ data class Haplotype(
     val allele: String,
     val alleleCount: Int,
     val function: HaplotypeFunction,
+    val linkedDrugs: String = "",
+    val urlPrescriptionInfo : String = ""
 ) : Comparable<Haplotype> {
 
     override fun compareTo(other: Haplotype): Int {

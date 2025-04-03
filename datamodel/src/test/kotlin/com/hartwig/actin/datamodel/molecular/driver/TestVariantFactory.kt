@@ -14,6 +14,8 @@ object TestVariantFactory {
             canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal(),
             otherImpacts = emptySet(),
             isHotspot = false,
+            totalReadCount = 0,
+            alleleReadCount = 0,
             isReportable = false,
             event = "",
             driverLikelihood = null,

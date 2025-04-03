@@ -23,7 +23,9 @@ internal object PharmacoExtraction {
                 Haplotype(
                     allele = it.allele(),
                     alleleCount = it.alleleCount(),
-                    function = determineFunction(it.function())
+                    function = determineFunction(it.function()),
+                    linkedDrugs = it.linkedDrugs(),
+                    urlPrescriptionInfo = it.urlPrescriptionInfo()
                 )
             }
                 .toSet()

@@ -13,6 +13,8 @@ data class Variant(
     val otherImpacts: Set<TranscriptVariantImpact>,
     val extendedVariantDetails: ExtendedVariantDetails? = null,
     val isHotspot: Boolean,
+    val totalReadCount: Int,
+    val alleleReadCount: Int,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,

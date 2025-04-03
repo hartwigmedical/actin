@@ -7,6 +7,7 @@ object TestTranscriptVariantImpactFactory {
             transcriptId = "",
             hgvsCodingImpact = "",
             hgvsProteinImpact = "",
+            hgvsProteinImpact3 = "",
             affectedCodon = null,
             affectedExon = null,
             isSpliceRegion = false,

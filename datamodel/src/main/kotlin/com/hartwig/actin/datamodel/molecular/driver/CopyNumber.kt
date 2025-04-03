@@ -5,6 +5,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 data class CopyNumber(
     val canonicalImpact: TranscriptCopyNumberImpact,
     val otherImpacts: Set<TranscriptCopyNumberImpact>,
+    val chromosome: String = "",
+    val region: String = "",
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,

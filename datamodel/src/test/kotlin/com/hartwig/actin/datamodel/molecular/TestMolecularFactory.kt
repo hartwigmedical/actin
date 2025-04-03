@@ -230,6 +230,7 @@ object TestMolecularFactory {
             transcriptId = "ENST00000288602",
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
+            hgvsProteinImpact3 = "p.Val600E",
             affectedCodon = 600,
             isSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
@@ -245,6 +246,8 @@ object TestMolecularFactory {
             clonalLikelihood = 1.0
         ),
         isHotspot = true,
+        totalReadCount = 0,
+        alleleReadCount = 0,
         isReportable = true,
         event = "BRAF V600E",
         driverLikelihood = DriverLikelihood.HIGH,
