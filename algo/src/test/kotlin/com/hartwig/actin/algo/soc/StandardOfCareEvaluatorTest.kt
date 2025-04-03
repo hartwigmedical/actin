@@ -18,12 +18,15 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalTestMolecularRecord
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
+import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import io.mockk.every
 import io.mockk.mockk
@@ -83,16 +86,33 @@ class StandardOfCareEvaluatorTest {
         )
     ).create()
 
-    private val minimalMolecularRecord = createMinimalTestMolecularRecord().copy(
-        characteristics = createMinimalTestMolecularRecord().characteristics.copy(
-            isMicrosatelliteUnstable = false,
-            isHomologousRecombinationDeficient = false
+    private val minimalMolecularRecord = TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+        characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
+            microsatelliteStability = MicrosatelliteStability(
+                microsatelliteIndelsPerMb = null,
+                isUnstable = false,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            ),
+            homologousRecombination = HomologousRecombination(
+                score = 0.0,
+                isDeficient = false,
+                type = HomologousRecombinationType.NONE,
+                brca1Value = 0.0,
+                brca2Value = 0.0,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
         )
     )
     private val molecularRecordWithBrafV600e = TestMolecularFactory.createProperTestMolecularRecord()
     private val msiMolecularRecord = minimalMolecularRecord.copy(
-        characteristics = minimalMolecularRecord.characteristics.copy(isMicrosatelliteUnstable = true)
+        characteristics = minimalMolecularRecord.characteristics.copy(
+            microsatelliteStability = MicrosatelliteStability(
+                microsatelliteIndelsPerMb = null,
+                isUnstable = true, evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        )
     )
+
     private val molecularRecordWithOtherBrafMutation = minimalMolecularRecord.copy(
         drivers = minimalMolecularRecord.drivers.copy(
             variants = listOf(
@@ -103,9 +123,13 @@ class StandardOfCareEvaluatorTest {
             )
         )
     )
-    private val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
+
+    private
+    val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
         .copy(molecularHistory = MolecularHistory(listOf(minimalMolecularRecord)))
-    private val minimalCrcPatientRecord = minimalPatientRecord.copy(
+
+    private
+    val minimalCrcPatientRecord = minimalPatientRecord.copy(
         tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
     )
 
@@ -358,7 +382,8 @@ class StandardOfCareEvaluatorTest {
     @Test
     fun `Should recommend expected treatments for patient with BRAF V600E in second line`() {
         val secondLinePatientResults = resultsForPatientWithHistoryAndMolecular(listOf("CHEMOTHERAPY"), molecularRecordWithBrafV600e)
-        val expectedAdditionalSecondLineCandidates = listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN).map(treatmentDatabase::findTreatmentByName)
+        val expectedAdditionalSecondLineCandidates =
+            listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN).map(treatmentDatabase::findTreatmentByName)
         assertThat(secondLinePatientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(alwaysAvailableTreatments + expectedAdditionalSecondLineCandidates)
     }
@@ -515,12 +540,12 @@ class StandardOfCareEvaluatorTest {
             doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID),
             primaryTumorSubLocation = tumorSubLocation
         )
-        val patientRecord = minimalPatientRecord.copy(
+
+        return minimalPatientRecord.copy(
             tumor = tumorDetails,
             oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
             molecularHistory = MolecularHistory(listOf(molecularRecord))
         )
-        return patientRecord
     }
 
     private fun assertSpecificTreatmentNotRecommended(name: String) {
@@ -544,7 +569,10 @@ class StandardOfCareEvaluatorTest {
         )
     }
 
-    private fun treatmentHistoryFromNames(names: List<String>, treatmentDate: LocalDate = RECENT_DATE): List<TreatmentHistoryEntry> {
+    private fun treatmentHistoryFromNames(
+        names: List<String>,
+        treatmentDate: LocalDate = RECENT_DATE
+    ): List<TreatmentHistoryEntry> {
         return names.map { treatmentName ->
             treatmentHistoryEntry(
                 treatments = treatmentSetWithName(treatmentName), startYear = treatmentDate.year, startMonth = treatmentDate.monthValue

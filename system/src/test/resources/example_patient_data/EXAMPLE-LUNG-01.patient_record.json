@@ -865,28 +865,40 @@
               }
             ]
           },
-          "isMicrosatelliteUnstable": false,
-          "microsatelliteEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "microsatelliteStability": {
+            "microsatelliteIndelsPerMb": 0.0,
+            "isUnstable": false,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "homologousRecombinationScore": 0.0,
-          "isHomologousRecombinationDeficient": false,
-          "homologousRecombinationEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "homologousRecombination": {
+            "score": 0.0,
+            "isDeficient": false,
+            "type": "NONE",
+            "brca1Value": 0.0,
+            "brca2Value": 0.0,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "tumorMutationalBurden": 14.0,
-          "hasHighTumorMutationalBurden": true,
-          "tumorMutationalBurdenEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "tumorMutationalBurden": {
+            "score": 14.0,
+            "isHigh": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "tumorMutationalLoad": 160,
-          "hasHighTumorMutationalLoad": true,
-          "tumorMutationalLoadEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "tumorMutationalLoad": {
+            "score": 160,
+            "isHigh": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           }
         },
         "evidenceSource": "External"

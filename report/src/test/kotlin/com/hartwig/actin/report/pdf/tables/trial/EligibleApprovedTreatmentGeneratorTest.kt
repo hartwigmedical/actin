@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
@@ -21,9 +20,10 @@ import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val width: Float = 10F
+private const val WIDTH = 10F
 
 class EligibleApprovedTreatmentGeneratorTest {
+
     @Test
     fun `Should return approved treatments if available`() {
         val contents = eligibleTreatmentsTable(treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch())
@@ -38,11 +38,9 @@ class EligibleApprovedTreatmentGeneratorTest {
         val molecularHistory = MolecularHistory(
             listOf(
                 TestMolecularFactory.createMinimalTestMolecularRecord().copy(
-                    characteristics = MolecularCharacteristics(
+                    characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                         predictedTumorOrigin = PredictedTumorOrigin(
-                            listOf(
-                                CupPrediction("colorectal", 0.9, 0.0, 0.0, 0.0)
-                            )
+                            listOf(CupPrediction("colorectal", 0.9, 0.0, 0.0, 0.0))
                         )
                     )
                 )
@@ -69,7 +67,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             treatmentMatch,
             EnvironmentConfiguration.create(null)
         )
-        return getWrappedTable(EligibleApprovedTreatmentGenerator(report, width))
+        return getWrappedTable(EligibleApprovedTreatmentGenerator(report, WIDTH))
     }
 }
 

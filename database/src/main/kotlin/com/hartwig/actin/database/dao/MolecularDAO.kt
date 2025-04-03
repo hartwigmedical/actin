@@ -32,11 +32,20 @@ internal class MolecularDAO(private val context: DSLContext) {
 
         for (molecularResult in molecularResults) {
             val molecularId = molecularResult.getValue(Tables.MOLECULAR.ID)
-            context.delete(Tables.MICROSATELLITEEVIDENCE).where(Tables.MICROSATELLITEEVIDENCE.MOLECULARID.eq(molecularId)).execute()
-            context.delete(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE).where(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.MOLECULARID.eq(molecularId)).execute()
-            context.delete(Tables.TUMORMUTATIONALBURDENEVIDENCE).where(Tables.TUMORMUTATIONALBURDENEVIDENCE.MOLECULARID.eq(molecularId))
+            context.delete(Tables.MICROSATELLITEEVIDENCE)
+                .where(Tables.MICROSATELLITEEVIDENCE.MOLECULARID.eq(molecularId))
                 .execute()
-            context.delete(Tables.TUMORMUTATIONALLOADEVIDENCE).where(Tables.TUMORMUTATIONALLOADEVIDENCE.MOLECULARID.eq(molecularId))
+
+            context.delete(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE)
+                .where(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.MOLECULARID.eq(molecularId))
+                .execute()
+
+            context.delete(Tables.TUMORMUTATIONALBURDENEVIDENCE)
+                .where(Tables.TUMORMUTATIONALBURDENEVIDENCE.MOLECULARID.eq(molecularId))
+                .execute()
+
+            context.delete(Tables.TUMORMUTATIONALLOADEVIDENCE)
+                .where(Tables.TUMORMUTATIONALLOADEVIDENCE.MOLECULARID.eq(molecularId))
                 .execute()
         }
         val variantResults = context.select(Tables.VARIANT.ID).from(Tables.VARIANT).where(Tables.VARIANT.SAMPLEID.eq(sampleId)).fetch()
@@ -147,21 +156,21 @@ internal class MolecularDAO(private val context: DSLContext) {
                 record.characteristics.ploidy,
                 predictedTumorOrigin?.cancerType(),
                 predictedTumorOrigin?.likelihood(),
-                record.characteristics.isMicrosatelliteUnstable,
-                record.characteristics.homologousRecombinationScore,
-                record.characteristics.isHomologousRecombinationDeficient,
-                record.characteristics.tumorMutationalBurden,
-                record.characteristics.hasHighTumorMutationalBurden,
-                record.characteristics.tumorMutationalLoad,
-                record.characteristics.hasHighTumorMutationalLoad
+                record.characteristics.microsatelliteStability?.isUnstable,
+                record.characteristics.homologousRecombination?.score,
+                record.characteristics.homologousRecombination?.isDeficient,
+                record.characteristics.tumorMutationalBurden?.score,
+                record.characteristics.tumorMutationalBurden?.isHigh,
+                record.characteristics.tumorMutationalLoad?.score,
+                record.characteristics.tumorMutationalLoad?.isHigh
             )
             .returning(Tables.MOLECULAR.ID)
             .fetchOne()!!
             .getValue(Tables.MOLECULAR.ID)
-        writeMicrosatelliteEvidence(molecularId, record.characteristics.microsatelliteEvidence)
-        writeHomologousRecombinationEvidence(molecularId, record.characteristics.homologousRecombinationEvidence)
-        writeTumorMutationalBurdenEvidence(molecularId, record.characteristics.tumorMutationalBurdenEvidence)
-        writeTumorMutationalLoadEvidence(molecularId, record.characteristics.tumorMutationalLoadEvidence)
+        writeMicrosatelliteEvidence(molecularId, record.characteristics.microsatelliteStability?.evidence)
+        writeHomologousRecombinationEvidence(molecularId, record.characteristics.homologousRecombination?.evidence)
+        writeTumorMutationalBurdenEvidence(molecularId, record.characteristics.tumorMutationalBurden?.evidence)
+        writeTumorMutationalLoadEvidence(molecularId, record.characteristics.tumorMutationalLoad?.evidence)
     }
 
     private fun writeMicrosatelliteEvidence(molecularId: Int, evidence: ClinicalEvidence?) {

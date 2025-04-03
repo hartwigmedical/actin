@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,7 +16,7 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
 
     @Test
     fun `Should correctly classify HRD drivers`() {
-        val drivers = Drivers(
+        val drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
             variants = listOf(
                 hrdVariant(
                     gene = "BRCA1",

@@ -8,15 +8,15 @@ object MolecularCharacteristicFormat {
 
     fun formatTumorMutationalBurden(molecularCharacteristics: MolecularCharacteristics, includeValue: Boolean = true) =
         "TMB " + formatHighLowCharacteristic(
-            molecularCharacteristics.tumorMutationalBurden,
-            molecularCharacteristics.hasHighTumorMutationalBurden,
+            molecularCharacteristics.tumorMutationalBurden?.score,
+            molecularCharacteristics.tumorMutationalBurden?.isHigh,
             includeValue
         )
 
     fun formatTumorMutationalLoad(molecularCharacteristics: MolecularCharacteristics, includeValue: Boolean = true) =
         "TML " + formatHighLowCharacteristic(
-            molecularCharacteristics.tumorMutationalLoad,
-            molecularCharacteristics.hasHighTumorMutationalLoad,
+            molecularCharacteristics.tumorMutationalLoad?.score,
+            molecularCharacteristics.tumorMutationalLoad?.isHigh,
             includeValue
         )
 
@@ -35,23 +35,38 @@ object MolecularCharacteristicFormat {
     private fun formHighLow(i: Boolean) = if (i) "High" else "Low"
 
     fun formatMicrosatelliteStability(molecularCharacteristics: MolecularCharacteristics): String {
-        return molecularCharacteristics.isMicrosatelliteUnstable?.let { unstable -> if (unstable) "Unstable" else "Stable" }
+        return molecularCharacteristics.microsatelliteStability?.isUnstable?.let { isUnstable -> if (isUnstable) "Unstable" else "Stable" }
             ?: Formats.VALUE_UNKNOWN
     }
 
-    fun formatHomologousRecombination(molecularCharacteristics: MolecularCharacteristics, includeTypeInterpretation: Boolean = true): String {
-        return molecularCharacteristics.isHomologousRecombinationDeficient?.let { isDeficient ->
+    fun formatHomologousRecombination(
+        molecularCharacteristics: MolecularCharacteristics,
+        includeTypeInterpretation: Boolean = true
+    ): String {
+        return molecularCharacteristics.homologousRecombination?.isDeficient?.let { isDeficient ->
             val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
-            val scoreInterpretation = molecularCharacteristics.homologousRecombinationScore?.let { "(${Formats.twoDigitNumber(it)})" }
+            val scoreInterpretation = molecularCharacteristics.homologousRecombination?.score?.let { "(${Formats.twoDigitNumber(it)})" }
 
-            val typeInterpretation = molecularCharacteristics.homologousRecombinationType?.let { type ->
+            val typeInterpretation = molecularCharacteristics.homologousRecombination?.type?.let { type ->
                 when (type) {
                     HomologousRecombinationType.BRCA1_TYPE -> {
-                        "- BRCA1-type (BRCA1 value: ${molecularCharacteristics.brca1Value?.let { Formats.twoDigitNumber(it) }})"
+                        "- BRCA1-type (BRCA1 value: ${
+                            molecularCharacteristics.homologousRecombination?.brca1Value?.let {
+                                Formats.twoDigitNumber(
+                                    it
+                                )
+                            }
+                        })"
                     }
 
                     HomologousRecombinationType.BRCA2_TYPE -> {
-                        "- BRCA2-type (BRCA2 value: ${molecularCharacteristics.brca2Value?.let { Formats.twoDigitNumber(it) }})"
+                        "- BRCA2-type (BRCA2 value: ${
+                            molecularCharacteristics.homologousRecombination?.brca2Value?.let {
+                                Formats.twoDigitNumber(
+                                    it
+                                )
+                            }
+                        })"
                     }
 
                     HomologousRecombinationType.NONE, HomologousRecombinationType.CANNOT_BE_DETERMINED -> null

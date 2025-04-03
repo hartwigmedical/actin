@@ -2,7 +2,9 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -70,11 +72,14 @@ class MolecularCharacteristicsGeneratorTest {
         val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
             characteristics = base.characteristics.copy(
-                isHomologousRecombinationDeficient = isHrd,
-                homologousRecombinationScore = hrScore,
-                homologousRecombinationType = homologousRecombinationType,
-                brca1Value = brca1Value,
-                brca2Value = brca2Value
+                homologousRecombination = HomologousRecombination(
+                    score = hrScore,
+                    isDeficient = isHrd,
+                    type = homologousRecombinationType,
+                    brca1Value = brca1Value,
+                    brca2Value = brca2Value,
+                    evidence = TestClinicalEvidenceFactory.createEmpty()
+                )
             )
         )
     }

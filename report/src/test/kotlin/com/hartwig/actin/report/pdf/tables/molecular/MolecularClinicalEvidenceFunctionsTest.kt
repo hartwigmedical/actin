@@ -3,8 +3,11 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
+import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -19,7 +22,11 @@ class MolecularClinicalEvidenceFunctionsTest {
         val variant = TestMolecularFactory.createProperVariant().copy(evidence = CLINICAL_EVIDENCE)
         val events =
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                molecularHistory(BASE_MOLECULAR_TEST.copy(drivers = Drivers(variants = listOf(variant))))
+                molecularHistory(
+                    BASE_MOLECULAR_TEST.copy(
+                        drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(variant))
+                    )
+                )
             )
         assertThat(events).containsExactly(variant.event to CLINICAL_EVIDENCE)
     }
@@ -30,21 +37,28 @@ class MolecularClinicalEvidenceFunctionsTest {
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
                 molecularHistory(
                     BASE_MOLECULAR_TEST.copy(
-                        characteristics = MolecularCharacteristics(
-                            isMicrosatelliteUnstable = true,
-                            microsatelliteEvidence = CLINICAL_EVIDENCE
+                        characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                            microsatelliteStability = MicrosatelliteStability(
+                                microsatelliteIndelsPerMb = null,
+                                isUnstable = true,
+                                evidence = CLINICAL_EVIDENCE
+                            )
                         )
                     )
                 )
             )
         ).containsExactly("MS Unstable" to CLINICAL_EVIDENCE)
+
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
                 molecularHistory(
                     BASE_MOLECULAR_TEST.copy(
-                        characteristics = MolecularCharacteristics(
-                            isMicrosatelliteUnstable = false,
-                            microsatelliteEvidence = CLINICAL_EVIDENCE
+                        characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                            microsatelliteStability = MicrosatelliteStability(
+                                microsatelliteIndelsPerMb = null,
+                                isUnstable = false,
+                                evidence = CLINICAL_EVIDENCE
+                            )
                         )
                     )
                 )
@@ -59,10 +73,15 @@ class MolecularClinicalEvidenceFunctionsTest {
                 MolecularHistory(
                     molecularTests = listOf(
                         BASE_MOLECULAR_TEST.copy(
-                            characteristics = MolecularCharacteristics(
-                                isHomologousRecombinationDeficient = true,
-                                homologousRecombinationScore = 1.0,
-                                homologousRecombinationEvidence = CLINICAL_EVIDENCE
+                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                                homologousRecombination = HomologousRecombination(
+                                    score = 1.0,
+                                    isDeficient = true,
+                                    type = HomologousRecombinationType.BRCA1_TYPE,
+                                    brca1Value = 1.0,
+                                    brca2Value = 0.0,
+                                    evidence = CLINICAL_EVIDENCE
+                                )
                             )
                         )
                     )
@@ -78,10 +97,12 @@ class MolecularClinicalEvidenceFunctionsTest {
                 MolecularHistory(
                     molecularTests = listOf(
                         BASE_MOLECULAR_TEST.copy(
-                            characteristics = MolecularCharacteristics(
-                                tumorMutationalBurden = 61.0,
-                                hasHighTumorMutationalBurden = true,
-                                tumorMutationalBurdenEvidence = CLINICAL_EVIDENCE
+                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                                tumorMutationalBurden = TumorMutationalBurden(
+                                    score = 61.0,
+                                    isHigh = true,
+                                    evidence = CLINICAL_EVIDENCE
+                                )
                             )
                         )
                     )
@@ -94,10 +115,12 @@ class MolecularClinicalEvidenceFunctionsTest {
                 MolecularHistory(
                     molecularTests = listOf(
                         BASE_MOLECULAR_TEST.copy(
-                            characteristics = MolecularCharacteristics(
-                                tumorMutationalLoad = 10,
-                                hasHighTumorMutationalLoad = true,
-                                tumorMutationalLoadEvidence = CLINICAL_EVIDENCE
+                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                                tumorMutationalLoad = TumorMutationalLoad(
+                                    score = 10,
+                                    isHigh = true,
+                                    evidence = CLINICAL_EVIDENCE
+                                )
                             )
                         )
                     )
@@ -113,17 +136,21 @@ class MolecularClinicalEvidenceFunctionsTest {
                 MolecularHistory(
                     molecularTests = listOf(
                         BASE_MOLECULAR_TEST.copy(
-                            characteristics = MolecularCharacteristics(
-                                tumorMutationalBurden = 61.0,
-                                hasHighTumorMutationalBurden = true,
-                                tumorMutationalBurdenEvidence = CLINICAL_EVIDENCE
+                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                                tumorMutationalBurden = TumorMutationalBurden(
+                                    score = 61.0,
+                                    isHigh = true,
+                                    evidence = CLINICAL_EVIDENCE
+                                )
                             )
                         ),
                         BASE_MOLECULAR_TEST.copy(
-                            characteristics = MolecularCharacteristics(
-                                tumorMutationalBurden = 61.0,
-                                hasHighTumorMutationalBurden = true,
-                                tumorMutationalBurdenEvidence = CLINICAL_EVIDENCE
+                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                                tumorMutationalBurden = TumorMutationalBurden(
+                                    score = 61.0,
+                                    isHigh = true,
+                                    evidence = CLINICAL_EVIDENCE
+                                )
                             )
                         )
                     )

@@ -1,10 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.actin.report.pdf.getWrappedTable
@@ -40,7 +42,13 @@ class LongitudinalMolecularHistoryGeneratorTest {
 
     @Test
     fun `Should create row for each variant and mark as detected in correct tests`() {
-        val molecularHistory = MolecularHistory(listOf(FIRST_TEST.copy(drivers = Drivers(variants = listOf(VARIANT))), SECOND_TEST))
+        val molecularHistory = MolecularHistory(
+            listOf(
+                FIRST_TEST.copy(
+                    drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(VARIANT))
+                ), SECOND_TEST
+            )
+        )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
         assertRow(
             getWrappedTable(result),
@@ -64,7 +72,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
         val molecularHistory = MolecularHistory(
             listOf(
                 FIRST_TEST.copy(
-                    drivers = Drivers(
+                    drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                         variants = listOf(tierOneGeneTwoVariantEventTwo, tierOneGeneTwoVariant, tierTwoVariant, tierOneVariant),
                         fusions = listOf(tierOneGeneTwoLowLikelihoodFusion)
                     )
@@ -118,8 +126,12 @@ class LongitudinalMolecularHistoryGeneratorTest {
     fun `Should create row for TMB and assign value to the correct test`() {
         val molecularHistory = MolecularHistory(
             listOf(
-                FIRST_TEST.copy(characteristics = MolecularCharacteristics(tumorMutationalBurden = 1.0)),
-                SECOND_TEST.copy(characteristics = MolecularCharacteristics(tumorMutationalBurden = 2.0))
+                FIRST_TEST.copy(
+                    characteristics = withTumorMutationalBurden(test = FIRST_TEST, score = 1.0)
+                ),
+                SECOND_TEST.copy(
+                    characteristics = withTumorMutationalBurden(test = SECOND_TEST, score = 2.0)
+                )
             )
         )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
@@ -130,10 +142,10 @@ class LongitudinalMolecularHistoryGeneratorTest {
     fun `Should create row for MSI and assign value to the correct test`() {
         val molecularHistory = MolecularHistory(
             listOf(
-                FIRST_TEST.copy(characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = false)),
-                SECOND_TEST.copy(characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = true)),
+                FIRST_TEST.copy(characteristics = withMicrosatelliteStability(test = FIRST_TEST, isUnstable = false)),
+                SECOND_TEST.copy(characteristics = withMicrosatelliteStability(test = SECOND_TEST, isUnstable = true)),
                 SECOND_TEST.copy(
-                    date = SECOND_TEST.date?.plusDays(1), characteristics = MolecularCharacteristics()
+                    date = SECOND_TEST.date?.plusDays(1), characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
                 )
             )
         )
@@ -143,7 +155,13 @@ class LongitudinalMolecularHistoryGeneratorTest {
 
     @Test
     fun `Should create row for fusion and mark as detected in correct tests`() {
-        val molecularHistory = MolecularHistory(listOf(FIRST_TEST.copy(drivers = Drivers(fusions = listOf(FUSION))), SECOND_TEST))
+        val molecularHistory = MolecularHistory(
+            listOf(
+                FIRST_TEST.copy(
+                    drivers = TestMolecularFactory.createMinimalTestDrivers().copy(fusions = listOf(FUSION))
+                ), SECOND_TEST
+            )
+        )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
         assertRow(
             getWrappedTable(result),
@@ -153,6 +171,26 @@ class LongitudinalMolecularHistoryGeneratorTest {
             HIGH,
             DETECTED,
             NOT_DETECTED
+        )
+    }
+
+    private fun withTumorMutationalBurden(test: MolecularRecord, score: Double): MolecularCharacteristics {
+        return test.characteristics.copy(
+            tumorMutationalBurden = TumorMutationalBurden(
+                score = score,
+                isHigh = false,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        )
+    }
+
+    private fun withMicrosatelliteStability(test: MolecularRecord, isUnstable: Boolean): MolecularCharacteristics {
+        return test.characteristics.copy(
+            microsatelliteStability = MicrosatelliteStability(
+                microsatelliteIndelsPerMb = 0.0,
+                isUnstable = isUnstable,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
         )
     }
 }
