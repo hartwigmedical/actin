@@ -34,7 +34,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             palliativeIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had prior systemic treatment in advanced or metastatic setting",
+                        "Has had prior systemic treatment in metastatic or advanced setting",
                         palliativeIntentTreatments
                     )
                 )
@@ -49,13 +49,22 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 )
             }
 
-            (nonCurativeTreatments.size > 1 || nonCurativeTreatments.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
-                priorSystemicTreatments,
-                nonCurativeTreatments.first()
-            )) -> {
+            nonCurativeTreatments.size > 1 -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had more than one systemic lines with unknown or non-curative intent - presumably at least one in metastatic setting",
+                        "Has had more than one systemic lines with unknown or non-curative intent - presumably at least one in metastatic or advanced setting",
+                        nonCurativeTreatments
+                    )
+                )
+            }
+
+           nonCurativeTreatments.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
+                priorSystemicTreatments,
+                nonCurativeTreatments.first()
+            ) -> {
+                EvaluationFactory.pass(
+                    createMessage(
+                        "Has had a systemic line with unknown or non-curative intent not followed by radiotherapy or surgery - thus presumably in metastatic or advanced setting",
                         nonCurativeTreatments
                     )
                 )
@@ -64,7 +73,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             nonCurativeTreatmentsWithUnknownStopDate.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
-                        "Has had prior systemic treatment but undetermined if in advanced or metastatic setting",
+                        "Has had prior systemic treatment but undetermined if in metastatic or advanced setting",
                         nonCurativeTreatmentsWithUnknownStopDate
                     )
                 )
@@ -73,13 +82,13 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             nonRecentNonCurativeTreatments.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
-                        "Has had prior systemic treatment >6 months ago but undetermined if in advanced or metastatic setting",
+                        "Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting",
                         nonRecentNonCurativeTreatments
                     )
                 )
             }
 
-            else -> EvaluationFactory.fail("No prior systemic treatment in advanced or metastatic setting")
+            else -> EvaluationFactory.fail("No prior systemic treatment in metastatic or advanced setting")
         }
     }
 

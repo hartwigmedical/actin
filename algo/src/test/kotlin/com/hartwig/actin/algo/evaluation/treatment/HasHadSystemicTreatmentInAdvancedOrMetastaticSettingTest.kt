@@ -44,44 +44,19 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     }
 
     @Test
-    fun `Should pass if patient has had more than two systemic lines with unknown or non-curative intent`() {
+    fun `Should pass if patient has had more than one systemic lines with unknown or non-curative intent`() {
         val noCurative = listOf(null, Intent.ADJUVANT, Intent.INDUCTION).map { nonRecentTreatment.copy(intents = it?.let { setOf(it) }) }
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(noCurative)))
     }
 
     @Test
-    fun `Should pass if patient has had 3 prior systemic lines but 1 with curative intent`() {
-        val oneCurative = listOf(null, Intent.CURATIVE, Intent.INDUCTION).map { nonRecentTreatment.copy(intents = it?.let { setOf(it) }) }
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(oneCurative)))
-    }
-
-    @Test
-    fun `Should pass if patient has had systemic treatment longer than 6 months ago with intent other than curative`() {
-        listOf(Intent.ADJUVANT, null)
-            .map {
-                createTreatment(
-                    it,
-                    isSystemic = true,
-                    "Treatment",
-                    stopYear = nonRecentDate.year,
-                    stopMonth = nonRecentDate.monthValue
-                )
-            }
-            .forEach {
-                assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(it))))
-            }
-    }
-
-    @Test
-    fun `Should pass if patient has had systemic treatment with unknown stop date and intent other than curative`() {
-        val record = withTreatmentHistory(
-            listOf(createTreatment(Intent.ADJUVANT, isSystemic = true, stopYear = null, stopMonth = null))
-        )
+    fun `Should pass if patient has had one systemic line with non-curative intent and no radiotherapy or surgery afterwards`() {
+        val record = withTreatmentHistory(listOf(createTreatment(null, isSystemic = true, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
-    fun `Should evaluate to undetermined if patient has had prior systemic treatment more than 6 months ago with intent other than curative`() {
+    fun `Should evaluate to undetermined if patient has had prior systemic treatment more than 6 months ago with intent other than curative followed by radiotherapy`() {
         val record = withTreatmentHistory(
             listOf(
                 createTreatment(Intent.ADJUVANT, isSystemic = true, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue),
@@ -98,7 +73,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if patient has had systemic treatment with unknown stop date and intent other than curative`() {
+    fun `Should evaluate to undetermined if patient has had systemic treatment with unknown stop date and intent other than curative followed by surgery with unknown date`() {
         val record = withTreatmentHistory(
             listOf(
                 createTreatment(Intent.NEOADJUVANT, isSystemic = true, stopYear = null, stopMonth = null),
