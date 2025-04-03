@@ -6,14 +6,6 @@ import com.hartwig.actin.report.trial.ExternalTrialSummary
 private const val MANY_PLEASE_CHECK_LINK = "Many, please check link"
 
 object EligibleExternalTrialGeneratorFunctions {
-    
-    fun shortenTitle(title: String): String {
-        return if (title.length > 160) {
-            title.take(80).substringBeforeLast(" ") + " ... " + title.takeLast(80).substringAfter(" ")
-        } else {
-            title
-        }
-    }
 
     fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: Country): Pair<String, String> {
         val homeCountries = trial.countries.filter { it.country == country }

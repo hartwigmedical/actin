@@ -7,11 +7,11 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
+import com.hartwig.actin.report.pdf.util.Cells.createContentNoBorder
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.kernel.pdf.action.PdfAction
-import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
@@ -40,20 +40,27 @@ object TrialGeneratorFunctions {
         }
 
         externalTrials.forEach { trial ->
-            table.addCell(
-                createContent(EligibleExternalTrialGeneratorFunctions.shortenTitle(trial.title))
-                    .setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle())
-            )
-            table.addCell(createContent(trial.sourceMolecularEvents.joinToString(",\n")))
-            table.addCell(createContent(trial.actinMolecularEvents.joinToString(",\n")))
-            table.addCell(
-                createContent(
-                     homeCountry?.let {
+            val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
+            table.addCell(createContent(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()).setItalic())
+
+            val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
+            trialSubTable.addCell(createContentNoBorder(trial.sourceMolecularEvents.joinToString(",\n")))
+            trialSubTable.addCell(createContentNoBorder(trial.actinMolecularEvents.joinToString(",\n")))
+            trialSubTable.addCell(
+                createContentNoBorder(
+                    homeCountry?.let {
                         val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
                         if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
                     } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
                 )
             )
+
+            val finalSubTable = if (trialSubTable.numberOfRows > 2) {
+                Tables.makeWrapping(trialSubTable, false)
+            } else {
+                trialSubTable.setKeepTogether(true)
+            }
+            table.addCell(createContent(finalSubTable.setItalic()))
         }
     }
 
@@ -67,17 +74,9 @@ object TrialGeneratorFunctions {
     private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table, paddingDistance: Float) {
         cellContent.map {
             val paragraph = Paragraph(it).setKeepTogether(true)
-            val cell = if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else Cells.createContentNoBorder(paragraph)
+            val cell = if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else createContentNoBorder(paragraph)
             cell.setPadding(paddingDistance)
         }.forEach(table::addCell)
-    }
-
-    private fun renderTrialTitle(trialLabelText: List<Text>, cohort: InterpretedCohort): Cell {
-        return if (!cohort.url.isNullOrBlank()) {
-            createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
-                PdfAction.createURI(cohort.url)
-            )
-        } else createContent(Paragraph().addAll(trialLabelText))
     }
 
     private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table) {
@@ -90,18 +89,23 @@ object TrialGeneratorFunctions {
                 cohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
                     ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
 
-
-            table.addCell(
-                when (cohort.source) {
-                    TrialSource.LKO -> cohort.sourceId?.let {
-                        createContent(Paragraph().addAll(trialLabelText.map { it.addStyle(Styles.urlStyle()) })).setAction(
-                            PdfAction.createURI(cohort.url)
+            if (cohortList.none(InterpretedCohort::hasSlotsAvailable)) {
+                val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()) }
+                table.addCell(
+                    cohort.url?.let {
+                        createContent(Paragraph().addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
+                    } ?: createContent(Paragraph().addAll(trialLabel))
+                )
+            } else {
+                table.addCell(
+                    cohort.url?.let {
+                        createContent(Paragraph().addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) })).setAction(
+                            PdfAction.createURI(it)
                         )
                     } ?: createContent(Paragraph().addAll(trialLabelText))
+                )
+            }
 
-                    else -> renderTrialTitle(trialLabelText, cohort)
-                }
-            )
             val finalSubTable = if (trialSubTable.numberOfRows > 2) {
                 Tables.makeWrapping(trialSubTable, false)
             } else {
