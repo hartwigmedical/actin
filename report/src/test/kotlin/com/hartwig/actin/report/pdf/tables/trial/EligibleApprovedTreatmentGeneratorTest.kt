@@ -37,7 +37,7 @@ class EligibleApprovedTreatmentGeneratorTest {
 
         val molecularHistory = MolecularHistory(
             listOf(
-                TestMolecularFactory.createMinimalTestOrangeRecord().copy(
+                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
                     characteristics = MolecularCharacteristics(
                         predictedTumorOrigin = PredictedTumorOrigin(
                             listOf(

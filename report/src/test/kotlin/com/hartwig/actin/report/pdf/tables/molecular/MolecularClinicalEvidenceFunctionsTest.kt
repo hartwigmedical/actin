@@ -1,16 +1,16 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val CLINICAL_EVIDENCE = TestClinicalEvidenceFactory.createEmpty()
-private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalTestOrangeRecord()
+private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalTestMolecularRecord()
 
 class MolecularClinicalEvidenceFunctionsTest {
 

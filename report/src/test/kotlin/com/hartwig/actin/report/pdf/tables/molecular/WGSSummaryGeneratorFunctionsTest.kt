@@ -15,7 +15,7 @@ import org.junit.Test
 
 class WGSSummaryGeneratorFunctionsTest {
 
-    private val molecularRecord = TestMolecularFactory.createProperTestOrangeRecord()
+    private val molecularRecord = TestMolecularFactory.createProperTestMolecularRecord()
     private val inconclusivePredictions = listOf(
         CupPrediction(
             cancerType = "Melanoma",

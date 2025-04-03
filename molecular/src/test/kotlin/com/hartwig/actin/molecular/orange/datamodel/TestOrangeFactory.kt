@@ -182,6 +182,7 @@ object TestOrangeFactory {
 
     private fun createTestPurpleCharacteristics(): PurpleCharacteristics {
         return TestPurpleFactory.characteristicsBuilder()
+            .microsatelliteIndelsPerMb(0.12)
             .microsatelliteStatus(PurpleMicrosatelliteStatus.MSS)
             .tumorMutationalBurdenPerMb(13.0)
             .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.HIGH)
@@ -286,10 +287,10 @@ object TestOrangeFactory {
 
     private fun createTestChordRecord(): ChordRecord {
         return ImmutableChordRecord.builder()
-            .hrStatus(ChordStatus.HR_PROFICIENT)
-            .brca1Value(0.0)
-            .brca2Value(0.0)
+            .brca1Value(0.4)
+            .brca2Value(0.05)
             .hrdValue(0.45)
+            .hrStatus(ChordStatus.HR_PROFICIENT)
             .hrdType(HomologousRecombinationType.NONE.name)
             .build()
     }

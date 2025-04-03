@@ -11,7 +11,7 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should annotate molecular record with evidence for characteristics when they are provided`() {
-        val annotated = annotator.annotate(TestMolecularFactory.createProperTestOrangeRecord())
+        val annotated = annotator.annotate(TestMolecularFactory.createProperTestMolecularRecord())
         with(annotated.characteristics) {
             assertThat(microsatelliteEvidence).isNotNull
             assertThat(homologousRecombinationEvidence).isNotNull
@@ -22,7 +22,7 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should not annotate molecular record with evidence for null characteristics`() {
-        val annotated = annotator.annotate(TestMolecularFactory.createMinimalTestOrangeRecord())
+        val annotated = annotator.annotate(TestMolecularFactory.createMinimalTestMolecularRecord())
         with(annotated.characteristics) {
             assertThat(microsatelliteEvidence).isNull()
             assertThat(homologousRecombinationEvidence).isNull()

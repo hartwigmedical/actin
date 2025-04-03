@@ -50,15 +50,15 @@ object TestMolecularFactory {
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
     fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createMinimalTestOrangeRecord(), createMinimalTestPanelRecord()))
+        return MolecularHistory(listOf(createMinimalTestMolecularRecord(), createMinimalTestPanelRecord()))
     }
 
     fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createProperTestOrangeRecord(), createProperTestPanelRecord()))
+        return MolecularHistory(listOf(createProperTestMolecularRecord(), createProperTestPanelRecord()))
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestOrangeRecord(), createExhaustiveTestPanelRecord()))
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), createExhaustiveTestPanelRecord()))
     }
 
     fun createMinimalTestPanelRecord(): PanelRecord {
@@ -75,7 +75,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun createMinimalTestOrangeRecord(): MolecularRecord {
+    fun createMinimalTestMolecularRecord(): MolecularRecord {
         return MolecularRecord(
             sampleId = TestPatientFactory.TEST_SAMPLE,
             experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
@@ -105,8 +105,8 @@ object TestMolecularFactory {
         )
     }
 
-    fun createProperTestOrangeRecord(): MolecularRecord {
-        return createMinimalTestOrangeRecord().copy(
+    fun createProperTestMolecularRecord(): MolecularRecord {
+        return createMinimalTestMolecularRecord().copy(
             date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
             evidenceSource = "kb",
             externalTrialSource = "trial kb",
@@ -126,8 +126,8 @@ object TestMolecularFactory {
         )
     }
 
-    fun createExhaustiveTestOrangeRecord(): MolecularRecord {
-        return createProperTestOrangeRecord().copy(
+    fun createExhaustiveTestMolecularRecord(): MolecularRecord {
+        return createProperTestMolecularRecord().copy(
             drivers = createExhaustiveTestDrivers(), characteristics = createExhaustiveTestCharacteristics()
         )
     }
@@ -226,7 +226,7 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createMinimalTestDrivers(): Drivers {
+    fun createMinimalTestDrivers(): Drivers {
         return Drivers(
             variants = emptyList(),
             copyNumbers = emptyList(),

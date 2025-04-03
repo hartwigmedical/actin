@@ -4,16 +4,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
-import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -125,7 +125,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             molecularHistory = MolecularHistory(
                 listOf(
-                    TestMolecularFactory.createMinimalTestOrangeRecord().copy(
+                    TestMolecularFactory.createMinimalTestMolecularRecord().copy(
                         drivers = Drivers(variants = variants)
                     )
                 )

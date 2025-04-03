@@ -1,7 +1,11 @@
 package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
+import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
@@ -10,7 +14,6 @@ import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
@@ -28,28 +31,38 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     private fun annotateCharacteristics(characteristics: MolecularCharacteristics): MolecularCharacteristics {
         return with(characteristics) {
             copy(
-                microsatelliteEvidence = createEvidenceForNullableMatch(
-                    isMicrosatelliteUnstable, evidenceDatabase::evidenceForMicrosatelliteStatus
-                ),
-                homologousRecombinationEvidence = createEvidenceForNullableMatch(
-                    isHomologousRecombinationDeficient, evidenceDatabase::evidenceForHomologousRecombinationStatus
-                ),
-                tumorMutationalBurdenEvidence = createEvidenceForNullableMatch(
-                    hasHighTumorMutationalBurden, evidenceDatabase::evidenceForTumorMutationalBurdenStatus
-                ),
-                tumorMutationalLoadEvidence = createEvidenceForNullableMatch(
-                    hasHighTumorMutationalLoad, evidenceDatabase::evidenceForTumorMutationalLoadStatus
-                )
+                microsatelliteStability = annotateMicrosatelliteStability(microsatelliteStability),
+                homologousRecombination = annotateHomologousRecombination(homologousRecombination),
+                tumorMutationalBurden = annotateTumorMutationalBurden(tumorMutationalBurden),
+                tumorMutationalLoad = annotateTumorMutationalLoad(tumorMutationalLoad)
             )
         }
     }
 
-    private fun createEvidenceForNullableMatch(
-        nullableCharacteristic: Boolean?, lookUpEvidence: (Boolean) -> ClinicalEvidence
-    ): ClinicalEvidence? {
-        return nullableCharacteristic?.let { characteristic -> lookUpEvidence(characteristic) }
+    private fun annotateMicrosatelliteStability(microsatelliteStability: MicrosatelliteStability?): MicrosatelliteStability? {
+        return microsatelliteStability?.let {
+            it.copy(evidence = evidenceDatabase.evidenceForMicrosatelliteStatus(it.isUnstable))
+        }
     }
 
+    private fun annotateHomologousRecombination(homologousRecombination: HomologousRecombination?): HomologousRecombination? {
+        return homologousRecombination?.let {
+            it.copy(evidence = evidenceDatabase.evidenceForHomologousRecombinationStatus(it.isDeficient))
+        }
+    }
+
+    private fun annotateTumorMutationalBurden(tumorMutationalBurden: TumorMutationalBurden?): TumorMutationalBurden? {
+        return tumorMutationalBurden?.let {
+            it.copy(evidence = evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it.isHigh))
+        }
+    }
+
+    private fun annotateTumorMutationalLoad(tumorMutationalLoad: TumorMutationalLoad?): TumorMutationalLoad? {
+        return tumorMutationalLoad?.let {
+            it.copy(evidence = evidenceDatabase.evidenceForTumorMutationalLoadStatus(it.isHigh))
+        }
+    }
+    
     private fun annotateDrivers(drivers: Drivers): Drivers {
         return drivers.copy(
             variants = drivers.variants.map { annotateVariant(it) },

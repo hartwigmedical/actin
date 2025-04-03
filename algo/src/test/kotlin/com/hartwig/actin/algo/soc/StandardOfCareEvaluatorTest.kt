@@ -15,12 +15,12 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalTestOrangeRecord
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalTestMolecularRecord
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
@@ -83,13 +83,13 @@ class StandardOfCareEvaluatorTest {
         )
     ).create()
 
-    private val minimalMolecularRecord = createMinimalTestOrangeRecord().copy(
-        characteristics = createMinimalTestOrangeRecord().characteristics.copy(
+    private val minimalMolecularRecord = createMinimalTestMolecularRecord().copy(
+        characteristics = createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = false,
             isHomologousRecombinationDeficient = false
         )
     )
-    private val molecularRecordWithBrafV600e = TestMolecularFactory.createProperTestOrangeRecord()
+    private val molecularRecordWithBrafV600e = TestMolecularFactory.createProperTestMolecularRecord()
     private val msiMolecularRecord = minimalMolecularRecord.copy(
         characteristics = minimalMolecularRecord.characteristics.copy(isMicrosatelliteUnstable = true)
     )
