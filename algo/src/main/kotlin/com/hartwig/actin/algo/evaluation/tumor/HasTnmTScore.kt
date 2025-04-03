@@ -43,6 +43,6 @@ class HasTnmTScore(private val targetTnmTs: Set<TnmT>) : EvaluationFunction {
     }
 
     private fun show(tnmTs: Set<TnmT>): String{
-        return Format.concatWithCommaAndOr(tnmTs.map { it.toString() })
+        return Format.concatWithCommaAndOr(tnmTs.map { it.display() })
     }
 }
