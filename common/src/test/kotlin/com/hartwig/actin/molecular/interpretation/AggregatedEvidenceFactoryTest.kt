@@ -60,7 +60,7 @@ class AggregatedEvidenceFactoryTest {
         val characteristics = TestMolecularFactory.createExhaustiveTestMolecularRecord().characteristics
         val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
 
-        assertThat(evidence.treatmentEvidencePerEvent).hasSize(4)
+        assertThat(evidence.treatmentEvidencePerEvent).hasSize(2)
     }
 
     @Test

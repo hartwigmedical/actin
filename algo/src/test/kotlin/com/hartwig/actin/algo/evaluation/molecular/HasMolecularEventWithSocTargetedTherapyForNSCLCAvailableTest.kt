@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
@@ -126,7 +125,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             molecularHistory = MolecularHistory(
                 listOf(
                     TestMolecularFactory.createMinimalTestMolecularRecord().copy(
-                        drivers = Drivers(variants = variants)
+                        drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
                     )
                 )
             )
