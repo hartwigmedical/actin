@@ -29,11 +29,11 @@ class HasTnmTScore(private val targetTnmTs: Set<TnmT>) : EvaluationFunction {
     )
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.tumor.stage
-        val possibleTnmTs = stageMap[stage] ?: emptySet()
+        val stages = record.tumor.stage?.let { setOf(it) }?: record.tumor.derivedStages
+        val possibleTnmTs = stages?.mapNotNull { stageMap[it] }?.flatten()?.toSet() ?: emptySet()
 
         return when {
-            stage == TumorStage.IV || stage == TumorStage.IVA || stage == TumorStage.IVB || stage == TumorStage.IVC ->
+            stages?.let { setOf(TumorStage.IV, TumorStage.IVA, TumorStage.IVB, TumorStage.IVC).containsAll(it) } == true ->
                 EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification ${show(targetTnmTs)}")
             targetTnmTs.containsAll(possibleTnmTs) -> EvaluationFactory.pass("Tumor could be T scores of ${show(possibleTnmTs)}")
             targetTnmTs.intersect(possibleTnmTs).isNotEmpty() ->

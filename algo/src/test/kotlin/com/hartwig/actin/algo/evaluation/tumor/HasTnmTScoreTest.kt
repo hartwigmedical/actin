@@ -42,6 +42,22 @@ class HasTnmTScoreTest {
             EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B) , TumorTestFactory.withTumorStage(TumorStage.IIB))
         )
     }
+
+    @Test
+    fun `Should use derived stages if stage is null`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIB)))
+        )
+    }
+
+    @Test
+    fun `Should return true if all target TnmTs are listed between possible TnmTs of the derived stage`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function(setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIB, TumorStage.IA)))
+        )
+    }
 }
 
 private fun function(scores: Set<TnmT>, record: PatientRecord) = HasTnmTScore(scores).evaluate(record)
