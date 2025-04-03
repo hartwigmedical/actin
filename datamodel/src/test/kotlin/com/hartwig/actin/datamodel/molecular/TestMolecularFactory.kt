@@ -132,7 +132,7 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
+    fun createMinimalTestCharacteristics(): MolecularCharacteristics {
         return MolecularCharacteristics(
             purity = null,
             ploidy = null,

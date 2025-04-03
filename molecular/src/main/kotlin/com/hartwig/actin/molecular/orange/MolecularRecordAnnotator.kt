@@ -18,6 +18,7 @@ import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.util.ExtractionUtil
 
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
 
@@ -47,7 +48,10 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateHomologousRecombination(homologousRecombination: HomologousRecombination?): HomologousRecombination? {
         return homologousRecombination?.let {
-            it.copy(evidence = evidenceDatabase.evidenceForHomologousRecombinationStatus(it.isDeficient))
+            val evidence =
+                it.isDeficient?.let { isDeficient -> evidenceDatabase.evidenceForHomologousRecombinationStatus(isDeficient) }
+                    ?: ExtractionUtil.noEvidence()
+            it.copy(evidence = evidence)
         }
     }
 
@@ -62,7 +66,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
             it.copy(evidence = evidenceDatabase.evidenceForTumorMutationalLoadStatus(it.isHigh))
         }
     }
-    
+
     private fun annotateDrivers(drivers: Drivers): Drivers {
         return drivers.copy(
             variants = drivers.variants.map { annotateVariant(it) },
