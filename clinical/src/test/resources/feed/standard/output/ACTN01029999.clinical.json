@@ -199,7 +199,7 @@
   "priorSequencingTests": [
     {
       "test": "Archer FP Lung Target",
-      "noMutationGenes": [
+      "testedGenes": [
         "ALK",
         "ROS1",
         "RET",
@@ -207,7 +207,8 @@
         "NTRK1",
         "NTRK2",
         "NTRK3",
-        "NRG1"
+        "NRG1",
+        "KRAS"
       ],
       "date": {
         "year": 2024,

@@ -45,7 +45,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                                 deletedGenes = geneDeletions(allResults),
                                 isMicrosatelliteUnstable = msi(allResults),
                                 tumorMutationalBurden = tmb(allResults),
-                                noMutationGenes = noMutations(test.testedGenes ?: emptySet(), allResults)
+                                testedGenes = (test.testedGenes ?: emptySet()) + impliedTestedGenes(allResults)
                             )
                         ),
                         mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
@@ -63,14 +63,9 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         }
     }
 
-    private fun noMutations(providedTestedGenes: Set<String>, allResults: Set<ProvidedMolecularTestResult>): Set<String> {
-        val impliedNoMutations =
-            providedTestedGenes - (allResults.filter { it.noMutationsFound != true }
-                .map { it.gene } + allResults.map { it.deletedGene } + allResults.map { it.fusionGeneUp } + allResults.map { it.fusionGeneDown } + allResults.map { it.amplifiedGene }).filterNotNull()
-                .toSet()
-        val explicitNoMutations = allResults.filter { it.noMutationsFound == true }.mapNotNull { it.gene }
-        return impliedNoMutations + explicitNoMutations
-    }
+    private fun impliedTestedGenes(allResults: Set<ProvidedMolecularTestResult>) =
+        (allResults.map { it.gene } + allResults.map { it.deletedGene } + allResults.map { it.fusionGeneUp } + allResults.map { it.fusionGeneDown } + allResults.map { it.amplifiedGene }).filterNotNull()
+            .toSet()
 
     private fun patientQualifiedTestName(patientId: String, test: ProvidedMolecularTest) = "$patientId | ${test.test}"
 

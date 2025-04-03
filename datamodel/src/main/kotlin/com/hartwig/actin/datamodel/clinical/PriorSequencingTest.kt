@@ -58,12 +58,5 @@ data class PriorSequencingTest(
     val skippedExons: Set<SequencedSkippedExons> = emptySet(),
     val fusions: Set<SequencedFusion> = emptySet(),
     val deletedGenes: Set<SequencedDeletedGene> = emptySet(),
-    val noMutationGenes: Set<String> = emptySet()
-) {
-    val testedGenes = (variants.map { it.gene } + amplifications.map { it.gene } + skippedExons.map { it.gene } + fusions.flatMap {
-        listOf(
-            it.geneUp,
-            it.geneDown
-        )
-    } + deletedGenes.map { it.gene } + noMutationGenes).filterNotNull().toSet()
-}
+    val testedGenes: Set<String> = emptySet()
+) 
