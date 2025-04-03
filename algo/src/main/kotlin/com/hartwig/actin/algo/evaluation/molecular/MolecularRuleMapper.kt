@@ -381,8 +381,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasProteinPolymorphismCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, type) = functionInputResolver().createOneProteinOneStringInput(function)
-            HasProteinWithPolymorphism(protein, type)
+            val (protein, polymorphism) = functionInputResolver().createOneProteinOneStringInput(function)
+            ProteinHasPolymorphism(protein, polymorphism)
         }
     }
 
