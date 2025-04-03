@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.clinical.feed.emc.FeedModel
 import com.hartwig.actin.clinical.feed.emc.FeedRecord
 import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction.isActualQuestionnaire
@@ -12,8 +11,7 @@ import java.time.LocalDate
 
 class QuestionnaireExtractionTest {
     private val today = LocalDate.now()
-    private val model: FeedModel = TestFeedFactory.createProperTestFeedModel()
-    private val feedRecord: FeedRecord = model.read().single()
+    private val feedRecord: FeedRecord = TestFeedFactory.createProperTestFeedModel().read().single()
 
     @Test
     fun `Should be able to determine that questionnaire entry is a questionnaire`() {
@@ -249,11 +247,12 @@ class QuestionnaireExtractionTest {
 
     @Test
     fun `Should be able to determine latest questionnaire`() {
-        val (latest, _) = QuestionnaireExtraction.extract(feedRecord.questionnaireEntries.map {
+        val (latest, errors) = QuestionnaireExtraction.extract(feedRecord.questionnaireEntries.map {
             val text = it.text
             it.copy(text = text.replace("\n", "\\n"))
         })
         assertThat(latest).isNotNull()
+        assertThat(errors.isEmpty())
         assertThat(latest!!.date).isEqualTo(LocalDate.of(2021, 8, 1))
     }
 

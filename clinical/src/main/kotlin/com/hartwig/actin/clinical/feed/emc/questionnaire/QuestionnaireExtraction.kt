@@ -61,9 +61,17 @@ object QuestionnaireExtraction {
                 ecg = ecg.curated,
                 complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
             )
-            val errors = listOf(brainLesionData, cnsLesionData, hasBoneLesions, hasLiverLesions, hasMeasurableDisease, whoStatus, infectionStatus, ecg, stage).flatMap(
-                ValidatedQuestionnaireCuration<*>::errors
-            )
+            val errors = listOf(
+                brainLesionData,
+                cnsLesionData,
+                hasBoneLesions,
+                hasLiverLesions,
+                hasMeasurableDisease,
+                whoStatus,
+                infectionStatus,
+                ecg,
+                stage
+            ).flatMap(ValidatedQuestionnaireCuration<*>::errors)
 
             when {
                 questionnaire.isEmpty() && errors.isEmpty() -> null
