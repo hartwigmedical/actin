@@ -941,15 +941,7 @@ class FunctionInputResolver(
     }
 
     private fun toTnmTs(input: Any): Set<TnmT>{
-        return toStringList(input).map(::toTnmT).toSet()
-    }
-
-    private fun toTnmT(tnmT: String): TnmT {
-        try {
-            return TnmT.valueOf(tnmT.uppercase(Locale.getDefault()))
-        } catch (e: Exception) {
-            throw IllegalStateException("TNM T not found: $tnmT")
-        }
+        return toStringList(input).map(TnmT::valueOf).toSet()
     }
 
     private fun toIntents(input: Any): Set<Intent> {

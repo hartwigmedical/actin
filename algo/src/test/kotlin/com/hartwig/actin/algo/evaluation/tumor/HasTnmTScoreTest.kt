@@ -18,7 +18,7 @@ class HasTnmTScoreTest {
     @Test
     fun `Should pass if the score matches the tumor stage`(){
         assertEvaluation(
-            EvaluationResult.PASS, function(setOf(TnmT.T4) , TumorTestFactory.withTumorStage(TumorStage.IIIA))
+            EvaluationResult.PASS, function(setOf(TnmT.T4), TumorTestFactory.withTumorStage(TumorStage.IIIA))
         )
     }
 

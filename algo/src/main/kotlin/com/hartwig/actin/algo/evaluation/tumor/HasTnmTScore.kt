@@ -8,12 +8,11 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.TnmT
 
-class HasTnmTScore(private val scores: Set<TnmT>) : EvaluationFunction {
+class HasTnmTScore(private val targetTnmTs: Set<TnmT>) : EvaluationFunction {
     private val t1 = setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C)
-    private val t2 = setOf(TnmT.T2, TnmT.T2A, TnmT.T2B)
     private val t2A = setOf(TnmT.T2, TnmT.T2A)
     private val t2B = setOf(TnmT.T2, TnmT.T2B)
-    private val t123 = t1 + t2 + TnmT.T3
+    private val t123 = t1 + t2A + t2B + TnmT.T3
     private val allT = t123 + TnmT.T4
 
     private val stageMap = mapOf(
@@ -35,15 +34,15 @@ class HasTnmTScore(private val scores: Set<TnmT>) : EvaluationFunction {
 
         return when {
             stage == TumorStage.IV || stage == TumorStage.IVA || stage == TumorStage.IVB || stage == TumorStage.IVC ->
-                EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification ${show(scores)}")
-            possibleTnmTs.containsAll(scores) -> EvaluationFactory.pass("Tumor could be T scores of ${show(possibleTnmTs)}")
-            possibleTnmTs.intersect(scores).isNotEmpty() ->
-                EvaluationFactory.undetermined("Undetermined if TNM T-classification is of ${show(scores)}- derived T's based on tumor stage are ${show(possibleTnmTs)}")
-            else -> EvaluationFactory.fail("Tumor is not of stage ${show(scores)}")
+                EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification ${show(targetTnmTs)}")
+            possibleTnmTs.containsAll(targetTnmTs) -> EvaluationFactory.pass("Tumor could be T scores of ${show(possibleTnmTs)}")
+            possibleTnmTs.intersect(targetTnmTs).isNotEmpty() ->
+                EvaluationFactory.undetermined("Undetermined if TNM T-classification is of ${show(targetTnmTs)}- derived T's based on tumor stage are ${show(possibleTnmTs)}")
+            else -> EvaluationFactory.fail("Tumor is not of stage ${show(targetTnmTs)}")
         }
     }
 
-    private fun show(set: Set<TnmT>): String{
-        return Format.concatWithCommaAndOr(set.map { it.toString() })
+    private fun show(tnmTs: Set<TnmT>): String{
+        return Format.concatWithCommaAndOr(tnmTs.map { it.toString() })
     }
 }
