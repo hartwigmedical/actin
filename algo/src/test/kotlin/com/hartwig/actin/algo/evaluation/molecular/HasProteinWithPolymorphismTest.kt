@@ -5,13 +5,13 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
-class HasGeneWithHaplotypeTest {
+class HasProteinWithPolymorphismTest {
 
     @Test
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasGeneWithHaplotype("gene", "V1/V2").evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            HasProteinWithPolymorphism("protein", "V1/V2").evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

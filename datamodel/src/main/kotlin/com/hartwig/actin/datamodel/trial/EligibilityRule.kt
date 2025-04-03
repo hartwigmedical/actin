@@ -268,7 +268,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES(FunctionInput.NONE),
     HAS_EGFR_PACC_MUTATION(FunctionInput.NONE),
     HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y(FunctionInput.TWO_STRINGS),
-    HAS_GENE_X_HAPLOTYPE_Y(FunctionInput.ONE_GENE_ONE_STRING),
+    HAS_PROTEIN_X_POLYMORPHISM_Y(FunctionInput.ONE_PROTEIN_ONE_STRING),
 
     // Rules related to recent laboratory measurements
     HAS_ADEQUATE_ORGAN_FUNCTION(FunctionInput.NONE),

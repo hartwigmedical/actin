@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasGeneWithHaplotype(private val gene: String, private val haplotype: String) : EvaluationFunction {
+class HasProteinWithPolymorphism(private val protein: String, private val type: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has $gene haplotype $haplotype")
+        return EvaluationFactory.undetermined("Undetermined if patient has $protein polymorphism $type")
     }
 }

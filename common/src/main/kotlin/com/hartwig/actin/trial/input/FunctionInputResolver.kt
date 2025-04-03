@@ -39,7 +39,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
-import com.hartwig.actin.trial.input.single.OneGeneOneString
+import com.hartwig.actin.trial.input.single.OneProteinOneString
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
@@ -317,11 +317,6 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_GENE_ONE_STRING -> {
-                    createOneGeneOneStringInput(function)
-                    return true
-                }
-
                 FunctionInput.ONE_GENE_ONE_INTEGER -> {
                     createOneGeneOneIntegerInput(function)
                     return true
@@ -419,6 +414,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_PROTEIN_ONE_GENE -> {
                     createOneProteinOneGeneInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN_ONE_STRING -> {
+                    createOneProteinOneStringInput(function)
                     return true
                 }
 
@@ -781,11 +781,6 @@ class FunctionInputResolver(
         return OneGene(parameterAsGene(function, 0))
     }
 
-    fun createOneGeneOneStringInput(function: EligibilityFunction): OneGeneOneString {
-        assertParamConfig(function, FunctionInput.ONE_GENE_ONE_STRING, 2)
-        return OneGeneOneString(geneName = parameterAsGene(function, 0), string = parameterAsString(function, 1))
-    }
-
     fun createOneGeneOneIntegerInput(function: EligibilityFunction): OneGeneOneInteger {
         assertParamConfig(function, FunctionInput.ONE_GENE_ONE_INTEGER, 2)
         return OneGeneOneInteger(geneName = parameterAsGene(function, 0), integer = (function.parameters[1] as String).toInt())
@@ -1004,6 +999,11 @@ class FunctionInputResolver(
     fun createOneProteinOneGeneInput(function: EligibilityFunction): OneProteinOneGene {
         assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_GENE, 2)
         return OneProteinOneGene(proteinName = parameterAsString(function, 0), geneName = parameterAsGene(function, 1))
+    }
+
+    fun createOneProteinOneStringInput(function: EligibilityFunction): OneProteinOneString {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_STRING, 2)
+        return OneProteinOneString(proteinName = parameterAsString(function, 0), string = parameterAsString(function, 1))
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String

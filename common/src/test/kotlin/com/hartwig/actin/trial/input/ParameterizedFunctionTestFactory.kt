@@ -222,8 +222,8 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("gene")
             }
 
-            FunctionInput.ONE_GENE_ONE_STRING -> {
-                listOf("gene", "string")
+            FunctionInput.ONE_PROTEIN_ONE_STRING -> {
+                listOf("protein", "string")
             }
 
             FunctionInput.ONE_GENE_ONE_INTEGER -> {

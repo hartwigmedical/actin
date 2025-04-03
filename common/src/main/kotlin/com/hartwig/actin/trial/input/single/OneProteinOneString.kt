@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.input.single
 
-data class OneGeneOneString (
-    val geneName: String,
+data class OneProteinOneString (
+    val proteinName: String,
     val string: String
 )
