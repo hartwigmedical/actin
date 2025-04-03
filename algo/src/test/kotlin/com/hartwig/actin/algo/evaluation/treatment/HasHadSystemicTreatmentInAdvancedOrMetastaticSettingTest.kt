@@ -51,7 +51,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
 
     @Test
     fun `Should pass if patient has had one systemic line with non-curative intent and not followed by radiotherapy or surgery`() {
-        val record = withTreatmentHistory(listOf(createTreatment(null, isSystemic = true, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue)))
+        val record = withTreatmentHistory(listOf(createTreatment(null, isSystemic = true, stopYear = null, stopMonth = null)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
