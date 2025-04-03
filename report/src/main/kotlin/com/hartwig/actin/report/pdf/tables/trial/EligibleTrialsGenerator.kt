@@ -22,7 +22,8 @@ class EligibleTrialsGenerator(
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
     private val locationColWidth: Float,
-    private val checksColWidth: Float
+    private val checksColWidth: Float,
+    private val allowDeEmphasis: Boolean
 ) : ActinTrialsGenerator {
 
     override fun title(): String {
@@ -33,7 +34,7 @@ class EligibleTrialsGenerator(
         val table = Tables.createFixedWidthCols(
             trialColWidth, cohortColWidth + molecularEventColWidth + locationColWidth + checksColWidth
         )
-        val widths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth).toFloatArray()
+        val widths = floatArrayOf(cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth)
 
         if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
@@ -48,7 +49,8 @@ class EligibleTrialsGenerator(
             homeCountry = homeCountry,
             table = table,
             tableWidths = widths,
-            feedbackFunction = InterpretedCohort::warnings
+            feedbackFunction = InterpretedCohort::warnings,
+            allowDeEmphasis = allowDeEmphasis
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -67,7 +69,8 @@ class EligibleTrialsGenerator(
             externalTrials: Set<ExternalTrialSummary>,
             requestingSource: TrialSource?,
             homeCountry: Country? = null,
-            width: Float
+            width: Float,
+            localTrials: Boolean = true
         ): EligibleTrialsGenerator {
             val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts)
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
@@ -77,10 +80,10 @@ class EligibleTrialsGenerator(
             } else {
                 "(0)"
             }
-
-            val title = "Trials that are open and potentially eligible $cohortFromTrialsText"
+            val locationString = if (!localTrials) "International trials" else homeCountry?.let { "Trials in ${it.display()}" } ?: "Trials"
+            val title = "$locationString that are open and potentially eligible $cohortFromTrialsText"
             val footNote = "Open cohorts with no slots available are shown in grey.\n" +
-                    "Trials matched on molecular event and tumor type only (i.e. no clinical data used) are displayed in italic."
+                    "Trials matched on molecular event and tumor type only (i.e. no clinical data used) are displayed in italic and small font."
 
             return create(recruitingAndEligibleCohorts, externalTrials, requestingSource, homeCountry, title, width, footNote)
         }
@@ -121,7 +124,7 @@ class EligibleTrialsGenerator(
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title =
                 "Trials and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
-            return create(unavailableAndEligible, emptySet(), requestingSource, null, title, contentWidth, null)
+            return create(unavailableAndEligible, emptySet(), requestingSource, null, title, contentWidth, null, false)
         }
 
         private fun create(
@@ -131,7 +134,8 @@ class EligibleTrialsGenerator(
             homeCountry: Country?,
             title: String,
             width: Float,
-            footNote: String? = null
+            footNote: String? = null,
+            allowDeEmphasis: Boolean = true
         ): EligibleTrialsGenerator {
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
@@ -149,7 +153,8 @@ class EligibleTrialsGenerator(
                 cohortColWidth,
                 molecularColWidth,
                 locationColWidth,
-                checksColWidth
+                checksColWidth,
+                allowDeEmphasis
             )
         }
     }

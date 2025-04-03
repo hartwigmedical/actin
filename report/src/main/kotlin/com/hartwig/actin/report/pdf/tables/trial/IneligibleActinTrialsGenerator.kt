@@ -19,7 +19,8 @@ class IneligibleActinTrialsGenerator(
     private val trialColWidth: Float,
     private val subTableWidths: FloatArray,
     private val includeIneligibilityReasonCol: Boolean,
-    private val paddingDistance: Float
+    private val paddingDistance: Float,
+    private val allowDeEmphasis: Boolean
 ) : ActinTrialsGenerator {
 
     override fun title(): String {
@@ -44,7 +45,8 @@ class IneligibleActinTrialsGenerator(
             subTableWidths,
             InterpretedCohort::fails,
             includeIneligibilityReasonCol,
-            paddingDistance
+            paddingDistance,
+            allowDeEmphasis
         )
 
         if (footNote != null) {
@@ -74,7 +76,8 @@ class IneligibleActinTrialsGenerator(
                 trialColWidth,
                 subTableWidths,
                 true,
-                paddingDistance = NORMAL_PADDING_DISTANCE
+                paddingDistance = NORMAL_PADDING_DISTANCE,
+                true
             )
         }
 
@@ -96,7 +99,8 @@ class IneligibleActinTrialsGenerator(
                 trialColWidth,
                 subTableWidths,
                 false,
-                paddingDistance = SMALL_PADDING_DISTANCE
+                paddingDistance = SMALL_PADDING_DISTANCE,
+                true
             )
         }
 

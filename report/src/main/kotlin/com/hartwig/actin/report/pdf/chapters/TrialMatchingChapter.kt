@@ -22,7 +22,7 @@ class TrialMatchingChapter(
 ) : ReportChapter {
 
     override fun name(): String {
-        return "Trial Matching Summary"
+        return "Trial Matching Chapter"
     }
 
     override fun pageSize(): PageSize {
@@ -60,7 +60,8 @@ class TrialMatchingChapter(
             externalTrials.internationalTrials.filtered,
             requestingSource,
             null,
-            contentWidth()
+            contentWidth(),
+            false
         ).takeIf { externalTrialsOnly }
 
         return localTrialGenerators + listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator)

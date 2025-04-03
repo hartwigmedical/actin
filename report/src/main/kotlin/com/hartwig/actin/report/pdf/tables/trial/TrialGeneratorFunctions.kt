@@ -8,6 +8,8 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Cells.createContentNoBorder
+import com.hartwig.actin.report.pdf.util.Cells.createContentSmallItalic
+import com.hartwig.actin.report.pdf.util.Cells.createContentSmallItalicNoBorder
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
@@ -27,7 +29,8 @@ object TrialGeneratorFunctions {
         tableWidths: FloatArray,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         includeFeedback: Boolean = true,
-        paddingDistance: Float = 1f
+        paddingDistance: Float = 1f,
+        allowDeEmphasis: Boolean
     ) {
         sortedCohortGroups(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
             val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
@@ -35,19 +38,21 @@ object TrialGeneratorFunctions {
                 cohorts = cohortList,
                 feedbackFunction = feedbackFunction,
                 includeFeedback = includeFeedback
-            ).forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable, paddingDistance) }
-            insertTrialRow(cohortList, table, trialSubTable)
+            ).forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent && allowDeEmphasis, trialSubTable, paddingDistance) }
+            insertTrialRow(cohortList, table, trialSubTable, allowDeEmphasis)
         }
 
         externalTrials.forEach { trial ->
             val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
-            table.addCell(createContent(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()).setItalic())
+            table.addCell(
+                createContentSmallItalic(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle())
+            )
 
             val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
-            trialSubTable.addCell(createContentNoBorder(trial.sourceMolecularEvents.joinToString(",\n")))
-            trialSubTable.addCell(createContentNoBorder(trial.actinMolecularEvents.joinToString(",\n")))
+            trialSubTable.addCell(createContentSmallItalicNoBorder(trial.sourceMolecularEvents.joinToString(",\n")))
+            trialSubTable.addCell(createContentSmallItalicNoBorder(trial.actinMolecularEvents.joinToString(",\n")))
             trialSubTable.addCell(
-                createContentNoBorder(
+                createContentSmallItalicNoBorder(
                     homeCountry?.let {
                         val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
                         if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
@@ -60,7 +65,8 @@ object TrialGeneratorFunctions {
             } else {
                 trialSubTable.setKeepTogether(true)
             }
-            table.addCell(createContent(finalSubTable.setItalic()))
+
+            table.addCell(createContent(finalSubTable))
         }
     }
 
@@ -79,7 +85,7 @@ object TrialGeneratorFunctions {
         }.forEach(table::addCell)
     }
 
-    private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table) {
+    private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table, allowDeEmphasis: Boolean) {
         if (cohortList.isNotEmpty()) {
             val cohort = cohortList.first()
             val trialLabelText = listOfNotNull(
@@ -89,7 +95,7 @@ object TrialGeneratorFunctions {
                 cohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
                     ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
 
-            if (cohortList.none(InterpretedCohort::hasSlotsAvailable)) {
+            if ((cohortList.none(InterpretedCohort::hasSlotsAvailable) || cohortList.none(InterpretedCohort::isOpen)) && allowDeEmphasis) {
                 val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()) }
                 table.addCell(
                     cohort.url?.let {

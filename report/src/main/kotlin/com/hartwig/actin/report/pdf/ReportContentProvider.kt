@@ -177,7 +177,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             externalTrialSummary.internationalTrials.filtered,
             requestingSource,
             null,
-            contentWidth
+            contentWidth,
+            false
         )
         val ineligibleTrialGenerator = IneligibleActinTrialsGenerator.forCohorts(
             interpretedCohorts,
