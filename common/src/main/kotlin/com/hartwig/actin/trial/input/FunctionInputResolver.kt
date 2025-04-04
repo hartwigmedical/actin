@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -417,6 +418,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_TNM_T -> {
+                    createManyTnmTInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_PROTEIN_ONE_STRING -> {
                     createOneProteinOneStringInput(function)
                     return true
@@ -677,6 +683,11 @@ class FunctionInputResolver(
         return parameterAsString(function, 0)
     }
 
+    fun createManyTnmTInput(function: EligibilityFunction): Set<TnmT> {
+        assertParamConfig(function, FunctionInput.MANY_TNM_T, 1)
+        return toTnmTs(function.parameters.first())
+    }
+
     fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {
         assertParamConfig(function, FunctionInput.TWO_STRINGS, 2)
         return TwoStrings(
@@ -933,6 +944,10 @@ class FunctionInputResolver(
         } catch (e: Exception) {
             throw IllegalStateException("Gender name not found: $genderName")
         }
+    }
+
+    private fun toTnmTs(input: Any): Set<TnmT>{
+        return toStringList(input).map(TnmT::valueOf).toSet()
     }
 
     private fun toIntents(input: Any): Set<Intent> {
