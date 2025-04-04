@@ -13,7 +13,7 @@ class HasTumorMutationalLoadWithinRange(
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val tumorMutationalLoad = test.characteristics.tumorMutationalLoad
+        val tumorMutationalLoad = test.characteristics.tumorMutationalLoad?.score
             ?: return EvaluationFactory.undetermined(
                 "Undetermined if TML is sufficient (no TML result)",
                 isMissingMolecularResultForEvaluation = true

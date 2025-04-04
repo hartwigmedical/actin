@@ -3,12 +3,11 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
@@ -19,6 +18,7 @@ import org.junit.Test
 private const val MATCHING_GENE = "gene A"
 
 class GeneIsWildTypeTest {
+
     private val function = GeneIsWildType(MATCHING_GENE)
 
     @Test
@@ -285,7 +285,7 @@ class GeneIsWildTypeTest {
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
                             testedGenes = setOf("ALK"),
-                            drivers = Drivers(
+                            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
                                     TestVariantFactory.createMinimal()
                                         .copy(
@@ -312,7 +312,7 @@ class GeneIsWildTypeTest {
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
                             testedGenes = setOf("ALK"),
-                            drivers = Drivers(
+                            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 fusions = listOf(
                                     TestFusionFactory.createMinimal().copy(
                                         geneEnd = "ALK",

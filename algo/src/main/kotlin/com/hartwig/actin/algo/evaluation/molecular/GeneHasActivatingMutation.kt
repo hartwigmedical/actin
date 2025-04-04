@@ -50,7 +50,7 @@ class GeneHasActivatingMutation(
     override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val hasHighMutationalLoad = test.characteristics.hasHighTumorMutationalLoad
+        val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         val evidenceSource = test.evidenceSource
         val variantCharacteristics =
             test.drivers.variants.filter { it.gene == gene }
@@ -105,9 +105,7 @@ class GeneHasActivatingMutation(
         }
     }
 
-    private fun evaluateVariant(
-        variant: Variant, hasHighMutationalLoad: Boolean?
-    ): ActivationProfile {
+    private fun evaluateVariant(variant: Variant, hasHighMutationalLoad: Boolean?): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
         val isGainOfFunction =
             variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
