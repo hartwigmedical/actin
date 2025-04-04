@@ -123,7 +123,8 @@ object ClinicalEvidenceFactory {
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            url = url
+            url = url,
+            therapyNames = trial.therapyNames(),
         )
     }
 
