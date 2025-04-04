@@ -27,10 +27,10 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerat
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.ActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialTableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialTableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.trial.SummarizedExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.apache.logging.log4j.LogManager
@@ -157,30 +157,32 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         externalTrialSummary: SummarizedExternalTrials,
         requestingSource: TrialSource?,
         contentWidth: Float
-    ): List<ActinTrialsGenerator?> {
+    ): List<TrialTableGenerator?> {
         val homeCountry = report.config.countryOfReference
-        val openCohortsGenerator = EligibleTrialsGenerator.forOpenCohorts(
+        val localOpenCohortsGenerator = EligibleTrialTableGenerator.forOpenCohorts(
             interpretedCohorts,
             externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty(),
+            externalTrialSummary.excludedNationalTrials().size,
             requestingSource,
             homeCountry,
             contentWidth
         )
-        val openCohortsWithMissingMolecularResultForEvaluationGenerator =
-            EligibleTrialsGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
+        val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
+            EligibleTrialTableGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
                 interpretedCohorts,
                 requestingSource,
                 contentWidth
             )
-        val nonLocalExternalTrialGenerator = EligibleTrialsGenerator.forOpenCohorts(
+        val nonLocalTrialGenerator = EligibleTrialTableGenerator.forOpenCohorts(
             emptyList(),
             externalTrialSummary.internationalTrials.filtered,
+            externalTrialSummary.excludedInternationalTrials().size,
             requestingSource,
             null,
             contentWidth,
             false
         )
-        val ineligibleTrialGenerator = IneligibleActinTrialsGenerator.forCohorts(
+        val ineligibleTrialGenerator = IneligibleTrialTableGenerator.forCohorts(
             interpretedCohorts,
             requestingSource,
             contentWidth,
@@ -188,11 +190,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         )
 
         val generators = listOfNotNull(
-            openCohortsGenerator.takeIf { report.config.includeTrialMatchingInSummary },
-            openCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
+            localOpenCohortsGenerator.takeIf { report.config.includeTrialMatchingInSummary },
+            localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
                 report.config.includeTrialMatchingInSummary && (it?.getCohortSize()?.let { size -> size > 0 } ?: true)
             },
-            nonLocalExternalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
+            nonLocalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
             ineligibleTrialGenerator.takeIf { report.config.includeIneligibleTrialsInSummary }
         )
         return generators

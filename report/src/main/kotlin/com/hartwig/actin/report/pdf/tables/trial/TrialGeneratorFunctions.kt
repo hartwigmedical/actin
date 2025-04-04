@@ -49,14 +49,7 @@ object TrialGeneratorFunctions {
             val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
             trialSubTable.addCell(subContentFunction(trial.sourceMolecularEvents.joinToString(",\n")))
             trialSubTable.addCell(subContentFunction(trial.actinMolecularEvents.joinToString(",\n")))
-            trialSubTable.addCell(
-                subContentFunction(
-                    homeCountry?.let {
-                        val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
-                        if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
-                    } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
-                )
-            )
+            trialSubTable.addCell(subContentFunction(externalTrialLocation(trial, homeCountry)))
 
             val finalSubTable = if (trialSubTable.numberOfRows > 2) {
                 Tables.makeWrapping(trialSubTable, false)
@@ -66,6 +59,17 @@ object TrialGeneratorFunctions {
 
             table.addCell(createContent(finalSubTable))
         }
+    }
+
+    //TODO("Test this function")
+    fun externalTrialLocation(
+        trial: ExternalTrialSummary,
+        homeCountry: Country?
+    ): String {
+        return homeCountry?.let {
+            val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
+            if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
+        } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
     }
 
     private fun sortedCohortGroups(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?): List<List<InterpretedCohort>> {

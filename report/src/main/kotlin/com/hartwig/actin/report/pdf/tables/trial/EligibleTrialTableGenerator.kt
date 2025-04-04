@@ -11,7 +11,7 @@ import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
 
-class EligibleTrialsGenerator(
+class EligibleTrialTableGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val externalTrials: Set<ExternalTrialSummary>,
     private val requestingSource: TrialSource?,
@@ -24,7 +24,7 @@ class EligibleTrialsGenerator(
     private val locationColWidth: Float,
     private val checksColWidth: Float?,
     private val allowDeEmphasis: Boolean
-) : ActinTrialsGenerator {
+) : TrialTableGenerator {
 
     override fun title(): String {
         return title
@@ -69,11 +69,12 @@ class EligibleTrialsGenerator(
         fun forOpenCohorts(
             cohorts: List<InterpretedCohort>,
             externalTrials: Set<ExternalTrialSummary>,
+            filteredCount: Int,
             requestingSource: TrialSource?,
             homeCountry: Country? = null,
             width: Float,
             localTrials: Boolean = true
-        ): EligibleTrialsGenerator {
+        ): EligibleTrialTableGenerator {
             val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts)
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
@@ -84,9 +85,14 @@ class EligibleTrialsGenerator(
             }
             val locationString = if (!localTrials) "International trials" else homeCountry?.let { "Trials in ${it.display()}" } ?: "Trials"
             val title = "$locationString that are open and potentially eligible $cohortFromTrialsText"
+            val filteredNote = if (filteredCount > 0) {
+                "\n$filteredCount trials were filtered due to eligible local trials for the same molecular target or trial for young adult patients."
+            } else ""
+            val externalTrialNote = if (externalTrials.isNotEmpty()) {
+                "\nTrials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
+            } else ""
             val footNote = if (localTrials) {
-                "Open cohorts with no slots available are shown in grey.\n" +
-                        "Trials matched solely on molecular event and tumor type—excluding clinical data—are shown in italicized, smaller font."
+                "Open cohorts with no slots available are shown in grey.$externalTrialNote$filteredNote"
             } else "International trials are matched solely on molecular event and tumor type (clinical data excluded)."
 
             return create(
@@ -104,7 +110,7 @@ class EligibleTrialsGenerator(
 
         fun forOpenCohortsWithMissingMolecularResultsForEvaluation(
             cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, width: Float
-        ): EligibleTrialsGenerator? {
+        ): EligibleTrialTableGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.isMissingMolecularResultForEvaluation!!
             }
@@ -134,7 +140,7 @@ class EligibleTrialsGenerator(
 
         fun forClosedCohorts(
             cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, contentWidth: Float
-        ): EligibleTrialsGenerator {
+        ): EligibleTrialTableGenerator {
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title =
                 "Trials and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
@@ -151,7 +157,7 @@ class EligibleTrialsGenerator(
             footNote: String? = null,
             allowDeEmphasis: Boolean = true,
             includeChecksColumn: Boolean = true
-        ): EligibleTrialsGenerator {
+        ): EligibleTrialTableGenerator {
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
@@ -159,7 +165,7 @@ class EligibleTrialsGenerator(
             val checksColWidth =
                 if (includeChecksColumn) width - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth) else null
 
-            return EligibleTrialsGenerator(
+            return EligibleTrialTableGenerator(
                 cohorts,
                 externalTrials,
                 requestingSource,

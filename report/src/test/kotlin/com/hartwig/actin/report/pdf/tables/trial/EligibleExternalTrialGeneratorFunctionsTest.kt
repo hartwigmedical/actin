@@ -80,7 +80,7 @@ class EligibleExternalTrialGeneratorFunctionsTest {
             externalTrialBelgium,
             Country.BELGIUM
         )
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("Many, please check link")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo(">3 locations - please check link")
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam, Groningen")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
@@ -98,7 +98,7 @@ class EligibleExternalTrialGeneratorFunctionsTest {
         assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
             .isEqualTo("The Netherlands (Amsterdam, Leiden), Germany (Berlin)")
         assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialBelgium))
-            .isEqualTo("Belgium (Many, please check link)")
+            .isEqualTo("Belgium (>3 locations - please check link)")
         assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlands))
             .isEqualTo("The Netherlands (Nijmegen, Leiden, Amsterdam, Groningen)")
     }

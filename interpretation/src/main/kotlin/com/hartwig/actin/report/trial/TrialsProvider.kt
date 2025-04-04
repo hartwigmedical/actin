@@ -13,6 +13,7 @@ class MolecularFilteredExternalTrials(
     val filtered: Set<ExternalTrialSummary>
 ) {
     fun isNotEmpty() = original.isNotEmpty()
+    fun originalMinusFiltered() = original - filtered
 }
 
 class SummarizedExternalTrials(
@@ -22,6 +23,8 @@ class SummarizedExternalTrials(
     fun allFiltered(): Set<ExternalTrialSummary> {
         return nationalTrials.filtered + internationalTrials.filtered
     }
+    fun excludedNationalTrials() = nationalTrials.originalMinusFiltered()
+    fun excludedInternationalTrials() = internationalTrials.originalMinusFiltered()
 }
 
 class TrialsProvider(
