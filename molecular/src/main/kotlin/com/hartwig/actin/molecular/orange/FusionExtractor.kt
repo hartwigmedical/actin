@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.FusionPhasedType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
@@ -31,13 +32,17 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                 evidence = ExtractionUtil.noEvidence(),
                 geneStart = fusion.geneStart(),
                 geneEnd = fusion.geneEnd(),
+                geneContextStart = fusion.geneContextStart(),
+                geneContextEnd = fusion.geneContextEnd(),
                 driverType = determineDriverType(fusion),
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null,
                 geneTranscriptStart = fusion.geneTranscriptStart(),
                 geneTranscriptEnd = fusion.geneTranscriptEnd(),
                 fusedExonUp = fusion.fusedExonUp(),
-                fusedExonDown = fusion.fusedExonDown()
+                fusedExonDown = fusion.fusedExonDown(),
+                fusionPhasedType = determineFusionPhasedType(fusion.phased()),
+                junctionCopyNumber = fusion.junctionCopyNumber()
             )
         }.sorted()
     }
@@ -105,6 +110,20 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                     "Cannot determine driver likelihood for fusion driver likelihood: " +
                             fusion.driverLikelihood()
                 )
+            }
+        }
+    }
+
+    internal fun determineFusionPhasedType(fusionPhasedType: com.hartwig.hmftools.datamodel.linx.FusionPhasedType)  : FusionPhasedType {
+        return when(fusionPhasedType) {
+            com.hartwig.hmftools.datamodel.linx.FusionPhasedType.INFRAME -> {
+                FusionPhasedType.INFRAME
+            }
+            com.hartwig.hmftools.datamodel.linx.FusionPhasedType.SKIPPED_EXONS -> {
+                FusionPhasedType.SKIPPED_EXONS
+            }
+            com.hartwig.hmftools.datamodel.linx.FusionPhasedType.OUT_OF_FRAME -> {
+                FusionPhasedType.OUT_OF_FRAME
             }
         }
     }

@@ -5,6 +5,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 data class Fusion(
     val geneStart: String,
     val geneEnd: String,
+    val geneContextStart: String = "",
+    val geneContextEnd: String = "",
     val driverType: FusionDriverType,
     val proteinEffect: ProteinEffect,
     val isAssociatedWithDrugResistance: Boolean?,
@@ -12,6 +14,8 @@ data class Fusion(
     val geneTranscriptEnd: String?,
     val fusedExonUp: Int?,
     val fusedExonDown: Int?,
+    val fusionPhasedType: FusionPhasedType = FusionPhasedType.INFRAME,
+    val junctionCopyNumber: Double = 0.0,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
