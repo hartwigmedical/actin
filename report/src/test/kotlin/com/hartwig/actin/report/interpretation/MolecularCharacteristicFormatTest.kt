@@ -32,12 +32,12 @@ class MolecularCharacteristicFormatTest {
     @Test
     fun `Should format TML high and low`() {
         assertThat(
-            MolecularCharacteristicFormat.formatTumorMutationalLoad(withTumorMutationalLoad(score = 10, isHigh = true))
-        ).isEqualTo("TML High (10)")
+            MolecularCharacteristicFormat.formatTumorMutationalLoad(withTumorMutationalLoad(score = 160, isHigh = true))
+        ).isEqualTo("TML High (160)")
 
         assertThat(
-            MolecularCharacteristicFormat.formatTumorMutationalLoad(withTumorMutationalLoad(score = 10, isHigh = false))
-        ).isEqualTo("TML Low (10)")
+            MolecularCharacteristicFormat.formatTumorMutationalLoad(withTumorMutationalLoad(score = 42, isHigh = false))
+        ).isEqualTo("TML Low (42)")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(TestMolecularFactory.createMinimalTestCharacteristics())

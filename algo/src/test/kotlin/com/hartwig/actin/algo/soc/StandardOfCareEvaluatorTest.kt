@@ -18,8 +18,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
-import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -89,16 +87,8 @@ class StandardOfCareEvaluatorTest {
     private val minimalMolecularRecord = TestMolecularFactory.createMinimalTestMolecularRecord().copy(
         characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
             microsatelliteStability = MicrosatelliteStability(
-                microsatelliteIndelsPerMb = null,
+                microsatelliteIndelsPerMb = 0.4,
                 isUnstable = false,
-                evidence = TestClinicalEvidenceFactory.createEmpty()
-            ),
-            homologousRecombination = HomologousRecombination(
-                score = 0.0,
-                isDeficient = false,
-                type = HomologousRecombinationType.NONE,
-                brca1Value = 0.0,
-                brca2Value = 0.0,
                 evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
@@ -107,8 +97,9 @@ class StandardOfCareEvaluatorTest {
     private val msiMolecularRecord = minimalMolecularRecord.copy(
         characteristics = minimalMolecularRecord.characteristics.copy(
             microsatelliteStability = MicrosatelliteStability(
-                microsatelliteIndelsPerMb = null,
-                isUnstable = true, evidence = TestClinicalEvidenceFactory.createEmpty()
+                microsatelliteIndelsPerMb = 10.2,
+                isUnstable = true,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
     )

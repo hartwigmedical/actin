@@ -39,7 +39,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     BASE_MOLECULAR_TEST.copy(
                         characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
                             microsatelliteStability = MicrosatelliteStability(
-                                microsatelliteIndelsPerMb = null,
+                                microsatelliteIndelsPerMb = 10.2,
                                 isUnstable = true,
                                 evidence = CLINICAL_EVIDENCE
                             )
@@ -55,7 +55,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     BASE_MOLECULAR_TEST.copy(
                         characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
                             microsatelliteStability = MicrosatelliteStability(
-                                microsatelliteIndelsPerMb = null,
+                                microsatelliteIndelsPerMb = 0.4,
                                 isUnstable = false,
                                 evidence = CLINICAL_EVIDENCE
                             )
@@ -117,7 +117,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                         BASE_MOLECULAR_TEST.copy(
                             characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
                                 tumorMutationalLoad = TumorMutationalLoad(
-                                    score = 10,
+                                    score = 160,
                                     isHigh = true,
                                     evidence = CLINICAL_EVIDENCE
                                 )

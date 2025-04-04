@@ -30,7 +30,7 @@ class AggregatedEvidenceFactoryTest {
     fun `Should find no evidence on no evidence`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             microsatelliteStability = MicrosatelliteStability(
-                microsatelliteIndelsPerMb = 0.0,
+                microsatelliteIndelsPerMb = 10.2,
                 isUnstable = true,
                 evidence = TestClinicalEvidenceFactory.createEmpty()
             ),
