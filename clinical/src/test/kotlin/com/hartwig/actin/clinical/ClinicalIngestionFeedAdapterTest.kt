@@ -169,7 +169,7 @@ class ClinicalIngestionFeedAdapterTest {
             ClinicalFeedReader.read(FEED_DIRECTORY)
         )
         assertThat(feed.read().size).isEqualTo(1)
-        val versionUnderTest = QuestionnaireVersion.version(feed.read()[0].latestQuestionnaireEntry!!)
+        val versionUnderTest = QuestionnaireVersion.version(feed.read()[0].questionnaireEntries.maxByOrNull { it.authored }!!)
         val latestVersion = QuestionnaireVersion.entries.last()
 
         assertThat(versionUnderTest).isNotNull()

@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
+import com.hartwig.actin.clinical.feed.emc.FeedRecord
+import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction.isActualQuestionnaire
 import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory.entryWithText
 import com.hartwig.actin.datamodel.clinical.TumorStage
@@ -8,6 +10,9 @@ import org.junit.Test
 import java.time.LocalDate
 
 class QuestionnaireExtractionTest {
+    private val today = LocalDate.now()
+    private val feedRecord: FeedRecord = TestFeedFactory.createProperTestFeedModel().read().single()
+
     @Test
     fun `Should be able to determine that questionnaire entry is a questionnaire`() {
         assertThat(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7()))).isTrue
@@ -215,12 +220,40 @@ class QuestionnaireExtractionTest {
 
     @Test
     fun `Should extract from missing or invalid entry`() {
-        val nullEntry = QuestionnaireExtraction.extract(null)
+        val nullEntry = QuestionnaireExtraction.extract(emptyList())
         assertThat(nullEntry.first).isNull()
         assertThat(nullEntry.second).isEmpty()
-        val invalidEntry = QuestionnaireExtraction.extract(entryWithText("Does not exist"))
+        val invalidEntry = QuestionnaireExtraction.extract(listOf(entryWithText("Does not exist")))
         assertThat(invalidEntry.first).isNull()
         assertThat(invalidEntry.second).isEmpty()
+    }
+
+    @Test
+    fun `Should reject new empty questionnaire in favor of an old one`() {
+        val newInvalidEntry = entryWithText("Does not exist").copy(authored = today)
+        val newEmptyEntry =
+            entryWithText("\"ACTIN Questionnaire V1.5\\nImportant: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!\\n\\nRelevant patient history\\nTreatment history current tumor: \\nOther oncological history (e.g. radiotherapy, surgery): \\nSecondary primary: \\n- Last date of active treatment: \\nNon-oncological history: \\n\\nTumor details\\nPrimary tumor location: \\nPrimary tumor type: \\nBiopsy location: \\nStage: \\nCNS lesions: \\n-Active: \\nBrain lesions: \\n-Active: \\nBone lesions: \\nLiver lesions: \\nOther lesions (e.g. lymph node, pulmonal):\\nMeasurable disease: \\n\\nPrevious Molecular tests\\n- IHC test results: \\n- PD L1 test results:\\n\\nClinical details\\nWHO status: \\nUnresolved toxicities grade => 2: \\nSignificant current infection: \\nSignificant aberration on latest ECG: \\nCancer-related complications (e.g. pleural effusion):\\n\\n\"").copy(
+                authored = today
+            )
+        val oldValidEntry = TestQuestionnaireFactory.createTestQuestionnaireEntry().copy(
+            authored = today.minusDays(1),
+            text = TestQuestionnaireFactory.createTestQuestionnaireValueV1_7().replace("\n", "\\n")
+        )
+        val (extractedEntry, errors) = QuestionnaireExtraction.extract(listOf(newInvalidEntry, newEmptyEntry, oldValidEntry))
+        assertThat(extractedEntry).isNotNull
+        assertThat(extractedEntry!!.hasActiveBrainLesions!!).isEqualTo(true)
+        assertThat(errors).isEmpty()
+    }
+
+    @Test
+    fun `Should be able to determine latest questionnaire`() {
+        val (latest, errors) = QuestionnaireExtraction.extract(feedRecord.questionnaireEntries.map {
+            val text = it.text
+            it.copy(text = text.replace("\n", "\\n"))
+        })
+        assertThat(latest).isNotNull()
+        assertThat(errors.isEmpty())
+        assertThat(latest!!.date).isEqualTo(LocalDate.of(2021, 8, 1))
     }
 
     companion object {
@@ -323,7 +356,7 @@ class QuestionnaireExtractionTest {
         }
 
         private fun questionnaire(text: String): Questionnaire {
-            return QuestionnaireExtraction.extract(entryWithText(text.replace("\n", "\\n"))).first!!
+            return QuestionnaireExtraction.extract(listOf(entryWithText(text.replace("\n", "\\n")))).first!!
         }
 
         private fun assertExtractionForQuestionnaireV1_5(rawQuestionnaire: String) {
