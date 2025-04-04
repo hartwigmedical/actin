@@ -30,14 +30,14 @@ class HasTnmTScoreTest {
     }
 
     @Test
-    fun `Should pass if the targets contains all possible TnmTs of the target`() {
+    fun `Should pass if the targets contains all possible TnmTs of the patient`() {
         assertEvaluation(
             EvaluationResult.PASS, function(setOf(TnmT.T2, TnmT.T4, TnmT.T2A) , TumorTestFactory.withTumorStage(TumorStage.IB))
         )
     }
 
     @Test
-    fun `Should be undetermined if only some of the stages are possible with the targets`() {
+    fun `Should be undetermined if only some of the possible TnmTs exist in the target set`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B) , TumorTestFactory.withTumorStage(TumorStage.IIB))
         )
@@ -52,10 +52,18 @@ class HasTnmTScoreTest {
     }
 
     @Test
-    fun `Should return true if all target TnmTs are listed between possible TnmTs of the derived stage`() {
+    fun `Should pass if the target TnmTs list all possible TnmTs of the derived stage`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function(setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIB, TumorStage.IA)))
+        )
+    }
+
+    @Test
+    fun `Should be undetermined if both the tumor stage and the derived tumor stages are not present`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function(setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, null))
         )
     }
 }
