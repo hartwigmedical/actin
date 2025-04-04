@@ -33,6 +33,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
+import com.hartwig.actin.trial.input.single.OneProteinOneString
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
@@ -1073,6 +1074,21 @@ class FunctionInputResolverTest {
         assertThat(resolver.createManyTnmTInput(valid)).isEqualTo(setOf(TnmT.T2A))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("T2C")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one protein one string input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("FGFR2")
+        val rule = firstOfType(FunctionInput.ONE_PROTEIN_ONE_STRING)
+        val valid = create(rule, listOf("FGFR2b", "string"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneProteinOneString("FGFR2b", "string")
+        assertThat(resolver.createOneProteinOneStringInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2b")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2b", 1)))!!).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

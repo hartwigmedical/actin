@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -36,5 +37,23 @@ class DataQualityMaskTest {
         val result = DataQualityMask(panelGeneList).apply(ehrPatientRecord)
         val ngsTest = result.molecularTests[0]
         assertThat(ngsTest.testedGenes).containsExactly("EGFR", "additional_gene")
+    }
+
+    @Test
+    fun `Should filter molecular test results when results are empty`() {
+        val nonEmptyVariant = ProvidedMolecularTestResult(gene = "KRAS", hgvsProteinImpact = "G12C")
+        every { panelGeneList.listGenesForPanel("test") } returns setOf("KRAS")
+        val ehrPatientRecord =
+            EHR_PATIENT_RECORD.copy(
+                molecularTests = listOf(
+                    ProvidedMolecularTest(
+                        test = "test",
+                        date = LocalDate.now(),
+                        results = setOf(ProvidedMolecularTestResult(gene = "ALK"), nonEmptyVariant)
+                    )
+                )
+            )
+        val result = DataQualityMask(panelGeneList).apply(ehrPatientRecord)
+        assertThat(result.molecularTests[0].results).containsOnly(nonEmptyVariant)
     }
 }

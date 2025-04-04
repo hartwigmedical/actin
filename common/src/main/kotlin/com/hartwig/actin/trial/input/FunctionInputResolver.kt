@@ -40,6 +40,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
+import com.hartwig.actin.trial.input.single.OneProteinOneString
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
@@ -419,6 +420,11 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_TNM_T -> {
                     createManyTnmTInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN_ONE_STRING -> {
+                    createOneProteinOneStringInput(function)
                     return true
                 }
 
@@ -1008,6 +1014,11 @@ class FunctionInputResolver(
     fun createOneProteinOneGeneInput(function: EligibilityFunction): OneProteinOneGene {
         assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_GENE, 2)
         return OneProteinOneGene(proteinName = parameterAsString(function, 0), geneName = parameterAsGene(function, 1))
+    }
+
+    fun createOneProteinOneStringInput(function: EligibilityFunction): OneProteinOneString {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_STRING, 2)
+        return OneProteinOneString(proteinName = parameterAsString(function, 0), string = parameterAsString(function, 1))
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String
