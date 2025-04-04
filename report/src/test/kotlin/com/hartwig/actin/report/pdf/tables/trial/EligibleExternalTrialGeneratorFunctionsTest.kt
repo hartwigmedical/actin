@@ -3,20 +3,9 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.pdf.tables.molecular.BASE_EXTERNAL_TRIAL_SUMMARY
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-
-private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
-    nctId = "nct",
-    title = "title",
-    url = "url",
-    actinMolecularEvents = sortedSetOf(),
-    sourceMolecularEvents = sortedSetOf(),
-    applicableCancerTypes = sortedSetOf(),
-    countries = sortedSetOf(),
-    therapyNames = sortedSetOf()
-)
 
 class EligibleExternalTrialGeneratorFunctionsTest {
 

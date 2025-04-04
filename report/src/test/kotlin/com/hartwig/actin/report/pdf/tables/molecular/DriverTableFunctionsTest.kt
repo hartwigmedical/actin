@@ -5,7 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.Test
 
-private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
+val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = "nct",
     title = "title",
     url = "url",
