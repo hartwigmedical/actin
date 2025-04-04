@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialSource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -44,8 +45,21 @@ class InterpretedCohortComparatorTest {
     }
 
     @Test
-    fun `Should place cohorts with molecular events before those without`() {
-        assertExpectedOrder(listOf(cohort, cohort.copy(molecularEvents = emptySet())))
+    fun `Should place cohorts from requesting source before those from other sources or source null`() {
+        val cohort = cohort.copy(source = TrialSource.EXAMPLE)
+        assertExpectedOrder(listOf(cohort, cohort.copy(source = TrialSource.LKO)), TrialSource.EXAMPLE)
+        assertExpectedOrder(listOf(cohort, cohort.copy(source = null)), TrialSource.EXAMPLE)
+    }
+
+    @Test
+    fun `Should place cohorts with the highest number of molecular events first and without molecular events last`() {
+        assertExpectedOrder(
+            listOf(
+                cohort.copy(molecularEvents = cohort.molecularEvents + "Event X"),
+                cohort,
+                cohort.copy(molecularEvents = emptySet())
+            )
+        )
     }
 
     @Test
@@ -68,8 +82,8 @@ class InterpretedCohortComparatorTest {
         assertExpectedOrder(listOf(cohort, cohort.copy(warnings = setOf("Warning"))))
     }
 
-    private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>) {
-        assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator())).isEqualTo(expectedCohorts)
+    private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>, requestingSource: TrialSource? = null) {
+        assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator(requestingSource))).isEqualTo(expectedCohorts)
     }
 
     private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): InterpretedCohort {

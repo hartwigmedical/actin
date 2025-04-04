@@ -52,7 +52,7 @@ object TestTreatmentMatchFactory {
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.NKI,
                     sourceId = "Source ID 1",
-                    locations = listOf("Antoni van Leeuwenhoek")
+                    locations = setOf("Antoni van Leeuwenhoek")
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),

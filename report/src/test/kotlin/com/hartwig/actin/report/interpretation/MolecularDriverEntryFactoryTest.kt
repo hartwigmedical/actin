@@ -73,7 +73,7 @@ class MolecularDriverEntryFactoryTest {
             ?: throw IllegalStateException(
                 "Could not find molecular driver entry starting with driver: $driverToFind"
             )
-        assertThat(entry.actinTrials).containsExactly(TrialAcronymAndLocations("trial 1", emptyList()))
+        assertThat(entry.actinTrials).containsExactly(TrialAcronymAndLocations("trial 1", emptySet()))
     }
 
     @Test

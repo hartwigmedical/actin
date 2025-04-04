@@ -21,7 +21,7 @@ class EligibilityRuleUsageEvaluatorTest {
             EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES,
             EligibilityRule.NOT
         )
-        val unusedRulesToKeep = EligibilityRule.values().toSet() - expectedUnusedRule - expectedUsedRules
+        val unusedRulesToKeep = EligibilityRule.entries.toSet() - expectedUnusedRule - expectedUsedRules
         assertThat(EligibilityRuleUsageEvaluator.evaluate(trials, unusedRulesToKeep)).containsExactly(expectedUnusedRule)
     }
 
@@ -33,7 +33,7 @@ class EligibilityRuleUsageEvaluatorTest {
                 identification = minimal.identification.copy(
                     acronym = "TEST-TRIAL",
                     title = "This is an ACTIN test trial",
-                    locations = listOf("Amsterdam UMC", "Antoni van Leeuwenhoek")
+                    locations = setOf("Amsterdam UMC", "Antoni van Leeuwenhoek")
                 ),
                 generalEligibility = listOf(
                     Eligibility(

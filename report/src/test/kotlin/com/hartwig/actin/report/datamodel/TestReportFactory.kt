@@ -58,7 +58,7 @@ object TestReportFactory {
                 title = "Example test trial 3",
                 nctId = "NCT00000003",
                 source = TrialSource.LKO,
-                locations = listOf("Radboud UMC", "UMC Groningen")
+                locations = setOf("Radboud UMC", "UMC Groningen")
             )
         )
         val trialMatch4 = trialMatch1.copy(
@@ -69,7 +69,7 @@ object TestReportFactory {
                 title = "Example test trial 4",
                 nctId = "NCT00000003",
                 source = TrialSource.LKO,
-                locations = listOf("LUMC"),
+                locations = setOf("LUMC"),
             )
         )
         val trialMatch5 = trialMatch1.copy(
@@ -80,7 +80,7 @@ object TestReportFactory {
                 title = "Example test trial 5",
                 nctId = "NCT00000005",
                 source = TrialSource.LKO,
-                locations = listOf("LUMC"),
+                locations = setOf("LUMC"),
             ),
             isPotentiallyEligible = false,
             cohorts = trialMatch1.cohorts.map { it.copy(isPotentiallyEligible = false) }

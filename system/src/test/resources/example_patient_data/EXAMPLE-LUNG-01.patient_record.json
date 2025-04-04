@@ -758,7 +758,7 @@
                 "eligibleTrials": [
                   {
                     "nctId": "NCT00000009",
-                    "title": "KRAS-G12C-TRIAL-DE",
+                    "title": "KRAS-TRIAL-DE",
                     "molecularMatches": [
                       {
                         "sourceDate": {
@@ -766,8 +766,8 @@
                           "month": 1,
                           "day": 1
                         },
-                        "sourceEvent": "KRAS G12C",
-                        "isCategoryEvent": false
+                        "sourceEvent": "KRAS activating mutations",
+                        "isCategoryEvent": true
                       }
                     ],
                     "applicableCancerTypes": [
@@ -783,6 +783,40 @@
                           "Stuttgart": [
                             {
                               "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "url": "https://hartwigmedicalfoundation.nl"
+                  },
+                  {
+                    "nctId": "NCT00000019",
+                    "title": "This trial is too long for display - NCT should be shown",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "KRAS G12",
+                        "isCategoryEvent": true
+                      }
+                    ],
+                    "applicableCancerTypes": [
+                      {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      }
+                    ],
+                    "countries": [
+                      {
+                        "country": "BELGIUM",
+                        "hospitalsPerCity": {
+                          "Antwerpen": [
+                            {
+                              "name": "UZA"
                             }
                           ]
                         }

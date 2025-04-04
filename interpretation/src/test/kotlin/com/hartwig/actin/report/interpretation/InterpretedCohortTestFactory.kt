@@ -12,7 +12,7 @@ object InterpretedCohortTestFactory {
         hasSlotsAvailable: Boolean = false,
         molecularEvents: Iterable<String> = emptySet(),
         cohort: String? = null,
-        locations: List<String> = emptyList()
+        locations: Set<String> = emptySet()
     ): InterpretedCohort {
         return InterpretedCohort(
             trialId = trialId,

@@ -1,11 +1,14 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.trial.TrialSource
+
 private const val COMBINATION_COHORT_IDENTIFIER = "+"
 
-class InterpretedCohortComparator : Comparator<InterpretedCohort> {
+class InterpretedCohortComparator(private val requestingSource: TrialSource? = null) : Comparator<InterpretedCohort> {
 
     override fun compare(cohort1: InterpretedCohort, cohort2: InterpretedCohort): Int {
-        return compareByDescending(InterpretedCohort::hasSlotsAvailable)
+        return compareByDescending<InterpretedCohort> { requestingSource?.let { r -> it.source == r } ?: true }
+            .thenByDescending(InterpretedCohort::hasSlotsAvailable)
             .thenBy { it.molecularEvents.isEmpty() }
             .thenBy(nullsLast(), InterpretedCohort::phase)
             .thenByDescending { it.warnings.isEmpty() }

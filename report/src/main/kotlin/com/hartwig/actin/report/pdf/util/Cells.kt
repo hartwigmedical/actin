@@ -77,6 +77,14 @@ object Cells {
         return createContent(Paragraph(text))
     }
 
+    fun createContentSmallItalic(text: String): Cell {
+        return createContent(Paragraph(text)).setFontSize(7f).setFont(Styles.fontItalic()).setFontSize(7f)
+    }
+
+    fun createContentSmallItalicNoBorder(text: String): Cell {
+        return createContentNoBorder(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(7f)
+    }
+
     fun createContentBold(text: String): Cell {
         return createContent(Paragraph(text), Styles.tableHighlightStyle())
     }

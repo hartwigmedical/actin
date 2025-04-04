@@ -3,17 +3,9 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 
-private const val MANY_PLEASE_CHECK_LINK = "Many, please check link"
+private const val MANY_PLEASE_CHECK_LINK = ">3 locations - please check link"
 
 object EligibleExternalTrialGeneratorFunctions {
-    
-    fun shortenTitle(title: String): String {
-        return if (title.length > 160) {
-            title.take(80).substringBeforeLast(" ") + " ... " + title.takeLast(80).substringAfter(" ")
-        } else {
-            title
-        }
-    }
 
     fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: Country): Pair<String, String> {
         val homeCountries = trial.countries.filter { it.country == country }
@@ -26,7 +18,7 @@ object EligibleExternalTrialGeneratorFunctions {
         } else {
             val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
             val cities = homeCountries.first().hospitalsPerCity.keys
-            val hospitalsString = if (hospitals.size > 10) {
+            val hospitalsString = if (hospitals.size > 3) {
                 MANY_PLEASE_CHECK_LINK
             } else hospitals.joinToString { it.name }
             val citiesString = if (cities.size > 8) {

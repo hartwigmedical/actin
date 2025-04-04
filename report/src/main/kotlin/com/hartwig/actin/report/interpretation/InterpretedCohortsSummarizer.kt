@@ -3,7 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.approved
 
-data class TrialAcronymAndLocations(val trialAcronym: String, val locations: List<String>)
+data class TrialAcronymAndLocations(val trialAcronym: String, val locations: Set<String>)
 
 class InterpretedCohortsSummarizer(
     private val eligibleOpenTrialsByInclusionEvent: Map<String, List<TrialAcronymAndLocations>>,
