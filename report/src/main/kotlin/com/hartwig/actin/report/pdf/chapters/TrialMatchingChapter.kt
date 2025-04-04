@@ -6,7 +6,6 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialTableGenerator
-import com.hartwig.actin.report.pdf.tables.trial.FilteredTrialTableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialTableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Tables
@@ -66,8 +65,11 @@ class TrialMatchingChapter(
             contentWidth(),
             false
         ).takeIf { externalTrialsOnly }
-        val filteredTrials = externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials()
-        val filteredTrialGenerator = FilteredTrialTableGenerator(filteredTrials, homeCountry, contentWidth())
+        val filteredTrialGenerator = EligibleTrialTableGenerator.forFilteredTrials(
+            externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials(),
+            homeCountry,
+            contentWidth()
+        )
 
         return localTrialGenerators + listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator) + filteredTrialGenerator
     }
@@ -82,7 +84,7 @@ class TrialMatchingChapter(
         val eligibleActinTrialsClosedCohortsGenerator = EligibleTrialTableGenerator.forClosedCohorts(
             nonIgnoredCohorts, source, contentWidth()
         )
-        val ineligibleActinTrialsGenerator = IneligibleTrialTableGenerator.forCohorts(nonIgnoredCohorts, source, contentWidth())
+        val ineligibleActinTrialsGenerator = IneligibleTrialTableGenerator.forEvaluableCohorts(nonIgnoredCohorts, source, contentWidth())
         val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialTableGenerator.forNonEvaluableAndIgnoredCohorts(
             ignoredCohorts, nonEvaluableCohorts, source, contentWidth()
         )

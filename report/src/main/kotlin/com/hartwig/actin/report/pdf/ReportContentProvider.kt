@@ -162,7 +162,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val localOpenCohortsGenerator = EligibleTrialTableGenerator.forOpenCohorts(
             interpretedCohorts,
             externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty(),
-            externalTrialSummary.excludedNationalTrials().size,
+            externalTrialSummary.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,
             homeCountry,
             contentWidth
@@ -182,7 +182,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             contentWidth,
             false
         )
-        val ineligibleTrialGenerator = IneligibleTrialTableGenerator.forCohorts(
+        val ineligibleTrialGenerator = IneligibleTrialTableGenerator.forEvaluableCohorts(
             interpretedCohorts,
             requestingSource,
             contentWidth,

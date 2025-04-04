@@ -5,7 +5,7 @@ import com.hartwig.actin.report.trial.ExternalTrialSummary
 
 private const val MANY_PLEASE_CHECK_LINK = ">3 locations - please check link"
 
-object EligibleExternalTrialGeneratorFunctions {
+object ExternalTrialFunctions {
 
     fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: Country): Pair<String, String> {
         val homeCountries = trial.countries.filter { it.country == country }

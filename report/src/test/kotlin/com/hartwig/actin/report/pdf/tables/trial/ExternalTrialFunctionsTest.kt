@@ -17,7 +17,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     countries = sortedSetOf()
 )
 
-class EligibleExternalTrialGeneratorFunctionsTest {
+class ExternalTrialFunctionsTest {
 
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
@@ -68,15 +68,15 @@ class EligibleExternalTrialGeneratorFunctionsTest {
 
     @Test
     fun `Should return hospitals and cities in home country`() {
-        val hospitalsAndCitiesExternalTrialNetherlands = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
+        val hospitalsAndCitiesExternalTrialNetherlands = ExternalTrialFunctions.hospitalsAndCitiesInCountry(
             externalTrialNetherlands,
             Country.NETHERLANDS
         )
-        val hospitalsAndCitiesExternalTrialNetherlandsGermany = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
+        val hospitalsAndCitiesExternalTrialNetherlandsGermany = ExternalTrialFunctions.hospitalsAndCitiesInCountry(
             externalTrialNetherlandsGermany,
             Country.NETHERLANDS
         )
-        val hospitalsAndCitiesExternalTrialBelgium = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
+        val hospitalsAndCitiesExternalTrialBelgium = ExternalTrialFunctions.hospitalsAndCitiesInCountry(
             externalTrialBelgium,
             Country.BELGIUM
         )
@@ -90,16 +90,16 @@ class EligibleExternalTrialGeneratorFunctionsTest {
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw illegal state exception if home country not found in external trial`() {
-        EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
+        ExternalTrialFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
     }
 
     @Test
     fun `Should return country names and cities`() {
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
+        assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
             .isEqualTo("The Netherlands (Amsterdam, Leiden), Germany (Berlin)")
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialBelgium))
+        assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialBelgium))
             .isEqualTo("Belgium (>3 locations - please check link)")
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlands))
+        assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlands))
             .isEqualTo("The Netherlands (Nijmegen, Leiden, Amsterdam, Groningen)")
     }
 

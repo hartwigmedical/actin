@@ -60,7 +60,7 @@ class IneligibleTrialTableGenerator(
     }
 
     companion object {
-        fun forCohorts(
+        fun forEvaluableCohorts(
             cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, width: Float, openOnly: Boolean = false
         ): IneligibleTrialTableGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }

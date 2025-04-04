@@ -40,15 +40,15 @@ class InterpretedCohortComparatorTest {
     }
 
     @Test
-    fun `Should place cohorts with open slots before those without`() {
-        assertExpectedOrder(listOf(cohort, cohort.copy(hasSlotsAvailable = false)))
-    }
-
-    @Test
     fun `Should place cohorts from requesting source before those from other sources or source null`() {
         val cohort = cohort.copy(source = TrialSource.EXAMPLE)
         assertExpectedOrder(listOf(cohort, cohort.copy(source = TrialSource.LKO)), TrialSource.EXAMPLE)
         assertExpectedOrder(listOf(cohort, cohort.copy(source = null)), TrialSource.EXAMPLE)
+    }
+
+    @Test
+    fun `Should place cohorts with open slots before those without`() {
+        assertExpectedOrder(listOf(cohort, cohort.copy(hasSlotsAvailable = false)))
     }
 
     @Test

@@ -5,6 +5,8 @@ import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.countryNamesWithCities
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.hospitalsAndCitiesInCountry
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Cells.createContentNoBorder
@@ -47,28 +49,23 @@ object TrialGeneratorFunctions {
 
             val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
             val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
-            trialSubTable.addCell(subContentFunction(trial.sourceMolecularEvents.joinToString(",\n")))
-            trialSubTable.addCell(subContentFunction(trial.actinMolecularEvents.joinToString(",\n")))
-            trialSubTable.addCell(subContentFunction(externalTrialLocation(trial, homeCountry)))
+            val country = if (trial.countries.none { it.country == homeCountry }) null else homeCountry
 
-            val finalSubTable = if (trialSubTable.numberOfRows > 2) {
-                Tables.makeWrapping(trialSubTable, false)
-            } else {
-                trialSubTable.setKeepTogether(true)
-            }
+            listOf(
+                trial.sourceMolecularEvents.joinToString(", "),
+                trial.actinMolecularEvents.joinToString(", "),
+                externalTrialLocation(trial, country)
+            ).map(subContentFunction).forEach(trialSubTable::addCell)
 
-            table.addCell(createContent(finalSubTable))
+            table.addCell(createContent(wrapSubTable(trialSubTable)))
         }
     }
 
-    fun externalTrialLocation(
-        trial: ExternalTrialSummary,
-        homeCountry: Country?
-    ): String {
+    private fun externalTrialLocation(trial: ExternalTrialSummary, homeCountry: Country?): String {
         return homeCountry?.let {
-            val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
+            val hospitalsToCities = hospitalsAndCitiesInCountry(trial, it)
             if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
-        } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
+        } ?: countryNamesWithCities(trial)
     }
 
     private fun sortedCohortGroups(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?): List<List<InterpretedCohort>> {
@@ -112,13 +109,15 @@ object TrialGeneratorFunctions {
                     } ?: createContent(Paragraph().addAll(trialLabelText))
                 )
             }
+            table.addCell(createContent(wrapSubTable(trialSubTable)))
+        }
+    }
 
-            val finalSubTable = if (trialSubTable.numberOfRows > 2) {
-                Tables.makeWrapping(trialSubTable, false)
-            } else {
-                trialSubTable.setKeepTogether(true)
-            }
-            table.addCell(createContent(finalSubTable))
+    private fun wrapSubTable(table: Table): Table {
+        return if (table.numberOfRows > 2) {
+            Tables.makeWrapping(table, false)
+        } else {
+            table.setKeepTogether(true)
         }
     }
 
