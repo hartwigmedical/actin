@@ -85,7 +85,7 @@ class EligibleExternalTrialGeneratorFunctionsTest {
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
         assertThat(hospitalsAndCitiesExternalTrialBelgium.first).isEqualTo("Brussels hospital")
-        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("Many, please check link")
+        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo(">3 locations - please check link")
     }
 
     @Test(expected = IllegalStateException::class)

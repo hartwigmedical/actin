@@ -61,7 +61,6 @@ object TrialGeneratorFunctions {
         }
     }
 
-    //TODO("Test this function")
     fun externalTrialLocation(
         trial: ExternalTrialSummary,
         homeCountry: Country?
