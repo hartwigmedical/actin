@@ -22,7 +22,7 @@ class EligibleTrialsGenerator(
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
     private val locationColWidth: Float,
-    private val checksColWidth: Float,
+    private val checksColWidth: Float?,
     private val allowDeEmphasis: Boolean
 ) : ActinTrialsGenerator {
 
@@ -32,14 +32,16 @@ class EligibleTrialsGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(
-            trialColWidth, cohortColWidth + molecularEventColWidth + locationColWidth + checksColWidth
+            trialColWidth, cohortColWidth + molecularEventColWidth + locationColWidth + (checksColWidth ?: 0f)
         )
-        val widths = floatArrayOf(cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth)
+        val widths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth).toFloatArray()
+
+        val headers = sequenceOf("Trial", "Cohort", "Molecular", "Sites", "Warnings".takeIf { cohorts.isNotEmpty() }).filterNotNull()
 
         if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
-            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
+            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader(headers.first())))
             val headerSubTable = Tables.createFixedWidthCols(*widths)
-            sequenceOf("Cohort", "Molecular", "Sites", "Warnings").map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
+            headers.drop(1).map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
         addTrialsToTable(
@@ -82,10 +84,22 @@ class EligibleTrialsGenerator(
             }
             val locationString = if (!localTrials) "International trials" else homeCountry?.let { "Trials in ${it.display()}" } ?: "Trials"
             val title = "$locationString that are open and potentially eligible $cohortFromTrialsText"
-            val footNote = "Open cohorts with no slots available are shown in grey.\n" +
-                    "Trials matched solely on molecular event and tumor type—excluding clinical data—are shown in italicized, smaller font."
+            val footNote = if (localTrials) {
+                "Open cohorts with no slots available are shown in grey.\n" +
+                        "Trials matched solely on molecular event and tumor type—excluding clinical data—are shown in italicized, smaller font."
+            } else "International trials are matched solely on molecular event and tumor type (clinical data excluded)."
 
-            return create(recruitingAndEligibleCohorts, externalTrials, requestingSource, homeCountry, title, width, footNote)
+            return create(
+                recruitingAndEligibleCohorts,
+                externalTrials,
+                requestingSource,
+                homeCountry,
+                title,
+                width,
+                footNote,
+                localTrials,
+                localTrials
+            )
         }
 
         fun forOpenCohortsWithMissingMolecularResultsForEvaluation(
@@ -135,13 +149,16 @@ class EligibleTrialsGenerator(
             title: String,
             width: Float,
             footNote: String? = null,
-            allowDeEmphasis: Boolean = true
+            allowDeEmphasis: Boolean = true,
+            includeChecksColumn: Boolean = true
         ): EligibleTrialsGenerator {
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
-            val locationColWidth = width / 7
-            val checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth)
+            val locationColWidth = if (includeChecksColumn) width / 7 else width / 2
+            val checksColWidth =
+                if (includeChecksColumn) width - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth) else null
+
             return EligibleTrialsGenerator(
                 cohorts,
                 externalTrials,

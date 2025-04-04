@@ -8,8 +8,6 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Cells.createContentNoBorder
-import com.hartwig.actin.report.pdf.util.Cells.createContentSmallItalic
-import com.hartwig.actin.report.pdf.util.Cells.createContentSmallItalicNoBorder
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
@@ -44,15 +42,15 @@ object TrialGeneratorFunctions {
 
         externalTrials.forEach { trial ->
             val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
-            table.addCell(
-                createContentSmallItalic(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle())
-            )
+            val mainContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalic else Cells::createContent
+            table.addCell(mainContentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
 
             val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
-            trialSubTable.addCell(createContentSmallItalicNoBorder(trial.sourceMolecularEvents.joinToString(",\n")))
-            trialSubTable.addCell(createContentSmallItalicNoBorder(trial.actinMolecularEvents.joinToString(",\n")))
+            val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
+            trialSubTable.addCell(subContentFunction(trial.sourceMolecularEvents.joinToString(",\n")))
+            trialSubTable.addCell(subContentFunction(trial.actinMolecularEvents.joinToString(",\n")))
             trialSubTable.addCell(
-                createContentSmallItalicNoBorder(
+                subContentFunction(
                     homeCountry?.let {
                         val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
                         if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
