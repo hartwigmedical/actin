@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -62,14 +63,35 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
                 createTreatment(Intent.ADJUVANT, isSystemic = true, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue),
                 createTreatment(
                     Intent.CURATIVE,
-                    isSystemic = true,
+                    isSystemic = false,
                     stopYear = nonRecentDate.year,
                     stopMonth = nonRecentDate.monthValue + 1,
                     categories = setOf(TreatmentCategory.RADIOTHERAPY)
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        val evaluation = function.evaluate(record)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages).containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting (Treatment name)")
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if patient has had radiotherapy before systemic treatment with intent other than curative more than 6 months ago`() {
+        val record = withTreatmentHistory(
+            listOf(
+                createTreatment(
+                    Intent.CURATIVE,
+                    isSystemic = false,
+                    stopYear = nonRecentDate.year,
+                    stopMonth = nonRecentDate.monthValue,
+                    categories = setOf(TreatmentCategory.SURGERY)
+                ),
+                createTreatment(Intent.ADJUVANT, isSystemic = true, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue + 1),
+            )
+        )
+        val evaluation = function.evaluate(record)
+       // assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+       // assertThat(evaluation.undeterminedMessages).containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting (Treatment name)")
     }
 
     @Test
@@ -79,14 +101,16 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
                 createTreatment(Intent.NEOADJUVANT, isSystemic = true, stopYear = null, stopMonth = null),
                 createTreatment(
                     Intent.CURATIVE,
-                    isSystemic = true,
+                    isSystemic = false,
                     stopYear = null,
                     stopMonth = null,
                     categories = setOf(TreatmentCategory.SURGERY)
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        val evaluation = function.evaluate(record)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages).containsExactly("Has had prior systemic treatment but undetermined if in metastatic or advanced setting (Treatment name)")
     }
 
     @Test

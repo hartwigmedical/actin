@@ -13,8 +13,8 @@ import java.time.LocalDate
 
 class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val referenceDate: LocalDate) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
+        val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val priorSystemicTreatments = record.oncologicalHistory.filter { entry -> entry.treatments.any { it.isSystemic } }
-            .sortedWith(TreatmentHistoryAscendingDateComparator())
         val (curativeTreatments, nonCurativeTreatments) = priorSystemicTreatments.partition { it.intents?.contains(Intent.CURATIVE) == true }
         val (recentNonCurativeTreatments, nonRecentNonCurativeTreatments) = nonCurativeTreatments
             .partition { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, referenceDate.minusMonths(6), false) }
@@ -60,7 +60,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             }
 
            nonCurativeTreatments.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
-                priorSystemicTreatments,
+                priorTreatments,
                 nonCurativeTreatments.first()
             ) -> {
                 EvaluationFactory.pass(
@@ -95,10 +95,10 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
     }
 
     private fun hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
-        priorSystemicTreatments: List<TreatmentHistoryEntry>,
+        priorTreatments: List<TreatmentHistoryEntry>,
         nonCurativeTreatment: TreatmentHistoryEntry
     ): Boolean {
-        return priorSystemicTreatments.drop(priorSystemicTreatments.indexOf(nonCurativeTreatment) + 1).any { entry ->
+        return priorTreatments.drop(priorTreatments.indexOf(nonCurativeTreatment) + 1).any { entry ->
             entry.treatments.any {
                 it.categories().contains(TreatmentCategory.RADIOTHERAPY) || it.categories().contains(TreatmentCategory.SURGERY)
             }
