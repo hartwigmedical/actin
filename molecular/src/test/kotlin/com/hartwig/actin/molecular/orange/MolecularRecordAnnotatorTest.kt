@@ -13,10 +13,10 @@ class MolecularRecordAnnotatorTest {
     fun `Should retain characteristics during annotation that are originally present`() {
         val annotated = annotator.annotate(TestMolecularFactory.createProperTestMolecularRecord())
         with(annotated.characteristics) {
-            assertThat(microsatelliteStability!!.evidence).isNotNull()
-            assertThat(homologousRecombination!!.evidence).isNotNull()
-            assertThat(tumorMutationalBurden!!.evidence).isNotNull()
-            assertThat(tumorMutationalLoad!!.evidence).isNotNull()
+            assertThat(microsatelliteStability?.evidence).isNotNull()
+            assertThat(homologousRecombination?.evidence).isNotNull()
+            assertThat(tumorMutationalBurden?.evidence).isNotNull()
+            assertThat(tumorMutationalLoad?.evidence).isNotNull()
         }
     }
 

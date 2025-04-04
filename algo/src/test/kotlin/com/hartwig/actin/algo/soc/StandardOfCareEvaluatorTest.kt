@@ -115,12 +115,10 @@ class StandardOfCareEvaluatorTest {
         )
     )
 
-    private
-    val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
+    private val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
         .copy(molecularHistory = MolecularHistory(listOf(minimalMolecularRecord)))
 
-    private
-    val minimalCrcPatientRecord = minimalPatientRecord.copy(
+    private val minimalCrcPatientRecord = minimalPatientRecord.copy(
         tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
     )
 
