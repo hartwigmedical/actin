@@ -95,16 +95,21 @@ object TestTreatmentEvidenceFactory {
         excludedCancerSubTypes: Set<String> = emptySet(),
         evidenceLevel: EvidenceLevel,
         evidenceLevelDetails: EvidenceLevelDetails,
-        evidenceDirection: EvidenceDirection
+        evidenceDirection: EvidenceDirection,
+        evidenceYear: Int = 2021
     ) = TreatmentEvidence(
         treatment = treatment,
-        molecularMatch = MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
+        molecularMatch = MolecularMatchDetails(
+            sourceDate = sourceDate,
+            sourceEvent = sourceEvent,
+            isCategoryEvent = isCategoryEvent,
+        ),
         applicableCancerType = CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
         isOnLabel = isOnLabel,
         evidenceLevel = evidenceLevel,
         evidenceLevelDetails = evidenceLevelDetails,
         evidenceDirection = evidenceDirection,
-        evidenceYear = 2021,
+        evidenceYear = evidenceYear,
         efficacyDescription = "efficacy description"
     )
 }
