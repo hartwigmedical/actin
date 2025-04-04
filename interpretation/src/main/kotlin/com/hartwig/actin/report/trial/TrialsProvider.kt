@@ -12,9 +12,7 @@ class MolecularFilteredExternalTrials(
     private val original: Set<ExternalTrialSummary>,
     val filtered: Set<ExternalTrialSummary>
 ) {
-    fun originalMinusFilteredSize() = original.size - filtered.size
     fun isNotEmpty() = original.isNotEmpty()
-    fun originalMinusFiltered() = original - filtered
 }
 
 class SummarizedExternalTrials(
@@ -53,10 +51,6 @@ class TrialsProvider(
 
     private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
         return filterCohortsAvailable(cohorts.filter { !it.ignore })
-    }
-
-    fun allEvidenceSources(): Set<String> {
-        return patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
     }
 
     fun summarizeExternalTrials(): SummarizedExternalTrials {
