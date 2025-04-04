@@ -83,7 +83,7 @@ class EligibleTrialsGenerator(
             val locationString = if (!localTrials) "International trials" else homeCountry?.let { "Trials in ${it.display()}" } ?: "Trials"
             val title = "$locationString that are open and potentially eligible $cohortFromTrialsText"
             val footNote = "Open cohorts with no slots available are shown in grey.\n" +
-                    "Trials matched on molecular event and tumor type only (i.e. no clinical data used) are displayed in italic and small font."
+                    "Trials matched solely on molecular event and tumor type—excluding clinical data—are shown in italicized, smaller font."
 
             return create(recruitingAndEligibleCohorts, externalTrials, requestingSource, homeCountry, title, width, footNote)
         }
