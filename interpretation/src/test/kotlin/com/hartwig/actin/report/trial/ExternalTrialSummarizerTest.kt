@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
@@ -26,7 +25,6 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = NCT_01,
     title = "title",
     countries = sortedSetOf(),
-    molecularMatches = emptySet(),
     actinMolecularEvents = sortedSetOf(),
     sourceMolecularEvents = sortedSetOf(),
     applicableCancerTypes = sortedSetOf(),
@@ -44,15 +42,11 @@ private val TRIAL_1 = ExternalTrial(
             sourceDate = LocalDate.of(2023, 2, 3),
             sourceEvent = "source event 1",
             isCategoryEvent = false,
-            evidenceType = EvidenceType.ACTIVATION,
-            sourceUrls = emptySet()
         ),
         MolecularMatchDetails(
             sourceDate = LocalDate.of(2023, 2, 3),
             sourceEvent = "source event 2",
             isCategoryEvent = false,
-            evidenceType = EvidenceType.ACTIVATION,
-            sourceUrls = emptySet()
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 1", emptySet()), CancerType("cancer type 2", emptySet())),
@@ -68,8 +62,6 @@ private val TRIAL_2 = ExternalTrial(
             sourceDate = LocalDate.of(2023, 2, 3),
             sourceEvent = "source event 3",
             isCategoryEvent = false,
-            evidenceType = EvidenceType.ACTIVATION,
-            sourceUrls = emptySet()
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 3", emptySet())),
@@ -222,7 +214,6 @@ class ExternalTrialSummarizerTest {
             nctId = externalTrial.nctId,
             title = externalTrial.title,
             countries = countries,
-            molecularMatches = externalTrial.molecularMatches,
             actinMolecularEvents = actinMolecularEvents,
             sourceMolecularEvents = externalTrial.molecularMatches.map { it.sourceEvent }.toSortedSet(),
             applicableCancerTypes = externalTrial.applicableCancerTypes.toSortedSet(Comparator.comparing { it.matchedCancerType }),
