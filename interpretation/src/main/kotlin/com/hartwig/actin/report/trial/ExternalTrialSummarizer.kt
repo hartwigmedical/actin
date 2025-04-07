@@ -16,8 +16,7 @@ data class ExternalTrialSummary(
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,
     val applicableCancerTypes: SortedSet<CancerType>,
-    val url: String,
-    val therapyNames: SortedSet<String>
+    val url: String
 )
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
@@ -85,8 +84,7 @@ object ExternalTrialSummarizer {
                 sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),
                 applicableCancerTypes = entry.value.flatMap { ewt -> ewt.trial.applicableCancerTypes }
                     .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType }),
-                url = trial.url,
-                therapyNames = entry.value.flatMap { ewt -> ewt.trial.therapyNames }.toSortedSet()
+                url = trial.url
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }

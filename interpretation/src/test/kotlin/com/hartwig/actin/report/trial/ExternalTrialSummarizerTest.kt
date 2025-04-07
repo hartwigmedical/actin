@@ -28,8 +28,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     actinMolecularEvents = sortedSetOf(),
     sourceMolecularEvents = sortedSetOf(),
     applicableCancerTypes = sortedSetOf(),
-    url = URL,
-    therapyNames = sortedSetOf(),
+    url = URL
 )
 private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = emptyMap())
 private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
@@ -217,8 +216,7 @@ class ExternalTrialSummarizerTest {
             actinMolecularEvents = actinMolecularEvents,
             sourceMolecularEvents = externalTrial.molecularMatches.map { it.sourceEvent }.toSortedSet(),
             applicableCancerTypes = externalTrial.applicableCancerTypes.toSortedSet(Comparator.comparing { it.matchedCancerType }),
-            url = externalTrial.url,
-            therapyNames = externalTrial.therapyNames.toSortedSet()
+            url = externalTrial.url
         )
     }
 }
