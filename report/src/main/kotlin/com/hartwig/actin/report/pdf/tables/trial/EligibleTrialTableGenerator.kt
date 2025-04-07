@@ -146,7 +146,7 @@ class EligibleTrialTableGenerator(
         fun forFilteredTrials(trials: Set<ExternalTrialSummary>, homeCountry: Country, contentWidth: Float
         ): EligibleTrialTableGenerator {
             val title = "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${trials.size})"
-            return create(emptyList(), trials, null, homeCountry, title, contentWidth, allowDeEmphasis = false)
+            return create(emptyList(), trials, null, homeCountry, title, contentWidth, allowDeEmphasis = false, includeChecksColumn = false)
         }
 
         private fun create(

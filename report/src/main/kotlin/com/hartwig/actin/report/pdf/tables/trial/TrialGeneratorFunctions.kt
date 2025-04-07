@@ -51,12 +51,13 @@ object TrialGeneratorFunctions {
             val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
             val country = if (trial.countries.none { it.country == homeCountry }) null else homeCountry
 
-            listOf(
+            val contentList = listOf(
                 trial.sourceMolecularEvents.joinToString(", "),
                 trial.actinMolecularEvents.joinToString(", "),
                 externalTrialLocation(trial, country)
-            ).map(subContentFunction).forEach(trialSubTable::addCell)
-
+            )
+            val content = if (contentList.size < tableWidths.size) contentList + "" else contentList
+            content.map(subContentFunction).forEach(trialSubTable::addCell)
             table.addCell(createContent(wrapSubTable(trialSubTable)))
         }
     }
