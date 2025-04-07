@@ -31,16 +31,12 @@ class EligibleTrialTableGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(
-            trialColWidth, cohortColWidth + molecularEventColWidth + locationColWidth + (checksColWidth ?: 0f)
-        )
-        val widths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth).toFloatArray()
-
+        val subTableWidths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, (checksColWidth ?: 0f)).toFloatArray()
+        val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
         val headers = sequenceOf("Trial", "Cohort", "Molecular", "Sites", "Warnings".takeIf { cohorts.isNotEmpty() }).filterNotNull()
-
         if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader(headers.first())))
-            val headerSubTable = Tables.createFixedWidthCols(*widths)
+            val headerSubTable = Tables.createFixedWidthCols(*subTableWidths)
             headers.drop(1).map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
@@ -50,7 +46,7 @@ class EligibleTrialTableGenerator(
             requestingSource = requestingSource,
             homeCountry = homeCountry,
             table = table,
-            tableWidths = widths,
+            tableWidths = subTableWidths,
             feedbackFunction = InterpretedCohort::warnings,
             allowDeEmphasis = allowDeEmphasis
         )
@@ -150,7 +146,7 @@ class EligibleTrialTableGenerator(
         fun forFilteredTrials(trials: Set<ExternalTrialSummary>, homeCountry: Country, contentWidth: Float
         ): EligibleTrialTableGenerator {
             val title = "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${trials.size})"
-            return create(emptyList(), trials, null, homeCountry, title, contentWidth)
+            return create(emptyList(), trials, null, homeCountry, title, contentWidth, allowDeEmphasis = false)
         }
 
         private fun create(

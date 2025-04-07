@@ -194,7 +194,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
                 report.config.includeTrialMatchingInSummary && (it?.getCohortSize()?.let { size -> size > 0 } ?: true)
             },
-            nonLocalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
+            nonLocalTrialGenerator
+                .takeIf { report.config.includeExternalTrialsInSummary && externalTrialSummary.internationalTrials.filtered.isNotEmpty() },
             ineligibleTrialGenerator.takeIf { report.config.includeIneligibleTrialsInSummary }
         )
         return generators

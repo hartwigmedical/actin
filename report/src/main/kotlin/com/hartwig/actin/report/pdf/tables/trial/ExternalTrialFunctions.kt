@@ -21,7 +21,7 @@ object ExternalTrialFunctions {
             val hospitalsString = if (hospitals.size > 3) {
                 MANY_PLEASE_CHECK_LINK
             } else hospitals.joinToString { it.name }
-            val citiesString = if (cities.size > 8) {
+            val citiesString = if (cities.size > 3) {
                 MANY_PLEASE_CHECK_LINK
             } else cities.joinToString { it }
             Pair(hospitalsString, citiesString)

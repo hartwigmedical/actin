@@ -29,11 +29,12 @@ class IneligibleTrialTableGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
+        val headers = sequenceOf("Trial", "Cohort", "Molecular", "Sites", "Ineligibility reasons".takeIf { includeIneligibilityReasonCol })
+            .filterNotNull()
         if (cohorts.isNotEmpty()) {
-            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
+            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader(headers.first())))
             val headerSubTable = Tables.createFixedWidthCols(*subTableWidths)
-            sequenceOf("Cohort", "Molecular", "Sites", "Ineligibility reasons").map(Cells::createHeader)
-                .forEach(headerSubTable::addHeaderCell)
+            headers.drop(1).map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
         addTrialsToTable(
@@ -48,7 +49,6 @@ class IneligibleTrialTableGenerator(
             paddingDistance,
             allowDeEmphasis
         )
-
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
         }
@@ -100,7 +100,7 @@ class IneligibleTrialTableGenerator(
                 subTableWidths,
                 false,
                 paddingDistance = SMALL_PADDING_DISTANCE,
-                true
+                false
             )
         }
 
