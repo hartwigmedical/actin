@@ -93,33 +93,33 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate tumor mutational burden with evidence`() {
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
-
-        val panelWithHighTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 200.0))
-        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(ON_LABEL_MATCH)
-
-        val panelWithLowTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 2.0))
-        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(EMPTY_MATCH)
-
-        val panelWithoutTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = null))
-        assertThat(panelWithoutTmb.characteristics.tumorMutationalBurdenEvidence).isNull()
-    }
-
-    @Test
     fun `Should annotate microsatellite status with evidence`() {
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
 
         val panelWithMSI = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = true))
-        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ON_LABEL_MATCH)
+        assertThat(panelWithMSI.characteristics.microsatelliteStability!!.evidence).isEqualTo(ON_LABEL_MATCH)
 
         val panelWithMSS = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = false))
-        assertThat(panelWithMSS.characteristics.microsatelliteEvidence).isEqualTo(EMPTY_MATCH)
+        assertThat(panelWithMSS.characteristics.microsatelliteStability!!.evidence).isEqualTo(EMPTY_MATCH)
 
         val panelWithoutMicrosatelliteStatus = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = null))
-        assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteEvidence).isNull()
+        assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteStability).isNull()
+    }
+
+    @Test
+    fun `Should annotate tumor mutational burden with evidence`() {
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
+
+        val panelWithHighTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 200.0))
+        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(ON_LABEL_MATCH)
+
+        val panelWithLowTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 2.0))
+        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(EMPTY_MATCH)
+
+        val panelWithoutTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = null))
+        assertThat(panelWithoutTmb.characteristics.tumorMutationalBurden).isNull()
     }
 
     private fun createTestPriorSequencingTest(): PriorSequencingTest {
