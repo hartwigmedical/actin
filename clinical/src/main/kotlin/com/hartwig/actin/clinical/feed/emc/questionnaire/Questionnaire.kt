@@ -37,30 +37,32 @@ data class Questionnaire(
             tumorType,
             biopsyLocation
         ).all { it.isNullOrEmpty() }
+
         val allListEmpty = listOf(
-                    treatmentHistoryCurrentTumor,
-                    otherOncologicalHistory,
-                    secondaryPrimaries,
-                    nonOncologicalHistory,
-                    otherLesions,
-                    ihcTestResults,
-                    pdl1TestResults,
-                    unresolvedToxicities,
-                    complications
-                ).all { it.isNullOrEmpty() }
+            treatmentHistoryCurrentTumor,
+            otherOncologicalHistory,
+            secondaryPrimaries,
+            nonOncologicalHistory,
+            otherLesions,
+            ihcTestResults,
+            pdl1TestResults,
+            unresolvedToxicities,
+            complications
+        ).all { it.isNullOrEmpty() }
+
         val allBooleanAndObjectFieldsNull = listOf(
-                    stage,
-                    hasMeasurableDisease,
-                    hasBrainLesions,
-                    hasActiveBrainLesions,
-                    hasCnsLesions,
-                    hasActiveCnsLesions,
-                    hasBoneLesions,
-                    hasLiverLesions,
-                    whoStatus,
-                    infectionStatus,
-                    ecg
-                ).all { it == null }
+            stage,
+            hasMeasurableDisease,
+            hasBrainLesions,
+            hasActiveBrainLesions,
+            hasCnsLesions,
+            hasActiveCnsLesions,
+            hasBoneLesions,
+            hasLiverLesions,
+            whoStatus,
+            infectionStatus,
+            ecg
+        ).all { it == null }
         return allStringsEmpty && allListEmpty && allBooleanAndObjectFieldsNull
     }
 }

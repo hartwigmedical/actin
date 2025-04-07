@@ -232,7 +232,44 @@ class QuestionnaireExtractionTest {
     fun `Should reject new empty questionnaire in favor of an old one`() {
         val newInvalidEntry = entryWithText("Does not exist").copy(authored = today)
         val newEmptyEntry =
-            entryWithText("\"ACTIN Questionnaire V1.5\\nImportant: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!\\n\\nRelevant patient history\\nTreatment history current tumor: \\nOther oncological history (e.g. radiotherapy, surgery): \\nSecondary primary: \\n- Last date of active treatment: \\nNon-oncological history: \\n\\nTumor details\\nPrimary tumor location: \\nPrimary tumor type: \\nBiopsy location: \\nStage: \\nCNS lesions: \\n-Active: \\nBrain lesions: \\n-Active: \\nBone lesions: \\nLiver lesions: \\nOther lesions (e.g. lymph node, pulmonal):\\nMeasurable disease: \\n\\nPrevious Molecular tests\\n- IHC test results: \\n- PD L1 test results:\\n\\nClinical details\\nWHO status: \\nUnresolved toxicities grade => 2: \\nSignificant current infection: \\nSignificant aberration on latest ECG: \\nCancer-related complications (e.g. pleural effusion):\\n\\n\"").copy(
+            entryWithText(
+                """
+                ACTIN Questionnaire V1.5
+                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
+                
+                Relevant patient history
+                Treatment history current tumor: 
+                Other oncological history (e.g. radiotherapy, surgery): 
+                Secondary primary: 
+                - Last date of active treatment: 
+                Non-oncological history: 
+                
+                Tumor details
+                Primary tumor location: 
+                Primary tumor type: 
+                Biopsy location: 
+                Stage: 
+                CNS lesions: 
+                -Active: 
+                Brain lesions: 
+                -Active: 
+                Bone lesions: 
+                Liver lesions: 
+                Other lesions (e.g. lymph node, pulmonal):
+                Measurable disease: 
+                
+                Previous Molecular tests
+                - IHC test results: 
+                - PD L1 test results:
+                
+                Clinical details
+                WHO status: 
+                Unresolved toxicities grade => 2: 
+                Significant current infection: 
+                Significant aberration on latest ECG: 
+                Cancer-related complications (e.g. pleural effusion):
+                """.trimIndent().replace("\n", "\\n")
+            ).copy(
                 authored = today
             )
         val oldValidEntry = TestQuestionnaireFactory.createTestQuestionnaireEntry().copy(
@@ -241,7 +278,7 @@ class QuestionnaireExtractionTest {
         )
         val (extractedEntry, errors) = QuestionnaireExtraction.extract(listOf(newInvalidEntry, newEmptyEntry, oldValidEntry))
         assertThat(extractedEntry).isNotNull
-        assertThat(extractedEntry!!.hasActiveBrainLesions!!).isEqualTo(true)
+        assertThat(extractedEntry?.hasActiveBrainLesions).isEqualTo(true)
         assertThat(errors).isEmpty()
     }
 
