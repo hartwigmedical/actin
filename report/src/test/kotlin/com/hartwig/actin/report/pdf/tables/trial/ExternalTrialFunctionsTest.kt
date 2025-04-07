@@ -81,7 +81,7 @@ class ExternalTrialFunctionsTest {
             Country.BELGIUM
         )
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo(">3 locations - please check link")
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam, Groningen")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo(">3 locations - please check link")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
         assertThat(hospitalsAndCitiesExternalTrialBelgium.first).isEqualTo("Brussels hospital")

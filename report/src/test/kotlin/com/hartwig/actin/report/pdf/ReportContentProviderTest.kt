@@ -185,8 +185,7 @@ class ReportContentProviderTest {
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
             EligibleApprovedTreatmentGenerator::class,
-            EligibleTrialTableGenerator::class,
-            EligibleTrialTableGenerator::class,
+            EligibleTrialTableGenerator::class
         )
     }
 
