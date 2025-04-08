@@ -14,8 +14,8 @@ class ExampleDataDeserializationTest {
 
     @Test
     fun `Should be able to deserialize example data`() {
-        assertThat(PatientRecordJson.read(examplePatientRecordJson)).isNotNull
-        assertThat(TreatmentMatchJson.read(exampleTreatmentMatchJson)).isNotNull
-        assertThat(TrialJson.readFromDir(exampleTrialDatabaseDir)).isNotNull
+        assertThat(PatientRecordJson.read(examplePatientRecordJson)).isNotNull()
+        assertThat(TreatmentMatchJson.read(exampleTreatmentMatchJson)).isNotNull()
+        assertThat(TrialJson.readFromDir(exampleTrialDatabaseDir)).isNotNull()
     }
 }

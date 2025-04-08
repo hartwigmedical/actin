@@ -26,7 +26,7 @@ class CurrentlyGetsMedicationOfAtcLevel(
 
             plannedMedicationsWithAtcLevel.isNotEmpty() -> {
                 val foundMedicationString = concatLowercaseWithCommaAndAnd(plannedMedicationsWithAtcLevel)
-                EvaluationFactory.recoverableWarn("Planned $categoryName medication use ($foundMedicationString)")
+                EvaluationFactory.warn("Planned $categoryName medication use ($foundMedicationString)")
             }
 
             else -> {

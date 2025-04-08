@@ -5,12 +5,12 @@ import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.Paths
-import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.CompressionConstants
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.WriterProperties
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType

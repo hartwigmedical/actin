@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evidence
 
+import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
@@ -7,6 +8,7 @@ data class Score(
     val event: String,
     val scoringMatch: ScoringMatch,
     val evidenceLevelDetails: EvidenceApprovalPhase,
+    val tumorType: CancerType,
     val score: Double,
     val evidenceDescription: String
 ) : Comparable<Score> {
@@ -31,7 +33,8 @@ class TreatmentScorer {
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             score = factor * score.toDouble(),
             event = treatment.molecularMatch.sourceEvent,
-            evidenceDescription = treatment.efficacyDescription
+            evidenceDescription = treatment.efficacyDescription,
+            tumorType = treatment.applicableCancerType
         )
     }
 }

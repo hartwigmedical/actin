@@ -8,8 +8,7 @@ data class IngestionResult(
 
 enum class PatientIngestionStatus {
     PASS,
-    WARN_CURATION_REQUIRED,
-    WARN_NO_QUESTIONNAIRE
+    WARN
 }
 
 data class PatientIngestionResult(

@@ -45,6 +45,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.UTR_3_LOSS_IN_GENE_X to geneHasUTR3LossCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X to geneIsAmplifiedCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES to geneIsAmplifiedMinCopiesCreator(),
+            EligibilityRule.COPY_NUMBER_OF_GENE_X_OF_AT_LEAST_Y to geneHasSufficientCopyNumber(),
             EligibilityRule.FUSION_IN_GENE_X to hasFusionInGeneCreator(),
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
@@ -64,12 +65,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
-            EligibilityRule.LOSS_OF_PROTEIN_X_BY_IHC to proteinIsLostByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
-            EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
+            EligibilityRule.LOSS_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsLostByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsExpressedByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_EXACTLY_Z to proteinHasExactExpressionByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_AT_LEAST_Z to proteinHasSufficientExpressionByIHCCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_AT_MOST_Z to proteinHasLimitedExpressionByIHCCreator(),
+            EligibilityRule.PROTEIN_X_OF_GENE_Y_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
             EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIHCCreator(),
@@ -89,7 +90,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable(maxMolecularTestAge()) },
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable() },
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
-            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
+            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator(),
+            EligibilityRule.HAS_PROTEIN_X_POLYMORPHISM_Y to hasProteinPolymorphismCreator()
         )
     }
 
@@ -198,6 +200,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun geneHasSufficientCopyNumber(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneGeneOneIntegerInput(function)
+            GeneHasSufficientCopyNumber(input.geneName, input.integer, maxMolecularTestAge())
+        }
+    }
+
     private fun hasFusionInGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasFusionInGene(functionInputResolver().createOneGeneInput(function).geneName, maxMolecularTestAge())
@@ -275,33 +284,36 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinIsLostByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsLostByIHC(functionInputResolver().createOneProteinInput(function).proteinName)
+            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
+            ProteinIsLostByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsExpressedByIHC(functionInputResolver().createOneProteinInput(function).proteinName)
+            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
+            ProteinIsExpressedByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
     private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(protein, expressionLevel)
+            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
+            ProteinHasExactExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 
     private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
-            ProteinHasSufficientExpressionByIHC(protein, expressionLevel)
+            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
+            ProteinHasSufficientExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 
     private fun proteinIsWildTypeByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsWildTypeByIHC(functionInputResolver().createOneProteinInput(function).proteinName)
+            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
+            ProteinIsWildTypeByIHC(protein, gene, maxMolecularTestAge())
         }
     }
 
@@ -311,8 +323,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
-            ProteinHasLimitedExpressionByIHC(protein, expressionLevel)
+            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
+            ProteinHasLimitedExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
         }
     }
 
@@ -364,6 +376,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val (chromosome1, chromosome2) = functionInputResolver().createTwoStringsInput(function)
             HasCodeletionOfChromosomeArms(chromosome1, chromosome2)
+        }
+    }
+
+    private fun hasProteinPolymorphismCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (protein, polymorphism) = functionInputResolver().createOneProteinOneStringInput(function)
+            ProteinHasPolymorphism(protein, polymorphism)
         }
     }
 

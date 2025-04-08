@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -32,6 +33,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
+import com.hartwig.actin.trial.input.single.OneProteinOneString
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
@@ -42,11 +44,13 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
+import com.hartwig.actin.trial.input.single.OneProteinOneGene
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoStrings
+import com.hartwig.actin.trial.input.single.OneProteinOneGeneOneInteger
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
@@ -1035,6 +1039,56 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("1", "not a gender")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("een", "female")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("female", "1.0")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one protein one gene inputs`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("FGFR2")
+        val rule = firstOfType(FunctionInput.ONE_PROTEIN_ONE_GENE)
+        val valid = create(rule, listOf("FGFR2b", "FGFR2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneProteinOneGeneInput(valid)).isEqualTo(OneProteinOneGene("FGFR2b", "FGFR2"))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2b")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2", "FGFR2b")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one protein one gene one integer inputs`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("FGFR2")
+        val rule = firstOfType(FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER)
+        val valid = create(rule, listOf("FGFR2b", "FGFR2", "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneProteinOneGeneOneIntegerInput(valid)).isEqualTo(OneProteinOneGeneOneInteger("FGFR2b", "FGFR2", 1))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2b", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2", 1, "FGFR2b")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2", "FGFR2b", 1)))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many TNM Ts as input`() {
+        val rule = firstOfType(FunctionInput.MANY_TNM_T)
+        val valid = create(rule, listOf("T2A"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createManyTnmTInput(valid)).isEqualTo(setOf(TnmT.T2A))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("T2C")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one protein one string input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("FGFR2")
+        val rule = firstOfType(FunctionInput.ONE_PROTEIN_ONE_STRING)
+        val valid = create(rule, listOf("FGFR2b", "string"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneProteinOneString("FGFR2b", "string")
+        assertThat(resolver.createOneProteinOneStringInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2b")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2b", 1)))!!).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

@@ -72,7 +72,7 @@ class StandardDataIngestion(
                     record,
                     PatientIngestionResult(
                         record.patientId,
-                        if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN_CURATION_REQUIRED,
+                        if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN,
                         curationResultsFromWarnings(evaluation.warnings),
                         emptySet(),
                         emptySet()
@@ -150,7 +150,8 @@ class StandardDataIngestion(
             drugInteractionDatabase: DrugInteractionsDatabase,
             qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
-            treatmentDatabase: TreatmentDatabase
+            treatmentDatabase: TreatmentDatabase,
+            panelGeneList: PanelGeneList
         ) = StandardDataIngestion(
             directory,
             StandardMedicationExtractor(atcModel, drugInteractionDatabase, qtProlongatingDatabase, treatmentDatabase),
@@ -172,7 +173,7 @@ class StandardDataIngestion(
             StandardBodyHeightExtractor(),
             StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
-            DataQualityMask()
+            DataQualityMask(panelGeneList)
         )
     }
 }

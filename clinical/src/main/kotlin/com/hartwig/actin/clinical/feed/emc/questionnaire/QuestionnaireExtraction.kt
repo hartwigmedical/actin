@@ -11,52 +11,74 @@ object QuestionnaireExtraction {
     private const val ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire"
     private const val ACTIVE_LINE_OFFSET = 1
 
-    fun extract(entry: QuestionnaireEntry?): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
-        if (entry == null || !isActualQuestionnaire(entry)) {
-            return null to emptyList()
+    fun extract(entryList: List<QuestionnaireEntry>): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
+        return entryList.asSequence().sortedByDescending(QuestionnaireEntry::authored)
+            .firstNotNullOfOrNull(::extractQuestionnaire)
+            ?: (null to emptyList())
+    }
+
+    private fun extractQuestionnaire(entry: QuestionnaireEntry?): Pair<Questionnaire?, List<QuestionnaireCurationError>>? {
+        return entry?.takeIf(::isActualQuestionnaire)?.let { validEntry ->
+            val mapping = QuestionnaireMapping.mapping(entry)
+            val lines = QuestionnaireReader.read(entry.text, QuestionnaireMapping.keyStrings(entry), QuestionnaireMapping.SECTION_HEADERS)
+            val brainLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_BRAIN_LESIONS]!!)
+            val cnsLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_CNS_LESIONS]!!)
+            val hasMeasurableDisease =
+                QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_MEASURABLE_DISEASE]))
+            val hasBoneLesions = QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_BONE_LESIONS]))
+            val hasLiverLesions = QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_LIVER_LESIONS]))
+            val whoStatus = QuestionnaireCuration.toWHO(entry.subject, value(lines, mapping[QuestionnaireKey.WHO_STATUS]))
+            val infectionStatus =
+                QuestionnaireCuration.toInfectionStatus(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION]))
+            val ecg = QuestionnaireCuration.toEcg(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG]))
+            val stage = QuestionnaireCuration.toStage(entry.subject, value(lines, mapping[QuestionnaireKey.STAGE]))
+            val questionnaire = Questionnaire(
+                date = entry.authored,
+                tumorLocation = value(lines, mapping[QuestionnaireKey.PRIMARY_TUMOR_LOCATION]),
+                tumorType = if (QuestionnaireVersion.version(entry) == QuestionnaireVersion.V0_1) "Unknown" else value(
+                    lines,
+                    mapping[QuestionnaireKey.PRIMARY_TUMOR_TYPE]
+                ),
+                biopsyLocation = value(lines, mapping[QuestionnaireKey.BIOPSY_LOCATION]),
+                stage = stage.curated,
+                treatmentHistoryCurrentTumor = toList(value(lines, mapping[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR])),
+                otherOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY])),
+                secondaryPrimaries = secondaryPrimaries(lines, mapping[QuestionnaireKey.SECONDARY_PRIMARY]),
+                nonOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY])),
+                ihcTestResults = value(lines, mapping[QuestionnaireKey.IHC_TEST_RESULTS])?.let { listOf(trimWhitespaceAndCommas(it)) },
+                pdl1TestResults = toList(value(lines, mapping[QuestionnaireKey.PDL1_TEST_RESULTS])),
+                hasMeasurableDisease = hasMeasurableDisease.curated,
+                hasBrainLesions = brainLesionData.curated?.present(),
+                hasActiveBrainLesions = brainLesionData.curated?.active(),
+                hasCnsLesions = cnsLesionData.curated?.present(),
+                hasActiveCnsLesions = cnsLesionData.curated?.active(),
+                hasBoneLesions = hasBoneLesions.curated,
+                hasLiverLesions = hasLiverLesions.curated,
+                otherLesions = otherLesions(entry, lines, mapping),
+                whoStatus = whoStatus.curated,
+                unresolvedToxicities = toList(value(lines, mapping[QuestionnaireKey.UNRESOLVED_TOXICITIES])),
+                infectionStatus = infectionStatus.curated,
+                ecg = ecg.curated,
+                complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
+            )
+            val errors = listOf(
+                brainLesionData,
+                cnsLesionData,
+                hasBoneLesions,
+                hasLiverLesions,
+                hasMeasurableDisease,
+                whoStatus,
+                infectionStatus,
+                ecg,
+                stage
+            ).flatMap(ValidatedQuestionnaireCuration<*>::errors)
+
+            when {
+                questionnaire.isEmpty() && errors.isEmpty() -> null
+                questionnaire.isEmpty() -> null to errors
+                else -> questionnaire to errors
+            }
         }
-        val mapping = QuestionnaireMapping.mapping(entry)
-        val lines = QuestionnaireReader.read(entry.text, QuestionnaireMapping.keyStrings(entry), QuestionnaireMapping.SECTION_HEADERS)
-        val brainLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_BRAIN_LESIONS]!!)
-        val cnsLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_CNS_LESIONS]!!)
-        val hasMeasurableDisease =
-            QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_MEASURABLE_DISEASE]))
-        val hasBoneLesions = QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_BONE_LESIONS]))
-        val hasLiverLesions = QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_LIVER_LESIONS]))
-        val whoStatus = QuestionnaireCuration.toWHO(entry.subject, value(lines, mapping[QuestionnaireKey.WHO_STATUS]))
-        val infectionStatus =
-            QuestionnaireCuration.toInfectionStatus(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION]))
-        val ecg = QuestionnaireCuration.toEcg(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG]))
-        val stage = QuestionnaireCuration.toStage(entry.subject, value(lines, mapping[QuestionnaireKey.STAGE]))
-        return Questionnaire(
-            date = entry.authored,
-            tumorLocation = value(lines, mapping[QuestionnaireKey.PRIMARY_TUMOR_LOCATION]),
-            tumorType = if (QuestionnaireVersion.version(entry) == QuestionnaireVersion.V0_1) "Unknown" else value(
-                lines,
-                mapping[QuestionnaireKey.PRIMARY_TUMOR_TYPE]
-            ),
-            biopsyLocation = value(lines, mapping[QuestionnaireKey.BIOPSY_LOCATION]),
-            stage = stage.curated,
-            treatmentHistoryCurrentTumor = toList(value(lines, mapping[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR])),
-            otherOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY])),
-            secondaryPrimaries = secondaryPrimaries(lines, mapping[QuestionnaireKey.SECONDARY_PRIMARY]),
-            nonOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY])),
-            ihcTestResults = toList(value(lines, mapping[QuestionnaireKey.IHC_TEST_RESULTS])),
-            pdl1TestResults = toList(value(lines, mapping[QuestionnaireKey.PDL1_TEST_RESULTS])),
-            hasMeasurableDisease = hasMeasurableDisease.curated,
-            hasBrainLesions = brainLesionData.curated?.present(),
-            hasActiveBrainLesions = brainLesionData.curated?.active(),
-            hasCnsLesions = cnsLesionData.curated?.present(),
-            hasActiveCnsLesions = cnsLesionData.curated?.active(),
-            hasBoneLesions = hasBoneLesions.curated,
-            hasLiverLesions = hasLiverLesions.curated,
-            otherLesions = otherLesions(entry, lines, mapping),
-            whoStatus = whoStatus.curated,
-            unresolvedToxicities = toList(value(lines, mapping[QuestionnaireKey.UNRESOLVED_TOXICITIES])),
-            infectionStatus = infectionStatus.curated,
-            ecg = ecg.curated,
-            complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
-        ) to hasBoneLesions.errors + hasLiverLesions.errors + hasMeasurableDisease.errors + whoStatus.errors + infectionStatus.errors + ecg.errors + stage.errors
     }
 
     fun isActualQuestionnaire(entry: QuestionnaireEntry): Boolean {
@@ -118,6 +140,10 @@ object QuestionnaireExtraction {
             }
         }
         return trimmed
+    }
+
+    private fun trimWhitespaceAndCommas(value: String): String {
+        return value.trim { it <= ' ' || it == ',' }
     }
 
     private fun value(lines: Array<String>, key: String?, isOptional: Boolean = false): String? {

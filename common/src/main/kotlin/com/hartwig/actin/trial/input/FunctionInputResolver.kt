@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -51,7 +52,10 @@ import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneProtein
+import com.hartwig.actin.trial.input.single.OneProteinOneGene
+import com.hartwig.actin.trial.input.single.OneProteinOneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneProteinOneInteger
+import com.hartwig.actin.trial.input.single.OneProteinOneString
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
@@ -72,7 +76,7 @@ import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
-    val icdModel: IcdModel,
+    private val icdModel: IcdModel,
     private val molecularInputChecker: MolecularInputChecker,
     private val treatmentDatabase: TreatmentDatabase,
     private val medicationCategories: MedicationCategories
@@ -404,6 +408,26 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER -> {
+                    createOneProteinOneGeneOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN_ONE_GENE -> {
+                    createOneProteinOneGeneInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_TNM_T -> {
+                    createManyTnmTInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_PROTEIN_ONE_STRING -> {
+                    createOneProteinOneStringInput(function)
+                    return true
+                }
+
                 else -> {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
@@ -659,6 +683,11 @@ class FunctionInputResolver(
         return parameterAsString(function, 0)
     }
 
+    fun createManyTnmTInput(function: EligibilityFunction): Set<TnmT> {
+        assertParamConfig(function, FunctionInput.MANY_TNM_T, 1)
+        return toTnmTs(function.parameters.first())
+    }
+
     fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {
         assertParamConfig(function, FunctionInput.TWO_STRINGS, 2)
         return TwoStrings(
@@ -760,18 +789,18 @@ class FunctionInputResolver(
 
     fun createOneGeneInput(function: EligibilityFunction): OneGene {
         assertParamConfig(function, FunctionInput.ONE_GENE, 1)
-        return OneGene(firstParameterAsGene(function))
+        return OneGene(parameterAsGene(function, 0))
     }
 
     fun createOneGeneOneIntegerInput(function: EligibilityFunction): OneGeneOneInteger {
         assertParamConfig(function, FunctionInput.ONE_GENE_ONE_INTEGER, 2)
-        return OneGeneOneInteger(geneName = firstParameterAsGene(function), integer = (function.parameters[1] as String).toInt())
+        return OneGeneOneInteger(geneName = parameterAsGene(function, 0), integer = (function.parameters[1] as String).toInt())
     }
 
     fun createOneGeneOneIntegerOneVariantTypeInput(function: EligibilityFunction): OneGeneOneIntegerOneVariantType {
         assertParamConfig(function, FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE, 3)
         return OneGeneOneIntegerOneVariantType(
-            geneName = firstParameterAsGene(function),
+            geneName = parameterAsGene(function, 0),
             integer = (function.parameters[1] as String).toInt(),
             variantType = VariantTypeInput.valueOf(function.parameters[2] as String)
         )
@@ -780,7 +809,7 @@ class FunctionInputResolver(
     fun createOneGeneTwoIntegersInput(function: EligibilityFunction): OneGeneTwoIntegers {
         assertParamConfig(function, FunctionInput.ONE_GENE_TWO_INTEGERS, 3)
         return OneGeneTwoIntegers(
-            geneName = firstParameterAsGene(function),
+            geneName = parameterAsGene(function, 0),
             integer1 = (function.parameters[1] as String).toInt(),
             integer2 = (function.parameters[2] as String).toInt()
         )
@@ -794,12 +823,12 @@ class FunctionInputResolver(
                 throw IllegalStateException("Not a valid codon: $codon")
             }
         }
-        return OneGeneManyCodons(geneName = firstParameterAsGene(function), codons = codons)
+        return OneGeneManyCodons(geneName = parameterAsGene(function, 0), codons = codons)
     }
 
     fun createOneGeneManyProteinImpactsInput(function: EligibilityFunction): OneGeneManyProteinImpacts {
         assertParamConfig(function, FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS, 2)
-        val gene = firstParameterAsGene(function)
+        val gene = parameterAsGene(function, 0)
         val proteinImpacts = toStringList(function.parameters[1]).toSet()
         for (proteinImpact in proteinImpacts) {
             if (!MolecularInputChecker.isProteinImpact(proteinImpact)) {
@@ -917,6 +946,10 @@ class FunctionInputResolver(
         }
     }
 
+    private fun toTnmTs(input: Any): Set<TnmT>{
+        return toStringList(input).map(TnmT::valueOf).toSet()
+    }
+
     private fun toIntents(input: Any): Set<Intent> {
         return toStringList(input).map(::toIntent).toSet()
     }
@@ -969,12 +1002,31 @@ class FunctionInputResolver(
         return OneProteinOneInteger(proteinName = parameterAsString(function, 0), integer = (function.parameters[1] as String).toInt())
     }
 
+    fun createOneProteinOneGeneOneIntegerInput(function: EligibilityFunction): OneProteinOneGeneOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER, 3)
+        return OneProteinOneGeneOneInteger(
+            proteinName = parameterAsString(function, 0),
+            geneName = parameterAsGene(function, 1),
+            integer = parameterAsInt(function, 2)
+        )
+    }
+
+    fun createOneProteinOneGeneInput(function: EligibilityFunction): OneProteinOneGene {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_GENE, 2)
+        return OneProteinOneGene(proteinName = parameterAsString(function, 0), geneName = parameterAsGene(function, 1))
+    }
+
+    fun createOneProteinOneStringInput(function: EligibilityFunction): OneProteinOneString {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_STRING, 2)
+        return OneProteinOneString(proteinName = parameterAsString(function, 0), string = parameterAsString(function, 1))
+    }
+
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String
 
     private fun parameterAsInt(function: EligibilityFunction, i: Int) = parameterAsString(function, i).toInt()
 
-    private fun firstParameterAsGene(function: EligibilityFunction): String {
-        val gene = parameterAsString(function, 0)
+    private fun parameterAsGene(function: EligibilityFunction, i: Int): String {
+        val gene = parameterAsString(function, i)
         if (!molecularInputChecker.isGene(gene)) {
             throw IllegalStateException("Not a valid gene: $gene")
         }

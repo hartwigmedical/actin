@@ -10,24 +10,24 @@ class MolecularRecordAnnotatorTest {
     private val annotator = MolecularRecordAnnotator(TestEvidenceDatabaseFactory.createProperDatabase())
 
     @Test
-    fun `Should annotate molecular record with evidence for characteristics when they are provided`() {
-        val annotated = annotator.annotate(TestMolecularFactory.createProperTestOrangeRecord())
+    fun `Should retain characteristics during annotation that are originally present`() {
+        val annotated = annotator.annotate(TestMolecularFactory.createProperTestMolecularRecord())
         with(annotated.characteristics) {
-            assertThat(microsatelliteEvidence).isNotNull
-            assertThat(homologousRecombinationEvidence).isNotNull
-            assertThat(tumorMutationalBurdenEvidence).isNotNull
-            assertThat(tumorMutationalLoadEvidence).isNotNull
+            assertThat(microsatelliteStability?.evidence).isNotNull()
+            assertThat(homologousRecombination?.evidence).isNotNull()
+            assertThat(tumorMutationalBurden?.evidence).isNotNull()
+            assertThat(tumorMutationalLoad?.evidence).isNotNull()
         }
     }
 
     @Test
-    fun `Should not annotate molecular record with evidence for null characteristics`() {
-        val annotated = annotator.annotate(TestMolecularFactory.createMinimalTestOrangeRecord())
+    fun `Should not create characteristics during annotation that are originally missing`() {
+        val annotated = annotator.annotate(TestMolecularFactory.createMinimalTestMolecularRecord())
         with(annotated.characteristics) {
-            assertThat(microsatelliteEvidence).isNull()
-            assertThat(homologousRecombinationEvidence).isNull()
-            assertThat(tumorMutationalBurdenEvidence).isNull()
-            assertThat(tumorMutationalLoadEvidence).isNull()
+            assertThat(microsatelliteStability).isNull()
+            assertThat(homologousRecombination).isNull()
+            assertThat(tumorMutationalBurden).isNull()
+            assertThat(tumorMutationalLoad).isNull()
         }
     }
 }

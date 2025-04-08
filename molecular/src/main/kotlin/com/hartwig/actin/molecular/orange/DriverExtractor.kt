@@ -9,7 +9,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 import org.apache.logging.log4j.LogManager
 
-internal class DriverExtractor private constructor(
+class DriverExtractor private constructor(
     private val variantExtractor: VariantExtractor,
     private val copyNumberExtractor: CopyNumberExtractor,
     private val homozygousDisruptionExtractor: HomozygousDisruptionExtractor,

@@ -154,11 +154,24 @@ class TreatmentRankerTest {
     ) = TestPatientFactory.createProperTestPatientRecord().copy(
         molecularHistory = MolecularHistory(
             listOf(
-                TestMolecularFactory.createProperTestOrangeRecord().copy(
+                TestMolecularFactory.createExhaustiveTestMolecularRecord().copy(
                     drivers = Drivers(
-                        variants = variants.toList()
+                        variants = variants.toList(),
+                        copyNumbers = emptyList(),
+                        homozygousDisruptions = emptyList(),
+                        disruptions = emptyList(),
+                        fusions = emptyList(),
+                        viruses = emptyList()
                     ),
-                    characteristics = MolecularCharacteristics()
+                    characteristics = MolecularCharacteristics(
+                        homologousRecombination = null,
+                        purity = null,
+                        ploidy = null,
+                        predictedTumorOrigin = null,
+                        microsatelliteStability = null,
+                        tumorMutationalBurden = null,
+                        tumorMutationalLoad = null
+                    )
                 )
             )
         )

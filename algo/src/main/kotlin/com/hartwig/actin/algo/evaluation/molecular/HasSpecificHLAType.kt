@@ -17,7 +17,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
         )
         val immunology = molecular.immunology
         if (!immunology.isReliable) {
-            return EvaluationFactory.recoverableUndetermined("HLA typing unreliable")
+            return EvaluationFactory.undetermined("HLA typing unreliable")
         }
 
         val isMatch: (HlaAllele) -> Boolean = if (matchOnHlaGroup) {

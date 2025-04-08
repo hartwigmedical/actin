@@ -26,7 +26,7 @@ class CurrentlyGetsAnyCypInhibitingOrInducingMedication(private val selector: Me
             }
 
             plannedCypMedications.isNotEmpty() -> {
-                EvaluationFactory.recoverableWarn(
+                EvaluationFactory.warn(
                     "Planned CYP inhibiting or inducing medication (${concatLowercaseWithCommaAndAnd(plannedCypMedications)})"
                 )
             }

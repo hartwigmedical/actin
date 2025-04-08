@@ -23,7 +23,7 @@ class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSele
             }
 
             plannedQtMedication.isNotEmpty() -> {
-                EvaluationFactory.recoverableWarn(
+                EvaluationFactory.warn(
                     "Planned QT prolongating medication use (risk type): " + concatWithType(plannedQtMedication)
                 )
             }

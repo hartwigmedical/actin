@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
+import com.hartwig.actin.clinical.feed.emc.FeedRecord
+import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction.isActualQuestionnaire
 import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory.entryWithText
 import com.hartwig.actin.datamodel.clinical.TumorStage
@@ -8,6 +10,9 @@ import org.junit.Test
 import java.time.LocalDate
 
 class QuestionnaireExtractionTest {
+    private val today = LocalDate.now()
+    private val feedRecord: FeedRecord = TestFeedFactory.createProperTestFeedModel().read().single()
+
     @Test
     fun `Should be able to determine that questionnaire entry is a questionnaire`() {
         assertThat(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7()))).isTrue
@@ -59,7 +64,7 @@ class QuestionnaireExtractionTest {
         assertClinicalBeforeV1_5(questionnaire)
         val ihcTestResults = questionnaire.ihcTestResults
         assertThat(ihcTestResults!!).hasSize(1)
-        assertThat(ihcTestResults).contains("IHC ERBB2 3+")
+        assertThat(ihcTestResults).contains("positive for KRAS; p.G12D, CCND1, APC exon 16; TP53; p.D259Y")
         assertThat(questionnaire.pdl1TestResults).isNull()
     }
 
@@ -215,12 +220,77 @@ class QuestionnaireExtractionTest {
 
     @Test
     fun `Should extract from missing or invalid entry`() {
-        val nullEntry = QuestionnaireExtraction.extract(null)
+        val nullEntry = QuestionnaireExtraction.extract(emptyList())
         assertThat(nullEntry.first).isNull()
         assertThat(nullEntry.second).isEmpty()
-        val invalidEntry = QuestionnaireExtraction.extract(entryWithText("Does not exist"))
+        val invalidEntry = QuestionnaireExtraction.extract(listOf(entryWithText("Does not exist")))
         assertThat(invalidEntry.first).isNull()
         assertThat(invalidEntry.second).isEmpty()
+    }
+
+    @Test
+    fun `Should reject new empty questionnaire in favor of an old one`() {
+        val newInvalidEntry = entryWithText("Does not exist").copy(authored = today)
+        val newEmptyEntry =
+            entryWithText(
+                """
+                ACTIN Questionnaire V1.5
+                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
+                
+                Relevant patient history
+                Treatment history current tumor: 
+                Other oncological history (e.g. radiotherapy, surgery): 
+                Secondary primary: 
+                - Last date of active treatment: 
+                Non-oncological history: 
+                
+                Tumor details
+                Primary tumor location: 
+                Primary tumor type: 
+                Biopsy location: 
+                Stage: 
+                CNS lesions: 
+                -Active: 
+                Brain lesions: 
+                -Active: 
+                Bone lesions: 
+                Liver lesions: 
+                Other lesions (e.g. lymph node, pulmonal):
+                Measurable disease: 
+                
+                Previous Molecular tests
+                - IHC test results: 
+                - PD L1 test results:
+                
+                Clinical details
+                WHO status: 
+                Unresolved toxicities grade => 2: 
+                Significant current infection: 
+                Significant aberration on latest ECG: 
+                Cancer-related complications (e.g. pleural effusion):
+                """.trimIndent().replace("\n", "\\n")
+            ).copy(
+                authored = today
+            )
+        val oldValidEntry = TestQuestionnaireFactory.createTestQuestionnaireEntry().copy(
+            authored = today.minusDays(1),
+            text = TestQuestionnaireFactory.createTestQuestionnaireValueV1_7().replace("\n", "\\n")
+        )
+        val (extractedEntry, errors) = QuestionnaireExtraction.extract(listOf(newInvalidEntry, newEmptyEntry, oldValidEntry))
+        assertThat(extractedEntry).isNotNull
+        assertThat(extractedEntry?.hasActiveBrainLesions).isEqualTo(true)
+        assertThat(errors).isEmpty()
+    }
+
+    @Test
+    fun `Should be able to determine latest questionnaire`() {
+        val (latest, errors) = QuestionnaireExtraction.extract(feedRecord.questionnaireEntries.map {
+            val text = it.text
+            it.copy(text = text.replace("\n", "\\n"))
+        })
+        assertThat(latest).isNotNull()
+        assertThat(errors.isEmpty())
+        assertThat(latest!!.date).isEqualTo(LocalDate.of(2021, 8, 1))
     }
 
     companion object {
@@ -323,7 +393,7 @@ class QuestionnaireExtractionTest {
         }
 
         private fun questionnaire(text: String): Questionnaire {
-            return QuestionnaireExtraction.extract(entryWithText(text.replace("\n", "\\n"))).first!!
+            return QuestionnaireExtraction.extract(listOf(entryWithText(text.replace("\n", "\\n")))).first!!
         }
 
         private fun assertExtractionForQuestionnaireV1_5(rawQuestionnaire: String) {

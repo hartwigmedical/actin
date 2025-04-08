@@ -66,8 +66,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     private fun createTMLStatusString(): String? {
-        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
-        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
+        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad?.score
+        val hasHighTumorMutationalLoad = molecular.characteristics.tumorMutationalLoad?.isHigh
         return if (hasHighTumorMutationalLoad == null || tumorMutationalLoad == null) {
             null
         } else {
@@ -76,15 +76,15 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     private fun createTMLStatusCell(): Cell {
-        return createCellForCharacteristic(createTMLStatusString(), molecular.characteristics.hasHighTumorMutationalLoad)
+        return createCellForCharacteristic(createTMLStatusString(), molecular.characteristics.tumorMutationalLoad?.isHigh)
     }
 
     private fun createTMBStatusCell(): Cell {
         if (insufficientQuality()) {
             return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         }
-        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
-        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
+        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden?.score
+        val hasHighTumorMutationalBurden = molecular.characteristics.tumorMutationalBurden?.isHigh
         if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN)
         }
@@ -105,7 +105,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     private fun createMSStabilityCell(): Cell {
-        return createCellForCharacteristic(createMSStabilityString(), molecular.characteristics.isMicrosatelliteUnstable)
+        return createCellForCharacteristic(createMSStabilityString(), molecular.characteristics.microsatelliteStability?.isUnstable)
     }
 
     fun createHRStatusString(): String {
@@ -113,7 +113,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     private fun createHRStatusCell(): Cell {
-        return createCellForCharacteristic(createHRStatusString(), molecular.characteristics.isHomologousRecombinationDeficient)
+        return createCellForCharacteristic(createHRStatusString(), molecular.characteristics.homologousRecombination?.isDeficient)
     }
 
     private fun createCellForCharacteristic(summaryString: String?, shouldHighlight: Boolean?): Cell {

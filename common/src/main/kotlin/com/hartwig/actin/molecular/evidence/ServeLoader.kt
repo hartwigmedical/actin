@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.molecular.evidence.ServeCleaner.cleanServeDatabase
 import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
@@ -9,7 +10,7 @@ import com.hartwig.serve.datamodel.serialization.ServeJson
 object ServeLoader {
 
     fun loadServeDatabase(jsonFilePath: String): ServeDatabase {
-        val serveDatabase = ServeJson.read(jsonFilePath)
+        val serveDatabase = cleanServeDatabase(ServeJson.read(jsonFilePath))
 
         ServeVerifier.verifyServeDatabase(serveDatabase)
 

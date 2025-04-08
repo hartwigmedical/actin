@@ -6,6 +6,9 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
+import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
@@ -15,11 +18,11 @@ class EligibleExternalTrialsGenerator(
     private val width: Float,
     private val filteredCount: Int,
     private val homeCountry: Country? = null,
-    private val isFilteredTrialsTable: Boolean = true
+    private val isFilteredTrialsTable: Boolean
 ) : TableGenerator {
 
     override fun title() =
-        "${if (isFilteredTrialsTable) "" else "Filtered"} ${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
+        "${if (isFilteredTrialsTable) "Filtered" else ""} ${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
                 "recruiting ${homeCountry?.let { "locally in ${it.display()}" } ?: "internationally"} (${trials.size})"
 
     override fun contents(): Table {
@@ -58,7 +61,7 @@ class EligibleExternalTrialsGenerator(
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
-        if (filteredCount > 0 && isFilteredTrialsTable)
+        if (filteredCount > 0 && !isFilteredTrialsTable)
             table.addCell(
                 Cells.createSpanningSubNote(
                     homeCountry?.let {
@@ -72,5 +75,51 @@ class EligibleExternalTrialsGenerator(
             )
 
         return makeWrapping(table)
+    }
+
+    companion object {
+        fun provideExternalTrialsGenerators(
+            trialsProvider: TrialsProvider, contentWidth: Float, homeCountry: Country?, isFilteredTrialsTable: Boolean
+        ): Pair<TableGenerator?, TableGenerator?> {
+            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
+            val allEvidenceSources = trialsProvider.allEvidenceSources()
+            return Pair(
+                provideExternalTrialsGenerator(
+                    allEvidenceSources,
+                    summarizedExternalTrials.nationalTrials,
+                    contentWidth,
+                    homeCountry,
+                    isFilteredTrialsTable
+                ),
+                provideExternalTrialsGenerator(
+                    allEvidenceSources,
+                    summarizedExternalTrials.internationalTrials,
+                    contentWidth,
+                    null,
+                    isFilteredTrialsTable
+                )
+            )
+        }
+
+        private fun provideExternalTrialsGenerator(
+            allEvidenceSources: Set<String>,
+            molecularFilteredTrials: MolecularFilteredExternalTrials,
+            contentWidth: Float,
+            homeCountry: Country?,
+            isFilteredTrialsTable: Boolean
+        ): TableGenerator? {
+            val hasTrials = if (isFilteredTrialsTable) molecularFilteredTrials.originalMinusFiltered().isNotEmpty() else molecularFilteredTrials.isNotEmpty()
+            val trials = if (isFilteredTrialsTable) molecularFilteredTrials.originalMinusFiltered() else molecularFilteredTrials.filtered
+            return if (hasTrials) {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    trials,
+                    contentWidth,
+                    molecularFilteredTrials.originalMinusFilteredSize(),
+                    homeCountry,
+                    isFilteredTrialsTable
+                )
+            } else null
+        }
     }
 }

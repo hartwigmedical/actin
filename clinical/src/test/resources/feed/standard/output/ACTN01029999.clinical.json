@@ -199,7 +199,7 @@
   "priorSequencingTests": [
     {
       "test": "Archer FP Lung Target",
-      "noMutationGenes": [
+      "testedGenes": [
         "ALK",
         "ROS1",
         "RET",
@@ -207,7 +207,8 @@
         "NTRK1",
         "NTRK2",
         "NTRK3",
-        "NRG1"
+        "NRG1",
+        "KRAS"
       ],
       "date": {
         "year": 2024,
@@ -353,91 +354,5 @@
       "product": "Erytrocytes Filtered"
     }
   ],
-  "medications": [
-    {
-      "name": "METOCLOPRAMIDE TABLET 10MG",
-      "status": null,
-      "administrationRoute": "oraal",
-      "dosage": {
-        "dosageMin": 3.5,
-        "dosageMax": 3.5,
-        "dosageUnit": "piece",
-        "frequency": 3.5,
-        "frequencyUnit": "day",
-        "periodBetweenValue": 3.5,
-        "periodBetweenUnit": null,
-        "ifNeeded": true
-      },
-      "startDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "drug": null,
-      "cypInteractions": [],
-      "transporterInteractions": [],
-      "qtProlongatingRisk": "NONE",
-      "atc": null,
-      "isSelfCare": true,
-      "isTrialMedication": true
-    },
-    {
-      "name": "paracetamol",
-      "status": null,
-      "administrationRoute": "oraal",
-      "dosage": {
-        "dosageMin": 3.5,
-        "dosageMax": 3.5,
-        "dosageUnit": "mg",
-        "frequency": 3.5,
-        "frequencyUnit": "day",
-        "periodBetweenValue": 3.5,
-        "periodBetweenUnit": null,
-        "ifNeeded": true
-      },
-      "startDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "drug": null,
-      "cypInteractions": [],
-      "transporterInteractions": [],
-      "qtProlongatingRisk": "NONE",
-      "atc": {
-        "anatomicalMainGroup": {
-          "code": "N",
-          "name": "NERVOUS SYSTEM"
-        },
-        "therapeuticSubGroup": {
-          "code": "N02",
-          "name": "ANALGESICS"
-        },
-        "pharmacologicalSubGroup": {
-          "code": "N02B",
-          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
-        },
-        "chemicalSubGroup": {
-          "code": "N02BE",
-          "name": "Anilides"
-        },
-        "chemicalSubstance": {
-          "code": "N02BE01",
-          "name": "paracetamol"
-        }
-      },
-      "isSelfCare": false,
-      "isTrialMedication": false
-    }
-  ]
+  "medications": null
 }

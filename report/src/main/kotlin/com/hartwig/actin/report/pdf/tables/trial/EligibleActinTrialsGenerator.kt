@@ -1,12 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.createTableTitleStart
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
 
 class EligibleActinTrialsGenerator(
@@ -18,7 +18,7 @@ class EligibleActinTrialsGenerator(
     private val molecularEventColWidth: Float,
     private val locationColWidth: Float?,
     private val checksColWidth: Float
-) : TableGenerator {
+) : ActinTrialsGenerator {
 
     private val includeLocation = locationColWidth != null
 
@@ -53,17 +53,16 @@ class EligibleActinTrialsGenerator(
         return makeWrapping(table)
     }
 
-    fun getCohortSize(): Int {
+    override fun getCohortSize(): Int {
         return cohorts.size
     }
 
     companion object {
+
         fun forOpenCohorts(
             cohorts: List<InterpretedCohort>, source: String?, width: Float, slotsAvailable: Boolean, includeLocation: Boolean = false
-        ): Pair<EligibleActinTrialsGenerator, List<InterpretedCohort>> {
-            val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
-            }
+        ): EligibleActinTrialsGenerator {
+            val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts, slotsAvailable)
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
@@ -75,7 +74,7 @@ class EligibleActinTrialsGenerator(
 
             val title = "${createTableTitleStart(source)} that are open and potentially eligible$slotsText $cohortFromTrialsText"
 
-            return create(recruitingAndEligibleCohorts, title, width, null, includeLocation) to recruitingAndEligibleCohorts
+            return create(recruitingAndEligibleCohorts, title, width, null, includeLocation)
         }
 
         fun forOpenCohortsWithMissingMolecularResultsForEvaluation(

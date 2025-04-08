@@ -1,9 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationRequirement
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationResult
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
@@ -14,12 +11,12 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfus
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
@@ -28,6 +25,9 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunction
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationRequirement
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.icd.TestIcdFactory
@@ -98,7 +98,22 @@ class StandardDataIngestionTest {
             bodyHeightExtractor = StandardBodyHeightExtractor(),
             ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
             sequencingTestExtractor = StandardPriorSequencingTestExtractor(curationDatabase.sequencingTestCuration),
-            dataQualityMask = DataQualityMask()
+            dataQualityMask = DataQualityMask(
+                PanelGeneList(
+                    mapOf(
+                        Regex("archer") to listOf(
+                            "ALK",
+                            "ROS1",
+                            "RET",
+                            "MET",
+                            "NTRK1",
+                            "NTRK2",
+                            "NTRK3",
+                            "NRG1"
+                        )
+                    )
+                )
+            )
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
@@ -108,7 +123,7 @@ class StandardDataIngestionTest {
         assertThat(result.size).isEqualTo(1)
         val patientResult = result.first()
         assertThat(patientResult.first).isEqualTo(expected)
-        assertThat(patientResult.second.status).isEqualTo(PatientIngestionStatus.WARN_CURATION_REQUIRED)
+        assertThat(patientResult.second.status).isEqualTo(PatientIngestionStatus.WARN)
         assertThat(patientResult.second.curationResults).containsExactlyInAnyOrder(
             CurationResult(
                 category = CurationCategory.NON_ONCOLOGICAL_HISTORY,
