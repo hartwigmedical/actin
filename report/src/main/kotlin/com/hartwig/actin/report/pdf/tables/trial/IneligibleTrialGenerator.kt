@@ -11,7 +11,7 @@ import com.itextpdf.layout.element.Table
 private const val SMALL_PADDING_DISTANCE = 0.1f
 private const val NORMAL_PADDING_DISTANCE = 1f
 
-class IneligibleTrialTableGenerator(
+class IneligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val requestingSource: TrialSource?,
     private val title: String,
@@ -29,8 +29,8 @@ class IneligibleTrialTableGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
-        val subTableHeaders = sequenceOf("Cohort", "Molecular", "Sites", "Ineligibility reasons".takeIf { includeIneligibilityReasonCol })
-            .filterNotNull()
+        val subTableHeaders =
+            listOfNotNull("Cohort", "Molecular", "Sites", "Ineligibility reasons".takeIf { includeIneligibilityReasonCol })
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val subTable = Tables.createFixedWidthCols(*subTableWidths)
@@ -62,13 +62,13 @@ class IneligibleTrialTableGenerator(
     companion object {
         fun forEvaluableCohorts(
             cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, width: Float, openOnly: Boolean = false
-        ): IneligibleTrialTableGenerator {
+        ): IneligibleTrialGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
             val (trialColWidth, subTableWidths) = getColumnWidths(width, true)
             val title =
                 "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
             val footNote = if (!openOnly) "Closed cohorts are shown in grey." else null
-            return IneligibleTrialTableGenerator(
+            return IneligibleTrialGenerator(
                 ineligibleCohorts,
                 requestingSource,
                 title,
@@ -86,12 +86,12 @@ class IneligibleTrialTableGenerator(
             nonEvaluableCohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?,
             width: Float,
-        ): IneligibleTrialTableGenerator {
+        ): IneligibleTrialGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
             val (trialColWidth, subTableWidths) = getColumnWidths(width, false)
             val title =
                 "Trials and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
-            return IneligibleTrialTableGenerator(
+            return IneligibleTrialGenerator(
                 nonEvaluableAndIgnoredCohorts,
                 requestingSource,
                 title,

@@ -59,8 +59,7 @@ class ExternalTrialFunctionsTest {
                         Hospital("VUmc", false),
                         Hospital("OLVG", false),
                         Hospital("BovenIJ", false)
-                    ),
-                    "Groningen" to setOf(Hospital("Martini", false), Hospital("UMCG", false), Hospital("Ommelander", false))
+                    )
                 )
             )
         )
@@ -81,7 +80,7 @@ class ExternalTrialFunctionsTest {
             Country.BELGIUM
         )
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo(">3 locations - please check link")
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo(">3 locations - please check link")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
         assertThat(hospitalsAndCitiesExternalTrialBelgium.first).isEqualTo("Brussels hospital")
@@ -100,7 +99,7 @@ class ExternalTrialFunctionsTest {
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialBelgium))
             .isEqualTo("Belgium (>3 locations - please check link)")
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlands))
-            .isEqualTo("The Netherlands (Nijmegen, Leiden, Amsterdam, Groningen)")
+            .isEqualTo("The Netherlands (Nijmegen, Leiden, Amsterdam)")
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)

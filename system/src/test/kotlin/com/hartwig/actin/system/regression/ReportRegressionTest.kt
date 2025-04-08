@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 import java.time.LocalDate
-import java.util.*
+import java.util.Locale
 
 @RunWith(Parameterized::class)
 class ReportRegressionTest(private val exampleName: String) {

@@ -5,8 +5,8 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialTableGenerator
-import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialTableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.TrialsProvider
@@ -48,7 +48,7 @@ class TrialMatchingChapter(
         val localTrialGenerators = createTrialTableGenerators(
             trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
         )
-        val localExternalTrialGenerator = EligibleTrialTableGenerator.forOpenCohorts(
+        val localExternalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             externalTrials.nationalTrials.filtered,
             externalTrials.excludedNationalTrials().size,
@@ -56,7 +56,7 @@ class TrialMatchingChapter(
             homeCountry,
             contentWidth()
         ).takeIf { externalTrialsOnly }
-        val nonLocalTrialGenerator = EligibleTrialTableGenerator.forOpenCohorts(
+        val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             externalTrials.internationalTrials.filtered,
             externalTrials.excludedInternationalTrials().size,
@@ -65,7 +65,7 @@ class TrialMatchingChapter(
             contentWidth(),
             false
         ).takeIf { externalTrialsOnly }
-        val filteredTrialGenerator = EligibleTrialTableGenerator.forFilteredTrials(
+        val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(
             externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials(),
             homeCountry,
             contentWidth()
@@ -81,11 +81,11 @@ class TrialMatchingChapter(
     ): List<TrialTableGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
 
-        val eligibleActinTrialsClosedCohortsGenerator = EligibleTrialTableGenerator.forClosedCohorts(
+        val eligibleActinTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(
             nonIgnoredCohorts, source, contentWidth()
         )
-        val ineligibleActinTrialsGenerator = IneligibleTrialTableGenerator.forEvaluableCohorts(nonIgnoredCohorts, source, contentWidth())
-        val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialTableGenerator.forNonEvaluableAndIgnoredCohorts(
+        val ineligibleActinTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source, contentWidth())
+        val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialGenerator.forNonEvaluableAndIgnoredCohorts(
             ignoredCohorts, nonEvaluableCohorts, source, contentWidth()
         )
 

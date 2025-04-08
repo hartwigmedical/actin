@@ -25,8 +25,8 @@ import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialTableGenerator
-import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialTableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import junit.framework.TestCase.assertEquals
 import org.assertj.core.api.Assertions.assertThat
@@ -43,15 +43,15 @@ class ReportContentProviderTest {
     @Test
     fun `Should match total cohort size between report and input`() {
         val report = TestReportFactory.createExhaustiveTestReport()
-        val eligibleTrialTableGenerators = ReportContentProvider(report).provideSummaryTables(
+        val eligibleTrialGenerators = ReportContentProvider(report).provideSummaryTables(
             KEY_WIDTH,
             VALUE_WIDTH,
             CONTENT_WIDTH,
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        ).filterIsInstance<EligibleTrialTableGenerator>()
+        ).filterIsInstance<EligibleTrialGenerator>()
 
-        assertThat(eligibleTrialTableGenerators).hasSize(2)
-        assertReportCohortSizeMatchesInput(report, eligibleTrialTableGenerators)
+        assertThat(eligibleTrialGenerators).hasSize(2)
+        assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
     }
 
     @Test
@@ -62,15 +62,15 @@ class ReportContentProviderTest {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch1, trialMatch2))
         )
-        val eligibleTrialTableGenerators = ReportContentProvider(report).provideSummaryTables(
+        val eligibleTrialGenerators = ReportContentProvider(report).provideSummaryTables(
             KEY_WIDTH,
             VALUE_WIDTH,
             CONTENT_WIDTH,
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        ).filterIsInstance<EligibleTrialTableGenerator>()
+        ).filterIsInstance<EligibleTrialGenerator>()
 
-        assertThat(eligibleTrialTableGenerators).hasSize(2)
-        assertReportCohortSizeMatchesInput(report, eligibleTrialTableGenerators)
+        assertThat(eligibleTrialGenerators).hasSize(2)
+        assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
     }
 
     @Test
@@ -170,8 +170,8 @@ class ReportContentProviderTest {
             PatientClinicalHistoryGenerator::class,
             MolecularSummaryGenerator::class,
             EligibleApprovedTreatmentGenerator::class,
-            EligibleTrialTableGenerator::class,
-            EligibleTrialTableGenerator::class
+            EligibleTrialGenerator::class,
+            EligibleTrialGenerator::class
         )
     }
 
@@ -185,7 +185,7 @@ class ReportContentProviderTest {
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
             EligibleApprovedTreatmentGenerator::class,
-            EligibleTrialTableGenerator::class
+            EligibleTrialGenerator::class
         )
     }
 
@@ -200,19 +200,19 @@ class ReportContentProviderTest {
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryWithOverviewGenerator::class,
             SOCEligibleApprovedTreatmentGenerator::class,
-            EligibleTrialTableGenerator::class,
-            EligibleTrialTableGenerator::class,
-            IneligibleTrialTableGenerator::class
+            EligibleTrialGenerator::class,
+            EligibleTrialGenerator::class,
+            IneligibleTrialGenerator::class
         )
     }
 
-    private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialTableGenerators: List<EligibleTrialTableGenerator>) {
+    private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
         val trialMatchingChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
         val generators = trialMatchingChapter.getGenerators()
         val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
         
         val totalCohortSizeOnReport =
-            eligibleTrialTableGenerators.sumOf { it.getCohortSize() } + trialTableGenerators.sumOf { it.getCohortSize() }
+            eligibleTrialGenerators.sumOf { it.getCohortSize() } + trialTableGenerators.sumOf { it.getCohortSize() }
         val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
 
         assertEquals(totalCohortSizeOnReport, totalCohortSizeInput)

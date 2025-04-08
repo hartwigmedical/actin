@@ -64,8 +64,8 @@ object TrialGeneratorFunctions {
 
     private fun externalTrialLocation(trial: ExternalTrialSummary, homeCountry: Country?): String {
         return homeCountry?.let {
-            val hospitalsToCities = hospitalsAndCitiesInCountry(trial, it)
-            if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
+            val (hospitals, cities) = hospitalsAndCitiesInCountry(trial, it)
+            if (homeCountry == Country.NETHERLANDS && hospitals != MANY_PLEASE_CHECK_LINK) hospitals else cities
         } ?: countryNamesWithCities(trial)
     }
 

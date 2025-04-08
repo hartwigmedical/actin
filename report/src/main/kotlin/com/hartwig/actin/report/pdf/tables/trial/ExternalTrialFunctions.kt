@@ -1,9 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 
-private const val MANY_PLEASE_CHECK_LINK = ">3 locations - please check link"
+private const val MAX_TO_DISPLAY = 3
+const val MANY_PLEASE_CHECK_LINK = ">3 locations - please check link"
 
 object ExternalTrialFunctions {
 
@@ -16,21 +18,16 @@ object ExternalTrialFunctions {
                         "This should not be possible and indicates an issue in the SERVE data export"
             )
         } else {
-            val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
-            val cities = homeCountries.first().hospitalsPerCity.keys
-            val hospitalsString = if (hospitals.size > 3) {
-                MANY_PLEASE_CHECK_LINK
-            } else hospitals.joinToString { it.name }
-            val citiesString = if (cities.size > 3) {
-                MANY_PLEASE_CHECK_LINK
-            } else cities.joinToString { it }
-            Pair(hospitalsString, citiesString)
+            val (cities, hospitals) = homeCountries.first().hospitalsPerCity
+                .let { listOf(it.keys, it.values.flatten().map(Hospital::name)) }
+                .map { if (it.size > MAX_TO_DISPLAY) MANY_PLEASE_CHECK_LINK else it.joinToString() }
+            hospitals to cities
         }
     }
 
     fun countryNamesWithCities(externalTrial: ExternalTrialSummary): String {
         return externalTrial.countries.joinToString { country ->
-            val cities = if (country.hospitalsPerCity.keys.size > 8) {
+            val cities = if (country.hospitalsPerCity.keys.size > MAX_TO_DISPLAY) {
                 MANY_PLEASE_CHECK_LINK
             } else {
                 country.hospitalsPerCity.keys.joinToString(", ")
