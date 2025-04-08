@@ -40,7 +40,7 @@ class TrialsProvider(
 ) {
 
     private val cohorts: List<InterpretedCohort> = InterpretedCohortFactory.createEvaluableCohorts(
-        treatmentMatch, 
+        treatmentMatch,
         filterOnSOCExhaustionAndTumorType
     )
     private val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
