@@ -435,7 +435,9 @@
                         "day": 1
                       },
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false
+                      "isCategoryEvent": false,
+                      "evidenceType": null,
+                      "sourceUrls": []
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -462,7 +464,9 @@
                         "day": 1
                       },
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false
+                      "isCategoryEvent": false,
+                      "evidenceType": null,
+                      "sourceUrls": []
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -493,7 +497,9 @@
                           "day": 1
                         },
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "evidenceType": null,
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [
@@ -525,7 +531,8 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl"
+                    "url": "https://hartwigmedicalfoundation.nl",
+                    "therapyNames": []
                   },
                   {
                     "nctId": "NCT00000007",
@@ -538,7 +545,9 @@
                           "day": 1
                         },
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "evidenceType": null,
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [
@@ -559,7 +568,8 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl"
+                    "url": "https://hartwigmedicalfoundation.nl",
+                    "therapyNames": []
                   }
                 ]
               },
@@ -610,7 +620,9 @@
                         "day": 1
                       },
                       "sourceEvent": "EGFR C797S",
-                      "isCategoryEvent": false
+                      "isCategoryEvent": false,
+                      "evidenceType": null,
+                      "sourceUrls": []
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -641,7 +653,9 @@
                           "day": 1
                         },
                         "sourceEvent": "EGFR C797S",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "evidenceType": null,
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [
@@ -673,7 +687,8 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl"
+                    "url": "https://hartwigmedicalfoundation.nl",
+                    "therapyNames": []
                   }
                 ]
               },
@@ -767,7 +782,9 @@
                           "day": 1
                         },
                         "sourceEvent": "KRAS G12C",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "evidenceType": null,
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [
@@ -788,7 +805,8 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl"
+                    "url": "https://hartwigmedicalfoundation.nl",
+                    "therapyNames": []
                   }
                 ]
               },
