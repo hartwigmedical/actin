@@ -31,14 +31,15 @@ class EligibleTrialTableGenerator(
     }
 
     override fun contents(): Table {
-        val subTableWidths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, (checksColWidth ?: 0f)).toFloatArray()
+        val checksCol = if (cohorts.isEmpty()) null else checksColWidth
+        val subTableWidths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, checksCol).toFloatArray()
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
-        val headers = sequenceOf("Trial", "Cohort", "Molecular", "Sites", "Warnings".takeIf { cohorts.isNotEmpty() }).filterNotNull()
+        val subTableHeaders = sequenceOf("Cohort", "Molecular", "Sites", "Warnings".takeIf { cohorts.isNotEmpty() }).filterNotNull()
         if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
-            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader(headers.first())))
-            val headerSubTable = Tables.createFixedWidthCols(*subTableWidths)
-            headers.drop(1).map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
-            table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
+            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
+            val subTable = Tables.createFixedWidthCols(*subTableWidths)
+            subTableHeaders.map(Cells::createHeader).forEach(subTable::addHeaderCell)
+            table.addHeaderCell(Cells.createContentNoBorder(subTable))
         }
         addTrialsToTable(
             cohorts = cohorts,
@@ -140,7 +141,7 @@ class EligibleTrialTableGenerator(
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title =
                 "Trials and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
-            return create(unavailableAndEligible, emptySet(), requestingSource, null, title, contentWidth, null, false)
+            return create(unavailableAndEligible, emptySet(), requestingSource, null, title, contentWidth, null, allowDeEmphasis = false)
         }
 
         fun forFilteredTrials(trials: Set<ExternalTrialSummary>, homeCountry: Country, contentWidth: Float
