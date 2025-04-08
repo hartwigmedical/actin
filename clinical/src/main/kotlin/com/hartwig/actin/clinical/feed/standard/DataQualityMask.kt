@@ -11,20 +11,15 @@ private fun ProvidedPatientRecord.scrubModifications() =
 private fun ProvidedPatientRecord.scrubMedications() =
     this.copy(medications = null)
 
-private fun ProvidedPatientRecord.useOnlyPriorOtherConditions(clinicalConfiguration: ClinicalConfiguration) =
-    if (clinicalConfiguration.useOnlyPriorOtherConditions) {
-        this.copy(
-            treatmentHistory = emptyList(),
-            complications = emptyList(),
-            surgeries = emptyList(),
-            toxicities = emptyList(),
-            priorPrimaries = emptyList(),
-            allergies = emptyList(),
-            tumorDetails = this.tumorDetails.copy(diagnosisDate = null, lesionSite = null, lesions = emptyList())
-        )
-    } else {
-        this
-    }
+private fun ProvidedPatientRecord.useOnlyPriorOtherConditions() = this.copy(
+    treatmentHistory = emptyList(),
+    complications = emptyList(),
+    surgeries = emptyList(),
+    toxicities = emptyList(),
+    priorPrimaries = emptyList(),
+    allergies = emptyList(),
+    tumorDetails = this.tumorDetails.copy(diagnosisDate = null, lesionSite = null, lesions = emptyList())
+)
 
 private fun ProvidedPatientRecord.addAlwaysTestedGenes(panelGeneList: PanelGeneList) =
     this.copy(molecularTests = this.molecularTests.map {
