@@ -21,7 +21,8 @@ object TestExternalTrialFactory {
         countries: Set<CountryDetails> = emptySet(),
         molecularMatches: Set<MolecularMatchDetails> = emptySet(),
         applicableCancerTypes: Set<CancerType> = emptySet(),
-        url: String = ""
+        url: String = "",
+        therapyNames: Set<String> = emptySet()
     ): ExternalTrial {
         return ExternalTrial(
             nctId = nctId,
@@ -30,7 +31,8 @@ object TestExternalTrialFactory {
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            url = url
+            url = url,
+            therapyNames = therapyNames
         )
     }
 }
