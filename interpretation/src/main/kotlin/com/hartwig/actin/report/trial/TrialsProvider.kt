@@ -12,7 +12,9 @@ class MolecularFilteredExternalTrials(
     private val original: Set<ExternalTrialSummary>,
     val filtered: Set<ExternalTrialSummary>
 ) {
+
     fun isNotEmpty() = original.isNotEmpty()
+
     fun originalMinusFiltered() = original - filtered
 }
 
@@ -23,7 +25,9 @@ class SummarizedExternalTrials(
     fun allFiltered(): Set<ExternalTrialSummary> {
         return nationalTrials.filtered + internationalTrials.filtered
     }
+
     fun excludedNationalTrials() = nationalTrials.originalMinusFiltered()
+
     fun excludedInternationalTrials() = internationalTrials.originalMinusFiltered()
 }
 
@@ -34,8 +38,9 @@ class TrialsProvider(
     private val enableExtendedMode: Boolean,
     filterOnSOCExhaustionAndTumorType: Boolean
 ) {
+
     private val cohorts: List<InterpretedCohort> = InterpretedCohortFactory.createEvaluableCohorts(
-        treatmentMatch,
+        treatmentMatch, 
         filterOnSOCExhaustionAndTumorType
     )
     private val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
