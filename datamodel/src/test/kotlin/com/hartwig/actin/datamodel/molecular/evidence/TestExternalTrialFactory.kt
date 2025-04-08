@@ -17,6 +17,7 @@ object TestExternalTrialFactory {
     fun create(
         nctId: String = "",
         title: String = "",
+        acronym: String? = null,
         countries: Set<CountryDetails> = emptySet(),
         molecularMatches: Set<MolecularMatchDetails> = emptySet(),
         applicableCancerTypes: Set<CancerType> = emptySet(),
@@ -25,6 +26,7 @@ object TestExternalTrialFactory {
         return ExternalTrial(
             nctId = nctId,
             title = title,
+            acronym = acronym,
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,

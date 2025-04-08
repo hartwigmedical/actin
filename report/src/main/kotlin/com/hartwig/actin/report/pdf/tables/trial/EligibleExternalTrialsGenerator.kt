@@ -6,6 +6,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
@@ -81,19 +82,19 @@ class EligibleExternalTrialsGenerator(
         fun provideExternalTrialsGenerators(
             trialsProvider: TrialsProvider, contentWidth: Float, homeCountry: Country?, isFilteredTrialsTable: Boolean
         ): Pair<TableGenerator?, TableGenerator?> {
-            val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
+            val externalTrials = trialsProvider.externalTrials()
             val allEvidenceSources = trialsProvider.allEvidenceSources()
             return Pair(
                 provideExternalTrialsGenerator(
                     allEvidenceSources,
-                    summarizedExternalTrials.nationalTrials,
+                    externalTrials.nationalTrials,
                     contentWidth,
                     homeCountry,
                     isFilteredTrialsTable
                 ),
                 provideExternalTrialsGenerator(
                     allEvidenceSources,
-                    summarizedExternalTrials.internationalTrials,
+                    externalTrials.internationalTrials,
                     contentWidth,
                     null,
                     isFilteredTrialsTable
@@ -113,7 +114,7 @@ class EligibleExternalTrialsGenerator(
             return if (hasTrials) {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,
-                    trials,
+                    ExternalTrialSummarizer.summarize(trials),
                     contentWidth,
                     molecularFilteredTrials.originalMinusFilteredSize(),
                     homeCountry,

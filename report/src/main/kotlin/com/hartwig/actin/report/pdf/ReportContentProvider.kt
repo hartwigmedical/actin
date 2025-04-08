@@ -32,6 +32,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
+import com.hartwig.actin.report.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.apache.logging.log4j.LogManager
 
@@ -63,7 +64,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }
         }
 
-        val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
+        val externalTrials = trialsProvider.externalTrials()
 
         return listOf(
             SummaryChapter(report, this, trialsProvider.evaluableCohortsAndNotIgnore()),
@@ -76,7 +77,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 report.config.includeMolecularDetailsChapter,
                 report.config.includeRawPathologyReport,
-                summarizedExternalTrials.allFiltered()
+                ExternalTrialSummarizer.summarize(externalTrials.allFiltered())
             ),
             LongitudinalMolecularHistoryChapter(
                 report,

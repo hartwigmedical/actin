@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -58,6 +59,7 @@ class ClinicalEvidenceFactoryTest {
                 sourceDate = BASE_ACTIONABLE_EVENT.sourceDate(),
                 sourceEvent = BASE_ACTIONABLE_EVENT.sourceEvent(),
                 isCategoryEvent = false,
+                evidenceType = EvidenceType.HOTSPOT_MUTATION,
                 matchedCancerType = "on-label type",
                 excludedCancerSubTypes = setOf("excluded 1", "excluded 2"),
                 evidenceLevel = EvidenceLevel.D,
@@ -97,6 +99,7 @@ class ClinicalEvidenceFactoryTest {
                 sourceDate = BASE_ACTIONABLE_EVENT.sourceDate(),
                 sourceEvent = BASE_ACTIONABLE_EVENT.sourceEvent(),
                 isCategoryEvent = true,
+                evidenceType = EvidenceType.CODON_MUTATION,
                 matchedCancerType = "off-label type",
                 excludedCancerSubTypes = emptySet(),
                 evidenceLevel = EvidenceLevel.B,
@@ -151,7 +154,8 @@ class ClinicalEvidenceFactoryTest {
         val expectedClinicalEvidence = TestClinicalEvidenceFactory.withEligibleTrial(
             TestExternalTrialFactory.create(
                 nctId = "NCT00000001",
-                title = "test trial acronym",
+                title = "test trial",
+                acronym = "test trial acronym",
                 countries = setOf(
                     CountryDetails(
                         country = Country.NETHERLANDS,
@@ -168,12 +172,16 @@ class ClinicalEvidenceFactoryTest {
                     MolecularMatchDetails(
                         sourceDate = LocalDate.of(2022, 1, 1),
                         sourceEvent = "event 1",
-                        isCategoryEvent = false
+                        isCategoryEvent = false,
+                        evidenceType = EvidenceType.HOTSPOT_MUTATION,
+                        sourceUrls = emptySet()
                     ),
                     MolecularMatchDetails(
                         sourceDate = LocalDate.of(2023, 1, 1),
                         sourceEvent = "event 2",
-                        isCategoryEvent = false
+                        isCategoryEvent = false,
+                        evidenceType = EvidenceType.HOTSPOT_MUTATION,
+                        sourceUrls = emptySet()
                     ),
                 ),
                 applicableCancerTypes = setOf(
@@ -220,7 +228,7 @@ class ClinicalEvidenceFactoryTest {
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000001",
                     molecularMatches = setOf(
-                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 1", isCategoryEvent = false),
+                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 1", isCategoryEvent = false, evidenceType = EvidenceType.HOTSPOT_MUTATION, sourceUrls = emptySet()),
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 1", excludedCancerSubTypes = emptySet()),
@@ -230,7 +238,7 @@ class ClinicalEvidenceFactoryTest {
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000002",
                     molecularMatches = setOf(
-                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 2", isCategoryEvent = false)
+                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 2", isCategoryEvent = false, evidenceType = EvidenceType.HOTSPOT_MUTATION, sourceUrls = emptySet())
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 2", excludedCancerSubTypes = emptySet())
