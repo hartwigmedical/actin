@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.hartwig.actin.configuration.ClinicalConfiguration
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 
@@ -9,6 +10,21 @@ private fun ProvidedPatientRecord.scrubModifications() =
 
 private fun ProvidedPatientRecord.scrubMedications() =
     this.copy(medications = null)
+
+private fun ProvidedPatientRecord.useOnlyPriorOtherConditions(clinicalConfiguration: ClinicalConfiguration) =
+    if (clinicalConfiguration.useOnlyPriorOtherConditions) {
+        this.copy(
+            treatmentHistory = emptyList(),
+            complications = emptyList(),
+            surgeries = emptyList(),
+            toxicities = emptyList(),
+            priorPrimaries = emptyList(),
+            allergies = emptyList(),
+            tumorDetails = this.tumorDetails.copy(diagnosisDate = null, lesionSite = null, lesions = emptyList())
+        )
+    } else {
+        this
+    }
 
 private fun ProvidedPatientRecord.addAlwaysTestedGenes(panelGeneList: PanelGeneList) =
     this.copy(molecularTests = this.molecularTests.map {
@@ -44,9 +60,12 @@ fun ProvidedMolecularTestResult.isAllFieldsExceptGeneNull(): Boolean {
             this.vaf == null
 }
 
-class DataQualityMask(private val panelGeneList: PanelGeneList) {
+class DataQualityMask(private val panelGeneList: PanelGeneList, private val clinicalConfiguration: ClinicalConfiguration) {
     fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
-        return ehrPatientRecord.scrubMedications().scrubModifications().addAlwaysTestedGenes(panelGeneList)
+        return ehrPatientRecord.scrubMedications()
+            .scrubModifications()
+            .addAlwaysTestedGenes(panelGeneList)
             .removeAllEmptyMolecularTestResults()
+            .useOnlyPriorOtherConditions(clinicalConfiguration)
     }
 } 
