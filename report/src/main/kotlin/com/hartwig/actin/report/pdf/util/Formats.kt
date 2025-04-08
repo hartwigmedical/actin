@@ -53,8 +53,7 @@ object Formats {
     fun daysToMonths(number: Double): String {
         return singleDigitNumber(number / 30.44)
     }
-
-    @JvmOverloads
+    
     fun date(date: LocalDate?, fallback: String = DATE_UNKNOWN): String {
         return if (date != null) DATE_FORMAT.format(date) else fallback
     }
