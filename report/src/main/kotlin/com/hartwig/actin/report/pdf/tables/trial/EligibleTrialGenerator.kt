@@ -87,8 +87,9 @@ class EligibleTrialGenerator(
                     "Open cohorts with no slots available are shown in grey.",
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { externalTrials.isNotEmpty() },
-                    "${formatCountWithLabel(filteredCount, "trial")} filtered due to eligible local trials for the same molecular target or because the trial is for young adult patients only."
-                        .takeIf { filteredCount > 0 }
+                    "${formatCountWithLabel(filteredCount, "trial")} filtered due to eligible local trials for the same molecular " +
+                            "target or because the trial is for young adult patients only."
+                                .takeIf { filteredCount > 0 }
                 ).joinToString("\n")
             } else "International trials are matched solely on molecular event and tumor type (clinical data excluded)."
 
@@ -113,9 +114,9 @@ class EligibleTrialGenerator(
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
-                    val numCohorts = formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")
-                    val numTrials = formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")
-                    "($numCohorts from $numTrials)"
+                val numCohorts = formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")
+                val numTrials = formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")
+                "($numCohorts from $numTrials)"
             } else "(0)"
 
             val title = "Trials that are open but additional molecular tests needed to evaluate eligibility $cohortFromTrialsText"
