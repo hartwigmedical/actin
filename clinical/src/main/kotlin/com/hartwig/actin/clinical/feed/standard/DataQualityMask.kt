@@ -57,12 +57,12 @@ fun ProvidedMolecularTestResult.isAllFieldsExceptGeneNull(): Boolean {
 
 class DataQualityMask(private val panelGeneList: PanelGeneList, private val clinicalConfiguration: ClinicalConfiguration) {
     fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
-        return ehrPatientRecord.scrubMedications()
+        val masked = ehrPatientRecord.scrubMedications()
             .scrubModifications()
             .addAlwaysTestedGenes(panelGeneList)
             .removeAllEmptyMolecularTestResults()
-            return if (clinicalConfiguration.useOnlyPriorOtherConditions) {
-                scrubbed.useOnlyPriorOtherConditions()
-            } else scrubbed
+        return if (clinicalConfiguration.useOnlyPriorOtherConditions) {
+            masked.useOnlyPriorOtherConditions()
+        } else masked
     }
 } 
