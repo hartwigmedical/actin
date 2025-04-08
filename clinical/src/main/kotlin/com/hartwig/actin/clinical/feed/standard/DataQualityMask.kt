@@ -66,6 +66,8 @@ class DataQualityMask(private val panelGeneList: PanelGeneList, private val clin
             .scrubModifications()
             .addAlwaysTestedGenes(panelGeneList)
             .removeAllEmptyMolecularTestResults()
-            .useOnlyPriorOtherConditions(clinicalConfiguration)
+            return if (clinicalConfiguration.useOnlyPriorOtherConditions) {
+                scrubbed.useOnlyPriorOtherConditions()
+            } else scrubbed
     }
 } 
