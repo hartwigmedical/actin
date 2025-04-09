@@ -38,7 +38,7 @@ object ActinTrialContentFunctions {
             ContentDefinition(
                 listOfNotNull(
                     cohort.name ?: "",
-                    concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
+                    concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
                     concat(cohort.locations - commonLocations, false),
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),

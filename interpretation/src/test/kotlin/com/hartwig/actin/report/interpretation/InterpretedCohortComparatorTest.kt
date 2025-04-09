@@ -47,6 +47,12 @@ class InterpretedCohortComparatorTest {
     }
 
     @Test
+    fun `Should check if trial matches to requestingSource using location if source is null`() {
+        val cohort = cohort.copy(source = null, locations = setOf(TrialSource.NKI.description, TrialSource.EMC.description))
+        assertExpectedOrder(listOf(cohort, cohort.copy(locations = setOf("some location"))), TrialSource.NKI)
+    }
+
+    @Test
     fun `Should place cohorts with open slots before those without`() {
         assertExpectedOrder(listOf(cohort, cohort.copy(hasSlotsAvailable = false)))
     }
