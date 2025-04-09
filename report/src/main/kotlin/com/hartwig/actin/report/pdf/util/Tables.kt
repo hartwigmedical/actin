@@ -30,7 +30,7 @@ object Tables {
         continuedWrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
         continuedWrappingTable.setSkipFirstHeader(true).addCell(Cells.create(contentTable).setPadding(0F))
 
-        val wrappedTable = Table(1).setMinWidth(contentTable.width).setMarginBottom(20F)
+        val wrappedTable = Table(1).setMinWidth(contentTable.width).setMarginBottom(10F)
         wrappedTable.addCell(Cells.create(continuedWrappingTable).setPadding(0F).setBorder(Border.NO_BORDER))
         return wrappedTable
     }
