@@ -10,13 +10,19 @@ import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.hospital
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Cells.createContentNoBorder
+import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
+
+const val MAX_TO_DISPLAY = 3
+const val MANY_PLEASE_CHECK_LINK = "3+ locations - please check link"
 
 object TrialGeneratorFunctions {
 
@@ -37,7 +43,8 @@ object TrialGeneratorFunctions {
             ActinTrialContentFunctions.contentForTrialCohortList(
                 cohorts = cohortList,
                 feedbackFunction = feedbackFunction,
-                includeFeedback = includeFeedback
+                includeFeedback = includeFeedback,
+                requestingSource = requestingSource
             ).forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent && allowDeEmphasis, trialSubTable, paddingDistance) }
             insertTrialRow(cohortList, table, trialSubTable, allowDeEmphasis)
         }
@@ -78,7 +85,13 @@ object TrialGeneratorFunctions {
 
     private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table, paddingDistance: Float) {
         cellContent.map {
-            val paragraph = Paragraph(it).setKeepTogether(true)
+            val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
+                Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(1.6f)
+            } else {
+                Paragraph(it)
+            }.setKeepTogether(true)
+
             val cell = if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else createContentNoBorder(paragraph)
             cell.setPadding(paddingDistance)
         }.forEach(table::addCell)

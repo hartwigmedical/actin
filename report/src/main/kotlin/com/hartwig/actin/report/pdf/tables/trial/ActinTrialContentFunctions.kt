@@ -1,6 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortFunctions
 import com.hartwig.actin.report.pdf.util.Formats
 
 data class ContentDefinition(val textEntries: List<String>, val deEmphasizeContent: Boolean)
@@ -10,7 +12,8 @@ object ActinTrialContentFunctions {
     fun contentForTrialCohortList(
         cohorts: List<InterpretedCohort>,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        includeFeedback: Boolean = true
+        includeFeedback: Boolean = true,
+        requestingSource: TrialSource? = null
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
@@ -24,9 +27,9 @@ object ActinTrialContentFunctions {
             listOf(
                 ContentDefinition(
                     listOfNotNull(
-                        "Applies to all cohorts below",
+                        "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
-                        concat(commonLocations, false),
+                        concatLocations(cohorts.first().source, requestingSource, commonLocations),
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
@@ -39,13 +42,30 @@ object ActinTrialContentFunctions {
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
-                    concat(cohort.locations - commonLocations, false),
+                    concatLocations(cohort.source, requestingSource, cohort.locations - commonLocations),
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )
         }
     }
+
+    private fun concatLocations(source: TrialSource?, requestingSource: TrialSource?, locations: Set<String>): String {
+        val showRequestingSite = requestingSource != null &&
+                InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(source, locations, requestingSource)
+
+        return when {
+            showRequestingSite && locations.size > MAX_TO_DISPLAY - 1 -> {
+                val otherLocationCount = locations.size - 1
+                "${requestingSource?.description} and $otherLocationCount other locations – please check link"
+            }
+
+            locations.size > MAX_TO_DISPLAY -> MANY_PLEASE_CHECK_LINK
+
+            else -> concat(locations, false)
+        }
+    }
+
 
     private fun findCommonMembersInCohorts(
         cohorts: List<InterpretedCohort>, retrieveMemberFunction: (InterpretedCohort) -> Set<String>

@@ -4,9 +4,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 
-private const val MAX_TO_DISPLAY = 3
-const val MANY_PLEASE_CHECK_LINK = ">3 locations - please check link"
-
 object ExternalTrialFunctions {
 
     private val format: (Collection<String>) -> String = { items ->

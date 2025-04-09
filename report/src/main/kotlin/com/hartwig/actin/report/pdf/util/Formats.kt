@@ -17,6 +17,7 @@ object Formats {
     const val COMMA_SEPARATOR = ", "
     const val STANDARD_KEY_WIDTH = 210f
     const val DATE_UNKNOWN = "Date unknown"
+    const val ITALIC_TEXT_MARKER = "{i}"
     private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
     private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
     private val TWO_DIGIT_FORMAT = DecimalFormat("#.##", DECIMAL_FORMAT_SYMBOLS)

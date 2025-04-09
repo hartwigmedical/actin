@@ -41,7 +41,7 @@ class InterpretedCohortComparatorTest {
     fun `Should place cohorts from requesting source before those from other sources or source null`() {
         val cohort = cohort.copy(source = TrialSource.EXAMPLE)
         assertExpectedOrder(listOf(cohort, cohort.copy(source = TrialSource.LKO)), TrialSource.EXAMPLE)
-        assertExpectedOrder(listOf(cohort, cohort.copy(source = null)), TrialSource.EXAMPLE)
+        assertExpectedOrder(listOf(cohort, cohort.copy(source = null, locations = emptySet())), TrialSource.EXAMPLE)
     }
 
     @Test

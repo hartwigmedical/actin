@@ -2,8 +2,11 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+
+private const val APPLIES_TO_ALL_COHORTS = "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}"
 
 class ActinTrialContentFunctionsTest {
 
@@ -43,7 +46,7 @@ class ActinTrialContentFunctionsTest {
     fun `Should group common warnings for multiple cohorts in trial`() {
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "", "warning1"), false),
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
                 ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
             )
@@ -68,7 +71,7 @@ class ActinTrialContentFunctionsTest {
 
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(cohorts, InterpretedCohort::fails)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "", "failure1"), false),
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
                 ContentDefinition(listOf("cohort2", "None", "", "failure2"), false)
             )
@@ -99,7 +102,7 @@ class ActinTrialContentFunctionsTest {
         val cohort3 = cohort1.copy(name = "cohort3")
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort3), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "MSI", "", "warning1"), true),
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "MSI", "", "warning1"), true),
                 ContentDefinition(listOf("cohort1", "", "", ""), true),
                 ContentDefinition(listOf("cohort3", "", "", ""), true)
             )
@@ -117,7 +120,7 @@ class ActinTrialContentFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "None", "", "warning1"), true),
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "None", "", "warning1"), true),
                 ContentDefinition(listOf("cohort1", "", "", ""), true),
                 ContentDefinition(listOf("cohort3", "", "", ""), true)
             )
@@ -137,7 +140,7 @@ class ActinTrialContentFunctionsTest {
     fun `Should not create group row for multiple cohorts in trial with no common molecular events`() {
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "", "warning1"), false),
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
                 ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
             )
@@ -154,7 +157,7 @@ class ActinTrialContentFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("Applies to all cohorts below", "", "site1", "warning1"), false),
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "site1", "warning1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
                 ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
             )
