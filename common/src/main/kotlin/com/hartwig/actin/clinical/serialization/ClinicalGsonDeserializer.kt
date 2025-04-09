@@ -52,8 +52,8 @@ object ClinicalGsonDeserializer {
             return if (jsonElement.isJsonNull) {
                 null
             } else {
-                val dateObject = jsonElement.asJsonObject
-                LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"))
+                val dateString = jsonElement.asString
+                LocalDate.parse(dateString)
             }
         }
     }

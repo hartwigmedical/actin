@@ -3,16 +3,8 @@
   "patient": {
     "gender": "MALE",
     "birthYear": 1960,
-    "registrationDate": {
-      "year": 2021,
-      "month": 6,
-      "day": 1
-    },
-    "questionnaireDate": {
-      "year": 2021,
-      "month": 8,
-      "day": 1
-    }
+    "registrationDate": "2021-06-01",
+    "questionnaireDate": "2021-08-01"
   },
   "tumor": {
     "primaryTumorLocation": null,
@@ -132,11 +124,7 @@
           "extensionCode": null
         }
       ],
-      "evaluatedDate": {
-        "year": 2019,
-        "month": 4,
-        "day": 4
-      },
+      "evaluatedDate": "2019-04-04",
       "source": "QUESTIONNAIRE",
       "grade": 3,
       "comorbidityClass": "TOXICITY"
@@ -149,11 +137,7 @@
           "extensionCode": null
         }
       ],
-      "evaluatedDate": {
-        "year": 2020,
-        "month": 3,
-        "day": 3
-      },
+      "evaluatedDate": "2020-03-03",
       "source": "EHR",
       "grade": 1,
       "comorbidityClass": "TOXICITY"
@@ -209,11 +193,7 @@
   "priorSequencingTests": [],
   "labValues": [
     {
-      "date": {
-        "year": 2020,
-        "month": 8,
-        "day": 8
-      },
+      "date": "2020-08-08",
       "measurement": "CREATININE_CLEARANCE_CG",
       "comparator": "",
       "value": 11,
@@ -223,11 +203,7 @@
       "isOutsideRef": null
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 8,
-        "day": 8
-      },
+      "date": "2020-08-08",
       "measurement": "HEMOGLOBIN",
       "comparator": "",
       "value": 8.8,
@@ -239,11 +215,7 @@
   ],
   "surgeries": [
     {
-      "endDate": {
-        "year": 2012,
-        "month": 10,
-        "day": 10
-      },
+      "endDate": "2012-10-10",
       "status": "PLANNED"
     }
   ],
@@ -266,11 +238,7 @@
   ],
   "bloodTransfusions": [
     {
-      "date": {
-        "year": 2018,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2018-01-01",
       "product": "white blood cells"
     }
   ],
@@ -288,16 +256,8 @@
         "frequencyUnit": "day",
         "ifNeeded": false
       },
-      "startDate": {
-        "year": 2018,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2018,
-        "month": 2,
-        "day": 1
-      },
+      "startDate": "2018-01-01",
+      "stopDate": "2018-02-01",
       "drug": null,
       "cypInteractions": [
         {
@@ -325,16 +285,8 @@
         "frequencyUnit": null,
         "ifNeeded": null
       },
-      "startDate": {
-        "year": 2019,
-        "month": 5,
-        "day": 25
-      },
-      "stopDate": {
-        "year": 2019,
-        "month": 6,
-        "day": 25
-      },
+      "startDate": "2019-05-25",
+      "stopDate": "2019-06-25",
       "cypInteractions": [],
       "transporterInteractions": [],
       "qtProlongatingRisk": "KNOWN",

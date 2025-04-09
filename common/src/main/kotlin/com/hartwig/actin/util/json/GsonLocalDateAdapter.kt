@@ -12,14 +12,7 @@ class GsonLocalDateAdapter : TypeAdapter<LocalDate?>() {
         if (localDate == null) {
             writer.nullValue()
         } else {
-            writer.beginObject()
-            writer.name("year")
-            writer.value(localDate.year.toLong())
-            writer.name("month")
-            writer.value(localDate.monthValue.toLong())
-            writer.name("day")
-            writer.value(localDate.dayOfMonth.toLong())
-            writer.endObject()
+            writer.value(localDate.toString())
         }
     }
 
@@ -29,30 +22,7 @@ class GsonLocalDateAdapter : TypeAdapter<LocalDate?>() {
             reader.skipValue()
             return null
         }
-        var year: Int = -1
-        var month: Int = -1
-        var day: Int = -1
-        reader.beginObject()
-        var field: String = reader.nextName()
-        while (reader.hasNext()) {
-            val token: JsonToken = reader.peek()
-            if (token == JsonToken.NAME) {
-                field = reader.nextName()
-            }
-            if ((field == "year")) {
-                reader.peek()
-                year = reader.nextInt()
-            }
-            if ((field == "month")) {
-                reader.peek()
-                month = reader.nextInt()
-            }
-            if ((field == "day")) {
-                reader.peek()
-                day = reader.nextInt()
-            }
-        }
-        reader.endObject()
-        return LocalDate.of(year, month, day)
+        reader.peek()
+        return LocalDate.parse(reader.nextString())
     }
 }

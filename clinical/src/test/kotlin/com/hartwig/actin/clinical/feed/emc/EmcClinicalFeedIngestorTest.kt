@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.feed.emc.TestFeedFactory.createTestClinicalFee
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.ingestion.Warnings
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -39,7 +40,7 @@ class EmcClinicalFeedIngestorTest {
         )
 
         val (_, patientIngestionResult, _) = emcClinicalFeedIngestor.ingest().first()
-        assertThat(patientIngestionResult.feedValidationWarnings.map { it.message }).contains("No Questionnaire found")
+        assertThat(patientIngestionResult.feedValidationWarnings.map { it.message }).contains(Warnings.NO_QUESTIONNAIRE_FOUND)
 
     }
 }

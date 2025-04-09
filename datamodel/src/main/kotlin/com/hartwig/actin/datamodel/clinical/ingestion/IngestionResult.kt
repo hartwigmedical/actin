@@ -80,3 +80,8 @@ data class FeedValidationWarning(val subject: String, val message: String) : Com
             .compare(this, other)
     }
 }
+
+object Warnings{
+    const val NO_QUESTIONNAIRE_FOUND = "No Questionnaire Found"
+}
+
