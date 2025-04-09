@@ -33,10 +33,4 @@ class InterpretedCohortComparator(private val requestingSource: TrialSource? = n
             .thenByDescending { it }
             .compare(cohort2Name, cohort1Name)
     }
-
-    private fun compareMolecularEvents(cohort1: InterpretedCohort, cohort2: InterpretedCohort): Int {
-        return cohort1.molecularEvents.sorted().zip(cohort2.molecularEvents.sorted()).asSequence()
-            .map { compareValues(it.second, it.first) }
-            .find { it != 0 } ?: 0
-    }
 }

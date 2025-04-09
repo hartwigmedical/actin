@@ -15,7 +15,7 @@ class EligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val externalTrials: Set<ExternalTrialSummary>,
     private val requestingSource: TrialSource?,
-    private val homeCountry: Country? = null,
+    private val countryOfReference: Country? = null,
     private val title: String,
     private val footNote: String?,
     private val trialColWidth: Float,
@@ -31,8 +31,9 @@ class EligibleTrialGenerator(
     }
 
     override fun contents(): Table {
-        val checksCol = if (cohorts.isEmpty()) null else checksColWidth
-        val subTableWidths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, checksCol).toFloatArray()
+        val subTableWidths = listOfNotNull(
+            cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth.takeIf { cohorts.isNotEmpty() }
+        ).toFloatArray()
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
         val subTableHeaders = listOfNotNull("Cohort", "Molecular", "Sites", "Warnings".takeIf { cohorts.isNotEmpty() })
         if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
@@ -45,7 +46,7 @@ class EligibleTrialGenerator(
             cohorts = cohorts,
             externalTrials = externalTrials,
             requestingSource = requestingSource,
-            homeCountry = homeCountry,
+            countryOfReference = countryOfReference,
             table = table,
             tableWidths = subTableWidths,
             feedbackFunction = InterpretedCohort::warnings,
@@ -68,7 +69,7 @@ class EligibleTrialGenerator(
             externalTrials: Set<ExternalTrialSummary>,
             filteredCount: Int,
             requestingSource: TrialSource?,
-            homeCountry: Country? = null,
+            countryOfReference: Country? = null,
             width: Float,
             localTrials: Boolean = true
         ): EligibleTrialGenerator {
@@ -80,7 +81,7 @@ class EligibleTrialGenerator(
             } else {
                 "(0)"
             }
-            val locationString = if (!localTrials) "International trials" else homeCountry?.let { "Trials in ${it.display()}" } ?: "Trials"
+            val locationString = if (!localTrials) "International trials" else countryOfReference?.let { "Trials in ${it.display()}" } ?: "Trials"
             val title = "$locationString that are open and potentially eligible $cohortFromTrialsText"
             val footNote = if (localTrials) {
                 listOfNotNull(
@@ -101,7 +102,7 @@ class EligibleTrialGenerator(
                 recruitingAndEligibleCohorts,
                 externalTrials,
                 requestingSource,
-                homeCountry,
+                countryOfReference,
                 title,
                 width,
                 footNote,
@@ -114,7 +115,7 @@ class EligibleTrialGenerator(
             cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, width: Float
         ): EligibleTrialGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.isMissingMolecularResultForEvaluation!!
+                it.isPotentiallyEligible && it.isOpen && it.isMissingMolecularResultForEvaluation
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
@@ -145,17 +146,17 @@ class EligibleTrialGenerator(
         }
 
         fun forFilteredTrials(
-            trials: Set<ExternalTrialSummary>, homeCountry: Country, contentWidth: Float
+            trials: Set<ExternalTrialSummary>, countryOfReference: Country, contentWidth: Float
         ): EligibleTrialGenerator {
             val title = "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${trials.size})"
-            return create(emptyList(), trials, null, homeCountry, title, contentWidth, allowDeEmphasis = false, includeChecksColumn = false)
+            return create(emptyList(), trials, null, countryOfReference, title, contentWidth, allowDeEmphasis = false, includeChecksColumn = false)
         }
 
         private fun create(
             cohorts: List<InterpretedCohort>,
             externalTrials: Set<ExternalTrialSummary>,
             requestingSource: TrialSource?,
-            homeCountry: Country?,
+            countryOfReference: Country?,
             title: String,
             width: Float,
             footNote: String? = null,
@@ -173,7 +174,7 @@ class EligibleTrialGenerator(
                 cohorts,
                 externalTrials,
                 requestingSource,
-                homeCountry,
+                countryOfReference,
                 title,
                 footNote,
                 trialColWidth,

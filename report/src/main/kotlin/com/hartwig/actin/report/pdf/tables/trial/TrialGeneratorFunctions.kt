@@ -24,7 +24,7 @@ object TrialGeneratorFunctions {
         cohorts: List<InterpretedCohort>,
         externalTrials: Set<ExternalTrialSummary>,
         requestingSource: TrialSource?,
-        homeCountry: Country?,
+        countryOfReference: Country?,
         table: Table,
         tableWidths: FloatArray,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
@@ -49,7 +49,7 @@ object TrialGeneratorFunctions {
 
             val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
             val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
-            val country = if (trial.countries.none { it.country == homeCountry }) null else homeCountry
+            val country = if (trial.countries.none { it.country == countryOfReference }) null else countryOfReference
 
             val contentList = listOf(
                 trial.sourceMolecularEvents.joinToString(", "),
@@ -62,10 +62,10 @@ object TrialGeneratorFunctions {
         }
     }
 
-    private fun externalTrialLocation(trial: ExternalTrialSummary, homeCountry: Country?): String {
-        return homeCountry?.let {
+    private fun externalTrialLocation(trial: ExternalTrialSummary, countryOfReference: Country?): String {
+        return countryOfReference?.let {
             val (hospitals, cities) = hospitalsAndCitiesInCountry(trial, it)
-            if (homeCountry == Country.NETHERLANDS && hospitals != MANY_PLEASE_CHECK_LINK) hospitals else cities
+            if (countryOfReference == Country.NETHERLANDS && hospitals != MANY_PLEASE_CHECK_LINK) hospitals else cities
         } ?: countryNamesWithCities(trial)
     }
 

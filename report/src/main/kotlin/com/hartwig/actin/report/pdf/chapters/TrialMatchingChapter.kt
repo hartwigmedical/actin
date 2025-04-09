@@ -36,13 +36,12 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        addGenerators(getGenerators(), table, false)
+        addGenerators(createGenerators(), table, false)
         document.add(table)
     }
 
-    fun getGenerators(): List<TableGenerator> {
+    fun createGenerators(): List<TableGenerator> {
         val requestingSource = TrialSource.fromDescription(report.requestingHospital)
-        val homeCountry = report.config.countryOfReference
         val externalTrials = trialsProvider.summarizeExternalTrials()
 
         val localTrialGenerators = createTrialTableGenerators(
@@ -53,7 +52,7 @@ class TrialMatchingChapter(
             externalTrials.nationalTrials.filtered,
             externalTrials.excludedNationalTrials().size,
             requestingSource,
-            homeCountry,
+            report.config.countryOfReference,
             contentWidth()
         ).takeIf { externalTrialsOnly }
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
@@ -67,7 +66,7 @@ class TrialMatchingChapter(
         ).takeIf { externalTrialsOnly }
         val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(
             externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials(),
-            homeCountry,
+            report.config.countryOfReference,
             contentWidth()
         )
 

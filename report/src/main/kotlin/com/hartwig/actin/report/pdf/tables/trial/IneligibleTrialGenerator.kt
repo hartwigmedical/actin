@@ -41,7 +41,7 @@ class IneligibleTrialGenerator(
             cohorts,
             externalTrials = emptySet(),
             requestingSource,
-            homeCountry = null,
+            countryOfReference = null,
             table,
             subTableWidths,
             InterpretedCohort::fails,

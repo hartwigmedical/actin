@@ -128,7 +128,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             PatientClinicalHistoryGenerator(report, false, keyWidth, valueWidth)
         }
 
-        val trialTableGenerators = getGenerators(
+        val trialTableGenerators = createGenerators(
             interpretedCohorts,
             trialsProvider.summarizeExternalTrials(),
             TrialSource.fromDescription(report.requestingHospital),
@@ -152,19 +152,18 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }) + trialTableGenerators
     }
 
-    private fun getGenerators(
+    private fun createGenerators(
         interpretedCohorts: List<InterpretedCohort>,
         externalTrialSummary: SummarizedExternalTrials,
         requestingSource: TrialSource?,
         contentWidth: Float
     ): List<TrialTableGenerator?> {
-        val homeCountry = report.config.countryOfReference
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
             interpretedCohorts,
             externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty(),
             externalTrialSummary.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,
-            homeCountry,
+            report.config.countryOfReference,
             contentWidth
         )
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =

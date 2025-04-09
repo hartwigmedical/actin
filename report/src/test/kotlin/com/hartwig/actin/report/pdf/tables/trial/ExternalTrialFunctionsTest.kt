@@ -66,7 +66,7 @@ class ExternalTrialFunctionsTest {
     )
 
     @Test
-    fun `Should return hospitals and cities in home country`() {
+    fun `Should return hospitals and cities in country`() {
         val hospitalsAndCitiesExternalTrialNetherlands = ExternalTrialFunctions.hospitalsAndCitiesInCountry(
             externalTrialNetherlands,
             Country.NETHERLANDS
@@ -88,7 +88,7 @@ class ExternalTrialFunctionsTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun `Should throw illegal state exception if home country not found in external trial`() {
+    fun `Should throw illegal state exception if country not found in external trial`() {
         ExternalTrialFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
     }
 
