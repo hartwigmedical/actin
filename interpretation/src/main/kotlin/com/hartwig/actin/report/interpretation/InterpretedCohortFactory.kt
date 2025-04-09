@@ -37,19 +37,20 @@ object InterpretedCohortFactory {
                         acronym = acronym,
                         nctId = nctId,
                         title = title,
-                        name = null,
-                        molecularEvents = trialInclusionEvents,
-                        isPotentiallyEligible = trialMatch.isPotentiallyEligible,
-                        isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
-                        isOpen = trialIsOpen,
-                        hasSlotsAvailable = trialIsOpen,
-                        warnings = trialWarnings,
-                        fails = trialFails,
                         phase = phase,
                         source = source,
                         sourceId = sourceId,
+                        locations = locations,
                         url = link,
-                        locations = locations
+                        name = null,
+                        isOpen = trialIsOpen,
+                        hasSlotsAvailable = trialIsOpen,
+                        ignore = false,
+                        molecularEvents = trialInclusionEvents,
+                        isPotentiallyEligible = trialMatch.isPotentiallyEligible,
+                        isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
+                        warnings = trialWarnings,
+                        fails = trialFails
                     )
                 )
             } else {
@@ -61,21 +62,21 @@ object InterpretedCohortFactory {
                         acronym = acronym,
                         nctId = nctId,
                         title = title,
+                        phase = phase,
+                        source = source,
+                        sourceId = sourceId,
+                        locations = locations,
+                        url = link,
                         name = cohortMatch.metadata.description,
+                        isOpen = trialIsOpen && cohortMatch.metadata.open,
+                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
+                        ignore = cohortMatch.metadata.ignore,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
                         isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation ||
                                 cohortMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation },
-                        isOpen = trialIsOpen && cohortMatch.metadata.open,
-                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
-                        fails = trialFails.union(extractFails(cohortMatch.evaluations)),
-                        phase = phase,
-                        ignore = cohortMatch.metadata.ignore,
-                        source = source,
-                        sourceId = sourceId,
-                        url = link,
-                        locations = locations
+                        fails = trialFails.union(extractFails(cohortMatch.evaluations))
                     )
                 }
             }
@@ -91,15 +92,20 @@ object InterpretedCohortFactory {
                     acronym = identification.acronym,
                     nctId = identification.nctId,
                     title = identification.title,
+                    phase = identification.phase,
+                    source = identification.source,
+                    sourceId = identification.sourceId,
+                    locations = identification.locations,
+                    url = identification.url,
                     name = cohortMetadata.description,
                     isOpen = identification.open && cohortMetadata.open,
                     hasSlotsAvailable = cohortMetadata.slotsAvailable,
                     ignore = cohortMetadata.ignore,
-                    phase = identification.phase,
-                    source = identification.source,
-                    sourceId = identification.sourceId,
-                    url = identification.url,
-                    locations = identification.locations
+                    molecularEvents = emptySet(),
+                    isPotentiallyEligible = false,
+                    isMissingMolecularResultForEvaluation = false,
+                    warnings = emptySet(),
+                    fails = emptySet(),
                 )
             }
         }.sortedWith(InterpretedCohortComparator())

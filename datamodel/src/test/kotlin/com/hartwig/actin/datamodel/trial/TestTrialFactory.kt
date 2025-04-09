@@ -12,7 +12,11 @@ object TestTrialFactory {
                 acronym = "",
                 title = "",
                 nctId = null,
-                source = TrialSource.EMC
+                phase = null,
+                source = TrialSource.EMC,
+                sourceId = null,
+                locations = emptySet(),
+                url = null
             ),
             cohorts = emptyList(),
             generalEligibility = emptyList()

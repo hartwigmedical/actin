@@ -8,33 +8,36 @@ import org.junit.Test
 class ActinTrialContentFunctionsTest {
 
     private val cohort1 = InterpretedCohort(
-        "trial1",
-        "T1",
+        trialId = "trial1",
+        acronym = "T1",
         nctId = "nct01",
         title = "title1",
+        phase = null,
+        source = null,
+        sourceId = null,
+        locations = emptySet(),
+        url = null,
         name = "cohort1",
         isOpen = true,
         hasSlotsAvailable = false,
+        ignore = false,
         molecularEvents = setOf("MSI"),
         isPotentiallyEligible = true,
+        isMissingMolecularResultForEvaluation = false,
         warnings = setOf("warning1"),
         fails = emptySet()
     )
-    private val cohort2 =
-        InterpretedCohort(
-            "trial1",
-            "T1",
-            nctId = "nct02",
-            title = "title2",
-            name = "cohort2",
-            isOpen = true,
-            hasSlotsAvailable = true,
-            isPotentiallyEligible = true,
-            warnings = setOf("warning1", "warning2"),
-            fails = emptySet(),
-            source = TrialSource.LKO,
-            sourceId = "123",
-        )
+
+    private val cohort2 = cohort1.copy(
+        nctId = "nct02",
+        title = "title2",
+        name = "cohort2",
+        hasSlotsAvailable = true,
+        warnings = setOf("warning1", "warning2"),
+        source = TrialSource.LKO,
+        sourceId = "123",
+        molecularEvents = emptySet()
+    )
 
     @Test
     fun `Should group common warnings for multiple cohorts in trial`() {
