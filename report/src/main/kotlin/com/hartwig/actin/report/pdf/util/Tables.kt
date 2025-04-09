@@ -15,26 +15,23 @@ object Tables {
     }
 
     @JvmOverloads
-    fun makeWrapping(table: Table, printSubNotes: Boolean = true): Table {
-        if (table.numberOfRows == 0) {
-            table.addCell(Cells.createSpanningNoneEntry(table))
+    fun makeWrapping(contentTable: Table): Table {
+        if (contentTable.numberOfRows == 0) {
+            contentTable.addCell(Cells.createSpanningNoneEntry(contentTable))
         }
-        table.addFooterCell(
-            Cells.createSpanningSubNote(if (printSubNotes) "The table continues on the next page" else "", table)
-                .setPaddingTop(5f)
-                .setPaddingBottom(5f)
-        )
-        table.isSkipLastFooter = true
 
-        val wrappingTable = Table(1).setMinWidth(table.width)
-        if (printSubNotes) {
-            wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
-        }
-        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f))
+        contentTable.addFooterCell(
+            Cells.createSpanningSubNote("The table continues on the next page", contentTable)
+                .setPaddingTop(5F)
+                .setPaddingBottom(5F)
+        ).setSkipLastFooter(true)
 
-        val finalTable = Table(1).setMinWidth(table.width).setMarginBottom(20f)
-        finalTable.addCell(Cells.create(wrappingTable).setPadding(0f).setBorder(Border.NO_BORDER))
-        return finalTable
-        
+        val continuedWrappingTable = Table(1).setMinWidth(contentTable.width)
+        continuedWrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
+        continuedWrappingTable.setSkipFirstHeader(true).addCell(Cells.create(contentTable).setPadding(0F))
+
+        val wrappedTable = Table(1).setMinWidth(contentTable.width).setMarginBottom(20F)
+        wrappedTable.addCell(Cells.create(continuedWrappingTable).setPadding(0F).setBorder(Border.NO_BORDER))
+        return wrappedTable
     }
 }

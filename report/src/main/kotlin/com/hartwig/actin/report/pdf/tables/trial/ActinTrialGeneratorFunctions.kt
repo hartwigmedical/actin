@@ -90,7 +90,7 @@ object ActinTrialGeneratorFunctions {
                 }
             )
             val finalSubTable = if (trialSubTable.numberOfRows > 2) {
-                Tables.makeWrapping(trialSubTable, false)
+                Tables.makeWrapping(trialSubTable)
             } else {
                 trialSubTable.setKeepTogether(true)
             }
