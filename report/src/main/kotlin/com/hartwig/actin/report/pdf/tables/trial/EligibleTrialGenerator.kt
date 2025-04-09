@@ -81,19 +81,16 @@ class EligibleTrialGenerator(
             } else {
                 "(0)"
             }
-            val locationString = if (!localTrials) "International trials" else countryOfReference?.let { "Trials in ${it.display()}" } ?: "Trials"
+            val locationString =
+                if (!localTrials) "International trials" else countryOfReference?.let { "Trials in ${it.display()}" } ?: "Trials"
             val title = "$locationString that are open and potentially eligible $cohortFromTrialsText"
             val footNote = if (localTrials) {
                 listOfNotNull(
-                    "Open cohorts with no slots available are shown in grey.",
+                    "Open cohorts with no slots available are shown in grey.".takeIf { cohorts.any { !it.hasSlotsAvailable } },
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { externalTrials.isNotEmpty() },
-                    "${
-                        formatCountWithLabel(
-                            filteredCount,
-                            "trial"
-                        )
-                    } filtered due to eligible local trials for the same molecular target or because the trial is for young adult patients only."
+                    ("${formatCountWithLabel(filteredCount, "trial")} filtered due to eligible local trials for the same molecular " +
+                            "target or because the trial is for young adult patients only.")
                                 .takeIf { filteredCount > 0 }
                 ).joinToString("\n")
             } else "International trials are matched solely on molecular event and tumor type (clinical data excluded)."
