@@ -18,33 +18,23 @@ object InterpretedCohortFactory {
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
             val identification = trialMatch.identification
-            val trialId = identification.trialId
-            val acronym = identification.acronym
-            val nctId = identification.nctId
-            val title = identification.title
-            val trialIsOpen = identification.open
-            val phase = identification.phase
             val isMissingMolecularResultForEvaluation = trialMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation }
-            val source = identification.source
-            val sourceId = identification.sourceId
-            val link = identification.url
-            val locations = identification.locations
 
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
                     InterpretedCohort(
-                        trialId = trialId,
-                        acronym = acronym,
-                        nctId = nctId,
-                        title = title,
-                        phase = phase,
-                        source = source,
-                        sourceId = sourceId,
-                        locations = locations,
-                        url = link,
+                        trialId = identification.trialId,
+                        acronym = identification.acronym,
+                        nctId = identification.nctId,
+                        title = identification.title,
+                        phase = identification.phase,
+                        source = identification.source,
+                        sourceId = identification.sourceId,
+                        locations = identification.locations,
+                        url = identification.url,
                         name = null,
-                        isOpen = trialIsOpen,
-                        hasSlotsAvailable = trialIsOpen,
+                        isOpen = identification.open,
+                        hasSlotsAvailable = identification.open,
                         ignore = false,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
@@ -58,17 +48,17 @@ object InterpretedCohortFactory {
                     trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
                 ).map { cohortMatch: CohortMatch ->
                     InterpretedCohort(
-                        trialId = trialId,
-                        acronym = acronym,
-                        nctId = nctId,
-                        title = title,
-                        phase = phase,
-                        source = source,
-                        sourceId = sourceId,
-                        locations = locations,
-                        url = link,
+                        trialId = identification.trialId,
+                        acronym = identification.acronym,
+                        nctId = identification.nctId,
+                        title = identification.title,
+                        phase = identification.phase,
+                        source = identification.source,
+                        sourceId = identification.sourceId,
+                        locations = identification.locations,
+                        url = identification.url,
                         name = cohortMatch.metadata.description,
-                        isOpen = trialIsOpen && cohortMatch.metadata.open,
+                        isOpen = identification.open && cohortMatch.metadata.open,
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         ignore = cohortMatch.metadata.ignore,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),

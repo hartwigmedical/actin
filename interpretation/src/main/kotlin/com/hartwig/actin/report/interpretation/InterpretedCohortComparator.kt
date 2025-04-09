@@ -16,8 +16,6 @@ class InterpretedCohortComparator(private val requestingSource: TrialSource? = n
             .thenByDescending { it.warnings.isEmpty() }
             .thenBy(InterpretedCohort::trialId)
             .thenComparing(::compareCohortNames)
-            .thenByDescending { it.molecularEvents.size }
-            .thenComparing(::compareMolecularEvents)
             .compare(cohort1, cohort2)
     }
 
