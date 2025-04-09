@@ -22,7 +22,7 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
 const val MAX_TO_DISPLAY = 3
-const val MANY_SEE_LINK = "3+ locations (see link)"
+const val MANY_SEE_LINK = "3+ locations - see link"
 
 object TrialGeneratorFunctions {
 

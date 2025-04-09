@@ -57,7 +57,7 @@ object ActinTrialContentFunctions {
         return when {
             showRequestingSite && locations.size > MAX_TO_DISPLAY - 1 -> {
                 val otherLocationCount = locations.size - 1
-                "${requestingSource?.description} and $otherLocationCount other locations (see link)"
+                "${requestingSource?.description} and $otherLocationCount other locations - see link"
             }
 
             locations.size > MAX_TO_DISPLAY -> MANY_SEE_LINK
