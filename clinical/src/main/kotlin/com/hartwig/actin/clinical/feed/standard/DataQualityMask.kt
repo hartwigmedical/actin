@@ -17,8 +17,7 @@ private fun ProvidedPatientRecord.useOnlyPriorOtherConditions() = this.copy(
     surgeries = emptyList(),
     toxicities = emptyList(),
     priorPrimaries = emptyList(),
-    allergies = emptyList(),
-    tumorDetails = this.tumorDetails.copy(diagnosisDate = null, lesionSite = null, lesions = emptyList())
+    tumorDetails = this.tumorDetails.copy(diagnosisDate = null, lesionSite = null)
 )
 
 private fun ProvidedPatientRecord.addAlwaysTestedGenes(panelGeneList: PanelGeneList) =
