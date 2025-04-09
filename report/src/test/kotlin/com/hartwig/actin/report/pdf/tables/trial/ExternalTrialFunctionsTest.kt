@@ -79,12 +79,12 @@ class ExternalTrialFunctionsTest {
             externalTrialBelgium,
             Country.BELGIUM
         )
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("3+ locations - please check link")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("3+ locations (see link)")
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
         assertThat(hospitalsAndCitiesExternalTrialBelgium.first).isEqualTo("Brussels hospital")
-        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("3+ locations - please check link")
+        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("3+ locations (see link)")
     }
 
     @Test(expected = IllegalStateException::class)
@@ -95,11 +95,11 @@ class ExternalTrialFunctionsTest {
     @Test
     fun `Should return country names and cities`() {
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
-            .isEqualTo("The Netherlands (Amsterdam, Leiden), Germany (Berlin)")
+            .isEqualTo("NL (Amsterdam, Leiden), Germany (Berlin)")
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialBelgium))
-            .isEqualTo("Belgium (3+ locations - please check link)")
+            .isEqualTo("Belgium (3+ locations (see link))")
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlands))
-            .isEqualTo("The Netherlands (Nijmegen, Leiden, Amsterdam)")
+            .isEqualTo("NL (Nijmegen, Leiden, Amsterdam)")
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)

@@ -22,7 +22,7 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
 const val MAX_TO_DISPLAY = 3
-const val MANY_PLEASE_CHECK_LINK = "3+ locations - please check link"
+const val MANY_SEE_LINK = "3+ locations (see link)"
 
 object TrialGeneratorFunctions {
 
@@ -72,7 +72,7 @@ object TrialGeneratorFunctions {
     private fun externalTrialLocation(trial: ExternalTrialSummary, countryOfReference: Country?): String {
         return countryOfReference?.let {
             val (hospitals, cities) = hospitalsAndCitiesInCountry(trial, it)
-            if (countryOfReference == Country.NETHERLANDS && hospitals != MANY_PLEASE_CHECK_LINK) hospitals else cities
+            if (countryOfReference == Country.NETHERLANDS && hospitals != MANY_SEE_LINK) hospitals else cities
         } ?: countryNamesWithCities(trial)
     }
 
