@@ -13,8 +13,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
-import com.hartwig.actin.util.json.Json.integer
 import com.hartwig.actin.util.json.StrictEnumDeserializer
 import java.lang.reflect.Type
 import java.time.LocalDate
@@ -33,7 +33,7 @@ object ClinicalGsonDeserializer {
     private fun gsonBuilder(): GsonBuilder {
         return GsonBuilder().serializeNulls()
             .enableComplexMapKeySerialization()
-            .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+            .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
             .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
@@ -41,25 +41,6 @@ object ClinicalGsonDeserializer {
             .registerTypeAdapter(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))
             .registerTypeAdapter(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))
             .registerTypeAdapter(TreatmentCategory::class.java, StrictEnumDeserializer(TreatmentCategory::class.java))
-    }
-
-    private class LocalDateAdapter : JsonDeserializer<LocalDate?> {
-
-        override fun deserialize(
-            jsonElement: JsonElement, type: Type,
-            jsonDeserializationContext: JsonDeserializationContext
-        ): LocalDate? {
-            return if (jsonElement.isJsonNull) {
-                null
-            } else if (jsonElement.isJsonObject){
-                val dateObject = jsonElement.asJsonObject
-                LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"))
-            }
-            else {
-                val dateString = jsonElement.asString
-                LocalDate.parse(dateString)
-            }
-        }
     }
 
     private class DrugNameAdapter(private val drugsByName: Map<String, Drug>) : JsonDeserializer<Drug> {
