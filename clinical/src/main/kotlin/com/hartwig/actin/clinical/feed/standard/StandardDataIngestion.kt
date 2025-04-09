@@ -7,8 +7,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
@@ -18,19 +16,22 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfus
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.configuration.ClinicalConfiguration
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.doid.DoidModel
 import java.nio.file.Files
@@ -151,7 +152,8 @@ class StandardDataIngestion(
             qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
             treatmentDatabase: TreatmentDatabase,
-            panelGeneList: PanelGeneList
+            panelGeneList: PanelGeneList,
+            clinicalConfiguration: ClinicalConfiguration
         ) = StandardDataIngestion(
             directory,
             StandardMedicationExtractor(atcModel, drugInteractionDatabase, qtProlongatingDatabase, treatmentDatabase),
@@ -173,7 +175,7 @@ class StandardDataIngestion(
             StandardBodyHeightExtractor(),
             StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
-            DataQualityMask(panelGeneList)
+            DataQualityMask(panelGeneList, clinicalConfiguration)
         )
     }
 }
