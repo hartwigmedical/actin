@@ -12,17 +12,11 @@ class MmrStatusIsAvailable(maxTestAge: LocalDate? = null) : MolecularEvaluationF
         EvaluationFactory.fail("No molecular data to determine MMR status")
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
-        return when (molecular.characteristics.isMicrosatelliteUnstable) {
-            null -> {
-                EvaluationFactory.recoverableFail("No MMR status result", isMissingMolecularResultForEvaluation = true)
-            }
-
-            true, false -> {
-                EvaluationFactory.pass(
-                    "MMR status is known",
-                    inclusionEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
-                )
-            }
-        }
+        return molecular.characteristics.microsatelliteStability?.let {
+            EvaluationFactory.pass(
+                message = "MMR status is known",
+                inclusionEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
+            )
+        } ?: EvaluationFactory.recoverableFail("No MMR status result", isMissingMolecularResultForEvaluation = true)
     }
 }

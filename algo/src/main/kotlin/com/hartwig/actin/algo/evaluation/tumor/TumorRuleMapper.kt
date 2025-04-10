@@ -171,8 +171,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasSpecificTnmTScoreCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val score = functionInputResolver().createOneStringInput(function)
-            HasTnmTScore(score)
+            val scores = functionInputResolver().createManyTnmTInput(function)
+            HasTnmTScore(scores)
         }
     }
 

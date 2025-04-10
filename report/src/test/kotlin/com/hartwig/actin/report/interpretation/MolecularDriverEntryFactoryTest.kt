@@ -17,7 +17,7 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should created molecular driver entries`() {
-        val record = TestMolecularFactory.createExhaustiveTestOrangeRecord()
+        val record = TestMolecularFactory.createExhaustiveTestMolecularRecord()
         val factory = createFactoryForMolecularRecord(record)
         val entries = factory.create()
         assertThat(entries).hasSize(8)
@@ -64,7 +64,7 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should match actin trial to molecular drivers`() {
-        val record = TestMolecularFactory.createProperTestOrangeRecord()
+        val record = TestMolecularFactory.createProperTestMolecularRecord()
         assertThat(record.drivers.variants).isNotEmpty
         val firstVariant = record.drivers.variants.iterator().next()
         val driverToFind = firstVariant.event
@@ -87,7 +87,7 @@ class MolecularDriverEntryFactoryTest {
     private fun assertCopyNumberType(copyNumberType: CopyNumberType, expectedDriverType: String) {
         val copyNumber = TestMolecularFactory.createProperCopyNumber()
             .copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(copyNumberType))
-        val record = TestMolecularFactory.createProperTestOrangeRecord().copy(
+        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(variants = emptyList(), copyNumbers = listOf(copyNumber))
         )
@@ -100,11 +100,11 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
-        return TestMolecularFactory.createMinimalTestOrangeRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
+        return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 
     private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
-        return TestMolecularFactory.createMinimalTestOrangeRecord().drivers.copy(
+        return TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
             viruses = listOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
         )
     }

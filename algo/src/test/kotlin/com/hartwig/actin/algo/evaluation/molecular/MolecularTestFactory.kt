@@ -3,19 +3,26 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.molecular.driver.Driver
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
+import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.Virus
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
@@ -23,7 +30,7 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 internal object MolecularTestFactory {
 
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestOrangeRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
     fun priorIHCTest(
         test: String = "",
@@ -59,7 +66,7 @@ internal object MolecularTestFactory {
 
     fun withCopyNumberAndPriorIHCTests(copyNumber: CopyNumber, priorIHCTests: List<PriorIHCTest>): PatientRecord {
         val molecular = baseMolecular.copy(
-            characteristics = MolecularCharacteristics(0.80, 3.0),
+            characteristics = baseMolecular.characteristics.copy(purity = 0.80, ploidy = 3.0),
             drivers = baseMolecular.drivers.copy(copyNumbers = listOf(copyNumber))
         )
         return base.copy(priorIHCTests = priorIHCTests, molecularHistory = MolecularHistory(listOf(molecular)))
@@ -76,7 +83,9 @@ internal object MolecularTestFactory {
     fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: Variant): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
+                characteristics = baseMolecular.characteristics.copy(
+                    tumorMutationalLoad = createTestTumorMutationalLoad(isHigh = hasHighTumorMutationalLoad)
+                ),
                 drivers = baseMolecular.drivers.copy(variants = listOf(*variants))
             )
         )
@@ -89,7 +98,9 @@ internal object MolecularTestFactory {
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
+                characteristics = baseMolecular.characteristics.copy(
+                    tumorMutationalLoad = createTestTumorMutationalLoad(isHigh = hasHighTumorMutationalLoad)
+                ),
                 drivers = baseMolecular.drivers.copy(
                     variants = listOf(variant), disruptions = listOf(disruption)
                 )
@@ -163,79 +174,74 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: Variant): PatientRecord {
+    fun withMicrosatelliteStabilityAndVariant(isUnstable: Boolean?, variant: Variant): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), variant
+            baseMolecular.characteristics.copy(microsatelliteStability = createTestMicrosatelliteStability(isUnstable)),
+            variant
         )
     }
 
-    fun withMicrosatelliteInstabilityAndLoss(isMicrosatelliteUnstable: Boolean?, loss: CopyNumber): PatientRecord {
+    fun withMicrosatelliteStabilityAndLoss(isUnstable: Boolean?, loss: CopyNumber): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), loss
+            baseMolecular.characteristics.copy(microsatelliteStability = createTestMicrosatelliteStability(isUnstable)), loss
         )
     }
 
-    fun withMicrosatelliteInstabilityAndHomozygousDisruption(
-        isMicrosatelliteUnstable: Boolean?, homozygousDisruption: HomozygousDisruption
-    ): PatientRecord {
-        return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), homozygousDisruption
-        )
-    }
-
-    fun withMicrosatelliteInstabilityAndDisruption(
-        isMicrosatelliteUnstable: Boolean?,
-        disruption: Disruption
-    ): PatientRecord {
-        return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), disruption
-        )
-    }
-
-    fun withHomologousRecombinationDeficiencyAndVariant(
-        isHomologousRecombinationDeficient: Boolean?,
-        variant: Variant
-    ): PatientRecord {
-        return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), variant
-        )
-    }
-
-    fun withHomologousRecombinationDeficiencyAndLoss(
-        isHomologousRecombinationDeficient: Boolean?,
-        loss: CopyNumber
-    ): PatientRecord {
-        return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), loss
-        )
-    }
-
-    fun withHomologousRecombinationDeficiencyAndHomozygousDisruption(
-        isHomologousRecombinationDeficient: Boolean?,
+    fun withMicrosatelliteStabilityAndHomozygousDisruption(
+        isUnstable: Boolean?,
         homozygousDisruption: HomozygousDisruption
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), homozygousDisruption
+            baseMolecular.characteristics.copy(microsatelliteStability = createTestMicrosatelliteStability(isUnstable)),
+            homozygousDisruption
         )
     }
 
-    fun withHomologousRecombinationDeficiencyAndDisruption(
-        isHomologousRecombinationDeficient: Boolean?,
-        disruption: Disruption
+    fun withMicrosatelliteStabilityAndDisruption(isUnstable: Boolean?, disruption: Disruption): PatientRecord {
+        return withCharacteristicsAndDriver(
+            baseMolecular.characteristics.copy(microsatelliteStability = createTestMicrosatelliteStability(isUnstable)),
+            disruption
+        )
+    }
+
+    fun withHomologousRecombinationAndVariant(isHrDeficient: Boolean?, variant: Variant): PatientRecord {
+        return withCharacteristicsAndDriver(
+            baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), variant
+        )
+    }
+
+    fun withHomologousRecombinationAndLoss(isHrDeficient: Boolean?, loss: CopyNumber): PatientRecord {
+        return withCharacteristicsAndDriver(
+            baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), loss
+        )
+    }
+
+    fun withHomologousRecombinationAndHomozygousDisruption(
+        isHrDeficient: Boolean?,
+        homozygousDisruption: HomozygousDisruption
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), disruption
+            baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)),
+            homozygousDisruption
         )
     }
 
-    fun withHomologousRecombinationDeficiencyAndVariantAndDisruption(
-        isHomologousRecombinationDeficient: Boolean?,
+    fun withHomologousRecombinationAndDisruption(isHrDeficient: Boolean?, disruption: Disruption): PatientRecord {
+        return withCharacteristicsAndDriver(
+            baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), disruption
+        )
+    }
+
+    fun withHomologousRecombinationAndVariantAndDisruption(
+        isHrDeficient: Boolean?,
         disruption: Disruption,
         variant: Variant
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient),
+                characteristics = baseMolecular.characteristics.copy(
+                    homologousRecombination = createTestHomologousRecombination(isHrDeficient)
+                ),
                 drivers = baseMolecular.drivers.copy(variants = listOf(variant), disruptions = listOf(disruption))
             )
         )
@@ -244,15 +250,19 @@ internal object MolecularTestFactory {
     fun withTumorMutationalBurden(tumorMutationalBurden: Double?): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(tumorMutationalBurden = tumorMutationalBurden)
+                characteristics = baseMolecular.characteristics.copy(
+                    tumorMutationalBurden = tumorMutationalBurden?.let { createTestTumorMutationalBurden(score = it) }
+                )
             )
         )
     }
 
-    fun withIsMicrosatelliteUnstable(microsatelliteStatus: Boolean?): PatientRecord {
+    fun withMicrosatelliteStability(isUnstable: Boolean?): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(isMicrosatelliteUnstable = microsatelliteStatus)
+                characteristics = baseMolecular.characteristics.copy(
+                    microsatelliteStability = createTestMicrosatelliteStability(isUnstable)
+                )
             )
         )
     }
@@ -264,7 +274,9 @@ internal object MolecularTestFactory {
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(tumorMutationalBurden = tumorMutationalBurden),
+                characteristics = baseMolecular.characteristics.copy(
+                    tumorMutationalBurden = tumorMutationalBurden?.let { createTestTumorMutationalBurden(score = it) }
+                ),
                 hasSufficientPurity = hasSufficientPurity,
                 hasSufficientQuality = hasSufficientQuality
             )
@@ -274,7 +286,9 @@ internal object MolecularTestFactory {
     fun withTumorMutationalLoad(tumorMutationalLoad: Int?): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(tumorMutationalLoad = tumorMutationalLoad)
+                characteristics = baseMolecular.characteristics.copy(
+                    tumorMutationalLoad = tumorMutationalLoad?.let { createTestTumorMutationalLoad(score = it) }
+                )
             )
         )
     }
@@ -295,7 +309,9 @@ internal object MolecularTestFactory {
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(tumorMutationalLoad = tumorMutationalLoad),
+                characteristics = baseMolecular.characteristics.copy(
+                    tumorMutationalLoad = tumorMutationalLoad?.let { createTestTumorMutationalLoad(score = it) }
+                ),
                 hasSufficientPurity = hasSufficientPurity,
                 hasSufficientQuality = hasSufficientQuality
             )
@@ -310,10 +326,54 @@ internal object MolecularTestFactory {
                     copyNumbers = drivers.filterIsInstance<CopyNumber>(),
                     homozygousDisruptions = drivers.filterIsInstance<HomozygousDisruption>(),
                     disruptions = drivers.filterIsInstance<Disruption>(),
-                    fusions = drivers.filterIsInstance<Fusion>()
+                    fusions = drivers.filterIsInstance<Fusion>(),
+                    viruses = drivers.filterIsInstance<Virus>(),
                 )
             )
         )
+    }
+
+    private fun createTestMicrosatelliteStability(isUnstable: Boolean?): MicrosatelliteStability? {
+        return isUnstable?.let {
+            MicrosatelliteStability(
+                microsatelliteIndelsPerMb = null,
+                isUnstable = it,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        }
+    }
+
+    private fun createTestHomologousRecombination(isDeficient: Boolean?): HomologousRecombination? {
+        return isDeficient?.let {
+            HomologousRecombination(
+                score = if (it) 1.0 else 0.0,
+                isDeficient = it,
+                type = if (it) HomologousRecombinationType.BRCA1_TYPE else HomologousRecombinationType.CANNOT_BE_DETERMINED,
+                brca1Value = if (it) 1.0 else 0.0,
+                brca2Value = 0.0,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        }
+    }
+
+    private fun createTestTumorMutationalBurden(score: Double = 0.0, isHigh: Boolean? = false): TumorMutationalBurden? {
+        return isHigh?.let {
+            TumorMutationalBurden(
+                score = score,
+                isHigh = it,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        }
+    }
+
+    private fun createTestTumorMutationalLoad(score: Int = 0, isHigh: Boolean? = false): TumorMutationalLoad? {
+        return isHigh?.let {
+            TumorMutationalLoad(
+                score = score,
+                isHigh = it,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        }
     }
 
     private fun withDriver(driver: Driver): PatientRecord {

@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -39,7 +40,6 @@ import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
-import com.hartwig.actin.trial.input.single.OneProteinOneString
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
@@ -53,7 +53,9 @@ import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneProtein
 import com.hartwig.actin.trial.input.single.OneProteinOneGene
+import com.hartwig.actin.trial.input.single.OneProteinOneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneProteinOneInteger
+import com.hartwig.actin.trial.input.single.OneProteinOneString
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
@@ -67,7 +69,6 @@ import com.hartwig.actin.trial.input.single.OneTreatmentTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoStrings
-import com.hartwig.actin.trial.input.single.OneProteinOneGeneOneInteger
 import com.hartwig.actin.trial.input.single.TwoTreatmentCategoriesManyTypes
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -75,7 +76,7 @@ import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
-    val icdModel: IcdModel,
+    private val icdModel: IcdModel,
     private val molecularInputChecker: MolecularInputChecker,
     private val treatmentDatabase: TreatmentDatabase,
     private val medicationCategories: MedicationCategories
@@ -417,6 +418,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_TNM_T -> {
+                    createManyTnmTInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_PROTEIN_ONE_STRING -> {
                     createOneProteinOneStringInput(function)
                     return true
@@ -677,6 +683,11 @@ class FunctionInputResolver(
         return parameterAsString(function, 0)
     }
 
+    fun createManyTnmTInput(function: EligibilityFunction): Set<TnmT> {
+        assertParamConfig(function, FunctionInput.MANY_TNM_T, 1)
+        return toTnmTs(function.parameters.first())
+    }
+
     fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {
         assertParamConfig(function, FunctionInput.TWO_STRINGS, 2)
         return TwoStrings(
@@ -933,6 +944,10 @@ class FunctionInputResolver(
         } catch (e: Exception) {
             throw IllegalStateException("Gender name not found: $genderName")
         }
+    }
+
+    private fun toTnmTs(input: Any): Set<TnmT>{
+        return toStringList(input).map(TnmT::valueOf).toSet()
     }
 
     private fun toIntents(input: Any): Set<Intent> {

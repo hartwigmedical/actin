@@ -11,7 +11,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val isHRD = test.characteristics.isHomologousRecombinationDeficient
+        val isHRD = test.characteristics.homologousRecombination?.isDeficient
 
         with(HomologousRecombinationDeficiencyGeneSummary.createForDrivers(test.drivers)) {
             val genesToFindWithDeletionOrPartialLoss = genesInGenesToFind(hrdGenesWithDeletionOrPartialLoss)

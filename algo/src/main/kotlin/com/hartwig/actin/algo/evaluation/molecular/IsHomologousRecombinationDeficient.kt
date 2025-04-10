@@ -48,7 +48,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
                 }
             }
         }
-        return when (test.characteristics.isHomologousRecombinationDeficient) {
+        return when (test.characteristics.homologousRecombination?.isDeficient) {
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(

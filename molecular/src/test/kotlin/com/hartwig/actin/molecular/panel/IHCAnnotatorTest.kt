@@ -1,11 +1,10 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.PanelRecord
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import io.mockk.every
 import io.mockk.mockk
@@ -47,8 +46,8 @@ class IHCAnnotatorTest {
                 testedGenes = setOf("ALK"),
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
-                drivers = Drivers(fusions = listOf(fusion)),
-                characteristics = MolecularCharacteristics(),
+                drivers = TestMolecularFactory.createMinimalTestDrivers().copy(fusions = listOf(fusion)),
+                characteristics = TestMolecularFactory.createMinimalTestCharacteristics(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
                 hasSufficientPurity = true,
                 hasSufficientQuality = true
@@ -72,8 +71,8 @@ class IHCAnnotatorTest {
                 testedGenes = setOf(NEGATIVE_FUSION_GENE),
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
-                drivers = Drivers(),
-                characteristics = MolecularCharacteristics(),
+                drivers = TestMolecularFactory.createMinimalTestDrivers(),
+                characteristics = TestMolecularFactory.createMinimalTestCharacteristics(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
                 hasSufficientPurity = true,
                 hasSufficientQuality = true

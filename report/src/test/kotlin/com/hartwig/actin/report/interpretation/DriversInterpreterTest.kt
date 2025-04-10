@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
@@ -82,7 +82,7 @@ class DriversInterpreterTest {
     }
 
     private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
-        return TestMolecularFactory.createMinimalTestOrangeRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
+        return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 
     private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {

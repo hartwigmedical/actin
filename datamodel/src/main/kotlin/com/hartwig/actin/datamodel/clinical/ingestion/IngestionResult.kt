@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.clinical.ingestion
 
+import java.time.LocalDate
+
 data class IngestionResult(
     val configValidationErrors: Set<CurationConfigValidationError> = emptySet(),
     val patientResults: List<PatientIngestionResult> = emptyList(),
@@ -13,6 +15,7 @@ enum class PatientIngestionStatus {
 
 data class PatientIngestionResult(
     val patientId: String,
+    val registrationDate: LocalDate,
     val status: PatientIngestionStatus,
     val curationResults: Set<CurationResult>,
     val questionnaireCurationErrors: Set<QuestionnaireCurationError>,
@@ -77,3 +80,6 @@ data class FeedValidationWarning(val subject: String, val message: String) : Com
             .compare(this, other)
     }
 }
+
+const val NO_QUESTIONNAIRE_FOUND = "No Questionnaire Found"
+
