@@ -3,8 +3,6 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.configuration.ClinicalConfiguration
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
-import io.mockk.every
-import io.mockk.mockk
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -13,9 +11,7 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord()
 private val EHR_TREATMENT_HISTORY = EhrTestData.createEhrTreatmentHistory()
 
 class DataQualityMaskTest {
-
-    private val panelGeneList = mockk<PanelGeneList>()
-    private val dataQualityMask = DataQualityMask(panelGeneList, ClinicalConfiguration())
+    private val dataQualityMask = DataQualityMask(ClinicalConfiguration())
 
     @Test
     fun `Should remove all modifications from treatment history`() {
@@ -26,24 +22,8 @@ class DataQualityMaskTest {
     }
 
     @Test
-    fun `Should add always tested genes for archer and ngs panels`() {
-        val ehrPatientRecord = EHR_PATIENT_RECORD.copy(
-            molecularTests = listOf(
-                ProvidedMolecularTest(
-                    test = "NGS panel", date = LocalDate.now(), testedGenes = setOf("additional_gene"), results = emptySet()
-                )
-            )
-        )
-        every { panelGeneList.listGenesForPanel("NGS panel") } returns setOf("EGFR")
-        val result = dataQualityMask.apply(ehrPatientRecord)
-        val ngsTest = result.molecularTests[0]
-        assertThat(ngsTest.testedGenes).containsExactly("EGFR", "additional_gene")
-    }
-
-    @Test
     fun `Should filter molecular test results when results are empty`() {
         val nonEmptyVariant = ProvidedMolecularTestResult(gene = "KRAS", hgvsProteinImpact = "G12C")
-        every { panelGeneList.listGenesForPanel("test") } returns setOf("KRAS")
         val ehrPatientRecord =
             EHR_PATIENT_RECORD.copy(
                 molecularTests = listOf(
@@ -60,7 +40,7 @@ class DataQualityMaskTest {
 
     @Test
     fun `Should scrub fields likely to be duplicated in prior other conditions when enabled in config`() {
-        val result = DataQualityMask(panelGeneList, ClinicalConfiguration(useOnlyPriorOtherConditions = true)).apply(EHR_PATIENT_RECORD)
+        val result = DataQualityMask(ClinicalConfiguration(useOnlyPriorOtherConditions = true)).apply(EHR_PATIENT_RECORD)
         assertThat(result.treatmentHistory).isEmpty()
         assertThat(result.complications).isEmpty()
         assertThat(result.surgeries).isEmpty()

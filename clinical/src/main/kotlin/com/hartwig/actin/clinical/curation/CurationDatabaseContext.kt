@@ -25,6 +25,8 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
+import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
+import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfigFactory
 import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
 import com.hartwig.actin.clinical.curation.config.SurgeryNameConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
@@ -51,6 +53,7 @@ data class CurationDatabaseContext(
     val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
     val molecularTestPdl1Curation: CurationDatabase<IHCTestConfig>,
     val sequencingTestCuration: CurationDatabase<SequencingTestConfig>,
+    val sequencingTestResultCuration: CurationDatabase<SequencingTestResultConfig>,
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>,
@@ -97,6 +100,7 @@ data class CurationDatabaseContext(
         molecularTestIhcCuration.validationErrors,
         molecularTestPdl1Curation.validationErrors,
         sequencingTestCuration.validationErrors,
+        sequencingTestResultCuration.validationErrors,
         medicationNameCuration.validationErrors,
         medicationDosageCuration.validationErrors,
         surgeryNameCuration.validationErrors,
@@ -157,6 +161,12 @@ data class CurationDatabaseContext(
                 curationDir,
                 CurationDatabaseReader.SEQUENCING_TEST_TSV,
                 SequencingTestConfigFactory(),
+                CurationCategory.SEQUENCING_TEST
+            ) { it.sequencingTestEvaluatedInputs },
+            sequencingTestResultCuration = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.SEQUENCING_TEST_RESULT_TSV,
+                SequencingTestResultConfigFactory(),
                 CurationCategory.SEQUENCING_TEST
             ) { it.sequencingTestEvaluatedInputs },
             medicationNameCuration = CurationDatabaseReader.read(

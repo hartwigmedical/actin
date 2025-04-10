@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
+import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
@@ -41,7 +41,7 @@ private const val FREE_TEXT = "free text"
 
 class StandardPriorSequencingTestExtractorTest {
 
-    val curation = mockk<CurationDatabase<SequencingTestConfig>> {
+    val curation = mockk<CurationDatabase<SequencingTestResultConfig>> {
         every { find("$HASHED_ID_IN_BASE64 | $TEST") } returns emptySet()
     }
     val extractor = StandardPriorSequencingTestExtractor(curation)
@@ -173,7 +173,7 @@ class StandardPriorSequencingTestExtractorTest {
     @Test
     fun `Should curate any free text results`() {
         every { curation.find(FREE_TEXT) } returns setOf(
-            SequencingTestConfig(
+            SequencingTestResultConfig(
                 input = FREE_TEXT,
                 curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
             )
@@ -211,7 +211,7 @@ class StandardPriorSequencingTestExtractorTest {
     @Test
     fun `Should respect ignore flag when curating free text`() {
         every { curation.find(FREE_TEXT) } returns setOf(
-            SequencingTestConfig(
+            SequencingTestResultConfig(
                 input = FREE_TEXT,
                 ignore = true
             )
@@ -224,7 +224,7 @@ class StandardPriorSequencingTestExtractorTest {
     @Test
     fun `Should allow for ignoring of full tests`() {
         every { curation.find("$HASHED_ID_IN_BASE64 | $TEST") } returns setOf(
-            SequencingTestConfig(
+            SequencingTestResultConfig(
                 input = "$HASHED_ID_IN_BASE64 | $TEST",
                 ignore = true
             )
@@ -236,7 +236,7 @@ class StandardPriorSequencingTestExtractorTest {
     @Test
     fun `Should allow for ignoring of individual test results`() {
         every { curation.find(FREE_TEXT) } returns setOf(
-            SequencingTestConfig(
+            SequencingTestResultConfig(
                 input = FREE_TEXT,
                 ignore = true
             )
