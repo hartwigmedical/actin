@@ -67,7 +67,9 @@ class IneligibleTrialGenerator(
             val (trialColWidth, subTableWidths) = getColumnWidths(width, true)
             val title =
                 "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
-            val footNote = if (!openOnly) "Closed cohorts are shown in grey." else null
+            val footNote = if (!openOnly) {
+                "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
+            } else null
             return IneligibleTrialGenerator(
                 ineligibleCohorts,
                 requestingSource,

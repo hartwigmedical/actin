@@ -124,6 +124,7 @@ class EligibleTrialGenerator(
 
             val title = "Trials in NL that are open but additional molecular tests needed to evaluate eligibility $cohortFromTrialsText"
             val footNote = "Open cohorts with no slots available are shown in grey."
+                .takeUnless { recruitingAndEligibleCohorts.all(InterpretedCohort::hasSlotsAvailable) }
 
             return if (recruitingAndEligibleCohorts.isNotEmpty()) {
                 create(recruitingAndEligibleCohorts, externalTrials = emptySet(), requestingSource, null, title, width, footNote)
