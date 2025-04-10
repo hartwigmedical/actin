@@ -129,7 +129,7 @@ object TrialGeneratorFunctions {
 
     private fun wrapSubTable(table: Table): Table {
         return if (table.numberOfRows > 2) {
-            Tables.makeWrapping(table, false)
+            Tables.makeWrapping(table)
         } else {
             table.setKeepTogether(true)
         }
