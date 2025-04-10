@@ -26,6 +26,10 @@ class IneligibleTrialGenerator(
         return title
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
         val subTableHeaders =

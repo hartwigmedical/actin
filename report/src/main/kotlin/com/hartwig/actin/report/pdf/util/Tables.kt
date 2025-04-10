@@ -13,23 +13,26 @@ object Tables {
         return Table(UnitValue.createPercentArray(floatArrayOf(1f))).setWidth(width)
     }
 
-    fun makeWrapping(contentTable: Table): Table {
+    fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean): Table {
         if (contentTable.numberOfRows == 0) {
             contentTable.addCell(Cells.createSpanningNoneEntry(contentTable))
         }
 
-        contentTable.addFooterCell(
-            Cells.createSpanningSubNote("The table continues on the next page", contentTable)
-                .setPaddingTop(5F)
-                .setPaddingBottom(5F)
-        ).setSkipLastFooter(true)
+        if (contentTable.numberOfRows < 3 || forceKeepTogether) {
+            contentTable.setKeepTogether(true)
+            return contentTable
+        } else {
+            contentTable.addFooterCell(
+                Cells.createSpanningSubNote("The table continues on the next page", contentTable)
+                    .setPaddingTop(5f)
+                    .setPaddingBottom(5f)
+            ).setSkipLastFooter(true)
 
-        val continuedWrappingTable = Table(1).setMinWidth(contentTable.width).setMarginBottom(10F)
-        continuedWrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
-        continuedWrappingTable.setSkipFirstHeader(true).addCell(Cells.create(contentTable).setPadding(0F))
+            val wrappingTable = Table(1).setWidth(contentTable.width).setMarginBottom(10f)
+            wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
+            wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(contentTable).setPadding(0f))
 
-//            val wrappedTable = Table(1).setMinWidth(contentTable.width).setMarginBottom(10F)
-//            wrappedTable.addCell(Cells.create(continuedWrappingTable).setPadding(0F).setBorder(Border.NO_BORDER))
-        return continuedWrappingTable
+            return wrappingTable
+        }
     }
 }

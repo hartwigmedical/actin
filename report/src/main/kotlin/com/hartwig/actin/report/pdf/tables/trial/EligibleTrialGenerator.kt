@@ -29,6 +29,10 @@ class EligibleTrialGenerator(
         return title
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val subTableWidths = listOfNotNull(
             cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth.takeIf { cohorts.isNotEmpty() }

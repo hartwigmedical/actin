@@ -11,13 +11,14 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class EfficacyEvidenceDetailsGenerator(
-    private val annotation: EfficacyEntry,
-    private val width: Float
-) : TableGenerator {
+class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, private val width: Float) : TableGenerator {
 
     override fun title(): String {
         return annotation.acronym
+    }
+
+    override fun forceKeepTogether(): Boolean {
+        return false
     }
 
     override fun contents(): Table {

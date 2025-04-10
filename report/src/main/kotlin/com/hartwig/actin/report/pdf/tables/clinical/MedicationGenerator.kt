@@ -13,15 +13,19 @@ import com.itextpdf.layout.element.Table
 private const val SPECIFIC_OR_UNKNOWN = "specific prescription|unknown prescription"
 
 class MedicationGenerator(
-    private val medications: List<Medication>, private val totalWidth: Float, private val interpreter: MedicationStatusInterpreter
+    private val medications: List<Medication>, private val width: Float, private val interpreter: MedicationStatusInterpreter
 ) : TableGenerator {
 
     override fun title(): String {
         return "Active medication details"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(1f, 1f, 1f, 1f, 1f, 1f).setWidth(totalWidth)
+        val table = Tables.createFixedWidthCols(1f, 1f, 1f, 1f, 1f, 1f).setWidth(width)
         
         table.addHeaderCell(Cells.createHeader("Medication"))
         table.addHeaderCell(Cells.createHeader("Administration route"))

@@ -16,6 +16,10 @@ class SOCEligibleApprovedTreatmentGenerator(
         return "Standard of care options considered potentially eligible"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val treatments = report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() }
         if (treatments.isNullOrEmpty()) {

@@ -16,6 +16,10 @@ class TumorDetailsGenerator(private val record: PatientRecord, private val keyWi
         return "Tumor details (" + date(record.patient.questionnaireDate) + ")"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return true
+    }
+
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("Measurable disease"))

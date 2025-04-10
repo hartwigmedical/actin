@@ -14,6 +14,10 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
         return "Approved treatments considered eligible"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(width)
         table.addHeaderCell(Cells.createHeader("Treatment"))

@@ -4,13 +4,19 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.itextpdf.layout.element.Table
 
-class OnLabelMolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+class OnLabelMolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, val width: Float) : TableGenerator {
 
+    private val wrapped = MolecularClinicalEvidenceGenerator(molecularHistory, width, isOnLabel = true)
+    
     override fun title(): String {
-        return MolecularClinicalEvidenceGenerator(molecularHistory, width, isOnLabel = true).title()
+        return wrapped.title()
+    }
+
+    override fun forceKeepTogether(): Boolean {
+        return wrapped.forceKeepTogether()
     }
 
     override fun contents(): Table {
-        return MolecularClinicalEvidenceGenerator(molecularHistory, width, isOnLabel = true).contents()
+        return wrapped.contents()
     }
 }

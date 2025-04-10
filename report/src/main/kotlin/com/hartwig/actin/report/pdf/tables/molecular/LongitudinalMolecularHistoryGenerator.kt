@@ -28,6 +28,10 @@ class LongitudinalMolecularHistoryGenerator(
         return "Molecular history"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val eventVAFMapByTest = molecularHistory.molecularTests.sortedBy { it.date }
             .associateWith { test ->

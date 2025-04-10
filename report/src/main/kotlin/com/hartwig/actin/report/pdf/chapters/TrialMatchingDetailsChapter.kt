@@ -74,7 +74,12 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         document.add(blankLine())
         val trialEvaluationPerCriterion = toWorstEvaluationPerReference(trial.evaluations)
         if (hasDisplayableEvaluations(trialEvaluationPerCriterion, displayFailOnly)) {
-            document.add(Tables.makeWrapping(createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly)))
+            document.add(
+                Tables.makeWrapping(
+                    contentTable = createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly),
+                    forceKeepTogether = false
+                )
+            )
         }
         for (cohort in trial.cohorts) {
             document.add(blankLine())
@@ -88,7 +93,12 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
             val cohortEvaluationPerCriterion = toWorstEvaluationPerReference(cohort.evaluations)
             if (hasDisplayableEvaluations(cohortEvaluationPerCriterion, displayFailOnly)) {
                 document.add(blankLine())
-                document.add(Tables.makeWrapping(createEvaluationTable(cohortEvaluationPerCriterion, displayFailOnly)))
+                document.add(
+                    Tables.makeWrapping(
+                        contentTable = createEvaluationTable(cohortEvaluationPerCriterion, displayFailOnly),
+                        forceKeepTogether = false
+                    )
+                )
             }
         }
     }

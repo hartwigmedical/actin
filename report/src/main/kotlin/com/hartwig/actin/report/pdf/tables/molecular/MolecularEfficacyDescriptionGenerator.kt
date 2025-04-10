@@ -19,6 +19,10 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
         return "Efficacy evidence description"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val table = Table(1).setWidth(width)
         val sortedEvidence = DriverTableFunctions.allDrivers(molecularHistory)

@@ -31,6 +31,10 @@ class EfficacyEvidenceGenerator(
         return "Standard of care options considered potentially eligible"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         if (treatments.isNullOrEmpty()) {
             return Tables.createSingleColWithWidth(width)

@@ -7,6 +7,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
@@ -71,7 +72,7 @@ class MolecularDetailsChapter(
 
             val generators =
                 listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts, trials)
-            ChapterContentFunctions.addGenerators(generators, orangeMolecularTable, overrideTitleFormatToSubtitle = true)
+            TableGeneratorFunctions.addGenerators(generators, orangeMolecularTable, overrideTitleFormatToSubtitle = true)
 
             if (!molecular.hasSufficientQuality) {
                 orangeMolecularTable.addCell(

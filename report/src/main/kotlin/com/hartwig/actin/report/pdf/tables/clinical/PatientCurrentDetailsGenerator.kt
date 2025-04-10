@@ -26,6 +26,10 @@ class PatientCurrentDetailsGenerator(
         return "Patient current details (" + date(record.patient.questionnaireDate) + ")"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return true
+    }
+
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("Unresolved toxicities grade => 2"))
@@ -68,7 +72,7 @@ class PatientCurrentDetailsGenerator(
 
     private fun createMeasureCells(table: Table, key: String, measure: EcgMeasure) {
         table.addCell(Cells.createKey(key))
-        table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value!!.toDouble())).toString() + " " + measure.unit)
+        table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value.toDouble())).toString() + " " + measure.unit)
     }
 
     private fun unresolvedToxicities(record: PatientRecord): String {

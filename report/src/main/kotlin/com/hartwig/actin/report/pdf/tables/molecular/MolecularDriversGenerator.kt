@@ -26,6 +26,10 @@ class MolecularDriversGenerator(
         return "Drivers"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val colWidth = width / 9
         val table = Tables.createFixedWidthCols(colWidth * 2, colWidth * 2, colWidth, colWidth, colWidth, colWidth, colWidth)
