@@ -54,7 +54,7 @@ data class ProvidedPatientDetail(
 @JacksonSerializable
 data class ProvidedTumorDetail(
     @Description("Date of diagnosis")
-    val diagnosisDate: LocalDate,
+    val diagnosisDate: LocalDate?,
     @Description("Tumor localization details (eg. Lung)")
     val tumorLocation: String,
     @Description("Tumor type details (eg. Adenocarcinoma)")

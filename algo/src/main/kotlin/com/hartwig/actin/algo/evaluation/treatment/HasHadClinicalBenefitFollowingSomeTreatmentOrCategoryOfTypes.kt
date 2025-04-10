@@ -73,15 +73,17 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
             }
 
             TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {
-                EvaluationFactory.warn("Uncertain$benefitMessage" +
-                        "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.STABLE_DISEASE]))} " +
+                EvaluationFactory.warn(
+                    "Uncertain$benefitMessage" +
+                            "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.STABLE_DISEASE]))} " +
                             "(best response: stable disease)"
                 )
             }
 
             TreatmentResponse.MIXED in targetTreatmentsToResponseMap -> {
-                EvaluationFactory.warn("Uncertain$benefitMessage" +
-                        "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.MIXED]))} " +
+                EvaluationFactory.warn(
+                    "Uncertain$benefitMessage" +
+                            "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.MIXED]))} " +
                             "(best response: mixed)"
                 )
             }
@@ -111,7 +113,10 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
 
     companion object {
         private val BENEFIT_RESPONSE_SET = setOf(
-            TreatmentResponse.PARTIAL_RESPONSE, TreatmentResponse.COMPLETE_RESPONSE, TreatmentResponse.REMISSION
+            TreatmentResponse.PARTIAL_RESPONSE,
+            TreatmentResponse.NEAR_COMPLETE_RESPONSE,
+            TreatmentResponse.COMPLETE_RESPONSE,
+            TreatmentResponse.REMISSION
         )
     }
 }

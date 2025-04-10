@@ -16,8 +16,9 @@ class MolecularFilteredExternalTrials(
     private val original: Set<EventWithExternalTrial>,
     val filtered: Set<EventWithExternalTrial>
 ) {
-    fun originalMinusFilteredSize() = original.size - filtered.size
+
     fun isNotEmpty() = original.isNotEmpty()
+
     fun originalMinusFiltered() = original - filtered
 }
 
@@ -28,6 +29,10 @@ class ExternalTrials(
     fun allFiltered(): Set<EventWithExternalTrial> {
         return nationalTrials.filtered + internationalTrials.filtered
     }
+
+    fun excludedNationalTrials() = nationalTrials.originalMinusFiltered()
+
+    fun excludedInternationalTrials() = internationalTrials.originalMinusFiltered()
 }
 
 class TrialsProvider(
@@ -37,6 +42,7 @@ class TrialsProvider(
     private val enableExtendedMode: Boolean,
     filterOnSOCExhaustionAndTumorType: Boolean
 ) {
+
     private val cohorts: List<InterpretedCohort> = InterpretedCohortFactory.createEvaluableCohorts(
         treatmentMatch,
         filterOnSOCExhaustionAndTumorType
@@ -55,12 +61,8 @@ class TrialsProvider(
         return nonEvaluableCohorts
     }
 
-    fun allEvidenceSources(): Set<String> {
-        return patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
-    }
-
     private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
-        return filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
+        return filterCohortsAvailable(cohorts.filter { !it.ignore })
     }
 
     private fun externalEligibleTrials(): Set<EventWithExternalTrial> {
@@ -111,9 +113,9 @@ class TrialsProvider(
     }
 
     companion object {
-        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean): List<InterpretedCohort> {
+        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
+                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation!!
             }
         }
 

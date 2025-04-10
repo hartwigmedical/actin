@@ -32,14 +32,14 @@ private val BASE_EXTERNAL_TRIAL = TestExternalTrialFactory.create(
 
 val TRIAL_MATCHES = setOf(
     TrialMatch(
-        identification = TrialIdentification("TRIAL-1", open = true, "TR-1", "Different title of same trial 1", NCT_01),
+        identification = TrialIdentification("TRIAL-1", open = true, "TR-1", "Different title of same trial 1", NCT_01, null, null, null, emptySet(), null),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList(),
         nonEvaluableCohorts = emptyList()
     ),
     TrialMatch(
-        identification = TrialIdentification("TRIAL-3", open = true, "TR-3", "Different trial 3", "NCT00000003"),
+        identification = TrialIdentification("TRIAL-3", open = true, "TR-3", "Different trial 3", "NCT00000003", null, null, null, emptySet(), null),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList(),

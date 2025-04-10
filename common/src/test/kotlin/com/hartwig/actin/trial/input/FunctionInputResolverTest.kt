@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -1063,6 +1064,16 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2b", "1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2", 1, "FGFR2b")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("FGFR2", "FGFR2b", 1)))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many TNM Ts as input`() {
+        val rule = firstOfType(FunctionInput.MANY_TNM_T)
+        val valid = create(rule, listOf("T2A"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createManyTnmTInput(valid)).isEqualTo(setOf(TnmT.T2A))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("T2C")))!!).isFalse
     }
 
     @Test

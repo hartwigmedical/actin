@@ -13,7 +13,6 @@ object Tables {
         return Table(UnitValue.createPercentArray(floatArrayOf(1f))).setWidth(width)
     }
 
-    @JvmOverloads
     fun makeWrapping(table: Table, printSubNotes: Boolean = true): Table {
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))

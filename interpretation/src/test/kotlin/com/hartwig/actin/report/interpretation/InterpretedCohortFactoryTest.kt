@@ -51,7 +51,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.warnings).isEmpty()
         assertThat(trial1cohortA.fails).isNotEmpty()
         assertThat(trial1cohortA.source).isEqualTo(TrialSource.NKI)
-        assertThat(trial1cohortA.locations).isEqualTo(listOf("Antoni van Leeuwenhoek"))
+        assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
         assertThat(trial1cohortB.molecularEvents).isEmpty()
@@ -63,7 +63,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortB.warnings).isEmpty()
         assertThat(trial1cohortB.fails).isNotEmpty()
         assertThat(trial1cohortA.source).isEqualTo(TrialSource.NKI)
-        assertThat(trial1cohortA.locations).isEqualTo(listOf("Antoni van Leeuwenhoek"))
+        assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
         assertThat(trial1cohortC.molecularEvents).isEmpty()
@@ -75,7 +75,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortC.warnings).isEmpty()
         assertThat(trial1cohortC.fails).isNotEmpty
         assertThat(trial1cohortA.source).isEqualTo(TrialSource.NKI)
-        assertThat(trial1cohortA.locations).isEqualTo(listOf("Antoni van Leeuwenhoek"))
+        assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
         assertThat(trial2cohortA.molecularEvents).isNotEmpty
@@ -87,8 +87,8 @@ class InterpretedCohortFactoryTest {
         assertThat(trial2cohortA.ignore).isFalse
         assertThat(trial2cohortA.warnings).isEmpty()
         assertThat(trial2cohortA.fails).isEmpty()
-        assertThat(trial2cohortA.source).isNull()
-        assertThat(trial2cohortA.locations).isEmpty()
+        assertThat(trial2cohortA.source).isEqualTo(TrialSource.NKI)
+        assertThat(trial2cohortA.locations).containsExactly("Antoni van Leeuwenhoek")
     }
 
     @Test
@@ -99,7 +99,7 @@ class InterpretedCohortFactoryTest {
         val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
         assertThat(trial2cohortB.molecularEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
-        assertThat(trial2cohortB.isMissingMolecularResultForEvaluation).isEqualTo(null)
+        assertThat(trial2cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
         assertThat(trial2cohortB.ignore).isFalse
@@ -115,7 +115,12 @@ class InterpretedCohortFactoryTest {
                 open = true,
                 acronym = "test-1",
                 title = "Example test trial 1",
-                nctId = null
+                nctId = null,
+                phase = null,
+                source = null,
+                sourceId = null,
+                locations = emptySet(),
+                url = null
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
@@ -206,7 +211,11 @@ class InterpretedCohortFactoryTest {
                 acronym = TRIAL_NAME,
                 title = "Example test trial 1",
                 nctId = "NCT00000010",
-                phase = TrialPhase.PHASE_1
+                phase = TrialPhase.PHASE_1,
+                source = null,
+                sourceId = null,
+                locations = emptySet(),
+                url = null
             ),
             isPotentiallyEligible = true,
             evaluations = evaluation,

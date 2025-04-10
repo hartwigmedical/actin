@@ -5,9 +5,10 @@ data class TrialIdentification(
     val open: Boolean,
     val acronym: String,
     val title: String,
-    val nctId: String? = null,
-    val phase: TrialPhase? = null,
-    val source: TrialSource? = null,
-    val sourceId: String? = null,
-    val locations: List<String> = emptyList()
+    val nctId: String?,
+    val phase: TrialPhase?,
+    val source: TrialSource?,
+    val sourceId: String?,
+    val locations: Set<String>,
+    val url : String?
 )
