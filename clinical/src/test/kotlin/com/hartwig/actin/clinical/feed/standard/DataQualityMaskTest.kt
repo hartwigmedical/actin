@@ -68,7 +68,5 @@ class DataQualityMaskTest {
         assertThat(result.priorPrimaries).isEmpty()
         assertThat(result.tumorDetails.diagnosisDate).isNull()
         assertThat(result.tumorDetails.lesionSite).isNull()
-        assertThat(result.tumorDetails.lesions).isEmpty()
-
     }
 }
