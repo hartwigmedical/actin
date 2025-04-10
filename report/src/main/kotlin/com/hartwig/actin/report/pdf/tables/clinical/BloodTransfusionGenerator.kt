@@ -14,15 +14,14 @@ class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfu
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(1f, 1f).setWidth(
-            totalWidth
-        )
+        val table = Tables.createFixedWidthCols(1f, 1f).setWidth(totalWidth)
         table.addHeaderCell(Cells.createHeader("Product"))
         table.addHeaderCell(Cells.createHeader("Date"))
+
         for (bloodTransfusion in bloodTransfusions) {
             table.addCell(Cells.createContent(bloodTransfusion.product))
             table.addCell(Cells.createContent(date(bloodTransfusion.date)))
         }
-        return Tables.makeWrapping(table)
+        return table
     }
 }

@@ -8,8 +8,6 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.countryNamesWithCities
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.hospitalsAndCitiesInCountry
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Cells.createContent
-import com.hartwig.actin.report.pdf.util.Cells.createContentNoBorder
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -65,7 +63,7 @@ object TrialGeneratorFunctions {
             )
             val content = if (contentList.size < tableWidths.size) contentList + "" else contentList
             content.map(subContentFunction).forEach(trialSubTable::addCell)
-            table.addCell(createContent(wrapSubTable(trialSubTable)))
+            table.addCell(Cells.createContent(trialSubTable))
         }
     }
 
@@ -92,7 +90,7 @@ object TrialGeneratorFunctions {
                 Paragraph(it)
             }.setKeepTogether(true)
 
-            val cell = if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else createContentNoBorder(paragraph)
+            val cell = if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else Cells.createContentNoBorder(paragraph)
             cell.setPadding(paddingDistance)
         }.forEach(table::addCell)
     }
@@ -111,27 +109,18 @@ object TrialGeneratorFunctions {
                 val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()) }
                 table.addCell(
                     cohort.url?.let {
-                        createContent(Paragraph().addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
-                    } ?: createContent(Paragraph().addAll(trialLabel))
+                        Cells.createContent(Paragraph().addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
+                    } ?: Cells.createContent(Paragraph().addAll(trialLabel))
                 )
             } else {
                 table.addCell(
                     cohort.url?.let {
-                        createContent(Paragraph().addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) })).setAction(
-                            PdfAction.createURI(it)
-                        )
-                    } ?: createContent(Paragraph().addAll(trialLabelText))
+                        Cells.createContent(Paragraph().addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) }))
+                            .setAction(PdfAction.createURI(it))
+                    } ?: Cells.createContent(Paragraph().addAll(trialLabelText))
                 )
             }
-            table.addCell(createContent(wrapSubTable(trialSubTable)))
-        }
-    }
-
-    private fun wrapSubTable(table: Table): Table {
-        return if (table.numberOfRows > 2) {
-            Tables.makeWrapping(table)
-        } else {
-            table.setKeepTogether(true)
+            table.addCell(Cells.createContent(trialSubTable))
         }
     }
 

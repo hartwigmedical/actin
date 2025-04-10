@@ -14,7 +14,7 @@ class EligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val externalTrials: Set<ExternalTrialSummary>,
     private val requestingSource: TrialSource?,
-    private val countryOfReference: Country? = null,
+    private val countryOfReference: Country?,
     private val title: String,
     private val footNote: String?,
     private val trialColWidth: Float,
@@ -33,6 +33,7 @@ class EligibleTrialGenerator(
         val subTableWidths = listOfNotNull(
             cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth.takeIf { cohorts.isNotEmpty() }
         ).toFloatArray()
+
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
         val subTableHeaders = listOfNotNull("Cohort", "Molecular", "Sites", "Warnings".takeIf { cohorts.isNotEmpty() })
         if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
@@ -41,6 +42,7 @@ class EligibleTrialGenerator(
             subTableHeaders.map(Cells::createHeader).forEach(subTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(subTable))
         }
+
         addTrialsToTable(
             cohorts = cohorts,
             externalTrials = externalTrials,
@@ -54,7 +56,7 @@ class EligibleTrialGenerator(
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
         }
-        return Tables.makeWrapping(table)
+        return table
     }
 
     override fun getCohortSize(): Int {

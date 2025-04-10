@@ -35,6 +35,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
 
     override fun render(document: Document) {
         addChapterTitle(document)
+
         val (eligible: List<TrialMatch>, nonEligible: List<TrialMatch>) = report.treatmentMatch.trialMatches
             .map(TrialClassification::createForTrialMatch)
             .fold(TrialClassification(), TrialClassification::combine)
@@ -42,6 +43,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         if (eligible.isNotEmpty()) {
             addTrialMatches(document, eligible, "Potentially eligible open trials & cohorts", true)
         }
+
         if (nonEligible.isNotEmpty()) {
             if (eligible.isNotEmpty()) {
                 document.add(pageBreak())
@@ -50,10 +52,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         }
     }
 
-    private fun addTrialMatches(
-        document: Document, trials: List<TrialMatch>, title: String,
-        trialsAreEligible: Boolean
-    ) {
+    private fun addTrialMatches(document: Document, trials: List<TrialMatch>, title: String, trialsAreEligible: Boolean) {
         document.add(Paragraph(title).addStyle(Styles.tableTitleStyle()))
         var addBlank = false
         for (trial in trials) {

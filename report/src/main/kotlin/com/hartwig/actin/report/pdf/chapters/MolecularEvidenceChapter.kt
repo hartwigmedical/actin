@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularEfficacyDescriptionGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OffLabelMolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OnLabelMolecularClinicalEvidenceGenerator
@@ -31,14 +30,14 @@ class MolecularEvidenceChapter(private val report: Report, override val include:
         val table = Tables.createSingleColWithWidth(contentWidth())
         val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularHistory, contentWidth())
         val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularHistory, contentWidth())
-        addGenerators(listOf(onLabelGenerator, offLabelGenerator), table, true)
+        ChapterContentFunctions.addGenerators(listOf(onLabelGenerator, offLabelGenerator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
 
     private fun addEfficacyDescriptionTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generator = MolecularEfficacyDescriptionGenerator(molecularHistory, contentWidth())
-        addGenerators(listOf(generator), table, true)
+        ChapterContentFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
 }

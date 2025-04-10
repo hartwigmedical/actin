@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceDetailsGenerator
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -34,7 +33,7 @@ class EfficacyEvidenceDetailsChapter(private val report: Report, override val in
         if (allAnnotations.isNotEmpty()) {
             val generators =
                 allAnnotations.distinctBy { it.acronym }.map { annotation -> EfficacyEvidenceDetailsGenerator(annotation, contentWidth()) }
-            addGenerators(generators, table, addSubTitle = true)
+            ChapterContentFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true)
             document.add(table)
         } else {
             document.add(Paragraph("There are no standard of care treatment options for this patient").addStyle(Styles.tableContentStyle()))

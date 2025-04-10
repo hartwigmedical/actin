@@ -21,15 +21,15 @@ class MedicationGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(1f, 1f, 1f, 1f, 1f, 1f).setWidth(
-            totalWidth
-        )
+        val table = Tables.createFixedWidthCols(1f, 1f, 1f, 1f, 1f, 1f).setWidth(totalWidth)
+        
         table.addHeaderCell(Cells.createHeader("Medication"))
         table.addHeaderCell(Cells.createHeader("Administration route"))
         table.addHeaderCell(Cells.createHeader("Start date"))
         table.addHeaderCell(Cells.createHeader("Stop date"))
         table.addHeaderCell(Cells.createHeader("Dosage"))
         table.addHeaderCell(Cells.createHeader("Frequency"))
+
         medications.distinct()
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             .forEach { medication: Medication ->
@@ -40,7 +40,8 @@ class MedicationGenerator(
                 table.addCell(Cells.createContent(dosage(medication)))
                 table.addCell(Cells.createContent(frequency(medication.dosage)))
             }
-        return Tables.makeWrapping(table)
+
+        return table
     }
 
     private fun administrationRoute(medication: Medication): String {

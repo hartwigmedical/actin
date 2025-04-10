@@ -6,7 +6,6 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
-import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
@@ -14,11 +13,11 @@ import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.borders.Border
@@ -66,7 +65,7 @@ class MolecularDetailsChapter(
 
             val generators =
                 listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts, trials)
-            addGenerators(generators, orangeMolecularTable, addSubTitle = true)
+            ChapterContentFunctions.addGenerators(generators, orangeMolecularTable, overrideTitleFormatToSubtitle = true)
 
             if (!molecular.hasSufficientQuality) {
                 orangeMolecularTable.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))

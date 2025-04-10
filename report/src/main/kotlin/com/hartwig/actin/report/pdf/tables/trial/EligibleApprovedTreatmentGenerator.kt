@@ -39,6 +39,6 @@ class EligibleApprovedTreatmentGenerator(private val report: Report, private val
                 table.addCell(Cells.createContent("Not yet determined"))
             }
         }
-        return Tables.makeWrapping(table)
+        return table
     }
 }

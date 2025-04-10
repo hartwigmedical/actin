@@ -30,12 +30,14 @@ class IneligibleTrialGenerator(
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
         val subTableHeaders =
             listOfNotNull("Cohort", "Molecular", "Sites", "Ineligibility reasons".takeIf { includeIneligibilityReasonCol })
+
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val subTable = Tables.createFixedWidthCols(*subTableWidths)
             subTableHeaders.map(Cells::createHeader).forEach(subTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(subTable))
         }
+
         addTrialsToTable(
             cohorts,
             externalTrials = emptySet(),
@@ -51,7 +53,7 @@ class IneligibleTrialGenerator(
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
         }
-        return Tables.makeWrapping(table)
+        return table
     }
 
     override fun getCohortSize(): Int {
