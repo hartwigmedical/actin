@@ -5,7 +5,6 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 private const val SMALL_PADDING_DISTANCE = 0.1f
@@ -52,7 +51,7 @@ class IneligibleTrialGenerator(
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
         }
-        return makeWrapping(table)
+        return Tables.makeWrapping(table)
     }
 
     override fun getCohortSize(): Int {

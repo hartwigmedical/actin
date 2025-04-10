@@ -9,11 +9,10 @@ import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
@@ -55,7 +54,7 @@ class MolecularDriversGenerator(
             val note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal"
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
-        return makeWrapping(table)
+        return Tables.makeWrapping(table)
     }
 
     private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {

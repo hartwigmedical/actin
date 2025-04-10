@@ -5,7 +5,6 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfusion>, private val totalWidth: Float) : TableGenerator {
@@ -24,6 +23,6 @@ class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfu
             table.addCell(Cells.createContent(bloodTransfusion.product))
             table.addCell(Cells.createContent(date(bloodTransfusion.date)))
         }
-        return makeWrapping(table)
+        return Tables.makeWrapping(table)
     }
 }
