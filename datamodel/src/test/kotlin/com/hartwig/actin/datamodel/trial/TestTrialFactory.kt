@@ -12,7 +12,11 @@ object TestTrialFactory {
                 acronym = "",
                 title = "",
                 nctId = null,
-                source = TrialSource.EMC
+                phase = null,
+                source = TrialSource.EMC,
+                sourceId = null,
+                locations = emptySet(),
+                url = null
             ),
             cohorts = emptyList(),
             generalEligibility = emptyList()
@@ -25,7 +29,7 @@ object TestTrialFactory {
             identification = minimal.identification.copy(
                 acronym = "TEST-TRIAL",
                 title = "This is an ACTIN test trial",
-                locations = listOf("Amsterdam UMC", "Antoni van Leeuwenhoek")
+                locations = setOf("Amsterdam UMC", "Antoni van Leeuwenhoek")
             ),
             generalEligibility = createGeneralEligibility(),
             cohorts = createTestCohorts(),

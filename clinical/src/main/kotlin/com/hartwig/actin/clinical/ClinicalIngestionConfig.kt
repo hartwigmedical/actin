@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical
 
+import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
+import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
@@ -26,6 +28,7 @@ data class ClinicalIngestionConfig(
     val outputDirectory: String,
     val feedFormat: FeedFormat,
     val panelGeneListTsv: String?,
+    val overridesYaml: String?
 ) {
 
     companion object {
@@ -68,6 +71,7 @@ data class ClinicalIngestionConfig(
                 true,
                 "The format of the feed. Accepted values [${FeedFormat.entries.joinToString()}]. Default is ${FeedFormat.EMC_TSV.name}."
             )
+            options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             return options
         }
 
@@ -88,7 +92,8 @@ data class ClinicalIngestionConfig(
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 feedFormat = ApplicationConfig.optionalValue(cmd, FEED_FORMAT)?.let { FeedFormat.valueOf(it) } ?: FeedFormat.EMC_TSV,
-                panelGeneListTsv = ApplicationConfig.optionalFile(cmd, PANEL_GENE_LIST_TSV)
+                panelGeneListTsv = ApplicationConfig.optionalFile(cmd, PANEL_GENE_LIST_TSV),
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
     }

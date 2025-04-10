@@ -17,7 +17,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     countries = sortedSetOf()
 )
 
-class EligibleExternalTrialGeneratorFunctionsTest {
+class ExternalTrialFunctionsTest {
 
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
@@ -59,48 +59,47 @@ class EligibleExternalTrialGeneratorFunctionsTest {
                         Hospital("VUmc", false),
                         Hospital("OLVG", false),
                         Hospital("BovenIJ", false)
-                    ),
-                    "Groningen" to setOf(Hospital("Martini", false), Hospital("UMCG", false), Hospital("Ommelander", false))
+                    )
                 )
             )
         )
     )
 
     @Test
-    fun `Should return hospitals and cities in home country`() {
-        val hospitalsAndCitiesExternalTrialNetherlands = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
+    fun `Should return hospitals and cities in country`() {
+        val hospitalsAndCitiesExternalTrialNetherlands = ExternalTrialFunctions.hospitalsAndCitiesInCountry(
             externalTrialNetherlands,
             Country.NETHERLANDS
         )
-        val hospitalsAndCitiesExternalTrialNetherlandsGermany = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
+        val hospitalsAndCitiesExternalTrialNetherlandsGermany = ExternalTrialFunctions.hospitalsAndCitiesInCountry(
             externalTrialNetherlandsGermany,
             Country.NETHERLANDS
         )
-        val hospitalsAndCitiesExternalTrialBelgium = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
+        val hospitalsAndCitiesExternalTrialBelgium = ExternalTrialFunctions.hospitalsAndCitiesInCountry(
             externalTrialBelgium,
             Country.BELGIUM
         )
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("Many, please check link")
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam, Groningen")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("3+ locations - see link")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
         assertThat(hospitalsAndCitiesExternalTrialBelgium.first).isEqualTo("Brussels hospital")
-        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("Many, please check link")
+        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("3+ locations - see link")
     }
 
     @Test(expected = IllegalStateException::class)
-    fun `Should throw illegal state exception if home country not found in external trial`() {
-        EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
+    fun `Should throw illegal state exception if country not found in external trial`() {
+        ExternalTrialFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
     }
 
     @Test
     fun `Should return country names and cities`() {
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
-            .isEqualTo("Netherlands (Amsterdam, Leiden), Germany (Berlin)")
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialBelgium))
-            .isEqualTo("Belgium (Many, please check link)")
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlands))
-            .isEqualTo("Netherlands (Nijmegen, Leiden, Amsterdam, Groningen)")
+        assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
+            .isEqualTo("NL (Amsterdam, Leiden), Germany (Berlin)")
+        assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialBelgium))
+            .isEqualTo("Belgium (3+ locations - see link)")
+        assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlands))
+            .isEqualTo("NL (Nijmegen, Leiden, Amsterdam)")
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)

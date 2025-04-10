@@ -1,6 +1,6 @@
 package com.hartwig.actin.database.dao
 
-import java.util.*
+import java.util.Objects
 
 internal object DataUtil {
 

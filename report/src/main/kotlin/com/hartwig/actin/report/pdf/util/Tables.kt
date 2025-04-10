@@ -13,8 +13,7 @@ object Tables {
     fun createSingleColWithWidth(width: Float): Table {
         return Table(UnitValue.createPercentArray(floatArrayOf(1f))).setWidth(width)
     }
-
-    @JvmOverloads
+    
     fun makeWrapping(contentTable: Table): Table {
         if (contentTable.numberOfRows == 0) {
             contentTable.addCell(Cells.createSpanningNoneEntry(contentTable))
