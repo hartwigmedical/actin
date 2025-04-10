@@ -423,6 +423,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_KNOWN_HEPATITIS_B_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_HEPATITIS_C_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_HIV_INFECTION(FunctionInput.NONE),
+    HAS_KNOWN_HSV_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_TUBERCULOSIS_INFECTION(FunctionInput.NONE),
     MEETS_COVID_19_INFECTION_REQUIREMENTS(FunctionInput.NONE),
