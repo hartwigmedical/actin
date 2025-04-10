@@ -101,6 +101,7 @@ object IcdConstants {
     const val CHRONIC_HEPATITIS_C_CODE = "1E51.1"
     const val HIV_BLOCK = "BlockL1-1C6"
     const val HSV_CODE = "1F00"
+    const val ANOGENITAL_HERPES_SIMPLEX_INFECTION_CODE = "1A94"
     const val CYTOMEGALOVIRAL_DISEASE_CODE = "1D82"
     const val TUBERCULOSIS_BLOCK = "BlockL2-1B1"
     const val ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK = "BlockL1-4A8"

@@ -18,7 +18,7 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_KNOWN_HEPATITIS_B_INFECTION to hasSpecificInfectionCreator(setOf(IcdCode(IcdConstants.ACUTE_HEPATITIS_B_CODE), IcdCode(IcdConstants.CHRONIC_HEPATITIS_B_CODE)), "hepatitis B virus"),
             EligibilityRule.HAS_KNOWN_HEPATITIS_C_INFECTION to hasSpecificInfectionCreator(setOf(IcdCode(IcdConstants.ACUTE_HEPATITIS_C_CODE), IcdCode(IcdConstants.CHRONIC_HEPATITIS_C_CODE)), "hepatitis C virus"),
             EligibilityRule.HAS_KNOWN_HIV_INFECTION to hasSpecificInfectionCreator(setOf(IcdCode(IcdConstants.HIV_BLOCK)), "HIV"),
-            EligibilityRule.HAS_KNOWN_HSV_INFECTION to hasSpecificInfectionCreator(setOf(IcdCode(IcdConstants.HSV_CODE)), "HSV"),
+            EligibilityRule.HAS_KNOWN_HSV_INFECTION to hasSpecificInfectionCreator(setOf(IcdCode(IcdConstants.HSV_CODE), IcdCode(IcdConstants.ANOGENITAL_HERPES_SIMPLEX_INFECTION_CODE)), "HSV"),
             EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION to hasSpecificInfectionCreator(setOf(IcdCode(IcdConstants.CYTOMEGALOVIRAL_DISEASE_CODE)), "cytomegalovirus"),
             EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION to hasSpecificInfectionCreator(setOf(IcdCode(IcdConstants.TUBERCULOSIS_BLOCK)), "tuberculosis"),
             EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS to meetsCovid19InfectionRequirementsCreator(),
