@@ -115,7 +115,7 @@ class TrialsProvider(
     companion object {
         fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation!!
+                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation
             }
         }
 
