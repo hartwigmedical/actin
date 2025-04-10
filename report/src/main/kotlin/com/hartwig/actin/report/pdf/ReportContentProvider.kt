@@ -31,7 +31,8 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
-import com.hartwig.actin.report.trial.SummarizedExternalTrials
+import com.hartwig.actin.report.trial.ExternalTrialSummarizer
+import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.apache.logging.log4j.LogManager
 
@@ -63,7 +64,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }
         }
 
-        val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
+        val summarizedExternalTrials = trialsProvider.externalTrials()
 
         return listOf(
             SummaryChapter(report, this, trialsProvider.evaluableCohortsAndNotIgnore()),
@@ -76,7 +77,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 report.config.includeMolecularDetailsChapter,
                 report.config.includeRawPathologyReport,
-                summarizedExternalTrials.allFiltered()
+                ExternalTrialSummarizer.summarize(summarizedExternalTrials.allFiltered())
             ),
             LongitudinalMolecularHistoryChapter(
                 report,
@@ -130,7 +131,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         val trialTableGenerators = createGenerators(
             interpretedCohorts,
-            trialsProvider.summarizeExternalTrials(),
+            trialsProvider.externalTrials(),
             TrialSource.fromDescription(report.requestingHospital),
             contentWidth
         ).filterNotNull()
@@ -154,13 +155,13 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
     private fun createGenerators(
         interpretedCohorts: List<InterpretedCohort>,
-        externalTrialSummary: SummarizedExternalTrials,
+        externalTrialSummary: ExternalTrials,
         requestingSource: TrialSource?,
         contentWidth: Float
     ): List<TrialTableGenerator?> {
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
             interpretedCohorts,
-            externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty(),
+            ExternalTrialSummarizer.summarize(externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()),
             externalTrialSummary.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,
             report.config.countryOfReference,
@@ -174,7 +175,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             )
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
-            externalTrialSummary.internationalTrials.filtered,
+            ExternalTrialSummarizer.summarize(externalTrialSummary.internationalTrials.filtered),
             externalTrialSummary.excludedInternationalTrials().size,
             requestingSource,
             null,
