@@ -42,7 +42,7 @@ private const val FREE_TEXT = "free text"
 class StandardPriorSequencingTestExtractorTest {
 
     val curation = mockk<CurationDatabase<SequencingTestConfig>> {
-        every { find("$HASHED_ID_IN_BASE64 | $TEST") } returns emptySet()
+        every { find("$HASHED_ID_IN_BASE64 | $TEST", isCaseSensitive = true) } returns emptySet()
     }
     val extractor = StandardPriorSequencingTestExtractor(curation)
 
@@ -223,7 +223,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should allow for ignoring of full tests`() {
-        every { curation.find("$HASHED_ID_IN_BASE64 | $TEST") } returns setOf(
+        every { curation.find("$HASHED_ID_IN_BASE64 | $TEST", isCaseSensitive = true) } returns setOf(
             SequencingTestConfig(
                 input = "$HASHED_ID_IN_BASE64 | $TEST",
                 ignore = true

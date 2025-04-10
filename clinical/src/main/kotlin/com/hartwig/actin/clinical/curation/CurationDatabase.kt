@@ -16,7 +16,10 @@ class CurationDatabase<T : CurationConfig>(
     private val evaluatedInputFunction: (CurationExtractionEvaluation) -> Set<String>
 ) {
 
-    fun find(input: InputText) = configs[input.lowercase()] ?: emptySet()
+    fun find(input: InputText, isCaseSensitive: Boolean = false): Set<T> {
+        val inputToFind = if (!isCaseSensitive) input.lowercase() else input
+        return configs[inputToFind] ?: emptySet()
+    }
 
     fun reportUnusedConfig(evaluation: CurationExtractionEvaluation): List<UnusedCurationConfig> {
         return (configs.keys - evaluatedInputFunction(evaluation)).map { UnusedCurationConfig(category, it) }

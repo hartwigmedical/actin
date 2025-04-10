@@ -22,7 +22,9 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
         val extracted = ehrPatientRecord.molecularTests.mapNotNull { test ->
-            val ignoreEntireTest = curation.find(patientQualifiedTestName(ehrPatientRecord.patientDetails.hashedId, test)).any { it.ignore }
+            val ignoreEntireTest =
+                curation.find(patientQualifiedTestName(ehrPatientRecord.patientDetails.hashedId, test), isCaseSensitive = true)
+                    .any { it.ignore }
             if (!ignoreEntireTest) {
                 val nonIHCTestResults = test.results.filter { it.ihcResult == null }.toSet()
                 val (onlyFreeTextResults, populatedResults) = nonIHCTestResults

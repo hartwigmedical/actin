@@ -12,6 +12,7 @@ import org.junit.Test
 import java.io.File
 
 private const val INPUT = "input"
+private const val INPUT_UPPER_CASE = "INPUT"
 private const val INPUT2 = "input2"
 
 class CurationDatabaseTest {
@@ -28,6 +29,18 @@ class CurationDatabaseTest {
     fun `Should return curation configs when key is found`() {
         val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY) { emptySet() }
         assertThat(database.find(INPUT)).containsExactly(testConfig)
+    }
+
+    @Test
+    fun `Should return curation configs when key is found with different case and isCaseSensitive = false`() {
+        val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY) { emptySet() }
+        assertThat(database.find(INPUT_UPPER_CASE)).containsExactly(testConfig)
+    }
+
+    @Test
+    fun `Should not return curation configs when key is found with different case and isCaseSensitive = true`() {
+        val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY) { emptySet() }
+        assertThat(database.find(INPUT_UPPER_CASE, isCaseSensitive = true)).isEmpty()
     }
 
     @Test
