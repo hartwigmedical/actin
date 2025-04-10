@@ -3,22 +3,18 @@ package com.hartwig.actin.report.trial
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.util.MapFunctions
-import java.util.Collections.emptySortedSet
-import java.util.SortedSet
 
 class MolecularFilteredExternalTrials(
     private val original: Set<ExternalTrialSummary>,
     val filtered: Set<ExternalTrialSummary>
 ) {
-    fun originalMinusFilteredSize() = original.size - filtered.size
+
     fun isNotEmpty() = original.isNotEmpty()
+
     fun originalMinusFiltered() = original - filtered
 }
 
@@ -29,6 +25,10 @@ class SummarizedExternalTrials(
     fun allFiltered(): Set<ExternalTrialSummary> {
         return nationalTrials.filtered + internationalTrials.filtered
     }
+
+    fun excludedNationalTrials() = nationalTrials.originalMinusFiltered()
+
+    fun excludedInternationalTrials() = internationalTrials.originalMinusFiltered()
 }
 
 class TrialsProvider(
@@ -38,6 +38,7 @@ class TrialsProvider(
     private val enableExtendedMode: Boolean,
     filterOnSOCExhaustionAndTumorType: Boolean
 ) {
+
     private val cohorts: List<InterpretedCohort> = InterpretedCohortFactory.createEvaluableCohorts(
         treatmentMatch,
         filterOnSOCExhaustionAndTumorType
@@ -56,12 +57,8 @@ class TrialsProvider(
         return nonEvaluableCohorts
     }
 
-    fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
-        return filterCohortsAvailable(cohorts.filter { !it.ignore }, true)
-    }
-
-    fun allEvidenceSources(): Set<String> {
-        return patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
+    private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
+        return filterCohortsAvailable(cohorts.filter { !it.ignore })
     }
 
     fun summarizeExternalTrials(): SummarizedExternalTrials {
@@ -112,9 +109,9 @@ class TrialsProvider(
     }
 
     companion object {
-        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>, slotsAvailable: Boolean): List<InterpretedCohort> {
+        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingMolecularResultForEvaluation!!
+                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation!!
             }
         }
     }

@@ -18,36 +18,29 @@ object InterpretedCohortFactory {
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
             val identification = trialMatch.identification
-            val trialId = identification.trialId
-            val acronym = identification.acronym
-            val nctId = identification.nctId
-            val title = identification.title
-            val trialIsOpen = identification.open
-            val phase = identification.phase
             val isMissingMolecularResultForEvaluation = trialMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation }
-            val source = identification.source
-            val sourceId = identification.sourceId
-            val locations = identification.locations
 
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
                     InterpretedCohort(
-                        trialId = trialId,
-                        acronym = acronym,
-                        nctId = nctId,
-                        title = title,
+                        trialId = identification.trialId,
+                        acronym = identification.acronym,
+                        nctId = identification.nctId,
+                        title = identification.title,
+                        phase = identification.phase,
+                        source = identification.source,
+                        sourceId = identification.sourceId,
+                        locations = identification.locations,
+                        url = identification.url,
                         name = null,
+                        isOpen = identification.open,
+                        hasSlotsAvailable = identification.open,
+                        ignore = false,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
                         isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
-                        isOpen = trialIsOpen,
-                        hasSlotsAvailable = trialIsOpen,
                         warnings = trialWarnings,
-                        fails = trialFails,
-                        phase = phase,
-                        source = source,
-                        sourceId = sourceId,
-                        locations = locations
+                        fails = trialFails
                     )
                 )
             } else {
@@ -55,24 +48,25 @@ object InterpretedCohortFactory {
                     trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
                 ).map { cohortMatch: CohortMatch ->
                     InterpretedCohort(
-                        trialId = trialId,
-                        acronym = acronym,
-                        nctId = nctId,
-                        title = title,
+                        trialId = identification.trialId,
+                        acronym = identification.acronym,
+                        nctId = identification.nctId,
+                        title = identification.title,
+                        phase = identification.phase,
+                        source = identification.source,
+                        sourceId = identification.sourceId,
+                        locations = identification.locations,
+                        url = identification.url,
                         name = cohortMatch.metadata.description,
+                        isOpen = identification.open && cohortMatch.metadata.open,
+                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
+                        ignore = cohortMatch.metadata.ignore,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
                         isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation ||
                                 cohortMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation },
-                        isOpen = trialIsOpen && cohortMatch.metadata.open,
-                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
-                        fails = trialFails.union(extractFails(cohortMatch.evaluations)),
-                        phase = phase,
-                        ignore = cohortMatch.metadata.ignore,
-                        source = source,
-                        sourceId = sourceId,
-                        locations = locations
+                        fails = trialFails.union(extractFails(cohortMatch.evaluations))
                     )
                 }
             }
@@ -88,14 +82,20 @@ object InterpretedCohortFactory {
                     acronym = identification.acronym,
                     nctId = identification.nctId,
                     title = identification.title,
+                    phase = identification.phase,
+                    source = identification.source,
+                    sourceId = identification.sourceId,
+                    locations = identification.locations,
+                    url = identification.url,
                     name = cohortMetadata.description,
                     isOpen = identification.open && cohortMetadata.open,
                     hasSlotsAvailable = cohortMetadata.slotsAvailable,
                     ignore = cohortMetadata.ignore,
-                    phase = identification.phase,
-                    source = identification.source,
-                    sourceId = identification.sourceId,
-                    locations = identification.locations
+                    molecularEvents = emptySet(),
+                    isPotentiallyEligible = false,
+                    isMissingMolecularResultForEvaluation = false,
+                    warnings = emptySet(),
+                    fails = emptySet(),
                 )
             }
         }.sortedWith(InterpretedCohortComparator())
