@@ -16,12 +16,11 @@ object ChapterContentFunctions {
                 generatedTable.addCell(Cells.createTitle(generator.title()))
             }
             val contentTable = generator.contents()
-            generatedTable.addCell(Tables.makeWrapping(contentTable))
+            generatedTable.addCell(Cells.create(Tables.makeWrapping(contentTable)))
             if (contentTable.numberOfRows < 3) {
-                contentTable.setKeepTogether(true)
                 generatedTable.setKeepTogether(true)
             }
-            Cells.createContent(generatedTable)
+            Cells.create(generatedTable)
         }.forEach(table::addCell)
     }
 }

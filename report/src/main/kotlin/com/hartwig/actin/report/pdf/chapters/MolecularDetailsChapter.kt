@@ -60,7 +60,13 @@ class MolecularDetailsChapter(
                 Cells.createTitle("${molecular.experimentType.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
             if (molecular.hasSufficientQualityButLowPurity()) {
-                orangeMolecularTable.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
+                val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"
+                orangeMolecularTable.addCell(
+                    Cells.createContentNoBorder(
+                        ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
+                                "DNA aberrations might not have been detected & predicted tumor origin results may be less reliable")
+                    )
+                )
             }
 
             val generators =
@@ -68,7 +74,12 @@ class MolecularDetailsChapter(
             ChapterContentFunctions.addGenerators(generators, orangeMolecularTable, overrideTitleFormatToSubtitle = true)
 
             if (!molecular.hasSufficientQuality) {
-                orangeMolecularTable.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
+                orangeMolecularTable.addCell(
+                    Cells.createContent(
+                        ("No successful OncoAct WGS and/or tumor NGS panel could be "
+                                + "performed on the submitted biopsy (insufficient quality for reporting)")
+                    )
+                )
             }
         } ?: orangeMolecularTable.addCell(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
         document.add(orangeMolecularTable)
