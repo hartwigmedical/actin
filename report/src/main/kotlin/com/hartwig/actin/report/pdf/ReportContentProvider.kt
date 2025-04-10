@@ -31,8 +31,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
-import com.hartwig.actin.report.trial.ExternalTrialSummarizer
-import com.hartwig.actin.report.trial.ExternalTrials
+import com.hartwig.actin.report.trial.SummarizedExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.apache.logging.log4j.LogManager
 
@@ -64,7 +63,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }
         }
 
-        val externalTrials = trialsProvider.externalTrials()
+        val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
 
         return listOf(
             SummaryChapter(report, this, trialsProvider.evaluableCohortsAndNotIgnore()),
@@ -77,7 +76,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 report.config.includeMolecularDetailsChapter,
                 report.config.includeRawPathologyReport,
-                ExternalTrialSummarizer.summarize(externalTrials.allFiltered())
+                summarizedExternalTrials.allFiltered()
             ),
             LongitudinalMolecularHistoryChapter(
                 report,
@@ -131,7 +130,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         val trialTableGenerators = createGenerators(
             interpretedCohorts,
-            trialsProvider.externalTrials(),
+            trialsProvider.summarizeExternalTrials(),
             TrialSource.fromDescription(report.requestingHospital),
             contentWidth
         ).filterNotNull()
@@ -155,14 +154,14 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
     private fun createGenerators(
         interpretedCohorts: List<InterpretedCohort>,
-        externalTrials: ExternalTrials,
+        externalTrialSummary: SummarizedExternalTrials,
         requestingSource: TrialSource?,
         contentWidth: Float
     ): List<TrialTableGenerator?> {
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
             interpretedCohorts,
-            ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()),
-            externalTrials.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
+            externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty(),
+            externalTrialSummary.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,
             report.config.countryOfReference,
             contentWidth
@@ -175,8 +174,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             )
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
-            ExternalTrialSummarizer.summarize(externalTrials.internationalTrials.filtered),
-            externalTrials.excludedInternationalTrials().size,
+            externalTrialSummary.internationalTrials.filtered,
+            externalTrialSummary.excludedInternationalTrials().size,
             requestingSource,
             null,
             contentWidth,
@@ -195,7 +194,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeTrialMatchingInSummary && it?.getCohortSize() != 0
             },
             nonLocalTrialGenerator
-                .takeIf { report.config.includeExternalTrialsInSummary && externalTrials.internationalTrials.filtered.isNotEmpty() },
+                .takeIf { report.config.includeExternalTrialsInSummary && externalTrialSummary.internationalTrials.filtered.isNotEmpty() },
             ineligibleTrialGenerator.takeIf { report.config.includeIneligibleTrialsInSummary }
         )
         return generators

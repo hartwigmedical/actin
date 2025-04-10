@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
+import com.hartwig.actin.util.MapFunctions
 import java.time.LocalDate
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
@@ -115,7 +116,7 @@ class TrialsProvider(
     companion object {
         fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation
+                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation!!
             }
         }
 
