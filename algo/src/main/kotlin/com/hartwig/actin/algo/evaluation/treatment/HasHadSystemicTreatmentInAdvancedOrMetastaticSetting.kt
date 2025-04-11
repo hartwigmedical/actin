@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -14,7 +15,7 @@ import java.time.LocalDate
 class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val referenceDate: LocalDate) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
-        val priorSystemicTreatments = priorTreatments.filter { it.treatments.any { treatment -> treatment.isSystemic } }
+        val priorSystemicTreatments = priorTreatments.filter { it.treatments.any(Treatment::isSystemic) }
         val (curativeTreatments, nonCurativeTreatments) = priorSystemicTreatments.partition { it.intents?.contains(Intent.CURATIVE) == true }
         val (recentNonCurativeTreatments, nonRecentNonCurativeTreatments) = partitionRecentTreatments(nonCurativeTreatments, false)
         val (recentNonCurativeTreatmentsIncludingUnknown, _) = partitionRecentTreatments(nonCurativeTreatments, true)

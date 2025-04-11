@@ -87,7 +87,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if patient has had radiotherapy before systemic treatment with intent other than curative more than 6 months ago`() {
+    fun `Should evaluate to undetermined if patient has had surgery before systemic treatment with intent other than curative more than 6 months ago`() {
         val record = withTreatmentHistory(
             listOf(
                 createTreatment(
@@ -111,7 +111,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if patient has had systemic treatment with unknown date and intent other than curative followed by surgery with unknown date`() {
+    fun `Should evaluate to undetermined if patient has had systemic treatment with unknown date and intent other than curative and surgery with unknown date`() {
         val record = withTreatmentHistory(
             listOf(
                 createTreatment(Intent.NEOADJUVANT, isSystemic = true, stopYear = null, stopMonth = null),
