@@ -12,11 +12,11 @@ import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
+import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class LongitudinalMolecularHistoryGenerator(
-    private val molecularHistory: MolecularHistory, private val cohorts: List<InterpretedCohort>, private val width: Float
-) : TableGenerator {
+class LongitudinalMolecularHistoryGenerator(private val molecularHistory: MolecularHistory, private val cohorts: List<InterpretedCohort>) :
+    TableGenerator {
 
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
@@ -39,7 +39,7 @@ class LongitudinalMolecularHistoryGenerator(
             }
 
         val columnCount = 3 + eventVAFMapByTest.size
-        val table = Table(columnCount).setWidth(width)
+        val table = Tables.createMultiCol(columnCount)
 
         val headers = listOf("Event", "Description", "Driver likelihood") + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }

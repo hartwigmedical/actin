@@ -4,9 +4,9 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.itextpdf.layout.element.Table
 
-class OnLabelMolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, val width: Float) : TableGenerator {
+class OnLabelMolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory) : TableGenerator {
 
-    private val wrapped = MolecularClinicalEvidenceGenerator(molecularHistory, width, isOnLabel = true)
+    private val wrapped = MolecularClinicalEvidenceGenerator(molecularHistory, isOnLabel = true)
     
     override fun title(): String {
         return wrapped.title()

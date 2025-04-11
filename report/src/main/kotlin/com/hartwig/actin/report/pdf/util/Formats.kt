@@ -16,7 +16,7 @@ object Formats {
     const val VALUE_NOT_AVAILABLE = "N/A"
     const val COMMA_SEPARATOR = ", "
     const val STANDARD_KEY_WIDTH = 210f
-    const val STANDARD_INNER_TABLE_WIDTH_DECREASE = 10f
+    const val STANDARD_INNER_TABLE_WIDTH_DECREASE = 5f
     const val DATE_UNKNOWN = "Date unknown"
     const val ITALIC_TEXT_MARKER = "{i}"
 

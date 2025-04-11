@@ -24,12 +24,11 @@ class ClinicalDetailsChapter(private val report: Report, override val include: B
     }
 
     private fun addClinicalDetails(document: Document) {
-        val contentWidth = contentWidth()
-        val table = Tables.createSingleColWithWidth(contentWidth)
+        val table = Tables.createSingleColWithWidth(contentWidth())
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val valueWidth = contentWidth - (keyWidth + Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE)
+        val valueWidth = contentWidth() - keyWidth
 
-        val generators = ReportContentProvider(report).provideClinicalDetailsTables(keyWidth, valueWidth, contentWidth)
+        val generators = ReportContentProvider(report).provideClinicalDetailsTables(keyWidth, valueWidth)
         TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }

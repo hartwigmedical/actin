@@ -14,7 +14,7 @@ class ResistanceEvidenceGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return ""
+        return "Resistance evidence"
     }
 
     override fun forceKeepTogether(): Boolean {

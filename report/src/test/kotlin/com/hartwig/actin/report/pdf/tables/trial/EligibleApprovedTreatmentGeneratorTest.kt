@@ -19,8 +19,6 @@ import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val WIDTH = 10F
-
 class EligibleApprovedTreatmentGeneratorTest {
 
     @Test
@@ -66,7 +64,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             treatmentMatch,
             EnvironmentConfiguration.create(null)
         )
-        return EligibleApprovedTreatmentGenerator(report, WIDTH).contents()
+        return EligibleApprovedTreatmentGenerator(report).contents()
     }
 }
 

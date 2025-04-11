@@ -31,7 +31,6 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
-import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.trial.SummarizedExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.apache.logging.log4j.LogManager
@@ -99,9 +98,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         ).filter(ReportChapter::include)
     }
 
-    fun provideClinicalDetailsTables(keyWidth: Float, valueWidth: Float, contentWidth: Float): List<TableGenerator> {
-        val bloodTransfusions = report.patientRecord.bloodTransfusions
-
+    fun provideClinicalDetailsTables(keyWidth: Float, valueWidth: Float): List<TableGenerator> {
         return listOfNotNull(
             PatientClinicalHistoryGenerator(report = report, showDetails = true, keyWidth = keyWidth, valueWidth = valueWidth),
             PatientCurrentDetailsGenerator(
@@ -114,21 +111,17 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             report.patientRecord.medications?.let {
                 MedicationGenerator(
                     medications = it,
-                    width = contentWidth - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE,
                     interpreter = MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null)
                 )
             },
-            if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(
-                bloodTransfusions = bloodTransfusions,
-                width = contentWidth - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
-            )
+            if (report.patientRecord.bloodTransfusions.isEmpty()) null else
+                BloodTransfusionGenerator(bloodTransfusions = report.patientRecord.bloodTransfusions)
         )
     }
 
     fun provideSummaryTables(
         keyWidth: Float,
         valueWidth: Float,
-        innerContentWidth: Float,
         interpretedCohorts: List<InterpretedCohort>
     ): List<TableGenerator> {
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
@@ -140,8 +133,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val trialTableGenerators = createGenerators(
             interpretedCohorts,
             trialsProvider.summarizeExternalTrials(),
-            TrialSource.fromDescription(report.requestingHospital),
-            innerContentWidth
+            TrialSource.fromDescription(report.requestingHospital)
         ).filterNotNull()
 
         return listOfNotNull(
@@ -156,46 +148,37 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE &&
                         report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
-            }, SOCEligibleApprovedTreatmentGenerator(report, innerContentWidth).takeIf {
-                report.config.includeEligibleSOCTreatmentSummary
-            }, EligibleApprovedTreatmentGenerator(report, innerContentWidth).takeIf {
-                report.config.includeApprovedTreatmentsInSummary
-            }) + trialTableGenerators
+            },
+            SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.config.includeEligibleSOCTreatmentSummary },
+            EligibleApprovedTreatmentGenerator(report).takeIf { report.config.includeApprovedTreatmentsInSummary }
+        ) + trialTableGenerators
     }
 
     private fun createGenerators(
         interpretedCohorts: List<InterpretedCohort>,
         externalTrialSummary: SummarizedExternalTrials,
-        requestingSource: TrialSource?,
-        contentWidth: Float
+        requestingSource: TrialSource?
     ): List<TrialTableGenerator?> {
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
             interpretedCohorts,
             externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty(),
             externalTrialSummary.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,
-            report.config.countryOfReference,
-            contentWidth
+            report.config.countryOfReference
         )
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
-            EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
-                interpretedCohorts,
-                requestingSource,
-                contentWidth
-            )
+            EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(interpretedCohorts, requestingSource)
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             externalTrialSummary.internationalTrials.filtered,
             externalTrialSummary.excludedInternationalTrials().size,
             requestingSource,
             null,
-            contentWidth,
             false
         )
         val ineligibleTrialGenerator = IneligibleTrialGenerator.forEvaluableCohorts(
             interpretedCohorts,
             requestingSource,
-            contentWidth,
             openOnly = true
         )
 

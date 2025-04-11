@@ -18,8 +18,7 @@ import com.itextpdf.layout.element.Table
 class MolecularDriversGenerator(
     private val molecular: MolecularRecord,
     private val cohorts: List<InterpretedCohort>,
-    private val externalTrials: Set<ExternalTrialSummary>,
-    private val width: Float
+    private val externalTrials: Set<ExternalTrialSummary>
 ) : TableGenerator {
 
     override fun title(): String {
@@ -31,7 +30,7 @@ class MolecularDriversGenerator(
     }
 
     override fun contents(): Table {
-        val colWidth = width / 9
+        val colWidth = 1f / 9
         val table = Tables.createFixedWidthCols(colWidth * 2, colWidth * 2, colWidth, colWidth, colWidth, colWidth, colWidth)
 
         table.addHeaderCell(Cells.createHeader("Type"))

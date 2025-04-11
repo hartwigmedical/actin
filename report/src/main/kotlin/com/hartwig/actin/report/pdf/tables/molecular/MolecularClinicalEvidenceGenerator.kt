@@ -11,11 +11,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularClinicalEvidenceGenerator(
-    val molecularHistory: MolecularHistory,
-    private val width: Float,
-    private val isOnLabel: Boolean
-) : TableGenerator {
+class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, private val isOnLabel: Boolean) : TableGenerator {
 
     override fun title(): String {
         val titleEnd = "label clinical evidence"
@@ -27,14 +23,12 @@ class MolecularClinicalEvidenceGenerator(
     }
 
     override fun contents(): Table {
-        val columnCount = 6
-
-        val eventWidth = (0.7 * width / 6).toFloat()
-        val sourceEventWidth = (0.7 * width / 6).toFloat()
-        val levelAWidth = (1.2 * width / 6).toFloat()
-        val levelBWidth = (1.2 * width / 6).toFloat()
-        val levelCWidth = (1.2 * width / 6).toFloat()
-        val levelDWidth = (1.2 * width / 6).toFloat()
+        val eventWidth = (0.7 / 6).toFloat()
+        val sourceEventWidth = (0.7 / 6).toFloat()
+        val levelAWidth = (1.2 / 6).toFloat()
+        val levelBWidth = (1.2 / 6).toFloat()
+        val levelCWidth = (1.2 / 6).toFloat()
+        val levelDWidth = (1.2 / 6).toFloat()
 
         val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
 
@@ -55,7 +49,7 @@ class MolecularClinicalEvidenceGenerator(
                         table.addCell(Cells.createContent(sourceEvent))
 
                         treatmentEvidencesByLevel.forEach { perLevelEvidences ->
-                            val evidenceLevelTable = Table(1).setWidth(width / columnCount)
+                            val evidenceLevelTable = Tables.createSingleCol()
 
                             val evidenceCellContents = TreatmentEvidenceFunctions.generateEvidenceCellContents(perLevelEvidences)
 
@@ -68,7 +62,7 @@ class MolecularClinicalEvidenceGenerator(
                                     cancerTypeContent.setFontColor(PALETTE_RED)
                                 }
 
-                                val evidenceSubTable = Table(1).setWidth(width / columnCount)
+                                val evidenceSubTable = Tables.createSingleCol()
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
 

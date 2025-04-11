@@ -66,60 +66,61 @@ class IneligibleTrialGenerator(
 
     companion object {
         fun forEvaluableCohorts(
-            cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, width: Float, openOnly: Boolean = false
+            cohorts: List<InterpretedCohort>,
+            requestingSource: TrialSource?,
+            openOnly: Boolean = false
         ): IneligibleTrialGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
-            val (trialColWidth, subTableWidths) = getColumnWidths(width, true)
+            val (trialColWidth, subTableWidths) = determineRelativeColumnWidths(true)
             val title =
                 "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
             val footNote = if (!openOnly) {
                 "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
             } else null
             return IneligibleTrialGenerator(
-                ineligibleCohorts,
-                requestingSource,
-                title,
-                footNote,
-                trialColWidth,
-                subTableWidths,
-                true,
+                cohorts = ineligibleCohorts,
+                requestingSource = requestingSource,
+                title = title,
+                footNote = footNote,
+                trialColWidth = trialColWidth,
+                subTableWidths = subTableWidths,
+                includeIneligibilityReasonCol = true,
                 paddingDistance = NORMAL_PADDING_DISTANCE,
-                true
+                allowDeEmphasis = true
             )
         }
 
         fun forNonEvaluableAndIgnoredCohorts(
             ignoredCohorts: List<InterpretedCohort>,
             nonEvaluableCohorts: List<InterpretedCohort>,
-            requestingSource: TrialSource?,
-            width: Float,
+            requestingSource: TrialSource?
         ): IneligibleTrialGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
-            val (trialColWidth, subTableWidths) = getColumnWidths(width, false)
-            val title =
-                "Trials and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
+            val (trialColWidth, subTableWidths) = determineRelativeColumnWidths(includeIneligibilityReason = false)
+            val title = "Trials and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
+
             return IneligibleTrialGenerator(
-                nonEvaluableAndIgnoredCohorts,
-                requestingSource,
-                title,
+                cohorts = nonEvaluableAndIgnoredCohorts,
+                requestingSource = requestingSource,
+                title = title,
                 footNote = null,
-                trialColWidth,
-                subTableWidths,
-                false,
+                trialColWidth = trialColWidth,
+                subTableWidths = subTableWidths,
+                includeIneligibilityReasonCol = false,
                 paddingDistance = SMALL_PADDING_DISTANCE,
-                false
+                allowDeEmphasis = false
             )
         }
 
-        private fun getColumnWidths(
-            width: Float, includeIneligibilityReason: Boolean = false
-        ): Pair<Float, FloatArray> = width.let { w ->
-            val trialWidth = if (includeIneligibilityReason) w / 9 else w / 4
-            val cohortWidth = if (includeIneligibilityReason) w / 4 else w / 2
-            val molecularWidth = if (includeIneligibilityReason) w / 7 else w / 4
-            val sitesWidth = if (includeIneligibilityReason) w / 7 else w / 4
-            val remainingWidth = w - (trialWidth + cohortWidth + molecularWidth + sitesWidth)
-            trialWidth to listOfNotNull(
+        private fun determineRelativeColumnWidths(includeIneligibilityReason: Boolean = false): Pair<Float, FloatArray> {
+            val base = 1f
+            val trialWidth = if (includeIneligibilityReason) base / 9 else base / 4
+            val cohortWidth = if (includeIneligibilityReason) base / 4 else base / 2
+            val molecularWidth = if (includeIneligibilityReason) base / 7 else base / 4
+            val sitesWidth = if (includeIneligibilityReason) base / 7 else base / 4
+            val remainingWidth = base - (trialWidth + cohortWidth + molecularWidth + sitesWidth)
+
+            return trialWidth to listOfNotNull(
                 cohortWidth,
                 molecularWidth,
                 sitesWidth,

@@ -48,26 +48,25 @@ class TrialMatchingChapter(
             trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
         )
         val localExternalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
-            emptyList(),
-            externalTrials.nationalTrials.filtered,
-            externalTrials.excludedNationalTrials().size,
-            requestingSource,
-            report.config.countryOfReference,
-            contentWidth()
+            cohorts = emptyList(),
+            externalTrials = externalTrials.nationalTrials.filtered,
+            filteredCount = externalTrials.excludedNationalTrials().size,
+            requestingSource = requestingSource,
+            countryOfReference = report.config.countryOfReference
         ).takeIf { externalTrialsOnly }
+
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
-            emptyList(),
-            externalTrials.internationalTrials.filtered,
-            externalTrials.excludedInternationalTrials().size,
-            requestingSource,
-            null,
-            contentWidth(),
-            false
+            cohorts = emptyList(),
+            externalTrials = externalTrials.internationalTrials.filtered,
+            filteredCount = externalTrials.excludedInternationalTrials().size,
+            requestingSource = requestingSource,
+            countryOfReference = null,
+            forLocalTrials = false
         ).takeIf { externalTrialsOnly }
+
         val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(
-            externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials(),
-            report.config.countryOfReference,
-            contentWidth()
+            trials = externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials(),
+            countryOfReference = report.config.countryOfReference
         )
 
         return localTrialGenerators + listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator) + filteredTrialGenerator
@@ -80,12 +79,10 @@ class TrialMatchingChapter(
     ): List<TrialTableGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
 
-        val eligibleActinTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(
-            nonIgnoredCohorts, source, contentWidth()
-        )
-        val ineligibleActinTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source, contentWidth())
+        val eligibleActinTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(nonIgnoredCohorts, source)
+        val ineligibleActinTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source)
         val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialGenerator.forNonEvaluableAndIgnoredCohorts(
-            ignoredCohorts, nonEvaluableCohorts, source, contentWidth()
+            ignoredCohorts, nonEvaluableCohorts, source
         )
 
         return listOfNotNull(

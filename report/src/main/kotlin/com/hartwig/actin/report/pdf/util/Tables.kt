@@ -9,8 +9,16 @@ object Tables {
         return Table(UnitValue.createPointArray(widths))
     }
 
+    fun createMultiCol(numColumns: Int): Table {
+        return Table(UnitValue.createPercentArray(FloatArray(numColumns) { 1f / numColumns }))
+    }
+
+    fun createSingleCol(): Table {
+        return createMultiCol(1)
+    }
+    
     fun createSingleColWithWidth(width: Float): Table {
-        return Table(UnitValue.createPercentArray(floatArrayOf(1f))).setWidth(width)
+        return createSingleCol().setWidth(width)
     }
 
     fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean): Table {

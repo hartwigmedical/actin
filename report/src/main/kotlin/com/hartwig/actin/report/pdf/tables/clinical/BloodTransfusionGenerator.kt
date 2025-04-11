@@ -7,7 +7,7 @@ import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfusion>, private val width: Float) : TableGenerator {
+class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfusion>) : TableGenerator {
     
     override fun title(): String {
         return "Blood transfusions"
@@ -18,7 +18,7 @@ class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfu
     }
     
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(1f, 1f).setWidth(width)
+        val table = Tables.createFixedWidthCols(1f, 1f)
         table.addHeaderCell(Cells.createHeader("Product"))
         table.addHeaderCell(Cells.createHeader("Date"))
 

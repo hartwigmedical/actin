@@ -27,7 +27,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
 
     @Test
     fun `Should create table with header with column for each test`() {
-        val result = LongitudinalMolecularHistoryGenerator(MolecularHistory(listOf(FIRST_TEST, SECOND_TEST)), emptyList(), 1f)
+        val result = LongitudinalMolecularHistoryGenerator(MolecularHistory(listOf(FIRST_TEST, SECOND_TEST)), emptyList())
         assertThat(result.title()).isEqualTo("Molecular history")
         assertHeader(result, "Event", "Description", "Driver likelihood", "2024-07-21\nHartwig WGS", "2024-07-22\nHartwig WGS")
     }
@@ -41,7 +41,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 ), SECOND_TEST
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
+        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
         assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Hotspot)\nGain of function", HIGH, VAF, NOT_DETECTED)
     }
 
@@ -63,7 +63,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
+        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
         assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Hotspot)\nGain of function", HIGH, VAF)
         assertRow(result, 1, "KRAS G12C\n(Tier I)", "Mutation (Hotspot)\nGain of function", HIGH, VAF)
         assertRow(result, 2, "KRAS G12D\n(Tier I)", "Mutation (Hotspot)\nGain of function", HIGH, VAF)
@@ -83,7 +83,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
+        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
         assertRow(result, 0, "TMB", "", "", "1.0", "2.0")
     }
 
@@ -98,7 +98,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
+        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
         assertRow(result, 1, "MSI", "", "", "Stable", "Unstable", "")
     }
 
@@ -111,7 +111,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 ), SECOND_TEST
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
+        val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
         assertRow(result, 0, "EML4::ALK fusion\n(Tier I)", "Known fusion\nGain of function", HIGH, DETECTED, NOT_DETECTED)
     }
 

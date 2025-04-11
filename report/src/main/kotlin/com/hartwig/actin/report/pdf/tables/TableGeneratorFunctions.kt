@@ -15,7 +15,7 @@ object TableGeneratorFunctions {
             } else {
                 generatedTable.addCell(Cells.createTitle(generator.title()))
             }
-            val contentTable = generator.contents()
+            val contentTable = generator.contents().setWidth(table.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE)
 
             generatedTable.addCell(Tables.makeWrapping(contentTable, generator.forceKeepTogether()))
             if (contentTable.numberOfRows < 3) {

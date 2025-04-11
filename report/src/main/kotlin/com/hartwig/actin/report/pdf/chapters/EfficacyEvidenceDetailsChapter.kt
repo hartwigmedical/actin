@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceDetailsGenerator
-import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
@@ -34,13 +33,7 @@ class EfficacyEvidenceDetailsChapter(private val report: Report, override val in
         val allAnnotations = socMatches?.flatMap { it.annotations } ?: emptyList()
         if (allAnnotations.isNotEmpty()) {
             val generators =
-                allAnnotations.distinctBy { it.acronym }
-                    .map { annotation ->
-                        EfficacyEvidenceDetailsGenerator(
-                            annotation = annotation,
-                            width = contentWidth() - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
-                        )
-                    }
+                allAnnotations.distinctBy { it.acronym }.map { annotation -> EfficacyEvidenceDetailsGenerator(annotation = annotation) }
             TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true)
             document.add(table)
         } else {

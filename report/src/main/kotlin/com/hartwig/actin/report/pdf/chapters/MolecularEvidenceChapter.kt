@@ -5,7 +5,6 @@ import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularEfficacyDescriptionGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OffLabelMolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OnLabelMolecularClinicalEvidenceGenerator
-import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -30,17 +29,15 @@ class MolecularEvidenceChapter(val report: Report, override val include: Boolean
 
     private fun addMolecularEvidenceTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val innerContentWidth = contentWidth() - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
-        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularHistory, innerContentWidth)
-        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularHistory, innerContentWidth)
+        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularHistory)
+        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularHistory)
         TableGeneratorFunctions.addGenerators(listOf(onLabelGenerator, offLabelGenerator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
 
     private fun addEfficacyDescriptionTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val innerContentWidth = contentWidth() - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
-        val generator = MolecularEfficacyDescriptionGenerator(molecularHistory, innerContentWidth)
+        val generator = MolecularEfficacyDescriptionGenerator(molecularHistory)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }

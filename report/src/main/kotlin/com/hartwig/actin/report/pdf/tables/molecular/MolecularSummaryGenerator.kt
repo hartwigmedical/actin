@@ -32,7 +32,7 @@ class MolecularSummaryGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
+        val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
         for (molecularTest in nonIhcTestsIncludedInTrialMatching.sortedByDescending { it.date }) {

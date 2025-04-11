@@ -13,7 +13,7 @@ import com.itextpdf.layout.element.Table
 private const val PADDING_LEFT = 20
 private const val PADDING_RIGHT = 25
 
-class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
+class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : TableGenerator {
 
     override fun title(): String {
         return "Predicted tumor origin"
@@ -33,7 +33,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
                 predictedTumorOrigin.cancerType(),
                 Formats.percentage(predictedTumorOrigin.likelihood())
             )
-            Tables.createSingleColWithWidth(width).addCell(Cells.createContentNoBorder(message))
+            Tables.createSingleCol().addCell(Cells.createContentNoBorder(message))
         } else {
             val numColumns = predictions.size + 1
             val table = Table(numColumns)

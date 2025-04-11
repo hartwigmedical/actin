@@ -70,8 +70,7 @@ class MolecularDetailsChapter(
                 )
             }
 
-            val generators =
-                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts, trials)
+            val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
             TableGeneratorFunctions.addGenerators(generators, orangeMolecularTable, overrideTitleFormatToSubtitle = true)
 
             if (!molecular.hasSufficientQuality) {
@@ -93,7 +92,7 @@ class MolecularDetailsChapter(
                 panel,
                 cohorts,
                 keyWidth,
-                contentWidth()
+                contentWidth() - keyWidth
             ).apply {
                 val table = Tables.createSingleColWithWidth(contentWidth())
                 table.addCell(Cells.createTitle(title()))
@@ -110,13 +109,8 @@ class MolecularDetailsChapter(
     ): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(
-                PredictedTumorOriginGenerator(molecular, contentWidth()),
-                MolecularDriversGenerator(
-                    molecular,
-                    evaluated,
-                    trials,
-                    contentWidth()
-                )
+                PredictedTumorOriginGenerator(molecular),
+                MolecularDriversGenerator(molecular, evaluated, trials)
             )
         } else emptyList()
     }
@@ -124,9 +118,8 @@ class MolecularDetailsChapter(
     private fun addPathologyReport(document: Document) {
         document.add(Div().setHeight(20F))
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = PathologyReportGenerator(report.patientRecord.tumor, contentWidth())
-        table.addCell(Cells.createTitle(generator.title()))
-        table.addCell(Cells.create(generator.contents()))
+        val generator = PathologyReportGenerator(report.patientRecord.tumor)
+        TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }
 }

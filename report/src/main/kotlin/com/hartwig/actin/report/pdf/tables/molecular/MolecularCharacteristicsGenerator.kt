@@ -14,7 +14,7 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import java.util.function.Consumer
 
-class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, private val width: Float) : TableGenerator {
+class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : TableGenerator {
 
     private val wgsMolecular = molecular as? MolecularRecord
 
@@ -27,7 +27,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     override fun contents(): Table {
-        val colWidth = width / 10
+        val colWidth = 1f / 10f
         val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
 
         listOf("Purity", "Ploidy", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(

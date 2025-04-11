@@ -66,10 +66,9 @@ class SummaryChapter(
     }
 
     private fun addSummaryTable(document: Document) {
-        val innerContentWidth = contentWidth() - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val valueWidth = innerContentWidth - keyWidth
-        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, innerContentWidth, interpretedCohorts)
+        val valueWidth = contentWidth() - keyWidth
+        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, interpretedCohorts)
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = false)
