@@ -6,6 +6,6 @@ data class MolecularMatchDetails(
     val sourceDate: LocalDate,
     val sourceEvent: String,
     val isCategoryEvent: Boolean,
-    val evidenceType: EvidenceType,
+    val sourceEvidenceType: EvidenceType,
     val sourceUrls: Set<String>
 )

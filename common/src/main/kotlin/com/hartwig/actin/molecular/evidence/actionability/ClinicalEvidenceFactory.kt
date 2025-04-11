@@ -66,7 +66,7 @@ object ClinicalEvidenceFactory {
                 sourceDate = sourceDate,
                 sourceEvent = sourceEvent,
                 isCategoryEvent = isCategoryEvent,
-                evidenceType = evidenceType,
+                sourceEvidenceType = evidenceType,
                 sourceUrls = sourceUrls
             ),
             applicableCancerType = CancerType(

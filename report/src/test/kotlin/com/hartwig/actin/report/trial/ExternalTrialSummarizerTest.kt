@@ -32,14 +32,14 @@ private val TRIAL_1 = TestExternalTrialFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
             sourceEvent = "source event 1",
             isCategoryEvent = false,
-            evidenceType = EvidenceType.ACTIVATION,
+            sourceEvidenceType = EvidenceType.ACTIVATION,
             sourceUrls = emptySet()
         ),
         MolecularMatchDetails(
             sourceDate = LocalDate.of(2023, 2, 3),
             sourceEvent = "source event 2",
             isCategoryEvent = false,
-            evidenceType = EvidenceType.ACTIVATION,
+            sourceEvidenceType = EvidenceType.ACTIVATION,
             sourceUrls = emptySet()
         )
     ),
@@ -56,7 +56,7 @@ private val TRIAL_2 = TestExternalTrialFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
             sourceEvent = "source event 3",
             isCategoryEvent = false,
-            evidenceType = EvidenceType.ACTIVATION,
+            sourceEvidenceType = EvidenceType.ACTIVATION,
             sourceUrls = emptySet()
         )
     ),

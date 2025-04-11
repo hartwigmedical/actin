@@ -104,7 +104,7 @@ object TestTreatmentEvidenceFactory {
             sourceDate = sourceDate,
             sourceEvent = sourceEvent,
             isCategoryEvent = isCategoryEvent,
-            evidenceType = evidenceType,
+            sourceEvidenceType = evidenceType,
             sourceUrls = emptySet()
         ),
         applicableCancerType = CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),

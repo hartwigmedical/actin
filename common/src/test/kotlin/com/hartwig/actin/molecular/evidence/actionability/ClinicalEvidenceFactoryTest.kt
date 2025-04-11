@@ -173,14 +173,14 @@ class ClinicalEvidenceFactoryTest {
                         sourceDate = LocalDate.of(2022, 1, 1),
                         sourceEvent = "event 1",
                         isCategoryEvent = false,
-                        evidenceType = EvidenceType.HOTSPOT_MUTATION,
+                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION,
                         sourceUrls = emptySet()
                     ),
                     MolecularMatchDetails(
                         sourceDate = LocalDate.of(2023, 1, 1),
                         sourceEvent = "event 2",
                         isCategoryEvent = false,
-                        evidenceType = EvidenceType.HOTSPOT_MUTATION,
+                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION,
                         sourceUrls = emptySet()
                     ),
                 ),
@@ -228,7 +228,7 @@ class ClinicalEvidenceFactoryTest {
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000001",
                     molecularMatches = setOf(
-                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 1", isCategoryEvent = false, evidenceType = EvidenceType.HOTSPOT_MUTATION, sourceUrls = emptySet()),
+                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 1", isCategoryEvent = false, sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION, sourceUrls = emptySet()),
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 1", excludedCancerSubTypes = emptySet()),
@@ -238,7 +238,7 @@ class ClinicalEvidenceFactoryTest {
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000002",
                     molecularMatches = setOf(
-                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 2", isCategoryEvent = false, evidenceType = EvidenceType.HOTSPOT_MUTATION, sourceUrls = emptySet())
+                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 2", isCategoryEvent = false, sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION, sourceUrls = emptySet())
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 2", excludedCancerSubTypes = emptySet())
