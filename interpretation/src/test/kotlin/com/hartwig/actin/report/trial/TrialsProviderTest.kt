@@ -53,7 +53,7 @@ class TrialsProviderTest {
     fun `Should filter internal trials`() {
         val notFiltered = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(nctId = "NCT00000002"))
         assertThat(
-            listOf(
+            setOf(
                 EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(nctId = NCT_01)),
                 notFiltered
             ).filterInternalTrials(TRIAL_MATCHES.toList())

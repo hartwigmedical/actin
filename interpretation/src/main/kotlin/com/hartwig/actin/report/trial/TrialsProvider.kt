@@ -97,8 +97,8 @@ class TrialsProvider(
     }
 
     private fun hideOverlappingTrials(
-        original: Iterable<EventWithExternalTrial>,
-        filtered: Iterable<EventWithExternalTrial>,
+        original: Set<EventWithExternalTrial>,
+        filtered: Set<EventWithExternalTrial>,
         enableExtendedMode: Boolean
     ): MolecularFilteredExternalTrials {
         return MolecularFilteredExternalTrials(
@@ -117,27 +117,28 @@ class TrialsProvider(
         private fun countryNames(it: EventWithExternalTrial) = it.trial.countries.map { c -> c.country }
 
         fun partitionByCountry(
-            trials: Iterable<EventWithExternalTrial>,
+            trials: Set<EventWithExternalTrial>,
             country: Country
-        ): Pair<List<EventWithExternalTrial>, List<EventWithExternalTrial>> {
-            return trials.partition { country in countryNames(it).toSet() }
+        ): Pair<Set<EventWithExternalTrial>, Set<EventWithExternalTrial>> {
+            val (a, b) = trials.partition { country in countryNames(it).toSet() }
+            return a.toSet() to b.toSet()
         }
     }
 }
 
-fun Iterable<EventWithExternalTrial>.filterInternalTrials(internalTrials: List<TrialMatch>): Iterable<EventWithExternalTrial> {
+fun Set<EventWithExternalTrial>.filterInternalTrials(internalTrials: List<TrialMatch>): Set<EventWithExternalTrial> {
     val internalIds = internalTrials.map { it.identification.nctId }.toSet()
     return this.filter { it.trial.nctId !in internalIds }.toSet()
 }
 
-fun Iterable<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(
+fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(
     internalEvaluatedCohorts: List<InterpretedCohort>
-): Iterable<EventWithExternalTrial> {
+): Set<EventWithExternalTrial> {
     return filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts.flatMap { it.molecularEvents }.toSet())
 }
 
-fun Iterable<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Iterable<EventWithExternalTrial>):
-        Iterable<EventWithExternalTrial> {
+fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Set<EventWithExternalTrial>):
+        Set<EventWithExternalTrial> {
     return filterMolecularCriteriaAlreadyPresent(trials.map { it.event }.toSet())
 }
 
@@ -146,7 +147,7 @@ private fun hospitalsNamesForCountry(trial: ExternalTrial, country: Country) =
         ?: throw IllegalArgumentException("Country not found")
 
 
-fun Iterable<EventWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReferenceCountry(
+fun Set<EventWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReferenceCountry(
     birthYear: Int,
     referenceDate: LocalDate,
     countryOfReference: Country
@@ -159,10 +160,10 @@ fun Iterable<EventWithExternalTrial>.filterExclusivelyInChildrensHospitalsInRefe
     }.toSet()
 }
 
-private fun Iterable<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Iterable<EventWithExternalTrial> {
+private fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<EventWithExternalTrial> {
     return filter {
         !presentEvents.contains(it.event)
-    }
+    }.toSet()
 }
 
 
