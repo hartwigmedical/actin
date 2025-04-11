@@ -30,7 +30,7 @@ class ActionableEventExtractionTest {
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
-            EvidenceTypeAndEvent(EvidenceType.HOTSPOT_MUTATION, actionableHotspot)
+            EvidenceType.HOTSPOT_MUTATION to actionableHotspot
         )
     }
 
@@ -49,7 +49,7 @@ class ActionableEventExtractionTest {
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
-            EvidenceTypeAndEvent(EvidenceType.CODON_MUTATION, actionableCodon)
+            EvidenceType.CODON_MUTATION to actionableCodon
         )
     }
 
@@ -68,7 +68,7 @@ class ActionableEventExtractionTest {
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
-            EvidenceTypeAndEvent(EvidenceType.EXON_MUTATION, actionableExon)
+            EvidenceType.EXON_MUTATION to actionableExon
         )
     }
 
@@ -85,7 +85,7 @@ class ActionableEventExtractionTest {
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
-            EvidenceTypeAndEvent(EvidenceType.PROMISCUOUS_FUSION, actionableGene)
+            EvidenceType.PROMISCUOUS_FUSION to actionableGene
         )
     }
 
@@ -103,7 +103,7 @@ class ActionableEventExtractionTest {
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
-            EvidenceTypeAndEvent(EvidenceType.FUSION_PAIR, actionableFusion)
+            EvidenceType.FUSION_PAIR to actionableFusion
         )
     }
 
@@ -118,7 +118,7 @@ class ActionableEventExtractionTest {
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
-            EvidenceTypeAndEvent(EvidenceType.SIGNATURE, actionableCharacteristic)
+            EvidenceType.SIGNATURE to actionableCharacteristic
         )
     }
 
@@ -133,7 +133,7 @@ class ActionableEventExtractionTest {
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
-            EvidenceTypeAndEvent(EvidenceType.HLA, actionableHla)
+            EvidenceType.HLA to actionableHla
         )
     }
 }

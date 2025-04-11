@@ -37,16 +37,15 @@ object ClinicalEvidenceFactory {
 
     private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
-            val evidenceTypeAndEvent = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
-            val actionableEvent = evidenceTypeAndEvent.actionableEvent
+            val (evidenceType, event) = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
             createTreatmentEvidence(
                 isOnLabel,
                 evidence,
-                actionableEvent.sourceDate(),
-                actionableEvent.sourceEvent(),
-                actionableEvent.isCategoryEvent(),
-                evidenceTypeAndEvent.evidenceType,
-                actionableEvent.sourceUrls()
+                event.sourceDate(),
+                event.sourceEvent(),
+                event.isCategoryEvent(),
+                evidenceType,
+                event.sourceUrls()
             )
         }.toSet()
     }
@@ -57,7 +56,7 @@ object ClinicalEvidenceFactory {
         sourceDate: LocalDate,
         sourceEvent: String,
         isCategoryEvent: Boolean,
-        evidenceType: EvidenceType?,
+        evidenceType: EvidenceType,
         sourceUrls: Set<String>
     ): TreatmentEvidence {
         return TreatmentEvidence(
@@ -111,13 +110,12 @@ object ClinicalEvidenceFactory {
         }.toSet()
 
         val molecularMatches = matchingCriteria.map {
-            val evidenceTypeAndEvent = ActionableEventExtraction.extractEvent(it)
-            val event = evidenceTypeAndEvent.actionableEvent
+            val (evidenceType, event) = ActionableEventExtraction.extractEvent(it)
             MolecularMatchDetails(
                 sourceDate = event.sourceDate(),
                 sourceEvent = event.sourceEvent(),
                 isCategoryEvent = event.isCategoryEvent(),
-                evidenceTypeAndEvent.evidenceType,
+                evidenceType,
                 sourceUrls = event.sourceUrls()
             )
         }.toSet()

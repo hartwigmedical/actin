@@ -13,40 +13,38 @@ import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import java.util.function.Predicate
 
-data class EvidenceTypeAndEvent(val evidenceType: EvidenceType?, val actionableEvent: ActionableEvent)
-
 object ActionableEventExtraction {
 
-    fun extractEvent(molecularCriterium: MolecularCriterium): EvidenceTypeAndEvent {
+    fun extractEvent(molecularCriterium: MolecularCriterium): Pair<EvidenceType, ActionableEvent> {
         return when {
             hotspotFilter().test(molecularCriterium) -> {
-                EvidenceTypeAndEvent(EvidenceType.HOTSPOT_MUTATION, extractHotspot(molecularCriterium))
+                EvidenceType.HOTSPOT_MUTATION to extractHotspot(molecularCriterium)
             }
 
             codonFilter().test(molecularCriterium) -> {
-                EvidenceTypeAndEvent(EvidenceType.CODON_MUTATION, extractCodon(molecularCriterium))
+                EvidenceType.CODON_MUTATION to extractCodon(molecularCriterium)
             }
 
             exonFilter().test(molecularCriterium) -> {
-                EvidenceTypeAndEvent(EvidenceType.EXON_MUTATION, extractExon(molecularCriterium))
+                EvidenceType.EXON_MUTATION to extractExon(molecularCriterium)
             }
 
             geneFilter(GeneEvent.entries.toSet()).test(molecularCriterium) -> {
                 val gene = extractGene(molecularCriterium)
-                EvidenceTypeAndEvent(fromActionableGene(gene), gene)
+                fromActionableGene(gene) to gene
             }
 
             fusionFilter().test(molecularCriterium) -> {
-                EvidenceTypeAndEvent(EvidenceType.FUSION_PAIR, extractFusion(molecularCriterium))
+                EvidenceType.FUSION_PAIR to extractFusion(molecularCriterium)
             }
 
             characteristicsFilter(TumorCharacteristicType.entries.toSet()).test(molecularCriterium) -> {
                 val characteristic = extractCharacteristic(molecularCriterium)
-                EvidenceTypeAndEvent(fromActionableCharacteristic(characteristic), characteristic)
+                fromActionableCharacteristic(characteristic) to characteristic
             }
 
             hlaFilter().test(molecularCriterium) -> {
-                EvidenceTypeAndEvent(EvidenceType.HLA, extractHla(molecularCriterium))
+                EvidenceType.HLA to extractHla(molecularCriterium)
             }
 
             else -> throw IllegalStateException("Could not extract event for molecular criterium: $molecularCriterium")
@@ -109,7 +107,7 @@ object ActionableEventExtraction {
         return Predicate { molecularCriterium -> molecularCriterium.hla().isNotEmpty() }
     }
 
-    private fun fromActionableGene(gene: ActionableGene): EvidenceType? {
+    private fun fromActionableGene(gene: ActionableGene): EvidenceType {
         return when (gene.event()) {
             GeneEvent.AMPLIFICATION -> EvidenceType.AMPLIFICATION
             GeneEvent.OVEREXPRESSION -> EvidenceType.OVER_EXPRESSION
@@ -123,17 +121,17 @@ object ActionableEventExtraction {
             GeneEvent.FUSION -> EvidenceType.PROMISCUOUS_FUSION
             GeneEvent.WILD_TYPE -> EvidenceType.WILD_TYPE
             else -> {
-                return null
+                throw java.lang.IllegalStateException("Unsupported gene level event: " + gene.event())
             }
         }
     }
 
-    private fun fromActionableCharacteristic(characteristic: ActionableCharacteristic): EvidenceType? {
+    private fun fromActionableCharacteristic(characteristic: ActionableCharacteristic): EvidenceType {
         return when (characteristic.type()) {
             TumorCharacteristicType.MICROSATELLITE_UNSTABLE, TumorCharacteristicType.MICROSATELLITE_STABLE, TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD, TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD, TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN, TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN, TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> EvidenceType.SIGNATURE
             TumorCharacteristicType.HPV_POSITIVE, TumorCharacteristicType.EBV_POSITIVE -> EvidenceType.VIRAL_PRESENCE
             else -> {
-                return null
+                throw java.lang.IllegalStateException("Unsupported tumor characteristic: " + characteristic.type())
             }
         }
     }
