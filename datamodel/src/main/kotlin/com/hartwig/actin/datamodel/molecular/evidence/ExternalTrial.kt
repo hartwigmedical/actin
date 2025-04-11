@@ -4,11 +4,11 @@ data class ExternalTrial(
     val nctId: String,
     val title: String,
     val acronym: String?,
+    val treatments: Set<String>,
     val countries: Set<CountryDetails>,
     val molecularMatches: Set<MolecularMatchDetails>,
     val applicableCancerTypes: Set<CancerType>,
-    val url: String,
-    val therapyNames: Set<String>
+    val url: String
 ) : Comparable<ExternalTrial> {
 
     override fun compareTo(other: ExternalTrial): Int {

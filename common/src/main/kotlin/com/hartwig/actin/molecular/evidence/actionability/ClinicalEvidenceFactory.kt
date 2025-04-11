@@ -136,11 +136,11 @@ object ClinicalEvidenceFactory {
             nctId = trial.nctId(),
             title = trial.title(),
             acronym = trial.acronym(),
+            treatments = trial.therapyNames(),
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
             url = url,
-            therapyNames = trial.therapyNames(),
         )
     }
 

@@ -18,21 +18,21 @@ object TestExternalTrialFactory {
         nctId: String = "",
         title: String = "",
         acronym: String? = null,
+        treatments: Set<String> = emptySet(),
         countries: Set<CountryDetails> = emptySet(),
         molecularMatches: Set<MolecularMatchDetails> = emptySet(),
         applicableCancerTypes: Set<CancerType> = emptySet(),
-        url: String = "",
-        therapyNames: Set<String> = emptySet()
+        url: String = ""
     ): ExternalTrial {
         return ExternalTrial(
             nctId = nctId,
             title = title,
             acronym = acronym,
+            treatments = treatments,
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            url = url,
-            therapyNames = therapyNames
+            url = url
         )
     }
 }
