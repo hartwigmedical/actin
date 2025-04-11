@@ -258,7 +258,9 @@ object TestMolecularFactory {
         evidence = TestClinicalEvidenceFactory.withEligibleTrial(
             TestExternalTrialFactory.create(
                 nctId = "NCT00000020",
-                title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " + "for Participants With Advanced Solid Tumor (acronym)",
+                title = ("A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
+                        "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
+                        "for Participants With Advanced Solid Tumor (acronym)"),
                 countries = setOf(
                     CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet())),
                     CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
@@ -363,14 +365,18 @@ object TestMolecularFactory {
                                 )
                             ),
                             url = "https://clinicaltrials.gov/study/NCT00000003"
-                        ), TestExternalTrialFactory.create(
-                            nctId = "NCT00000011", title = "this trial should be filtered out", countries = setOf(
+                        ),
+                        TestExternalTrialFactory.create(
+                            nctId = "NCT00000011",
+                            title = "this trial should be filtered out",
+                            countries = setOf(
                                 CountryDetails(
                                     Country.BELGIUM, mapOf(
                                         "Leuven" to setOf(Hospital("hospital", null))
                                     )
                                 )
-                            ), url = "https://clinicaltrials.gov/study/NCT00000011"
+                            ),
+                            url = "https://clinicaltrials.gov/study/NCT00000011"
                         )
                     )
                 ),
