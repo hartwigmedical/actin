@@ -26,7 +26,7 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
             }
 
             warnScore >= minScore -> {
-                EvaluationFactory.warn("${performanceScore.display()} score based on WHO status exceeds requested score of $minScore")
+                EvaluationFactory.warn("${performanceScore.display()} score based on WHO status exceeds $minScore")
             }
 
             else -> EvaluationFactory.fail("${performanceScore.display()} score based on WHO status is below $minScore")

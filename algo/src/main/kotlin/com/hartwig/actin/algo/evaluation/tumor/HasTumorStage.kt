@@ -36,7 +36,7 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
                 }
 
                 derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }.all { it.result == EvaluationResult.PASS } -> {
-                    pass("Tumor stage data missing but requested stage $stageMessage met - $derivedStageMessage")
+                    pass("Tumor stage data missing but stage $stageMessage met - $derivedStageMessage")
                 }
 
                 derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }
@@ -45,7 +45,7 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
                 }
 
                 else -> {
-                    fail("Tumor stage data missing but requested stage $stageMessage not met - $derivedStageMessage")
+                    fail("Tumor stage data missing but stage $stageMessage not met - $derivedStageMessage")
                 }
             }
         }
@@ -59,7 +59,7 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
     ): Evaluation {
         return when {
             stage in stagesToMatch || stage.category in stagesToMatch -> {
-                pass("Tumor stage $stage meets requested stage(s) $stageMessage")
+                pass("Tumor stage is $stage")
             }
 
             stagesToMatch.any { it.category == stage } -> {
@@ -67,7 +67,7 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
             }
 
             else -> {
-                fail("Tumor stage $stage does not meet requested stage(s) $stageMessage")
+                fail("Tumor stage $stage not equal to $stageMessage")
             }
         }
     }
