@@ -44,7 +44,7 @@ class IHCAnnotatorTest {
         assertThat(result).isEqualTo(
             PanelRecord(
                 date = TEST_DATE,
-                geneCoverage = mapOf("ALK" to listOf(MolecularTestTarget.NON_FUSION)),
+                geneSpecifications = mapOf("ALK" to listOf(MolecularTestTarget.NON_FUSION)),
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(fusions = listOf(fusion)),
@@ -69,7 +69,7 @@ class IHCAnnotatorTest {
         assertThat(result).isEqualTo(
             PanelRecord(
                 date = TEST_DATE,
-                geneCoverage = mapOf(NEGATIVE_FUSION_GENE to listOf(MolecularTestTarget.NON_FUSION)),
+                geneSpecifications = mapOf(NEGATIVE_FUSION_GENE to listOf(MolecularTestTarget.NON_FUSION)),
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
                 drivers = TestMolecularFactory.createMinimalTestDrivers(),

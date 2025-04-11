@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import java.time.LocalDate
 
 data class PanelRecord(
-    val geneCoverage: Map<String, List<MolecularTestTarget>>,
+    val geneSpecifications: Map<String, List<MolecularTestTarget>>,
     override val experimentType: ExperimentType,
     override val testTypeDisplay: String? = null,
     override val date: LocalDate? = null,
@@ -17,6 +17,6 @@ data class PanelRecord(
 ) : MolecularTest {
 
     override fun testsGene(gene: String, molecularTestTargets: List<MolecularTestTarget>): Boolean {
-        return geneCoverage[gene]?.containsAll(molecularTestTargets) ?: false
+        return geneSpecifications[gene]?.containsAll(molecularTestTargets) ?: false
     }
 }

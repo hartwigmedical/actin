@@ -14,7 +14,7 @@ class IHCAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
     override fun annotate(input: IHCExtraction): PanelRecord {
         return PanelRecord(
             date = input.date,
-            geneCoverage = (input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith { listOf(MolecularTestTarget.NON_FUSION) },
+            geneSpecifications = (input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith { listOf(MolecularTestTarget.NON_FUSION) },
             experimentType = ExperimentType.IHC,
             testTypeDisplay = ExperimentType.IHC.display(),
             drivers = Drivers(
