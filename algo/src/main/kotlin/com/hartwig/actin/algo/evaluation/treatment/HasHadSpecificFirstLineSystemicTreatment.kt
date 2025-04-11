@@ -10,24 +10,26 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 class HasHadSpecificFirstLineSystemicTreatment(private val treatmentToFind: Treatment) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val treatmentNameToFind = treatmentToFind.name.lowercase()
         val systemicTreatments = record.oncologicalHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
         val (treatmentsWithStartDate, treatmentsWithoutStartDate) = systemicTreatments.partition { it.startYear != null }
         val firstTreatment = SystemicTreatmentAnalyser.firstSystemicTreatment(treatmentsWithStartDate)
-        val hasHadTreatmentToFindInFirstLine = containsTreatment(listOf(firstTreatment))
-        val hadTreatmentToFindWithUnknownStartDate = containsTreatment(treatmentsWithoutStartDate)
+        val hasHadTreatmentToFindInFirstLine = containsTreatment(listOf(firstTreatment), treatmentNameToFind)
+        val hasHadTreatmentToFindWithUnknownStartDate = containsTreatment(treatmentsWithoutStartDate, treatmentNameToFind)
         val hasOnlyHadTreatmentToFind =
-            systemicTreatments.isNotEmpty() && systemicTreatments.all { it.allTreatments().contains(treatmentToFind) }
+            systemicTreatments.isNotEmpty() && systemicTreatments.all { entry ->
+                entry.allTreatments().any { it.name.lowercase() == treatmentNameToFind }
+            }
         val firstTreatmentIsPotentialTrialMatch =
             firstTreatment?.let { TrialFunctions.treatmentMayMatchAsTrial(it, treatmentToFind.categories()) } ?: false
 
         val treatmentToFindDisplay = treatmentToFind.display()
         return when {
-            (hasHadTreatmentToFindInFirstLine && treatmentsWithoutStartDate.isEmpty())
-                    || hasOnlyHadTreatmentToFind -> {
+            (hasHadTreatmentToFindInFirstLine && treatmentsWithoutStartDate.isEmpty()) || hasOnlyHadTreatmentToFind -> {
                 EvaluationFactory.pass("Has received $treatmentToFindDisplay as first-line treatment")
             }
 
-            hasHadTreatmentToFindInFirstLine || hadTreatmentToFindWithUnknownStartDate -> {
+            hasHadTreatmentToFindInFirstLine || hasHadTreatmentToFindWithUnknownStartDate -> {
                 EvaluationFactory.undetermined("Undetermined if $treatmentToFindDisplay was given as first-line treatment")
             }
 
@@ -41,7 +43,7 @@ class HasHadSpecificFirstLineSystemicTreatment(private val treatmentToFind: Trea
         }
     }
 
-    private fun containsTreatment(treatments: List<TreatmentHistoryEntry?>): Boolean {
-        return treatments.any { it?.allTreatments()?.any { t -> t == treatmentToFind } == true }
+    private fun containsTreatment(treatments: List<TreatmentHistoryEntry?>, treatmentNameToFind: String): Boolean {
+        return treatments.any { it?.allTreatments()?.any { t -> t.name.lowercase() == treatmentNameToFind } == true }
     }
 }
