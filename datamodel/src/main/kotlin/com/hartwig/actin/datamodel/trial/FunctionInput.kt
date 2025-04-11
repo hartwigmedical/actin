@@ -31,6 +31,7 @@ enum class FunctionInput {
     ONE_NYHA_CLASS,
     ONE_TUMOR_TYPE,
     ONE_STRING,
+    MANY_TNM_T,
     TWO_STRINGS,
     ONE_STRING_ONE_INTEGER,
     MANY_STRINGS,
@@ -67,4 +68,5 @@ enum class FunctionInput {
     ONE_PROTEIN_ONE_INTEGER,
     ONE_PROTEIN_ONE_GENE,
     ONE_PROTEIN_ONE_GENE_ONE_INTEGER,
+    ONE_PROTEIN_ONE_STRING,
 }

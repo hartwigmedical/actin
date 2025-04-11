@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -66,14 +65,14 @@ private val TRIAL_2 = ExternalTrial(
 )
 private val TRIAL_MATCHES = setOf(
     TrialMatch(
-        identification = TrialIdentification("TRIAL-1", open = true, "TR-1", "Different title of same trial 1", NCT_01),
+        identification = TrialIdentification("TRIAL-1", open = true, "TR-1", "Different title of same trial 1", NCT_01, null, null, null, emptySet(), null),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList(),
         nonEvaluableCohorts = emptyList()
     ),
     TrialMatch(
-        identification = TrialIdentification("TRIAL-3", open = true, "TR-3", "Different trial 3", "NCT00000003"),
+        identification = TrialIdentification("TRIAL-3", open = true, "TR-3", "Different trial 3", "NCT00000003", null, null, null, emptySet(), null),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList(),

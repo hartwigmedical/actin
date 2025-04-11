@@ -99,7 +99,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
     }
 
     private fun msStatus(molecular: MolecularRecord): String {
-        return if (molecular.characteristics.isMicrosatelliteUnstable == true) "MSI" else "MSS"
+        return if (molecular.characteristics.microsatelliteStability?.isUnstable == true) "MSI" else "MSS"
     }
 
     private fun measurableDisease(tumor: TumorDetails): String {

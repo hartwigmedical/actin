@@ -39,8 +39,10 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.HEART_RATE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
+import com.hartwig.actin.datamodel.clinical.ingestion.NO_QUESTIONNAIRE_FOUND
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 class EmcClinicalFeedIngestor(
     private val feed: FeedModel,
@@ -61,7 +63,7 @@ class EmcClinicalFeedIngestor(
             val patientId = feedRecord.patientEntry.subject
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.latestQuestionnaireEntry)
+            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.questionnaireEntries)
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val comorbidityExtraction =
                 comorbidityExtractor.extract(patientId, questionnaire, feedRecord.toxicityEntries, feedRecord.intoleranceEntries)
@@ -107,7 +109,7 @@ class EmcClinicalFeedIngestor(
 
             Triple(
                 record,
-                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
+                ingestionResult(record.patientId, record.patient.registrationDate, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
                 patientEvaluation
             )
         }
@@ -177,6 +179,7 @@ class EmcClinicalFeedIngestor(
 
     private fun ingestionResult(
         patientId: String,
+        registrationDate: LocalDate,
         questionnaire: Questionnaire?,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
@@ -188,13 +191,14 @@ class EmcClinicalFeedIngestor(
             if (questionnaire == null || curationResults.isNotEmpty()) PatientIngestionStatus.WARN else PatientIngestionStatus.PASS
 
         val validationWarnings = if (questionnaire == null) {
-            feedRecord.validationWarnings + FeedValidationWarning(patientId, "No Questionnaire found")
+            feedRecord.validationWarnings + FeedValidationWarning(patientId, NO_QUESTIONNAIRE_FOUND)
         } else {
             feedRecord.validationWarnings
         }
 
         return PatientIngestionResult(
             patientId,
+            registrationDate,
             ingestionStatus,
             curationResults,
             questionnaireCurationErrors.toSet(),

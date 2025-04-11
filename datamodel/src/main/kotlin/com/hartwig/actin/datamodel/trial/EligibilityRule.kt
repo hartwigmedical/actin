@@ -47,7 +47,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE(FunctionInput.NONE),
     HAS_PATHOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE(FunctionInput.NONE),
     HAS_ANY_STAGE_X(FunctionInput.MANY_TUMOR_STAGES),
-    HAS_TNM_T_SCORE_X(FunctionInput.ONE_STRING),
+    HAS_TNM_T_SCORE_X(FunctionInput.MANY_TNM_T),
     HAS_LOCALLY_ADVANCED_CANCER(FunctionInput.NONE),
     HAS_METASTATIC_CANCER(FunctionInput.NONE),
     HAS_UNRESECTABLE_CANCER(FunctionInput.NONE),
@@ -268,6 +268,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES(FunctionInput.NONE),
     HAS_EGFR_PACC_MUTATION(FunctionInput.NONE),
     HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y(FunctionInput.TWO_STRINGS),
+    HAS_PROTEIN_X_POLYMORPHISM_Y(FunctionInput.ONE_PROTEIN_ONE_STRING),
 
     // Rules related to recent laboratory measurements
     HAS_ADEQUATE_ORGAN_FUNCTION(FunctionInput.NONE),
@@ -422,6 +423,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_KNOWN_HEPATITIS_B_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_HEPATITIS_C_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_HIV_INFECTION(FunctionInput.NONE),
+    HAS_KNOWN_HSV_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION(FunctionInput.NONE),
     HAS_KNOWN_TUBERCULOSIS_INFECTION(FunctionInput.NONE),
     MEETS_COVID_19_INFECTION_REQUIREMENTS(FunctionInput.NONE),

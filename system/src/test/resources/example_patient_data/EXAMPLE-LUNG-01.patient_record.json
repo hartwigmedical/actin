@@ -3,16 +3,8 @@
   "patient": {
     "gender": "FEMALE",
     "birthYear": 1975,
-    "registrationDate": {
-      "year": 2025,
-      "month": 2,
-      "day": 20
-    },
-    "questionnaireDate": {
-      "year": 2025,
-      "month": 2,
-      "day": 20
-    },
+    "registrationDate": "2025-02-20",
+    "questionnaireDate": "2025-02-20",
     "hasHartwigSequencing": true
   },
   "tumor": {
@@ -116,11 +108,7 @@
   ],
   "labValues": [
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "ALAT",
       "name": "Alanine aminotransferase",
       "comparator": "",
@@ -131,11 +119,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "ASAT",
       "name": "Aspartate aminotransferase",
       "comparator": "",
@@ -146,11 +130,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "TOTAL_BILIRUBIN",
       "name": "total bilirubin",
       "comparator": "",
@@ -161,11 +141,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "Hb",
       "name": "hemoglobin",
       "comparator": "",
@@ -176,11 +152,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "THROMBOCYTES_ABS",
       "name": "absolute thrombocyte count",
       "comparator": "",
@@ -191,11 +163,7 @@
       "isOutsideRef": true
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "LYMPHOCYTES_ABS_EDA",
       "name": "absolute lymphocyte count eDA",
       "comparator": "",
@@ -209,11 +177,7 @@
   "surgeries": [
     {
       "name": "Cholecystectomy",
-      "endDate": {
-        "year": 2024,
-        "month": 8,
-        "day": 1
-      },
+      "endDate": "2024-08-01",
       "status": "FINISHED"
     }
   ],
@@ -259,11 +223,7 @@
   ],
   "bloodTransfusions": [
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 20
-      },
+      "date": "2024-09-20",
       "product": "ERTHROCYTES_FILTERED"
     }
   ],
@@ -282,11 +242,7 @@
         "periodBetweenUnit": "DAYS",
         "ifNeeded": false
       },
-      "startDate": {
-        "year": 2023,
-        "month": 2,
-        "day": 1
-      },
+      "startDate": "2023-02-01",
       "stopDate": null,
       "drug": null,
       "cypInteractions": [
@@ -386,11 +342,7 @@
         "hasSufficientQuality": true,
         "testTypeDisplay": null,
         "experimentType": "HARTWIG_WHOLE_GENOME",
-        "date": {
-          "year": 2025,
-          "month": 2,
-          "day": 22
-        },
+        "date": "2025-02-22",
         "drivers": {
           "variants": [
             {
@@ -429,11 +381,7 @@
                   {
                     "treatment": "OSIMERTINIB",
                     "molecularMatch": {
-                      "sourceDate": {
-                        "year": 2012,
-                        "month": 1,
-                        "day": 1
-                      },
+                      "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
                       "isCategoryEvent": false
                     },
@@ -456,11 +404,7 @@
                   {
                     "treatment": "AFATINIB",
                     "molecularMatch": {
-                      "sourceDate": {
-                        "year": 2012,
-                        "month": 1,
-                        "day": 1
-                      },
+                      "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
                       "isCategoryEvent": false
                     },
@@ -487,11 +431,7 @@
                     "title": "EGFR-L858R-TRIAL",
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
                         "isCategoryEvent": false
                       }
@@ -532,11 +472,7 @@
                     "title": "EGFR-BE",
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
                         "isCategoryEvent": false
                       }
@@ -604,11 +540,7 @@
                   {
                     "treatment": "AFATINIB",
                     "molecularMatch": {
-                      "sourceDate": {
-                        "year": 2012,
-                        "month": 1,
-                        "day": 1
-                      },
+                      "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
                       "isCategoryEvent": false
                     },
@@ -635,11 +567,7 @@
                     "title": "EGFR-C797S-TRIAL",
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR C797S",
                         "isCategoryEvent": false
                       }
@@ -761,11 +689,7 @@
                     "title": "KRAS-G12C-TRIAL-DE",
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "KRAS G12C",
                         "isCategoryEvent": false
                       }
@@ -865,28 +789,40 @@
               }
             ]
           },
-          "isMicrosatelliteUnstable": false,
-          "microsatelliteEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "microsatelliteStability": {
+            "microsatelliteIndelsPerMb": 0.0,
+            "isUnstable": false,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "homologousRecombinationScore": 0.0,
-          "isHomologousRecombinationDeficient": false,
-          "homologousRecombinationEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "homologousRecombination": {
+            "score": 0.0,
+            "isDeficient": false,
+            "type": "NONE",
+            "brca1Value": 0.0,
+            "brca2Value": 0.0,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "tumorMutationalBurden": 14.0,
-          "hasHighTumorMutationalBurden": true,
-          "tumorMutationalBurdenEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "tumorMutationalBurden": {
+            "score": 14.0,
+            "isHigh": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "tumorMutationalLoad": 160,
-          "hasHighTumorMutationalLoad": true,
-          "tumorMutationalLoadEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "tumorMutationalLoad": {
+            "score": 160,
+            "isHigh": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           }
         },
         "evidenceSource": "External"

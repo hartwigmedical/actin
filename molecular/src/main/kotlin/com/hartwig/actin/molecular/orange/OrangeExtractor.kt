@@ -21,7 +21,6 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
     fun interpret(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
         val driverExtractor = DriverExtractor.create(geneFilter)
-        val characteristicsExtractor = CharacteristicsExtractor()
 
         return MolecularRecord(
             sampleId = record.sampleId(),
@@ -34,7 +33,7 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
             isContaminated = isContaminated(record),
             hasSufficientPurity = hasSufficientPurity(record),
             hasSufficientQuality = hasSufficientQuality(record),
-            characteristics = characteristicsExtractor.extract(record),
+            characteristics = CharacteristicsExtraction.extract(record),
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record)

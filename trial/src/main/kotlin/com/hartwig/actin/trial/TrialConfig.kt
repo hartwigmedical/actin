@@ -3,10 +3,6 @@ package com.hartwig.actin.trial
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 
-data class InclusionCriterionConfig(val inclusionRule: String, val references: List<InclusionCriterionReferenceConfig>?)
-
-data class InclusionCriterionReferenceConfig(val id: String, val text: String)
-
 data class TrialConfig(
     val trialId: String,
     val source: TrialSource?,
@@ -30,3 +26,7 @@ data class CohortConfig(
     val evaluable: Boolean,
     val inclusionCriterion: List<InclusionCriterionConfig>,
 )
+
+data class InclusionCriterionConfig(val inclusionRule: String, val references: List<InclusionCriterionReferenceConfig>?)
+
+data class InclusionCriterionReferenceConfig(val id: String, val text: String)

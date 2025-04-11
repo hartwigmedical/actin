@@ -1,18 +1,23 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.trial.TrialSource
+
 private const val COMBINATION_COHORT_IDENTIFIER = "+"
 
-class InterpretedCohortComparator : Comparator<InterpretedCohort> {
+class InterpretedCohortComparator(private val requestingSource: TrialSource? = null) : Comparator<InterpretedCohort> {
 
     override fun compare(cohort1: InterpretedCohort, cohort2: InterpretedCohort): Int {
-        return compareByDescending(InterpretedCohort::hasSlotsAvailable)
+        return compareByDescending<InterpretedCohort> { cohort ->
+            requestingSource?.let {
+                InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(cohort.source, cohort.locations, requestingSource)
+            } ?: true
+        }
+            .thenByDescending(InterpretedCohort::hasSlotsAvailable)
             .thenBy { it.molecularEvents.isEmpty() }
             .thenBy(nullsLast(), InterpretedCohort::phase)
             .thenByDescending { it.warnings.isEmpty() }
             .thenBy(InterpretedCohort::trialId)
             .thenComparing(::compareCohortNames)
-            .thenByDescending { it.molecularEvents.size }
-            .thenComparing(::compareMolecularEvents)
             .compare(cohort1, cohort2)
     }
 
@@ -29,11 +34,5 @@ class InterpretedCohortComparator : Comparator<InterpretedCohort> {
         return compareBy<String> { hasMolecular && it.contains(COMBINATION_COHORT_IDENTIFIER) }
             .thenByDescending { it }
             .compare(cohort2Name, cohort1Name)
-    }
-
-    private fun compareMolecularEvents(cohort1: InterpretedCohort, cohort2: InterpretedCohort): Int {
-        return cohort1.molecularEvents.sorted().zip(cohort2.molecularEvents.sorted()).asSequence()
-            .map { compareValues(it.second, it.first) }
-            .find { it != 0 } ?: 0
     }
 }
