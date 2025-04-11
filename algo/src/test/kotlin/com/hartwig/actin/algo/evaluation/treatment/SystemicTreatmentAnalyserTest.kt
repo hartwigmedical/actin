@@ -145,7 +145,6 @@ class SystemicTreatmentAnalyserTest {
         name: String,
         treatmentSelector: (List<TreatmentHistoryEntry>) -> TreatmentHistoryEntry?
     ) {
-        val treatment = treatmentSelector(treatmentHistory)
-        assertThat(treatment!!.treatments.first().name).isEqualTo(name)
+        assertThat(treatmentSelector(treatmentHistory)?.treatments?.first()?.name).isEqualTo(name)
     }
 }

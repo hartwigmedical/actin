@@ -8,11 +8,11 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
-class HasHadFirstLineSystemicTreatmentNameTest {
+class HasHadSpecificFirstLineSystemicTreatmentTest {
     private val matchingTreatment =
         treatmentHistoryEntry(setOf(treatment("matching treatment", categories = setOf(TreatmentCategory.CHEMOTHERAPY), isSystemic = true)))
     private val otherTreatment = treatmentHistoryEntry(setOf(treatment("other treatment", true)))
-    private val function = HasHadFirstLineSystemicTreatmentName(matchingTreatment.treatments.first())
+    private val function = HasHadSpecificFirstLineSystemicTreatment(matchingTreatment.treatments.first())
 
     @Test
     fun `Should fail for empty treatments`() {
@@ -54,12 +54,36 @@ class HasHadFirstLineSystemicTreatmentNameTest {
     }
 
     @Test
+    fun `Should pass when patient has received correct treatment in first line and in third line`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                withTreatmentHistory(
+                    listOf(
+                        matchingTreatment.copy(startYear = 2023),
+                        otherTreatment.copy(startYear = 2024),
+                        matchingTreatment.copy(startYear = 2025)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should pass when patient has only received correct treatment but with unknown date`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(matchingTreatment))))
     }
 
     @Test
-    fun `Should evaluate to undetermined when trial treatment received in first line`() {
+    fun `Should pass when patient has received correct treatment multiple times and no other treatments`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(listOf(matchingTreatment, matchingTreatment.copy(startYear = 2025))))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when trial treatment received in first line with unknown category`() {
         val firstLineTrial = treatmentHistoryEntry(setOf(treatment("trial", true)), isTrial = true, startYear = 2024)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -68,7 +92,7 @@ class HasHadFirstLineSystemicTreatmentNameTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when correct treatment received as first treatment but other treatments with unknown date`() {
+    fun `Should evaluate to undetermined when received correct treatment as first treatment and other treatments with unknown date`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(listOf(matchingTreatment.copy(startYear = 2025), otherTreatment)))
@@ -80,6 +104,14 @@ class HasHadFirstLineSystemicTreatmentNameTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(listOf(matchingTreatment, otherTreatment)))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when correct treatment received with unknown start date and another treatment with known start date`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(listOf(matchingTreatment, otherTreatment.copy(startYear = 2025))))
         )
     }
 }

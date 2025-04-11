@@ -5,23 +5,25 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
-class HasHadFirstLineSystemicTreatmentName(private val treatmentToFind: Treatment) : EvaluationFunction {
+class HasHadSpecificFirstLineSystemicTreatment(private val treatmentToFind: Treatment) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (treatmentsWithStartDate, treatmentsWithoutStartDate) = record.oncologicalHistory.partition { it.startYear != null }
+        val systemicTreatments = record.oncologicalHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
+        val (treatmentsWithStartDate, treatmentsWithoutStartDate) = systemicTreatments.partition { it.startYear != null }
         val firstTreatment = SystemicTreatmentAnalyser.firstSystemicTreatment(treatmentsWithStartDate)
-        val hasHadTreatmentToFindInFirstLine = firstTreatment?.allTreatments()?.contains(treatmentToFind) == true
-        val hadTreatmentToFindWithUnknownStartDate = treatmentsWithoutStartDate.any { it.allTreatments().any { t -> t == treatmentToFind } }
-        val hasOnlyHadTreatmentToFindButWithUnknownStartDate =
-            hadTreatmentToFindWithUnknownStartDate && treatmentsWithoutStartDate.size == 1
-        val firstTreatmentIsPotentialTrialMatch = firstTreatment?.isTrial == true && (firstTreatment.categories()
-            .containsAll(treatmentToFind.categories()) || firstTreatment.categories().isEmpty())
+        val hasHadTreatmentToFindInFirstLine = containsTreatment(listOf(firstTreatment))
+        val hadTreatmentToFindWithUnknownStartDate = containsTreatment(treatmentsWithoutStartDate)
+        val hasOnlyHadTreatmentToFind =
+            systemicTreatments.isNotEmpty() && systemicTreatments.all { it.allTreatments().contains(treatmentToFind) }
+        val firstTreatmentIsPotentialTrialMatch =
+            firstTreatment?.let { TrialFunctions.treatmentMayMatchAsTrial(it, treatmentToFind.categories()) } ?: false
 
         val treatmentToFindDisplay = treatmentToFind.display()
         return when {
             (hasHadTreatmentToFindInFirstLine && treatmentsWithoutStartDate.isEmpty())
-                    || hasOnlyHadTreatmentToFindButWithUnknownStartDate -> {
+                    || hasOnlyHadTreatmentToFind -> {
                 EvaluationFactory.pass("Has received $treatmentToFindDisplay as first-line treatment")
             }
 
@@ -37,5 +39,9 @@ class HasHadFirstLineSystemicTreatmentName(private val treatmentToFind: Treatmen
                 EvaluationFactory.fail("Has not received $treatmentToFindDisplay as first-line treatment")
             }
         }
+    }
+
+    private fun containsTreatment(treatments: List<TreatmentHistoryEntry?>): Boolean {
+        return treatments.any { it?.allTreatments()?.any { t -> t == treatmentToFind } == true }
     }
 }
