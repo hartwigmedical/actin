@@ -11,18 +11,20 @@ class HasHadFirstLineSystemicTreatmentName(private val treatmentToFind: Treatmen
     override fun evaluate(record: PatientRecord): Evaluation {
         val (treatmentsWithStartDate, treatmentsWithoutStartDate) = record.oncologicalHistory.partition { it.startYear != null }
         val firstTreatment = SystemicTreatmentAnalyser.firstSystemicTreatment(treatmentsWithStartDate)
-        val hasHadTreatmentInFirstLine = firstTreatment?.allTreatments()?.contains(treatmentToFind) == true
+        val hasHadTreatmentToFindInFirstLine = firstTreatment?.allTreatments()?.contains(treatmentToFind) == true
         val hadTreatmentToFindWithUnknownStartDate = treatmentsWithoutStartDate.any { it.allTreatments().any { t -> t == treatmentToFind } }
+        val hasOnlyHadTreatmentToFindButWithUnknownStartDate =
+            hadTreatmentToFindWithUnknownStartDate && treatmentsWithoutStartDate.size == 1
         val firstTreatmentIsPotentialTrialMatch = firstTreatment?.isTrial == true && (firstTreatment.categories()
             .containsAll(treatmentToFind.categories()) || firstTreatment.categories().isEmpty())
 
         val treatmentToFindDisplay = treatmentToFind.display()
         return when {
-            (hasHadTreatmentInFirstLine && treatmentsWithoutStartDate.isEmpty()) || (hadTreatmentToFindWithUnknownStartDate && treatmentsWithoutStartDate.size == 1) -> {
+            (hasHadTreatmentToFindInFirstLine && treatmentsWithoutStartDate.isEmpty()) || hasOnlyHadTreatmentToFindButWithUnknownStartDate -> {
                 EvaluationFactory.pass("Has received $treatmentToFindDisplay as first-line treatment")
             }
 
-            hasHadTreatmentInFirstLine || hadTreatmentToFindWithUnknownStartDate -> {
+            hasHadTreatmentToFindInFirstLine || hadTreatmentToFindWithUnknownStartDate -> {
                 EvaluationFactory.undetermined("Undetermined if $treatmentToFindDisplay was given as first-line treatment")
             }
 

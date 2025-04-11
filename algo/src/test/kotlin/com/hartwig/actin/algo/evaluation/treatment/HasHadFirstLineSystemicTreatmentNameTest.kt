@@ -5,11 +5,18 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadFirstLineSystemicTreatmentNameTest {
     private val matchingTreatmentName = "treatment 1"
-    private val function = HasHadFirstLineSystemicTreatmentName(treatment(matchingTreatmentName, isSystemic = true))
+    private val function = HasHadFirstLineSystemicTreatmentName(
+        treatment(
+            matchingTreatmentName,
+            categories = setOf(TreatmentCategory.CHEMOTHERAPY),
+            isSystemic = true
+        )
+    )
 
     @Test
     fun `Should fail for empty treatments`() {
@@ -30,6 +37,16 @@ class HasHadFirstLineSystemicTreatmentNameTest {
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2)))
         )
+    }
+
+    @Test
+    fun `Should fail when trial treatment received in first line but with incorrect category`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(treatment("trial", categories = setOf(TreatmentCategory.IMMUNOTHERAPY), isSystemic = true)),
+            isTrial = true,
+            startYear = 2025
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
     }
 
     @Test
@@ -56,11 +73,11 @@ class HasHadFirstLineSystemicTreatmentNameTest {
 
     @Test
     fun `Should evaluate to undetermined when correct treatment received as first treatment but other treatments with unknown date`() {
-        val correctTreatment = treatmentHistoryEntry(setOf(treatment(matchingTreatmentName, true)), startYear = 2025, startMonth = 3)
-        val otherTreatmentWithUnknownDate = treatmentHistoryEntry(setOf(treatment("other treatment", true)))
+        val treatmentHistoryEntry1 = treatmentHistoryEntry(setOf(treatment(matchingTreatmentName, true)), startYear = 2025)
+        val treatmentHistoryEntry2 = treatmentHistoryEntry(setOf(treatment("other treatment", true)))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistory(listOf(correctTreatment, otherTreatmentWithUnknownDate)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2)))
         )
     }
 
