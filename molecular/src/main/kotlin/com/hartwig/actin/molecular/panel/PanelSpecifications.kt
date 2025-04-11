@@ -12,7 +12,7 @@ object PanelSpecificationsFile {
 
     fun create(panelGeneListTsvPath: String): PanelSpecifications {
 
-        data class PanelGeneEntry(val testName: String, val gene: String, val fusion: Boolean, val anyNonFusion: Boolean)
+        data class PanelGeneEntry(val testName: String, val gene: String, val fusion: Boolean, val mutation: Boolean, val amp: Boolean, val del: Boolean)
 
         val entries = CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(PanelGeneEntry::class.java)
             .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t')).readValues<PanelGeneEntry>(File(panelGeneListTsvPath))
@@ -24,7 +24,9 @@ object PanelSpecificationsFile {
                             g.gene,
                             listOfNotNull(
                                 if (g.fusion) MolecularTestTarget.FUSION else null,
-                                if (g.anyNonFusion) MolecularTestTarget.NON_FUSION else null
+                                if (g.mutation) MolecularTestTarget.MUTATION else null,
+                                if (g.amp) MolecularTestTarget.AMP else null,
+                                if (g.del) MolecularTestTarget.DEL else null,
                             )
                         )
                     }
