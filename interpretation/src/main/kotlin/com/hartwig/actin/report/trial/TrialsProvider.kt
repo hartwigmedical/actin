@@ -8,25 +8,19 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
-import com.hartwig.actin.util.MapFunctions
 import java.time.LocalDate
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
 
-class MolecularFilteredExternalTrials(
-    private val original: Set<EventWithExternalTrial>,
-    val filtered: Set<EventWithExternalTrial>
-) {
+class MolecularFilteredExternalTrials(private val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
 
     fun isNotEmpty() = original.isNotEmpty()
 
     fun originalMinusFiltered() = original - filtered
 }
 
-class ExternalTrials(
-    val nationalTrials: MolecularFilteredExternalTrials,
-    val internationalTrials: MolecularFilteredExternalTrials
-) {
+class ExternalTrials(val nationalTrials: MolecularFilteredExternalTrials, val internationalTrials: MolecularFilteredExternalTrials) {
+
     fun allFiltered(): Set<EventWithExternalTrial> {
         return nationalTrials.filtered + internationalTrials.filtered
     }
@@ -116,7 +110,7 @@ class TrialsProvider(
     companion object {
         fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation!!
+                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation
             }
         }
 
@@ -136,11 +130,14 @@ fun Iterable<EventWithExternalTrial>.filterInternalTrials(internalTrials: List<T
     return this.filter { it.trial.nctId !in internalIds }.toSet()
 }
 
-fun Iterable<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts: List<InterpretedCohort>): Iterable<EventWithExternalTrial> {
+fun Iterable<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(
+    internalEvaluatedCohorts: List<InterpretedCohort>
+): Iterable<EventWithExternalTrial> {
     return filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts.flatMap { it.molecularEvents }.toSet())
 }
 
-fun Iterable<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Iterable<EventWithExternalTrial>): Iterable<EventWithExternalTrial> {
+fun Iterable<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Iterable<EventWithExternalTrial>):
+        Iterable<EventWithExternalTrial> {
     return filterMolecularCriteriaAlreadyPresent(trials.map { it.event }.toSet())
 }
 
