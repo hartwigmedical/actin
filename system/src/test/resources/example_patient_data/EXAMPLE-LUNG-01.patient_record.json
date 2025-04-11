@@ -433,6 +433,7 @@
                   {
                     "nctId": "NCT00000006",
                     "title": "EGFR-L858R-TRIAL",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
@@ -471,12 +472,12 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "therapyNames": []
+                    "url": "https://hartwigmedicalfoundation.nl"
                   },
                   {
                     "nctId": "NCT00000007",
                     "title": "EGFR-BE",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
@@ -504,8 +505,7 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "therapyNames": []
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
                 ]
               },
@@ -577,6 +577,7 @@
                   {
                     "nctId": "NCT00000008",
                     "title": "EGFR-C797S-TRIAL",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
@@ -615,8 +616,7 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "therapyNames": []
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
                 ]
               },
@@ -702,6 +702,7 @@
                   {
                     "nctId": "NCT00000009",
                     "title": "KRAS-G12C-TRIAL-DE",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
@@ -729,8 +730,7 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "therapyNames": []
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
                 ]
               },
