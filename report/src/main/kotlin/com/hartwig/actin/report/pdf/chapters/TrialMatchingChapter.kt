@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -42,14 +43,14 @@ class TrialMatchingChapter(
 
     fun createGenerators(): List<TableGenerator> {
         val requestingSource = TrialSource.fromDescription(report.requestingHospital)
-        val externalTrials = trialsProvider.summarizeExternalTrials()
+        val externalTrials = trialsProvider.externalTrials()
 
         val localTrialGenerators = createTrialTableGenerators(
             trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
         )
         val localExternalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
-            externalTrials.nationalTrials.filtered,
+            ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered),
             externalTrials.excludedNationalTrials().size,
             requestingSource,
             report.config.countryOfReference,
@@ -57,7 +58,7 @@ class TrialMatchingChapter(
         ).takeIf { externalTrialsOnly }
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
-            externalTrials.internationalTrials.filtered,
+            ExternalTrialSummarizer.summarize(externalTrials.internationalTrials.filtered),
             externalTrials.excludedInternationalTrials().size,
             requestingSource,
             null,
@@ -65,7 +66,7 @@ class TrialMatchingChapter(
             false
         ).takeIf { externalTrialsOnly }
         val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(
-            externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials(),
+            ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials()),
             report.config.countryOfReference,
             contentWidth()
         )

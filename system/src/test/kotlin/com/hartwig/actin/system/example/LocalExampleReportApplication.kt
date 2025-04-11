@@ -45,7 +45,7 @@ private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
 
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
-    Locale.setDefault(Locale("en", "US"))
+    Locale.setDefault(Locale.US)
     val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
