@@ -20,7 +20,8 @@ class HasHadFirstLineSystemicTreatmentName(private val treatmentToFind: Treatmen
 
         val treatmentToFindDisplay = treatmentToFind.display()
         return when {
-            (hasHadTreatmentToFindInFirstLine && treatmentsWithoutStartDate.isEmpty()) || hasOnlyHadTreatmentToFindButWithUnknownStartDate -> {
+            (hasHadTreatmentToFindInFirstLine && treatmentsWithoutStartDate.isEmpty())
+                    || hasOnlyHadTreatmentToFindButWithUnknownStartDate -> {
                 EvaluationFactory.pass("Has received $treatmentToFindDisplay as first-line treatment")
             }
 
