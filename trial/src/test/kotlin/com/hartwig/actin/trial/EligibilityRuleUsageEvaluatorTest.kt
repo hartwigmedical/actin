@@ -13,7 +13,7 @@ class EligibilityRuleUsageEvaluatorTest {
 
     @Test
     fun `Should evaluate eligibility rule usage`() {
-        val trials = listOf(createMinimalTestTrial(), TestTrialFactory.createProperTestTrial())
+        val trials = listOf(TestTrialFactory.createMinimalTestTrial(), TestTrialFactory.createProperTestTrial())
         val expectedUnusedRule = EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X
         val expectedUsedRules = setOf(
             EligibilityRule.IS_AT_LEAST_X_YEARS_OLD,
@@ -37,15 +37,12 @@ class EligibilityRuleUsageEvaluatorTest {
                 ),
                 generalEligibility = listOf(
                     Eligibility(
-                        function = EligibilityFunction(
-                            rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC,
-                            parameters = listOf("ABC")
-                        ),
+                        function = EligibilityFunction(rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC, parameters = listOf("ABC")),
                         references = setOf(CriterionReference(id = "I-01", text = "ref 01"))
                     ),
                     Eligibility(
                         function = EligibilityFunction(
-                            rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_EXACTLY_Z,
+                            rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y,
                             parameters = listOf("DEF", "1")
                         ),
                         references = setOf(CriterionReference(id = "I-02", text = "ref 02"))
