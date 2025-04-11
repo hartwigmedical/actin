@@ -173,7 +173,10 @@ class StandardDataIngestion(
             StandardBodyWeightExtractor(),
             StandardBodyHeightExtractor(),
             StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
-            StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
+            StandardPriorSequencingTestExtractor(
+                curationDatabaseContext.sequencingTestCuration,
+                curationDatabaseContext.sequencingTestResultCuration
+            ),
             DataQualityMask(clinicalConfiguration)
         )
     }

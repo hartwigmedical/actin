@@ -11,10 +11,14 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
         val molecularHistory = record.molecularHistory
         val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
             .partition { it.containsTumorCells }
-        val panelGenes = (molecularHistory.allPanels().map { it.testedGenes }).flatten()
+        val missing = molecularHistory.allPanels()
+            .flatMap { panel -> NSCLC_DRIVER_GENE_SET.map { gene -> gene to panel.testsGene(gene) } }
+            .filter { geneIsTested -> geneIsTested.second }
+            .map { it.first }
+            .toSet()
 
         return when {
-            validOncoPanelOrWGSList.isNotEmpty() || panelGenes.containsAll(NSCLC_DRIVER_GENE_SET) -> {
+            validOncoPanelOrWGSList.isNotEmpty() || missing.isEmpty() -> {
                 EvaluationFactory.pass("NSCLC driver gene statuses are available")
             }
 
@@ -26,7 +30,7 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
             }
 
             else -> {
-                val missingGenes = NSCLC_DRIVER_GENE_SET.filterNot { it in panelGenes }.joinToString(", ")
+                val missingGenes = missing.joinToString(", ")
                 EvaluationFactory.recoverableFail(
                     "NSCLC driver gene statuses not available (missing: $missingGenes)", isMissingMolecularResultForEvaluation = true
                 )

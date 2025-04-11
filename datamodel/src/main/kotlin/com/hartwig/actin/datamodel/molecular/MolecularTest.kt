@@ -14,7 +14,7 @@ interface MolecularTest {
     val hasSufficientPurity: Boolean
     val hasSufficientQuality: Boolean
 
-    fun testsGene(gene: String): Boolean
+    fun testsGene(gene: String, molecularTestTargets: List<MolecularTestTarget> = emptyList()): Boolean
 
     fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity

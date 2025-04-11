@@ -38,7 +38,8 @@ class ProteinIsLostByIHCTest {
             MolecularTestFactory.withIHCTests(priorIHCTest(test = IHC, item = "No protein", scoreText = "loss")).copy(
                 molecularHistory = MolecularHistory(
                     listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf(GENE))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(geneCoverage = TestMolecularFactory.panelSpecifications(setOf(GENE)))
                     )
                 )
             )

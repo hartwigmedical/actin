@@ -50,8 +50,10 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED -> {
-                EvaluationFactory.undetermined("OncoAct tumor NGS panel performed containing $gene but biopsy contained " +
-                        "insufficient tumor cells for analysis")
+                EvaluationFactory.undetermined(
+                    "OncoAct tumor NGS panel performed containing $gene but biopsy contained " +
+                            "insufficient tumor cells for analysis"
+                )
             }
 
             indeterminatePriorIHCTestsForGene.isNotEmpty() -> {

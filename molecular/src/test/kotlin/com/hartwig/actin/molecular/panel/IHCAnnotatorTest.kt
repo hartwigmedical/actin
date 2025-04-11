@@ -2,15 +2,16 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private val TEST_DATE = LocalDate.of(2023, 1, 1)
 private const val POSITIVE_FUSION_GENE = "ALK"
@@ -43,7 +44,7 @@ class IHCAnnotatorTest {
         assertThat(result).isEqualTo(
             PanelRecord(
                 date = TEST_DATE,
-                testedGenes = setOf("ALK"),
+                geneCoverage = mapOf("ALK" to listOf(MolecularTestTarget.NON_FUSION)),
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(fusions = listOf(fusion)),
@@ -68,7 +69,7 @@ class IHCAnnotatorTest {
         assertThat(result).isEqualTo(
             PanelRecord(
                 date = TEST_DATE,
-                testedGenes = setOf(NEGATIVE_FUSION_GENE),
+                geneCoverage = mapOf(NEGATIVE_FUSION_GENE to listOf(MolecularTestTarget.NON_FUSION)),
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
                 drivers = TestMolecularFactory.createMinimalTestDrivers(),

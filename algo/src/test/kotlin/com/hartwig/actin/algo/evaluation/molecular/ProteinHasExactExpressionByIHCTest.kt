@@ -59,7 +59,8 @@ class ProteinHasExactExpressionByIHCTest {
             MolecularTestFactory.withIHCTests(emptyList()).copy(
                 molecularHistory = MolecularHistory(
                     listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf(GENE))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(geneCoverage = TestMolecularFactory.panelSpecifications(setOf(GENE)))
                     )
                 )
             )

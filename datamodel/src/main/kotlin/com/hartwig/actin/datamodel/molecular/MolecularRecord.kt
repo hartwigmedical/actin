@@ -14,6 +14,7 @@ data class MolecularRecord(
     val isContaminated: Boolean,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>,
+    val panelSpecifications: Map<String, List<MolecularTestTarget>>? = null,
     override val hasSufficientPurity: Boolean,
     override val hasSufficientQuality: Boolean,
     override val testTypeDisplay: String? = null,
@@ -24,8 +25,9 @@ data class MolecularRecord(
     override val evidenceSource: String,
 ) : MolecularTest {
 
-    override fun testsGene(gene: String) =
-        if (experimentType == ExperimentType.HARTWIG_TARGETED) drivers.copyNumbers.any { gene == it.gene } else true
+    override fun testsGene(gene: String, molecularTestTargets: List<MolecularTestTarget>) =
+        if (experimentType == ExperimentType.HARTWIG_TARGETED) panelSpecifications!![gene]?.containsAll(molecularTestTargets)
+            ?: false else true
 
     override fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity

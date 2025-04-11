@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
@@ -14,6 +15,7 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
+    override fun targets() = listOf(MolecularTestTarget.FUSION)
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
         val fusionSkippingEvents = molecularHistory.molecularTests.flatMap(::findFusionSkippingEvents).toSet()

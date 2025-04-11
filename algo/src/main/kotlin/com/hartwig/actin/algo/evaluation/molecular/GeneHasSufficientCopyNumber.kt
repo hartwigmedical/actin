@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import java.time.LocalDate
 
 private enum class CopyNumberEvaluation {
@@ -47,6 +48,7 @@ class GeneHasSufficientCopyNumber(private val gene: String, private val requeste
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
+    override fun targets() = listOf(MolecularTestTarget.AMP, MolecularTestTarget.DEL)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val targetCopyNumbers = test.drivers.copyNumbers.filter { it.gene == gene }

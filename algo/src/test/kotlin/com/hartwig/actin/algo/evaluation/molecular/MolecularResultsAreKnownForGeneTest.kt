@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import org.junit.Test
@@ -171,7 +171,10 @@ class MolecularResultsAreKnownForGeneTest {
             MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK")))
+                        listOf(
+                            TestMolecularFactory.createMinimalTestPanelRecord()
+                                .copy(geneCoverage = TestMolecularFactory.panelSpecifications(setOf("ALK")))
+                        )
                     )
                 )
         )
@@ -185,7 +188,10 @@ class MolecularResultsAreKnownForGeneTest {
             MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("EGFR")))
+                        listOf(
+                            TestMolecularFactory.createMinimalTestPanelRecord()
+                                .copy(geneCoverage = TestMolecularFactory.panelSpecifications(setOf("EGFR")))
+                        )
                     )
                 )
         )

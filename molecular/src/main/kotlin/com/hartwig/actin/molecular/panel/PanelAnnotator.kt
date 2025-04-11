@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.panel
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.PanelRecord
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
@@ -18,7 +19,8 @@ class PanelAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
-    private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator
+    private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+    private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<PriorSequencingTest, PanelRecord> {
 
     override fun annotate(input: PriorSequencingTest): PanelRecord {
@@ -26,9 +28,9 @@ class PanelAnnotator(
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletedGenes)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
-        
+
         return PanelRecord(
-            testedGenes = input.testedGenes,
+            geneCoverage = panelSpecifications.genesForPanel(input.test),
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
             date = input.date,

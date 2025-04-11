@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
@@ -41,10 +42,11 @@ private const val FREE_TEXT = "free text"
 
 class StandardPriorSequencingTestExtractorTest {
 
-    val curation = mockk<CurationDatabase<SequencingTestResultConfig>> {
+    private val testCuration = mockk<CurationDatabase<SequencingTestConfig>>()
+    private val testResultCuration = mockk<CurationDatabase<SequencingTestResultConfig>> {
         every { find("$HASHED_ID_IN_BASE64 | $TEST") } returns emptySet()
     }
-    val extractor = StandardPriorSequencingTestExtractor(curation)
+    val extractor = StandardPriorSequencingTestExtractor(testCuration, testResultCuration)
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
@@ -172,7 +174,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should curate any free text results`() {
-        every { curation.find(FREE_TEXT) } returns setOf(
+        every { testResultCuration.find(FREE_TEXT) } returns setOf(
             SequencingTestResultConfig(
                 input = FREE_TEXT,
                 curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
@@ -188,7 +190,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should return curation warnings for uncurated free text when all other fields are null`() {
-        every { curation.find(FREE_TEXT) } returns emptySet()
+        every { testResultCuration.find(FREE_TEXT) } returns emptySet()
         val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).hasSize(1)
         assertThat(result.evaluation.warnings.first()).isEqualTo(
@@ -203,14 +205,14 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should not return curation warnings for uncurated free text when some fields are not null`() {
-        every { curation.find(FREE_TEXT) } returns emptySet()
+        every { testResultCuration.find(FREE_TEXT) } returns emptySet()
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
     fun `Should respect ignore flag when curating free text`() {
-        every { curation.find(FREE_TEXT) } returns setOf(
+        every { testResultCuration.find(FREE_TEXT) } returns setOf(
             SequencingTestResultConfig(
                 input = FREE_TEXT,
                 ignore = true
@@ -223,7 +225,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should allow for ignoring of full tests`() {
-        every { curation.find("$HASHED_ID_IN_BASE64 | $TEST") } returns setOf(
+        every { testResultCuration.find("$HASHED_ID_IN_BASE64 | $TEST") } returns setOf(
             SequencingTestResultConfig(
                 input = "$HASHED_ID_IN_BASE64 | $TEST",
                 ignore = true
@@ -235,7 +237,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should allow for ignoring of individual test results`() {
-        every { curation.find(FREE_TEXT) } returns setOf(
+        every { testResultCuration.find(FREE_TEXT) } returns setOf(
             SequencingTestResultConfig(
                 input = FREE_TEXT,
                 ignore = true

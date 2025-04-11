@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
@@ -56,7 +57,8 @@ class PanelAnnotatorTest {
             evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
-            panelCopyNumberAnnotator
+            panelCopyNumberAnnotator,
+            PanelSpecifications(emptyMap())
         )
 
     @Test

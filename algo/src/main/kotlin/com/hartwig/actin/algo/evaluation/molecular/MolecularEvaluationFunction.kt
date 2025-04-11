@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import java.time.LocalDate
 
@@ -26,7 +27,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
             )
         } else {
 
-            if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it) } })
+            if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it, targets()) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested",
                     isMissingMolecularResultForEvaluation = true
@@ -53,6 +54,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
     open fun evaluate(molecular: MolecularRecord): Evaluation? = null
     open fun evaluate(test: MolecularTest): Evaluation? = null
     open fun genes(): List<String> = emptyList()
+    open fun targets(): List<MolecularTestTarget> = emptyList()
     open fun evaluationPrecedence(): (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? =
         { MolecularEvaluation.defaultEvaluationPrecedence(it) }
 }

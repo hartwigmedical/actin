@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import java.time.LocalDate
 
@@ -22,6 +23,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
     }
 
     override fun genes() = listOf(gene)
+    override fun targets() = listOf(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val canonicalCodonMatches = mutableSetOf<String>()

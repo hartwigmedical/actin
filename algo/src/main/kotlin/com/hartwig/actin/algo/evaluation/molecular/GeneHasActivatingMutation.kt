@@ -48,6 +48,7 @@ class GeneHasActivatingMutation(
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
+    
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh

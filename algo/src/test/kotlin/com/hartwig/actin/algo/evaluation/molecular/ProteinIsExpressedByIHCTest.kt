@@ -27,7 +27,8 @@ class ProteinIsExpressedByIHCTest {
             MolecularTestFactory.withIHCTests(emptyList()).copy(
                 molecularHistory = MolecularHistory(
                     listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf(GENE))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(geneCoverage = TestMolecularFactory.panelSpecifications(setOf(GENE)))
                     )
                 )
             )
@@ -52,8 +53,11 @@ class ProteinIsExpressedByIHCTest {
     }
 
     @Test
-    fun `Should pass when score text is positive `(){
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIHCTests(listOf(ihcTest(scoreText = "positive")))))
+    fun `Should pass when score text is positive `() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withIHCTests(listOf(ihcTest(scoreText = "positive"))))
+        )
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =

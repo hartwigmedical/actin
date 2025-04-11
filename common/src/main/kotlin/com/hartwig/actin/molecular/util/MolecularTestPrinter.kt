@@ -40,7 +40,7 @@ class MolecularTestPrinter(private val printer: DatamodelPrinter) {
     fun printPanelRecord(record: PanelRecord) {
         printer.print("Test: " + formatPanelTestTypeDisplay(record.testTypeDisplay))
         printer.print(" Experiment type '" + record.experimentType.display() + "' on " + formatDate(record.date))
-        printer.print(" Number of genes tested: " + record.testedGenes.size)
+        printer.print(" Number of genes tested: " + record.geneCoverage.size)
         printer.print(" Has sufficient purity: " + toYesNoUnknown(record.hasSufficientPurity))
         printer.print(" Has sufficient quality: " + toYesNoUnknown(record.hasSufficientQuality))
         with(record.characteristics) {

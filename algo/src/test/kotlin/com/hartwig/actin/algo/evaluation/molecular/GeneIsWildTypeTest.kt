@@ -17,6 +17,7 @@ import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
 
+
 class GeneIsWildTypeTest {
 
     private val function = GeneIsWildType(MATCHING_GENE)
@@ -255,7 +256,8 @@ class GeneIsWildTypeTest {
             .copy(
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK"))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(geneCoverage = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -269,7 +271,8 @@ class GeneIsWildTypeTest {
             .copy(
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK"))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(geneCoverage = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -284,7 +287,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            testedGenes = setOf("ALK"),
+                            geneCoverage = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
                                     TestVariantFactory.createMinimal()
@@ -311,7 +314,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            testedGenes = setOf("ALK"),
+                            geneCoverage = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 fusions = listOf(
                                     TestFusionFactory.createMinimal().copy(
