@@ -384,7 +384,7 @@
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
                       "isCategoryEvent": false,
-                      "evidenceType": null,
+                      "sourceEvidenceType": "ACTIVATION",
                       "sourceUrls": []
                     },
                     "applicableCancerType": {
@@ -409,7 +409,7 @@
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
                       "isCategoryEvent": false,
-                      "evidenceType": null,
+                      "sourceEvidenceType": "ACTIVATION",
                       "sourceUrls": []
                     },
                     "applicableCancerType": {
@@ -439,7 +439,7 @@
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
                         "isCategoryEvent": false,
-                        "evidenceType": null,
+                        "sourceEvidenceType": "ACTIVATION",
                         "sourceUrls": []
                       }
                     ],
@@ -483,7 +483,7 @@
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
                         "isCategoryEvent": false,
-                        "evidenceType": null,
+                        "sourceEvidenceType": "ACTIVATION",
                         "sourceUrls": []
                       }
                     ],
@@ -553,7 +553,7 @@
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
                       "isCategoryEvent": false,
-                      "evidenceType": null,
+                      "sourceEvidenceType": "ACTIVATION",
                       "sourceUrls": []
                     },
                     "applicableCancerType": {
@@ -583,7 +583,7 @@
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR C797S",
                         "isCategoryEvent": false,
-                        "evidenceType": null,
+                        "sourceEvidenceType": "ACTIVATION",
                         "sourceUrls": []
                       }
                     ],
@@ -708,7 +708,7 @@
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "KRAS G12C",
                         "isCategoryEvent": false,
-                        "evidenceType": null,
+                        "sourceEvidenceType": "ACTIVATION",
                         "sourceUrls": []
                       }
                     ],
