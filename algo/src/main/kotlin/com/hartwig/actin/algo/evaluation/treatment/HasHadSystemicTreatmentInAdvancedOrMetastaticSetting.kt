@@ -14,10 +14,10 @@ import java.time.LocalDate
 class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val referenceDate: LocalDate) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
-        val priorSystemicTreatments = record.oncologicalHistory.filter { entry -> entry.treatments.any { it.isSystemic } }
+        val priorSystemicTreatments = priorTreatments.filter { it.treatments.any { treatment -> treatment.isSystemic } }
         val (curativeTreatments, nonCurativeTreatments) = priorSystemicTreatments.partition { it.intents?.contains(Intent.CURATIVE) == true }
-        val (recentNonCurativeTreatments, nonRecentNonCurativeTreatments) = nonCurativeTreatments
-            .partition { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, referenceDate.minusMonths(6), false) }
+        val (recentNonCurativeTreatments, nonRecentNonCurativeTreatments) = partitionRecentTreatments(nonCurativeTreatments, false)
+        val (recentNonCurativeTreatmentsIncludingUnknown, _) = partitionRecentTreatments(nonCurativeTreatments, true)
         val nonCurativeTreatmentsWithUnknownStopDate = nonCurativeTreatments.filter { it.treatmentHistoryDetails?.stopYear == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
 
@@ -59,15 +59,15 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 )
             }
 
-           nonCurativeTreatments.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
+            recentNonCurativeTreatmentsIncludingUnknown.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
                 priorTreatments,
-                nonCurativeTreatments.first()
+                recentNonCurativeTreatmentsIncludingUnknown.first()
             ) -> {
                 EvaluationFactory.pass(
                     createMessage(
                         "Has had a systemic line with unknown or non-curative intent not followed by radiotherapy or surgery " +
                                 "- thus presumably in metastatic or advanced setting",
-                        nonCurativeTreatments
+                        recentNonCurativeTreatmentsIncludingUnknown
                     )
                 )
             }
@@ -103,6 +103,14 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 it.categories().contains(TreatmentCategory.RADIOTHERAPY) || it.categories().contains(TreatmentCategory.SURGERY)
             }
         }
+    }
+
+    private fun partitionRecentTreatments(
+        nonCurativeTreatments: List<TreatmentHistoryEntry>,
+        includeUnknown: Boolean
+    ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
+        return nonCurativeTreatments
+            .partition { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, referenceDate.minusMonths(6), includeUnknown) }
     }
 
     private fun createMessage(string: String, treatments: List<TreatmentHistoryEntry>): String {
