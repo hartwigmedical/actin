@@ -19,6 +19,10 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
         return "Predicted tumor origin"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return true
+    }
+
     override fun contents(): Table {
         val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
         val tumorOriginInterpreter = TumorOriginInterpreter.create(molecular)

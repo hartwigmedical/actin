@@ -22,6 +22,10 @@ class MolecularClinicalEvidenceGenerator(
         return if (isOnLabel) "On $titleEnd" else "Off $titleEnd"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val columnCount = 6
 

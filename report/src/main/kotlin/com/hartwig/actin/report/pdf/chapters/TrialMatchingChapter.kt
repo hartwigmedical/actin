@@ -3,8 +3,8 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
@@ -36,7 +36,7 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        addGenerators(createGenerators(), table, false)
+        TableGeneratorFunctions.addGenerators(createGenerators(), table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }
 

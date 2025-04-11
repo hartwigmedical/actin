@@ -18,6 +18,10 @@ class RealWorldTreatmentDecisionsGenerator(
         return "Treatment decisions (percentage of population assigned to systemic treatment) in NCR real-world data set"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         return if (eligibleTreatments.isEmpty()) {
             Tables.createSingleColWithWidth(width)

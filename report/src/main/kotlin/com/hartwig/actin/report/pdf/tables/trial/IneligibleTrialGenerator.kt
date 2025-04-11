@@ -5,7 +5,6 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 private const val SMALL_PADDING_DISTANCE = 0.1f
@@ -27,16 +26,22 @@ class IneligibleTrialGenerator(
         return title
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
         val subTableHeaders =
             listOfNotNull("Cohort", "Molecular", "Sites", "Ineligibility reasons".takeIf { includeIneligibilityReasonCol })
+
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val subTable = Tables.createFixedWidthCols(*subTableWidths)
             subTableHeaders.map(Cells::createHeader).forEach(subTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(subTable))
         }
+
         addTrialsToTable(
             cohorts,
             externalTrials = emptySet(),
@@ -52,7 +57,7 @@ class IneligibleTrialGenerator(
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
         }
-        return makeWrapping(table)
+        return table
     }
 
     override fun getCohortSize(): Int {

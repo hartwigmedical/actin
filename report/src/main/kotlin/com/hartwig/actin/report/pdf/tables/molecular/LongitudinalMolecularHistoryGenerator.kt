@@ -12,7 +12,6 @@ import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class LongitudinalMolecularHistoryGenerator(
@@ -27,6 +26,10 @@ class LongitudinalMolecularHistoryGenerator(
 
     override fun title(): String {
         return "Molecular history"
+    }
+
+    override fun forceKeepTogether(): Boolean {
+        return false
     }
 
     override fun contents(): Table {
@@ -66,7 +69,7 @@ class LongitudinalMolecularHistoryGenerator(
             it.characteristics.tumorMutationalBurden?.score?.toString() ?: ""
         }
         characteristicRow(table, eventVAFMapByTest.keys, "MSI", ::msiText)
-        return makeWrapping(table)
+        return table
     }
 
     private fun msiText(it: MolecularTest) = when (it.characteristics.microsatelliteStability?.isUnstable) {

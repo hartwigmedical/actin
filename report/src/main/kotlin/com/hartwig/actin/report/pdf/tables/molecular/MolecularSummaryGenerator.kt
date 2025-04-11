@@ -27,6 +27,10 @@ class MolecularSummaryGenerator(
         return "Recent molecular results"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return true
+    }
+
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
         val nonIhcTestsIncludedInTrialMatching =

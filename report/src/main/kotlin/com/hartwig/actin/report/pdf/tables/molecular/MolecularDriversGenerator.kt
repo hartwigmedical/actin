@@ -9,11 +9,10 @@ import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
@@ -25,6 +24,10 @@ class MolecularDriversGenerator(
 
     override fun title(): String {
         return "Drivers"
+    }
+
+    override fun forceKeepTogether(): Boolean {
+        return false
     }
 
     override fun contents(): Table {
@@ -46,7 +49,10 @@ class MolecularDriversGenerator(
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.display()))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
-            table.addCell(Cells.createContent(entry.actinTrials.joinToString(", ") { "${it.trialAcronym} ${if (it.locations.isNotEmpty()) "(${it.locations.joinToString()})" else ""}" }))
+            table.addCell(
+                Cells.createContent(entry.actinTrials.joinToString(", ")
+                { "${it.trialAcronym} ${if (it.locations.isNotEmpty()) "(${it.locations.joinToString()})" else ""}" })
+            )
             table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event]?.let { concatEligibleTrials(it) } ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
@@ -55,7 +61,7 @@ class MolecularDriversGenerator(
             val note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal"
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
-        return makeWrapping(table)
+        return table
     }
 
     private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {

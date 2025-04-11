@@ -31,6 +31,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
+import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.trial.SummarizedExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.apache.logging.log4j.LogManager
@@ -102,24 +103,32 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val bloodTransfusions = report.patientRecord.bloodTransfusions
 
         return listOfNotNull(
-            PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth),
+            PatientClinicalHistoryGenerator(report = report, showDetails = true, keyWidth = keyWidth, valueWidth = valueWidth),
             PatientCurrentDetailsGenerator(
-                report.patientRecord, keyWidth, valueWidth, report.treatmentMatch.referenceDate
+                record = report.patientRecord,
+                keyWidth = keyWidth,
+                valueWidth = valueWidth,
+                referenceDate = report.treatmentMatch.referenceDate
             ),
-            TumorDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
+            TumorDetailsGenerator(record = report.patientRecord, keyWidth = keyWidth, valueWidth = valueWidth),
             report.patientRecord.medications?.let {
                 MedicationGenerator(
-                    it, contentWidth, MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null)
+                    medications = it,
+                    width = contentWidth - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE,
+                    interpreter = MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null)
                 )
             },
-            if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth)
+            if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(
+                bloodTransfusions = bloodTransfusions,
+                width = contentWidth - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
+            )
         )
     }
 
     fun provideSummaryTables(
         keyWidth: Float,
         valueWidth: Float,
-        contentWidth: Float,
+        innerContentWidth: Float,
         interpretedCohorts: List<InterpretedCohort>
     ): List<TableGenerator> {
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
@@ -132,11 +141,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             interpretedCohorts,
             trialsProvider.summarizeExternalTrials(),
             TrialSource.fromDescription(report.requestingHospital),
-            contentWidth
+            innerContentWidth
         ).filterNotNull()
 
         return listOfNotNull(
-            clinicalHistoryGenerator, MolecularSummaryGenerator(
+            clinicalHistoryGenerator,
+            MolecularSummaryGenerator(
                 report.patientRecord,
                 interpretedCohorts,
                 keyWidth,
@@ -144,10 +154,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.molecularSummaryType == MolecularSummaryType.SHORT,
                 MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
             ).takeIf {
-                report.config.molecularSummaryType != MolecularSummaryType.NONE && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
-            }, SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
+                report.config.molecularSummaryType != MolecularSummaryType.NONE &&
+                        report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
+            }, SOCEligibleApprovedTreatmentGenerator(report, innerContentWidth).takeIf {
                 report.config.includeEligibleSOCTreatmentSummary
-            }, EligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
+            }, EligibleApprovedTreatmentGenerator(report, innerContentWidth).takeIf {
                 report.config.includeApprovedTreatmentsInSummary
             }) + trialTableGenerators
     }

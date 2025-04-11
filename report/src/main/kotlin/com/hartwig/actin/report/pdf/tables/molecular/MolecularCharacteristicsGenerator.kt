@@ -22,6 +22,10 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         return "General"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val colWidth = width / 10
         val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)

@@ -17,6 +17,10 @@ class ResistanceEvidenceGenerator(
         return ""
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         return if (treatments.isEmpty()) {
             Tables.createSingleColWithWidth(width)

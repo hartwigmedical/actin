@@ -24,8 +24,11 @@ class RealWorldSurvivalOutcomesGenerator(
         }
     }
 
-    override fun contents(): Table {
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
 
+    override fun contents(): Table {
         return if (eligibleTreatments.isEmpty()) {
             Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))

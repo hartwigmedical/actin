@@ -11,6 +11,10 @@ class PathologyReportGenerator(private val tumorDetails: TumorDetails, private v
         return "Raw pathology report:"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val table = Table(1).setWidth(width)
         val text = tumorDetails.rawPathologyReport

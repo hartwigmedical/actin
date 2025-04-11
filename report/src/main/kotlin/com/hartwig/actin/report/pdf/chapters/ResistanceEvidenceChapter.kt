@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
+import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.soc.ResistanceEvidenceGenerator
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
@@ -26,7 +26,7 @@ class ResistanceEvidenceChapter(private val report: Report, override val include
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generator = ResistanceEvidenceGenerator(eligibleSocTreatments, contentWidth())
-        addGenerators(listOf(generator), table, addSubTitle = false)
+        TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }
 }

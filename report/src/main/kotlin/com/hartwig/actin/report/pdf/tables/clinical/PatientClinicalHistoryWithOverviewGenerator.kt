@@ -28,6 +28,10 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return "Clinical summary"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return true
+    }
+
     override fun contents(): Table {
         val record = report.patientRecord
         val pharmaco = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco

@@ -36,6 +36,10 @@ class PatientClinicalHistoryGenerator(
         return "Clinical summary"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return true
+    }
+
     override fun contents(): Table {
         val table = createFixedWidthCols(keyWidth, valueWidth)
         contentsAsList().forEach(table::addCell)
