@@ -136,6 +136,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_SYSTEMIC_TREATMENT -> {
+                    createOneSystemicTreatment(function)
+                    return true
+                }
+
                 FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE -> {
                     createOneTreatmentCategoryOrTypeInput(function)
                     return true
@@ -464,6 +469,13 @@ class FunctionInputResolver(
             double1 = parameterAsString(function, 0).toDouble(),
             double2 = parameterAsString(function, 1).toDouble()
         )
+    }
+
+    fun createOneSystemicTreatment(function: EligibilityFunction): Treatment {
+        assertParamConfig(function, FunctionInput.ONE_SYSTEMIC_TREATMENT, 1)
+        val treatment = toTreatment(parameterAsString(function, 0))
+        return treatment.takeIf { it.isSystemic }
+            ?: throw IllegalStateException("Not a systemic treatment: ${treatment.display()}")
     }
 
     fun createOneTreatmentCategoryOrTypeInput(function: EligibilityFunction): TreatmentCategoryInput {
