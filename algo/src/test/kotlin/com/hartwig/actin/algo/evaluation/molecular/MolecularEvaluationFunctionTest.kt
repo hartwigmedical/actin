@@ -10,10 +10,11 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val OVERRIDE_MESSAGE = "Override message"
 private const val FAIL_MESSAGE = "Fail message"
@@ -41,9 +42,12 @@ class MolecularEvaluationFunctionTest {
     }
 
     private val functionWithGenes = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun genes(): List<String> {
-            return listOf("GENE")
-        }
+        override fun genes() = listOf("GENE")
+    }
+
+    private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
+        override fun genes() = listOf("GENE")
+        override fun targets() = listOf(MolecularTestTarget.FUSION)
     }
 
     @Test
@@ -94,12 +98,32 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.failMessages).containsExactly(FAIL_MESSAGE)
     }
 
+
     @Test
     fun `Should return undetermined when genes have not been tested which are mandatory`() {
         val patient = withPanelTest()
         val evaluation = functionWithGenes.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested")
+        assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
+    }
+
+    @Test
+    fun `Should return undetermined when genes and targets have not been tested which are mandatory`() {
+        val patient = withPanelTest()
+        val evaluation =
+            functionWithGenesAndTarget.evaluate(
+                patient.copy(
+                    molecularHistory = MolecularHistory(
+                        listOf(
+                            TestMolecularFactory.createMinimalTestPanelRecord()
+                                .copy(geneSpecifications = mapOf("GENE" to listOf(MolecularTestTarget.MUTATION)))
+                        )
+                    )
+                )
+            )
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested for fusions")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 

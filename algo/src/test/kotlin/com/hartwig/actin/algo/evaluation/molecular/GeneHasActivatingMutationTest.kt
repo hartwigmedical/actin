@@ -17,7 +17,7 @@ import org.junit.Test
 class GeneHasActivatingMutationTest {
     private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
     private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE)
-
+    
     @Test
     fun `Should fail for minimal patient`() {
         assertMolecularEvaluation(

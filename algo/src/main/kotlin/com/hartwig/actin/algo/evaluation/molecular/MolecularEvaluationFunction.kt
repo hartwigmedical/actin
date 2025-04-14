@@ -29,7 +29,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
 
             if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it, targets()) } })
                 return EvaluationFactory.undetermined(
-                    "Gene(s) ${genes().joinToString { it }} not tested",
+                    "Gene(s) ${genes().joinToString { it }} not tested${targetSuffix()}",
                     isMissingMolecularResultForEvaluation = true
                 )
 
@@ -48,6 +48,12 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
                 )
         }
     }
+
+    private fun targetSuffix() = if (targets().isNotEmpty()) " ${
+        "for " + targets().joinToString {
+            it.toString().lowercase() + "s"
+        }
+    }" else ""
 
     open fun noMolecularRecordEvaluation(): Evaluation? = null
     open fun evaluate(molecularHistory: MolecularHistory): Evaluation? = null
