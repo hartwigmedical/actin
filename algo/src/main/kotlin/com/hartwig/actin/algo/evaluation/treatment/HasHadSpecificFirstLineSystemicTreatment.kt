@@ -14,12 +14,10 @@ class HasHadSpecificFirstLineSystemicTreatment(private val treatmentToFind: Trea
         val systemicTreatments = record.oncologicalHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
         val (treatmentsWithStartDate, treatmentsWithoutStartDate) = systemicTreatments.partition { it.startYear != null }
         val firstTreatment = SystemicTreatmentAnalyser.firstSystemicTreatment(treatmentsWithStartDate)
-        val hasHadTreatmentToFindInFirstLine = containsTreatment(listOf(firstTreatment), treatmentNameToFind)
-        val hasHadTreatmentToFindWithUnknownStartDate = containsTreatment(treatmentsWithoutStartDate, treatmentNameToFind)
+        val hasHadTreatmentToFindInFirstLine = firstTreatment?.containsTreatment(treatmentNameToFind) == true
+        val hasHadTreatmentToFindWithUnknownStartDate = treatmentsWithoutStartDate.any { it.containsTreatment(treatmentNameToFind) }
         val hasOnlyHadTreatmentToFind =
-            systemicTreatments.isNotEmpty() && systemicTreatments.all { entry ->
-                entry.allTreatments().any { it.name.lowercase() == treatmentNameToFind }
-            }
+            systemicTreatments.isNotEmpty() && systemicTreatments.all { it.containsTreatment(treatmentNameToFind) }
         val firstTreatmentIsPotentialTrialMatch =
             firstTreatment?.let { TrialFunctions.treatmentMayMatchAsTrial(it, treatmentToFind.categories()) } ?: false
 
@@ -43,7 +41,6 @@ class HasHadSpecificFirstLineSystemicTreatment(private val treatmentToFind: Trea
         }
     }
 
-    private fun containsTreatment(treatments: List<TreatmentHistoryEntry?>, treatmentNameToFind: String): Boolean {
-        return treatments.any { it?.allTreatments()?.any { t -> t.name.lowercase() == treatmentNameToFind } == true }
-    }
+    private fun TreatmentHistoryEntry.containsTreatment(treatmentNameToFind: String) =
+        allTreatments().any { it.name.lowercase() == treatmentNameToFind }
 }
