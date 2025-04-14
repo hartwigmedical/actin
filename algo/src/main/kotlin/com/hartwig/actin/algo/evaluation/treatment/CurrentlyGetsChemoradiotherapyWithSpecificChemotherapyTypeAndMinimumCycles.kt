@@ -37,7 +37,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 
         val typeString = type.display()
         return when {
-            treatmentMatches.isEmpty() -> EvaluationFactory.fail("Currently receives chemoradiotherapy with $typeString chemotherapy")
+            treatmentMatches.isEmpty() -> EvaluationFactory.fail("Does not currently receive chemoradiotherapy with $typeString chemotherapy")
             true in treatmentMatches -> EvaluationFactory.pass("Currently receives chemoradiotherapy with $typeString chemotherapy and at least $minCycles cycles")
             null in treatmentMatches -> EvaluationFactory.undetermined("Undetermined if patient currently receives chemoradiotherapy with $typeString chemotherapy and at least $minCycles cycles")
             else -> EvaluationFactory.fail("Does not currently receive chemoradiotherapy with $typeString chemotherapy with at least $minCycles cycles")
