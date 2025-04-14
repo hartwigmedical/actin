@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
@@ -36,13 +37,15 @@ object ClinicalEvidenceFactory {
 
     private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
-            val actionableEvent = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
+            val (evidenceType, event) = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
             createTreatmentEvidence(
                 isOnLabel,
                 evidence,
-                actionableEvent.sourceDate(),
-                actionableEvent.sourceEvent(),
-                actionableEvent.isCategoryEvent()
+                event.sourceDate(),
+                event.sourceEvent(),
+                event.isCategoryEvent(),
+                evidenceType,
+                event.sourceUrls()
             )
         }.toSet()
     }
@@ -52,12 +55,20 @@ object ClinicalEvidenceFactory {
         evidence: EfficacyEvidence,
         sourceDate: LocalDate,
         sourceEvent: String,
-        isCategoryEvent: Boolean
+        isCategoryEvent: Boolean,
+        evidenceType: EvidenceType,
+        sourceUrls: Set<String>
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
             isOnLabel = isOnLabel,
-            molecularMatch = MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
+            molecularMatch = MolecularMatchDetails(
+                sourceDate = sourceDate,
+                sourceEvent = sourceEvent,
+                isCategoryEvent = isCategoryEvent,
+                sourceEvidenceType = evidenceType,
+                sourceUrls = sourceUrls
+            ),
             applicableCancerType = CancerType(
                 matchedCancerType = evidence.indication().applicableType().name(),
                 excludedCancerSubTypes = evidence.indication().excludedSubTypes().map { ct -> ct.name() }.toSet()
@@ -99,11 +110,13 @@ object ClinicalEvidenceFactory {
         }.toSet()
 
         val molecularMatches = matchingCriteria.map {
-            val event = ActionableEventExtraction.extractEvent(it)
+            val (evidenceType, event) = ActionableEventExtraction.extractEvent(it)
             MolecularMatchDetails(
                 sourceDate = event.sourceDate(),
                 sourceEvent = event.sourceEvent(),
-                isCategoryEvent = event.isCategoryEvent()
+                isCategoryEvent = event.isCategoryEvent(),
+                evidenceType,
+                sourceUrls = event.sourceUrls()
             )
         }.toSet()
 
@@ -119,11 +132,13 @@ object ClinicalEvidenceFactory {
 
         return ExternalTrial(
             nctId = trial.nctId(),
-            title = trial.acronym() ?: trial.title(),
+            title = trial.title(),
+            acronym = trial.acronym(),
+            treatments = trial.therapyNames(),
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            url = url
+            url = url,
         )
     }
 

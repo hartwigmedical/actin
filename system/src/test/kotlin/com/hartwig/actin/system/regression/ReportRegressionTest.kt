@@ -30,7 +30,7 @@ class ReportRegressionTest(private val exampleName: String) {
 
         @BeforeClass
         @JvmStatic
-        fun setReportLocale() = Locale.setDefault(Locale("en", "US"))
+        fun setReportLocale() = Locale.setDefault(Locale.US)
 
         @AfterClass
         @JvmStatic

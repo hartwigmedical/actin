@@ -383,7 +383,9 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false
+                      "isCategoryEvent": false,
+                      "sourceEvidenceType": "ACTIVATION",
+                      "sourceUrls": []
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -406,7 +408,9 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false
+                      "isCategoryEvent": false,
+                      "sourceEvidenceType": "ACTIVATION",
+                      "sourceUrls": []
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -429,11 +433,14 @@
                   {
                     "nctId": "NCT00000006",
                     "title": "EGFR-L858R-TRIAL",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "sourceEvidenceType": "ACTIVATION",
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [
@@ -470,11 +477,14 @@
                   {
                     "nctId": "NCT00000007",
                     "title": "EGFR-BE",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "sourceEvidenceType": "ACTIVATION",
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [
@@ -542,7 +552,9 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
-                      "isCategoryEvent": false
+                      "isCategoryEvent": false,
+                      "sourceEvidenceType": "ACTIVATION",
+                      "sourceUrls": []
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -565,11 +577,14 @@
                   {
                     "nctId": "NCT00000008",
                     "title": "EGFR-C797S-TRIAL",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR C797S",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "sourceEvidenceType": "ACTIVATION",
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [
@@ -687,11 +702,14 @@
                   {
                     "nctId": "NCT00000009",
                     "title": "KRAS-G12C-TRIAL-DE",
+                    "treatments": [],
                     "molecularMatches": [
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "KRAS G12C",
-                        "isCategoryEvent": false
+                        "isCategoryEvent": false,
+                        "sourceEvidenceType": "ACTIVATION",
+                        "sourceUrls": []
                       }
                     ],
                     "applicableCancerTypes": [

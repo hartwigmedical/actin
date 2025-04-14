@@ -4,8 +4,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
-import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -36,9 +36,9 @@ class TreatmentEvidenceFunctionsTest {
     @Test
     fun `Should filter out off label evidence if there is on label evidence of the same treatment with the same or higher evidence`() {
         val evidence = listOf(
-            onLabelCategoryLevelA.copy("treatment"),
-            offLabelCategoryLevelA.copy("treatment"),
-            offLabelCategoryLevelB.copy("treatment")
+            onLabelCategoryLevelA.copy(TREATMENT),
+            offLabelCategoryLevelA.copy(TREATMENT),
+            offLabelCategoryLevelB.copy(TREATMENT)
         )
         val onLabel = evidence.filter { it.isOnLabel }
         val onLabelHighestEvidencePerTreatment = TreatmentEvidenceFunctions.getHighestEvidenceLevelPerTreatment(onLabel)
@@ -110,7 +110,7 @@ class TreatmentEvidenceFunctionsTest {
         val treatment1 = createTreatmentEvidence(
             "treatment 1",
             evidenceLevel = EvidenceLevel.A,
-            cancerType = CancerType("cancer type 1", emptySet())
+            matchedCancerType = "cancer type 1"
         )
         val otherTreatment1 = treatment1.copy(evidenceLevel = EvidenceLevel.B)
         val treatment2 = treatment1.copy("treatment 2")
@@ -147,11 +147,10 @@ class TreatmentEvidenceFunctionsTest {
     @Test
     fun `Should generate TreatmentEvidenceContent objects with treatment name, cancer types with dates, and isResistant Boolean`() {
         val year = 2024
-        val cancerType = CancerType("Cancer type 1", emptySet())
-        val treatmentEvidence = createTreatmentEvidence(evidenceYear = year, cancerType = cancerType)
+        val treatmentEvidence = createTreatmentEvidence(evidenceYear = year, matchedCancerType = "Cancer type 1")
         val evidence = listOf(
             treatmentEvidence,
-            treatmentEvidence.copy(evidenceYear = year.minus(1), applicableCancerType = cancerType.copy("Cancer type 2")),
+            treatmentEvidence.copy(evidenceYear = year.minus(1), applicableCancerType = CancerType("Cancer type 2", emptySet())),
             treatmentEvidence.copy(treatment = "other treatment", evidenceDirection = TestEvidenceDirectionFactory.certainResistant())
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
@@ -197,18 +196,17 @@ class TreatmentEvidenceFunctionsTest {
         isCategoryEvent: Boolean = true,
         sourceEvent: String = "sourceEvent",
         evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
-        cancerType: CancerType = CancerType("", emptySet())
+        matchedCancerType: String = "",
     ): TreatmentEvidence {
-        return TreatmentEvidence(
-            treatment = treatment,
-            molecularMatch = MolecularMatchDetails(sourceDate = entryDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
-            applicableCancerType = cancerType,
+        return TestTreatmentEvidenceFactory.create(treatment = treatment,
             isOnLabel = isOnLabel,
             evidenceLevel = evidenceLevel,
-            evidenceLevelDetails = evidenceLevelDetails,
             evidenceDirection = direction,
+            sourceDate = entryDate,
             evidenceYear = evidenceYear,
-            efficacyDescription = ""
-        )
+            isCategoryEvent = isCategoryEvent,
+            sourceEvent = sourceEvent,
+            evidenceLevelDetails = evidenceLevelDetails,
+            matchedCancerType = matchedCancerType)
     }
 }
