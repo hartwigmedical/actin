@@ -12,7 +12,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val molecular = test as? MolecularRecord ?: return EvaluationFactory.undetermined(
-            "Cannot evaluate HLA type without WGS",
+            "HLA type not tested",
             isMissingMolecularResultForEvaluation = true
         )
         val immunology = molecular.immunology
