@@ -14,11 +14,11 @@ class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
                 "Undetermined if WHO status is within requested max WHO $maximumWHO (WHO data missing)"
             )
 
-            who <= maximumWHO -> EvaluationFactory.pass("WHO $who is within max WHO $maximumWHO")
+            who <= maximumWHO -> EvaluationFactory.pass("WHO $who is below WHO $maximumWHO")
 
-            who - maximumWHO == 1 -> EvaluationFactory.recoverableFail("WHO $who exceeds max WHO $maximumWHO")
+            who - maximumWHO == 1 -> EvaluationFactory.recoverableFail("WHO $who exceeds WHO $maximumWHO")
 
-            else -> EvaluationFactory.fail("WHO $who exceeds max WHO $maximumWHO")
+            else -> EvaluationFactory.fail("WHO $who exceeds WHO $maximumWHO")
         }
     }
 }

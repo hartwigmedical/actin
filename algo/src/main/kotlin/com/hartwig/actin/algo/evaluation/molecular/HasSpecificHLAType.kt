@@ -50,7 +50,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
         return when {
             matchingAllelesUnmodifiedInTumor.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Has required HLA type $hlaAlleleToFind (allele present without somatic variants in tumor)",
+                    "Has HLA type $hlaAlleleToFind (allele present without somatic variants in tumor)",
                     inclusionEvents = setOf("HLA-$hlaAlleleToFind")
                 )
             }
