@@ -160,6 +160,22 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with one specific systemic treatment input`() {
+        val rule = firstOfType(FunctionInput.ONE_SYSTEMIC_TREATMENT)
+        val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
+        val valid = create(rule, listOf(treatmentName))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = TestTreatmentDatabaseFactory.createProper().findTreatmentByName(treatmentName)!!
+        assertThat(resolver.createOneSystemicTreatment(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentName, treatmentName)))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("ABLATION")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one treatment category or type input`() {
         val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE)
         val treatment = TreatmentCategory.IMMUNOTHERAPY.display()
