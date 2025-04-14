@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import kotlin.reflect.full.memberProperties
@@ -32,7 +31,7 @@ class StandardPriorSequencingTestExtractor(
                     ehrPatientRecord.patientDetails.hashedId,
                     CurationCategory.SEQUENCING_TEST,
                     test.test,
-                    "sequencing test result",
+                    "sequencing test",
                     false
                 )
             testCurationConfig.config()?.let { testCuration ->
@@ -57,8 +56,7 @@ class StandardPriorSequencingTestExtractor(
                                     skippedExons = skippedExons(allResults),
                                     deletedGenes = geneDeletions(allResults),
                                     isMicrosatelliteUnstable = msi(allResults),
-                                    tumorMutationalBurden = tmb(allResults),
-                                    testedGenes = test.testedGenes ?: emptySet()
+                                    tumorMutationalBurden = tmb(allResults)
                                 )
                             ),
                             mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
@@ -76,8 +74,6 @@ class StandardPriorSequencingTestExtractor(
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }
     }
-
-    private fun patientQualifiedTestName(patientId: String, test: ProvidedMolecularTest) = "$patientId | ${test.test}"
 
     private fun removeCurated(
         original: Set<ProvidedMolecularTestResult>,
@@ -98,7 +94,7 @@ class StandardPriorSequencingTestExtractor(
             CurationResponse.createFromConfigs(
                 testResultCuration.find(text),
                 ehrPatientRecord.patientDetails.hashedId,
-                CurationCategory.SEQUENCING_TEST,
+                CurationCategory.SEQUENCING_TEST_RESULT,
                 text,
                 "sequencing test result",
                 false

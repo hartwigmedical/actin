@@ -75,6 +75,7 @@ data class CurationDatabaseContext(
             molecularTestIhcCuration,
             molecularTestPdl1Curation,
             sequencingTestCuration,
+            sequencingTestResultCuration,
             medicationNameCuration,
             medicationDosageCuration,
             surgeryNameCuration,
@@ -167,7 +168,7 @@ data class CurationDatabaseContext(
                 curationDir,
                 CurationDatabaseReader.SEQUENCING_TEST_RESULT_TSV,
                 SequencingTestResultConfigFactory(),
-                CurationCategory.SEQUENCING_TEST
+                CurationCategory.SEQUENCING_TEST_RESULT
             ) { it.sequencingTestEvaluatedInputs },
             medicationNameCuration = CurationDatabaseReader.read(
                 curationDir,

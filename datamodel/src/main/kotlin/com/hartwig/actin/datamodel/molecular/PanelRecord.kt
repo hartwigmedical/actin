@@ -17,6 +17,9 @@ data class PanelRecord(
 ) : MolecularTest {
 
     override fun testsGene(gene: String, molecularTestTargets: List<MolecularTestTarget>): Boolean {
+        if (molecularTestTargets.isEmpty()) {
+            return geneSpecifications[gene] != null
+        }
         return geneSpecifications[gene]?.containsAll(molecularTestTargets) ?: false
     }
 }

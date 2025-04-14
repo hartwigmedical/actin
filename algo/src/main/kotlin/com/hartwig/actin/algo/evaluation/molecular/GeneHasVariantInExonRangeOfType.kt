@@ -27,7 +27,7 @@ class GeneHasVariantInExonRangeOfType(
     }
 
     override fun genes() = listOf(gene)
-    override fun targets() = listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION)
+    override fun targets() = listOf(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)

@@ -25,8 +25,8 @@ object PanelSpecificationsFile {
                             listOfNotNull(
                                 if (g.fusion) MolecularTestTarget.FUSION else null,
                                 if (g.mutation) MolecularTestTarget.MUTATION else null,
-                                if (g.amp) MolecularTestTarget.AMP else null,
-                                if (g.del) MolecularTestTarget.DEL else null,
+                                if (g.amp) MolecularTestTarget.AMPLIFICATION else null,
+                                if (g.del) MolecularTestTarget.DELETION else null,
                             )
                         )
                     }

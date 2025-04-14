@@ -32,7 +32,7 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
         val testType = if (testTypeJson.isJsonNull) null else testTypeJson.asString
         return PanelRecord(
             geneSpecifications = gson.fromJson(
-                jsonObject.getAsJsonObject("testedGenes"),
+                jsonObject.getAsJsonObject("geneSpecifications"),
                 object : TypeToken<Map<String, List<MolecularTestTarget>>>() {}.type
             ),
             testTypeDisplay = testType,

@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
@@ -30,6 +31,7 @@ class GeneHasVariantWithProteinImpact(
     private val logger = LogManager.getLogger(GeneHasVariantWithProteinImpact::class.java)
 
     override fun genes() = listOf(gene)
+    override fun targets() = listOf(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
 

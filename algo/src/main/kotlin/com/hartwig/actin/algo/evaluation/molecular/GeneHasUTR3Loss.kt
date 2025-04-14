@@ -14,7 +14,7 @@ import java.time.LocalDate
 class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targets() = listOf(MolecularTestTarget.DEL)
+    override fun targets() = listOf(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = test.drivers.variants.filter { variant ->

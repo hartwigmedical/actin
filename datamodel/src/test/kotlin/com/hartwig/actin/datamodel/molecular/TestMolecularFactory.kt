@@ -96,7 +96,7 @@ object TestMolecularFactory {
 
     fun createProperTestPanelRecord(): PanelRecord {
         return createMinimalTestPanelRecord().copy(
-            geneSpecifications = mapOf("BRAF" to listOf(MolecularTestTarget.NON_FUSION), "PTEN" to listOf(MolecularTestTarget.NON_FUSION)),
+            geneSpecifications = mapOf("BRAF" to listOf(MolecularTestTarget.MUTATION), "PTEN" to listOf(MolecularTestTarget.MUTATION)),
             testTypeDisplay = "proper panel",
             date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
             drivers = createProperTestDrivers(),
@@ -119,7 +119,14 @@ object TestMolecularFactory {
 
     fun createExhaustiveTestPanelRecord(): PanelRecord {
         return createProperTestPanelRecord().copy(
-            geneSpecifications = setOf("BRAF", "PTEN", "MYC", "MET", "EML4", "ALK").associateWith { listOf(MolecularTestTarget.NON_FUSION) },
+            geneSpecifications = setOf(
+                "BRAF",
+                "PTEN",
+                "MYC",
+                "MET",
+                "EML4",
+                "ALK"
+            ).associateWith { listOf(MolecularTestTarget.MUTATION) },
             testTypeDisplay = "exhaustive panel",
             drivers = createExhaustiveTestDrivers(),
             characteristics = createExhaustiveTestCharacteristics()
@@ -144,7 +151,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun panelSpecifications(genes: Set<String>, targets: List<MolecularTestTarget> = listOf(MolecularTestTarget.NON_FUSION)) =
+    fun panelSpecifications(genes: Set<String>, targets: List<MolecularTestTarget> = listOf(MolecularTestTarget.MUTATION)) =
         genes.associateWith { targets }
 
     private fun createProperTestCharacteristics(): MolecularCharacteristics {

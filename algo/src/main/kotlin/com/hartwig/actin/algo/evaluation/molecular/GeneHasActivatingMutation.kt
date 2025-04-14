@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -48,7 +49,9 @@ class GeneHasActivatingMutation(
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    
+
+    override fun targets() = listOf(MolecularTestTarget.MUTATION)
+
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
@@ -181,7 +184,8 @@ class GeneHasActivatingMutation(
                 ),
                 EventsWithMessages(
                     activatingVariantsNoHotspotAndNoGainOfFunction,
-                    "$gene potentially activating mutation(s) ${activatingVariantsNoHotspotAndNoGainOfFunction?.let {
+                    "$gene potentially activating mutation(s) ${
+                        activatingVariantsNoHotspotAndNoGainOfFunction?.let {
                             concatVariants(it, gene)
                         }
                     } with high driver likelihood - however not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
