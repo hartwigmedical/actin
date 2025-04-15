@@ -162,7 +162,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
             interpretedCohorts,
             ExternalTrialSummarizer.summarize(externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()),
-            externalTrialSummary.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
+            externalTrialSummary.excludedNationalTrials()
+                .groupBy { ewt -> ewt.trial.nctId }.size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,
             report.config.countryOfReference,
             contentWidth
@@ -176,7 +177,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             ExternalTrialSummarizer.summarize(externalTrialSummary.internationalTrials.filtered),
-            externalTrialSummary.excludedInternationalTrials().size,
+            externalTrialSummary.excludedInternationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
             requestingSource,
             null,
             contentWidth,
@@ -195,7 +196,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeTrialMatchingInSummary && it?.getCohortSize() != 0
             },
             nonLocalTrialGenerator
-                .takeIf { report.config.includeExternalTrialsInSummary && externalTrialSummary.internationalTrials.filtered.isNotEmpty() },
+                .takeIf { report.config.includeExternalTrialsInSummary && externalTrialSummary.internationalTrials.isNotEmpty() },
             ineligibleTrialGenerator.takeIf { report.config.includeIneligibleTrialsInSummary }
         )
         return generators

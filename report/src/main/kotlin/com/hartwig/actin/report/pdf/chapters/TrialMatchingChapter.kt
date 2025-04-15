@@ -51,7 +51,7 @@ class TrialMatchingChapter(
         val localExternalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered),
-            externalTrials.excludedNationalTrials().size,
+            externalTrials.excludedNationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
             requestingSource,
             report.config.countryOfReference,
             contentWidth()
@@ -59,7 +59,7 @@ class TrialMatchingChapter(
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             ExternalTrialSummarizer.summarize(externalTrials.internationalTrials.filtered),
-            externalTrials.excludedInternationalTrials().size,
+            externalTrials.excludedInternationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
             requestingSource,
             null,
             contentWidth(),
