@@ -10,7 +10,7 @@ data class PanelRecord(
     override val testTypeDisplay: String? = null,
     override val date: LocalDate? = null,
     override val drivers: Drivers,
-    override val characteristics: MolecularCharacteristics = MolecularCharacteristics(),
+    override val characteristics: MolecularCharacteristics,
     override val evidenceSource: String,
     override val hasSufficientPurity: Boolean,
     override val hasSufficientQuality: Boolean

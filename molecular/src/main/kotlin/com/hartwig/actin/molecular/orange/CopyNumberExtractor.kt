@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 private val AMP_DRIVERS = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
 private val DEL_DRIVERS = setOf(PurpleDriverType.DEL)
 
-internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
+class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(purple: PurpleRecord): List<CopyNumber> {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)

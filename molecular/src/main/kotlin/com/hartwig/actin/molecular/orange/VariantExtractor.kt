@@ -24,7 +24,7 @@ import org.apache.logging.log4j.LogManager
 
 private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
 
-internal class VariantExtractor(private val geneFilter: GeneFilter) {
+class VariantExtractor(private val geneFilter: GeneFilter) {
 
     private val logger = LogManager.getLogger(VariantExtractor::class.java)
 

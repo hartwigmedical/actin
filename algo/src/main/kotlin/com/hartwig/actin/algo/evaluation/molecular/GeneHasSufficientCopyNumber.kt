@@ -64,7 +64,7 @@ class GeneHasSufficientCopyNumber(private val gene: String, private val requeste
         return when {
             reportableSufficientCN != null -> {
                 EvaluationFactory.pass(
-                    "$gene copy number is above requested $requestedMinCopyNumber",
+                    "$gene copy number is above $requestedMinCopyNumber",
                     inclusionEvents = reportableSufficientCN
                 )
             }

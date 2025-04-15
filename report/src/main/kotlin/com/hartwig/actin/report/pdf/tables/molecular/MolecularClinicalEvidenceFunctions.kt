@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 
@@ -14,22 +14,22 @@ object MolecularClinicalEvidenceFunctions {
             extractCharacteristics(
                 molecularHistory,
                 { "MS ${MolecularCharacteristicFormat.formatMicrosatelliteStability(it)}" },
-                { it.microsatelliteEvidence })
+                { it.microsatelliteStability?.evidence })
         val allTML =
             extractCharacteristics(
                 molecularHistory,
                 { MolecularCharacteristicFormat.formatTumorMutationalLoad(it, false) },
-                { it.tumorMutationalLoadEvidence })
+                { it.tumorMutationalLoad?.evidence })
         val allTMB =
             extractCharacteristics(
                 molecularHistory,
                 { MolecularCharacteristicFormat.formatTumorMutationalBurden(it, false) },
-                { it.tumorMutationalBurdenEvidence })
+                { it.tumorMutationalBurden?.evidence })
         val allHRD =
             extractCharacteristics(
                 molecularHistory,
                 { "HR ${MolecularCharacteristicFormat.formatHomologousRecombination(it, false)}" },
-                { it.homologousRecombinationEvidence })
+                { it.homologousRecombination?.evidence })
         return allMSI + allTMB + allTML + allHRD + allDrivers.map { it.event to it.evidence }
     }
 

@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype
 
-internal object PharmacoExtraction {
+object PharmacoExtraction {
 
     fun extract(record: OrangeRecord): Set<PharmacoEntry> {
         val peach = record.peach() ?: return emptySet()

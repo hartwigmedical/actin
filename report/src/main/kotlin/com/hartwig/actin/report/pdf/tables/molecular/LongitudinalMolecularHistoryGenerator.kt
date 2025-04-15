@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
@@ -63,13 +63,13 @@ class LongitudinalMolecularHistoryGenerator(
             .forEach { table.addCell(Cells.createContent(it)) }
 
         characteristicRow(table, eventVAFMapByTest.keys, "TMB") {
-            it.characteristics.tumorMutationalBurden?.toString() ?: ""
+            it.characteristics.tumorMutationalBurden?.score?.toString() ?: ""
         }
         characteristicRow(table, eventVAFMapByTest.keys, "MSI", ::msiText)
         return makeWrapping(table)
     }
 
-    private fun msiText(it: MolecularTest) = when (it.characteristics.isMicrosatelliteUnstable) {
+    private fun msiText(it: MolecularTest) = when (it.characteristics.microsatelliteStability?.isUnstable) {
         false -> "Stable"
         true -> "Unstable"
         null -> ""

@@ -6,10 +6,9 @@ import org.junit.Test
 
 private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
-private const val GENE = "gene 1"
 
 class ProteinIsWildTypeByIHCTest {
-    private val function = ProteinIsWildTypeByIHC(PROTEIN, GENE)
+    private val function = ProteinIsWildTypeByIHC(PROTEIN)
 
     @Test
     fun shouldReturnUndeterminedForEmptyListOfTests() {

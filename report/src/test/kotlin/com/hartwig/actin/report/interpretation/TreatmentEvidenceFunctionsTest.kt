@@ -36,9 +36,9 @@ class TreatmentEvidenceFunctionsTest {
     @Test
     fun `Should filter out off label evidence if there is on label evidence of the same treatment with the same or higher evidence`() {
         val evidence = listOf(
-            onLabelCategoryLevelA.copy("treatment"),
-            offLabelCategoryLevelA.copy("treatment"),
-            offLabelCategoryLevelB.copy("treatment")
+            onLabelCategoryLevelA.copy(TREATMENT),
+            offLabelCategoryLevelA.copy(TREATMENT),
+            offLabelCategoryLevelB.copy(TREATMENT)
         )
         val onLabel = evidence.filter { it.isOnLabel }
         val onLabelHighestEvidencePerTreatment = TreatmentEvidenceFunctions.getHighestEvidenceLevelPerTreatment(onLabel)

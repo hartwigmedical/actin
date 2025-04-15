@@ -30,16 +30,22 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
             else -> null
         }
 
-        val undeterminedMessage = "No reliable IHC HER2 expression test available"
+        val undeterminedMessage = "No IHC HER2 expression test available"
         return when {
             validIhcTests.isEmpty() && !(positiveArguments || negativeArguments) -> {
                 return when {
                     geneERBB2IsAmplified -> {
-                        EvaluationFactory.undetermined("$undeterminedMessage but likely positive since ERBB2 amp present")
+                        EvaluationFactory.undetermined(
+                            "$undeterminedMessage (but ERBB2 amplification detected)",
+                            isMissingMolecularResultForEvaluation = true
+                        )
                     }
 
                     indeterminateIhcTests.isNotEmpty() -> {
-                        EvaluationFactory.undetermined("$undeterminedMessage (indeterminate status)")
+                        EvaluationFactory.undetermined(
+                            "$undeterminedMessage (indeterminate status)",
+                            isMissingMolecularResultForEvaluation = true
+                        )
                     }
 
                     else -> {
@@ -51,9 +57,9 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
 
             her2ReceptorIsPositive != true && geneERBB2IsAmplified -> {
                 return if (her2ReceptorIsPositive == null) {
-                    EvaluationFactory.warn("Non-positive HER2 IHC results inconsistent with ERBB2 amp")
+                    EvaluationFactory.warn("Non-positive HER2 IHC results (inconsistent with detected ERBB2 amplification)")
                 } else {
-                    EvaluationFactory.warn("Negative HER2 IHC results inconsistent with ERBB2 amp")
+                    EvaluationFactory.warn("Negative HER2 IHC results (inconsistent with detected ERBB2 amplification)")
                 }
             }
 
