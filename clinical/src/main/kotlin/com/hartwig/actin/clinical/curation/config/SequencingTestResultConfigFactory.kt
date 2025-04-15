@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.util.ResourceFile
 
 class SequencingTestResultConfigFactory : CurationConfigFactory<SequencingTestResultConfig> {
+
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SequencingTestResultConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["gene"]!!])
         val input = parts[fields["input"]!!]
