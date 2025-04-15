@@ -50,7 +50,7 @@ class GeneHasActivatingMutation(
 
     override fun genes() = listOf(gene)
     override fun targets() = listOf(MolecularTestTarget.MUTATION)
-    
+
     override fun evaluate(test: MolecularTest): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         val evidenceSource = test.evidenceSource
@@ -186,7 +186,8 @@ class GeneHasActivatingMutation(
                         activatingVariantsNoHotspotAndNoGainOfFunction?.let {
                             concatVariants(it, gene)
                         }
-                    } with high driver likelihood - however not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                    } with high driver likelihood - " +
+                            "however not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,

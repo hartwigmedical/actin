@@ -17,7 +17,6 @@ import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
 
-
 class GeneIsWildTypeTest {
 
     private val function = GeneIsWildType(MATCHING_GENE)

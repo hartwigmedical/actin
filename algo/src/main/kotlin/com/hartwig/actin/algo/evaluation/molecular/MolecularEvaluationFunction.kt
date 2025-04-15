@@ -26,7 +26,6 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
                 isMissingMolecularResultForEvaluation = true
             )
         } else {
-
             if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it, targets()) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested${targetSuffix()}",

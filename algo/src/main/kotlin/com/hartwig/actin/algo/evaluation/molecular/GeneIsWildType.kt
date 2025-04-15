@@ -4,14 +4,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.datamodel.molecular.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import java.time.LocalDate
 
 class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
@@ -28,7 +28,6 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
             ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
 
     override fun evaluate(test: MolecularTest): Evaluation {
-
         val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
         val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
         val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()
