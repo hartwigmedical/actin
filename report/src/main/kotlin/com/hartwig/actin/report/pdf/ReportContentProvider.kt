@@ -162,15 +162,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
             interpretedCohorts,
             ExternalTrialSummarizer.summarize(externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()),
-            externalTrialSummary.excludedNationalTrials().size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
+            externalTrialSummary.excludedNationalTrials()
+                .groupBy { ewt -> ewt.trial.nctId }.size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,
             report.config.countryOfReference,
             contentWidth
         )
-        logger.info("original")
-        logger.info(externalTrialSummary.nationalTrials.original.map { it.trial.nctId }.toSet().joinToString { "---" })
-        logger.info("filtered")
-        logger.info(externalTrialSummary.nationalTrials.filtered.map { it.trial.nctId }.toSet().joinToString { "---" })
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
             EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
                 interpretedCohorts,
@@ -180,16 +177,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             ExternalTrialSummarizer.summarize(externalTrialSummary.internationalTrials.filtered),
-            externalTrialSummary.excludedInternationalTrials().size,
+            externalTrialSummary.excludedInternationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
             requestingSource,
             null,
             contentWidth,
             false
         )
-        logger.info("original")
-        logger.info(externalTrialSummary.internationalTrials.original.map { it.trial.nctId }.toSet().joinToString { "---" })
-        logger.info("filtered")
-        logger.info(externalTrialSummary.internationalTrials.filtered.map { it.trial.nctId }.toSet().joinToString { "---" })
         val ineligibleTrialGenerator = IneligibleTrialGenerator.forEvaluableCohorts(
             interpretedCohorts,
             requestingSource,
