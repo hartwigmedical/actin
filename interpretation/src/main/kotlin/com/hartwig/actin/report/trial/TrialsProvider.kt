@@ -12,7 +12,7 @@ import java.time.LocalDate
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
 
-class MolecularFilteredExternalTrials(private val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
+class MolecularFilteredExternalTrials(val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
 
     fun isNotEmpty() = original.isNotEmpty()
 

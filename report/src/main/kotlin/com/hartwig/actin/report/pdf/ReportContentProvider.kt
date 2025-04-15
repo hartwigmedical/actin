@@ -167,7 +167,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             report.config.countryOfReference,
             contentWidth
         )
-        logger.info("${externalTrialSummary.nationalTrials}")
+        logger.info("original")
+        logger.info(externalTrialSummary.nationalTrials.original.map { it.trial.nctId }.toSet().joinToString { "---" })
+        logger.info("filtered")
+        logger.info(externalTrialSummary.nationalTrials.filtered.map { it.trial.nctId }.toSet().joinToString { "---" })
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
             EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
                 interpretedCohorts,
@@ -183,6 +186,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             contentWidth,
             false
         )
+        logger.info("original")
+        logger.info(externalTrialSummary.internationalTrials.original.map { it.trial.nctId }.toSet().joinToString { "---" })
+        logger.info("filtered")
+        logger.info(externalTrialSummary.internationalTrials.filtered.map { it.trial.nctId }.toSet().joinToString { "---" })
         val ineligibleTrialGenerator = IneligibleTrialGenerator.forEvaluableCohorts(
             interpretedCohorts,
             requestingSource,
