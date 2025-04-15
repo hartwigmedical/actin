@@ -8,7 +8,8 @@ class PanelSpecifications(private val panelSpecifications: Map<String, List<Pane
         return panelSpecifications[panelName]?.groupBy(PanelGeneSpecification::geneName)
             ?.mapValues { it.value.flatMap { c -> c.targets } }
             ?: throw IllegalStateException(
-                "Panel [$panelName] is not found in panel specifications. Check curation and map to one of [${panelSpecifications.keys.joinToString()}] or add this panel to the specification TSV."
+                ("Panel [$panelName] is not found in panel specifications. Check curation and map to one " +
+                        "of [${panelSpecifications.keys.joinToString()}] or add this panel to the specification TSV.")
             )
     }
 }
