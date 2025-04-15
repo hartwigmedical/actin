@@ -167,6 +167,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             report.config.countryOfReference,
             contentWidth
         )
+        logger.info("${externalTrialSummary.nationalTrials}")
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
             EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(
                 interpretedCohorts,
@@ -195,7 +196,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeTrialMatchingInSummary && it?.getCohortSize() != 0
             },
             nonLocalTrialGenerator
-                .takeIf { report.config.includeExternalTrialsInSummary && externalTrialSummary.internationalTrials.filtered.isNotEmpty() },
+                .takeIf { report.config.includeExternalTrialsInSummary && externalTrialSummary.internationalTrials.isNotEmpty() },
             ineligibleTrialGenerator.takeIf { report.config.includeIneligibleTrialsInSummary }
         )
         return generators
