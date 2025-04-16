@@ -9,6 +9,10 @@ object Tables {
         return Table(UnitValue.createPointArray(widths))
     }
 
+    fun createRelativeWidthCols(vararg widths: Float): Table {
+        return Table(UnitValue.createPercentArray(widths))
+    }
+
     fun createMultiCol(numColumns: Int): Table {
         return Table(UnitValue.createPercentArray(FloatArray(numColumns) { 1f / numColumns }))
     }

@@ -7,18 +7,12 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-private const val SMALL_PADDING_DISTANCE = 0.1f
-private const val NORMAL_PADDING_DISTANCE = 1f
-
 class IneligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val requestingSource: TrialSource?,
     private val title: String,
     private val footNote: String?,
-    private val trialColWidth: Float,
-    private val subTableWidths: FloatArray,
     private val includeIneligibilityReasonCol: Boolean,
-    private val paddingDistance: Float,
     private val allowDeEmphasis: Boolean
 ) : TrialTableGenerator {
 
@@ -31,17 +25,27 @@ class IneligibleTrialGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
-        val subTableHeaders =
-            listOfNotNull("Cohort", "Molecular", "Sites", "Ineligibility reasons".takeIf { includeIneligibilityReasonCol })
+        val trialColWidth = 2f
+        val cohortColWidth = 3f
+        val molecularColWidth = 1f
+        val locationColWidth = 2f
+        val ineligibilityColWidth = 4f
 
-        if (cohorts.isNotEmpty()) {
-            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
-            val subTable = Tables.createFixedWidthCols(*subTableWidths)
-            subTableHeaders.map(Cells::createHeader).forEach(subTable::addHeaderCell)
-            table.addHeaderCell(Cells.createContentNoBorder(subTable))
+        val table =
+            if (includeIneligibilityReasonCol) {
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, ineligibilityColWidth)
+            } else {
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
+            }
+
+        table.addHeaderCell(Cells.createHeader("Trial"))
+        table.addHeaderCell(Cells.createHeader("Cohort"))
+        table.addHeaderCell(Cells.createHeader("Molecular"))
+        table.addHeaderCell(Cells.createHeader("Sites"))
+        if (includeIneligibilityReasonCol) {
+            table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
-
+        
         addTrialsToTable(
             table = table,
             cohorts = cohorts,
@@ -50,7 +54,6 @@ class IneligibleTrialGenerator(
             countryOfReference = null,
             feedbackFunction = InterpretedCohort::fails,
             includeFeedback = includeIneligibilityReasonCol,
-            paddingDistance = paddingDistance,
             allowDeEmphasis = allowDeEmphasis
         )
         if (footNote != null) {
@@ -59,32 +62,29 @@ class IneligibleTrialGenerator(
         return table
     }
 
-    override fun getCohortSize(): Int {
+    override fun cohortSize(): Int {
         return cohorts.size
     }
 
     companion object {
+        
         fun forEvaluableCohorts(
             cohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?,
             openOnly: Boolean = false
         ): IneligibleTrialGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
-            val (trialColWidth, subTableWidths) = determineRelativeColumnWidths(true)
-            val title =
-                "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
+            val title = "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
             val footNote = if (!openOnly) {
                 "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
             } else null
+            
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
                 requestingSource = requestingSource,
                 title = title,
                 footNote = footNote,
-                trialColWidth = trialColWidth,
-                subTableWidths = subTableWidths,
                 includeIneligibilityReasonCol = true,
-                paddingDistance = NORMAL_PADDING_DISTANCE,
                 allowDeEmphasis = true
             )
         }
@@ -95,7 +95,6 @@ class IneligibleTrialGenerator(
             requestingSource: TrialSource?
         ): IneligibleTrialGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
-            val (trialColWidth, subTableWidths) = determineRelativeColumnWidths(includeIneligibilityReason = false)
             val title = "Trials and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
 
             return IneligibleTrialGenerator(
@@ -103,28 +102,9 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = null,
-                trialColWidth = trialColWidth,
-                subTableWidths = subTableWidths,
                 includeIneligibilityReasonCol = false,
-                paddingDistance = SMALL_PADDING_DISTANCE,
                 allowDeEmphasis = false
             )
-        }
-
-        private fun determineRelativeColumnWidths(includeIneligibilityReason: Boolean = false): Pair<Float, FloatArray> {
-            val base = 1f
-            val trialWidth = if (includeIneligibilityReason) base / 9 else base / 4
-            val cohortWidth = if (includeIneligibilityReason) base / 4 else base / 2
-            val molecularWidth = if (includeIneligibilityReason) base / 7 else base / 4
-            val sitesWidth = if (includeIneligibilityReason) base / 7 else base / 4
-            val remainingWidth = base - (trialWidth + cohortWidth + molecularWidth + sitesWidth)
-
-            return trialWidth to listOfNotNull(
-                cohortWidth,
-                molecularWidth,
-                sitesWidth,
-                remainingWidth.takeIf { includeIneligibilityReason }
-            ).toFloatArray()
         }
     }
 }

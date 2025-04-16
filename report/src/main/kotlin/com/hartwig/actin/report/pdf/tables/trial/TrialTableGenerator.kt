@@ -4,5 +4,5 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 
 interface TrialTableGenerator : TableGenerator {
 
-    fun getCohortSize(): Int
+    fun cohortSize(): Int
 }

@@ -27,7 +27,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerat
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.soc.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
@@ -189,7 +189,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val generators = listOfNotNull(
             localOpenCohortsGenerator.takeIf { report.config.includeTrialMatchingInSummary },
             localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
-                report.config.includeTrialMatchingInSummary && it?.getCohortSize() != 0
+                report.config.includeTrialMatchingInSummary && it?.cohortSize() != 0
             },
             nonLocalTrialGenerator
                 .takeIf { report.config.includeExternalTrialsInSummary && externalTrialSummary.internationalTrials.isNotEmpty() },

@@ -11,8 +11,8 @@ object ActinTrialContentFunctions {
 
     fun contentForTrialCohortList(
         cohorts: List<InterpretedCohort>,
+        includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        includeFeedback: Boolean = true,
         requestingSource: TrialSource? = null
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()

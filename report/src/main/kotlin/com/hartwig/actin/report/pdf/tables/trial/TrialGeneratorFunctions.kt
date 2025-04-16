@@ -30,29 +30,25 @@ object TrialGeneratorFunctions {
         externalTrials: Set<ExternalTrialSummary>,
         requestingSource: TrialSource?,
         countryOfReference: Country?,
+        includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        includeFeedback: Boolean = true,
-        paddingDistance: Float = 1f,
         allowDeEmphasis: Boolean
     ) {
         sortedCohortGroups(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
-            insertTrial(table, cohortList, requestingSource, feedbackFunction, includeFeedback, paddingDistance, allowDeEmphasis)
+            insertTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis)
         }
 
         externalTrials.forEach { trial ->
             val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
-            val mainContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalic else Cells::createContent
-            table.addCell(mainContentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
-            
-            val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
-            
-            table.addCell(subContentFunction(trial.sourceMolecularEvents.joinToString(", ")))
-            table.addCell(subContentFunction(trial.actinMolecularEvents.joinToString(", ")))
+            val contentFunction = if (allowDeEmphasis) Cells::createContentSmallItalic else Cells::createContent
+            table.addCell(contentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
+            table.addCell(contentFunction(trial.sourceMolecularEvents.joinToString(", ")))
+            table.addCell(contentFunction(trial.actinMolecularEvents.joinToString(", ")))
             
             val country = if (trial.countries.none { it.country == countryOfReference }) null else countryOfReference
-            table.addCell(subContentFunction(externalTrialLocation(trial, country)))
+            table.addCell(contentFunction(externalTrialLocation(trial, country)))
             if (includeFeedback) {
-                table.addCell(Cells.createEmpty())
+                table.addCell(contentFunction(""))
             }
         }
     }
@@ -75,9 +71,8 @@ object TrialGeneratorFunctions {
         table: Table,
         cohortList: List<InterpretedCohort>,
         requestingSource: TrialSource?,
+        includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        includeFeedback: Boolean = true,
-        paddingDistance: Float = 1f,
         allowDeEmphasis: Boolean
     ) {
         if (cohortList.isNotEmpty()) {
@@ -106,16 +101,15 @@ object TrialGeneratorFunctions {
             }
             ActinTrialContentFunctions.contentForTrialCohortList(
                 cohorts = cohortList,
-                feedbackFunction = feedbackFunction,
                 includeFeedback = includeFeedback,
+                feedbackFunction = feedbackFunction,
                 requestingSource = requestingSource
             ).forEachIndexed { index, content ->
                 addContentListToTable(
                     table,
                     index == 0,
                     content.textEntries,
-                    content.deEmphasizeContent && allowDeEmphasis,
-                    paddingDistance
+                    content.deEmphasizeContent && allowDeEmphasis
                 )
             }
         }
@@ -125,8 +119,7 @@ object TrialGeneratorFunctions {
         table: Table,
         rowContainsTrialIdentificationCell: Boolean,
         cellContentsForRow: List<String>,
-        deEmphasizeContent: Boolean,
-        paddingDistance: Float
+        deEmphasizeContent: Boolean
     ) {
         if (!rowContainsTrialIdentificationCell) {
             table.addCell(Cells.createEmpty())
@@ -144,7 +137,7 @@ object TrialGeneratorFunctions {
             if (!rowContainsTrialIdentificationCell) {
                 cell.setBorder(Border.NO_BORDER)
             }
-            cell.setPadding(paddingDistance)
+            cell
         }.forEach(table::addCell)
     }
 

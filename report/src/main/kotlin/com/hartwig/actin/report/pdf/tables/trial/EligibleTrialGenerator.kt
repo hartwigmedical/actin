@@ -9,7 +9,6 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.properties.UnitValue
 
 class EligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
@@ -18,13 +17,8 @@ class EligibleTrialGenerator(
     private val countryOfReference: Country?,
     private val title: String,
     private val footNote: String?,
-    private val trialColWidth: Float,
-    private val cohortColWidth: Float,
-    private val molecularEventColWidth: Float,
-    private val locationColWidth: Float,
-    private val checksColWidth: Float?,
     private val allowDeEmphasis: Boolean,
-    private val includeChecksColumn: Boolean
+    private val includeWarningsColumn: Boolean
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -36,30 +30,27 @@ class EligibleTrialGenerator(
     }
 
     override fun contents(): Table {
+        val trialColWidth = 2f
+        val cohortColWidth = 3f
+        val molecularColWidth = 1f
+        val locationColWidth = 2f
+        val warningsColWidth = 4f
+
         val table =
-            if (includeChecksColumn) {
-                val trialColWidth = 1f / 9
-                val cohortColWidth = 1f / 4
-                val molecularColWidth = 1f / 7
-                val locationColWidth = 1f / 7
-                val checksColWidth = 1f - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth)
-                Tables.createFixedWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, checksColWidth)
+            if (includeWarningsColumn) {
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, warningsColWidth)
             } else {
-                val trialColWidth = 1f / 9
-                val cohortColWidth = 1f / 4
-                val molecularColWidth = 1f / 7
-                val locationColWidth = 1f - (trialColWidth + cohortColWidth + molecularColWidth)
-                Tables.createFixedWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
             }
-        
+
         table.addHeaderCell(Cells.createHeader("Trial"))
         table.addHeaderCell(Cells.createHeader("Cohort"))
         table.addHeaderCell(Cells.createHeader("Molecular"))
         table.addHeaderCell(Cells.createHeader("Sites"))
-        if (includeChecksColumn) {
+        if (includeWarningsColumn) {
             table.addHeaderCell(Cells.createHeader("Warnings"))
         }
-            
+
         addTrialsToTable(
             table = table,
             cohorts = cohorts,
@@ -67,7 +58,8 @@ class EligibleTrialGenerator(
             requestingSource = requestingSource,
             countryOfReference = countryOfReference,
             feedbackFunction = InterpretedCohort::warnings,
-            allowDeEmphasis = allowDeEmphasis
+            allowDeEmphasis = allowDeEmphasis,
+            includeFeedback = includeWarningsColumn
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -75,7 +67,7 @@ class EligibleTrialGenerator(
         return table
     }
 
-    override fun getCohortSize(): Int {
+    override fun cohortSize(): Int {
         return cohorts.size
     }
 
@@ -119,7 +111,7 @@ class EligibleTrialGenerator(
                         .takeIf { filteredCount > 0 }
                 ).joinToString("\n")
 
-            return create(
+            return EligibleTrialGenerator(
                 cohorts = recruitingAndEligibleCohorts,
                 externalTrials = externalTrials,
                 requestingSource = requestingSource,
@@ -127,7 +119,7 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = footNote,
                 allowDeEmphasis = forLocalTrials,
-                includeChecksColumn = forLocalTrials
+                includeWarningsColumn = forLocalTrials
             )
         }
 
@@ -150,7 +142,7 @@ class EligibleTrialGenerator(
                 .takeUnless { recruitingAndEligibleCohorts.all(InterpretedCohort::hasSlotsAvailable) }
 
             return if (recruitingAndEligibleCohorts.isNotEmpty()) {
-                create(
+                EligibleTrialGenerator(
                     cohorts = recruitingAndEligibleCohorts,
                     externalTrials = emptySet(),
                     requestingSource = requestingSource,
@@ -158,7 +150,7 @@ class EligibleTrialGenerator(
                     title = title,
                     footNote = footNote,
                     allowDeEmphasis = true,
-                    includeChecksColumn = true
+                    includeWarningsColumn = true
                 )
             } else null
         }
@@ -171,7 +163,7 @@ class EligibleTrialGenerator(
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title = "Trials and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
 
-            return create(
+            return EligibleTrialGenerator(
                 cohorts = unavailableAndEligible,
                 externalTrials = emptySet(),
                 requestingSource = requestingSource,
@@ -179,14 +171,14 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = null,
                 allowDeEmphasis = false,
-                includeChecksColumn = true
+                includeWarningsColumn = true
             )
         }
 
         fun forFilteredTrials(trials: Set<ExternalTrialSummary>, countryOfReference: Country): EligibleTrialGenerator {
             val title = "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${trials.size})"
 
-            return create(
+            return EligibleTrialGenerator(
                 cohorts = emptyList(),
                 externalTrials = trials,
                 requestingSource = null,
@@ -194,42 +186,7 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = null,
                 allowDeEmphasis = false,
-                includeChecksColumn = false
-            )
-        }
-
-        private fun create(
-            cohorts: List<InterpretedCohort>,
-            externalTrials: Set<ExternalTrialSummary>,
-            requestingSource: TrialSource?,
-            countryOfReference: Country?,
-            title: String,
-            footNote: String?,
-            allowDeEmphasis: Boolean,
-            includeChecksColumn: Boolean
-        ): EligibleTrialGenerator {
-            val base = 1f
-            val trialColWidth = base / 9
-            val cohortColWidth = base / 4
-            val molecularColWidth = base / 7
-            val locationColWidth = if (includeChecksColumn) base / 7 else base / 2
-            val checksColWidth =
-                if (includeChecksColumn) base - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth) else null
-
-            return EligibleTrialGenerator(
-                cohorts,
-                externalTrials,
-                requestingSource,
-                countryOfReference,
-                title,
-                footNote,
-                trialColWidth,
-                cohortColWidth,
-                molecularColWidth,
-                locationColWidth,
-                checksColWidth,
-                allowDeEmphasis,
-                includeChecksColumn = includeChecksColumn
+                includeWarningsColumn = false
             )
         }
     }

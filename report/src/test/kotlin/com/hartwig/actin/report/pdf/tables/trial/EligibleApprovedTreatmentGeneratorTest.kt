@@ -15,6 +15,7 @@ import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_SUB_LOCATION
 import com.hartwig.actin.report.pdf.getCellContents
+import com.hartwig.actin.report.pdf.tables.soc.EligibleApprovedTreatmentGenerator
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
