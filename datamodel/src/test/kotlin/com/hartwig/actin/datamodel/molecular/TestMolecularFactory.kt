@@ -283,7 +283,7 @@ object TestMolecularFactory {
             transcriptId = "ENST00000288602",
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
-            hgvsProteinImpact3 = "p.Val600E",
+            hgvsProteinImpact3 = "p.Val600Glu",
             affectedCodon = 600,
             isSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
