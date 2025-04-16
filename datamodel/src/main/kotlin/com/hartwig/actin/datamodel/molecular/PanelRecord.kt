@@ -3,6 +3,7 @@ package com.hartwig.actin.datamodel.molecular
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import java.time.LocalDate
+import java.util.function.Predicate
 
 data class PanelRecord(
     val geneSpecifications: Map<String, List<MolecularTestTarget>>,
@@ -16,10 +17,7 @@ data class PanelRecord(
     override val hasSufficientQuality: Boolean
 ) : MolecularTest {
 
-    override fun testsGene(gene: String, molecularTestTargets: List<MolecularTestTarget>): Boolean {
-        if (molecularTestTargets.isEmpty()) {
-            return geneSpecifications[gene] != null
-        }
-        return geneSpecifications[gene]?.containsAll(molecularTestTargets) ?: false
+    override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean {
+        return geneSpecifications[gene]?.let { molecularTestTargets.test(it) } ?: false
     }
 }

@@ -55,7 +55,7 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targets() = listOf(MolecularTestTarget.AMPLIFICATION)
+    override fun targetsRequiredPredicate() = TargetPredicate.exactly(MolecularTestTarget.AMPLIFICATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val ploidy = test.characteristics.ploidy ?: return EvaluationFactory.fail("Amplification for $gene undetermined (ploidy missing)")

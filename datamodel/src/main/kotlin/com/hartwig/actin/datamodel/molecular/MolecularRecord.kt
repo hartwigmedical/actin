@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import java.time.LocalDate
+import java.util.function.Predicate
 
 data class MolecularRecord(
     val sampleId: String,
@@ -25,8 +26,8 @@ data class MolecularRecord(
     override val evidenceSource: String,
 ) : MolecularTest {
 
-    override fun testsGene(gene: String, molecularTestTargets: List<MolecularTestTarget>) =
-        if (experimentType == ExperimentType.HARTWIG_TARGETED) geneSpecifications!![gene]?.containsAll(molecularTestTargets)
+    override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
+        if (experimentType == ExperimentType.HARTWIG_TARGETED) geneSpecifications!![gene]?.let { molecularTestTargets.test(it) }
             ?: false else true
 
     override fun hasSufficientQualityAndPurity(): Boolean {

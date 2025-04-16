@@ -3,6 +3,7 @@ package com.hartwig.actin.datamodel.molecular
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import java.time.LocalDate
+import java.util.function.Predicate
 
 interface MolecularTest {
     val experimentType: ExperimentType
@@ -14,7 +15,7 @@ interface MolecularTest {
     val hasSufficientPurity: Boolean
     val hasSufficientQuality: Boolean
 
-    fun testsGene(gene: String, molecularTestTargets: List<MolecularTestTarget> = emptyList()): Boolean
+    fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean
 
     fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity

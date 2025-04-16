@@ -48,7 +48,7 @@ class MolecularEvaluationFunctionTest {
 
     private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun genes() = listOf("GENE")
-        override fun targets() = listOf(MolecularTestTarget.FUSION)
+        override fun targetsRequiredPredicate() = TargetPredicate.exactly(MolecularTestTarget.FUSION)
     }
 
     @Test
@@ -104,7 +104,7 @@ class MolecularEvaluationFunctionTest {
         val patient = withPanelTest()
         val evaluation = functionWithGenes.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested ")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 

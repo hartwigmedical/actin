@@ -23,7 +23,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
     }
 
     override fun genes() = listOf(gene)
-    override fun targets() = listOf(MolecularTestTarget.MUTATION)
+    override fun targetsRequiredPredicate() = TargetPredicate.exactly(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val canonicalCodonMatches = mutableSetOf<String>()

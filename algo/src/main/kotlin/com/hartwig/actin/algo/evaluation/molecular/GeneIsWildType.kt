@@ -17,7 +17,7 @@ import java.time.LocalDate
 class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targets() = listOf(MolecularTestTarget.MUTATION)
+    override fun targetsRequiredPredicate() = TargetPredicate.all()
 
     override fun evaluationPrecedence() = ::evaluationPrecedenceFunction
 
