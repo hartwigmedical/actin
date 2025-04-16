@@ -26,7 +26,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
             )
         } else {
 
-            if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it, targetsRequiredPredicate()) } })
+            if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it, targetCoveragePredicate()) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested${targetSuffix()}",
                     isMissingMolecularResultForEvaluation = true
@@ -48,7 +48,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
         }
     }
 
-    private fun targetSuffix() = "for " + targetsRequiredPredicate().targets.joinToString {
+    private fun targetSuffix() = "for " + targetCoveragePredicate().targets.joinToString {
         it.toString().lowercase() + "s"
     }
 
@@ -57,7 +57,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
     open fun evaluate(molecular: MolecularRecord): Evaluation? = null
     open fun evaluate(test: MolecularTest): Evaluation? = null
     open fun genes(): List<String> = emptyList()
-    open fun targetsRequiredPredicate(): TargetPredicate = TargetPredicate.any()
+    open fun targetCoveragePredicate(): TargetCoveragePredicate = TargetCoveragePredicate.any()
     open fun evaluationPrecedence(): (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? =
         { MolecularEvaluation.defaultEvaluationPrecedence(it) }
 }

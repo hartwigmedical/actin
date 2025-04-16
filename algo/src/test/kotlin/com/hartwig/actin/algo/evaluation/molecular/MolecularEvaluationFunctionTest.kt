@@ -48,7 +48,7 @@ class MolecularEvaluationFunctionTest {
 
     private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun genes() = listOf("GENE")
-        override fun targetsRequiredPredicate() = TargetPredicate.exactly(MolecularTestTarget.FUSION)
+        override fun targetCoveragePredicate() = TargetCoveragePredicate.exactly(MolecularTestTarget.FUSION)
     }
 
     @Test

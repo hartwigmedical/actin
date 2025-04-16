@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -17,7 +16,7 @@ import java.time.LocalDate
 class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targetsRequiredPredicate() = TargetPredicate.all()
+    override fun targetCoveragePredicate() = TargetCoveragePredicate.all()
 
     override fun evaluationPrecedence() = ::evaluationPrecedenceFunction
 

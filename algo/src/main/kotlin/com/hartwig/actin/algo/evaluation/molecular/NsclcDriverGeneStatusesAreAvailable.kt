@@ -13,7 +13,7 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
             .partition { it.containsTumorCells }
 
         val missing = molecularHistory.allPanels().let { panels ->
-            NSCLC_DRIVER_GENE_SET.filterNot { gene -> panels.any { it.testsGene(gene, TargetPredicate.any()) } }
+            NSCLC_DRIVER_GENE_SET.filterNot { gene -> panels.any { it.testsGene(gene, TargetCoveragePredicate.any()) } }
         }
 
         return when {

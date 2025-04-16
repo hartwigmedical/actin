@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatFusions
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -14,7 +13,7 @@ import java.time.LocalDate
 class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targetsRequiredPredicate() = TargetPredicate.all()
+    override fun targetCoveragePredicate() = TargetCoveragePredicate.all()
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()

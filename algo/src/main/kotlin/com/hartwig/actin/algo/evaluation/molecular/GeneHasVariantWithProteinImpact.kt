@@ -31,7 +31,7 @@ class GeneHasVariantWithProteinImpact(
     private val logger = LogManager.getLogger(GeneHasVariantWithProteinImpact::class.java)
 
     override fun genes() = listOf(gene)
-    override fun targetsRequiredPredicate() = TargetPredicate.exactly(MolecularTestTarget.MUTATION)
+    override fun targetCoveragePredicate() = TargetCoveragePredicate.exactly(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
 
