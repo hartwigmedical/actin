@@ -1,7 +1,7 @@
 {
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
-  "referenceDate": "2025-02-25",
+  "referenceDate": "2025-04-16",
   "referenceDateIsLive": true,
   "trialMatches": [
     {
@@ -12,8 +12,10 @@
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
         "phase": null,
-        "locations": [
-        ]
+        "source": null,
+        "sourceId": null,
+        "locations": [],
+        "url": null
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -148,14 +150,14 @@
             }
           },
           {
-            "result": "WARN",
+            "result": "PASS",
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passMessages": [],
-            "warnMessages": [
-              "Has history of Rheumatoid arthritis"
+            "passMessages": [
+              "Has no other condition belonging to category autoimmune disease"
             ],
+            "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -177,15 +179,15 @@
             }
           },
           {
-            "result": "WARN",
+            "result": "UNDETERMINED",
             "recoverable": true,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [],
-            "warnMessages": [
-              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L"
+            "warnMessages": [],
+            "undeterminedMessages": [
+              "No measurement found for hemoglobin"
             ],
-            "undeterminedMessages": [],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
           }
@@ -285,7 +287,12 @@
         "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
         "nctId": "NCT00000002",
         "phase": null,
-        "locations": []
+        "source": null,
+        "sourceId": null,
+        "locations": [
+          "Erasmus MC"
+        ],
+        "url": "https://hartwigmedicalfoundation.nl"
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -346,7 +353,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Tumor stage IV is considered metastatic"
+              "Stage IV is considered metastatic"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -409,7 +416,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Variant(s) KRAS G12D in KRAS but subclonal likelihood of \u003e 50%"
+              "Variant(s) G12D in KRAS but subclonal likelihood of \u003e 50%"
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -542,7 +549,10 @@
         "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR with C797 mutations but not C797S in solid tumors",
         "nctId": "NCT00000003",
         "phase": null,
-        "locations": []
+        "source": null,
+        "sourceId": null,
+        "locations": [],
+        "url": null
       },
       "isPotentiallyEligible": false,
       "evaluations": [
@@ -647,7 +657,9 @@
           {
             "result": "FAIL",
             "recoverable": false,
-            "inclusionMolecularEvents": [],
+            "inclusionMolecularEvents": [
+              "EGFR C797S"
+            ],
             "exclusionMolecularEvents": [
               "EGFR C797S"
             ],
@@ -714,10 +726,12 @@
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
         "phase": null,
+        "source": null,
+        "sourceId": null,
         "locations": [
-          "NKI AvL"
+          "NKI-AvL"
         ],
-        "source": "NKI"
+        "url": "https://hartwigmedicalfoundation.nl"
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -789,8 +803,8 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Tumor belongs to DOID term(s) lung cancer",
-              "Stage IV is considered metastatic"
+              "Stage IV is considered metastatic",
+              "Tumor belongs to DOID term(s) lung cancer"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -868,19 +882,7 @@
             "open": true,
             "slotsAvailable": true,
             "ignore": false,
-            "description": "Lung cancer C797S cohort A"
-          },
-          "isPotentiallyEligible": true,
-          "evaluations": {}
-        },
-        {
-          "metadata": {
-            "cohortId": "B",
-            "evaluable": true,
-            "open": true,
-            "slotsAvailable": true,
-            "ignore": false,
-            "description": "Lung cancer C797S cohort B"
+            "description": "Lung cancer C797S cohort"
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
@@ -891,12 +893,15 @@
     {
       "identification": {
         "trialId": "METC 05",
-        "open": true,
+        "open": false,
         "acronym": "PICKME3CA",
         "title": "A phase 1/2 trial of ABC123 +/- platinum doublet in PIK3CA-mutated solid cancer",
         "nctId": "NCT00000020",
         "phase": null,
-        "locations": []
+        "source": null,
+        "sourceId": null,
+        "locations": [],
+        "url": null
       },
       "isPotentiallyEligible": false,
       "evaluations": [
@@ -1048,8 +1053,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has no other condition belonging to category coronary artery disease",
-              "Has no other condition belonging to category heart disease"
+              "Has no other condition belonging to category cardiac disease"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -1092,7 +1096,7 @@
           "metadata": {
             "cohortId": "A",
             "evaluable": true,
-            "open": true,
+            "open": false,
             "slotsAvailable": true,
             "ignore": false,
             "description": "Dose expansion - monotherapy - NSCLC"
@@ -1134,7 +1138,7 @@
           "metadata": {
             "cohortId": "B",
             "evaluable": true,
-            "open": true,
+            "open": false,
             "slotsAvailable": true,
             "ignore": false,
             "description": "Dose expansion - monotherapy - Other cancer types"

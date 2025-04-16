@@ -383,7 +383,7 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "sourceEvidenceType": "DELETION",
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
                     "applicableCancerType": {
@@ -407,7 +407,7 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "sourceEvidenceType": "DELETION",
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
                     "applicableCancerType": {
@@ -436,7 +436,7 @@
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "sourceEvidenceType": "DELETION",
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
                         "sourceUrl": ""
                       }
                     ],
@@ -479,7 +479,7 @@
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "sourceEvidenceType": "DELETION",
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
                         "sourceUrl": ""
                       }
                     ],
@@ -548,7 +548,7 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
-                      "sourceEvidenceType": "DELETION",
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
                     "applicableCancerType": {
@@ -577,7 +577,7 @@
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR C797S",
-                        "sourceEvidenceType": "DELETION",
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
                         "sourceUrl": ""
                       }
                     ],
