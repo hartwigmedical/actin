@@ -83,7 +83,7 @@ object ExampleFunctions {
                 includeExternalTrialsInSummary = true,
                 filterOnSOCExhaustionAndTumorType = true,
                 includeClinicalDetailsChapter = true,
-                includeTrialMatchingChapter = true,
+                includeOtherTrialMatchingResultsChapter = true,
                 includeOnlyExternalTrialsInTrialMatching = true,
                 includeLongitudinalMolecularChapter = true,
                 includeMolecularEvidenceChapter = true,
