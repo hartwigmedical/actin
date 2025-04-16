@@ -44,7 +44,7 @@ object ClinicalEvidenceFactory {
                 event.sourceDate(),
                 event.sourceEvent(),
                 evidenceType,
-                event.sourceUrls().firstOrNull()
+                event.sourceUrls().first()
             )
         }.toSet()
     }
@@ -55,7 +55,7 @@ object ClinicalEvidenceFactory {
         sourceDate: LocalDate,
         sourceEvent: String,
         evidenceType: EvidenceType,
-        sourceUrl: String?
+        sourceUrl: String
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
@@ -112,7 +112,7 @@ object ClinicalEvidenceFactory {
                 sourceDate = event.sourceDate(),
                 sourceEvent = event.sourceEvent(),
                 evidenceType,
-                sourceUrl = event.sourceUrls().firstOrNull()
+                sourceUrl = event.sourceUrls().first()
             )
         }.toSet()
 

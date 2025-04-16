@@ -2,6 +2,8 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 import java.time.LocalDate
 
+const val SOURCE_EVENT_URL : String = "sourceEventUrl"
+
 object TestTreatmentEvidenceFactory {
 
     fun approved() =
@@ -90,17 +92,17 @@ object TestTreatmentEvidenceFactory {
         isOnLabel: Boolean,
         sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
         sourceEvent: String = "",
-        evidenceType: EvidenceType = EvidenceType.ACTIVATION,
+        evidenceType: EvidenceType = EvidenceType.DELETION,
         matchedCancerType: String = "",
         excludedCancerSubTypes: Set<String> = emptySet(),
         evidenceLevel: EvidenceLevel,
         evidenceLevelDetails: EvidenceLevelDetails,
         evidenceDirection: EvidenceDirection,
         evidenceYear: Int = 2021,
-        sourceUrl: String? = null
+        sourceUrl: String = SOURCE_EVENT_URL
     ) = TreatmentEvidence(
         treatment = treatment,
-        molecularMatch = MolecularMatchDetails(
+        molecularMatch = TestMolecularMatchDetailsFactory.create(
             sourceDate = sourceDate,
             sourceEvent = sourceEvent,
             sourceEvidenceType = evidenceType,
