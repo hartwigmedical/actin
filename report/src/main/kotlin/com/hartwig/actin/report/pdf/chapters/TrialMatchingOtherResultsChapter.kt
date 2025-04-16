@@ -14,7 +14,7 @@ import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class OtherTrialMatchingResultsChapter(
+class TrialMatchingOtherResultsChapter(
     private val report: Report,
     private val includeIneligibleTrialsInSummary: Boolean,
     private val externalTrialsOnly: Boolean,

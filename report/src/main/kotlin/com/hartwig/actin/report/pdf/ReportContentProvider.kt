@@ -16,7 +16,7 @@ import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
-import com.hartwig.actin.report.pdf.chapters.OtherTrialMatchingResultsChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
@@ -88,12 +88,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
             MolecularEvidenceChapter(report, include = report.config.includeMolecularEvidenceChapter),
-            OtherTrialMatchingResultsChapter(
+            TrialMatchingOtherResultsChapter(
                 report,
                 report.config.includeIneligibleTrialsInSummary,
                 externalTrialsOnly = report.config.includeOnlyExternalTrialsInTrialMatching,
                 trialsProvider,
-                include = report.config.includeOtherTrialMatchingResultsChapter
+                include = report.config.includeTrialMatchingChapter
             ),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
         ).filter(ReportChapter::include)
