@@ -109,7 +109,7 @@ class MolecularEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should return undetermined when genes and targets have not been tested which are mandatory`() {
+    fun `Should return undetermined when mandatory genes and targets have not been tested`() {
         val patient = withPanelTest()
         val evaluation =
             functionWithGenesAndTarget.evaluate(
