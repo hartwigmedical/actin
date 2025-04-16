@@ -12,9 +12,9 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val OVERRIDE_MESSAGE = "Override message"
 private const val FAIL_MESSAGE = "Fail message"
@@ -42,13 +42,17 @@ class MolecularEvaluationFunctionTest {
         }
     }
 
-    private val functionWithGenes = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
+    private val functionWithGene = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun genes() = listOf("GENE")
+    }
+
+    private val functionWithMultipleGenes = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
+        override fun genes() = listOf("GENE", "ANOTHER_GENE")
     }
 
     private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun genes() = listOf("GENE")
-        override fun targetCoveragePredicate() = TargetCoveragePredicate.exactly(MolecularTestTarget.FUSION)
+        override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.FUSION)
     }
 
     @Test
@@ -102,9 +106,27 @@ class MolecularEvaluationFunctionTest {
     @Test
     fun `Should return undetermined when genes have not been tested which are mandatory`() {
         val patient = withPanelTest()
-        val evaluation = functionWithGenes.evaluate(patient)
+        val evaluation = functionWithGene.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested ")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested for at least one of fusions, mutations, amplifications or deletions")
+        assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
+    }
+
+    @Test
+    fun `Should return undetermined when one mandatory gene is tested and another is not`() {
+        val patient = withPanelTest()
+        val evaluation = functionWithMultipleGenes.evaluate(
+            patient.copy(
+                molecularHistory = MolecularHistory(
+                    listOf(
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(geneSpecifications = mapOf("GENE" to listOf(MolecularTestTarget.MUTATION)))
+                    )
+                )
+            )
+        )
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) ANOTHER_GENE not tested for fusions, mutations, amplifications or deletions")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 

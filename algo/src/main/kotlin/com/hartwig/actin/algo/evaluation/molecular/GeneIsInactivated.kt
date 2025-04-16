@@ -16,7 +16,7 @@ import java.time.LocalDate
 class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targetCoveragePredicate() = TargetCoveragePredicate.or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION)
+    override fun targetCoveragePredicate() = or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()

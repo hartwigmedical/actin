@@ -48,7 +48,7 @@ class GeneHasSufficientCopyNumber(private val gene: String, private val requeste
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targetCoveragePredicate() = TargetCoveragePredicate.or(MolecularTestTarget.AMPLIFICATION, MolecularTestTarget.DELETION)
+    override fun targetCoveragePredicate() = or(MolecularTestTarget.AMPLIFICATION, MolecularTestTarget.DELETION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val targetCopyNumbers = test.drivers.copyNumbers.filter { it.gene == gene }

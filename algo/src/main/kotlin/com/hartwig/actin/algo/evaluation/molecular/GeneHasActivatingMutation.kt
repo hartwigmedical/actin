@@ -49,7 +49,7 @@ class GeneHasActivatingMutation(
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targetCoveragePredicate() = TargetCoveragePredicate.exactly(MolecularTestTarget.MUTATION)
+    override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh

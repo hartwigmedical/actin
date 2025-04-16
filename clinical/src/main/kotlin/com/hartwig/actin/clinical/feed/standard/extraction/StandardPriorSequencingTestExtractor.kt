@@ -43,7 +43,7 @@ class StandardPriorSequencingTestExtractor(
                     val optionalCurationTestResults = curate(ehrPatientRecord, populatedResults)
                     val allResults =
                         removeCurated(removeCurated(nonIHCTestResults, mandatoryCurationTestResults), optionalCurationTestResults) +
-                                extract(mandatoryCurationTestResults) + extract(optionalCurationTestResults)
+                                extract(mandatoryCurationTestResults + optionalCurationTestResults)
                     if (allResults.isNotEmpty()) {
                         ExtractionResult(
                             listOf(

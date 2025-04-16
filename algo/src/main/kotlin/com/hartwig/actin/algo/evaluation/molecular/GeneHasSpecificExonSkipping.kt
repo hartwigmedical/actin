@@ -15,7 +15,7 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
-    override fun targetCoveragePredicate() = TargetCoveragePredicate.or(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION)
+    override fun targetCoveragePredicate() = or(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION)
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
         val fusionSkippingEvents = molecularHistory.molecularTests.flatMap(::findFusionSkippingEvents).toSet()
