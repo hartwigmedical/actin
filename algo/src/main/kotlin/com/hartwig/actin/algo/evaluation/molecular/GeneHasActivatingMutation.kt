@@ -48,7 +48,7 @@ class GeneHasActivatingMutation(
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(maxTestAge) {
 
-    override fun genes() = listOf(gene)
+    override fun gene() = gene
     override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {

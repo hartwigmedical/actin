@@ -15,7 +15,7 @@ data class MolecularRecord(
     val isContaminated: Boolean,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>,
-    val geneSpecifications: Map<String, List<MolecularTestTarget>>? = null,
+    val specification: PanelSpecification?,
     override val hasSufficientPurity: Boolean,
     override val hasSufficientQuality: Boolean,
     override val testTypeDisplay: String? = null,
@@ -27,8 +27,12 @@ data class MolecularRecord(
 ) : MolecularTest {
 
     override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
-        if (experimentType == ExperimentType.HARTWIG_TARGETED) geneSpecifications!![gene]?.let { molecularTestTargets.test(it) }
-            ?: false else true
+        if (experimentType == ExperimentType.HARTWIG_TARGETED) isTestedInTargetedPanel(gene, molecularTestTargets) else true
+
+    private fun isTestedInTargetedPanel(
+        gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>
+    ) = (specification?.testsGene(gene, molecularTestTargets)
+        ?: throw IllegalStateException("If experiment type is ${ExperimentType.HARTWIG_TARGETED} then a panel specification must be included"))
 
     override fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity

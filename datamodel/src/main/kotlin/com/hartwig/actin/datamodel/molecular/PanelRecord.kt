@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.util.function.Predicate
 
 data class PanelRecord(
-    val geneSpecifications: Map<String, List<MolecularTestTarget>>,
+    val specification: PanelSpecification,
     override val experimentType: ExperimentType,
     override val testTypeDisplay: String? = null,
     override val date: LocalDate? = null,
@@ -17,7 +17,6 @@ data class PanelRecord(
     override val hasSufficientQuality: Boolean
 ) : MolecularTest {
 
-    override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean {
-        return geneSpecifications[gene]?.let { molecularTestTargets.test(it) } ?: false
-    }
+    override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
+        specification.testsGene(gene, molecularTestTargets)
 }

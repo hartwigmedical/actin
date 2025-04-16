@@ -1,15 +1,26 @@
 package com.hartwig.actin.datamodel.molecular
 
+import java.util.function.Predicate
+
 data class PanelGeneSpecification(val geneName: String, val targets: List<MolecularTestTarget>)
 
-class PanelSpecifications(private val panelSpecifications: Map<String, List<PanelGeneSpecification>>) {
+data class PanelSpecification(private val geneTargetMap: Map<String, List<MolecularTestTarget>>) {
 
-    fun genesForPanel(panelName: String): Map<String, List<MolecularTestTarget>> {
-        return panelSpecifications[panelName]?.groupBy(PanelGeneSpecification::geneName)
-            ?.mapValues { it.value.flatMap { c -> c.targets } }
-            ?: throw IllegalStateException(
-                ("Panel [$panelName] is not found in panel specifications. Check curation and map to one " +
-                        "of [${panelSpecifications.keys.joinToString()}] or add this panel to the specification TSV.")
-            )
+    fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
+        geneTargetMap[gene]?.let { molecularTestTargets.test(it) } ?: false
+}
+
+class PanelSpecifications(panelGeneSpecifications: Map<String, List<PanelGeneSpecification>>) {
+
+    private val panelSpecifications: Map<String, PanelSpecification> = panelGeneSpecifications.entries.associate {
+        it.key to PanelSpecification(
+            it.value.groupBy(PanelGeneSpecification::geneName).mapValues { v -> v.value.flatMap { c -> c.targets } })
+    }
+
+    fun genesForPanel(panelName: String): PanelSpecification {
+        return panelSpecifications[panelName] ?: throw IllegalStateException(
+            ("Panel [$panelName] is not found in panel specifications. Check curation and map to one " +
+                    "of [${panelSpecifications.keys.joinToString()}] or add this panel to the specification TSV.")
+        )
     }
 }

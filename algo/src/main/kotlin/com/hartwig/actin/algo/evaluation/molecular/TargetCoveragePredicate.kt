@@ -19,11 +19,11 @@ fun all() = and(*MolecularTestTarget.entries.toTypedArray())
 fun atLeast(target: MolecularTestTarget) = and(target)
 
 fun and(vararg targets: MolecularTestTarget) = combine(targets.toSet(), Predicate<List<MolecularTestTarget>>::and) {
-    "all of " + it.map { t -> t.name.lowercase() }.joinWithConjunction("and")
+    it.map { t -> t.name.lowercase() }.joinWithConjunction("and")
 }
 
 fun or(vararg targets: MolecularTestTarget): TargetCoveragePredicate = combine(targets.toSet(), Predicate<List<MolecularTestTarget>>::or) {
-    "at least one of " + it.map { t -> t.name.lowercase() }.joinWithConjunction("or")
+    it.map { t -> t.name.lowercase() }.joinWithConjunction("or")
 }
 
 private fun combine(

@@ -30,7 +30,7 @@ class PanelAnnotator(
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
 
         return PanelRecord(
-            geneSpecifications = panelSpecifications.genesForPanel(input.test),
+            specification = panelSpecifications.genesForPanel(input.test),
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
             date = input.date,

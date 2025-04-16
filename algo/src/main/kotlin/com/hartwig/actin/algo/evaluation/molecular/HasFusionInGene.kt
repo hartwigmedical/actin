@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
-    override fun genes() = listOf(gene)
+    override fun gene() = gene
     override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.FUSION)
 
     override fun evaluate(test: MolecularTest): Evaluation {

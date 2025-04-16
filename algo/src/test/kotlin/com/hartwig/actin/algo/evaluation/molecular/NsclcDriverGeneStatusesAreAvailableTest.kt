@@ -84,7 +84,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     }
 
     private fun panelWithTestForGene(it: String) =
-        TestMolecularFactory.createMinimalTestPanelRecord().copy(geneSpecifications = TestMolecularFactory.panelSpecifications(setOf(it)))
+        TestMolecularFactory.createMinimalTestPanelRecord().copy(specification = TestMolecularFactory.panelSpecifications(setOf(it)))
 
     private fun createNonWGSRecordWithOptionalPriorTests(priorTest: List<MolecularTest> = emptyList()): PatientRecord {
         val history = MolecularHistory(priorTest)

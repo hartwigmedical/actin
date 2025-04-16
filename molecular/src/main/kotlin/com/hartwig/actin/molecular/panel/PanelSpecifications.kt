@@ -12,24 +12,33 @@ object PanelSpecificationsFile {
 
     fun create(panelGeneListTsvPath: String): PanelSpecifications {
 
-        data class PanelGeneEntry(val testName: String, val gene: String, val fusion: Boolean, val mutation: Boolean, val amp: Boolean, val del: Boolean)
+        data class PanelGeneEntry(
+            val testName: String,
+            val gene: String,
+            val fusion: Boolean,
+            val mutation: Boolean,
+            val amplification: Boolean,
+            val deletion: Boolean
+        ) {
+            fun toPanelGeneSpecification(): PanelGeneSpecification {
+                val targets = listOfNotNull(
+                    if (fusion) MolecularTestTarget.FUSION else null,
+                    if (mutation) MolecularTestTarget.MUTATION else null,
+                    if (amplification) MolecularTestTarget.AMPLIFICATION else null,
+                    if (deletion) MolecularTestTarget.DELETION else null,
+                )
+                if (targets.isEmpty()) throw IllegalStateException(
+                    "Targets for test $testName and gene $gene are empty, a gene should be tested for at least one target. " +
+                            "Please correct in the panel_specifications.tsv"
+                )
+                return PanelGeneSpecification(gene, targets)
+            }
+        }
 
         val entries = CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(PanelGeneEntry::class.java)
             .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t')).readValues<PanelGeneEntry>(File(panelGeneListTsvPath))
         return PanelSpecifications(
-            entries.readAll().groupBy(PanelGeneEntry::testName)
-                .mapValues {
-                    it.value.map { g ->
-                        PanelGeneSpecification(
-                            g.gene,
-                            listOfNotNull(
-                                if (g.fusion) MolecularTestTarget.FUSION else null,
-                                if (g.mutation) MolecularTestTarget.MUTATION else null,
-                                if (g.amp) MolecularTestTarget.AMPLIFICATION else null,
-                                if (g.del) MolecularTestTarget.DELETION else null,
-                            )
-                        )
-                    }
-                })
+            entries.readAll().groupBy(PanelGeneEntry::testName, PanelGeneEntry::toPanelGeneSpecification)
+        )
     }
 }

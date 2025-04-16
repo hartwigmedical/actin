@@ -47,7 +47,7 @@ private enum class CopyNumberEvaluation {
 class GeneHasSufficientCopyNumber(private val gene: String, private val requestedMinCopyNumber: Int, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(maxTestAge) {
 
-    override fun genes() = listOf(gene)
+    override fun gene() = gene
     override fun targetCoveragePredicate() = or(MolecularTestTarget.AMPLIFICATION, MolecularTestTarget.DELETION)
 
     override fun evaluate(test: MolecularTest): Evaluation {

@@ -68,10 +68,9 @@ class PanelAnnotatorTest {
     @Test
     fun `Should annotate test with panel specifications`() {
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest())
-        //TODO fix this later
-/*        assertThat(annotatedPanel.testsGene(GENE, listOf(MolecularTestTarget.MUTATION))).isTrue()
-        assertThat(annotatedPanel.testsGene("another gene", listOf(MolecularTestTarget.MUTATION))).isFalse()
-        assertThat(annotatedPanel.testsGene(GENE, listOf(MolecularTestTarget.FUSION))).isFalse()*/
+        assertThat(annotatedPanel.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
+        assertThat(annotatedPanel.testsGene("another gene") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
+        assertThat(annotatedPanel.testsGene(GENE) { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
     }
 
     @Test

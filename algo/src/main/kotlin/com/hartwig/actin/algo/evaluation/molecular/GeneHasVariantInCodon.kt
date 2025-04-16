@@ -22,7 +22,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
         NONE
     }
 
-    override fun genes() = listOf(gene)
+    override fun gene() = gene
     override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {

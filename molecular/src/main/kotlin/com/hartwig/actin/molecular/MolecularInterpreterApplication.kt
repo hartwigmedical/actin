@@ -75,8 +75,12 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
         LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
 
-        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids)
+        LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
+        val panelSpecifications =
+            config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
+
+        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
@@ -91,7 +95,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         config: MolecularInterpreterConfig,
         serveDatabase: ServeDatabase,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         return if (config.orangeJson != null) {
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
@@ -103,7 +108,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
             val orangeRecordMolecularRecordMolecularInterpreter =
-                MolecularInterpreter(OrangeExtractor(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
+                MolecularInterpreter(OrangeExtractor(geneFilter, panelSpecifications), MolecularRecordAnnotator(evidenceDatabase))
 
             orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
         } else {
@@ -116,7 +121,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         clinical: ClinicalRecord,
         serveDatabase: ServeDatabase,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
@@ -155,8 +161,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
         val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(evidenceDatabase, ensemblDataCache)
-        val panelSpecifications =
-            config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
 
         val sequencingMolecularTests = interpretPriorSequencingMolecularTests(
             clinical.priorSequencingTests,

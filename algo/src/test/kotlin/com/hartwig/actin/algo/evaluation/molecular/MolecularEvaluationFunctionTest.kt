@@ -43,15 +43,11 @@ class MolecularEvaluationFunctionTest {
     }
 
     private val functionWithGene = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun genes() = listOf("GENE")
-    }
-
-    private val functionWithMultipleGenes = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun genes() = listOf("GENE", "ANOTHER_GENE")
+        override fun gene() = "GENE"
     }
 
     private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun genes() = listOf("GENE")
+        override fun gene() = "GENE"
         override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.FUSION)
     }
 
@@ -108,25 +104,7 @@ class MolecularEvaluationFunctionTest {
         val patient = withPanelTest()
         val evaluation = functionWithGene.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested for at least one of fusions, mutations, amplifications or deletions")
-        assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
-    }
-
-    @Test
-    fun `Should return undetermined when one mandatory gene is tested and another is not`() {
-        val patient = withPanelTest()
-        val evaluation = functionWithMultipleGenes.evaluate(
-            patient.copy(
-                molecularHistory = MolecularHistory(
-                    listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord()
-                            .copy(geneSpecifications = mapOf("GENE" to listOf(MolecularTestTarget.MUTATION)))
-                    )
-                )
-            )
-        )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) ANOTHER_GENE not tested for fusions, mutations, amplifications or deletions")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Gene GENE not tested for fusions, mutations, amplifications or deletions")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 
@@ -139,13 +117,13 @@ class MolecularEvaluationFunctionTest {
                     molecularHistory = MolecularHistory(
                         listOf(
                             TestMolecularFactory.createMinimalTestPanelRecord()
-                                .copy(geneSpecifications = mapOf("GENE" to listOf(MolecularTestTarget.MUTATION)))
+                                .copy(specification = TestMolecularFactory.panelSpecifications(setOf("GENE"), listOf( MolecularTestTarget.MUTATION)))
                         )
                     )
                 )
             )
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested for fusions")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Gene GENE not tested for fusions")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 

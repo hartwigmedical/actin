@@ -256,7 +256,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord()
-                            .copy(geneSpecifications = TestMolecularFactory.panelSpecifications(setOf("ALK")))
+                            .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -271,7 +271,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord()
-                            .copy(geneSpecifications = TestMolecularFactory.panelSpecifications(setOf("ALK")))
+                            .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -286,7 +286,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            geneSpecifications = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
                                     TestVariantFactory.createMinimal()
@@ -313,7 +313,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            geneSpecifications = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 fusions = listOf(
                                     TestFusionFactory.createMinimal().copy(
