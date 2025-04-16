@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.properties.UnitValue
 
 class EligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
@@ -22,7 +23,8 @@ class EligibleTrialGenerator(
     private val molecularEventColWidth: Float,
     private val locationColWidth: Float,
     private val checksColWidth: Float?,
-    private val allowDeEmphasis: Boolean
+    private val allowDeEmphasis: Boolean,
+    private val includeChecksColumn: Boolean
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -34,26 +36,36 @@ class EligibleTrialGenerator(
     }
 
     override fun contents(): Table {
-        val subTableWidths = listOfNotNull(
-            cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth.takeIf { cohorts.isNotEmpty() }
-        ).toFloatArray()
-
-        val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
-        val subTableHeaders = listOfNotNull("Cohort", "Molecular", "Sites", "Warnings".takeIf { cohorts.isNotEmpty() })
-        if (cohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
-            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
-            val subTable = Tables.createFixedWidthCols(*subTableWidths)
-            subTableHeaders.map(Cells::createHeader).forEach(subTable::addHeaderCell)
-            table.addHeaderCell(Cells.createContentNoBorder(subTable))
+        val table =
+            if (includeChecksColumn) {
+                val trialColWidth = 1f / 9
+                val cohortColWidth = 1f / 4
+                val molecularColWidth = 1f / 7
+                val locationColWidth = 1f / 7
+                val checksColWidth = 1f - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth)
+                Tables.createFixedWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, checksColWidth)
+            } else {
+                val trialColWidth = 1f / 9
+                val cohortColWidth = 1f / 4
+                val molecularColWidth = 1f / 7
+                val locationColWidth = 1f - (trialColWidth + cohortColWidth + molecularColWidth)
+                Tables.createFixedWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
+            }
+        
+        table.addHeaderCell(Cells.createHeader("Trial"))
+        table.addHeaderCell(Cells.createHeader("Cohort"))
+        table.addHeaderCell(Cells.createHeader("Molecular"))
+        table.addHeaderCell(Cells.createHeader("Sites"))
+        if (includeChecksColumn) {
+            table.addHeaderCell(Cells.createHeader("Warnings"))
         }
-
+            
         addTrialsToTable(
+            table = table,
             cohorts = cohorts,
             externalTrials = externalTrials,
             requestingSource = requestingSource,
             countryOfReference = countryOfReference,
-            table = table,
-            tableWidths = subTableWidths,
             feedbackFunction = InterpretedCohort::warnings,
             allowDeEmphasis = allowDeEmphasis
         )
@@ -216,7 +228,8 @@ class EligibleTrialGenerator(
                 molecularColWidth,
                 locationColWidth,
                 checksColWidth,
-                allowDeEmphasis
+                allowDeEmphasis,
+                includeChecksColumn = includeChecksColumn
             )
         }
     }

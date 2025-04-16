@@ -65,8 +65,7 @@ object ActinTrialContentFunctions {
             else -> concat(locations, false)
         }
     }
-
-
+    
     private fun findCommonMembersInCohorts(
         cohorts: List<InterpretedCohort>, retrieveMemberFunction: (InterpretedCohort) -> Set<String>
     ): Set<String> {

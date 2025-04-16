@@ -162,7 +162,9 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     ): List<TrialTableGenerator?> {
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
             interpretedCohorts,
-            ExternalTrialSummarizer.summarize(externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()),
+            ExternalTrialSummarizer.summarize(
+                externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()
+            ),
             externalTrialSummary.excludedNationalTrials()
                 .groupBy { ewt -> ewt.trial.nctId }.size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
             requestingSource,

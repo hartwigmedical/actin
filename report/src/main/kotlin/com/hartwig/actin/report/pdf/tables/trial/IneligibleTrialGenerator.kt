@@ -43,16 +43,15 @@ class IneligibleTrialGenerator(
         }
 
         addTrialsToTable(
-            cohorts,
+            table = table,
+            cohorts = cohorts,
             externalTrials = emptySet(),
-            requestingSource,
+            requestingSource = requestingSource,
             countryOfReference = null,
-            table,
-            subTableWidths,
-            InterpretedCohort::fails,
-            includeIneligibilityReasonCol,
-            paddingDistance,
-            allowDeEmphasis
+            feedbackFunction = InterpretedCohort::fails,
+            includeFeedback = includeIneligibilityReasonCol,
+            paddingDistance = paddingDistance,
+            allowDeEmphasis = allowDeEmphasis
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
