@@ -17,7 +17,8 @@ class TargetCoveragePredicate(val targets: Set<MolecularTestTarget>, private val
 
         fun and(vararg targets: MolecularTestTarget) = combine(targets.toList(), Predicate<List<MolecularTestTarget>>::and)
 
-        fun or(vararg targets: MolecularTestTarget): TargetCoveragePredicate = combine(targets.toList(), Predicate<List<MolecularTestTarget>>::or)
+        fun or(vararg targets: MolecularTestTarget): TargetCoveragePredicate =
+            combine(targets.toList(), Predicate<List<MolecularTestTarget>>::or)
 
         private fun combine(
             targets: List<MolecularTestTarget>,
