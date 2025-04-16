@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.serve.datamodel.molecular.ActionableEvent
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
@@ -14,34 +15,36 @@ import java.util.function.Predicate
 
 object ActionableEventExtraction {
 
-    fun extractEvent(molecularCriterium: MolecularCriterium): ActionableEvent {
+    fun extractEvent(molecularCriterium: MolecularCriterium): Pair<EvidenceType, ActionableEvent> {
         return when {
             hotspotFilter().test(molecularCriterium) -> {
-                extractHotspot(molecularCriterium)
+                EvidenceType.HOTSPOT_MUTATION to extractHotspot(molecularCriterium)
             }
 
             codonFilter().test(molecularCriterium) -> {
-                extractCodon(molecularCriterium)
+                EvidenceType.CODON_MUTATION to extractCodon(molecularCriterium)
             }
 
             exonFilter().test(molecularCriterium) -> {
-                extractExon(molecularCriterium)
+                EvidenceType.EXON_MUTATION to extractExon(molecularCriterium)
             }
 
-            geneFilter(GeneEvent.values().toSet()).test(molecularCriterium) -> {
-                extractGene(molecularCriterium)
+            geneFilter(GeneEvent.entries.toSet()).test(molecularCriterium) -> {
+                val gene = extractGene(molecularCriterium)
+                fromActionableGene(gene) to gene
             }
 
             fusionFilter().test(molecularCriterium) -> {
-                extractFusion(molecularCriterium)
+                EvidenceType.FUSION_PAIR to extractFusion(molecularCriterium)
             }
 
-            characteristicsFilter(TumorCharacteristicType.values().toSet()).test(molecularCriterium) -> {
-                extractCharacteristic(molecularCriterium)
+            characteristicsFilter(TumorCharacteristicType.entries.toSet()).test(molecularCriterium) -> {
+                val characteristic = extractCharacteristic(molecularCriterium)
+                fromActionableCharacteristic(characteristic) to characteristic
             }
 
             hlaFilter().test(molecularCriterium) -> {
-                extractHla(molecularCriterium)
+                EvidenceType.HLA to extractHla(molecularCriterium)
             }
 
             else -> throw IllegalStateException("Could not extract event for molecular criterium: $molecularCriterium")
@@ -49,31 +52,31 @@ object ActionableEventExtraction {
     }
 
     fun extractHotspot(molecularCriterium: MolecularCriterium): ActionableHotspot {
-        return molecularCriterium.hotspots().iterator().next()
+        return molecularCriterium.hotspots().first()
     }
 
     fun extractCodon(molecularCriterium: MolecularCriterium): ActionableRange {
-        return molecularCriterium.codons().iterator().next()
+        return molecularCriterium.codons().first()
     }
 
     fun extractExon(molecularCriterium: MolecularCriterium): ActionableRange {
-        return molecularCriterium.exons().iterator().next()
+        return molecularCriterium.exons().first()
     }
 
     fun extractGene(molecularCriterium: MolecularCriterium): ActionableGene {
-        return molecularCriterium.genes().iterator().next()
+        return molecularCriterium.genes().first()
     }
 
     fun extractFusion(molecularCriterium: MolecularCriterium): ActionableFusion {
-        return molecularCriterium.fusions().iterator().next()
+        return molecularCriterium.fusions().first()
     }
 
     fun extractCharacteristic(molecularCriterium: MolecularCriterium): ActionableCharacteristic {
-        return molecularCriterium.characteristics().iterator().next()
+        return molecularCriterium.characteristics().first()
     }
 
     private fun extractHla(molecularCriterium: MolecularCriterium): ActionableHLA {
-        return molecularCriterium.hla().iterator().next()
+        return molecularCriterium.hla().first()
     }
 
     fun hotspotFilter(): Predicate<MolecularCriterium> {
@@ -102,5 +105,34 @@ object ActionableEventExtraction {
 
     private fun hlaFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.hla().isNotEmpty() }
+    }
+
+    private fun fromActionableGene(gene: ActionableGene): EvidenceType {
+        return when (gene.event()) {
+            GeneEvent.AMPLIFICATION -> EvidenceType.AMPLIFICATION
+            GeneEvent.OVEREXPRESSION -> EvidenceType.OVER_EXPRESSION
+            GeneEvent.PRESENCE_OF_PROTEIN -> EvidenceType.PRESENCE_OF_PROTEIN
+            GeneEvent.DELETION -> EvidenceType.DELETION
+            GeneEvent.UNDEREXPRESSION -> EvidenceType.UNDER_EXPRESSION
+            GeneEvent.ABSENCE_OF_PROTEIN -> EvidenceType.ABSENCE_OF_PROTEIN
+            GeneEvent.ACTIVATION -> EvidenceType.ACTIVATION
+            GeneEvent.INACTIVATION -> EvidenceType.INACTIVATION
+            GeneEvent.ANY_MUTATION -> EvidenceType.ANY_MUTATION
+            GeneEvent.FUSION -> EvidenceType.PROMISCUOUS_FUSION
+            GeneEvent.WILD_TYPE -> EvidenceType.WILD_TYPE
+            else -> {
+                throw java.lang.IllegalStateException("Unsupported gene level event: " + gene.event())
+            }
+        }
+    }
+
+    private fun fromActionableCharacteristic(characteristic: ActionableCharacteristic): EvidenceType {
+        return when (characteristic.type()) {
+            TumorCharacteristicType.MICROSATELLITE_UNSTABLE, TumorCharacteristicType.MICROSATELLITE_STABLE, TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD, TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD, TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN, TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN, TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> EvidenceType.SIGNATURE
+            TumorCharacteristicType.HPV_POSITIVE, TumorCharacteristicType.EBV_POSITIVE -> EvidenceType.VIRAL_PRESENCE
+            else -> {
+                throw java.lang.IllegalStateException("Unsupported tumor characteristic: " + characteristic.type())
+            }
+        }
     }
 }

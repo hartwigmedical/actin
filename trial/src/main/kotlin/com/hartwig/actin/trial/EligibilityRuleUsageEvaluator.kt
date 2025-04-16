@@ -41,14 +41,7 @@ object EligibilityRuleUsageEvaluator {
     fun extractIhcProteins(trials: List<Trial>): Set<String> {
         val allFunctions = collectFunctions(trials.flatMap { it.generalEligibility }.map { it.function })
         val parameterised =
-            allFunctions.filter {
-                it.rule.input in (listOf(
-                    FunctionInput.ONE_PROTEIN,
-                    FunctionInput.ONE_PROTEIN_ONE_INTEGER,
-                    FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER,
-                    FunctionInput.ONE_PROTEIN_ONE_GENE
-                ))
-            }
+            allFunctions.filter { it.rule.input in (listOf(FunctionInput.ONE_PROTEIN, FunctionInput.ONE_PROTEIN_ONE_INTEGER)) }
                 .map { it.parameters.first().toString() }
         return (parameterised + allFunctions.mapNotNull { it.rule.ihcProtein }).toSet()
     }

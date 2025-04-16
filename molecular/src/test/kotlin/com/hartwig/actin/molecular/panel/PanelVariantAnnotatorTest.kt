@@ -99,7 +99,6 @@ private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
     TestTreatmentEvidenceFactory.create(
         treatment = "treatment",
         isOnLabel = true,
-        isCategoryEvent = true,
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
@@ -212,7 +211,6 @@ class PanelVariantAnnotatorTest {
                     TestTreatmentEvidenceFactory.create(
                         treatment = "treatment",
                         isOnLabel = true,
-                        isCategoryEvent = true,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),

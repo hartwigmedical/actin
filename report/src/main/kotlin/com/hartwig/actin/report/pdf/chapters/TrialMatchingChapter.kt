@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -42,31 +43,31 @@ class TrialMatchingChapter(
 
     fun createGenerators(): List<TableGenerator> {
         val requestingSource = TrialSource.fromDescription(report.requestingHospital)
-        val externalTrials = trialsProvider.summarizeExternalTrials()
+        val externalTrials = trialsProvider.externalTrials()
 
         val localTrialGenerators = createTrialTableGenerators(
             trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
         )
         val localExternalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
-            cohorts = emptyList(),
-            externalTrials = externalTrials.nationalTrials.filtered,
-            filteredCount = externalTrials.excludedNationalTrials().size,
-            requestingSource = requestingSource,
-            countryOfReference = report.config.countryOfReference
+            emptyList(),
+            ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered),
+            externalTrials.excludedNationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
+            requestingSource,
+            report.config.countryOfReference
         ).takeIf { externalTrialsOnly }
 
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
-            cohorts = emptyList(),
-            externalTrials = externalTrials.internationalTrials.filtered,
-            filteredCount = externalTrials.excludedInternationalTrials().size,
-            requestingSource = requestingSource,
-            countryOfReference = null,
-            forLocalTrials = false
+            emptyList(),
+            ExternalTrialSummarizer.summarize(externalTrials.internationalTrials.filtered),
+            externalTrials.excludedInternationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
+            requestingSource,
+            null,
+            false
         ).takeIf { externalTrialsOnly }
 
         val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(
-            trials = externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials(),
-            countryOfReference = report.config.countryOfReference
+            ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials()),
+            report.config.countryOfReference
         )
 
         return localTrialGenerators + listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator) + filteredTrialGenerator

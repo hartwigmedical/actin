@@ -1,7 +1,7 @@
 {
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
-  "referenceDate": "2025-04-10",
+  "referenceDate": "2025-04-16",
   "referenceDateIsLive": true,
   "trialMatches": [
     {

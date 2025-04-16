@@ -95,10 +95,17 @@ class EligibleTrialGenerator(
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { externalTrials.isNotEmpty() },
                     ("${formatCountWithLabel(filteredCount, "trial")} filtered due to eligible local trials for the same molecular " +
-                            "target or because the trial is for young adult patients only.")
+                            "target or because the trial is for young adult patients only. See Trial Matching Overview for filtered matches.")
                         .takeIf { filteredCount > 0 }
                 ).joinToString("\n")
-            } else "International trials are matched solely on molecular event and tumor type (clinical data excluded)."
+            } else
+                listOfNotNull(
+                    "International trials are matched solely on molecular event and tumor type (clinical data excluded)."
+                        .takeIf { externalTrials.isNotEmpty() },
+                    ("${formatCountWithLabel(filteredCount, "trial")} filtered due to trials recruiting nationally for the same " +
+                            "molecular target. See Trial Matching Overview for filtered matches.")
+                        .takeIf { filteredCount > 0 }
+                ).joinToString("\n")
 
             return create(
                 cohorts = recruitingAndEligibleCohorts,

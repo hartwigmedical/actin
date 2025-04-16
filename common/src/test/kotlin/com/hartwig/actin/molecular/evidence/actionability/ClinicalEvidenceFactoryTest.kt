@@ -5,11 +5,12 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestMolecularMatchDetailsFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
@@ -57,7 +58,7 @@ class ClinicalEvidenceFactoryTest {
                 isOnLabel = true,
                 sourceDate = BASE_ACTIONABLE_EVENT.sourceDate(),
                 sourceEvent = BASE_ACTIONABLE_EVENT.sourceEvent(),
-                isCategoryEvent = false,
+                evidenceType = EvidenceType.HOTSPOT_MUTATION,
                 matchedCancerType = "on-label type",
                 excludedCancerSubTypes = setOf("excluded 1", "excluded 2"),
                 evidenceLevel = EvidenceLevel.D,
@@ -96,7 +97,7 @@ class ClinicalEvidenceFactoryTest {
                 isOnLabel = false,
                 sourceDate = BASE_ACTIONABLE_EVENT.sourceDate(),
                 sourceEvent = BASE_ACTIONABLE_EVENT.sourceEvent(),
-                isCategoryEvent = true,
+                evidenceType = EvidenceType.CODON_MUTATION,
                 matchedCancerType = "off-label type",
                 excludedCancerSubTypes = emptySet(),
                 evidenceLevel = EvidenceLevel.B,
@@ -151,7 +152,8 @@ class ClinicalEvidenceFactoryTest {
         val expectedClinicalEvidence = TestClinicalEvidenceFactory.withEligibleTrial(
             TestExternalTrialFactory.create(
                 nctId = "NCT00000001",
-                title = "test trial acronym",
+                title = "test trial",
+                acronym = "test trial acronym",
                 countries = setOf(
                     CountryDetails(
                         country = Country.NETHERLANDS,
@@ -165,15 +167,15 @@ class ClinicalEvidenceFactoryTest {
                     )
                 ),
                 molecularMatches = setOf(
-                    MolecularMatchDetails(
+                    TestMolecularMatchDetailsFactory.create(
                         sourceDate = LocalDate.of(2022, 1, 1),
                         sourceEvent = "event 1",
-                        isCategoryEvent = false
+                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
                     ),
-                    MolecularMatchDetails(
+                    TestMolecularMatchDetailsFactory.create(
                         sourceDate = LocalDate.of(2023, 1, 1),
                         sourceEvent = "event 2",
-                        isCategoryEvent = false
+                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
                     ),
                 ),
                 applicableCancerTypes = setOf(
@@ -220,7 +222,7 @@ class ClinicalEvidenceFactoryTest {
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000001",
                     molecularMatches = setOf(
-                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 1", isCategoryEvent = false),
+                        TestMolecularMatchDetailsFactory.create(sourceDate = expectedSourceDate, sourceEvent = "event 1", sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION)
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 1", excludedCancerSubTypes = emptySet()),
@@ -230,7 +232,7 @@ class ClinicalEvidenceFactoryTest {
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000002",
                     molecularMatches = setOf(
-                        MolecularMatchDetails(sourceDate = expectedSourceDate, sourceEvent = "event 2", isCategoryEvent = false)
+                        TestMolecularMatchDetailsFactory.create(sourceDate = expectedSourceDate, sourceEvent = "event 2", sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION)
                     ),
                     applicableCancerTypes = setOf(
                         CancerType(matchedCancerType = "type 2", excludedCancerSubTypes = emptySet())
