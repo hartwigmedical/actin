@@ -37,8 +37,7 @@ private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        isOnLabel = true,
-        isCategoryEvent = true
+        isOnLabel = true
     )
 )
 

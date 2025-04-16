@@ -3,15 +3,13 @@ package com.hartwig.actin.report.trial
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
-import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestMolecularMatchDetailsFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 import java.util.*
-import kotlin.Comparator
 
 private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
@@ -28,19 +26,13 @@ private val TRIAL_1 = TestExternalTrialFactory.create(
     title = TITLE,
     countries = setOf(NETHERLANDS, BELGIUM),
     molecularMatches = setOf(
-        MolecularMatchDetails(
+        TestMolecularMatchDetailsFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
-            sourceEvent = "source event 1",
-            isCategoryEvent = false,
-            sourceEvidenceType = EvidenceType.ACTIVATION,
-            sourceUrls = emptySet()
+            sourceEvent = "source event 1"
         ),
-        MolecularMatchDetails(
+        TestMolecularMatchDetailsFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
-            sourceEvent = "source event 2",
-            isCategoryEvent = false,
-            sourceEvidenceType = EvidenceType.ACTIVATION,
-            sourceUrls = emptySet()
+            sourceEvent = "source event 2"
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 1", emptySet()), CancerType("cancer type 2", emptySet())),
@@ -52,12 +44,9 @@ private val TRIAL_2 = TestExternalTrialFactory.create(
     acronym = ACRONYM,
     countries = setOf(BELGIUM),
     molecularMatches = setOf(
-        MolecularMatchDetails(
+        TestMolecularMatchDetailsFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
-            sourceEvent = "source event 3",
-            isCategoryEvent = false,
-            sourceEvidenceType = EvidenceType.ACTIVATION,
-            sourceUrls = emptySet()
+            sourceEvent = "source event 3"
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 3", emptySet())),

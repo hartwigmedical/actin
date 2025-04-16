@@ -383,9 +383,8 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false,
-                      "sourceEvidenceType": "ACTIVATION",
-                      "sourceUrls": []
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -408,9 +407,8 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false,
-                      "sourceEvidenceType": "ACTIVATION",
-                      "sourceUrls": []
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -438,9 +436,8 @@
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false,
-                        "sourceEvidenceType": "ACTIVATION",
-                        "sourceUrls": []
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
@@ -482,9 +479,8 @@
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false,
-                        "sourceEvidenceType": "ACTIVATION",
-                        "sourceUrls": []
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
@@ -552,9 +548,8 @@
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
-                      "isCategoryEvent": false,
-                      "sourceEvidenceType": "ACTIVATION",
-                      "sourceUrls": []
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
                     },
                     "applicableCancerType": {
                       "matchedCancerType": "Lung non-small cell carcinoma",
@@ -582,9 +577,8 @@
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR C797S",
-                        "isCategoryEvent": false,
-                        "sourceEvidenceType": "ACTIVATION",
-                        "sourceUrls": []
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
@@ -707,9 +701,8 @@
                       {
                         "sourceDate": "2012-01-01",
                         "sourceEvent": "KRAS G12C",
-                        "isCategoryEvent": false,
                         "sourceEvidenceType": "ACTIVATION",
-                        "sourceUrls": []
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
