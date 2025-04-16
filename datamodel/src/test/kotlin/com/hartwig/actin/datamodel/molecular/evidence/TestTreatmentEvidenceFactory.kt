@@ -90,7 +90,6 @@ object TestTreatmentEvidenceFactory {
         isOnLabel: Boolean,
         sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
         sourceEvent: String = "",
-        isCategoryEvent: Boolean = false,
         evidenceType: EvidenceType = EvidenceType.ACTIVATION,
         matchedCancerType: String = "",
         excludedCancerSubTypes: Set<String> = emptySet(),
@@ -98,14 +97,14 @@ object TestTreatmentEvidenceFactory {
         evidenceLevelDetails: EvidenceLevelDetails,
         evidenceDirection: EvidenceDirection,
         evidenceYear: Int = 2021,
+        sourceUrl: String? = null
     ) = TreatmentEvidence(
         treatment = treatment,
         molecularMatch = MolecularMatchDetails(
             sourceDate = sourceDate,
             sourceEvent = sourceEvent,
-            isCategoryEvent = isCategoryEvent,
             sourceEvidenceType = evidenceType,
-            sourceUrls = emptySet()
+            sourceUrl = sourceUrl
         ),
         applicableCancerType = CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
         isOnLabel = isOnLabel,

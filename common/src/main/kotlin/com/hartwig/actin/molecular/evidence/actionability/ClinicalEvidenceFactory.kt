@@ -43,9 +43,8 @@ object ClinicalEvidenceFactory {
                 evidence,
                 event.sourceDate(),
                 event.sourceEvent(),
-                event.isCategoryEvent(),
                 evidenceType,
-                event.sourceUrls()
+                event.sourceUrls().firstOrNull()
             )
         }.toSet()
     }
@@ -55,9 +54,8 @@ object ClinicalEvidenceFactory {
         evidence: EfficacyEvidence,
         sourceDate: LocalDate,
         sourceEvent: String,
-        isCategoryEvent: Boolean,
         evidenceType: EvidenceType,
-        sourceUrls: Set<String>
+        sourceUrl: String?
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
@@ -65,9 +63,8 @@ object ClinicalEvidenceFactory {
             molecularMatch = MolecularMatchDetails(
                 sourceDate = sourceDate,
                 sourceEvent = sourceEvent,
-                isCategoryEvent = isCategoryEvent,
                 sourceEvidenceType = evidenceType,
-                sourceUrls = sourceUrls
+                sourceUrl = sourceUrl
             ),
             applicableCancerType = CancerType(
                 matchedCancerType = evidence.indication().applicableType().name(),
@@ -114,9 +111,8 @@ object ClinicalEvidenceFactory {
             MolecularMatchDetails(
                 sourceDate = event.sourceDate(),
                 sourceEvent = event.sourceEvent(),
-                isCategoryEvent = event.isCategoryEvent(),
                 evidenceType,
-                sourceUrls = event.sourceUrls()
+                sourceUrl = event.sourceUrls().firstOrNull()
             )
         }.toSet()
 

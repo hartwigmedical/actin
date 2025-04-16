@@ -8,7 +8,7 @@ enum class EvidenceType(private val display: String, private val categoryEvent: 
     AMPLIFICATION("Amplification", false),
     OVER_EXPRESSION("Over expression", false),
     PRESENCE_OF_PROTEIN("Presence of protein", false),
-    DELETION("Deletion", true),
+    DELETION("Deletion", false),
     UNDER_EXPRESSION("Under expression", false),
     ABSENCE_OF_PROTEIN("Absence of protein", false),
     PROMISCUOUS_FUSION("Promiscuous fusion", true),
@@ -17,7 +17,7 @@ enum class EvidenceType(private val display: String, private val categoryEvent: 
     CODON_MUTATION("Codon", true),
     EXON_MUTATION("Exon", true),
     ANY_MUTATION("Any mutation", true),
-    WILD_TYPE("Wild-type", true),
+    WILD_TYPE("Wild-type", false),
     HLA("hla", false);
 
     fun display(): String {
@@ -25,6 +25,6 @@ enum class EvidenceType(private val display: String, private val categoryEvent: 
     }
 
     fun isCategoryEvent() : Boolean {
-        return categoryEvent;
+        return categoryEvent
     }
 }
