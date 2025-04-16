@@ -14,6 +14,7 @@ import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.action.PdfAction
+import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
@@ -38,24 +39,22 @@ object TrialGeneratorFunctions {
             insertTrial(table, cohortList, requestingSource, feedbackFunction, includeFeedback, paddingDistance, allowDeEmphasis)
         }
 
-//        externalTrials.forEach { trial ->
-//            val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
-//            val mainContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalic else Cells::createContent
-//            table.addCell(mainContentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
-//
-//            val trialSubTable = Tables.createFixedWidthCols(*subTableWidths)
-//            val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
-//            val country = if (trial.countries.none { it.country == countryOfReference }) null else countryOfReference
-//
-//            val contentList = listOf(
-//                trial.sourceMolecularEvents.joinToString(", "),
-//                trial.actinMolecularEvents.joinToString(", "),
-//                externalTrialLocation(trial, country)
-//            )
-//            val content = if (contentList.size < subTableWidths.size) contentList + "" else contentList
-//            content.map(subContentFunction).forEach(trialSubTable::addCell)
-//            table.addCell(Cells.createContent(trialSubTable))
-//        }
+        externalTrials.forEach { trial ->
+            val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
+            val mainContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalic else Cells::createContent
+            table.addCell(mainContentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
+            
+            val subContentFunction = if (allowDeEmphasis) Cells::createContentSmallItalicNoBorder else Cells::createContentNoBorder
+            
+            table.addCell(subContentFunction(trial.sourceMolecularEvents.joinToString(", ")))
+            table.addCell(subContentFunction(trial.actinMolecularEvents.joinToString(", ")))
+            
+            val country = if (trial.countries.none { it.country == countryOfReference }) null else countryOfReference
+            table.addCell(subContentFunction(externalTrialLocation(trial, country)))
+            if (includeFeedback) {
+                table.addCell(Cells.createEmpty())
+            }
+        }
     }
 
     private fun externalTrialLocation(trial: ExternalTrialSummary, countryOfReference: Country?): String {
@@ -124,16 +123,16 @@ object TrialGeneratorFunctions {
 
     private fun addContentListToTable(
         table: Table,
-        firstRowForTrial: Boolean,
-        cellContent: List<String>,
+        rowContainsTrialIdentificationCell: Boolean,
+        cellContentsForRow: List<String>,
         deEmphasizeContent: Boolean,
         paddingDistance: Float
     ) {
-        if (!firstRowForTrial) {
+        if (!rowContainsTrialIdentificationCell) {
             table.addCell(Cells.createEmpty())
         }
         
-        cellContent.map {
+        cellContentsForRow.map {
             val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
                     .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(1.6f)
@@ -141,7 +140,10 @@ object TrialGeneratorFunctions {
                 Paragraph(it)
             }
 
-            val cell = if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else Cells.createContentNoBorder(paragraph)
+            val cell = if (deEmphasizeContent) Cells.createContentDeEmphasize(paragraph) else Cells.createContent(paragraph)
+            if (!rowContainsTrialIdentificationCell) {
+                cell.setBorder(Border.NO_BORDER)
+            }
             cell.setPadding(paddingDistance)
         }.forEach(table::addCell)
     }
