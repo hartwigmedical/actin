@@ -10,6 +10,7 @@ import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
+private const val ADDITIONAL_EMPTY_COLS = 2
 private const val PADDING_LEFT = 20
 private const val PADDING_RIGHT = 25
 
@@ -35,13 +36,14 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             )
             Tables.createSingleCol().addCell(Cells.createContentNoBorder(message))
         } else {
-            val numColumns = predictions.size + 1
-            val table = Table(numColumns)
+            val numColumns = predictions.size + 1 + ADDITIONAL_EMPTY_COLS
+            val table = Tables.createMultiCol(numColumns)
             table.addHeaderCell(Cells.createEmpty())
             predictions.indices.asSequence()
                 .map { i: Int -> "${i + 1}. ${predictions[i].cancerType}" }
                 .map { Cells.createHeader(it).setPaddingLeft(PADDING_LEFT.toFloat()) }
                 .forEach(table::addHeaderCell)
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addHeaderCell(Cells.createHeader("")) }
 
             table.addCell(Cells.createContentBold("Combined prediction score"))
             predictions.map {
@@ -51,9 +53,10 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
                 }
                 likelihoodCell
             }.forEach(table::addCell)
-
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createContent("")) }
+            
             table.addCell(Cells.createContent("This score is calculated by combining information on:"))
-            repeat(predictions.size) { table.addCell(Cells.createContent("")) }
+            repeat(predictions.size + ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createContent("")) }
             addClassifierRow("(1) SNV types", predictions, CupPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
                 "(2) SNV genomic localisation distribution", predictions, CupPrediction::genomicPositionClassifier, table
@@ -74,8 +77,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
     }
 
     private fun addClassifierRow(
-        classifierText: String, predictions: List<CupPrediction>,
-        classifierFunction: (CupPrediction) -> Double, table: Table
+        classifierText: String, predictions: List<CupPrediction>, classifierFunction: (CupPrediction) -> Double, table: Table
     ) {
         table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
         predictions
@@ -84,5 +86,6 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             .map(Formats::percentage)
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
+        repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createContent("")) }
     }
 }

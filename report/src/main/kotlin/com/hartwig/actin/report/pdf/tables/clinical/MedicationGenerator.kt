@@ -24,7 +24,7 @@ class MedicationGenerator(private val medications: List<Medication>, private val
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(1f, 1f, 1f, 1f, 1f, 1f)
+        val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f, 1f)
 
         table.addHeaderCell(Cells.createHeader("Medication"))
         table.addHeaderCell(Cells.createHeader("Administration route"))

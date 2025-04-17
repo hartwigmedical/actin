@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.soc
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter

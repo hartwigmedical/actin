@@ -17,8 +17,7 @@ import com.hartwig.actin.report.pdf.util.Cells.createKey
 import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
 import com.hartwig.actin.report.pdf.util.Cells.createValue
 import com.hartwig.actin.report.pdf.util.Formats.DATE_UNKNOWN
-import com.hartwig.actin.report.pdf.util.Tables.createFixedWidthCols
-import com.hartwig.actin.report.pdf.util.Tables.createSingleColWithWidth
+import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
@@ -41,7 +40,7 @@ class PatientClinicalHistoryGenerator(
     }
 
     override fun contents(): Table {
-        val table = createFixedWidthCols(keyWidth, valueWidth)
+        val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         contentsAsList().forEach(table::addCell)
         return table
     }
@@ -237,11 +236,11 @@ class PatientClinicalHistoryGenerator(
     }
 
     private fun createDoubleColumnTable(column1Width: Float, column2Width: Float): Table {
-        return removePadding<Table>(createFixedWidthCols(column1Width, column2Width))
+        return removePadding<Table>(Tables.createFixedWidthCols(column1Width, column2Width))
     }
 
     private fun createSingleColumnTable(width: Float): Table {
-        return removePadding<Table>(createSingleColWithWidth(width))
+        return removePadding<Table>(Tables.createSingleColWithWidth(width))
     }
 
     private fun createSingleTableEntry(value: String): Cell {

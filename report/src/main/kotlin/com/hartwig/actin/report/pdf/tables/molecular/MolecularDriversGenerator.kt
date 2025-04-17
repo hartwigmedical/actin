@@ -30,8 +30,7 @@ class MolecularDriversGenerator(
     }
 
     override fun contents(): Table {
-        val colWidth = 1f / 9
-        val table = Tables.createFixedWidthCols(colWidth * 2, colWidth * 2, colWidth, colWidth, colWidth, colWidth, colWidth)
+        val table = Tables.createRelativeWidthCols(1f, 2f, 1f, 1f, 1f, 1f, 1f)
 
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))

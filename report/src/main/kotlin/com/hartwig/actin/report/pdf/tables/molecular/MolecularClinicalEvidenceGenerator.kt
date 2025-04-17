@@ -23,14 +23,14 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
     }
 
     override fun contents(): Table {
-        val eventWidth = (0.7 / 6).toFloat()
-        val sourceEventWidth = (0.7 / 6).toFloat()
-        val levelAWidth = (1.2 / 6).toFloat()
-        val levelBWidth = (1.2 / 6).toFloat()
-        val levelCWidth = (1.2 / 6).toFloat()
-        val levelDWidth = (1.2 / 6).toFloat()
+        val eventWidth = 7f
+        val sourceEventWidth = 7f
+        val levelAWidth = 12f
+        val levelBWidth = 12f
+        val levelCWidth = 12f
+        val levelDWidth = 12f
 
-        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
+        val table = Tables.createRelativeWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
 
         listOf("Event", "CKB Event", "Level A", "Level B", "Level C", "Level D")
             .map(Cells::createHeader)
@@ -54,7 +54,8 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
                             val evidenceCellContents = TreatmentEvidenceFunctions.generateEvidenceCellContents(perLevelEvidences)
 
                             evidenceCellContents.forEach { (treatment, cancerTypes, resistance) ->
-                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f).setFont(Styles.fontItalic()).setFontSize(5.5f)
+                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f)
+                                    .setFont(Styles.fontItalic()).setFontSize(5.5f)
                                 val treatmentContent = Paragraph(treatment)
 
                                 if (resistance) {

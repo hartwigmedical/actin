@@ -27,8 +27,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : 
     }
 
     override fun contents(): Table {
-        val colWidth = 1f / 10f
-        val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
+        val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f, 1f, 2f, 2f)
 
         listOf("Purity", "Ploidy", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })

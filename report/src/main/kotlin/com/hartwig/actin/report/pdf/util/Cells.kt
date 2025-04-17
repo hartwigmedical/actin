@@ -83,10 +83,6 @@ object Cells {
         return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
     }
 
-    fun createContentSmallItalicNoBorder(text: String): Cell {
-        return createContentNoBorder(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
-    }
-
     fun createContentDeEmphasize(element: IBlockElement): Cell {
         val cell = createContent(element)
         cell.setFontColor(Styles.PALETTE_MID_GREY)

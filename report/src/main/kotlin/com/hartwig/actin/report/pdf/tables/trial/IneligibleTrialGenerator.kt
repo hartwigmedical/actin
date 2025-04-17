@@ -12,7 +12,7 @@ class IneligibleTrialGenerator(
     private val requestingSource: TrialSource?,
     private val title: String,
     private val footNote: String?,
-    private val includeIneligibilityReasonCol: Boolean,
+    private val includeIneligibilityColumn: Boolean,
     private val allowDeEmphasis: Boolean
 ) : TrialTableGenerator {
 
@@ -32,7 +32,7 @@ class IneligibleTrialGenerator(
         val ineligibilityColWidth = 4f
 
         val table =
-            if (includeIneligibilityReasonCol) {
+            if (includeIneligibilityColumn) {
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, ineligibilityColWidth)
             } else {
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
@@ -42,7 +42,7 @@ class IneligibleTrialGenerator(
         table.addHeaderCell(Cells.createHeader("Cohort"))
         table.addHeaderCell(Cells.createHeader("Molecular"))
         table.addHeaderCell(Cells.createHeader("Sites"))
-        if (includeIneligibilityReasonCol) {
+        if (includeIneligibilityColumn) {
             table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
         
@@ -53,7 +53,7 @@ class IneligibleTrialGenerator(
             requestingSource = requestingSource,
             countryOfReference = null,
             feedbackFunction = InterpretedCohort::fails,
-            includeFeedback = includeIneligibilityReasonCol,
+            includeFeedback = includeIneligibilityColumn,
             allowDeEmphasis = allowDeEmphasis
         )
         if (footNote != null) {
@@ -84,7 +84,7 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = footNote,
-                includeIneligibilityReasonCol = true,
+                includeIneligibilityColumn = true,
                 allowDeEmphasis = true
             )
         }
@@ -102,7 +102,7 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = null,
-                includeIneligibilityReasonCol = false,
+                includeIneligibilityColumn = false,
                 allowDeEmphasis = false
             )
         }

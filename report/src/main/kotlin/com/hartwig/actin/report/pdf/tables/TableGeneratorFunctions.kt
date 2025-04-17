@@ -17,12 +17,13 @@ object TableGeneratorFunctions {
             }
             val contentTable = generator.contents().setWidth(table.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE)
 
-            generatedTable.addCell(Tables.makeWrapping(contentTable, generator.forceKeepTogether()))
+            // KD: Note, in order to more accurately test the layout of the tables, it helps to set the border of the both the generated
+            // table and the main table (e.g. remove Cells.create from below line and the map output
+            generatedTable.addCell(Cells.create(Tables.makeWrapping(contentTable, generator.forceKeepTogether())))
             if (contentTable.numberOfRows < 3) {
                 generatedTable.setKeepTogether(true)
             }
-//            Cells.create(generatedTable)
-            generatedTable
+            Cells.create(generatedTable)
         }.forEach(table::addCell)
     }
 }
