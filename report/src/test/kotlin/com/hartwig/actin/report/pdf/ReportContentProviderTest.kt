@@ -14,8 +14,8 @@ import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
-import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
@@ -203,12 +203,11 @@ class ReportContentProviderTest {
     }
 
     private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
-        val trialMatchingChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
-        val generators = trialMatchingChapter.createTrialTableGenerators()
-        val trialMatchingOtherResultsChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingOtherResultsChapter>().first()
-        val generators = trialMatchingOtherResultsChapter.createGenerators()
+        val trialMatchingOtherResultsChapter =
+            ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingOtherResultsChapter>().first()
+        val generators = trialMatchingOtherResultsChapter.createTrialTableGenerators()
         val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
-        
+
         val totalCohortSizeOnReport =
             eligibleTrialGenerators.sumOf { it.cohortSize() } + trialTableGenerators.sumOf { it.cohortSize() }
         val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
