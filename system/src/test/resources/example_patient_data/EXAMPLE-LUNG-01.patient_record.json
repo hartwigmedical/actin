@@ -766,10 +766,10 @@
               "isAssociatedWithDrugResistance": true,
               "geneTranscriptStart": "116312446",
               "geneTranscriptEnd": "116438440",
-              "fusedExonUp": 14,
-              "fusedExonDown": 14,
+              "fusedExonUp": 13,
+              "fusedExonDown": 15,
               "isReportable": true,
-              "event": "MET_MET",
+              "event": "MET::MET",
               "driverLikelihood": "HIGH",
               "evidence": {
                 "treatmentEvidence": [],
