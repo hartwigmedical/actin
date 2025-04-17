@@ -43,7 +43,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
                 .map { i: Int -> "${i + 1}. ${predictions[i].cancerType}" }
                 .map { Cells.createHeader(it).setPaddingLeft(PADDING_LEFT.toFloat()) }
                 .forEach(table::addHeaderCell)
-            repeat(ADDITIONAL_EMPTY_COLS) { table.addHeaderCell(Cells.createHeader("")) }
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addHeaderCell(Cells.createEmpty()) }
 
             table.addCell(Cells.createContentBold("Combined prediction score"))
             predictions.map {
@@ -53,10 +53,11 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
                 }
                 likelihoodCell
             }.forEach(table::addCell)
-            repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createContent("")) }
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
             
             table.addCell(Cells.createContent("This score is calculated by combining information on:"))
-            repeat(predictions.size + ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createContent("")) }
+            repeat(predictions.size) { table.addCell(Cells.createContent("")) }
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
             addClassifierRow("(1) SNV types", predictions, CupPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
                 "(2) SNV genomic localisation distribution", predictions, CupPrediction::genomicPositionClassifier, table
@@ -86,6 +87,6 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             .map(Formats::percentage)
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
-        repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createContent("")) }
+        repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
     }
 }

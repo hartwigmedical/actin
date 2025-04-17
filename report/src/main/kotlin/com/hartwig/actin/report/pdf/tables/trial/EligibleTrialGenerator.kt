@@ -30,11 +30,11 @@ class EligibleTrialGenerator(
     }
 
     override fun contents(): Table {
-        val trialColWidth = 2f
-        val cohortColWidth = 3f
+        val trialColWidth = 1f
+        val cohortColWidth = 2f
         val molecularColWidth = 1f
-        val locationColWidth = 2f
-        val warningsColWidth = 4f
+        val locationColWidth = 1f
+        val warningsColWidth = 3f
 
         val table =
             if (includeWarningsColumn) {

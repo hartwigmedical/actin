@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
@@ -20,7 +20,7 @@ class PathologyReportGenerator(private val tumorDetails: TumorDetails) : TableGe
         val table = Tables.createSingleCol()
         val text = tumorDetails.rawPathologyReport
         if (text != null) {
-            table.addCell(Cells.createContent(text))
+            table.addCell(text).addStyle(Styles.tableContentStyle())
         }
         return table
     }
