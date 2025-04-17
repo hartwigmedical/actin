@@ -15,12 +15,9 @@ import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_SUB_LOCATION
 import com.hartwig.actin.report.pdf.getCellContents
-import com.hartwig.actin.report.pdf.getWrappedTable
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-
-private const val WIDTH = 10F
 
 class EligibleApprovedTreatmentGeneratorTest {
 
@@ -61,7 +58,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             treatmentMatch,
             EnvironmentConfiguration.create(null)
         )
-        return getWrappedTable(EligibleApprovedTreatmentGenerator(report, WIDTH))
+        return EligibleApprovedTreatmentGenerator(report).contents()
     }
 }
 

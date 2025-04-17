@@ -3,8 +3,8 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
@@ -37,11 +37,11 @@ class TrialMatchingOtherResultsChapter(
 
     private fun addOtherTrialMatchingResults(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        addGenerators(createGenerators(), table, false)
+        TableGeneratorFunctions.addGenerators(createTrialTableGenerators(), table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }
 
-    fun createGenerators(): List<TableGenerator> {
+    fun createTrialTableGenerators(): List<TableGenerator> {
         val requestingSource = TrialSource.fromDescription(report.requestingHospital)
         val externalTrials = trialsProvider.externalTrials()
 
@@ -53,22 +53,21 @@ class TrialMatchingOtherResultsChapter(
             ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered),
             externalTrials.excludedNationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
             requestingSource,
-            report.config.countryOfReference,
-            contentWidth()
+            report.config.countryOfReference
         ).takeIf { externalTrialsOnly }
+
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
             emptyList(),
             ExternalTrialSummarizer.summarize(externalTrials.internationalTrials.filtered),
             externalTrials.excludedInternationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
             requestingSource,
             null,
-            contentWidth(),
             false
         ).takeIf { externalTrialsOnly }
+
         val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(
             ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials()),
-            report.config.countryOfReference,
-            contentWidth()
+            report.config.countryOfReference
         )
 
         return localTrialGenerators + listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator) + filteredTrialGenerator
@@ -81,17 +80,15 @@ class TrialMatchingOtherResultsChapter(
     ): List<TrialTableGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
 
-        val eligibleActinTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(
-            nonIgnoredCohorts, source, contentWidth()
-        )
-        val ineligibleActinTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source, contentWidth())
+        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(nonIgnoredCohorts, source)
+        val ineligibleTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source)
         val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialGenerator.forNonEvaluableAndIgnoredCohorts(
-            ignoredCohorts, nonEvaluableCohorts, source, contentWidth()
+            ignoredCohorts, nonEvaluableCohorts, source
         )
 
         return listOfNotNull(
-            eligibleActinTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
-            ineligibleActinTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
+            eligibleTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
+            ineligibleTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
             nonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) })
     }
 }

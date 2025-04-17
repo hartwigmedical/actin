@@ -5,21 +5,14 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
-
-private const val SMALL_PADDING_DISTANCE = 0.1f
-private const val NORMAL_PADDING_DISTANCE = 1f
 
 class IneligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val requestingSource: TrialSource?,
     private val title: String,
     private val footNote: String?,
-    private val trialColWidth: Float,
-    private val subTableWidths: FloatArray,
-    private val includeIneligibilityReasonCol: Boolean,
-    private val paddingDistance: Float,
+    private val includeIneligibilityColumn: Boolean,
     private val allowDeEmphasis: Boolean
 ) : TrialTableGenerator {
 
@@ -27,99 +20,91 @@ class IneligibleTrialGenerator(
         return title
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(trialColWidth, subTableWidths.sum())
-        val subTableHeaders =
-            listOfNotNull("Cohort", "Molecular", "Sites", "Ineligibility reasons".takeIf { includeIneligibilityReasonCol })
-        if (cohorts.isNotEmpty()) {
-            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
-            val subTable = Tables.createFixedWidthCols(*subTableWidths)
-            subTableHeaders.map(Cells::createHeader).forEach(subTable::addHeaderCell)
-            table.addHeaderCell(Cells.createContentNoBorder(subTable))
+        val trialColWidth = 1f
+        val cohortColWidth = 2f
+        val molecularColWidth = 1f
+        val locationColWidth = 1f
+        val ineligibilityColWidth = 3f
+
+        val table =
+            if (includeIneligibilityColumn) {
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, ineligibilityColWidth)
+            } else {
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
+            }
+
+        table.addHeaderCell(Cells.createHeader("Trial"))
+        table.addHeaderCell(Cells.createHeader("Cohort"))
+        table.addHeaderCell(Cells.createHeader("Molecular"))
+        table.addHeaderCell(Cells.createHeader("Sites"))
+        if (includeIneligibilityColumn) {
+            table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
+        
         addTrialsToTable(
-            cohorts,
+            table = table,
+            cohorts = cohorts,
             externalTrials = emptySet(),
-            requestingSource,
+            requestingSource = requestingSource,
             countryOfReference = null,
-            table,
-            subTableWidths,
-            InterpretedCohort::fails,
-            includeIneligibilityReasonCol,
-            paddingDistance,
-            allowDeEmphasis
+            includeFeedback = includeIneligibilityColumn,
+            feedbackFunction = InterpretedCohort::fails,
+            allowDeEmphasis = allowDeEmphasis
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
         }
-        return makeWrapping(table)
+        return table
     }
 
-    override fun getCohortSize(): Int {
+    override fun cohortSize(): Int {
         return cohorts.size
     }
 
     companion object {
+        
         fun forEvaluableCohorts(
-            cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, width: Float, openOnly: Boolean = false
+            cohorts: List<InterpretedCohort>,
+            requestingSource: TrialSource?,
+            openOnly: Boolean = false
         ): IneligibleTrialGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
-            val (trialColWidth, subTableWidths) = getColumnWidths(width, true)
-            val title =
-                "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
+            val title = "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
             val footNote = if (!openOnly) {
                 "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
             } else null
+            
             return IneligibleTrialGenerator(
-                ineligibleCohorts,
-                requestingSource,
-                title,
-                footNote,
-                trialColWidth,
-                subTableWidths,
-                true,
-                paddingDistance = NORMAL_PADDING_DISTANCE,
-                true
+                cohorts = ineligibleCohorts,
+                requestingSource = requestingSource,
+                title = title,
+                footNote = footNote,
+                includeIneligibilityColumn = true,
+                allowDeEmphasis = true
             )
         }
 
         fun forNonEvaluableAndIgnoredCohorts(
             ignoredCohorts: List<InterpretedCohort>,
             nonEvaluableCohorts: List<InterpretedCohort>,
-            requestingSource: TrialSource?,
-            width: Float,
+            requestingSource: TrialSource?
         ): IneligibleTrialGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
-            val (trialColWidth, subTableWidths) = getColumnWidths(width, false)
-            val title =
-                "Trials and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
-            return IneligibleTrialGenerator(
-                nonEvaluableAndIgnoredCohorts,
-                requestingSource,
-                title,
-                footNote = null,
-                trialColWidth,
-                subTableWidths,
-                false,
-                paddingDistance = SMALL_PADDING_DISTANCE,
-                false
-            )
-        }
+            val title = "Trials and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
 
-        private fun getColumnWidths(
-            width: Float, includeIneligibilityReason: Boolean = false
-        ): Pair<Float, FloatArray> = width.let { w ->
-            val trialWidth = if (includeIneligibilityReason) w / 9 else w / 4
-            val cohortWidth = if (includeIneligibilityReason) w / 4 else w / 2
-            val molecularWidth = if (includeIneligibilityReason) w / 7 else w / 4
-            val sitesWidth = if (includeIneligibilityReason) w / 7 else w / 4
-            val remainingWidth = w - (trialWidth + cohortWidth + molecularWidth + sitesWidth)
-            trialWidth to listOfNotNull(
-                cohortWidth,
-                molecularWidth,
-                sitesWidth,
-                remainingWidth.takeIf { includeIneligibilityReason }
-            ).toFloatArray()
+            return IneligibleTrialGenerator(
+                cohorts = nonEvaluableAndIgnoredCohorts,
+                requestingSource = requestingSource,
+                title = title,
+                footNote = null,
+                includeIneligibilityColumn = false,
+                allowDeEmphasis = false
+            )
         }
     }
 }

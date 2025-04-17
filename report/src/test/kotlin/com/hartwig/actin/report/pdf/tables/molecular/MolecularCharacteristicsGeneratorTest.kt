@@ -8,8 +8,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-const val WIDTH = 1f
-
 class MolecularCharacteristicsGeneratorTest {
 
     @Test
@@ -21,7 +19,7 @@ class MolecularCharacteristicsGeneratorTest {
             brca1Value = 0.0,
             brca2Value = 0.0
         )
-        assertThat(MolecularCharacteristicsGenerator(test, WIDTH).createHRStatusString()).isEqualTo("Proficient (0)")
+        assertThat(MolecularCharacteristicsGenerator(test).createHRStatusString()).isEqualTo("Proficient (0)")
     }
 
     @Test
@@ -34,8 +32,7 @@ class MolecularCharacteristicsGeneratorTest {
                 brca1Value = 0.75,
                 brca2Value = 0.06123
             )
-        assertThat(MolecularCharacteristicsGenerator(cannotBeDetermined, WIDTH).createHRStatusString())
-            .isEqualTo("Deficient (0.81)")
+        assertThat(MolecularCharacteristicsGenerator(cannotBeDetermined).createHRStatusString()).isEqualTo("Deficient (0.81)")
     }
 
     @Test
@@ -56,9 +53,9 @@ class MolecularCharacteristicsGeneratorTest {
                 brca1Value = 0.03123,
                 brca2Value = 0.78
             )
-        assertThat(MolecularCharacteristicsGenerator(brca1Type, WIDTH).createHRStatusString())
+        assertThat(MolecularCharacteristicsGenerator(brca1Type).createHRStatusString())
             .isEqualTo("Deficient (0.81) - BRCA1-type (BRCA1 value: 0.75)")
-        assertThat(MolecularCharacteristicsGenerator(brca2Type, WIDTH).createHRStatusString())
+        assertThat(MolecularCharacteristicsGenerator(brca2Type).createHRStatusString())
             .isEqualTo("Deficient (0.81) - BRCA2-type (BRCA2 value: 0.78)")
     }
 

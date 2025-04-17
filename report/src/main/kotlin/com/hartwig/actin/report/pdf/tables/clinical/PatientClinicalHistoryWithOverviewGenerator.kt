@@ -28,12 +28,16 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return "Clinical summary"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return true
+    }
+
     override fun contents(): Table {
         val record = report.patientRecord
         val pharmaco = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco
-        val mainTable = Tables.createSingleColWithWidth(700f)
+        val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
 
-        val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth)
+        val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
         listOf(
             "Gender" to record.patient.gender.display(),
             "Birth year" to record.patient.birthYear.toString(),
@@ -43,8 +47,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
             "Stage" to stage(record.tumor),
             "Measurable disease (RECIST)" to measurableDisease(record.tumor),
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),
-            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1),
-            "\n" to "\n"
+            "\n" to "\n",
+            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1)
         ).forEach { (key, value) ->
             clinicalSummaryTable.addCell(createKey(key))
             clinicalSummaryTable.addCell(createValue(value))
@@ -56,9 +60,9 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val molecularRecord = record.molecularHistory.latestOrangeMolecularRecord()
         clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
-        mainTable.addCell(create(clinicalSummaryTable))
-        mainTable.addCell(create(clinicalHistoryTable))
-        return mainTable
+        table.addCell(create(clinicalSummaryTable))
+        table.addCell(create(clinicalHistoryTable))
+        return table
     }
 
     private fun whoStatus(who: Int?): String {
