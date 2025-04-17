@@ -18,11 +18,7 @@ class GeneHasVariantInExonRangeOfType(
 ) : MolecularEvaluationFunction(
     targetCoveragePredicate = atLeast(
         MolecularTestTarget.MUTATION,
-        messagePrefix = "Mutation in exon range $minExon to $maxExon${
-            if (requiredVariantType != null) generateRequiredVariantTypeMessage(
-                requiredVariantType
-            ) else ""
-        } in"
+        messagePrefix = "Mutation in exon range $minExon to $maxExon${generateRequiredVariantTypeMessage(requiredVariantType)} in"
     ), maxTestAge = maxTestAge
 ) {
 
@@ -190,9 +186,8 @@ class GeneHasVariantInExonRangeOfType(
 }
 
 private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
-    return if (requiredVariantType == null) {
-        ""
-    } else when (requiredVariantType) {
+    return when (requiredVariantType) {
+        null -> ""
         VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
             " of type $requiredVariantType"
         }

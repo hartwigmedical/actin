@@ -25,9 +25,16 @@ class PanelSpecificationsTest {
     fun `Should resolve a panels specification from the set of all specification by name`() {
         val panelName = "panel"
         val geneName = "gene"
-        val specifications =
-            PanelSpecifications(mapOf(panelName to listOf(PanelGeneSpecification(geneName, listOf(MolecularTestTarget.MUTATION)))))
-        val specification = specifications.genesForPanel(panelName)
+        val specification = PanelSpecifications(
+            mapOf(
+                panelName to listOf(
+                    PanelGeneSpecification(
+                        geneName,
+                        listOf(MolecularTestTarget.MUTATION)
+                    )
+                )
+            )
+        ).genesForPanel(panelName)
         assertThat(specification.testsGene(geneName) { it == listOf(MolecularTestTarget.MUTATION) })
     }
 

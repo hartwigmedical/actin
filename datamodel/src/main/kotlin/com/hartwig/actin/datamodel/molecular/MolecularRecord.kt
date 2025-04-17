@@ -31,8 +31,8 @@ data class MolecularRecord(
 
     private fun isTestedInTargetedPanel(
         gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>
-    ) = (specification?.testsGene(gene, molecularTestTargets)
-        ?: throw IllegalStateException("If experiment type is ${ExperimentType.HARTWIG_TARGETED} then a panel specification must be included"))
+    ) = specification?.testsGene(gene, molecularTestTargets)
+        ?: throw IllegalStateException("If experiment type is ${ExperimentType.HARTWIG_TARGETED} then a panel specification must be included")
 
     override fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity

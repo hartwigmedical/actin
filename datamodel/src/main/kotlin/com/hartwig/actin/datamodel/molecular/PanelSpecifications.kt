@@ -12,9 +12,10 @@ data class PanelSpecification(private val geneTargetMap: Map<String, List<Molecu
 
 class PanelSpecifications(panelGeneSpecifications: Map<String, List<PanelGeneSpecification>>) {
 
-    private val panelSpecifications: Map<String, PanelSpecification> = panelGeneSpecifications.entries.associate {
-        it.key to PanelSpecification(
-            it.value.groupBy(PanelGeneSpecification::geneName).mapValues { v -> v.value.flatMap { c -> c.targets } })
+
+    private val panelSpecifications: Map<String, PanelSpecification> = panelGeneSpecifications.mapValues { (_, specs) ->
+        PanelSpecification(
+            specs.groupBy(PanelGeneSpecification::geneName).mapValues { it.value.flatMap(PanelGeneSpecification::targets) })
     }
 
     fun genesForPanel(panelName: String): PanelSpecification {

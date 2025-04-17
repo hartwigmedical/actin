@@ -12,7 +12,7 @@ private const val GENE = "GENE"
 class TargetCoveragePredicateTest {
 
     @Test
-    fun `Should test for all targets when any predicate`() {
+    fun `Should test for all targets when ALL predicate`() {
         val predicate = all(PREFIX)
         assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION))).isFalse()
         assertThat(predicate.test(MolecularTestTarget.entries)).isTrue()
@@ -20,7 +20,7 @@ class TargetCoveragePredicateTest {
     }
 
     @Test
-    fun `Should test for any targets when any predicate`() {
+    fun `Should test for any targets when ANY predicate`() {
         val predicate = any(PREFIX)
         assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isTrue()
@@ -30,7 +30,7 @@ class TargetCoveragePredicateTest {
     }
 
     @Test
-    fun `Should test for all of list of targets when and predicate`() {
+    fun `Should test for all of list of targets when AND predicate`() {
         val predicate = and(MolecularTestTarget.FUSION, MolecularTestTarget.MUTATION, messagePrefix = PREFIX)
         assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isFalse()
@@ -38,7 +38,7 @@ class TargetCoveragePredicateTest {
     }
 
     @Test
-    fun `Should test for one of list of targets when or predicate`() {
+    fun `Should test for one of list of targets when OR predicate`() {
         val predicate = or(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION, messagePrefix = PREFIX)
         assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION, MolecularTestTarget.AMPLIFICATION))).isTrue()
@@ -48,7 +48,7 @@ class TargetCoveragePredicateTest {
     }
 
     @Test
-    fun `Should test for single target when at least predicate`() {
+    fun `Should test for single target when AT LEAST predicate`() {
         val predicate = atLeast(MolecularTestTarget.MUTATION, PREFIX)
         assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isFalse()
