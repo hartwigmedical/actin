@@ -11,7 +11,12 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import java.time.LocalDate
 
-abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useInsufficientQualityRecords: Boolean = false) :
+abstract class MolecularEvaluationFunction(
+    maxTestAge: LocalDate? = null,
+    useInsufficientQualityRecords: Boolean = false,
+    open val gene: String? = null,
+    val targetCoveragePredicate: TargetCoveragePredicate = any(),
+) :
     EvaluationFunction {
 
     private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
@@ -26,9 +31,9 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
             )
         } else {
 
-            if (gene()?.let { g -> recentMolecularTests.any { t -> t.testsGene(g, targetCoveragePredicate()) } } == false)
+            if (gene?.let { g -> recentMolecularTests.any { t -> t.testsGene(g, targetCoveragePredicate) } } == false)
                 return EvaluationFactory.undetermined(
-                    "Gene ${gene()} not tested for ${targetCoveragePredicate()}",
+                    targetCoveragePredicate.message(gene!!),
                     isMissingMolecularResultForEvaluation = true
                 )
 
@@ -52,8 +57,6 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
     open fun evaluate(molecularHistory: MolecularHistory): Evaluation? = null
     open fun evaluate(molecular: MolecularRecord): Evaluation? = null
     open fun evaluate(test: MolecularTest): Evaluation? = null
-    open fun gene(): String? = null
-    open fun targetCoveragePredicate(): TargetCoveragePredicate = any()
     open fun evaluationPrecedence(): (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? =
         { MolecularEvaluation.defaultEvaluationPrecedence(it) }
 }

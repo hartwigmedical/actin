@@ -11,10 +11,10 @@ import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import java.time.LocalDate
 
-class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
-
-    override fun gene() = gene
-    override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.MUTATION)
+class GeneHasUTR3Loss(override val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(
+    targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, "3' UTR loss in"),
+    maxTestAge = maxTestAge
+) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = test.drivers.variants.filter { variant ->

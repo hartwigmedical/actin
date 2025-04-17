@@ -42,14 +42,13 @@ class MolecularEvaluationFunctionTest {
         }
     }
 
-    private val functionWithGene = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun gene() = "GENE"
-    }
+    private val functionWithGene = object : MolecularEvaluationFunction(gene = "GENE", useInsufficientQualityRecords = false) {}
 
-    private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun gene() = "GENE"
-        override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.FUSION)
-    }
+    private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(
+        gene = "GENE",
+        targetCoveragePredicate = atLeast(MolecularTestTarget.FUSION, messagePrefix = "Test in"),
+        useInsufficientQualityRecords = false
+    ) {}
 
     @Test
     fun `Should return no molecular results message when no ORANGE nor other molecular data`() {
@@ -104,7 +103,7 @@ class MolecularEvaluationFunctionTest {
         val patient = withPanelTest()
         val evaluation = functionWithGene.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Gene GENE not tested for fusions, mutations, amplifications or deletions")
+        assertThat(evaluation.undeterminedMessages).containsExactly("GENE undetermined (not tested for fusions, mutations, amplifications or deletions)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 
@@ -117,13 +116,18 @@ class MolecularEvaluationFunctionTest {
                     molecularHistory = MolecularHistory(
                         listOf(
                             TestMolecularFactory.createMinimalTestPanelRecord()
-                                .copy(specification = TestMolecularFactory.panelSpecifications(setOf("GENE"), listOf( MolecularTestTarget.MUTATION)))
+                                .copy(
+                                    specification = TestMolecularFactory.panelSpecifications(
+                                        setOf("GENE"),
+                                        listOf(MolecularTestTarget.MUTATION)
+                                    )
+                                )
                         )
                     )
                 )
             )
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Gene GENE not tested for fusions")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Test in GENE undetermined (not tested for fusions)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 

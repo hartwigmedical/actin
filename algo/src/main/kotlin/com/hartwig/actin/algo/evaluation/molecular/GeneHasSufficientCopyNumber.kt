@@ -44,11 +44,15 @@ private enum class CopyNumberEvaluation {
     }
 }
 
-class GeneHasSufficientCopyNumber(private val gene: String, private val requestedMinCopyNumber: Int, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge) {
-
-    override fun gene() = gene
-    override fun targetCoveragePredicate() = or(MolecularTestTarget.AMPLIFICATION, MolecularTestTarget.DELETION)
+class GeneHasSufficientCopyNumber(override val gene: String, private val requestedMinCopyNumber: Int, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(
+        targetCoveragePredicate = or(
+            MolecularTestTarget.AMPLIFICATION,
+            MolecularTestTarget.MUTATION,
+            messagePrefix = "Sufficient copy number in"
+        ),
+        maxTestAge = maxTestAge
+    ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val targetCopyNumbers = test.drivers.copyNumbers.filter { it.gene == gene }

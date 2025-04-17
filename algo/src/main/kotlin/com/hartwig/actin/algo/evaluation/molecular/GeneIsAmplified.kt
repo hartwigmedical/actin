@@ -51,11 +51,11 @@ private enum class AmplificationEvaluation {
     }
 }
 
-class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge) {
-
-    override fun gene() = gene
-    override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.AMPLIFICATION)
+class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(
+        targetCoveragePredicate = atLeast(MolecularTestTarget.AMPLIFICATION, "Amplification of"),
+        maxTestAge = maxTestAge
+    ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val ploidy = test.characteristics.ploidy ?: return EvaluationFactory.fail("Amplification for $gene undetermined (ploidy missing)")

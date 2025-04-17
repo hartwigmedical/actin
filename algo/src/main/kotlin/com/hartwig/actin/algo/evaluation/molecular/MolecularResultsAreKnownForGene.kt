@@ -67,6 +67,6 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
     }
 
     private fun isGeneTestedInPanel(molecularHistory: MolecularHistory): Boolean {
-        return molecularHistory.allPanels().any { it.testsGene(gene, any()) }
+        return molecularHistory.allPanels().any { it.testsGene(gene, any("Test coverage of")) }
     }
 }

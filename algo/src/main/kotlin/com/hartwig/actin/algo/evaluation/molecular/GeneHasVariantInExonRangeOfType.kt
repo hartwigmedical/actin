@@ -13,10 +13,18 @@ import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import java.time.LocalDate
 
 class GeneHasVariantInExonRangeOfType(
-    private val gene: String, private val minExon: Int, private val maxExon: Int,
-    private val requiredVariantType: VariantTypeInput?,
+    override val gene: String, private val minExon: Int, private val maxExon: Int, private val requiredVariantType: VariantTypeInput?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+) : MolecularEvaluationFunction(
+    targetCoveragePredicate = atLeast(
+        MolecularTestTarget.MUTATION,
+        messagePrefix = "Mutation in exon range $minExon to $maxExon${
+            if (requiredVariantType != null) generateRequiredVariantTypeMessage(
+                requiredVariantType
+            ) else ""
+        } in"
+    ), maxTestAge = maxTestAge
+) {
 
     private enum class VariantClassification {
         CANONICAL_HIGH_DRIVER,
@@ -25,9 +33,6 @@ class GeneHasVariantInExonRangeOfType(
         REPORTABLE_OTHER,
         NONE
     }
-
-    override fun gene() = gene
-    override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.MUTATION)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
@@ -153,24 +158,6 @@ class GeneHasVariantInExonRangeOfType(
         }
     }
 
-    private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
-        return if (requiredVariantType == null) {
-            ""
-        } else when (requiredVariantType) {
-            VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
-                " of type $requiredVariantType"
-            }
-
-            VariantTypeInput.INSERT -> {
-                " of type insertion"
-            }
-
-            VariantTypeInput.DELETE -> {
-                " of type deletion"
-            }
-        }
-    }
-
     private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
         return if (requiredVariantType == null) {
             VariantType.entries.toSet()
@@ -198,6 +185,24 @@ class GeneHasVariantInExonRangeOfType(
             else -> {
                 throw IllegalStateException("Could not map required variant type: $requiredVariantType")
             }
+        }
+    }
+}
+
+private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
+    return if (requiredVariantType == null) {
+        ""
+    } else when (requiredVariantType) {
+        VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
+            " of type $requiredVariantType"
+        }
+
+        VariantTypeInput.INSERT -> {
+            " of type insertion"
+        }
+
+        VariantTypeInput.DELETE -> {
+            " of type deletion"
         }
     }
 }

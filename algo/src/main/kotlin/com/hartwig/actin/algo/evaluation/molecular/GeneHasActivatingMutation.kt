@@ -43,14 +43,13 @@ data class ActivationProfile(
 private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation(
-    private val gene: String,
+    override val gene: String,
     private val codonsToIgnore: List<String>?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
-
-    override fun gene() = gene
-    override fun targetCoveragePredicate() = atLeast(MolecularTestTarget.MUTATION)
-
+) : MolecularEvaluationFunction(
+    targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in"),
+    maxTestAge = maxTestAge
+) {
     override fun evaluate(test: MolecularTest): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         val evidenceSource = test.evidenceSource
