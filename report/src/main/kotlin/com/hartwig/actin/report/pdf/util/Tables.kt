@@ -40,7 +40,7 @@ object Tables {
                     .setPaddingBottom(5f)
             ).setSkipLastFooter(true)
 
-            val wrappingTable = Table(1).setWidth(contentTable.width).setMarginBottom(10f)
+            val wrappingTable = createSingleColWithWidth(contentTable.width.value).setMarginBottom(10f)
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
             wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(contentTable).setPadding(0f))
 

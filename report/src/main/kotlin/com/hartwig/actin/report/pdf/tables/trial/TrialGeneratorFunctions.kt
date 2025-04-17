@@ -82,7 +82,7 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean
     ) {
-        table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis))
+        table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis).setKeepTogether(true))
 
         contentForTrialCohortList(
             cohortsForTrial = cohortsForTrial,

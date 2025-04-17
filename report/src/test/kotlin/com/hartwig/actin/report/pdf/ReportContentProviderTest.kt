@@ -204,7 +204,7 @@ class ReportContentProviderTest {
 
     private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
         val trialMatchingChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
-        val generators = trialMatchingChapter.createGenerators()
+        val generators = trialMatchingChapter.createTrialTableGenerators()
         val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
         
         val totalCohortSizeOnReport =

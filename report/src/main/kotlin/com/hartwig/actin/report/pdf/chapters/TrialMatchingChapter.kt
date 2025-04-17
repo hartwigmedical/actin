@@ -37,11 +37,11 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        TableGeneratorFunctions.addGenerators(createGenerators(), table, overrideTitleFormatToSubtitle = false)
+        TableGeneratorFunctions.addGenerators(createTrialTableGenerators(), table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }
 
-    fun createGenerators(): List<TableGenerator> {
+    fun createTrialTableGenerators(): List<TableGenerator> {
         val requestingSource = TrialSource.fromDescription(report.requestingHospital)
         val externalTrials = trialsProvider.externalTrials()
 
@@ -80,15 +80,15 @@ class TrialMatchingChapter(
     ): List<TrialTableGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
 
-        val eligibleActinTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(nonIgnoredCohorts, source)
-        val ineligibleActinTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source)
+        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(nonIgnoredCohorts, source)
+        val ineligibleTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source)
         val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialGenerator.forNonEvaluableAndIgnoredCohorts(
             ignoredCohorts, nonEvaluableCohorts, source
         )
 
         return listOfNotNull(
-            eligibleActinTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
-            ineligibleActinTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
+            eligibleTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
+            ineligibleTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
             nonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) })
     }
 }

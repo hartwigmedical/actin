@@ -52,8 +52,8 @@ class IneligibleTrialGenerator(
             externalTrials = emptySet(),
             requestingSource = requestingSource,
             countryOfReference = null,
-            feedbackFunction = InterpretedCohort::fails,
             includeFeedback = includeIneligibilityColumn,
+            feedbackFunction = InterpretedCohort::fails,
             allowDeEmphasis = allowDeEmphasis
         )
         if (footNote != null) {
