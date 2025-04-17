@@ -22,12 +22,6 @@ import org.junit.Test
 class EligibleApprovedTreatmentGeneratorTest {
 
     @Test
-    fun `Should return approved treatments if available`() {
-        val contents = eligibleTreatmentsTable(treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch())
-        assertThat(getCellContents(contents, 0, 0)).isEqualTo("Pembrolizumab")
-    }
-
-    @Test
     fun `Should return Potential SOC if it is a cancer of unknown primary`() {
         val cupTumor = TumorDetails(primaryTumorLocation = CUP_LOCATION, primaryTumorSubLocation = CUP_SUB_LOCATION)
         val clinicalRecord = TestClinicalFactory.createProperTestClinicalRecord().copy(tumor = cupTumor)

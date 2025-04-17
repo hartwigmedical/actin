@@ -115,7 +115,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
     }
 
     private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>?, gene: PharmacoGene): String {
-        val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
+        val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_NOT_AVAILABLE
         return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function.display()})" }
     }
 

@@ -14,7 +14,7 @@ import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class TrialMatchingChapter(
+class TrialMatchingOtherResultsChapter(
     private val report: Report,
     private val includeIneligibleTrialsInSummary: Boolean,
     private val externalTrialsOnly: Boolean,
@@ -23,7 +23,7 @@ class TrialMatchingChapter(
 ) : ReportChapter {
 
     override fun name(): String {
-        return "Trial Matching Overview"
+        return "Other Trial Matching Results"
     }
 
     override fun pageSize(): PageSize {
@@ -32,10 +32,10 @@ class TrialMatchingChapter(
 
     override fun render(document: Document) {
         addChapterTitle(document)
-        addTrialMatchingOverview(document)
+        addOtherTrialMatchingResults(document)
     }
 
-    private fun addTrialMatchingOverview(document: Document) {
+    private fun addOtherTrialMatchingResults(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         TableGeneratorFunctions.addGenerators(createTrialTableGenerators(), table, overrideTitleFormatToSubtitle = false)
         document.add(table)

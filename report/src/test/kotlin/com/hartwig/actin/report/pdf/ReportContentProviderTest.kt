@@ -14,7 +14,7 @@ import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
-import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
@@ -78,7 +78,7 @@ class ReportContentProviderTest {
             SummaryChapter::class,
             MolecularDetailsChapter::class,
             ClinicalDetailsChapter::class,
-            TrialMatchingChapter::class,
+            TrialMatchingOtherResultsChapter::class,
         )
     }
 
@@ -90,7 +90,7 @@ class ReportContentProviderTest {
             SummaryChapter::class,
             MolecularDetailsChapter::class,
             ClinicalDetailsChapter::class,
-            TrialMatchingChapter::class,
+            TrialMatchingOtherResultsChapter::class,
             TrialMatchingDetailsChapter::class
         )
     }
@@ -108,7 +108,7 @@ class ReportContentProviderTest {
             ResistanceEvidenceChapter::class,
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
-            TrialMatchingChapter::class
+            TrialMatchingOtherResultsChapter::class
         )
     }
 
@@ -126,7 +126,7 @@ class ReportContentProviderTest {
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
             EfficacyEvidenceDetailsChapter::class,
-            TrialMatchingChapter::class
+            TrialMatchingOtherResultsChapter::class
         )
     }
 
@@ -205,6 +205,8 @@ class ReportContentProviderTest {
     private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
         val trialMatchingChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
         val generators = trialMatchingChapter.createTrialTableGenerators()
+        val trialMatchingOtherResultsChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingOtherResultsChapter>().first()
+        val generators = trialMatchingOtherResultsChapter.createGenerators()
         val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
         
         val totalCohortSizeOnReport =
