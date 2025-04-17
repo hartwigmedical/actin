@@ -139,7 +139,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         if (wgsMolecular?.isContaminated == true) {
             return Formats.VALUE_NOT_AVAILABLE
         } else {
-            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
+            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_NOT_AVAILABLE
             return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function.display()})" }
         }
     }
