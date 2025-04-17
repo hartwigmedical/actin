@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
+import com.hartwig.actin.report.interpretation.InterpretedCohortFunctions
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.countryNamesWithCities
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.hospitalsAndCitiesInCountry
 import com.hartwig.actin.report.pdf.util.Cells
@@ -22,8 +23,10 @@ import com.itextpdf.layout.element.Text
 const val MAX_TO_DISPLAY = 3
 const val MANY_SEE_LINK = "3+ locations - see link"
 
-object TrialGeneratorFunctions {
+data class ContentDefinition(val textEntries: List<String>, val deEmphasizeContent: Boolean)
 
+object TrialGeneratorFunctions {
+    
     fun addTrialsToTable(
         table: Table,
         cohorts: List<InterpretedCohort>,
@@ -99,7 +102,7 @@ object TrialGeneratorFunctions {
                     } ?: Cells.createContent(Paragraph().addAll(trialLabelText))
                 )
             }
-            ActinTrialContentFunctions.contentForTrialCohortList(
+            contentForTrialCohortList(
                 cohorts = cohortList,
                 includeFeedback = includeFeedback,
                 feedbackFunction = feedbackFunction,
@@ -115,6 +118,8 @@ object TrialGeneratorFunctions {
         }
     }
 
+    private fun trialIdIsNotAcronym(cohort: InterpretedCohort) = cohort.trialId.trimIndent() != cohort.acronym
+    
     private fun addContentListToTable(
         table: Table,
         rowContainsTrialIdentificationCell: Boolean,
@@ -141,5 +146,73 @@ object TrialGeneratorFunctions {
         }.forEach(table::addCell)
     }
 
-    private fun trialIdIsNotAcronym(cohort: InterpretedCohort) = cohort.trialId.trimIndent() != cohort.acronym
+    fun contentForTrialCohortList(
+        cohorts: List<InterpretedCohort>,
+        includeFeedback: Boolean,
+        feedbackFunction: (InterpretedCohort) -> Set<String>,
+        requestingSource: TrialSource? = null
+    ): List<ContentDefinition> {
+        val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()
+        val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
+        val commonLocations = findCommonMembersInCohorts(cohorts, InterpretedCohort::locations)
+        val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
+
+        val hidePrefix = (commonFeedback.isEmpty() && commonEvents.isEmpty() && commonLocations.isEmpty()) || cohorts.size == 1
+
+        val prefix = if (hidePrefix) emptyList() else {
+            val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
+            listOf(
+                ContentDefinition(
+                    listOfNotNull(
+                        "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
+                        concat(commonEvents, allEventsEmpty && includeFeedback),
+                        concatLocations(cohorts.first().source, requestingSource, commonLocations),
+                        concat(commonFeedback).takeIf { includeFeedback }
+                    ),
+                    deEmphasizeContent
+                )
+            )
+        }
+
+        return prefix + cohorts.map { cohort: InterpretedCohort ->
+            ContentDefinition(
+                listOfNotNull(
+                    cohort.name ?: "",
+                    concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
+                    concatLocations(cohort.source, requestingSource, cohort.locations - commonLocations),
+                    if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
+                ),
+                !cohort.isOpen || !cohort.hasSlotsAvailable
+            )
+        }
+    }
+
+    private fun concatLocations(source: TrialSource?, requestingSource: TrialSource?, locations: Set<String>): String {
+        val showRequestingSite = requestingSource != null &&
+                InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(source, locations, requestingSource)
+
+        return when {
+            showRequestingSite && locations.size > MAX_TO_DISPLAY - 1 -> {
+                val otherLocationCount = locations.size - 1
+                "${requestingSource?.description} and $otherLocationCount other locations - see link"
+            }
+
+            locations.size > MAX_TO_DISPLAY -> MANY_SEE_LINK
+
+            else -> concat(locations, false)
+        }
+    }
+
+    private fun findCommonMembersInCohorts(
+        cohorts: List<InterpretedCohort>, retrieveMemberFunction: (InterpretedCohort) -> Set<String>
+    ): Set<String> {
+        return if (cohorts.size > 1) {
+            cohorts.map(retrieveMemberFunction).reduce { acc, set -> acc.intersect(set) }
+        } else emptySet()
+    }
+
+    private fun concat(strings: Set<String>, replaceEmptyWithNone: Boolean = true): String {
+        val joinedString = strings.sorted().joinToString(Formats.COMMA_SEPARATOR)
+        return if (replaceEmptyWithNone && joinedString.isEmpty()) Formats.VALUE_NONE else joinedString
+    }
 }

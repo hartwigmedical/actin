@@ -8,7 +8,7 @@ import org.junit.Test
 
 private const val APPLIES_TO_ALL_COHORTS = "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}"
 
-class ActinTrialContentFunctionsTest {
+class TrialGeneratorFunctionsTest {
 
     private val cohort1 = InterpretedCohort(
         trialId = "trial1",
@@ -44,7 +44,13 @@ class ActinTrialContentFunctionsTest {
 
     @Test
     fun `Should group common warnings for multiple cohorts in trial`() {
-        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)).isEqualTo(
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2),
+                true,
+                InterpretedCohort::warnings
+            )
+        ).isEqualTo(
             listOf(
                 ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
@@ -55,7 +61,7 @@ class ActinTrialContentFunctionsTest {
 
     @Test
     fun `Should not group warnings for trial with single cohort`() {
-        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1), InterpretedCohort::warnings)).isEqualTo(
+        assertThat(TrialGeneratorFunctions.contentForTrialCohortList(listOf(cohort1), true, InterpretedCohort::warnings)).isEqualTo(
             listOf(
                 ContentDefinition(listOf("cohort1", "MSI", "", "warning1"), true),
             )
@@ -69,7 +75,7 @@ class ActinTrialContentFunctionsTest {
             cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
         )
 
-        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(cohorts, InterpretedCohort::fails)).isEqualTo(
+        assertThat(TrialGeneratorFunctions.contentForTrialCohortList(cohorts, true, InterpretedCohort::fails)).isEqualTo(
             listOf(
                 ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
@@ -81,18 +87,22 @@ class ActinTrialContentFunctionsTest {
     @Test
     fun `Should de-emphasize content for common messages when all cohorts are unavailable`() {
         assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)
+            TrialGeneratorFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), true, InterpretedCohort::warnings)
                 .map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(false, true, false))
 
         assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2.copy(isOpen = false)), InterpretedCohort::warnings)
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2.copy(isOpen = false)),
+                true,
+                InterpretedCohort::warnings
+            )
                 .map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(true, true, true))
 
         assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(
-                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)), InterpretedCohort::warnings
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)), true, InterpretedCohort::warnings
             ).map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(true, true, true))
     }
@@ -100,7 +110,13 @@ class ActinTrialContentFunctionsTest {
     @Test
     fun `Should group common molecular events for multiple cohorts in trial`() {
         val cohort3 = cohort1.copy(name = "cohort3")
-        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort3), InterpretedCohort::warnings)).isEqualTo(
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort3),
+                true,
+                InterpretedCohort::warnings
+            )
+        ).isEqualTo(
             listOf(
                 ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "MSI", "", "warning1"), true),
                 ContentDefinition(listOf("cohort1", "", "", ""), true),
@@ -114,8 +130,9 @@ class ActinTrialContentFunctionsTest {
         val noMolecularEvent1 = cohort1.copy(molecularEvents = emptySet())
         val noMolecularEvent2 = cohort1.copy(name = "cohort3", molecularEvents = emptySet())
         assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(
+            TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(noMolecularEvent1, noMolecularEvent2),
+                true,
                 InterpretedCohort::warnings
             )
         ).isEqualTo(
@@ -129,7 +146,7 @@ class ActinTrialContentFunctionsTest {
 
     @Test
     fun `Should not group molecular events for trials with single cohort`() {
-        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1), InterpretedCohort::warnings)).isEqualTo(
+        assertThat(TrialGeneratorFunctions.contentForTrialCohortList(listOf(cohort1), true, InterpretedCohort::warnings)).isEqualTo(
             listOf(
                 ContentDefinition(listOf("cohort1", "MSI", "", "warning1"), true),
             )
@@ -138,7 +155,13 @@ class ActinTrialContentFunctionsTest {
 
     @Test
     fun `Should not create group row for multiple cohorts in trial with no common molecular events`() {
-        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)).isEqualTo(
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2),
+                true,
+                InterpretedCohort::warnings
+            )
+        ).isEqualTo(
             listOf(
                 ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
@@ -150,10 +173,10 @@ class ActinTrialContentFunctionsTest {
     @Test
     fun `Should group locations for cohorts if there are commonalities in locations between cohorts`() {
         assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(
+            TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site1"))),
-                InterpretedCohort::warnings,
-                true
+                true,
+                InterpretedCohort::warnings
             )
         ).isEqualTo(
             listOf(
@@ -167,10 +190,10 @@ class ActinTrialContentFunctionsTest {
     @Test
     fun `Should not create group row for multiple cohorts in trial with no common locations`() {
         assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(
+            TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"), warnings = emptySet())),
-                InterpretedCohort::warnings,
-                true
+                true,
+                InterpretedCohort::warnings
             )
         ).isEqualTo(
             listOf(
@@ -183,10 +206,10 @@ class ActinTrialContentFunctionsTest {
     @Test
     fun `Should put locations for cohorts on cohort row if there is only one cohort`() {
         assertThat(
-            ActinTrialContentFunctions.contentForTrialCohortList(
+            TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = setOf("site1"), warnings = emptySet())),
-                InterpretedCohort::warnings,
-                true
+                true,
+                InterpretedCohort::warnings
             )
         ).isEqualTo(
             listOf(
