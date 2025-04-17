@@ -57,9 +57,9 @@ class EligibleTrialGenerator(
             externalTrials = externalTrials,
             requestingSource = requestingSource,
             countryOfReference = countryOfReference,
+            includeFeedback = includeWarningsColumn,
             feedbackFunction = InterpretedCohort::warnings,
-            allowDeEmphasis = allowDeEmphasis,
-            includeFeedback = includeWarningsColumn
+            allowDeEmphasis = allowDeEmphasis
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -76,7 +76,7 @@ class EligibleTrialGenerator(
         fun forOpenCohorts(
             cohorts: List<InterpretedCohort>,
             externalTrials: Set<ExternalTrialSummary>,
-            filteredCount: Int,
+            externalFilteredCount: Int,
             requestingSource: TrialSource?,
             countryOfReference: Country? = null,
             forLocalTrials: Boolean = true
@@ -98,17 +98,18 @@ class EligibleTrialGenerator(
                         .takeIf { recruitingAndEligibleCohorts.any { !it.hasSlotsAvailable } },
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { externalTrials.isNotEmpty() },
-                    ("${formatCountWithLabel(filteredCount, "trial")} filtered due to eligible local trials for the same molecular " +
-                            "target or because the trial is for young adult patients only. See Trial Matching Overview for filtered matches.")
-                        .takeIf { filteredCount > 0 }
+                    ("${formatCountWithLabel(externalFilteredCount, "trial")} filtered due to eligible local trials for the same " +
+                            "molecular target or because the trial is for young adult patients only. " +
+                            "See Trial Matching Overview for filtered matches.")
+                        .takeIf { externalFilteredCount > 0 }
                 ).joinToString("\n")
             } else
                 listOfNotNull(
                     "International trials are matched solely on molecular event and tumor type (clinical data excluded)."
                         .takeIf { externalTrials.isNotEmpty() },
-                    ("${formatCountWithLabel(filteredCount, "trial")} filtered due to trials recruiting nationally for the same " +
+                    ("${formatCountWithLabel(externalFilteredCount, "trial")} filtered due to trials recruiting nationally for the same " +
                             "molecular target. See Trial Matching Overview for filtered matches.")
-                        .takeIf { filteredCount > 0 }
+                        .takeIf { externalFilteredCount > 0 }
                 ).joinToString("\n")
 
             return EligibleTrialGenerator(
@@ -155,10 +156,6 @@ class EligibleTrialGenerator(
             } else null
         }
 
-        private fun formatCountWithLabel(count: Int, word: String): String {
-            return "$count $word${if (count > 1) "s" else ""}"
-        }
-
         fun forClosedCohorts(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?): EligibleTrialGenerator {
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title = "Trials and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
@@ -188,6 +185,10 @@ class EligibleTrialGenerator(
                 allowDeEmphasis = false,
                 includeWarningsColumn = false
             )
+        }
+
+        private fun formatCountWithLabel(count: Int, word: String): String {
+            return "$count $word${if (count > 1) "s" else ""}"
         }
     }
 }

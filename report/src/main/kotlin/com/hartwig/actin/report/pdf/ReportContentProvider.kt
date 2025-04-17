@@ -160,29 +160,36 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         externalTrialSummary: ExternalTrials,
         requestingSource: TrialSource?
     ): List<TrialTableGenerator?> {
+        val localExternalTrials = ExternalTrialSummarizer.summarize(
+            externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()
+        )
+        val localExternalTrialFilteredCount = externalTrialSummary.excludedNationalTrials()
+            .groupBy { ewt -> ewt.trial.nctId }.size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0
+        
+        val remoteExternalTrials = ExternalTrialSummarizer.summarize(externalTrialSummary.internationalTrials.filtered)
+        val remoteExternalTrialFilteredCount = externalTrialSummary.excludedInternationalTrials().groupBy { ewt -> ewt.trial.nctId }.size
+        
         val localOpenCohortsGenerator = EligibleTrialGenerator.forOpenCohorts(
-            interpretedCohorts,
-            ExternalTrialSummarizer.summarize(
-                externalTrialSummary.nationalTrials.filtered.takeIf { report.config.includeExternalTrialsInSummary }.orEmpty()
-            ),
-            externalTrialSummary.excludedNationalTrials()
-                .groupBy { ewt -> ewt.trial.nctId }.size.takeIf { report.config.includeExternalTrialsInSummary } ?: 0,
-            requestingSource,
-            report.config.countryOfReference
+            cohorts = interpretedCohorts,
+            externalTrials = localExternalTrials,
+            externalFilteredCount = localExternalTrialFilteredCount,
+            requestingSource = requestingSource,
+            countryOfReference = report.config.countryOfReference,
+            forLocalTrials = true
         )
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
             EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(interpretedCohorts, requestingSource)
         val nonLocalTrialGenerator = EligibleTrialGenerator.forOpenCohorts(
-            emptyList(),
-            ExternalTrialSummarizer.summarize(externalTrialSummary.internationalTrials.filtered),
-            externalTrialSummary.excludedInternationalTrials().groupBy { ewt -> ewt.trial.nctId }.size,
-            requestingSource,
-            null,
-            false
+            cohorts = emptyList(),
+            externalTrials = remoteExternalTrials,
+            externalFilteredCount = remoteExternalTrialFilteredCount,
+            requestingSource = requestingSource,
+            countryOfReference = null,
+            forLocalTrials = false
         )
         val ineligibleTrialGenerator = IneligibleTrialGenerator.forEvaluableCohorts(
-            interpretedCohorts,
-            requestingSource,
+            cohorts = interpretedCohorts,
+            requestingSource = requestingSource,
             openOnly = true
         )
 

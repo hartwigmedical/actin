@@ -16,6 +16,7 @@ import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
@@ -26,7 +27,7 @@ const val MANY_SEE_LINK = "3+ locations - see link"
 data class ContentDefinition(val textEntries: List<String>, val deEmphasizeContent: Boolean)
 
 object TrialGeneratorFunctions {
-    
+
     fun addTrialsToTable(
         table: Table,
         cohorts: List<InterpretedCohort>,
@@ -37,8 +38,8 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean
     ) {
-        sortedCohortGroups(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
-            insertTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis)
+        sortedCohortsGroupedByTrial(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
+            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis)
         }
 
         externalTrials.forEach { trial ->
@@ -47,7 +48,7 @@ object TrialGeneratorFunctions {
             table.addCell(contentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
             table.addCell(contentFunction(trial.sourceMolecularEvents.joinToString(", ")))
             table.addCell(contentFunction(trial.actinMolecularEvents.joinToString(", ")))
-            
+
             val country = if (trial.countries.none { it.country == countryOfReference }) null else countryOfReference
             table.addCell(contentFunction(externalTrialLocation(trial, country)))
             if (includeFeedback) {
@@ -63,63 +64,67 @@ object TrialGeneratorFunctions {
         } ?: countryNamesWithCities(trial)
     }
 
-    private fun sortedCohortGroups(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?): List<List<InterpretedCohort>> {
+    private fun sortedCohortsGroupedByTrial(
+        cohorts: List<InterpretedCohort>,
+        requestingSource: TrialSource?
+    ): List<List<InterpretedCohort>> {
         val sortedCohorts = cohorts.sortedWith(InterpretedCohortComparator(requestingSource))
         val cohortsByTrialId = sortedCohorts.groupBy(InterpretedCohort::trialId)
 
         return sortedCohorts.map(InterpretedCohort::trialId).distinct().mapNotNull { cohortsByTrialId[it] }
     }
 
-    private fun insertTrial(
+    private fun insertAllCohortsForTrial(
         table: Table,
-        cohortList: List<InterpretedCohort>,
+        cohortsForTrial: List<InterpretedCohort>,
         requestingSource: TrialSource?,
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean
     ) {
-        if (cohortList.isNotEmpty()) {
-            val cohort = cohortList.first()
-            val trialLabelText = listOfNotNull(
-                Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
-                if (trialIdIsNotAcronym(cohort)) Text("\n") else null,
-                if (trialIdIsNotAcronym(cohort)) Text(cohort.acronym).addStyle(Styles.tableContentStyle()) else null,
-                cohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
-                    ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
+        table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis))
 
-            if ((cohortList.none(InterpretedCohort::hasSlotsAvailable) || cohortList.none(InterpretedCohort::isOpen)) && allowDeEmphasis) {
-                val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()) }
-                table.addCell(
-                    cohort.url?.let {
-                        Cells.createContent(Paragraph().addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
-                    } ?: Cells.createContent(Paragraph().addAll(trialLabel))
-                )
-            } else {
-                table.addCell(
-                    cohort.url?.let {
-                        Cells.createContent(Paragraph().addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) }))
-                            .setAction(PdfAction.createURI(it))
-                    } ?: Cells.createContent(Paragraph().addAll(trialLabelText))
-                )
-            }
-            contentForTrialCohortList(
-                cohorts = cohortList,
-                includeFeedback = includeFeedback,
-                feedbackFunction = feedbackFunction,
-                requestingSource = requestingSource
-            ).forEachIndexed { index, content ->
-                addContentListToTable(
-                    table,
-                    index == 0,
-                    content.textEntries,
-                    content.deEmphasizeContent && allowDeEmphasis
-                )
-            }
+        contentForTrialCohortList(
+            cohortsForTrial = cohortsForTrial,
+            includeFeedback = includeFeedback,
+            feedbackFunction = feedbackFunction,
+            requestingSource = requestingSource
+        ).forEachIndexed { index, content ->
+            addContentListToTable(
+                table,
+                index == 0,
+                content.textEntries,
+                content.deEmphasizeContent && allowDeEmphasis
+            )
         }
     }
 
-    private fun trialIdIsNotAcronym(cohort: InterpretedCohort) = cohort.trialId.trimIndent() != cohort.acronym
-    
+    private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, allowDeEmphasis: Boolean): Cell {
+        val anyCohort = cohortsForTrial.first()
+        val trialIdIsNotAcronym = anyCohort.trialId.trimIndent() != anyCohort.acronym
+        val trialLabelText = listOfNotNull(
+            Text(anyCohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
+            if (trialIdIsNotAcronym) Text("\n") else null,
+            if (trialIdIsNotAcronym) Text(anyCohort.acronym).addStyle(Styles.tableContentStyle()) else null,
+            anyCohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
+                ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
+
+        val hasNoOpenCohortsWithSlots =
+            (cohortsForTrial.none(InterpretedCohort::hasSlotsAvailable) || cohortsForTrial.none(InterpretedCohort::isOpen))
+        
+        return if (hasNoOpenCohortsWithSlots && allowDeEmphasis) {
+            val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()) }
+            anyCohort.url?.let {
+                Cells.createContent(Paragraph().addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
+            } ?: Cells.createContent(Paragraph().addAll(trialLabel))
+        } else {
+            anyCohort.url?.let {
+                Cells.createContent(Paragraph().addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) }))
+                    .setAction(PdfAction.createURI(it))
+            } ?: Cells.createContent(Paragraph().addAll(trialLabelText))
+        }
+    }
+
     private fun addContentListToTable(
         table: Table,
         rowContainsTrialIdentificationCell: Boolean,
@@ -129,7 +134,7 @@ object TrialGeneratorFunctions {
         if (!rowContainsTrialIdentificationCell) {
             table.addCell(Cells.createEmpty())
         }
-        
+
         cellContentsForRow.map {
             val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
@@ -147,26 +152,26 @@ object TrialGeneratorFunctions {
     }
 
     fun contentForTrialCohortList(
-        cohorts: List<InterpretedCohort>,
+        cohortsForTrial: List<InterpretedCohort>,
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         requestingSource: TrialSource? = null
     ): List<ContentDefinition> {
-        val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()
-        val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
-        val commonLocations = findCommonMembersInCohorts(cohorts, InterpretedCohort::locations)
-        val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
+        val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohortsForTrial, feedbackFunction) else emptySet()
+        val commonEvents = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::molecularEvents)
+        val commonLocations = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::locations)
+        val allEventsEmpty = cohortsForTrial.all { it.molecularEvents.isEmpty() }
 
-        val hidePrefix = (commonFeedback.isEmpty() && commonEvents.isEmpty() && commonLocations.isEmpty()) || cohorts.size == 1
+        val hidePrefix = (commonFeedback.isEmpty() && commonEvents.isEmpty() && commonLocations.isEmpty()) || cohortsForTrial.size == 1
 
         val prefix = if (hidePrefix) emptyList() else {
-            val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
+            val deEmphasizeContent = cohortsForTrial.all { !it.isOpen || !it.hasSlotsAvailable }
             listOf(
                 ContentDefinition(
                     listOfNotNull(
                         "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
-                        concatLocations(cohorts.first().source, requestingSource, commonLocations),
+                        concatLocations(cohortsForTrial.first().source, requestingSource, commonLocations),
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
@@ -174,7 +179,7 @@ object TrialGeneratorFunctions {
             )
         }
 
-        return prefix + cohorts.map { cohort: InterpretedCohort ->
+        return prefix + cohortsForTrial.map { cohort: InterpretedCohort ->
             ContentDefinition(
                 listOfNotNull(
                     cohort.name ?: "",
