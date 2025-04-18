@@ -166,19 +166,21 @@ class EligibleTrialGenerator(
             )
         }
 
-        fun forFilteredTrials(trials: Set<ExternalTrialSummary>, countryOfReference: Country): TrialTableGenerator {
+        fun forFilteredTrials(trials: Set<ExternalTrialSummary>, countryOfReference: Country): TrialTableGenerator? {
             val title = "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${trials.size})"
 
-            return EligibleTrialGenerator(
-                cohorts = emptyList(),
-                externalTrials = trials,
-                requestingSource = null,
-                countryOfReference = countryOfReference,
-                title = title,
-                footNote = null,
-                allowDeEmphasis = false,
-                includeWarningsColumn = false
-            )
+            return if (trials.isNotEmpty()) {
+                EligibleTrialGenerator(
+                    cohorts = emptyList(),
+                    externalTrials = trials,
+                    requestingSource = null,
+                    countryOfReference = countryOfReference,
+                    title = title,
+                    footNote = null,
+                    allowDeEmphasis = false,
+                    includeWarningsColumn = false
+                )
+            } else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {
