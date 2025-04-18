@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
@@ -17,13 +18,13 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class OrangeExtractorTest {
 
-    private val interpreter = OrangeExtractor(TestGeneFilterFactory.createAlwaysValid())
+    private val interpreter = OrangeExtractor(TestGeneFilterFactory.createAlwaysValid(), PanelSpecifications(emptyMap()))
 
     @Test
     fun `Should not crash on minimal orange record`() {

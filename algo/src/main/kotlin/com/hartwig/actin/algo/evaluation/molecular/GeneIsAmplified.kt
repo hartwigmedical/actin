@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import java.time.LocalDate
 
 private const val PLOIDY_FACTOR = 3.0
@@ -50,10 +51,11 @@ private enum class AmplificationEvaluation {
     }
 }
 
-class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge) {
-
-    override fun genes() = listOf(gene)
+class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(
+        targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, "Amplification of"),
+        maxTestAge = maxTestAge
+    ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val ploidy = test.characteristics.ploidy ?: return EvaluationFactory.fail("Amplification for $gene undetermined (ploidy missing)")
@@ -77,12 +79,13 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
         return evaluatedCopyNumbers[AmplificationEvaluation.REPORTABLE_FULL_AMP]?.let { reportableFullAmps ->
             EvaluationFactory.pass("$gene is amplified$minCopyMessage", inclusionEvents = reportableFullAmps)
         }
-            ?: requestedMinCopyNumber?.let { evaluatedCopyNumbers[AmplificationEvaluation.UNREPORTABLE_AMP] }?.let { ampsThatAreUnreportable ->
-                EvaluationFactory.pass(
-                    "$gene has a copy number >$requestedMinCopyNumber copies but is considered not reportable",
-                    inclusionEvents = ampsThatAreUnreportable
-                )
-            }
+            ?: requestedMinCopyNumber?.let { evaluatedCopyNumbers[AmplificationEvaluation.UNREPORTABLE_AMP] }
+                ?.let { ampsThatAreUnreportable ->
+                    EvaluationFactory.pass(
+                        "$gene has a copy number >$requestedMinCopyNumber copies but is considered not reportable",
+                        inclusionEvents = ampsThatAreUnreportable
+                    )
+                }
             ?: evaluatePotentialWarns(evaluatedCopyNumbers, eventsOnNonCanonical, test.evidenceSource)
             ?: EvaluationFactory.fail(
                 if (requestedMinCopyNumber == null) "No amplification of $gene$minCopyMessage" else "Insufficient copies of $gene"

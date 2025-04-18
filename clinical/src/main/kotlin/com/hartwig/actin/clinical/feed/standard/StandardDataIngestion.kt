@@ -153,7 +153,6 @@ class StandardDataIngestion(
             qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
             treatmentDatabase: TreatmentDatabase,
-            panelGeneList: PanelGeneList,
             clinicalConfiguration: ClinicalConfiguration
         ) = StandardDataIngestion(
             directory,
@@ -175,8 +174,11 @@ class StandardDataIngestion(
             StandardBodyWeightExtractor(),
             StandardBodyHeightExtractor(),
             StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
-            StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
-            DataQualityMask(panelGeneList, clinicalConfiguration)
+            StandardPriorSequencingTestExtractor(
+                curationDatabaseContext.sequencingTestCuration,
+                curationDatabaseContext.sequencingTestResultCuration
+            ),
+            DataQualityMask(clinicalConfiguration)
         )
     }
 }

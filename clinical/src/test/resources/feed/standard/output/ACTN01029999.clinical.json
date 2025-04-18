@@ -186,18 +186,7 @@
   ],
   "priorSequencingTests": [
     {
-      "test": "Archer FP Lung Target",
-      "testedGenes": [
-        "ALK",
-        "ROS1",
-        "RET",
-        "MET",
-        "NTRK1",
-        "NTRK2",
-        "NTRK3",
-        "NRG1",
-        "KRAS"
-      ],
+      "test": "Archer FP - Lung",
       "date": "2024-07-15",
       "variants": [
         {

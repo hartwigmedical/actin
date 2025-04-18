@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 
 data class CurationExtractionEvaluation(
     val warnings: Set<CurationWarning> = emptySet(),
@@ -13,6 +13,7 @@ data class CurationExtractionEvaluation(
     val periodBetweenUnitEvaluatedInputs: Set<String> = emptySet(),
     val molecularTestEvaluatedInputs: Set<String> = emptySet(),
     val sequencingTestEvaluatedInputs: Set<String> = emptySet(),
+    val sequencingTestResultEvaluatedInputs: Set<String> = emptySet(),
     val medicationNameEvaluatedInputs: Set<String> = emptySet(),
     val medicationDosageEvaluatedInputs: Set<String> = emptySet(),
     val surgeryCurationEvaluatedInputs: Set<String> = emptySet(),
@@ -32,6 +33,7 @@ data class CurationExtractionEvaluation(
             periodBetweenUnitEvaluatedInputs = periodBetweenUnitEvaluatedInputs + other.periodBetweenUnitEvaluatedInputs,
             molecularTestEvaluatedInputs = molecularTestEvaluatedInputs + other.molecularTestEvaluatedInputs,
             sequencingTestEvaluatedInputs = sequencingTestEvaluatedInputs + other.sequencingTestEvaluatedInputs,
+            sequencingTestResultEvaluatedInputs = sequencingTestResultEvaluatedInputs + other.sequencingTestResultEvaluatedInputs,
             medicationNameEvaluatedInputs = medicationNameEvaluatedInputs + other.medicationNameEvaluatedInputs,
             medicationDosageEvaluatedInputs = medicationDosageEvaluatedInputs + other.medicationDosageEvaluatedInputs,
             surgeryCurationEvaluatedInputs = surgeryCurationEvaluatedInputs + other.surgeryCurationEvaluatedInputs,

@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
+import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
@@ -22,6 +23,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val TEST = "test"
+private const val CURATED_TEST = "test"
 private const val GENE = "gene"
 private const val CODING = "coding"
 private val TEST_DATE = LocalDate.of(2024, 7, 25)
@@ -31,8 +33,7 @@ private val BASE_MOLECULAR_TEST = ProvidedMolecularTest(
 )
 private val BASE_PRIOR_SEQUENCING = PriorSequencingTest(
     test = TEST,
-    date = TEST_DATE,
-    testedGenes = setOf(GENE)
+    date = TEST_DATE
 )
 private const val FUSION_GENE_UP = "fusionUp"
 private const val FUSION_GENE_DOWN = "fusionDown"
@@ -41,10 +42,11 @@ private const val FREE_TEXT = "free text"
 
 class StandardPriorSequencingTestExtractorTest {
 
-    val curation = mockk<CurationDatabase<SequencingTestConfig>> {
-        every { find("$HASHED_ID_IN_BASE64 | $TEST") } returns emptySet()
+    private val testCuration = mockk<CurationDatabase<SequencingTestConfig>> {
+        every { find(TEST) } returns setOf(SequencingTestConfig(TEST, false, CURATED_TEST))
     }
-    val extractor = StandardPriorSequencingTestExtractor(curation)
+    private val testResultCuration = mockk<CurationDatabase<SequencingTestResultConfig>>()
+    val extractor = StandardPriorSequencingTestExtractor(testCuration, testResultCuration)
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
@@ -54,7 +56,22 @@ class StandardPriorSequencingTestExtractorTest {
     }
 
     @Test
-    fun `Should extract sequencing with test, date, and tested genes`() {
+    fun `Should return curation warning when test name is not curated`() {
+        every { testCuration.find(TEST) } returns emptySet()
+        val result = extractor.extract(EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST)))
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).containsExactly(
+            CurationWarning(
+                patientId = HASHED_ID_IN_BASE64,
+                category = CurationCategory.SEQUENCING_TEST,
+                feedInput = TEST,
+                message = "Could not find sequencing test config for input 'test'"
+            )
+        )
+    }
+
+    @Test
+    fun `Should curate test name and extract sequencing with test, date, and tested genes`() {
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(
                 molecularTests = listOf(
@@ -65,9 +82,8 @@ class StandardPriorSequencingTestExtractorTest {
                 )
             )
         )
-        assertThat(result.extracted[0].testedGenes).containsExactly(GENE)
         assertThat(result.extracted[0].date).isEqualTo(TEST_DATE)
-        assertThat(result.extracted[0].test).isEqualTo(TEST)
+        assertThat(result.extracted[0].test).isEqualTo(CURATED_TEST)
     }
 
     @Test
@@ -94,7 +110,6 @@ class StandardPriorSequencingTestExtractorTest {
         assertResultContains(
             result,
             BASE_PRIOR_SEQUENCING.copy(
-                testedGenes = setOf(GENE, FUSION_GENE_UP, FUSION_GENE_DOWN),
                 fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN))
             )
         )
@@ -109,10 +124,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         assertResultContains(
             result,
-            BASE_PRIOR_SEQUENCING.copy(
-                testedGenes = setOf(GENE, AMPLIFIED_GENE),
-                amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE))
-            )
+            BASE_PRIOR_SEQUENCING.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE)))
         )
     }
 
@@ -150,30 +162,9 @@ class StandardPriorSequencingTestExtractorTest {
     }
 
     @Test
-    fun `Should combine test result genes with provided tested genes`() {
-        val variantGene = "variantGene"
-        val noMutationsGene = "noMutationsGene"
-        val impliedNoMutationGene = "impliedNoMutationGene"
-        val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(
-                molecularTests = listOf(
-                    BASE_MOLECULAR_TEST.copy(
-                        testedGenes = setOf(impliedNoMutationGene),
-                        results = setOf(
-                            ProvidedMolecularTestResult(gene = variantGene, hgvsProteinImpact = "proteinImpact"),
-                            ProvidedMolecularTestResult(gene = noMutationsGene, noMutationsFound = true)
-                        )
-                    )
-                )
-            )
-        )
-        assertThat(result.extracted[0].testedGenes).containsExactlyInAnyOrder(variantGene, noMutationsGene, impliedNoMutationGene)
-    }
-
-    @Test
     fun `Should curate any free text results`() {
-        every { curation.find(FREE_TEXT) } returns setOf(
-            SequencingTestConfig(
+        every { testResultCuration.find(FREE_TEXT) } returns setOf(
+            SequencingTestResultConfig(
                 input = FREE_TEXT,
                 curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
             )
@@ -188,30 +179,30 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should return curation warnings for uncurated free text when all other fields are null`() {
-        every { curation.find(FREE_TEXT) } returns emptySet()
+        every { testResultCuration.find(FREE_TEXT) } returns emptySet()
         val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).hasSize(1)
         assertThat(result.evaluation.warnings.first()).isEqualTo(
             CurationWarning(
                 patientId = HASHED_ID_IN_BASE64,
-                category = CurationCategory.SEQUENCING_TEST,
+                category = CurationCategory.SEQUENCING_TEST_RESULT,
                 feedInput = FREE_TEXT,
-                message = "Could not find sequencing test config for input '$FREE_TEXT'"
+                message = "Could not find sequencing test result config for input '$FREE_TEXT'"
             )
         )
     }
 
     @Test
     fun `Should not return curation warnings for uncurated free text when some fields are not null`() {
-        every { curation.find(FREE_TEXT) } returns emptySet()
+        every { testResultCuration.find(FREE_TEXT) } returns emptySet()
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
     fun `Should respect ignore flag when curating free text`() {
-        every { curation.find(FREE_TEXT) } returns setOf(
-            SequencingTestConfig(
+        every { testResultCuration.find(FREE_TEXT) } returns setOf(
+            SequencingTestResultConfig(
                 input = FREE_TEXT,
                 ignore = true
             )
@@ -223,10 +214,11 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should allow for ignoring of full tests`() {
-        every { curation.find("$HASHED_ID_IN_BASE64 | $TEST") } returns setOf(
+        every { testCuration.find(TEST) } returns setOf(
             SequencingTestConfig(
-                input = "$HASHED_ID_IN_BASE64 | $TEST",
-                ignore = true
+                input = TEST,
+                ignore = true,
+                curatedName = "<ignore>"
             )
         )
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
@@ -235,8 +227,8 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should allow for ignoring of individual test results`() {
-        every { curation.find(FREE_TEXT) } returns setOf(
-            SequencingTestConfig(
+        every { testResultCuration.find(FREE_TEXT) } returns setOf(
+            SequencingTestResultConfig(
                 input = FREE_TEXT,
                 ignore = true
             )

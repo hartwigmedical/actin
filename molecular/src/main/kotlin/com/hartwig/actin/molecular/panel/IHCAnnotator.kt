@@ -2,7 +2,9 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelRecord
+import com.hartwig.actin.datamodel.molecular.PanelSpecification
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.MolecularAnnotator
@@ -13,7 +15,11 @@ class IHCAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
     override fun annotate(input: IHCExtraction): PanelRecord {
         return PanelRecord(
             date = input.date,
-            testedGenes = input.fusionPositiveGenes + input.fusionNegativeGenes,
+            specification = PanelSpecification((input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith {
+                listOf(
+                    MolecularTestTarget.FUSION
+                )
+            }),
             experimentType = ExperimentType.IHC,
             testTypeDisplay = ExperimentType.IHC.display(),
             drivers = Drivers(
@@ -27,7 +33,7 @@ class IHCAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
                 ),
                 viruses = emptyList()
             ),
-            characteristics = emptyCharacteristics(), 
+            characteristics = emptyCharacteristics(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             hasSufficientPurity = true,
             hasSufficientQuality = true

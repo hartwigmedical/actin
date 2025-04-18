@@ -20,11 +20,6 @@ private fun ProvidedPatientRecord.useOnlyPriorOtherConditions() = this.copy(
     tumorDetails = this.tumorDetails.copy(diagnosisDate = null, lesionSite = null)
 )
 
-private fun ProvidedPatientRecord.addAlwaysTestedGenes(panelGeneList: PanelGeneList) =
-    this.copy(molecularTests = this.molecularTests.map {
-        it.copy(testedGenes = panelGeneList.listGenesForPanel(it.test) + (it.testedGenes ?: emptySet()))
-    })
-
 private fun ProvidedPatientRecord.removeAllEmptyMolecularTestResults() =
     this.copy(molecularTests = this.molecularTests.map {
         it.copy(results = it.results.filterNot { r -> r.isAllFieldsExceptGeneNull() }.toSet())
@@ -54,11 +49,10 @@ fun ProvidedMolecularTestResult.isAllFieldsExceptGeneNull(): Boolean {
             this.vaf == null
 }
 
-class DataQualityMask(private val panelGeneList: PanelGeneList, private val clinicalConfiguration: ClinicalConfiguration) {
+class DataQualityMask(private val clinicalConfiguration: ClinicalConfiguration) {
     fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
         val masked = ehrPatientRecord.scrubMedications()
             .scrubModifications()
-            .addAlwaysTestedGenes(panelGeneList)
             .removeAllEmptyMolecularTestResults()
         return if (clinicalConfiguration.useOnlyPriorOtherConditions) {
             masked.useOnlyPriorOtherConditions()

@@ -5,6 +5,9 @@ import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
+import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
@@ -34,6 +37,8 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
 )
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 
+private const val TEST_NAME = "test"
+
 class PanelAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
@@ -55,8 +60,17 @@ class PanelAnnotatorTest {
             evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
-            panelCopyNumberAnnotator
+            panelCopyNumberAnnotator,
+            PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )
+
+    @Test
+    fun `Should annotate test with panel specifications`() {
+        val annotatedPanel = annotator.annotate(createTestPriorSequencingTest())
+        assertThat(annotatedPanel.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
+        assertThat(annotatedPanel.testsGene("another gene") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
+        assertThat(annotatedPanel.testsGene(GENE) { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
+    }
 
     @Test
     fun `Should annotate variant`() {
@@ -122,6 +136,6 @@ class PanelAnnotatorTest {
     }
 
     private fun createTestPriorSequencingTest(): PriorSequencingTest {
-        return PriorSequencingTest(test = "test")
+        return PriorSequencingTest(test = TEST_NAME)
     }
 }
