@@ -30,17 +30,12 @@ class EligibleTrialGenerator(
     }
 
     override fun contents(): Table {
-        val trialColWidth = 1f
-        val cohortColWidth = 2f
-        val molecularColWidth = 1f
-        val locationColWidth = 1f
-        val warningsColWidth = 3f
 
         val table =
             if (includeWarningsColumn) {
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, warningsColWidth)
+                Tables.createRelativeWidthCols(1f, 2f, 1f, 1f, 3f)
             } else {
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
+                Tables.createRelativeWidthCols(1f, 1f, 1f, 2f)
             }
 
         table.addHeaderCell(Cells.createHeader("Trial"))
@@ -80,7 +75,7 @@ class EligibleTrialGenerator(
             requestingSource: TrialSource?,
             countryOfReference: Country? = null,
             forLocalTrials: Boolean = true
-        ): EligibleTrialGenerator {
+        ): TrialTableGenerator {
             val recruitingAndEligibleCohorts = TrialsProvider.filterCohortsAvailable(cohorts)
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty() || externalTrials.isNotEmpty()) {
@@ -126,7 +121,7 @@ class EligibleTrialGenerator(
         fun forOpenCohortsWithMissingMolecularResultsForEvaluation(
             cohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?
-        ): EligibleTrialGenerator? {
+        ): TrialTableGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.isMissingMolecularResultForEvaluation
             }
@@ -155,7 +150,7 @@ class EligibleTrialGenerator(
             } else null
         }
 
-        fun forClosedCohorts(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?): EligibleTrialGenerator {
+        fun forClosedCohorts(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?): TrialTableGenerator {
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title = "Trials and cohorts that are potentially eligible, but are closed (${unavailableAndEligible.size})"
 
@@ -171,19 +166,21 @@ class EligibleTrialGenerator(
             )
         }
 
-        fun forFilteredTrials(trials: Set<ExternalTrialSummary>, countryOfReference: Country): EligibleTrialGenerator {
+        fun forFilteredTrials(trials: Set<ExternalTrialSummary>, countryOfReference: Country): TrialTableGenerator? {
             val title = "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${trials.size})"
 
-            return EligibleTrialGenerator(
-                cohorts = emptyList(),
-                externalTrials = trials,
-                requestingSource = null,
-                countryOfReference = countryOfReference,
-                title = title,
-                footNote = null,
-                allowDeEmphasis = false,
-                includeWarningsColumn = false
-            )
+            return if (trials.isNotEmpty()) {
+                EligibleTrialGenerator(
+                    cohorts = emptyList(),
+                    externalTrials = trials,
+                    requestingSource = null,
+                    countryOfReference = countryOfReference,
+                    title = title,
+                    footNote = null,
+                    allowDeEmphasis = false,
+                    includeWarningsColumn = false
+                )
+            } else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {

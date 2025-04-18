@@ -70,7 +70,7 @@ class TrialMatchingOtherResultsChapter(
             report.config.countryOfReference
         )
 
-        return localTrialGenerators + listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator) + filteredTrialGenerator
+        return listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator, filteredTrialGenerator) + localTrialGenerators
     }
 
     private fun createTrialTableGenerators(
