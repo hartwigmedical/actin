@@ -27,11 +27,12 @@ private const val CODING = "coding"
 private val TEST_DATE = LocalDate.of(2024, 7, 25)
 private const val PROTEIN = "protein"
 private val BASE_MOLECULAR_TEST = ProvidedMolecularTest(
-    test = TEST, date = TEST_DATE, results = emptySet()
+    test = TEST, date = TEST_DATE, results = emptySet(), testedGenes = setOf(GENE)
 )
 private val BASE_PRIOR_SEQUENCING = PriorSequencingTest(
     test = TEST,
     date = TEST_DATE,
+    testedGenes = setOf(GENE)
 )
 private const val FUSION_GENE_UP = "fusionUp"
 private const val FUSION_GENE_DOWN = "fusionDown"
@@ -91,7 +92,11 @@ class StandardPriorSequencingTestExtractorTest {
             )
         )
         assertResultContains(
-            result, BASE_PRIOR_SEQUENCING.copy(fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN)))
+            result,
+            BASE_PRIOR_SEQUENCING.copy(
+                testedGenes = setOf(GENE, FUSION_GENE_UP, FUSION_GENE_DOWN),
+                fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN))
+            )
         )
     }
 
@@ -102,7 +107,13 @@ class StandardPriorSequencingTestExtractorTest {
                 amplifiedGene = AMPLIFIED_GENE
             )
         )
-        assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE))))
+        assertResultContains(
+            result,
+            BASE_PRIOR_SEQUENCING.copy(
+                testedGenes = setOf(GENE, AMPLIFIED_GENE),
+                amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE))
+            )
+        )
     }
 
     @Test
@@ -157,7 +168,6 @@ class StandardPriorSequencingTestExtractorTest {
             )
         )
         assertThat(result.extracted[0].testedGenes).containsExactlyInAnyOrder(variantGene, noMutationsGene, impliedNoMutationGene)
-        assertThat(result.extracted[0].noMutationGenes).containsExactlyInAnyOrder(noMutationsGene, impliedNoMutationGene)
     }
 
     @Test

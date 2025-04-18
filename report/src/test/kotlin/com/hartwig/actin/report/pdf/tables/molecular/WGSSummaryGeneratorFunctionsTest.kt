@@ -15,7 +15,7 @@ import org.junit.Test
 
 class WGSSummaryGeneratorFunctionsTest {
 
-    private val molecularRecord = TestMolecularFactory.createProperTestOrangeRecord()
+    private val molecularRecord = TestMolecularFactory.createProperTestMolecularRecord()
     private val inconclusivePredictions = listOf(
         CupPrediction(
             cancerType = "Melanoma",
@@ -84,12 +84,7 @@ class WGSSummaryGeneratorFunctionsTest {
     @Test
     fun `Should not create tumor mutational cell when result is unknown and summary table configuration is short type`() {
         val record = molecularRecord.copy(
-            characteristics = molecularRecord.characteristics.copy(
-                tumorMutationalLoad = null,
-                tumorMutationalBurden = null,
-                hasHighTumorMutationalLoad = null,
-                hasHighTumorMutationalBurden = null
-            )
+            characteristics = molecularRecord.characteristics.copy(tumorMutationalLoad = null, tumorMutationalBurden = null)
         )
         val hasTmbTmlCells = WGSSummaryGeneratorFunctions.createTmbCells(record, true, Tables.createFixedWidthCols(100f, 100f))
         assertThat(hasTmbTmlCells).isFalse()

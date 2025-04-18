@@ -2,8 +2,13 @@ package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
+import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.driver.CodingContext
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
@@ -45,15 +50,15 @@ object TestMolecularFactory {
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
     fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createMinimalTestOrangeRecord(), createMinimalTestPanelRecord()))
+        return MolecularHistory(listOf(createMinimalTestMolecularRecord(), createMinimalTestPanelRecord()))
     }
 
     fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createProperTestOrangeRecord(), createProperTestPanelRecord()))
+        return MolecularHistory(listOf(createProperTestMolecularRecord(), createProperTestPanelRecord()))
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestOrangeRecord(), createExhaustiveTestPanelRecord()))
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), createExhaustiveTestPanelRecord()))
     }
 
     fun createMinimalTestPanelRecord(): PanelRecord {
@@ -62,15 +67,15 @@ object TestMolecularFactory {
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = "minimal panel",
             date = null,
-            drivers = Drivers(),
-            characteristics = MolecularCharacteristics(),
+            drivers = createMinimalTestDrivers(),
+            characteristics = createMinimalTestCharacteristics(),
             evidenceSource = "",
             hasSufficientPurity = true,
             hasSufficientQuality = true
         )
     }
 
-    fun createMinimalTestOrangeRecord(): MolecularRecord {
+    fun createMinimalTestMolecularRecord(): MolecularRecord {
         return MolecularRecord(
             sampleId = TestPatientFactory.TEST_SAMPLE,
             experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
@@ -81,7 +86,7 @@ object TestMolecularFactory {
             isContaminated = false,
             hasSufficientPurity = true,
             hasSufficientQuality = true,
-            drivers = Drivers(),
+            drivers = createMinimalTestDrivers(),
             characteristics = createMinimalTestCharacteristics(),
             immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
             date = null,
@@ -100,8 +105,8 @@ object TestMolecularFactory {
         )
     }
 
-    fun createProperTestOrangeRecord(): MolecularRecord {
-        return createMinimalTestOrangeRecord().copy(
+    fun createProperTestMolecularRecord(): MolecularRecord {
+        return createMinimalTestMolecularRecord().copy(
             date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
             evidenceSource = "kb",
             externalTrialSource = "trial kb",
@@ -121,15 +126,22 @@ object TestMolecularFactory {
         )
     }
 
-    fun createExhaustiveTestOrangeRecord(): MolecularRecord {
-        return createProperTestOrangeRecord().copy(
-            drivers = createExhaustiveTestDrivers(),
-            characteristics = createExhaustiveTestCharacteristics()
+    fun createExhaustiveTestMolecularRecord(): MolecularRecord {
+        return createProperTestMolecularRecord().copy(
+            drivers = createExhaustiveTestDrivers(), characteristics = createExhaustiveTestCharacteristics()
         )
     }
 
-    private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
-        return MolecularCharacteristics(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+    fun createMinimalTestCharacteristics(): MolecularCharacteristics {
+        return MolecularCharacteristics(
+            purity = null,
+            ploidy = null,
+            predictedTumorOrigin = null,
+            microsatelliteStability = null,
+            homologousRecombination = null,
+            tumorMutationalBurden = null,
+            tumorMutationalLoad = null
+        )
     }
 
     private fun createProperTestCharacteristics(): MolecularCharacteristics {
@@ -137,17 +149,10 @@ object TestMolecularFactory {
             purity = 0.98,
             ploidy = 3.1,
             predictedTumorOrigin = createProperPredictedTumorOrigin(),
-            isMicrosatelliteUnstable = false,
-            homologousRecombinationScore = 0.45,
-            isHomologousRecombinationDeficient = false,
-            tumorMutationalBurden = 13.71,
-            hasHighTumorMutationalBurden = true,
-            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.withApprovedTreatment("Pembro"),
-            tumorMutationalLoad = 185,
-            hasHighTumorMutationalLoad = true,
-            microsatelliteEvidence = null,
-            tumorMutationalLoadEvidence = null,
-            homologousRecombinationEvidence = null
+            microsatelliteStability = createProperMicrosatelliteStability(),
+            homologousRecombination = createProperHomologousRecombination(),
+            tumorMutationalBurden = createProperTumorMutationalBurden(),
+            tumorMutationalLoad = createProperTumorMutationalLoad()
         )
     }
 
@@ -160,15 +165,13 @@ object TestMolecularFactory {
                     snvPairwiseClassifier = 0.979,
                     genomicPositionClassifier = 0.99,
                     featureClassifier = 0.972,
-                ),
-                CupPrediction(
+                ), CupPrediction(
                     cancerType = "Lung",
                     likelihood = 0.001,
                     snvPairwiseClassifier = 0.0009,
                     genomicPositionClassifier = 0.011,
                     featureClassifier = 0.0102
-                ),
-                CupPrediction(
+                ), CupPrediction(
                     cancerType = "Esophagus/Stomach",
                     likelihood = 0.0016,
                     snvPairwiseClassifier = 0.0004,
@@ -179,19 +182,69 @@ object TestMolecularFactory {
         )
     }
 
+    private fun createProperMicrosatelliteStability(): MicrosatelliteStability {
+        return MicrosatelliteStability(
+            microsatelliteIndelsPerMb = 0.0,
+            isUnstable = false,
+            evidence = TestClinicalEvidenceFactory.createEmpty()
+        )
+    }
+
+    private fun createProperHomologousRecombination(): HomologousRecombination {
+        return HomologousRecombination(
+            score = 0.45,
+            isDeficient = false,
+            type = HomologousRecombinationType.NONE,
+            brca1Value = 0.4,
+            brca2Value = 0.05,
+            evidence = TestClinicalEvidenceFactory.createEmpty()
+        )
+    }
+
+    private fun createProperTumorMutationalBurden(): TumorMutationalBurden {
+        return TumorMutationalBurden(
+            score = 13.71,
+            isHigh = true,
+            evidence = TestClinicalEvidenceFactory.withApprovedTreatment("Pembro")
+        )
+    }
+
+    private fun createProperTumorMutationalLoad(): TumorMutationalLoad {
+        return TumorMutationalLoad(
+            score = 185,
+            isHigh = true,
+            evidence = TestClinicalEvidenceFactory.createEmpty()
+        )
+    }
+
     private fun createExhaustiveTestCharacteristics(): MolecularCharacteristics {
         return createProperTestCharacteristics().copy(
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
-            homologousRecombinationEvidence = TestClinicalEvidenceFactory.createExhaustive(),
-            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
-            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
+            microsatelliteStability = createProperMicrosatelliteStability().copy(evidence = TestClinicalEvidenceFactory.createExhaustive()),
+            homologousRecombination = createProperHomologousRecombination().copy(evidence = TestClinicalEvidenceFactory.createExhaustive()),
+            tumorMutationalBurden = createProperTumorMutationalBurden().copy(evidence = TestClinicalEvidenceFactory.createExhaustive()),
+            tumorMutationalLoad = createProperTumorMutationalLoad().copy(evidence = TestClinicalEvidenceFactory.createExhaustive())
+        )
+    }
+
+    fun createMinimalTestDrivers(): Drivers {
+        return Drivers(
+            variants = emptyList(),
+            copyNumbers = emptyList(),
+            homozygousDisruptions = emptyList(),
+            disruptions = emptyList(),
+            fusions = emptyList(),
+            viruses = emptyList()
         )
     }
 
     fun createProperTestDrivers(): Drivers {
         return Drivers(
             variants = listOf(createProperVariant()),
-            copyNumbers = listOf(createProperCopyNumber())
+            copyNumbers = listOf(createProperCopyNumber()),
+            homozygousDisruptions = emptyList(),
+            disruptions = emptyList(),
+            fusions = emptyList(),
+            viruses = emptyList()
         )
     }
 
@@ -202,9 +255,9 @@ object TestMolecularFactory {
         evidence = TestClinicalEvidenceFactory.withEligibleTrial(
             TestExternalTrialFactory.create(
                 nctId = "NCT00000020",
-                title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
-                        + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
-                        + "for Participants With Advanced Solid Tumor (acronym)",
+                title = ("A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
+                        "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
+                        "for Participants With Advanced Solid Tumor (acronym)"),
                 countries = setOf(
                     CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet())),
                     CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
@@ -238,11 +291,7 @@ object TestMolecularFactory {
         ),
         otherImpacts = emptySet(),
         extendedVariantDetails = ExtendedVariantDetails(
-            variantCopyNumber = 4.1,
-            totalCopyNumber = 6.0,
-            isBiallelic = false,
-            phaseGroups = null,
-            clonalLikelihood = 1.0
+            variantCopyNumber = 4.1, totalCopyNumber = 6.0, isBiallelic = false, phaseGroups = null, clonalLikelihood = 1.0
         ),
         isHotspot = true,
         isReportable = true,
@@ -283,10 +332,8 @@ object TestMolecularFactory {
             PharmacoEntry(
                 gene = PharmacoGene.DPYD,
                 haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)),
-            ),
-            PharmacoEntry(
-                gene = PharmacoGene.UGT1A1,
-                haplotypes = setOf(
+            ), PharmacoEntry(
+                gene = PharmacoGene.UGT1A1, haplotypes = setOf(
                     Haplotype(allele = "*1", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION),
                     Haplotype(allele = "*28", alleleCount = 1, function = HaplotypeFunction.REDUCED_FUNCTION),
                 )
@@ -308,8 +355,7 @@ object TestMolecularFactory {
                             title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
                             countries = setOf(
                                 CountryDetails(
-                                    Country.NETHERLANDS,
-                                    mapOf(
+                                    Country.NETHERLANDS, mapOf(
                                         "Nijmegen" to setOf(Hospital("Radboud UMC", false)),
                                         "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
                                     )
@@ -322,8 +368,7 @@ object TestMolecularFactory {
                             title = "this trial should be filtered out",
                             countries = setOf(
                                 CountryDetails(
-                                    Country.BELGIUM,
-                                    mapOf(
+                                    Country.BELGIUM, mapOf(
                                         "Leuven" to setOf(Hospital("hospital", null))
                                     )
                                 )
@@ -349,8 +394,7 @@ object TestMolecularFactory {
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
-            ),
-            homozygousDisruptions = proper.homozygousDisruptions + HomozygousDisruption(
+            ), homozygousDisruptions = proper.homozygousDisruptions + HomozygousDisruption(
                 isReportable = true,
                 event = "PTEN hom disruption",
                 driverLikelihood = DriverLikelihood.HIGH,
@@ -359,8 +403,7 @@ object TestMolecularFactory {
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
-            ),
-            disruptions = proper.disruptions + Disruption(
+            ), disruptions = proper.disruptions + Disruption(
                 isReportable = true,
                 event = "PTEN disruption",
                 driverLikelihood = DriverLikelihood.LOW,
@@ -375,8 +418,7 @@ object TestMolecularFactory {
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null,
                 clusterGroup = 0
-            ),
-            fusions = proper.fusions + Fusion(
+            ), fusions = proper.fusions + Fusion(
                 isReportable = false,
                 event = "EML4::ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
@@ -390,8 +432,7 @@ object TestMolecularFactory {
                 geneTranscriptEnd = "ENST00000389048",
                 fusedExonUp = 6,
                 fusedExonDown = 20,
-            ),
-            viruses = proper.viruses + Virus(
+            ), viruses = proper.viruses + Virus(
                 isReportable = true,
                 event = "HPV positive",
                 driverLikelihood = DriverLikelihood.HIGH,

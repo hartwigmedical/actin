@@ -8,10 +8,10 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
@@ -57,7 +57,7 @@ class HasCancerWithNeuroendocrineComponentTest {
 
     private fun createWithNeuroendocrineProfile(): PatientRecord {
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-        val baseMolecular = TestMolecularFactory.createMinimalTestOrangeRecord()
+        val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
             molecularHistory = MolecularHistory(
                 listOf(

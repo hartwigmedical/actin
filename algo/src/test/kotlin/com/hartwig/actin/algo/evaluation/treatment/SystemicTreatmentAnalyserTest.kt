@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.firstSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.lastSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.maxSystemicTreatments
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.minSystemicTreatments
@@ -92,34 +93,58 @@ class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    fun `Should return null for last systemic treatment when no treatments provided`() {
+    fun `Should return null for first and last systemic treatment when no treatments provided`() {
         assertThat(lastSystemicTreatment(emptyList())).isNull()
+        assertThat(firstSystemicTreatment(emptyList())).isNull()
     }
 
     @Test
-    fun `Should return null for last systemic treatment when only non systemic treatments`() {
+    fun `Should return null for first and last systemic treatment when only non systemic treatments`() {
         assertThat(lastSystemicTreatment(listOf(nonSystemicTreatmentHistoryEntry))).isNull()
+        assertThat(firstSystemicTreatment(listOf(nonSystemicTreatmentHistoryEntry))).isNull()
     }
 
     @Test
     fun `Should determine last systemic treatment`() {
         val treatmentHistory = mutableListOf(treatmentHistoryEntry(setOf(treatment("1", true)), 2020, 5))
-        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "1")
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "1", ::lastSystemicTreatment)
 
         treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("2", true)), 2021))
-        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "2")
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "2", ::lastSystemicTreatment)
 
         treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("3", true)), 2021, 1))
-        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "3")
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "3", ::lastSystemicTreatment)
 
         treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("4", true)), 2021, 10))
-        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "4")
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "4", ::lastSystemicTreatment)
 
         treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("5", true)), 2021, 8))
-        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "4")
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "4", ::lastSystemicTreatment)
     }
 
-    private fun assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory: List<TreatmentHistoryEntry>, name: String) {
-        assertThat(lastSystemicTreatment(treatmentHistory)!!.treatments.first().name).isEqualTo(name)
+    @Test
+    fun `Should determine first systemic treatment`() {
+        val treatmentHistory = mutableListOf(treatmentHistoryEntry(setOf(treatment("1", true)), 2020, 5))
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "1", ::firstSystemicTreatment)
+
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("2", true)), 2020))
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "2", ::firstSystemicTreatment)
+
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("3", true)), 2019, 12))
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "3", ::firstSystemicTreatment)
+
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("4", true)), 2019, 11))
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "4", ::firstSystemicTreatment)
+
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("5", true)), 2020, 1))
+        assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "4", ::firstSystemicTreatment)
+    }
+
+    private fun assertNameForSystemicTreatmentHistoryEntry(
+        treatmentHistory: List<TreatmentHistoryEntry>,
+        name: String,
+        treatmentSelector: (List<TreatmentHistoryEntry>) -> TreatmentHistoryEntry?
+    ) {
+        assertThat(treatmentSelector(treatmentHistory)?.treatments?.first()?.name).isEqualTo(name)
     }
 }

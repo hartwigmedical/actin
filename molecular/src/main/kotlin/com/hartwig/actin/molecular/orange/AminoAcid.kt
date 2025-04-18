@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
-internal object AminoAcid {
+object AminoAcid {
 
     private val TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER = mapOf(
         "Ala" to "A", // Alanine

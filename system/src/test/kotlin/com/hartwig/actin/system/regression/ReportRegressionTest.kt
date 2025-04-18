@@ -30,7 +30,7 @@ class ReportRegressionTest(private val exampleName: String) {
 
         @BeforeClass
         @JvmStatic
-        fun setReportLocale() = Locale.setDefault(Locale("en", "US"))
+        fun setReportLocale() = Locale.setDefault(Locale.US)
 
         @AfterClass
         @JvmStatic
@@ -56,13 +56,7 @@ class ReportRegressionTest(private val exampleName: String) {
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
             outputDirectory,
-            ExampleFunctions.createExhaustiveEnvironmentConfiguration(
-                LocalDate.of(
-                    2024,
-                    11,
-                    7
-                )
-            )
+            ExampleFunctions.createExhaustiveEnvironmentConfiguration(LocalDate.of(2025, 4, 17))
         )
 
         assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))

@@ -9,22 +9,42 @@ object Tables {
         return Table(UnitValue.createPointArray(widths))
     }
 
-    fun createSingleColWithWidth(width: Float): Table {
-        return Table(UnitValue.createPercentArray(floatArrayOf(1f))).setWidth(width)
+    fun createRelativeWidthCols(vararg widths: Float): Table {
+        return Table(UnitValue.createPercentArray(widths))
     }
 
-    @JvmOverloads
-    fun makeWrapping(table: Table, printSubNotes: Boolean = true): Table {
-        if (table.numberOfRows == 0) {
-            table.addCell(Cells.createSpanningNoneEntry(table))
+    fun createMultiCol(numColumns: Int): Table {
+        return Table(UnitValue.createPercentArray(FloatArray(numColumns) { 1f / numColumns }))
+    }
+
+    fun createSingleCol(): Table {
+        return createMultiCol(1)
+    }
+    
+    fun createSingleColWithWidth(width: Float): Table {
+        return createSingleCol().setWidth(width)
+    }
+
+    fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean): Table {
+        if (contentTable.numberOfRows == 0) {
+            contentTable.addCell(Cells.createSpanningNoneEntry(contentTable))
         }
-        table.addFooterCell(Cells.createSpanningSubNote(if (printSubNotes) "The table continues on the next page" else "", table))
-        table.isSkipLastFooter = true
-        val wrappingTable = Table(1).setMinWidth(table.width)
-        if (printSubNotes) {
+
+        if (contentTable.numberOfRows < 3 || forceKeepTogether) {
+            contentTable.setKeepTogether(true)
+            return contentTable
+        } else {
+            contentTable.addFooterCell(
+                Cells.createSpanningSubNote("The table continues on the next page", contentTable)
+                    .setPaddingTop(5f)
+                    .setPaddingBottom(5f)
+            ).setSkipLastFooter(true)
+
+            val wrappingTable = createSingleColWithWidth(contentTable.width.value).setMarginBottom(10f)
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
+            wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(contentTable).setPadding(0f))
+
+            return wrappingTable
         }
-        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f))
-        return wrappingTable
     }
 }
