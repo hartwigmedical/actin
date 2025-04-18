@@ -46,7 +46,7 @@ class MolecularEvaluationFunctionTest {
 
     private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(
         gene = "GENE",
-        targetCoveragePredicate = atLeast(MolecularTestTarget.FUSION, messagePrefix = "Test in"),
+        targetCoveragePredicate = specific(MolecularTestTarget.FUSION, messagePrefix = "Test in"),
         useInsufficientQualityRecords = false
     ) {}
 
@@ -103,7 +103,7 @@ class MolecularEvaluationFunctionTest {
         val patient = withPanelTest()
         val evaluation = functionWithGene.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("GENE undetermined (not tested for fusions, mutations, amplifications or deletions)")
+        assertThat(evaluation.undeterminedMessages).containsExactly("gene GENE undetermined (not tested for fusions, mutations, amplifications or deletions)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 
@@ -127,7 +127,7 @@ class MolecularEvaluationFunctionTest {
                 )
             )
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Test in GENE undetermined (not tested for fusions)")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Test in gene GENE undetermined (not tested for fusions)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 

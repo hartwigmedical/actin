@@ -27,7 +27,10 @@ class GeneHasVariantWithProteinImpact(
     private val allowedProteinImpacts: Set<String>,
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(
-    targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, "Mutation with protein impact in"),
+    targetCoveragePredicate = specific(
+        MolecularTestTarget.MUTATION,
+        "Mutation with protein impact(s) ${allowedProteinImpacts.joinToString()} in"
+    ),
     maxTestAge = maxTestAge
 ) {
 

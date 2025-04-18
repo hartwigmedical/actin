@@ -16,7 +16,7 @@ class TargetCoveragePredicateTest {
         val predicate = all(PREFIX)
         assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION))).isFalse()
         assertThat(predicate.test(MolecularTestTarget.entries)).isTrue()
-        assertThat(predicate.message(GENE)).isEqualTo("Mutation in GENE undetermined (not tested for fusions, mutations, amplifications and deletions)")
+        assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for fusions, mutations, amplifications and deletions)")
     }
 
     @Test
@@ -26,7 +26,7 @@ class TargetCoveragePredicateTest {
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.AMPLIFICATION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.DELETION))).isTrue()
-        assertThat(predicate.message(GENE)).isEqualTo("Mutation in GENE undetermined (not tested for fusions, mutations, amplifications or deletions)")
+        assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for fusions, mutations, amplifications or deletions)")
     }
 
     @Test
@@ -34,7 +34,7 @@ class TargetCoveragePredicateTest {
         val predicate = and(MolecularTestTarget.FUSION, MolecularTestTarget.MUTATION, messagePrefix = PREFIX)
         assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isFalse()
-        assertThat(predicate.message(GENE)).isEqualTo("Mutation in GENE undetermined (not tested for fusions and mutations)")
+        assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for fusions and mutations)")
     }
 
     @Test
@@ -44,7 +44,7 @@ class TargetCoveragePredicateTest {
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION, MolecularTestTarget.AMPLIFICATION))).isTrue()
         assertThat(predicate.test(listOf(MolecularTestTarget.AMPLIFICATION))).isFalse()
         assertThat(predicate.test(listOf(MolecularTestTarget.DELETION))).isFalse()
-        assertThat(predicate.message(GENE)).isEqualTo("Mutation in GENE undetermined (not tested for mutations or fusions)")
+        assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for mutations or fusions)")
     }
 
     @Test
@@ -54,6 +54,16 @@ class TargetCoveragePredicateTest {
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isFalse()
         assertThat(predicate.test(listOf(MolecularTestTarget.AMPLIFICATION))).isFalse()
         assertThat(predicate.test(listOf(MolecularTestTarget.DELETION))).isFalse()
-        assertThat(predicate.message(GENE)).isEqualTo("Mutation in GENE undetermined (not tested for mutations)")
+        assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for at least mutations)")
+    }
+
+    @Test
+    fun `Should test for single target when SPECIFIC predicate`() {
+        val predicate = specific(MolecularTestTarget.MUTATION, PREFIX)
+        assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION))).isTrue()
+        assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isFalse()
+        assertThat(predicate.test(listOf(MolecularTestTarget.AMPLIFICATION))).isFalse()
+        assertThat(predicate.test(listOf(MolecularTestTarget.DELETION))).isFalse()
+        assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for mutations)")
     }
 }

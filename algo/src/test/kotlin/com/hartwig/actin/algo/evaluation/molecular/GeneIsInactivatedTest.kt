@@ -5,6 +5,8 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomo
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicrosatelliteStabilityAndVariant
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -17,6 +19,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val GENE = "gene A"
@@ -307,6 +310,18 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = function.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        Assertions.assertThat(result.undeterminedMessages)
+            .containsExactly("Inactivation of gene gene A undetermined (not tested for mutations or deletions)")
     }
 
     private fun assertResultForVariant(result: EvaluationResult, variant: Variant) {

@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 class GeneHasVariantInCodon(override val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(
-        targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, "Mutation in codons ${codons.joinToString()} in"),
+        targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, "Mutation in codons ${codons.joinToString()} in"),
         maxTestAge = maxTestAge
     ) {
 

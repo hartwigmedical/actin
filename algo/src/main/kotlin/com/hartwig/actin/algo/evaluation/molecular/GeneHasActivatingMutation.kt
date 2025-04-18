@@ -47,7 +47,7 @@ class GeneHasActivatingMutation(
     private val codonsToIgnore: List<String>?,
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(
-    targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in"),
+    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in"),
     maxTestAge = maxTestAge
 ) {
     override fun evaluate(test: MolecularTest): Evaluation {

@@ -16,7 +16,11 @@ fun any(messagePrefix: String? = null) = or(*MolecularTestTarget.entries.toTyped
 
 fun all(messagePrefix: String) = and(*MolecularTestTarget.entries.toTypedArray(), messagePrefix = messagePrefix)
 
-fun atLeast(target: MolecularTestTarget, messagePrefix: String) = and(target, messagePrefix = messagePrefix)
+fun atLeast(target: MolecularTestTarget, messagePrefix: String) =
+    TargetCoveragePredicate(setOf(target), { it == listOf(target) }, { "at least ${plural(target.name.lowercase())}" }, messagePrefix)
+
+fun specific(target: MolecularTestTarget, messagePrefix: String) =
+    TargetCoveragePredicate(setOf(target), { it == listOf(target) }, { plural(target.name.lowercase()) }, messagePrefix)
 
 fun and(vararg targets: MolecularTestTarget, messagePrefix: String) =
     combine(targets.toSet(), messagePrefix = messagePrefix, Predicate<List<MolecularTestTarget>>::and) {
@@ -51,6 +55,6 @@ class TargetCoveragePredicate(
     override fun test(t: List<MolecularTestTarget>) = predicate.test(t)
 
     fun message(gene: String): String {
-        return "${if (messagePrefix != null) "$messagePrefix " else ""}$gene undetermined (not tested for ${stringify.invoke(targets)})"
+        return "${if (messagePrefix != null) "$messagePrefix " else ""}gene $gene undetermined (not tested for ${stringify.invoke(targets)})"
     }
 }

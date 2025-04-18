@@ -4,11 +4,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class GeneHasSufficientCopyNumberTest {
@@ -105,6 +108,17 @@ class GeneHasSufficientCopyNumberTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = functionWithMinCopies.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        Assertions.assertThat(result.undeterminedMessages).containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
     }
 
     private fun assertEvaluation(result: EvaluationResult, record: PatientRecord) {

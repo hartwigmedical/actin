@@ -13,7 +13,11 @@ import java.time.LocalDate
 
 class GeneHasSpecificExonSkipping(override val gene: String, private val exonToSkip: Int, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(
-        targetCoveragePredicate = or(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION, messagePrefix = "Skipped exon in gene"),
+        targetCoveragePredicate = or(
+            MolecularTestTarget.MUTATION,
+            MolecularTestTarget.FUSION,
+            messagePrefix = "Skipped exon $exonToSkip in"
+        ),
         maxTestAge = maxTestAge
     ) {
 

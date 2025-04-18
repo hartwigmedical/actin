@@ -3,21 +3,22 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class GeneHasActivatingMutationTest {
     private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
     private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE)
-    
+
     @Test
     fun `Should fail for minimal patient`() {
         assertMolecularEvaluation(
@@ -211,6 +212,17 @@ class GeneHasActivatingMutationTest {
 
         assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.inclusionMolecularEvents).containsExactly("event", "event2")
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = functionNotIgnoringCodons.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessages).containsExactly("Activating mutation in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {

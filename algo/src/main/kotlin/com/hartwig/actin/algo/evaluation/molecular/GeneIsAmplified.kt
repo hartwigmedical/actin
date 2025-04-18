@@ -53,7 +53,7 @@ private enum class AmplificationEvaluation {
 
 class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(
-        targetCoveragePredicate = atLeast(MolecularTestTarget.AMPLIFICATION, "Amplification of"),
+        targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, "Amplification of"),
         maxTestAge = maxTestAge
     ) {
 
