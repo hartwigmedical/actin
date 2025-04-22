@@ -38,6 +38,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
             EligibilityRule.HAS_AT_MOST_X_DISTANT_METASTASES to hasLimitedDistantMetastasesCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_METASTASES to meetsSpecificCriteriaRegardingMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES_ONLY to hasOnlyLiverMetastasesCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
@@ -226,6 +227,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             val maxDistantMetastases = functionInputResolver().createOneIntegerInput(function)
             HasLimitedDistantMetastases(maxDistantMetastases)
         }
+    }
+
+    private fun meetsSpecificCriteriaRegardingMetastasesCreator(): FunctionCreator {
+        return { MeetsSpecificCriteriaRegardingMetastases(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasLiverMetastasesCreator(): FunctionCreator {
