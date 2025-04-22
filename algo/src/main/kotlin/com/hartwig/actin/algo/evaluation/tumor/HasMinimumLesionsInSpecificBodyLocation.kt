@@ -15,12 +15,12 @@ class HasMinimumLesionsInSpecificBodyLocation(
 
         val (hasLesions, hasSuspectedLesions, count) = with(record.tumor) {
             when (bodyLocation) {
-                BodyLocationCategory.BONE -> Triple(hasBoneLesions, hasSuspectedBoneLesions, boneLesionsCount)
-                BodyLocationCategory.BRAIN -> Triple(hasBrainLesions, hasSuspectedBrainLesions, brainLesionsCount)
-                BodyLocationCategory.CNS -> Triple(hasCnsLesions, hasSuspectedCnsLesions, cnsLesionsCount)
-                BodyLocationCategory.LIVER -> Triple(hasLiverLesions, hasSuspectedLiverLesions, liverLesionsCount)
-                BodyLocationCategory.LUNG -> Triple(hasLungLesions, hasSuspectedLungLesions, lungLesionsCount)
-                BodyLocationCategory.LYMPH_NODE -> Triple(hasLymphNodeLesions, hasSuspectedLymphNodeLesions, lymphNodeLesionsCount)
+                BodyLocationCategory.BONE -> Triple(hasBoneLesions, hasSuspectedBoneLesions, boneLesionsMinCount)
+                BodyLocationCategory.BRAIN -> Triple(hasBrainLesions, hasSuspectedBrainLesions, brainLesionsMinCount)
+                BodyLocationCategory.CNS -> Triple(hasCnsLesions, hasSuspectedCnsLesions, cnsLesionsMinCount)
+                BodyLocationCategory.LIVER -> Triple(hasLiverLesions, hasSuspectedLiverLesions, liverLesionsMinCount)
+                BodyLocationCategory.LUNG -> Triple(hasLungLesions, hasSuspectedLungLesions, lungLesionsMinCount)
+                BodyLocationCategory.LYMPH_NODE -> Triple(hasLymphNodeLesions, hasSuspectedLymphNodeLesions, lymphNodeLesionsMinCount)
                 else -> return EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
             }
         }

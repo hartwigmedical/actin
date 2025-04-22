@@ -49,7 +49,7 @@ class TumorStageDeriverTest {
     fun `Should return stage IV when multiple lesions`() {
         assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(hasBoneLesions = true, hasBrainLesions = true)))
             .containsOnly(TumorStage.IV)
-        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3, hasBoneLesions = true)))
+        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsMinCount = 3, hasBoneLesions = true)))
             .containsOnly(TumorStage.IV)
     }
 
@@ -84,7 +84,7 @@ class TumorStageDeriverTest {
 
     @Test
     fun `Should return stage III and IV when lung cancer with other lung lesions besides the primary lung cancer`() {
-        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3)))
+        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsMinCount = 3)))
             .containsOnly(TumorStage.III, TumorStage.IV)
     }
 }

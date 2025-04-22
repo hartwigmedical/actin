@@ -50,7 +50,6 @@ class TumorDetailsExtractor(
         val otherLesions = filterCurateOtherLesions(curatedOtherLesions?.configs)
         val otherSuspectedLesions = filterCurateOtherLesions(curatedOtherLesions?.configs, true)
 
-
         val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" ||
                 primaryTumorDetails.primaryTumorType == "Glioma"
 
@@ -198,7 +197,6 @@ class TumorDetailsExtractor(
 
         val hasOtherLesions = lesionsConfig.any { it.suspected != true }.takeIf { it }
         val hasSuspectedOtherLesions = lesionsConfig.any { it.suspected == true }.takeIf { it }
-
 
         if ((hasOtherLesions == true || hasSuspectedOtherLesions == true) && hasLesion == false) {
             logger.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")

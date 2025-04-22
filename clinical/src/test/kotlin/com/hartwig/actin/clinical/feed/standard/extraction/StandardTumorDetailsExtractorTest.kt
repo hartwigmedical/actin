@@ -40,22 +40,22 @@ private val TUMOR_DETAILS = TumorDetails(
     hasBrainLesions = false,
     hasActiveBrainLesions = false,
     hasSuspectedBrainLesions = null,
-    brainLesionsCount = 0,
+    brainLesionsMinCount = 0,
     hasCnsLesions = null,
     hasActiveCnsLesions = null,
     hasSuspectedCnsLesions = null,
-    cnsLesionsCount = 0,
+    cnsLesionsMinCount = 0,
     hasBoneLesions = false,
     hasSuspectedBoneLesions = null,
-    boneLesionsCount = 0,
+    boneLesionsMinCount = 0,
     hasLiverLesions = false,
     hasSuspectedLiverLesions = null,
-    liverLesionsCount = 0,
+    liverLesionsMinCount = 0,
     hasLungLesions = null,
     hasSuspectedLungLesions = null,
-    lungLesionsCount = null,
+    lungLesionsMinCount = null,
     hasLymphNodeLesions = null,
-    lymphNodeLesionsCount = null,
+    lymphNodeLesionsMinCount = null,
     otherLesions = null,
     otherSuspectedLesions = null,
     biopsyLocation = null,
@@ -161,7 +161,7 @@ class StandardTumorDetailsExtractorTest {
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
                 hasLiverLesions = true,
-                liverLesionsCount = 1,
+                liverLesionsMinCount = 1,
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
@@ -183,9 +183,9 @@ class StandardTumorDetailsExtractorTest {
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
                 hasBrainLesions = true,
-                brainLesionsCount = 1,
+                brainLesionsMinCount = 1,
                 hasCnsLesions = true,
-                cnsLesionsCount = 1
+                cnsLesionsMinCount = 1
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
@@ -208,10 +208,10 @@ class StandardTumorDetailsExtractorTest {
             TUMOR_DETAILS.copy(
                 hasBrainLesions = true,
                 hasActiveBrainLesions = true,
-                brainLesionsCount = 1,
+                brainLesionsMinCount = 1,
                 hasCnsLesions = true,
                 hasActiveCnsLesions = true,
-                cnsLesionsCount = 1
+                cnsLesionsMinCount = 1
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()

@@ -281,7 +281,7 @@ internal object TumorTestFactory {
             TumorDetails(
                 hasLungLesions = hasLungLesions,
                 hasSuspectedLungLesions = hasSuspectedLungLesions,
-                lungLesionsCount = count
+                lungLesionsMinCount = count
             )
         )
     }

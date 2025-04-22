@@ -92,8 +92,8 @@ class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>
 
         private fun evaluateMetastases(hasLesions: Boolean, tumor: TumorDetails, doidToMatch: String, doidModel: DoidModel): Boolean {
             // Currently only for lung cancer multiple lesions are resolved to stage III/IV
-            return if (checkingLungMetastasesForLungCancer(doidModel, doidToMatch, tumor.doids) && tumor.lungLesionsCount != null) {
-                tumor.lungLesionsCount!! >= 2
+            return if (checkingLungMetastasesForLungCancer(doidModel, doidToMatch, tumor.doids) && tumor.lungLesionsMinCount != null) {
+                tumor.lungLesionsMinCount!! >= 2
             } else {
                 (hasLesions) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumor.doids, doidToMatch)
             }
