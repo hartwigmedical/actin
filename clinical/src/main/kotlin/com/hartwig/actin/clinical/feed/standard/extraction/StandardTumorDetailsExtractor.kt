@@ -67,38 +67,36 @@ class StandardTumorDetailsExtractor(
         lesions: List<LesionLocationConfig>
     ) = TumorDetails(
         primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
+        primaryTumorSubLocation = null,
         primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
-        stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
-        hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
-        hasSuspectedBoneLesions = hasSuspectedLesions(lesions, LesionLocationCategory.BONE),
-        boneLesionsCount = countLesions(lesions, LesionLocationCategory.BONE),
-        hasBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN),
-        hasSuspectedBrainLesions = hasSuspectedLesions(lesions, LesionLocationCategory.BRAIN),
-        hasActiveBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN, true),
-        brainLesionsCount = countLesions(lesions, LesionLocationCategory.BRAIN),
-        hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
-        hasSuspectedLiverLesions = hasSuspectedLesions(lesions, LesionLocationCategory.LIVER),
-        liverLesionsCount = countLesions(lesions, LesionLocationCategory.LIVER),
-        hasLungLesions = hasLesions(lesions, LesionLocationCategory.LUNG),
-        hasSuspectedLungLesions = hasSuspectedLesions(lesions, LesionLocationCategory.LUNG),
-        lungLesionsCount = countLesions(lesions, LesionLocationCategory.LUNG),
-        hasLymphNodeLesions = hasLesions(lesions, LesionLocationCategory.LYMPH_NODE),
-        hasSuspectedLymphNodeLesions = hasSuspectedLesions(lesions, LesionLocationCategory.LYMPH_NODE),
-        lymphNodeLesionsCount = countLesions(lesions, LesionLocationCategory.LYMPH_NODE),
-        hasCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS),
-        hasSuspectedCnsLesions = hasSuspectedLesions(lesions, LesionLocationCategory.CNS),
-        cnsLesionsCount = countLesions(lesions, LesionLocationCategory.CNS),
-        hasActiveCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS, true),
-        otherLesions = lesions.filter { lesion -> lesion.ignore.not() }
-            .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
-            .filter { lesion -> lesion.suspected != true }
-            .map { lesion -> lesion.location },
-        otherSuspectedLesions = lesions.filter { lesion -> lesion.ignore.not() }
-            .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
-            .filter { lesion -> lesion.suspected == true }
-            .map { lesion -> lesion.location },
-        hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
+        primaryTumorSubType = null,
         doids = emptySet(),
+        stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
+        derivedStages = null,
+        hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
+        hasBrainLesions = hasBrainLesions(lesions),
+        hasSuspectedBrainLesions = null,
+        hasActiveBrainLesions = hasBrainLesions(lesions, true),
+        brainLesionsCount = countLesions(lesions, LesionLocationCategory.BRAIN),
+        hasCnsLesions = if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
+        hasSuspectedCnsLesions = null,
+        hasActiveCnsLesions = if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
+        cnsLesionsCount = countLesions(lesions, LesionLocationCategory.BRAIN),
+        hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
+        hasSuspectedBoneLesions = null,
+        boneLesionsCount = countLesions(lesions, LesionLocationCategory.BONE),
+        hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
+        hasSuspectedLiverLesions = null,
+        liverLesionsCount = countLesions(lesions, LesionLocationCategory.LIVER),
+        hasLungLesions = null,
+        hasSuspectedLungLesions = null,
+        lungLesionsCount = null,
+        hasLymphNodeLesions = null,
+        hasSuspectedLymphNodeLesions = null,
+        lymphNodeLesionsCount = null,
+        otherLesions = null,
+        otherSuspectedLesions = null,
+        biopsyLocation = null,
         rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
     )
 
@@ -106,13 +104,11 @@ class StandardTumorDetailsExtractor(
         return lesions.any { it.category == location && (active == null || it.active == active) && (it.suspected == null || it.suspected == false) }
     }
 
+    private fun hasBrainLesions(lesions: List<LesionLocationConfig>, active: Boolean? = null) =
+        if (active == true) hasLesions(lesions, LesionLocationCategory.BRAIN, true) else hasLesions(lesions, LesionLocationCategory.BRAIN)
 
-    private fun hasSuspectedLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Boolean? {
-        return lesions.any { it.category == location && it.suspected == true }.takeIf { it }
-    }
-
-    private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Int {
-        return lesions.count { it.category == location }
+    private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory, active: Boolean? = null): Int {
+        return if (hasLesions(lesions, location, active)) 1 else 0
     }
 
     private fun extractLesions(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
