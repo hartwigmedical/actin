@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -35,7 +36,10 @@ object PanelSpecificationsFile {
             }
         }
 
-        val entries = CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(PanelGeneEntry::class.java)
+        val entries = CsvMapper().apply {
+            registerModule(KotlinModule.Builder().build())
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        }.readerFor(PanelGeneEntry::class.java)
             .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t')).readValues<PanelGeneEntry>(File(panelGeneListTsvPath))
         return PanelSpecifications(
             entries.readAll().groupBy(PanelGeneEntry::testName, PanelGeneEntry::toPanelGeneSpecification)
