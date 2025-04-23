@@ -13,7 +13,7 @@ class HasMinimumLesionsInSpecificBodyLocation(
     override fun evaluate(record: PatientRecord): Evaluation {
         val messageEnding = "at least $minimumLesions lesions in ${bodyLocation.display()}"
 
-        val (hasLesions, hasSuspectedLesions, count) = with(record.tumor) {
+        val (hasLesions, hasSuspectedLesions, minCount) = with(record.tumor) {
             when (bodyLocation) {
                 BodyLocationCategory.BONE -> Triple(hasBoneLesions, hasSuspectedBoneLesions, boneLesionsMinCount)
                 BodyLocationCategory.BRAIN -> Triple(hasBrainLesions, hasSuspectedBrainLesions, brainLesionsMinCount)
@@ -26,9 +26,9 @@ class HasMinimumLesionsInSpecificBodyLocation(
         }
 
         return when {
-            (count ?: if (hasLesions == true) 1 else 0) >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
+            (minCount ?: 0) >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
 
-            hasLesions != false && (hasSuspectedLesions == true || count == null) -> {
+            hasLesions != false || hasSuspectedLesions == true -> {
                 EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
             }
 

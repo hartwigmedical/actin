@@ -10,63 +10,100 @@ private const val REQUESTED_LESIONS = 2
 class HasMinimumLesionsInSpecificBodyLocationTest {
 
     private val function = HasMinimumLesionsInSpecificBodyLocation(REQUESTED_LESIONS, BodyLocationCategory.LUNG)
-    private val bladderLesionFunction = HasMinimumLesionsInSpecificBodyLocation(2, BodyLocationCategory.BLADDER)
+    private val bladderLesionFunction = HasMinimumLesionsInSpecificBodyLocation(REQUESTED_LESIONS, BodyLocationCategory.BLADDER)
 
     @Test
-    fun `Should pass for correct number of lesions in requested body location`() {
+    fun `Should pass for correct number of lesions in requested body location in case of known lesions`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = REQUESTED_LESIONS))
+            function.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = true,
+                    hasSuspectedLungLesions = null,
+                    minCount = REQUESTED_LESIONS
+                )
+            )
         )
     }
 
     @Test
-    fun `Should assume that there is one lesion when lesions present in requested location but count is unknown`() {
-        val function = HasMinimumLesionsInSpecificBodyLocation(1, BodyLocationCategory.LUNG)
+    fun `Should pass for correct number of lesions in requested body location in case of suspected lesions`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = null))
+            function.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = false,
+                    hasSuspectedLungLesions = true,
+                    minCount = REQUESTED_LESIONS
+                )
+            )
         )
     }
 
     @Test
-    fun `Should fail for too small number of lesions in requested body location`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = REQUESTED_LESIONS.minus(1)))
-        )
-    }
-
-    @Test
-    fun `Should fail for no lesions in requested body location`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = false, count = null))
-        )
-    }
-
-    @Test
-    fun `Should resolve to undetermined when data on presence and count of requested lesion is missing and requested minimum is more than zero`() {
+    fun `Should be undetermined for too small number of lesions in requested body location in case of known lesions`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null, count = null))
+            function.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = true,
+                    hasSuspectedLungLesions = null,
+                    minCount = REQUESTED_LESIONS.minus(1)
+                )
+            )
         )
     }
 
     @Test
-    fun `Should pass when data on presence and count of requested lesion is missing but requested minimum is zero`() {
+    fun `Should be undetermined for too small number of lesions in requested body location in case of suspect lesions`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = false,
+                    hasSuspectedLungLesions = true,
+                    minCount = REQUESTED_LESIONS.minus(1)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail for neither known or suspected lesions in requested body location`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = false, minCount = null))
+        )
+    }
+
+    @Test
+    fun `Should fail for no known lesions also if data on suspected lesions is missing`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = null, minCount = null))
+        )
+    }
+
+    @Test
+    fun `Should be undetermined when data on known lesions is missing and requested minimum is more than zero`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null, minCount = null))
+        )
+    }
+
+    @Test
+    fun `Should pass when data when data on known lesions is missing but requested minimum is zero`() {
         val functionRequestingZeroLesions = HasMinimumLesionsInSpecificBodyLocation(0, BodyLocationCategory.LUNG)
         assertEvaluation(
             EvaluationResult.PASS,
-            functionRequestingZeroLesions.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null))
-        )
-    }
-
-    @Test
-    fun `Should evaluate to undetermined for suspected lesions in requested body location regardless the known lesion count`() {
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = true, count = 1))
+            functionRequestingZeroLesions.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = null,
+                    hasSuspectedLungLesions = null,
+                    minCount = null
+                )
+            )
         )
     }
 
