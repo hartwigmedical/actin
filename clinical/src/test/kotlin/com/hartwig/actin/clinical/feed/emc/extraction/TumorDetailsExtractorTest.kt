@@ -143,11 +143,29 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should override has suspected liver lesions when listed in other lesions`() {
-        assertThat(baseTumor.hasLiverLesions).isNull()
+        assertThat(baseTumor.hasSuspectedLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
-        val expected = TumorDetails(
+        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasSuspectedLiverLesions = true)
+        assertTumorExtraction(
+            TumorDetailsExtractor(
+                TestCurationFactory.curationDatabase(
+                    lesionLocationConfig(LesionLocationCategory.LIVER).copy(suspected = true)
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
+            ), questionnaire, expected
+        )
+    }
+
+    @Test
+    fun `Should override only the aspect that needs to be overridden and leave the other aspect of pair intact`() {
+        assertThat(baseTumor.hasLiverLesions).isNull()
+        assertThat(baseTumor.hasSuspectedLiverLesions).isNull()
+        val questionnaire =
+            emptyQuestionnaire().copy(hasLiverLesions = true, otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
+        val expected = baseTumor.copy(
             otherLesions = emptyList(),
             otherSuspectedLesions = emptyList(),
+            hasLiverLesions = true,
             hasSuspectedLiverLesions = true
         )
         assertTumorExtraction(

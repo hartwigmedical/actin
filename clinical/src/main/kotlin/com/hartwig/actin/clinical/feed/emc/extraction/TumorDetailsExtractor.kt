@@ -186,22 +186,23 @@ class TumorDetailsExtractor(
     private fun determineLesionPresence(
         lesionLocationConfigMap: Map<LesionLocationCategory?, List<LesionLocationConfig>>?,
         lesionLocationCategory: LesionLocationCategory,
-        hasLesion: Boolean? = null
+        hasLesionsQuestionnaire: Boolean? = null
     ): Pair<Boolean?, Boolean?> {
 
         val lesionsConfig = lesionLocationConfigMap?.get(lesionLocationCategory)
 
         if (lesionsConfig.isNullOrEmpty()) {
-            return Pair(hasLesion, null)
+            return Pair(hasLesionsQuestionnaire, null)
         }
 
-        val hasOtherLesions = lesionsConfig.any { it.suspected != true }.takeIf { it }
-        val hasSuspectedOtherLesions = lesionsConfig.any { it.suspected == true }.takeIf { it }
+        val hasLesions = lesionsConfig.any { it.suspected != true }.takeIf { it }
+        val hasSuspectedLesions = lesionsConfig.any { it.suspected == true }.takeIf { it }
 
-        if ((hasOtherLesions == true || hasSuspectedOtherLesions == true) && hasLesion == false) {
+        if ((hasLesions == true || hasSuspectedLesions == true) && hasLesionsQuestionnaire != true) {
             logger.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")
         }
-        return Pair(hasOtherLesions, hasSuspectedOtherLesions)
+
+        return if (hasLesions == true) Pair(true, hasSuspectedLesions) else Pair(hasLesionsQuestionnaire, hasSuspectedLesions)
     }
 
     companion object {
