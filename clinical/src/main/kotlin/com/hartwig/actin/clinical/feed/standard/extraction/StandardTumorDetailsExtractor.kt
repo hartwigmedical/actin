@@ -13,8 +13,6 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
-private const val CONCLUSION_LABEL = "Conclusie:"
-
 class StandardTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
     private val lesionCurationDatabase: CurationDatabase<LesionLocationConfig>,
@@ -36,7 +34,7 @@ class StandardTumorDetailsExtractor(
             ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
 
-        val lesionCurationResponse = extractLesions(ehrPatientRecord)
+        val lesionCurationResponse = extractFromLesionList(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         val combinedTumorResponse = combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromOtherConditions)
@@ -111,15 +109,6 @@ class StandardTumorDetailsExtractor(
         return if (hasLesions(lesions, location, active)) 1 else 0
     }
 
-    private fun extractLesions(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
-        val patientId = patientRecord.patientDetails.hashedId
-        val lesionsFromLesionList = extractFromLesionList(patientRecord)
-        val lesionsFromRadiologyReport = extractFromRadiologyReport(patientRecord.tumorDetails.lesionSite, patientId)
-        val lesionsFromOtherConditions = extractFromSecondarySource(patientId, patientRecord.priorOtherConditions) { it.name }
-        val lesionsFromTreatmentHistory = extractFromSecondarySource(patientId, patientRecord.treatmentHistory) { it.treatmentName }
-        return lesionsFromLesionList + lesionsFromRadiologyReport + lesionsFromOtherConditions + lesionsFromTreatmentHistory
-    }
-
     private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
         val categories = LesionLocationCategory.entries.toSet().map { e -> e.name.uppercase() }
         return patientRecord.tumorDetails.lesions?.map {
@@ -141,33 +130,7 @@ class StandardTumorDetailsExtractor(
         } ?: emptyList()
     }
 
-    private fun <T> extractFromSecondarySource(
-        patientId: String,
-        sourceList: List<T>,
-        inputAccessor: (T) -> String
-    ): List<CurationResponse<LesionLocationConfig>> {
-        return sourceList.map {
-            lesionCurationResponse(patientId, inputAccessor.invoke(it))
-        }.filter { it.configs.isNotEmpty() }
-    }
-
-    private fun extractFromRadiologyReport(
-        radiologyReport: String?,
-        patientId: String
-    ): List<CurationResponse<LesionLocationConfig>> {
-        return radiologyReport?.substringAfter(CONCLUSION_LABEL)?.split(CONCLUSION_LABEL)?.flatMap { section ->
-            section.substringBefore("\r\n\n\n").split("\n")
-                .filter { it.isNotBlank() }
-                .map { line -> line.trim().substringBeforeLast(".") }
-                .map { line ->
-                    lesionCurationResponse(patientId, line)
-                }
-        } ?: emptyList()
-    }
-
-    private fun lesionCurationResponse(
-        patientId: String, input: String
-    ) = CurationResponse.createFromConfigs(
+    private fun lesionCurationResponse(patientId: String, input: String) = CurationResponse.createFromConfigs(
         lesionCurationDatabase.find(input),
         patientId,
         CurationCategory.LESION_LOCATION,
