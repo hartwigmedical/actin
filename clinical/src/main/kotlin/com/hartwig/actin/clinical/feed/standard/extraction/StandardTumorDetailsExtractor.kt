@@ -75,17 +75,17 @@ class StandardTumorDetailsExtractor(
         hasBrainLesions = hasBrainLesions(lesions),
         hasSuspectedBrainLesions = null,
         hasActiveBrainLesions = hasBrainLesions(lesions, true),
-        brainLesionsMinCount = countLesions(lesions, LesionLocationCategory.BRAIN),
+        brainLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.BRAIN),
         hasCnsLesions = if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
         hasSuspectedCnsLesions = null,
         hasActiveCnsLesions = if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
-        cnsLesionsMinCount = countLesions(lesions, LesionLocationCategory.BRAIN),
+        cnsLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.BRAIN),
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
         hasSuspectedBoneLesions = null,
-        boneLesionsMinCount = countLesions(lesions, LesionLocationCategory.BONE),
+        boneLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.BONE),
         hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
         hasSuspectedLiverLesions = null,
-        liverLesionsMinCount = countLesions(lesions, LesionLocationCategory.LIVER),
+        liverLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.LIVER),
         hasLungLesions = null,
         hasSuspectedLungLesions = null,
         lungLesionsMinCount = null,
@@ -105,8 +105,12 @@ class StandardTumorDetailsExtractor(
     private fun hasBrainLesions(lesions: List<LesionLocationConfig>, active: Boolean? = null) =
         if (active == true) hasLesions(lesions, LesionLocationCategory.BRAIN, true) else hasLesions(lesions, LesionLocationCategory.BRAIN)
 
-    private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory, active: Boolean? = null): Int {
-        return if (hasLesions(lesions, location, active)) 1 else 0
+    private fun determineLesionsMinCount(
+        lesions: List<LesionLocationConfig>,
+        location: LesionLocationCategory,
+        active: Boolean? = null
+    ): Int? {
+        return if (hasLesions(lesions, location, active)) 1 else null
     }
 
     private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
