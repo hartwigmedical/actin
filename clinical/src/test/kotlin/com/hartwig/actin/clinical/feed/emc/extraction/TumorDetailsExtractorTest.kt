@@ -386,7 +386,7 @@ class TumorDetailsExtractorTest {
     }
 
     @Test
-    fun `Should override only the aspect that needs to be overridden and leave the other aspect of pair intact`() {
+    fun `Should override has suspected liver lesions when suspected liver lesions are curated but then not override known lesions`() {
         assertThat(baseTumor.hasLiverLesions).isNull()
         assertThat(baseTumor.hasSuspectedLiverLesions).isNull()
         val questionnaire =
