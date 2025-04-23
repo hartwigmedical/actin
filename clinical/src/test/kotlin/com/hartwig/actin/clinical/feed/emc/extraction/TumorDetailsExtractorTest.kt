@@ -130,7 +130,8 @@ class TumorDetailsExtractorTest {
     fun `Should override has liver lesions when listed in other lesions`() {
         assertThat(baseTumor.hasLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasLiverLesions = true)
+        val expected =
+            TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasLiverLesions = true, liverLesionsMinCount = 1)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -145,28 +146,11 @@ class TumorDetailsExtractorTest {
     fun `Should override has suspected liver lesions when listed in other lesions`() {
         assertThat(baseTumor.hasSuspectedLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasSuspectedLiverLesions = true)
-        assertTumorExtraction(
-            TumorDetailsExtractor(
-                TestCurationFactory.curationDatabase(
-                    lesionLocationConfig(LesionLocationCategory.LIVER).copy(suspected = true)
-                ), TestCurationFactory.curationDatabase(),
-                tumorStageDeriver
-            ), questionnaire, expected
-        )
-    }
-
-    @Test
-    fun `Should override only the aspect that needs to be overridden and leave the other aspect of pair intact`() {
-        assertThat(baseTumor.hasLiverLesions).isNull()
-        assertThat(baseTumor.hasSuspectedLiverLesions).isNull()
-        val questionnaire =
-            emptyQuestionnaire().copy(hasLiverLesions = true, otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
-        val expected = baseTumor.copy(
+        val expected = TumorDetails(
             otherLesions = emptyList(),
             otherSuspectedLesions = emptyList(),
-            hasLiverLesions = true,
-            hasSuspectedLiverLesions = true
+            hasSuspectedLiverLesions = true,
+            liverLesionsMinCount = 1
         )
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -182,7 +166,11 @@ class TumorDetailsExtractorTest {
     fun `Should override has liver lesions when listed as biopsy`() {
         assertThat(baseTumor.hasLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(biopsyLocation = locationLesionInput(LesionLocationCategory.LIVER))
-        val expected = TumorDetails(biopsyLocation = curatedLocationLesionInput(LesionLocationCategory.LIVER), hasLiverLesions = true)
+        val expected = TumorDetails(
+            biopsyLocation = curatedLocationLesionInput(LesionLocationCategory.LIVER),
+            hasLiverLesions = true,
+            liverLesionsMinCount = 1
+        )
 
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -199,7 +187,11 @@ class TumorDetailsExtractorTest {
         assertThat(baseTumor.hasLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(biopsyLocation = locationLesionInput(LesionLocationCategory.LIVER))
         val expected =
-            TumorDetails(biopsyLocation = curatedLocationLesionInput(LesionLocationCategory.LIVER), hasSuspectedLiverLesions = true)
+            TumorDetails(
+                biopsyLocation = curatedLocationLesionInput(LesionLocationCategory.LIVER),
+                hasSuspectedLiverLesions = true,
+                liverLesionsMinCount = 1
+            )
 
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -215,7 +207,8 @@ class TumorDetailsExtractorTest {
     fun `Should override has cns lesions when listed in other lesions`() {
         assertThat(baseTumor.hasCnsLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.CNS)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasCnsLesions = true)
+        val expected =
+            TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasCnsLesions = true, cnsLesionsMinCount = 1)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -230,7 +223,12 @@ class TumorDetailsExtractorTest {
     fun `Should override has suspected cns lesions when listed in other lesions`() {
         assertThat(baseTumor.hasCnsLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.CNS)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasSuspectedCnsLesions = true)
+        val expected = TumorDetails(
+            otherLesions = emptyList(),
+            otherSuspectedLesions = emptyList(),
+            hasSuspectedCnsLesions = true,
+            cnsLesionsMinCount = 1
+        )
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -245,7 +243,8 @@ class TumorDetailsExtractorTest {
     fun `Should override has brain lesions when listed in other lesions`() {
         assertThat(baseTumor.hasBrainLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.BRAIN)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasBrainLesions = true)
+        val expected =
+            TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasBrainLesions = true, brainLesionsMinCount = 1)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -260,7 +259,12 @@ class TumorDetailsExtractorTest {
     fun `Should override has suspected brain lesions when listed in other lesions`() {
         assertThat(baseTumor.hasBrainLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.BRAIN)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasSuspectedBrainLesions = true)
+        val expected = TumorDetails(
+            otherLesions = emptyList(),
+            otherSuspectedLesions = emptyList(),
+            hasSuspectedBrainLesions = true,
+            brainLesionsMinCount = 1
+        )
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -278,7 +282,8 @@ class TumorDetailsExtractorTest {
         val expected = TumorDetails(
             otherLesions = listOf(curatedLocationLesionInput(LesionLocationCategory.LYMPH_NODE)),
             otherSuspectedLesions = emptyList(),
-            hasLymphNodeLesions = true
+            hasLymphNodeLesions = true,
+            lymphNodeLesionsMinCount = 1
         )
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -297,7 +302,8 @@ class TumorDetailsExtractorTest {
         val expected = TumorDetails(
             otherLesions = emptyList(),
             otherSuspectedLesions = listOf(curatedLocationLesionInput(LesionLocationCategory.LYMPH_NODE)),
-            hasSuspectedLymphNodeLesions = true
+            hasSuspectedLymphNodeLesions = true,
+            lymphNodeLesionsMinCount = 1
         )
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -326,7 +332,8 @@ class TumorDetailsExtractorTest {
                 curatedLocationLesionInput(LesionLocationCategory.LYMPH_NODE, " clavicle")
             ),
             hasLymphNodeLesions = true,
-            hasSuspectedLymphNodeLesions = true
+            hasSuspectedLymphNodeLesions = true,
+            lymphNodeLesionsMinCount = 2
         )
 
         val lesionLocationCuration = TestCurationFactory.curationDatabase(
@@ -346,7 +353,8 @@ class TumorDetailsExtractorTest {
     fun `Should override has bone lesions when listed in other lesions`() {
         assertThat(baseTumor.hasBoneLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.BONE)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasBoneLesions = true)
+        val expected =
+            TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasBoneLesions = true, boneLesionsMinCount = 1)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -361,11 +369,90 @@ class TumorDetailsExtractorTest {
     fun `Should override has suspected bone lesions when listed in other lesions`() {
         assertThat(baseTumor.hasBoneLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.BONE)))
-        val expected = TumorDetails(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasSuspectedBoneLesions = true)
+        val expected = TumorDetails(
+            otherLesions = emptyList(),
+            otherSuspectedLesions = emptyList(),
+            hasSuspectedBoneLesions = true,
+            boneLesionsMinCount = 1
+        )
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
                     lesionLocationConfig(LesionLocationCategory.BONE, true)
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
+            ), questionnaire, expected
+        )
+    }
+
+    @Test
+    fun `Should override only the aspect that needs to be overridden and leave the other aspect of pair intact`() {
+        assertThat(baseTumor.hasLiverLesions).isNull()
+        assertThat(baseTumor.hasSuspectedLiverLesions).isNull()
+        val questionnaire =
+            emptyQuestionnaire().copy(hasLiverLesions = true, otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
+        val expected = baseTumor.copy(
+            otherLesions = emptyList(),
+            otherSuspectedLesions = emptyList(),
+            hasLiverLesions = true,
+            hasSuspectedLiverLesions = true,
+            liverLesionsMinCount = 1
+        )
+        assertTumorExtraction(
+            TumorDetailsExtractor(
+                TestCurationFactory.curationDatabase(
+                    lesionLocationConfig(LesionLocationCategory.LIVER).copy(suspected = true)
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
+            ), questionnaire, expected
+        )
+    }
+
+    @Test
+    fun `Should determine min lesion count as the sum of lesion categorizations, including suspected`() {
+        val questionnaire = emptyQuestionnaire().copy(
+            otherLesions = listOf(
+                locationLesionInput(LesionLocationCategory.BRAIN),
+                locationLesionInput(LesionLocationCategory.BRAIN),
+                locationLesionInput(LesionLocationCategory.BRAIN),
+            )
+        )
+        val expected = TumorDetails(
+            hasBrainLesions = true,
+            hasSuspectedBrainLesions = true,
+            brainLesionsMinCount = 3,
+            otherLesions = emptyList(),
+            otherSuspectedLesions = emptyList()
+        )
+        assertTumorExtraction(
+            TumorDetailsExtractor(
+                TestCurationFactory.curationDatabase(
+                    lesionLocationConfig(LesionLocationCategory.BRAIN).copy(location = "brain 1"),
+                    lesionLocationConfig(LesionLocationCategory.BRAIN).copy(location = "brain 2"),
+                    lesionLocationConfig(LesionLocationCategory.BRAIN).copy(location = "brain 3", suspected = true),
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
+            ), questionnaire, expected
+        )
+    }
+
+    @Test
+    fun `Should not count hasLesions = true as lesion count when determining min lesion count`() {
+        val questionnaire = emptyQuestionnaire().copy(
+            hasLiverLesions = true,
+            otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER), locationLesionInput(LesionLocationCategory.LIVER))
+        )
+        val expected = TumorDetails(
+            hasLiverLesions = true,
+            liverLesionsMinCount = 2,
+            otherLesions = emptyList(),
+            otherSuspectedLesions = emptyList()
+        )
+        assertTumorExtraction(
+            TumorDetailsExtractor(
+                TestCurationFactory.curationDatabase(
+                    lesionLocationConfig(LesionLocationCategory.LIVER).copy(location = "liver 1"),
+                    lesionLocationConfig(LesionLocationCategory.LIVER).copy(location = "liver 2"),
                 ), TestCurationFactory.curationDatabase(),
                 tumorStageDeriver
             ), questionnaire, expected
