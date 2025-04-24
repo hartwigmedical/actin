@@ -209,11 +209,7 @@ class TumorDetailsExtractor(
             logger.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")
         }
 
-        return if (hasLesions == true) Triple(true, hasSuspectedLesions, minCount) else Triple(
-            hasLesionsQuestionnaire,
-            hasSuspectedLesions,
-            minCount
-        )
+        return Triple(if (hasLesions == true) true else hasLesionsQuestionnaire, hasSuspectedLesions, minCount)
     }
 
     companion object {
