@@ -21,7 +21,7 @@ class MeetsSpecificCriteriaRegardingMetastasesTest {
     }
 
     @Test
-    fun `Should be undetermined when tumor stage unknown`() {
+    fun `Should evaluate to undetermined when unknown if patient has metastatic cancer`() {
         val alwaysUndeterminedMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
@@ -30,7 +30,7 @@ class MeetsSpecificCriteriaRegardingMetastasesTest {
     }
 
     @Test
-    fun `Should be undetermined when patient has metastatic cancer`() {
+    fun `Should evaluate to undetermined when patient has metastatic cancer`() {
         val alwaysPassMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
