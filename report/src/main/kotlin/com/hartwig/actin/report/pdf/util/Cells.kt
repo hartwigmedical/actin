@@ -83,10 +83,12 @@ object Cells {
         return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
     }
 
-    fun createContentSmallItalicNoBorder(text: String): Cell {
-        return createContentNoBorder(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
+    fun createContentDeEmphasize(element: IBlockElement): Cell {
+        val cell = createContent(element)
+        cell.setFontColor(Styles.PALETTE_MID_GREY)
+        return cell
     }
-
+    
     fun createContentBold(text: String): Cell {
         return createContent(Paragraph(text), Styles.tableHighlightStyle())
     }
@@ -100,13 +102,7 @@ object Cells {
         cell.addStyle(Styles.tableContentStyle())
         return cell
     }
-
-    fun createContentNoBorderDeEmphasize(element: IBlockElement): Cell {
-        val cell = createContentNoBorder(element)
-        cell.setFontColor(Styles.PALETTE_MID_GREY)
-        return cell
-    }
-
+    
     fun createContentWarn(text: String): Cell {
         val cell = createContent(text)
         cell.setFontColor(Styles.PALETTE_WARN)

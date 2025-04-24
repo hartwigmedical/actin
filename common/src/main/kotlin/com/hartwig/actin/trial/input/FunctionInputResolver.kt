@@ -47,7 +47,6 @@ import com.hartwig.actin.trial.input.single.OneHlaGroup
 import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
-import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
@@ -133,6 +132,11 @@ class FunctionInputResolver(
 
                 FunctionInput.TWO_DOUBLES -> {
                     createTwoDoublesInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_SYSTEMIC_TREATMENT -> {
+                    createOneSystemicTreatment(function)
                     return true
                 }
 
@@ -263,11 +267,6 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_STRINGS -> {
                     createManyStringsInput(function)
-                    return true
-                }
-
-                FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
-                    createManyStringsOneIntegerInput(function)
                     return true
                 }
 
@@ -464,6 +463,13 @@ class FunctionInputResolver(
             double1 = parameterAsString(function, 0).toDouble(),
             double2 = parameterAsString(function, 1).toDouble()
         )
+    }
+
+    fun createOneSystemicTreatment(function: EligibilityFunction): Treatment {
+        assertParamConfig(function, FunctionInput.ONE_SYSTEMIC_TREATMENT, 1)
+        val treatment = toTreatment(parameterAsString(function, 0))
+        return treatment.takeIf { it.isSystemic }
+            ?: throw IllegalStateException("Not a systemic treatment: ${treatment.display()}")
     }
 
     fun createOneTreatmentCategoryOrTypeInput(function: EligibilityFunction): TreatmentCategoryInput {
@@ -695,14 +701,6 @@ class FunctionInputResolver(
     fun createManyStringsInput(function: EligibilityFunction): List<String> {
         assertParamConfig(function, FunctionInput.MANY_STRINGS, 1)
         return toStringList(function.parameters.first())
-    }
-
-    fun createManyStringsOneIntegerInput(function: EligibilityFunction): OneIntegerManyStrings {
-        assertParamConfig(function, FunctionInput.MANY_STRINGS_ONE_INTEGER, 2)
-        return OneIntegerManyStrings(
-            strings = toStringList(function.parameters.first()),
-            integer = parameterAsInt(function, 1)
-        )
     }
 
     fun createManyBodyLocationsInput(function: EligibilityFunction): Set<BodyLocationCategory> {

@@ -68,8 +68,7 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        isOnLabel = true,
-        isCategoryEvent = true
+        isOnLabel = true
     )
 )
 
@@ -176,7 +175,6 @@ class PanelFusionAnnotatorTest {
                     TestTreatmentEvidenceFactory.create(
                         treatment = "treatment",
                         isOnLabel = true,
-                        isCategoryEvent = true,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
@@ -212,9 +210,7 @@ class PanelFusionAnnotatorTest {
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                        isOnLabel = true,
-                        isCategoryEvent = true
-                    )
+                        isOnLabel = true)
                 )
             )
         )

@@ -10,7 +10,7 @@ fun evidenceTier(driver: Driver): EvidenceTier {
             it.isOnLabel && it.evidenceLevel in setOf(
                 EvidenceLevel.A,
                 EvidenceLevel.B
-            ) && !it.molecularMatch.isCategoryEvent
+            ) && !it.molecularMatch.sourceEvidenceType.isCategoryEvent()
         } -> EvidenceTier.I
 
         driver.evidence.treatmentEvidence.isNotEmpty() -> EvidenceTier.II

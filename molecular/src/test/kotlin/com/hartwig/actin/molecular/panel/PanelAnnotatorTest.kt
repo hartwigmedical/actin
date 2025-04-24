@@ -32,8 +32,7 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        isOnLabel = true,
-        isCategoryEvent = true
+        isOnLabel = true
     )
 )
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)

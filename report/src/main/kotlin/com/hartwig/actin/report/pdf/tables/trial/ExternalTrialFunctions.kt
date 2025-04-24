@@ -17,16 +17,16 @@ object ExternalTrialFunctions {
     }
 
     fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: Country): Pair<String, String> {
-        val homeCountries = trial.countries.filter { it.country == country }
+        val matchingCountry = trial.countries.filter { it.country == country }
 
-        if (homeCountries.size != 1) {
+        if (matchingCountry.size != 1) {
             throw IllegalStateException(
                 "Country ${country.display()} not configured or configured multiple times for trial ${trial.nctId}. " +
                         "This should not be possible and indicates an issue in the SERVE data export"
             )
         }
 
-        return formatHospitalsAndCities(homeCountries.first().hospitalsPerCity)
+        return formatHospitalsAndCities(matchingCountry.first().hospitalsPerCity)
     }
 
     fun countryNamesWithCities(externalTrial: ExternalTrialSummary): String {

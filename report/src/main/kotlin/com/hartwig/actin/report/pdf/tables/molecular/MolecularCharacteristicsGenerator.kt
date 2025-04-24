@@ -14,7 +14,7 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import java.util.function.Consumer
 
-class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, private val width: Float) : TableGenerator {
+class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : TableGenerator {
 
     private val wgsMolecular = molecular as? MolecularRecord
 
@@ -22,9 +22,12 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         return "General"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
-        val colWidth = width / 10
-        val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
+        val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f, 1f, 2f, 2f)
 
         listOf("Purity", "Ploidy", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
@@ -139,7 +142,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         if (wgsMolecular?.isContaminated == true) {
             return Formats.VALUE_NOT_AVAILABLE
         } else {
-            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
+            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_NOT_AVAILABLE
             return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function.display()})" }
         }
     }

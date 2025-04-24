@@ -70,7 +70,7 @@ class GeneHasSufficientCopyNumber(override val gene: String, private val request
         return when {
             reportableSufficientCN != null -> {
                 EvaluationFactory.pass(
-                    "$gene copy number is above requested $requestedMinCopyNumber",
+                    "$gene copy number is above $requestedMinCopyNumber",
                     inclusionEvents = reportableSufficientCN
                 )
             }

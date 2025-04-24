@@ -10,13 +10,18 @@ import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
+private const val ADDITIONAL_EMPTY_COLS = 2
 private const val PADDING_LEFT = 20
 private const val PADDING_RIGHT = 25
 
-class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
+class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : TableGenerator {
 
     override fun title(): String {
         return "Predicted tumor origin"
+    }
+
+    override fun forceKeepTogether(): Boolean {
+        return true
     }
 
     override fun contents(): Table {
@@ -29,15 +34,16 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
                 predictedTumorOrigin.cancerType(),
                 Formats.percentage(predictedTumorOrigin.likelihood())
             )
-            Tables.createSingleColWithWidth(width).addCell(Cells.createContentNoBorder(message))
+            Tables.createSingleCol().addCell(Cells.createContentNoBorder(message))
         } else {
-            val numColumns = predictions.size + 1
-            val table = Table(numColumns)
+            val numColumns = predictions.size + 1 + ADDITIONAL_EMPTY_COLS
+            val table = Tables.createMultiCol(numColumns)
             table.addHeaderCell(Cells.createEmpty())
             predictions.indices.asSequence()
                 .map { i: Int -> "${i + 1}. ${predictions[i].cancerType}" }
                 .map { Cells.createHeader(it).setPaddingLeft(PADDING_LEFT.toFloat()) }
                 .forEach(table::addHeaderCell)
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addHeaderCell(Cells.createEmpty()) }
 
             table.addCell(Cells.createContentBold("Combined prediction score"))
             predictions.map {
@@ -47,9 +53,11 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
                 }
                 likelihoodCell
             }.forEach(table::addCell)
-
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
+            
             table.addCell(Cells.createContent("This score is calculated by combining information on:"))
             repeat(predictions.size) { table.addCell(Cells.createContent("")) }
+            repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
             addClassifierRow("(1) SNV types", predictions, CupPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
                 "(2) SNV genomic localisation distribution", predictions, CupPrediction::genomicPositionClassifier, table
@@ -70,8 +78,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
     }
 
     private fun addClassifierRow(
-        classifierText: String, predictions: List<CupPrediction>,
-        classifierFunction: (CupPrediction) -> Double, table: Table
+        classifierText: String, predictions: List<CupPrediction>, classifierFunction: (CupPrediction) -> Double, table: Table
     ) {
         table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
         predictions
@@ -80,5 +87,6 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
             .map(Formats::percentage)
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
+        repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
     }
 }

@@ -58,6 +58,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("1", "female")
             }
 
+            FunctionInput.ONE_SYSTEMIC_TREATMENT -> {
+                listOf("CAPECITABINE+OXALIPLATIN")
+            }
+
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE -> {
                 listOf(TreatmentCategory.IMMUNOTHERAPY.display())
             }
@@ -180,10 +184,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
 
             FunctionInput.MANY_STRINGS -> {
                 listOf("string1;string2")
-            }
-
-            FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
-                listOf("string1;string2", "1")
             }
 
             FunctionInput.MANY_BODY_LOCATIONS -> {

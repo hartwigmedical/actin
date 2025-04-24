@@ -40,7 +40,6 @@ import com.hartwig.actin.trial.input.single.OneHlaGroup
 import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
-import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneProteinOneString
@@ -157,6 +156,22 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3.1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3.1", "not a double")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one specific systemic treatment input`() {
+        val rule = firstOfType(FunctionInput.ONE_SYSTEMIC_TREATMENT)
+        val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
+        val valid = create(rule, listOf(treatmentName))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = TestTreatmentDatabaseFactory.createProper().findTreatmentByName(treatmentName)!!
+        assertThat(resolver.createOneSystemicTreatment(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentName, treatmentName)))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("ABLATION")))!!).isFalse
     }
 
     @Test
@@ -591,18 +606,6 @@ class FunctionInputResolverTest {
         val expected = listOf("BRAF", "KRAS")
         assertThat(resolver.createManyStringsInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-    }
-
-    @Test
-    fun `Should resolve functions with many strings one integer input`() {
-        val rule = firstOfType(FunctionInput.MANY_STRINGS_ONE_INTEGER)
-        val valid = create(rule, listOf("BRAF;KRAS", "1"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = OneIntegerManyStrings(1, listOf("BRAF", "KRAS"))
-        assertThat(resolver.createManyStringsOneIntegerInput(valid)).isEqualTo(expected)
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "BRAF;KRAS")))!!).isFalse
     }
 
     @Test

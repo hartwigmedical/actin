@@ -18,7 +18,7 @@ class Footer {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageNumber = page.document.getPageNumber(page)
         val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 25f))
-        canvas.addXObjectAt(template, 58f, 20f)
+        canvas.addXObjectAt(template, 58f, 18f)
         footerTemplates.add(FooterTemplate(pageNumber, template))
         canvas.release()
     }
@@ -48,7 +48,7 @@ class Footer {
             canvas.showTextAligned(disclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
             // TODO (KD) Only add CKB attribution in case we have done molecular interpretation with evidenceSource = CKB.
-            // Note: If we don't add the CKB attribution we can reduce the height of the footer from 25 to ~20.
+            // Note: If we don't add the CKB attribution we can reduce the height of the footer from 28 to ~20.
             val attribution = "Gene and variant annotations and related content are powered by Genomenon Cancer Knowledgebase (CKB)."
             val attributionParagraph = Paragraph(attribution).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(attributionParagraph, 30f, 0f, TextAlignment.LEFT)

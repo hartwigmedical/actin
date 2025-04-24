@@ -7,7 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
-class HasIrradiationAmenableLesionTest {
+class MeetsSpecificCriteriaRegardingMetastasesTest {
 
     private val patientRecord = TumorTestFactory.withTumorStage(null)
 
@@ -16,7 +16,7 @@ class HasIrradiationAmenableLesionTest {
         val alwaysFailsMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
-        val function = HasIrradiationAmenableLesion(alwaysFailsMetastaticCancerEvaluation)
+        val function = MeetsSpecificCriteriaRegardingMetastases(alwaysFailsMetastaticCancerEvaluation)
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
@@ -25,7 +25,7 @@ class HasIrradiationAmenableLesionTest {
         val alwaysUndeterminedMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
-        val function = HasIrradiationAmenableLesion(alwaysUndeterminedMetastaticCancerEvaluation)
+        val function = MeetsSpecificCriteriaRegardingMetastases(alwaysUndeterminedMetastaticCancerEvaluation)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
@@ -34,7 +34,7 @@ class HasIrradiationAmenableLesionTest {
         val alwaysPassMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
-        val function = HasIrradiationAmenableLesion(alwaysPassMetastaticCancerEvaluation)
+        val function = MeetsSpecificCriteriaRegardingMetastases(alwaysPassMetastaticCancerEvaluation)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 }
