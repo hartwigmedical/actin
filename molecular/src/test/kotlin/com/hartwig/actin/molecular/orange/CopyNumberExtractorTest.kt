@@ -23,19 +23,19 @@ class CopyNumberExtractorTest {
         val driverGene3NonCanonical = TestPurpleFactory.driverBuilder().gene("gene 3").type(PurpleDriverType.AMP).isCanonical(false).build()
         val driverGene4Canonical = TestPurpleFactory.driverBuilder().gene("gene 4").type(PurpleDriverType.AMP).isCanonical(true).build()
 
-        val loss1Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(true)
-            .interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
-        val loss1NonCanonical = TestPurpleFactory.gainLossBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(false)
-            .interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
-        val gain2Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0).isCanonical(true)
+        val loss1Canonical = TestPurpleFactory.gainDelBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(true)
+            .interpretation(CopyNumberInterpretation.PARTIAL_DEL).build()
+        val loss1NonCanonical = TestPurpleFactory.gainDelBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(false)
+            .interpretation(CopyNumberInterpretation.PARTIAL_DEL).build()
+        val gain2Canonical = TestPurpleFactory.gainDelBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0).isCanonical(true)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
-        val gain2NonCanonical = TestPurpleFactory.gainLossBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0).isCanonical(false)
+        val gain2NonCanonical = TestPurpleFactory.gainDelBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0).isCanonical(false)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
-        val gain3Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 3").minCopies(20.0).maxCopies(20.0).isCanonical(true)
+        val gain3Canonical = TestPurpleFactory.gainDelBuilder().gene("gene 3").minCopies(20.0).maxCopies(20.0).isCanonical(true)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
-        val gain3NonCanonical = TestPurpleFactory.gainLossBuilder().gene("gene 3").minCopies(20.0).maxCopies(20.0).isCanonical(false)
+        val gain3NonCanonical = TestPurpleFactory.gainDelBuilder().gene("gene 3").minCopies(20.0).maxCopies(20.0).isCanonical(false)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
-        val gain4Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 4").minCopies(19.6).maxCopies(20.4).isCanonical(true)
+        val gain4Canonical = TestPurpleFactory.gainDelBuilder().gene("gene 4").minCopies(19.6).maxCopies(20.4).isCanonical(true)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
 
         val geneCopyNumber1 =
@@ -60,7 +60,7 @@ class CopyNumberExtractorTest {
         val purple = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driverGene3Canonical, driverGene3NonCanonical, driverGene2NonCanonical, driverGene4Canonical)
-            .addAllSomaticGainsLosses(
+            .addAllSomaticGainsDels(
                 loss1Canonical,
                 loss1NonCanonical,
                 gain2NonCanonical,
@@ -141,13 +141,13 @@ class CopyNumberExtractorTest {
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception when filtering reported copy number`() {
         val driver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
-        val gainLoss = TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
+        val gainDel = TestPurpleFactory.gainDelBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_DEL).build()
         val geneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder().gene("gene 1").build()
 
         val purple = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driver)
-            .addAllSomaticGainsLosses(gainLoss)
+            .addAllSomaticGainsDels(gainDel)
             .addAllSomaticGeneCopyNumbers(geneCopyNumber)
             .build()
 

@@ -11,6 +11,7 @@ import com.hartwig.hmftools.datamodel.chord.ChordRecord
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.chord.ImmutableChordRecord
 import com.hartwig.hmftools.datamodel.cuppa.CuppaData
+import com.hartwig.hmftools.datamodel.cuppa.CuppaMode
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.flagstat.ImmutableFlagstat
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord
@@ -75,7 +76,9 @@ object TestOrangeFactory {
             .fit(TestPurpleFactory.fitBuilder()
                 .qc(TestPurpleFactory.purpleQCBuilder().status(setOf<PurpleQCStatus?>(PurpleQCStatus.FAIL_NO_TUMOR)).build())
                 .build())
+            .tumorStats(TestPurpleFactory.tumorStatsBuilder().build())
             .characteristics(TestPurpleFactory.characteristicsBuilder().build())
+            .chromosomalRearrangements(TestPurpleFactory.chromosomalRearrangementsBuilder().build())
             .build()
     }
 
@@ -139,15 +142,15 @@ object TestOrangeFactory {
                     .reported(true)
                     .build())
                 .build())
-            .addAllSomaticGainsLosses(TestPurpleFactory.gainLossBuilder()
+            .addAllSomaticGainsDels(TestPurpleFactory.gainDelBuilder()
                 .gene("MYC")
                 .interpretation(CopyNumberInterpretation.FULL_GAIN)
                 .minCopies(38.0)
                 .maxCopies(40.0)
                 .build())
-            .addAllSomaticGainsLosses(TestPurpleFactory.gainLossBuilder()
+            .addAllSomaticGainsDels(TestPurpleFactory.gainDelBuilder()
                 .gene("PTEN")
-                .interpretation(CopyNumberInterpretation.FULL_LOSS)
+                .interpretation(CopyNumberInterpretation.FULL_DEL)
                 .minCopies(0.0)
                 .maxCopies(0.0)
                 .build())
@@ -249,6 +252,7 @@ object TestOrangeFactory {
             .build()
 
         return ImmutableCuppaData.builder()
+            .mode(CuppaMode.WGS)
             .addPredictions(cuppaPrediction)
             .bestPrediction(cuppaPrediction)
             .simpleDups32To200B(0)

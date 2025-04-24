@@ -656,9 +656,9 @@
       }
     ],
     "suspectGeneCopyNumbersWithLOH": [],
-    "allSomaticGainsLosses": [
+    "allSomaticGainsDels": [
       {
-        "interpretation": "FULL_LOSS",
+        "interpretation": "FULL_DEL",
         "gene": "DLGAP5P1",
         "chromosome": "Y",
         "chromosomeBand": "p11.2",
@@ -670,7 +670,7 @@
     ],
     "reportableSomaticGainsLosses": [
       {
-        "interpretation": "PARTIAL_LOSS",
+        "interpretation": "PARTIAL_DEL",
         "gene": "PTEN",
         "chromosome": "10",
         "chromosomeBand": "q23.31",
@@ -715,7 +715,7 @@
     ],
     "allGermlineFullLosses": [
       {
-        "interpretation": "PARTIAL_LOSS",
+        "interpretation": "PARTIAL_DEL",
         "gene": "BTNL3",
         "chromosome": "5",
         "chromosomeBand": "q35.3",

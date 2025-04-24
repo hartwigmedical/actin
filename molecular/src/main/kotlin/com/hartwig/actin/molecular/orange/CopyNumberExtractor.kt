@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleGainDeletion
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 import kotlin.math.roundToInt
 
@@ -41,10 +41,10 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
             .map { (geneCopyNumber, drivers) ->
                 val canonicalDriver = drivers.firstOrNull { it.isCanonical }
                 val otherGainLosses =
-                    drivers.filter { it != canonicalDriver }.map { driver -> findGainLoss(purple.allSomaticGainsLosses(), driver) }
+                    drivers.filter { it != canonicalDriver }.map { driver -> findGainLoss(purple.allSomaticGainsDels(), driver) }
                 if (canonicalDriver != null) {
-                    val canonicalGainLoss = findGainLoss(purple.allSomaticGainsLosses(), canonicalDriver)
-                    val event = DriverEventFactory.gainLossEvent(canonicalGainLoss)
+                    val canonicalGainLoss = findGainLoss(purple.allSomaticGainsDels(), canonicalDriver)
+                    val event = DriverEventFactory.gainDelEvent(canonicalGainLoss)
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,
@@ -60,19 +60,19 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                             canonicalGainLoss.minCopies().roundToInt(),
                             canonicalGainLoss.maxCopies().roundToInt()
                         ),
-                        otherImpacts = otherGainLosses.map { gainLoss ->
+                        otherImpacts = otherGainLosses.map { gainDel ->
                             TranscriptCopyNumberImpact(
-                                gainLoss.transcript(),
-                                determineType(gainLoss.interpretation()),
-                                gainLoss.minCopies().roundToInt(),
-                                gainLoss.maxCopies().roundToInt()
+                                gainDel.transcript(),
+                                determineType(gainDel.interpretation()),
+                                gainDel.minCopies().roundToInt(),
+                                gainDel.maxCopies().roundToInt()
                             )
                         }.toSet(),
                     )
                 } else {
                     val event =
                         if (otherGainLosses.isEmpty()) DriverEventFactory.geneCopyNumberEvent(geneCopyNumber) else otherGainLosses.first()
-                            .let { DriverEventFactory.gainLossEvent(it) }
+                            .let { DriverEventFactory.gainDelEvent(it) }
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,
@@ -90,12 +90,12 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                             maxCopies = geneCopyNumber.maxCopyNumber()
                                 .roundToInt() // TODO (CB): Should be changed once PurpleGeneCopyNumber has transcript / isCanonical fields
                         ),
-                        otherImpacts = otherGainLosses.map { gainLoss ->
+                        otherImpacts = otherGainLosses.map { gainDel ->
                             TranscriptCopyNumberImpact(
-                                gainLoss.transcript(),
-                                determineType(gainLoss.interpretation()),
-                                gainLoss.minCopies().roundToInt(),
-                                gainLoss.maxCopies().roundToInt()
+                                gainDel.transcript(),
+                                determineType(gainDel.interpretation()),
+                                gainDel.minCopies().roundToInt(),
+                                gainDel.maxCopies().roundToInt()
                             )
                         }.toSet()
                     )
@@ -114,7 +114,7 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                 CopyNumberType.PARTIAL_GAIN
             }
 
-            CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
+            CopyNumberInterpretation.FULL_DEL, CopyNumberInterpretation.PARTIAL_DEL -> {
                 CopyNumberType.LOSS
             }
 
@@ -130,17 +130,17 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    private fun findGainLoss(gainsLosses: List<PurpleGainLoss>, driverToMatch: PurpleDriver): PurpleGainLoss {
-        val gainLoss =
-            gainsLosses.firstOrNull { gainLoss ->
-                gainLoss.gene() == driverToMatch.gene() && gainLoss.isCanonical == driverToMatch.isCanonical
+    private fun findGainLoss(gainsLosses: List<PurpleGainDeletion>, driverToMatch: PurpleDriver): PurpleGainDeletion {
+        val gainDel =
+            gainsLosses.firstOrNull { gainDel ->
+                gainDel.gene() == driverToMatch.gene() && gainDel.isCanonical == driverToMatch.isCanonical
             }
 
-        if (gainLoss != null) {
-            return gainLoss
+        if (gainDel != null) {
+            return gainDel
         } else {
             throw IllegalStateException(
-                "Copy number driver found but could not find corresponding PurpleGainLoss for driver : '$driverToMatch'."
+                "Copy number driver found but could not find corresponding PurpleGainDeletion for driver : '$driverToMatch'."
             )
         }
     }
