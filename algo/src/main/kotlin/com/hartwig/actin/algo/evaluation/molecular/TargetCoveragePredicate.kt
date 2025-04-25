@@ -17,10 +17,10 @@ fun any(messagePrefix: String? = null) = or(*MolecularTestTarget.entries.toTyped
 fun all(messagePrefix: String) = and(*MolecularTestTarget.entries.toTypedArray(), messagePrefix = messagePrefix)
 
 fun atLeast(target: MolecularTestTarget, messagePrefix: String) =
-    TargetCoveragePredicate(setOf(target), { it == listOf(target) }, { "at least ${plural(target.name.lowercase())}" }, messagePrefix)
+    TargetCoveragePredicate(setOf(target), { it.contains(target) }, { "at least ${plural(target.name.lowercase())}" }, messagePrefix)
 
 fun specific(target: MolecularTestTarget, messagePrefix: String) =
-    TargetCoveragePredicate(setOf(target), { it == listOf(target) }, { plural(target.name.lowercase()) }, messagePrefix)
+    TargetCoveragePredicate(setOf(target), { it.contains(target) }, { plural(target.name.lowercase()) }, messagePrefix)
 
 fun and(vararg targets: MolecularTestTarget, messagePrefix: String) =
     combine(targets.toSet(), messagePrefix = messagePrefix, Predicate<List<MolecularTestTarget>>::and) {

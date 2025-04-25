@@ -54,6 +54,7 @@ class TargetCoveragePredicateTest {
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isFalse()
         assertThat(predicate.test(listOf(MolecularTestTarget.AMPLIFICATION))).isFalse()
         assertThat(predicate.test(listOf(MolecularTestTarget.DELETION))).isFalse()
+        assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION))).isTrue()
         assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for at least mutations)")
     }
 
@@ -64,6 +65,7 @@ class TargetCoveragePredicateTest {
         assertThat(predicate.test(listOf(MolecularTestTarget.FUSION))).isFalse()
         assertThat(predicate.test(listOf(MolecularTestTarget.AMPLIFICATION))).isFalse()
         assertThat(predicate.test(listOf(MolecularTestTarget.DELETION))).isFalse()
+        assertThat(predicate.test(listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION))).isTrue()
         assertThat(predicate.message(GENE)).isEqualTo("Mutation in gene GENE undetermined (not tested for mutations)")
     }
 }
