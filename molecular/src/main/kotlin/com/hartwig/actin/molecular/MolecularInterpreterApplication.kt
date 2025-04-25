@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -24,6 +25,7 @@ import com.hartwig.actin.molecular.panel.IHCExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
+import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
@@ -37,13 +39,13 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
@@ -73,8 +75,12 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
         LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
 
-        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids)
+        LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
+        val panelSpecifications =
+            config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
+
+        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
@@ -89,7 +95,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         config: MolecularInterpreterConfig,
         serveDatabase: ServeDatabase,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         return if (config.orangeJson != null) {
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
@@ -101,7 +108,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
             val orangeRecordMolecularRecordMolecularInterpreter =
-                MolecularInterpreter(OrangeExtractor(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
+                MolecularInterpreter(OrangeExtractor(geneFilter, panelSpecifications), MolecularRecordAnnotator(evidenceDatabase))
 
             orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
         } else {
@@ -114,7 +121,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         clinical: ClinicalRecord,
         serveDatabase: ServeDatabase,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
@@ -159,7 +167,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
-            panelCopyNumberAnnotator
+            panelCopyNumberAnnotator,
+            panelSpecifications
         )
 
         val ihcMolecularTests = interpretPriorIHCMolecularTests(
@@ -176,7 +185,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         evidenceDatabase: EvidenceDatabase,
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
-        panelCopyNumberAnnotator: PanelCopyNumberAnnotator
+        panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+        panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         return MolecularInterpreter(
             extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
@@ -188,7 +198,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 evidenceDatabase,
                 panelVariantAnnotator,
                 panelFusionAnnotator,
-                panelCopyNumberAnnotator
+                panelCopyNumberAnnotator,
+                panelSpecifications
             ),
         ).run(priorSequencingTests)
     }

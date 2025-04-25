@@ -50,8 +50,10 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED -> {
-                EvaluationFactory.undetermined("OncoAct tumor NGS panel performed containing $gene but biopsy contained " +
-                        "insufficient tumor cells for analysis")
+                EvaluationFactory.undetermined(
+                    "OncoAct tumor NGS panel performed containing $gene but biopsy contained " +
+                            "insufficient tumor cells for analysis"
+                )
             }
 
             indeterminatePriorIHCTestsForGene.isNotEmpty() -> {
@@ -65,6 +67,6 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
     }
 
     private fun isGeneTestedInPanel(molecularHistory: MolecularHistory): Boolean {
-        return molecularHistory.allPanels().any { it.testsGene(gene) }
+        return molecularHistory.allPanels().any { it.testsGene(gene, any("Test coverage of")) }
     }
 }

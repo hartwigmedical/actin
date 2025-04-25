@@ -7,11 +7,15 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import java.time.LocalDate
 
-class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge) {
+class GeneHasVariantInCodon(override val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(
+        targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, "Mutation in codons ${codons.joinToString()} in"),
+        maxTestAge = maxTestAge
+    ) {
 
     private enum class VariantClassification {
         CANONICAL_REPORTABLE,
@@ -20,8 +24,6 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
         REPORTABLE_OTHER,
         NONE
     }
-
-    override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val canonicalCodonMatches = mutableSetOf<String>()
