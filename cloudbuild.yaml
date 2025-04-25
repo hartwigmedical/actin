@@ -1,5 +1,4 @@
 steps:
-
   - id: 'Set version for maven'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:2.0.0'
     entrypoint: mvn
