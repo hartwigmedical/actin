@@ -57,6 +57,5 @@ data class PriorSequencingTest(
     val amplifications: Set<SequencedAmplification> = emptySet(),
     val skippedExons: Set<SequencedSkippedExons> = emptySet(),
     val fusions: Set<SequencedFusion> = emptySet(),
-    val deletedGenes: Set<SequencedDeletedGene> = emptySet(),
-    val testedGenes: Set<String> = emptySet()
+    val deletedGenes: Set<SequencedDeletedGene> = emptySet()
 ) 
