@@ -48,7 +48,9 @@ data class ProvidedPatientDetail(
     @Description("Base64 encoded SHA-256 hash of source hospital's identifier.")
     val hashedId: String,
     @Description("Flag to indicate there is pending Hartwig analysis data for this patient")
-    val hartwigMolecularDataExpected: Boolean
+    val hartwigMolecularDataExpected: Boolean,
+    @Description("Hospital specific Patient Id")
+    val hospitalPatientId: String? = null
 )
 
 @JacksonSerializable
@@ -71,8 +73,30 @@ data class ProvidedTumorDetail(
     val lesions: List<ProvidedLesion>? = null,
     @Description("Deprecated: currently use to store radiology report. Should move to lesions")
     val lesionSite: String? = null,
+    @Description("Raw pathology report of molecular test results")
+    val rawPathologyReport: String? = null,
+    @Description("Raw pathology reports")
+    val pathology: List<ProvidedPathologyReport>? = null,
+)
+
+@JacksonSerializable
+data class ProvidedPathologyReport(
+    @Description("Tissue Id")
+    val tissueId: String? = null,
+    @Description("Indication on whether the report was requested")
+    val reportRequested: Boolean,
+    @Description("Source of the report (internal or external)")
+    val source: String,
+    @Description("Lab that performed the report (for external sources only)")
+    val lab: String? = null,
+    @Description("Diagnosis written in the pathology reports")
+    val diagnosis: String,
+    @Description("Date of tissue collection")
+    val tissueDate: LocalDate,
+    @Description("Latest date of report authorization")
+    val authorisationDate: LocalDate,
     @Description("Raw pathology report of molecular test results.")
-    val rawPathologyReport: String? = null
+    val rawPathologyReport: String
 )
 
 @JacksonSerializable

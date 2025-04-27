@@ -19,6 +19,7 @@ data class ClinicalRecord(
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
+    val pathologyReports: List<PathologyReport>?
 ) {
 
     val otherConditions: List<OtherCondition>

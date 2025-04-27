@@ -33,6 +33,16 @@ class MolecularSummaryGenerator(
 
     override fun contents(): Table {
         val table = Tables.createSingleCol()
+
+        patientRecord.pathologyReports
+            ?.takeIf { reports -> reports.any { !it.tissueId.isNullOrBlank() } }
+            ?.let {
+                val generator = PathologyReportsOverviewGenerator(patientRecord.pathologyReports)
+                table.addCell(Cells.createSubTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                table.addCell(Cells.createEmpty())
+            }
+
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
         for (molecularTest in nonIhcTestsIncludedInTrialMatching.sortedByDescending { it.date }) {
@@ -58,8 +68,7 @@ class MolecularSummaryGenerator(
             }
         }
 
-        val priorMolecularResultGenerator =
-            PriorIHCResultGenerator(patientRecord, keyWidth, valueWidth, PriorIHCTestInterpreter())
+        val priorMolecularResultGenerator = PriorIHCResultGenerator(patientRecord, keyWidth, valueWidth, PriorIHCTestInterpreter())
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.create(priorMolecularResultGenerator.contents()))
         return table

@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
+import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
@@ -29,6 +30,7 @@ data class PatientRecord(
     val oncologicalHistory: List<TreatmentHistoryEntry>,
     val priorSecondPrimaries: List<PriorSecondPrimary>,
     val comorbidities: List<Comorbidity>,
+    val priorIHCTests: List<PriorIHCTest>,
     val labValues: List<LabValue>,
     val surgeries: List<Surgery>,
     val bodyWeights: List<BodyWeight>,
@@ -36,7 +38,7 @@ data class PatientRecord(
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
-    val priorIHCTests: List<PriorIHCTest>,
+    val pathologyReports: List<PathologyReport>?,
     val molecularHistory: MolecularHistory
 ) {
 

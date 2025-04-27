@@ -1,8 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
@@ -12,6 +10,8 @@ import com.hartwig.actin.clinical.feed.standard.TREATMENT_HISTORY_INPUT
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedLesion
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
 import io.mockk.every
@@ -352,15 +352,6 @@ class StandardTumorDetailsExtractorTest {
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
-    }
-
-    @Test
-    fun `Should extract raw pathology report text from patient record if provided`() {
-        setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG)
-        val base = EHR_PATIENT_RECORD
-        val providedRecord = base.copy(tumorDetails = base.tumorDetails.copy(rawPathologyReport = "Some report"))
-        val result = extractor.extract(providedRecord)
-        assertThat(result.extracted).isEqualTo(TUMOR_DETAILS.copy(rawPathologyReport = "Some report"))
     }
 
     private fun setupTumorCuration(input: String, vararg primaryTumorConfig: PrimaryTumorConfig) {

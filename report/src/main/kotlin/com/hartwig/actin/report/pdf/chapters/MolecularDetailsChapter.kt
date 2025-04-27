@@ -11,6 +11,7 @@ import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportsOverviewGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
@@ -41,8 +42,10 @@ class MolecularDetailsChapter(
 
     override fun render(document: Document) {
         addChapterTitle(document)
+        addPathologyReportsOverview(document)
         addMolecularDetails(document)
-        if (includeRawPathologyReport) report.patientRecord.tumor.rawPathologyReport?.let { addPathologyReport(document) }
+        if (includeRawPathologyReport)
+            addRawPathologyReport(document)
     }
 
     private fun addMolecularDetails(document: Document) {
@@ -87,12 +90,7 @@ class MolecularDetailsChapter(
         val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         for (panel in externalPanelResults) {
             WGSSummaryGenerator(
-                true,
-                report.patientRecord,
-                panel,
-                cohorts,
-                keyWidth,
-                contentWidth() - keyWidth
+                true, report.patientRecord, panel, cohorts, keyWidth, contentWidth() - keyWidth
             ).apply {
                 val table = Tables.createSingleColWithWidth(contentWidth())
                 table.addCell(Cells.createTitle(title()))
@@ -115,13 +113,30 @@ class MolecularDetailsChapter(
         } else emptyList()
     }
 
-    private fun addPathologyReport(document: Document) {
-        document.add(Div().setHeight(20F))
-        val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = PathologyReportGenerator(report.patientRecord.tumor)
-        // KD: This table doesn't fit in the typical generator format since it contains one row but with a lot of lines. 
-        table.addCell(Cells.createTitle(generator.title()))
-        table.addCell(Cells.create(generator.contents()))
-        document.add(table)
+    private fun addPathologyReportsOverview(document: Document) {
+        report.patientRecord.pathologyReports
+            ?.takeIf { reports -> reports.any { !it.tissueId.isNullOrBlank() } }
+            ?.let {
+                val table = Tables.createSingleColWithWidth(contentWidth())
+                val generator = PathologyReportsOverviewGenerator(report.patientRecord.pathologyReports)
+                table.addCell(Cells.createTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                table.addCell(Cells.createEmpty())
+                document.add(table)
+            }
+    }
+
+    private fun addRawPathologyReport(document: Document) {
+        report.patientRecord.pathologyReports
+            ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
+            ?.let {
+                document.add(Div().setHeight(20F))
+                val table = Tables.createSingleColWithWidth(contentWidth())
+                val generator = PathologyReportGenerator(report.patientRecord.pathologyReports)
+                // KD: This table doesn't fit in the typical generator format since it contains one row but with a lot of lines.
+                table.addCell(Cells.createTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                document.add(table)
+            }
     }
 }

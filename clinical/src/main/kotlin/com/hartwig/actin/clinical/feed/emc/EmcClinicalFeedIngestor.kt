@@ -4,8 +4,6 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
@@ -25,7 +23,6 @@ import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
-import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
@@ -40,6 +37,9 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.NON_INVASIVE_B
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.datamodel.clinical.ingestion.NO_QUESTIONNAIRE_FOUND
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 import java.time.LocalDate
@@ -92,7 +92,8 @@ class EmcClinicalFeedIngestor(
                 bodyHeights = emptyList(),
                 vitalFunctions = extractVitalFunctions(feedRecord),
                 bloodTransfusions = bloodTransfusionsExtraction.extracted,
-                medications = medicationExtraction.extracted
+                medications = medicationExtraction.extracted,
+                pathologyReports = emptyList()
             )
 
             val patientEvaluation = listOf(
@@ -109,7 +110,14 @@ class EmcClinicalFeedIngestor(
 
             Triple(
                 record,
-                ingestionResult(record.patientId, record.patient.registrationDate, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
+                ingestionResult(
+                    record.patientId,
+                    record.patient.registrationDate,
+                    questionnaire,
+                    patientEvaluation,
+                    questionnaireCurationErrors,
+                    feedRecord
+                ),
                 patientEvaluation
             )
         }

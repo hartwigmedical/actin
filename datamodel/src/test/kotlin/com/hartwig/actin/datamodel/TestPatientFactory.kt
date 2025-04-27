@@ -52,6 +52,7 @@ object TestPatientFactory {
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,
             priorIHCTests = clinical.priorIHCTests,
+            pathologyReports = clinical.pathologyReports,
             molecularHistory = molecular ?: MolecularHistory.empty()
         )
     }

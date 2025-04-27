@@ -32,8 +32,7 @@ data class TumorDetails(
     val lymphNodeLesionsCount: Int? = null,
     val otherLesions: List<String>? = null,
     val otherSuspectedLesions: List<String>? = null,
-    val biopsyLocation: String? = null,
-    val rawPathologyReport: String? = null
+    val biopsyLocation: String? = null
 ) {
 
     fun hasConfirmedBrainLesions() = hasBrainLesions == true || hasActiveBrainLesions == true

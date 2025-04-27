@@ -22,6 +22,7 @@ object PatientRecordFactory {
             oncologicalHistory = clinical.oncologicalHistory,
             priorSecondPrimaries = clinical.priorSecondPrimaries,
             comorbidities = clinical.comorbidities,
+            priorIHCTests = clinical.priorIHCTests,
             labValues = clinical.labValues,
             surgeries = clinical.surgeries,
             bodyWeights = clinical.bodyWeights,
@@ -29,7 +30,7 @@ object PatientRecordFactory {
             vitalFunctions = clinical.vitalFunctions,
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,
-            priorIHCTests = clinical.priorIHCTests,
+            pathologyReports = clinical.pathologyReports,
             molecularHistory = molecularHistory ?: MolecularHistory.empty()
         )
     }

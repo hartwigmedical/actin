@@ -5,7 +5,8 @@
     "birthYear": 1953,
     "registrationDate": "2020-07-13",
     "questionnaireDate": "2021-08-16",
-    "hasHartwigSequencing": true
+    "hasHartwigSequencing": true,
+    "hospitalPatientId": null
   },
   "tumor": {
     "primaryTumorLocation": "Ovary",
@@ -41,8 +42,7 @@
     "lymphNodeLesionsCount": null,
     "otherLesions": null,
     "otherSuspectedLesions": null,
-    "biopsyLocation": "Lymph node",
-    "rawPathologyReport": null
+    "biopsyLocation": "Lymph node"
   },
   "clinicalStatus": {
     "who": 0,
@@ -331,7 +331,9 @@
       "stopDate": "2019-06-07",
       "drug": {
         "name": "PEMBROLIZUMAB",
-        "drugTypes": ["TOPO1_INHIBITOR"],
+        "drugTypes": [
+          "TOPO1_INHIBITOR"
+        ],
         "category": "IMMUNOTHERAPY",
         "displayOverride": null
       },
@@ -342,5 +344,6 @@
       "isSelfCare": false,
       "isTrialMedication": true
     }
-  ]
+  ],
+  "pathologyReports": []
 }

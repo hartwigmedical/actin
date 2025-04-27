@@ -53,7 +53,8 @@ object TestClinicalFactory {
             bodyHeights = emptyList(),
             vitalFunctions = emptyList(),
             bloodTransfusions = emptyList(),
-            medications = emptyList()
+            medications = emptyList(),
+            pathologyReports = emptyList()
         )
     }
 
@@ -70,7 +71,8 @@ object TestClinicalFactory {
             bodyWeights = createTestBodyWeights(),
             vitalFunctions = createTestVitalFunctions(),
             bloodTransfusions = createTestBloodTransfusions(),
-            medications = createTestMedications()
+            medications = createTestMedications(),
+            pathologyReports = createTestPathologyReports()
         )
     }
 
@@ -277,7 +279,7 @@ object TestClinicalFactory {
             ),
             OtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
-                icdCodes = setOf(IcdCode("QB50.1",  null)),
+                icdCodes = setOf(IcdCode("QB50.1", null)),
                 year = 2023,
                 month = 10
             )
@@ -494,7 +496,26 @@ object TestClinicalFactory {
     }
 
     private fun createTestBloodTransfusions(): List<BloodTransfusion> {
-        return listOf(BloodTransfusion(date = FIXED_DATE.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()), product = "Thrombocyte concentrate"))
+        return listOf(
+            BloodTransfusion(
+                date = FIXED_DATE.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()),
+                product = "Thrombocyte concentrate"
+            )
+        )
+    }
+
+    private fun createTestPathologyReports(): List<PathologyReport> {
+        return listOf(
+            PathologyReport(
+                tissueId = "T-10100",
+                reportRequested = true,
+                source = "internal",
+                diagnosis = "long*onderkwab*rechts*biopt*niet-kleincellig carcinoom",
+                tissueDate = FIXED_DATE,
+                authorisationDate = FIXED_DATE,
+                report = "raw pathology report"
+            )
+        )
     }
 
     private fun createTestMedications(): List<Medication> {

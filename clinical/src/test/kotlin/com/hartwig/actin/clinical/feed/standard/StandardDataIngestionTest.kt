@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestDrugInteractionsFactory
 import com.hartwig.actin.clinical.curation.TestQtProlongatingFactory
+import com.hartwig.actin.clinical.feed.standard.extraction.PathologyReportsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
@@ -98,8 +99,12 @@ class StandardDataIngestionTest {
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
             ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
-            sequencingTestExtractor = StandardPriorSequencingTestExtractor(curationDatabase.sequencingTestCuration, curationDatabase.sequencingTestResultCuration),
+            sequencingTestExtractor = StandardPriorSequencingTestExtractor(
+                curationDatabase.sequencingTestCuration,
+                curationDatabase.sequencingTestResultCuration
+            ),
             dataQualityMask = DataQualityMask(ClinicalConfiguration()),
+            pathologyReportsExtractor = PathologyReportsExtractor()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
