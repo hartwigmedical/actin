@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 
 enum class IhcExpressionComparisonType {
     LIMITED,
@@ -20,7 +20,7 @@ class ProteinExpressionByIHCFunctions(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, protein)
+        val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.ihcTests, protein)
         val evaluationsVersusReference = ihcTests.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue -> evaluateValue(ihcTest, scoreValue) }
         }.toSet()
@@ -55,7 +55,7 @@ class ProteinExpressionByIHCFunctions(
         }
     }
 
-    private fun evaluateValue(ihcTest: PriorIHCTest, scoreValue: Double): EvaluationResult {
+    private fun evaluateValue(ihcTest: IHCTest, scoreValue: Double): EvaluationResult {
         return when (comparisonType) {
             IhcExpressionComparisonType.SUFFICIENT -> {
                 evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())

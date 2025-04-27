@@ -21,7 +21,7 @@ private val doidModel =
 
 class PDL1EvaluationFunctionsTest {
 
-    private val pdl1Test = MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = MEASURE)
+    private val pdl1Test = MolecularTestFactory.ihcTest(test = "IHC", item = "PD-L1", measure = MEASURE)
 
     @Test
     fun `Should evaluate to undetermined if some PD-L1 tests are passing and others failing`() {
@@ -46,8 +46,8 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should fail with message when molecular history only contains tests with other measure types `() {
         val record = MolecularTestFactory.withIHCTests(
-            MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "wrong"),
-            MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "other wrong")
+            MolecularTestFactory.ihcTest(test = "IHC", item = "PD-L1", measure = "wrong"),
+            MolecularTestFactory.ihcTest(test = "IHC", item = "PD-L1", measure = "other wrong")
         )
         evaluateFunctions(EvaluationResult.FAIL, record)
         assertMessage(record, "PD-L1 tests not in correct unit ($MEASURE)")
@@ -56,7 +56,7 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should use any measurement type when requested measure in function is an empty string`() {
         val record = MolecularTestFactory.withIHCTests(
-            MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", scoreValue = PDL1_REFERENCE, measure = "wrong")
+            MolecularTestFactory.ihcTest(test = "IHC", item = "PD-L1", scoreValue = PDL1_REFERENCE, measure = "wrong")
         )
         evaluateFunctions(EvaluationResult.PASS, record, measure = null)
     }
@@ -72,7 +72,7 @@ class PDL1EvaluationFunctionsTest {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             tumor = TumorDetails(
                 doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-            ), priorIHCTests = listOf(pdl1Test.copy(measure = null, scoreValue = 2.0))
+            ), ihcTests = listOf(pdl1Test.copy(measure = null, scoreValue = 2.0))
         )
         evaluateFunctions(EvaluationResult.PASS, record, measure = "TPS")
     }

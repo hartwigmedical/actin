@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -17,14 +17,14 @@ private const val MOLECULAR_TEST_INTERPRETATION_IHC = "Molecular test interpreta
 private const val MOLECULAR_TEST_INTERPRETATION_PDL1 = "Molecular test interpretation PD-L1"
 
 
-class PriorMolecularTestsExtractorTest {
+class MolecularTestsExtractorTest {
 
-    val extractor = PriorMolecularTestsExtractor(
+    val extractor = MolecularTestsExtractor(
         TestCurationFactory.curationDatabase(
             IHCTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
-                curated = PriorIHCTest(
+                curated = IHCTest(
                     impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_IHC, item = "item"
                 )
             )
@@ -33,7 +33,7 @@ class PriorMolecularTestsExtractorTest {
             IHCTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
-                curated = PriorIHCTest(
+                curated = IHCTest(
                     impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_PDL1, item = "item"
                 )
             )
@@ -46,10 +46,10 @@ class PriorMolecularTestsExtractorTest {
         val pdl1Inputs = listOf(MOLECULAR_TEST_INPUT, CANNOT_CURATE)
 
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = ihcInputs, pdl1TestResults = pdl1Inputs)
-        val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(priorMolecularTests).hasSize(2)
-        assertThat(priorMolecularTests[0].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_IHC)
-        assertThat(priorMolecularTests[1].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_PDL1)
+        val (molecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(molecularTests).hasSize(2)
+        assertThat(molecularTests[0].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_IHC)
+        assertThat(molecularTests[1].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_PDL1)
 
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(

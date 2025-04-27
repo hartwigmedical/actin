@@ -195,7 +195,7 @@
       "bodyLocations": null
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "Acute myocardial infarction",
@@ -487,7 +487,7 @@
       "isTrialMedication": false
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
       "test": "IHC",
       "item": "PD-L1",
@@ -599,10 +599,10 @@
                     ],
                     "evidenceLevelDetails": "CLINICAL_STUDY",
                     "applicableCancerTypes": [
-                        {
-                            "matchedCancerType": "Lung cancer",
-                            "excludedCancerSubTypes": []
-                        }
+                      {
+                        "matchedCancerType": "Lung cancer",
+                        "excludedCancerSubTypes": []
+                      }
                     ]
                   }
                 ],

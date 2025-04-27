@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.IHC_TEST_TYPE
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.util.ResourceFile
 
 class IHCTestConfigFactory(private val curationCategory: CurationCategory) : CurationConfigFactory<IHCTestConfig> {
@@ -13,13 +13,13 @@ class IHCTestConfigFactory(private val curationCategory: CurationCategory) : Cur
         val input = parts[fields["input"]!!]
         val (impliesPotentialIndeterminateStatus, impliesPotentialIndeterminateStatusValidationErrors)
                 = validateBoolean(curationCategory, input, "impliesPotentialIndeterminateStatus", fields, parts)
-        val priorMolecularTest = impliesPotentialIndeterminateStatus?.let { curateObject(it, test, fields, parts) }
+        val molecularTest = impliesPotentialIndeterminateStatus?.let { curateObject(it, test, fields, parts) }
         return ValidatedCurationConfig(
             IHCTestConfig(
                 input = input,
                 ignore = ignore,
                 curated = if (!ignore) {
-                    priorMolecularTest
+                    molecularTest
                 } else null
             ), impliesPotentialIndeterminateStatusValidationErrors
         )
@@ -30,8 +30,8 @@ class IHCTestConfigFactory(private val curationCategory: CurationCategory) : Cur
         test: String,
         fields: Map<String, Int>,
         parts: Array<String>
-    ): PriorIHCTest {
-        return PriorIHCTest(
+    ): IHCTest {
+        return IHCTest(
             item = parts[fields["item"]!!],
             test = test.ifEmpty { IHC_TEST_TYPE },
             measure = ResourceFile.optionalString(parts[fields["measure"]!!]),

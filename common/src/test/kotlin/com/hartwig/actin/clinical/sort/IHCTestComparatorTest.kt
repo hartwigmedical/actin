@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class PriorIHCTestComparatorTest {
+class IHCTestComparatorTest {
 
     @Test
     fun `Should sort prior molecular tests`() {
@@ -13,7 +13,7 @@ class PriorIHCTestComparatorTest {
         val test3 = withItem("ZZZ")
         val test4 = withItem("CK20")
         val test5 = withItem(null)
-        val sorted = listOf(test1, test2, test3, test4, test5).sortedWith(PriorIHCTestComparator())
+        val sorted = listOf(test1, test2, test3, test4, test5).sortedWith(IHCTestComparator())
 
         assertThat(sorted[0]).isEqualTo(test5)
         assertThat(sorted[1]).isEqualTo(test4)
@@ -22,7 +22,7 @@ class PriorIHCTestComparatorTest {
         assertThat(sorted[4].item).isEqualTo("ZZZ")
     }
 
-    private fun withItem(item: String?): PriorIHCTest {
-        return PriorIHCTest(item = item, impliesPotentialIndeterminateStatus = false)
+    private fun withItem(item: String?): IHCTest {
+        return IHCTest(item = item, impliesPotentialIndeterminateStatus = false)
     }
 }

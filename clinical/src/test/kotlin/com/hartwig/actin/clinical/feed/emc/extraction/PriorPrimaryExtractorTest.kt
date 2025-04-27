@@ -1,14 +1,14 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
+import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TumorStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -21,13 +21,13 @@ private const val TUMOR_LOCATION_INTERPRETATION = "Tumor location interpretation
 
 private const val TREATMENT_HISTORY_INPUT = "Treatment history input"
 
-class PriorSecondPrimaryExtractorTest {
-    private val extractor = PriorSecondPrimaryExtractor(
+class PriorPrimaryExtractorTest {
+    private val extractor = PriorPrimaryExtractor(
         TestCurationFactory.curationDatabase(
-            SecondPrimaryConfig(
+            PriorPrimaryConfig(
                 input = SECOND_PRIMARY_INPUT,
                 ignore = false,
-                curated = PriorSecondPrimary(
+                curated = PriorPrimary(
                     status = TumorStatus.ACTIVE,
                     tumorType = "tumorType",
                     tumorSubType = "tumorSubType",
@@ -48,9 +48,9 @@ class PriorSecondPrimaryExtractorTest {
     fun `Should curate prior second primaries from second primary config`() {
         val inputs = listOf(SECOND_PRIMARY_INPUT, CANNOT_CURATE)
         val questionnaire = emptyQuestionnaire().copy(secondaryPrimaries = inputs)
-        val (priorSecondPrimaries, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(priorSecondPrimaries).hasSize(1)
-        assertThat(priorSecondPrimaries[0].tumorLocation).isEqualTo(TUMOR_LOCATION_INTERPRETATION)
+        val (priorPrimaries, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(priorPrimaries).hasSize(1)
+        assertThat(priorPrimaries[0].tumorLocation).isEqualTo(TUMOR_LOCATION_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

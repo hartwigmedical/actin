@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
@@ -13,19 +13,19 @@ import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val PRIOR_IHC_TEST =
-    PriorIHCTest(test = "IHC", item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
+    IHCTest(test = "IHC", item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
 private const val MICROSCOPIE_LINE = "TTF1 negatief"
 
 private const val PATHOLOGY_REPORT =
     "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
-private val PRIOR_MOLECULAR_TEST =
-    PriorIHCTest(
+private val MOLECULAR_TEST =
+    IHCTest(
         test = "Archer FP Lung Target",
         item = "EGFR",
         measure = "c.2573T>G",
@@ -40,12 +40,12 @@ private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
 private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
 
 
-class StandardPriorIHCTestExtractorTest {
+class StandardIHCTestExtractorTest {
 
     private val molecularTestCuration = mockk<CurationDatabase<IHCTestConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = StandardPriorIHCTestExtractor(molecularTestCuration)
+    private val extractor = StandardIHCTestExtractor(molecularTestCuration)
 
     @Test
     fun `Should return no molecular test configs when tumor differentiation is null`() {
@@ -96,11 +96,11 @@ class StandardPriorIHCTestExtractorTest {
 
     @Test
     fun `Should curate molecular tests from other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
-        val anotherMolecularTest = PRIOR_MOLECULAR_TEST.copy(item = "ERBB2")
+        val anotherMolecularTest = MOLECULAR_TEST.copy(item = "ERBB2")
         every { molecularTestCuration.find(OTHER_CONDITION_INPUT) } returns setOf(
             IHCTestConfig(
                 input = OTHER_CONDITION_INPUT,
-                curated = PRIOR_MOLECULAR_TEST
+                curated = MOLECULAR_TEST
             ),
             IHCTestConfig(
                 input = OTHER_CONDITION_INPUT,
@@ -122,21 +122,21 @@ class StandardPriorIHCTestExtractorTest {
                     )
                 )
             )
-        assertThat(result.extracted).containsExactly(PRIOR_MOLECULAR_TEST, anotherMolecularTest)
+        assertThat(result.extracted).containsExactly(MOLECULAR_TEST, anotherMolecularTest)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
     fun `Should curate molecular tests from tumor grade differentiation lines, supporting multiple configs per input, but ignore any curation warnings`() {
-        val anotherPriorMolecularTest = PRIOR_MOLECULAR_TEST.copy(item = "ERBB2")
+        val anotherMolecularTest = MOLECULAR_TEST.copy(item = "ERBB2")
         every { molecularTestCuration.find(MICROSCOPIE_LINE) } returns setOf(
             IHCTestConfig(
                 input = MICROSCOPIE_LINE,
-                curated = PRIOR_MOLECULAR_TEST
+                curated = MOLECULAR_TEST
             ),
             IHCTestConfig(
                 input = MICROSCOPIE_LINE,
-                curated = anotherPriorMolecularTest
+                curated = anotherMolecularTest
             )
         )
         val result =
@@ -149,7 +149,7 @@ class StandardPriorIHCTestExtractorTest {
                     )
                 )
             )
-        assertThat(result.extracted).containsExactly(PRIOR_MOLECULAR_TEST, anotherPriorMolecularTest)
+        assertThat(result.extracted).containsExactly(MOLECULAR_TEST, anotherMolecularTest)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 

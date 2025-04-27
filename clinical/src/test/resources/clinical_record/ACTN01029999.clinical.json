@@ -127,7 +127,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [
+  "priorPrimaries": [
     {
       "tumorLocation": "Prostate",
       "tumorSubLocation": "",
@@ -237,7 +237,7 @@
       "comorbidityClass": "ECG"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -261,7 +261,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [],
+  "sequencingTests": [],
   "labValues": [
     {
       "date": "2019-06-27",

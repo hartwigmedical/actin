@@ -43,10 +43,10 @@ object TestClinicalFactory {
             tumor = TumorDetails(),
             clinicalStatus = ClinicalStatus(),
             oncologicalHistory = emptyList(),
-            priorSecondPrimaries = emptyList(),
+            priorPrimaries = emptyList(),
             comorbidities = emptyList(),
-            priorIHCTests = emptyList(),
-            priorSequencingTests = emptyList(),
+            ihcTests = emptyList(),
+            sequencingTests = emptyList(),
             labValues = emptyList(),
             surgeries = emptyList(),
             bodyWeights = emptyList(),
@@ -63,9 +63,9 @@ object TestClinicalFactory {
             tumor = createTestTumorDetails(),
             clinicalStatus = createTestClinicalStatus(),
             oncologicalHistory = createTreatmentHistory(),
-            priorSecondPrimaries = createTestPriorSecondPrimaries(),
+            priorPrimaries = createTestPriorPrimaries(),
             comorbidities = createTestOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
-            priorIHCTests = createTestPriorMolecularTests(),
+            ihcTests = createTestMolecularTests(),
             labValues = createTestLabValues(),
             surgeries = createTestSurgeries(),
             bodyWeights = createTestBodyWeights(),
@@ -253,9 +253,9 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPriorSecondPrimaries(): List<PriorSecondPrimary> {
+    private fun createTestPriorPrimaries(): List<PriorPrimary> {
         return listOf(
-            PriorSecondPrimary(
+            PriorPrimary(
                 tumorLocation = "Lung",
                 tumorSubLocation = "",
                 tumorType = "Carcinoma",
@@ -286,9 +286,9 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestPriorMolecularTests(): List<PriorIHCTest> {
+    fun createTestMolecularTests(): List<IHCTest> {
         return listOf(
-            PriorIHCTest(
+            IHCTest(
                 item = "EGFR",
                 measure = null,
                 scoreText = "c.2240_2254del",
@@ -297,7 +297,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IHCTest(
                 item = "Something",
                 measure = null,
                 scoreText = "GEEN mutaties aangetoond",
@@ -306,7 +306,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IHCTest(
                 item = "PD-L1",
                 measure = null,
                 measureDate = LocalDate.of(2024, 10, 1),
@@ -316,7 +316,7 @@ object TestClinicalFactory {
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IHCTest(
                 item = "PD-L1",
                 measure = null,
                 measureDate = LocalDate.of(2023, 10, 1),
@@ -326,7 +326,7 @@ object TestClinicalFactory {
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IHCTest(
                 item = "HER2",
                 measure = null,
                 scoreText = "Positive",
@@ -335,7 +335,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IHCTest(
                 item = "FGFR3::TACC3",
                 measure = null,
                 scoreText = "Positive",

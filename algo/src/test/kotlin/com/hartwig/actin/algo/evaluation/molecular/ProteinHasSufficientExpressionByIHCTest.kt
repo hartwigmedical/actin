@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorIHCTest
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.ihcTest
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
@@ -21,13 +21,13 @@ class ProteinHasSufficientExpressionByIHCTest {
 
     @Test
     fun `Should evaluate to undetermined when no IHC test of correct protein present in record`() {
-        val test = priorIHCTest(test = IHC, item = "other", scoreValue = 1.0)
+        val test = ihcTest(test = IHC, item = "other", scoreValue = 1.0)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIHCTests(test)))
     }
 
     @Test
     fun `Should evaluate to undetermined when only score text is provided and exact value is unclear`() {
-        val test = priorIHCTest(scoreText = "negative")
+        val test = MolecularTestFactory.ihcTest(scoreText = "negative")
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIHCTests(test)))
     }
 
@@ -44,12 +44,12 @@ class ProteinHasSufficientExpressionByIHCTest {
 
     @Test
     fun `Should evaluate to undetermined when unclear if above requested value due to comparator`() {
-        val test = priorIHCTest(scoreValue = REFERENCE.minus(1).toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN)
+        val test = MolecularTestFactory.ihcTest(scoreValue = REFERENCE.minus(1).toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIHCTests(test)))
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
-        priorIHCTest(
+        ihcTest(
             test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }

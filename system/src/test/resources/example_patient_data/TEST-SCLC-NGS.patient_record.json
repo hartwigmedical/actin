@@ -132,7 +132,7 @@
       "bodyLocations": null
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "Cerebrovascular accident",
@@ -552,7 +552,7 @@
       }
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
       "test": "IHC",
       "item": "PD-L1",

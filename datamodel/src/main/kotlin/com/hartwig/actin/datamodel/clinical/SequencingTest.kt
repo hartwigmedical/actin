@@ -48,7 +48,7 @@ data class SequencedFusion(
 
 data class SequencedDeletedGene(val gene: String, val transcript: String? = null)
 
-data class PriorSequencingTest(
+data class SequencingTest(
     val test: String,
     val date: LocalDate? = null,
     val tumorMutationalBurden: Double? = null,

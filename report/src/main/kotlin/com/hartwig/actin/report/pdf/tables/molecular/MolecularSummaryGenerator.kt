@@ -4,8 +4,8 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
+import com.hartwig.actin.report.interpretation.IHCTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -68,9 +68,9 @@ class MolecularSummaryGenerator(
             }
         }
 
-        val priorMolecularResultGenerator = PriorIHCResultGenerator(patientRecord, keyWidth, valueWidth, PriorIHCTestInterpreter())
+        val molecularResultGenerator = IHCResultGenerator(patientRecord, keyWidth, valueWidth, IHCTestInterpreter())
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.create(priorMolecularResultGenerator.contents()))
+        table.addCell(Cells.create(molecularResultGenerator.contents()))
         return table
     }
 }

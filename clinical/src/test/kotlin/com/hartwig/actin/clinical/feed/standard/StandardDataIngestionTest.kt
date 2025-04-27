@@ -13,13 +13,13 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExt
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardIHCTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
@@ -98,8 +98,8 @@ class StandardDataIngestionTest {
             patientDetailsExtractor = StandardPatientDetailsExtractor(),
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
-            ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
-            sequencingTestExtractor = StandardPriorSequencingTestExtractor(
+            ihcTestExtractor = StandardIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
+            sequencingTestExtractor = StandardSequencingTestExtractor(
                 curationDatabase.sequencingTestCuration,
                 curationDatabase.sequencingTestResultCuration
             ),

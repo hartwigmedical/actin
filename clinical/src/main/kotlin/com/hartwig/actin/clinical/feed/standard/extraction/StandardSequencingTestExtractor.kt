@@ -6,24 +6,24 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import kotlin.reflect.full.memberProperties
 
-class StandardPriorSequencingTestExtractor(
+class StandardSequencingTestExtractor(
     private val testCuration: CurationDatabase<SequencingTestConfig>,
     private val testResultCuration: CurationDatabase<SequencingTestResultConfig>
 ) :
-    StandardDataExtractor<List<PriorSequencingTest>> {
+    StandardDataExtractor<List<SequencingTest>> {
 
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
+    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<SequencingTest>> {
         val extracted = ehrPatientRecord.molecularTests.mapNotNull { test ->
             val testCurationConfig =
                 CurationResponse.createFromConfigs(
@@ -47,7 +47,7 @@ class StandardPriorSequencingTestExtractor(
                     if (allResults.isNotEmpty()) {
                         ExtractionResult(
                             listOf(
-                                PriorSequencingTest(
+                                SequencingTest(
                                     test = testCuration.curatedName,
                                     date = test.date,
                                     variants = variants(allResults),

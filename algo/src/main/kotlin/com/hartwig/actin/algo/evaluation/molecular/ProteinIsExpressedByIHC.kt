@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 
 class ProteinIsExpressedByIHC internal constructor(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, protein)
+        val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.ihcTests, protein)
 
         return when {
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "positive" || testScoredAboveZero(ihcTest) } -> {
@@ -28,7 +28,7 @@ class ProteinIsExpressedByIHC internal constructor(private val protein: String) 
         }
     }
 
-    private fun testScoredAboveZero(ihcTest: PriorIHCTest) = ihcTest.scoreValue?.let { scoreValue ->
+    private fun testScoredAboveZero(ihcTest: IHCTest) = ihcTest.scoreValue?.let { scoreValue ->
         evaluateVersusMinValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)
     } == EvaluationResult.PASS
 }

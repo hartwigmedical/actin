@@ -3,17 +3,17 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.IHCTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
-import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
+import com.hartwig.actin.report.pdf.tables.molecular.IHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportsOverviewGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -50,10 +50,9 @@ class MolecularDetailsChapter(
 
     private fun addMolecularDetails(document: Document) {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val priorIHCResultGenerator =
-            PriorIHCResultGenerator(report.patientRecord, keyWidth, contentWidth() - keyWidth - 10, PriorIHCTestInterpreter())
-        val priorIHCResults = priorIHCResultGenerator.contents().setBorder(Border.NO_BORDER)
-        document.add(priorIHCResults)
+        val ihcResultGenerator =
+            IHCResultGenerator(report.patientRecord, keyWidth, contentWidth() - keyWidth - 10, IHCTestInterpreter())
+        document.add(ihcResultGenerator.contents().setBorder(Border.NO_BORDER))
 
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)

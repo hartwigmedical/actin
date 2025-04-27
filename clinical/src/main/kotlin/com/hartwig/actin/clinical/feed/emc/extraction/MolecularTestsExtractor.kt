@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
@@ -9,14 +8,15 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 
-class PriorMolecularTestsExtractor(
+class MolecularTestsExtractor(
     private val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
     private val molecularTestPdl1Curation: CurationDatabase<IHCTestConfig>,
 ) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorIHCTest>> {
+    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<IHCTest>> {
         if (questionnaire == null) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
@@ -32,7 +32,7 @@ class PriorMolecularTestsExtractor(
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
-            PriorMolecularTestsExtractor(
+            MolecularTestsExtractor(
                 curationDatabaseContext.molecularTestIhcCuration,
                 curationDatabaseContext.molecularTestPdl1Curation
             )

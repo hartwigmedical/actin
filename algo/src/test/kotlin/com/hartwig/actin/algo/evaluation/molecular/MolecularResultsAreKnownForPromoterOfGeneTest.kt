@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import org.junit.Test
 
 class MolecularResultsAreKnownForPromoterOfGeneTest {
@@ -19,8 +19,8 @@ class MolecularResultsAreKnownForPromoterOfGeneTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIHCTests(create("gene 2 promoter", false))))
     }
 
-    private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): PriorIHCTest {
-        return MolecularTestFactory.priorIHCTest(
+    private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): IHCTest {
+        return MolecularTestFactory.ihcTest(
             test = "IHC",
             item = gene,
             impliesIndeterminate = impliesPotentialDeterminateStatus

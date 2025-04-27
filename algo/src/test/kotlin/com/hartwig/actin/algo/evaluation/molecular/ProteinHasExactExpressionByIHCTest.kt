@@ -49,7 +49,7 @@ class ProteinHasExactExpressionByIHCTest {
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
-        MolecularTestFactory.priorIHCTest(
+        MolecularTestFactory.ihcTest(
             test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }

@@ -94,7 +94,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "pain",
@@ -172,7 +172,7 @@
       "comorbidityClass": "INTOLERANCE"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -185,7 +185,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [
+  "sequencingTests": [
     {
       "test": "Archer FP - Lung",
       "date": "2024-07-15",

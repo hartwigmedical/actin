@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIs
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import java.time.LocalDate
 
@@ -16,8 +16,8 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val receptorType = ReceptorType.HER2
-        val (indeterminateIhcTests, validIhcTests) = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, receptorType.name)
-            .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
+        val (indeterminateIhcTests, validIhcTests) = IhcTestFilter.allIHCTestsForProtein(record.ihcTests, receptorType.name)
+            .partition(IHCTest::impliesPotentialIndeterminateStatus)
         val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record, maxTestAge)
 
         val testResults = validIhcTests.map(::classifyHer2Test).toSet()
