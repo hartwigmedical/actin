@@ -668,7 +668,7 @@
         "maxCopies": 0.0
       }
     ],
-    "reportableSomaticGainsLosses": [
+    "reportableSomaticGainsDels": [
       {
         "interpretation": "PARTIAL_DEL",
         "gene": "PTEN",
@@ -681,7 +681,7 @@
       }
     ],
     "nearReportableSomaticGains": [],
-    "additionalSuspectSomaticGainsLosses": [
+    "additionalSuspectSomaticGainsDels": [
       {
         "interpretation": "FULL_GAIN",
         "gene": "CFL1P7",
@@ -713,7 +713,7 @@
         "reported": false
       }
     ],
-    "allGermlineFullLosses": [
+    "allGermlineFullDels": [
       {
         "interpretation": "PARTIAL_DEL",
         "gene": "BTNL3",
@@ -725,7 +725,7 @@
         "maxCopies": 1.9906
       }
     ],
-    "reportableGermlineFullLosses": [],
+    "reportableGermlineFullDels": [],
     "allGermlineLossOfHeterozygosities": [],
     "reportableGermlineLossOfHeterozygosities": []
   },
