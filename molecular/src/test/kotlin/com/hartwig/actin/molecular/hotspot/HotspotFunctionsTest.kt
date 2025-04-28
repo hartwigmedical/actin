@@ -8,13 +8,39 @@ import org.junit.Test
 class HotspotFunctionsTest {
 
     @Test
-    fun `Should determine serve hotspot status`() {
-        val gainOfFunction = TestServeKnownFactory.hotspotBuilder().proteinEffect(ProteinEffect.GAIN_OF_FUNCTION).build()
-        val unknownFunction = TestServeKnownFactory.hotspotBuilder().proteinEffect(ProteinEffect.UNKNOWN).build()
-        val noHotspot = TestServeKnownFactory.copyNumberBuilder().proteinEffect(ProteinEffect.GAIN_OF_FUNCTION).build()
+    fun `Should determine hotspot from gene alteration`() {
+        assertThat(
+            HotspotFunctions.isHotspot(
+                TestServeKnownFactory.hotspotBuilder()
+                    .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                    .build()
+            )
+        ).isTrue()
 
-        assertThat(HotspotFunctions.isHotspot(gainOfFunction)).isTrue()
-        assertThat(HotspotFunctions.isHotspot(unknownFunction)).isFalse()
-        assertThat(HotspotFunctions.isHotspot(noHotspot)).isFalse()
+        assertThat(
+            HotspotFunctions.isHotspot(
+                TestServeKnownFactory.hotspotBuilder()
+                    .proteinEffect(ProteinEffect.NO_EFFECT)
+                    .build()
+            )
+        ).isFalse()
+
+        assertThat(
+            HotspotFunctions.isHotspot(
+                TestServeKnownFactory.codonBuilder()
+                    .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
+                    .build()
+            )
+        ).isTrue()
+
+        assertThat(
+            HotspotFunctions.isHotspot(
+                TestServeKnownFactory.exonBuilder()
+                    .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                    .build()
+            )
+        ).isFalse()
+
+        assertThat(HotspotFunctions.isHotspot(null)).isFalse()
     }
 }

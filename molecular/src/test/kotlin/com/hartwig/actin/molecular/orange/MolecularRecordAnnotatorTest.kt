@@ -77,6 +77,11 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withProteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.GAIN_OF_FUNCTION)
     .withAssociatedWithDrugResistance(true)
 
+private val NON_HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
+    .withGeneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.ONCO)
+    .withProteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.NO_EFFECT)
+    .withAssociatedWithDrugResistance(false)
+
 class MolecularRecordAnnotatorTest {
 
     private val annotator = MolecularRecordAnnotator(TestEvidenceDatabaseFactory.createProperDatabase())
@@ -104,7 +109,7 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should overwrite hotspots`() {
+    fun `Should overwrite driverlikelihood and isHotspot fields for variant that is hotspot according to serve`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
             every { geneAlterationsForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns listOf(HOTSPOT)
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
@@ -114,6 +119,20 @@ class MolecularRecordAnnotatorTest {
         assertThat(annotated.isHotspot).isTrue()
         assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
         assertThat(annotated.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
+        assertThat(annotated.geneRole).isEqualTo(GeneRole.ONCO)
+    }
+
+    @Test
+    fun `Should not overwrite driverlikelihood and isHotspot fields for variant that is no hotspot according to serve`() {
+        val evidenceDatabase = mockk<EvidenceDatabase> {
+            every { geneAlterationsForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns listOf(NON_HOTSPOT)
+            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+        }
+
+        val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
+        assertThat(annotated.isHotspot).isFalse()
+        assertThat(annotated.driverLikelihood).isNull()
+        assertThat(annotated.proteinEffect).isEqualTo(ProteinEffect.NO_EFFECT)
         assertThat(annotated.geneRole).isEqualTo(GeneRole.ONCO)
     }
 }

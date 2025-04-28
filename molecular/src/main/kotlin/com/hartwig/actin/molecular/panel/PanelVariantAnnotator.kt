@@ -26,6 +26,8 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.ImpactDisplay.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import org.apache.logging.log4j.LogManager
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
@@ -248,11 +250,11 @@ class PanelVariantAnnotator(
     private fun annotateWithGeneAlteration(variant: Variant): Variant {
         val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val ckbGeneAlteration = evidenceDatabase.geneAlterationsForVariant(criteria).firstOrNull()
-        val nonCkbGeneAlterations = evidenceDatabase.geneAlterationsForVariant(criteria, false)
+        val otherGeneAlterations = evidenceDatabase.geneAlterationsForVariant(criteria, false).filterNot { (it is KnownHotspot) && it.sources().contains(Knowledgebase.CKB) }
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, ckbGeneAlteration)
 
         return variant.copy(
-            isHotspot = HotspotFunctions.isHotspot(ckbGeneAlteration) || nonCkbGeneAlterations.isNotEmpty(),
+            isHotspot = HotspotFunctions.isHotspot(ckbGeneAlteration) || otherGeneAlterations.isNotEmpty(),
             geneRole = geneAlteration.geneRole,
             proteinEffect = geneAlteration.proteinEffect,
             isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
