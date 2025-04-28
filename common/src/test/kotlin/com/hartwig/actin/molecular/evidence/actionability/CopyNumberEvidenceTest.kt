@@ -53,9 +53,9 @@ class CopyNumberEvidenceTest {
         assertThat(ampMatches.evidenceMatches).isEmpty()
         assertThat(ampMatches.matchingCriteriaPerTrialMatch).isEmpty()
 
-        val DelOnOtherGene = create("other gene", CopyNumberType.DEL)
+        val delOnOtherGene = create("other gene", CopyNumberType.DEL)
 
-        val delMatches = copyNumberEvidence.findMatches(DelOnOtherGene)
+        val delMatches = copyNumberEvidence.findMatches(delOnOtherGene)
         assertThat(delMatches.evidenceMatches).isEmpty()
         assertThat(delMatches.matchingCriteriaPerTrialMatch).isEmpty()
     }
