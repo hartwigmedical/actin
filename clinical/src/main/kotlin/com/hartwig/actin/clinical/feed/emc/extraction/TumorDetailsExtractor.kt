@@ -83,7 +83,6 @@ class TumorDetailsExtractor(
         )
 
         val tumorDetails = primaryTumorDetails.copy(
-            biopsyLocation = curatedBiopsyLocation?.config()?.location,
             stage = questionnaire.stage,
             hasMeasurableDisease = questionnaire.hasMeasurableDisease,
             hasBrainLesions = hasBrainLesions,
@@ -107,7 +106,9 @@ class TumorDetailsExtractor(
             hasSuspectedLymphNodeLesions = hasSuspectedLymphNodeLesions,
             lymphNodeLesionsMinCount = lymphNodeLesionsMinCount,
             otherLesions = otherLesions,
-            otherSuspectedLesions = otherSuspectedLesions
+            otherSuspectedLesions = otherSuspectedLesions,
+            biopsyLocation = curatedBiopsyLocation?.config()?.location,
+            rawPathologyReport = null
         )
 
         val tumorDetailsWithDerivedStages = tumorDetails.copy(derivedStages = tumorStageDeriver.derive(tumorDetails))
