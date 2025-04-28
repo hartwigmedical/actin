@@ -116,7 +116,6 @@ class GeneHasSpecificExonSkippingTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
-            .containsExactly("Skipped exon 2 in gene gene_A undetermined (not tested for mutations or fusions)")
+        Assertions.assertThat(result.undeterminedMessages).containsExactly("Skipped exon 2 in gene gene_A undetermined (not tested for mutations or fusions)")
     }
 }

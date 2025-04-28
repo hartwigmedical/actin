@@ -189,8 +189,7 @@ class GeneHasVariantInCodonTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
-            .containsExactly("Mutation in codons A100, B200 in gene gene A undetermined (not tested for mutations)")
+        Assertions.assertThat(result.undeterminedMessages).containsExactly("Mutation in codons A100, B200 in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun impactWithCodon(affectedCodon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)

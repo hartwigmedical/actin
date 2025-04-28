@@ -118,8 +118,7 @@ class GeneHasSufficientCopyNumberTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
-            .containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
+        Assertions.assertThat(result.undeterminedMessages).containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
     }
 
     private fun assertEvaluation(result: EvaluationResult, record: PatientRecord) {

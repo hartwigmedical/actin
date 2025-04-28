@@ -80,8 +80,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
 
         val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
-        val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)

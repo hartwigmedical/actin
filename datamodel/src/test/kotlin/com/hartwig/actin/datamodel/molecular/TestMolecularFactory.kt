@@ -125,15 +125,14 @@ object TestMolecularFactory {
 
     fun createExhaustiveTestPanelRecord(): PanelRecord {
         return createProperTestPanelRecord().copy(
-            specification = PanelSpecification(
-                setOf(
-                    "BRAF",
-                    "PTEN",
-                    "MYC",
-                    "MET",
-                    "EML4",
-                    "ALK"
-                ).associateWith { listOf(MolecularTestTarget.MUTATION) }),
+            specification = PanelSpecification(setOf(
+                "BRAF",
+                "PTEN",
+                "MYC",
+                "MET",
+                "EML4",
+                "ALK"
+            ).associateWith { listOf(MolecularTestTarget.MUTATION) }),
             testTypeDisplay = "exhaustive panel",
             drivers = createExhaustiveTestDrivers(),
             characteristics = createExhaustiveTestCharacteristics()
