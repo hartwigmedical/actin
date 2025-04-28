@@ -4,9 +4,8 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -88,17 +87,14 @@ class MolecularDriverEntryFactoryTest {
     }
 
     @Test
-    fun `Should assign correct driver types to variant drivers`() {
-        assertVariantType(TestVariantFactory.createMinimal(), "Mutation (Gain of function)")
+    fun `Should assign correct driver type to variant drivers`() {
+        assertVariantType(TestMolecularFactory.createProperVariant().copy(isHotspot = true, proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
+        assertVariantType(TestMolecularFactory.createProperVariant().copy(isHotspot = true, proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
         // add all different options here.
     }
 
     private fun assertVariantType(variant: Variant, expectedDriverType: String) {
-        val variant1 = TestMolecularFactory.createProperVariant().copy(canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal())
-        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
-            drivers = TestMolecularFactory.createProperTestDrivers()
-                .copy(variants = listOf(variant1), copyNumbers = emptyList())
-        )
+        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = listOf(variant), copyNumbers = emptyList()))
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)
     }
