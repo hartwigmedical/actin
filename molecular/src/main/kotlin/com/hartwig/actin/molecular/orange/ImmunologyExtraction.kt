@@ -12,11 +12,11 @@ object ImmunologyExtraction {
 
     fun extract(record: OrangeRecord): MolecularImmunology {
         val lilac = record.lilac()
-        return MolecularImmunology(isReliable = isQCPass(lilac), hlaAlleles = toHlaAlleles(lilac.alleles()))
+        return MolecularImmunology(isReliable = isQCPass(lilac), hlaAlleles = toHlaAlleles(lilac?.alleles() ?: emptyList()))
     }
 
-    private fun isQCPass(lilac: LilacRecord): Boolean {
-        return lilac.qc() == LILAC_QC_PASS
+    private fun isQCPass(lilac: LilacRecord?): Boolean {
+        return lilac?.qc() == LILAC_QC_PASS
     }
 
     private fun toHlaAlleles(alleles: List<LilacAllele>): Set<HlaAllele> {

@@ -27,15 +27,15 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should fail when HRD with loss of BRCA1`() {
+    fun `Should fail when HRD with deletion of BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationAndLoss(
+                MolecularTestFactory.withHomologousRecombinationAndDeletion(
                     true,
                     TestCopyNumberFactory.createMinimal()
                         .copy(
-                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                             gene = "BRCA1",
                             driverLikelihood = DriverLikelihood.HIGH
                         )

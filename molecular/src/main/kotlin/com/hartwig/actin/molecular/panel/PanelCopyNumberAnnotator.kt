@@ -89,14 +89,14 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         }
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
-            type = if (isCanonicalTranscript) CopyNumberType.LOSS else CopyNumberType.NONE,
+            type = if (isCanonicalTranscript) CopyNumberType.DEL else CopyNumberType.NONE,
             minCopies = if (isCanonicalTranscript) 0 else PLOIDY,
             maxCopies = if (isCanonicalTranscript) 0 else PLOIDY
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
-                type = CopyNumberType.LOSS,
+                type = CopyNumberType.DEL,
                 minCopies = 0,
                 maxCopies = 0
             )

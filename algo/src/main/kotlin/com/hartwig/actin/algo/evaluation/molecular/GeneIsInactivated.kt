@@ -28,7 +28,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val evidenceSource = test.evidenceSource
 
         sequenceOf(
-            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type == CopyNumberType.LOSS } }
+            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type == CopyNumberType.DEL } }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver -> inactivationEventsOnNonCanonicalTranscript.add(geneAlterationDriver.event) }
@@ -36,7 +36,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val drivers = test.drivers
         sequenceOf(
             drivers.homozygousDisruptions.asSequence(),
-            drivers.copyNumbers.asSequence().filter { it.canonicalImpact.type == CopyNumberType.LOSS }
+            drivers.copyNumbers.asSequence().filter { it.canonicalImpact.type == CopyNumberType.DEL }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver ->

@@ -61,14 +61,14 @@ class IsMicrosatelliteUnstableTest {
     }
 
     @Test
-    fun `Should pass with MSI true and MSI copy loss`() {
+    fun `Should pass with MSI true and MSI copy deletion`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMicrosatelliteStabilityAndLoss(
+                MolecularTestFactory.withMicrosatelliteStabilityAndDeletion(
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
-                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                         gene = msiGene
                     )
                 )
