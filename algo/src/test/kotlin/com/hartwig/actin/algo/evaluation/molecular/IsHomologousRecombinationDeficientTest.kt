@@ -59,10 +59,10 @@ class IsHomologousRecombinationDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationAndLoss(
+                MolecularTestFactory.withHomologousRecombinationAndDeletion(
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
-                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                         gene = hrdGene
                     )
                 )

@@ -22,7 +22,7 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
         override fun compare(string1: String, string2: String): Int {
             return compareBy<String> { it.startsWith("mutation") }
                 .thenBy { it.startsWith("amplification") }
-                .thenBy { it.startsWith("loss") }
+                .thenBy { it.startsWith("deletion") }
                 .thenBy { it.contains("fusion") }
                 .thenBy { it.contains("disruption") }
                 .thenBy { it.startsWith("virus") }

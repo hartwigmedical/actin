@@ -23,9 +23,9 @@ class CopyNumberExtractorTest {
         val driverGene3NonCanonical = TestPurpleFactory.driverBuilder().gene("gene 3").type(PurpleDriverType.AMP).isCanonical(false).build()
         val driverGene4Canonical = TestPurpleFactory.driverBuilder().gene("gene 4").type(PurpleDriverType.AMP).isCanonical(true).build()
 
-        val loss1Canonical = TestPurpleFactory.gainDelBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(true)
+        val del1Canonical = TestPurpleFactory.gainDelBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(true)
             .interpretation(CopyNumberInterpretation.PARTIAL_DEL).build()
-        val loss1NonCanonical = TestPurpleFactory.gainDelBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(false)
+        val del1NonCanonical = TestPurpleFactory.gainDelBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(false)
             .interpretation(CopyNumberInterpretation.PARTIAL_DEL).build()
         val gain2Canonical = TestPurpleFactory.gainDelBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0).isCanonical(true)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
@@ -61,8 +61,8 @@ class CopyNumberExtractorTest {
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driverGene3Canonical, driverGene3NonCanonical, driverGene2NonCanonical, driverGene4Canonical)
             .addAllSomaticGainsDels(
-                loss1Canonical,
-                loss1NonCanonical,
+                del1Canonical,
+                del1NonCanonical,
                 gain2NonCanonical,
                 gain2Canonical,
                 gain3Canonical,
@@ -81,7 +81,7 @@ class CopyNumberExtractorTest {
 
         val geneFilter =
             TestGeneFilterFactory.createValidForGenes(
-                loss1Canonical.gene(),
+                del1Canonical.gene(),
                 gain2Canonical.gene(),
                 gain3Canonical.gene(),
                 gain4Canonical.gene(),

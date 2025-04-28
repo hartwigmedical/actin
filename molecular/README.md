@@ -169,12 +169,12 @@ In addition to the (gene) driver fields, the following data is captured per copy
 | canonicalImpact | See below     | The impact of the copy number event on the canonical transcript of the gene |
 | otherImpacts    | See below     | The impact of the copy number event on other transcripts of this gene       |
 
-| Field        | Example Value   | Details                                                                              |
-|--------------|-----------------|--------------------------------------------------------------------------------------|
-| transcriptId | ENST00000646891 | The ensembl ID of the transcript                                                     | 
-| type         | FULL_GAIN       | The type of copy number event (either `FULL_GAIN`, `PARTIAL_GAIN`, `LOSS` or `NONE`) |
-| minCopies    | 12              | The minimum copy number of the gene along the specific transcript of the gene        |
-| maxCopies    | 18              | The maximum copy number of the gene along the specific transcript of the gene        |
+| Field        | Example Value   | Details                                                                                  |
+|--------------|-----------------|------------------------------------------------------------------------------------------|
+| transcriptId | ENST00000646891 | The ensembl ID of the transcript                                                         | 
+| type         | FULL_GAIN       | The type of copy number event (either `FULL_GAIN`, `PARTIAL_GAIN`, `DELETION` or `NONE`) |
+| minCopies    | 12              | The minimum copy number of the gene along the specific transcript of the gene            |
+| maxCopies    | 18              | The maximum copy number of the gene along the specific transcript of the gene            |
 
 #### N homozygous disruptions
 
@@ -452,7 +452,7 @@ The annotation finds the best matching entry from SERVE's known event database a
   - Is there a copy number specific match? If yes, use copy number specific annotation.
   - Else, fall back to gene matching.
 - For homozygous disruptions:
-  - Is there copy number loss specific match? If yes, use copy number loss annotation.
+  - Is there copy number deletion specific match? If yes, use copy number deletion annotation.
   - Else, fall back to gene matching.
 - For disruptions, a gene match is performed.
 - For fusions:
@@ -482,7 +482,7 @@ A molecular match is made between treatment evidence or trial and driver / chara
 | tumor mutational burden status  | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                                  |
 | tumor mutational load status    | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                                    |
 | variant                         | In case the variant has `HIGH` driver likelihood and is reported: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
-| copy number                     | In case of a (partial) amplification, all gene level events of type `AMPLIFICATION`. In case of a loss, all gene level events of type `DELETION`                                                                                                          |
+| copy number                     | In case of a (partial) amplification, all gene level events of type `AMPLIFICATION`. In case of a deletion, all gene level events of type `DELETION`                                                                                                      |
 | homozygous disruption           | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                                              | 
 | disruption                      | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported and geneRole is not TSG                                                                                                                                                 | 
 | fusion                          | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                                    | 

@@ -33,10 +33,10 @@ class EvidenceDatabaseTest {
     }
 
     @Test
-    fun `Should match evidence for gains and losses`() {
-        val loss = createWithCopyNumberType(CopyNumberType.LOSS)
-        assertThat(database.geneAlterationForCopyNumber(loss)).isNotNull()
-        assertEvidence(database.evidenceForCopyNumber(loss), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+    fun `Should match evidence for gains and deletions`() {
+        val del = createWithCopyNumberType(CopyNumberType.DEL)
+        assertThat(database.geneAlterationForCopyNumber(del)).isNotNull()
+        assertEvidence(database.evidenceForCopyNumber(del), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
 
         val gain = createWithCopyNumberType(CopyNumberType.FULL_GAIN)
         assertThat(database.geneAlterationForCopyNumber(gain)).isNotNull()
