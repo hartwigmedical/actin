@@ -1,4 +1,4 @@
-FROM europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-transvar:1.1.0
+FROM europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-transvar:1.1.1
 
 ARG VERSION=local-SNAPSHOT
 
