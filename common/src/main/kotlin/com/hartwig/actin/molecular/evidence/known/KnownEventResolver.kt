@@ -15,23 +15,28 @@ import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import com.hartwig.serve.datamodel.molecular.range.KnownExon
 
-class KnownEventResolver(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: Set<KnownGene>) {
+class KnownEventResolver(
+    private val knownEvents: KnownEvents,
+    private val filteredKnownEvents: KnownEvents,
+    private val aggregatedKnownGenes: Set<KnownGene>
+) {
 
-    fun resolveForVariant(variantMatchCriteria: VariantMatchCriteria): GeneAlteration? {
+    fun resolveForVariant(variantMatchCriteria: VariantMatchCriteria, fromFilteredKnownEvents: Boolean = true): List<GeneAlteration> {
+        val knownEvents = if (fromFilteredKnownEvents) filteredKnownEvents else knownEvents
         return findHotspot(knownEvents.hotspots(), variantMatchCriteria)
             ?: findCodon(knownEvents.codons(), variantMatchCriteria)
             ?: findExon(knownEvents.exons(), variantMatchCriteria)
-            ?: GeneLookup.find(aggregatedKnownGenes, variantMatchCriteria.gene)
+            ?: GeneLookup.find(aggregatedKnownGenes, variantMatchCriteria.gene)?.let { listOf(it) } ?: emptyList()
     }
 
     fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {
-        return CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), copyNumber)
+        return CopyNumberLookup.findForCopyNumber(filteredKnownEvents.copyNumbers(), copyNumber)
             ?: GeneLookup.find(aggregatedKnownGenes, copyNumber.gene)
     }
 
     fun resolveForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
         // Assume a homozygous disruption always has the same annotation as a loss.
-        return CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption)
+        return CopyNumberLookup.findForHomozygousDisruption(filteredKnownEvents.copyNumbers(), homozygousDisruption)
             ?: GeneLookup.find(aggregatedKnownGenes, homozygousDisruption.gene)
     }
 
@@ -40,18 +45,18 @@ class KnownEventResolver(private val knownEvents: KnownEvents, private val aggre
     }
 
     fun resolveForFusion(fusion: FusionMatchCriteria): KnownFusion? {
-        return FusionLookup.find(knownEvents.fusions(), fusion)
+        return FusionLookup.find(filteredKnownEvents.fusions(), fusion)
     }
 
-    private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: VariantMatchCriteria): KnownHotspot? {
-        return knownHotspots.find { HotspotMatching.isMatch(it, variant) }
+    private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: VariantMatchCriteria): List<KnownHotspot>? {
+        return knownHotspots.filter { HotspotMatching.isMatch(it, variant) }.ifEmpty { null }
     }
 
-    private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: VariantMatchCriteria): KnownCodon? {
-        return knownCodons.find { RangeMatching.isMatch(it, variant) }
+    private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: VariantMatchCriteria): List<KnownCodon>? {
+        return knownCodons.filter { RangeMatching.isMatch(it, variant) }.ifEmpty { null }
     }
 
-    private fun findExon(knownExons: Iterable<KnownExon>, variant: VariantMatchCriteria): KnownExon? {
-        return knownExons.find { RangeMatching.isMatch(it, variant) }
+    private fun findExon(knownExons: Iterable<KnownExon>, variant: VariantMatchCriteria): List<KnownExon>? {
+        return knownExons.filter { RangeMatching.isMatch(it, variant) }.ifEmpty { null }
     }
 }

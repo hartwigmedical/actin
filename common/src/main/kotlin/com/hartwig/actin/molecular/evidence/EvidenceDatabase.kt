@@ -33,8 +33,8 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
     }
 
-    fun geneAlterationForVariant(variant: VariantMatchCriteria): GeneAlteration? {
-        return knownEventResolver.resolveForVariant(variant)
+    fun geneAlterationsForVariant(variant: VariantMatchCriteria, fromFilteredKnownEvents: Boolean = true): List<GeneAlteration> {
+        return knownEventResolver.resolveForVariant(variant, fromFilteredKnownEvents)
     }
 
     fun evidenceForVariant(variant: VariantMatchCriteria): ClinicalEvidence {

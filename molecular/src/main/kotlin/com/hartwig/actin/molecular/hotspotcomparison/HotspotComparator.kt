@@ -2,12 +2,14 @@ package com.hartwig.actin.molecular.hotspotcomparison
 
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.actin.molecular.panel.isHotspot
+import com.hartwig.actin.molecular.hotspot.HotspotFunctions
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
+import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.molecular.gene.KnownGene
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 
 object HotspotComparator {
 
@@ -17,8 +19,9 @@ object HotspotComparator {
             .mapNotNull { variant ->
                 val criteria = createVariantCriteria(variant)
                 val knownEventResolver = KnownEventResolverFactory.create(serveRecord.knownEvents())
-                val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
-                val isHotspotServe = isHotspot(serveGeneAlteration)
+                val serveGeneAlteration =
+                    knownEventResolver.resolveForVariant(criteria).find { (it as KnownHotspot).sources().contains(Knowledgebase.CKB) }
+                val isHotspotServe = HotspotFunctions.isHotspot(serveGeneAlteration)
                 val isHotspotOrange = variant.hotspot() == HotspotType.HOTSPOT
                 if (isHotspotServe || isHotspotOrange) {
                     AnnotatedHotspot(
