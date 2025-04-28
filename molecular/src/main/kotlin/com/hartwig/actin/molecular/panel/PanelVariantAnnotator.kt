@@ -248,11 +248,11 @@ class PanelVariantAnnotator(
     private fun annotateWithGeneAlteration(variant: Variant): Variant {
         val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val ckbGeneAlteration = evidenceDatabase.geneAlterationsForVariant(criteria).firstOrNull()
-        val otherGeneAlterations = evidenceDatabase.geneAlterationsForVariant(criteria, false) - ckbGeneAlteration // moet nog beter
+        val nonCkbGeneAlterations = evidenceDatabase.geneAlterationsForVariant(criteria, false)
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, ckbGeneAlteration)
 
         return variant.copy(
-            isHotspot = HotspotFunctions.isHotspot(ckbGeneAlteration) || otherGeneAlterations.isNotEmpty(),
+            isHotspot = HotspotFunctions.isHotspot(ckbGeneAlteration) || nonCkbGeneAlterations.isNotEmpty(),
             geneRole = geneAlteration.geneRole,
             proteinEffect = geneAlteration.proteinEffect,
             isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance

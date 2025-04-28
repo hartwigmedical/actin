@@ -13,13 +13,13 @@ import com.hartwig.serve.datamodel.molecular.range.KnownExon
 
 object KnownEventResolverFactory {
 
-    private val KNOWN_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE)
+    val KNOWN_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE)
 
     fun create(knownEvents: KnownEvents): KnownEventResolver {
         return KnownEventResolver(knownEvents, filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()))
     }
 
-    private fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
+    internal fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
         return ImmutableKnownEvents.builder()
             .hotspots(filterKnown<KnownHotspot>(knownEvents.hotspots()))
             .codons(filterKnown<KnownCodon>(knownEvents.codons()))

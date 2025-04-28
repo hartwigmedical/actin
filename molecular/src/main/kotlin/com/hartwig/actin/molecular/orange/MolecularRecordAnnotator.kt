@@ -84,7 +84,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun annotateVariant(variant: Variant): Variant {
+    fun annotateVariant(variant: Variant): Variant {
         val geneAlteration =
             evidenceDatabase.geneAlterationsForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant)).firstOrNull()
         val isServeHotspot = HotspotFunctions.isHotspot(geneAlteration)

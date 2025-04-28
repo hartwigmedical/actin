@@ -14,6 +14,6 @@ object TestKnownEventResolverFactory {
             .addFusions(TestServeKnownFactory.fusionBuilder().build())
             .build()
 
-        return KnownEventResolver(knownEvents, knownEvents.genes())
+        return KnownEventResolver(knownEvents, knownEvents, knownEvents.genes())
     }
 }
