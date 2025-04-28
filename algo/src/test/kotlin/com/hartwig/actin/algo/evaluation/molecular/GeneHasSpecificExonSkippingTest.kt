@@ -3,13 +3,16 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
-private const val MATCHING_GENE = "gene A"
+private const val MATCHING_GENE = "gene_A"
 
 private val EXON_SKIPPING_FUSION = TestFusionFactory.createMinimal().copy(
     isReportable = true,
@@ -103,5 +106,17 @@ class GeneHasSpecificExonSkippingTest {
                 MolecularTestFactory.withDrivers(EXON_SKIPPING_FUSION, SPLICE_VARIANT)
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = function.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        Assertions.assertThat(result.undeterminedMessages)
+            .containsExactly("Skipped exon 2 in gene gene_A undetermined (not tested for mutations or fusions)")
     }
 }

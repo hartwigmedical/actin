@@ -56,6 +56,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_INCURABLE_CANCER(FunctionInput.NONE),
     HAS_ANY_LESION(FunctionInput.NONE),
     HAS_AT_MOST_X_DISTANT_METASTASES(FunctionInput.ONE_INTEGER),
+    MEETS_SPECIFIC_CRITERIA_REGARDING_METASTASES(FunctionInput.NONE),
     HAS_LIVER_METASTASES(FunctionInput.NONE),
     HAS_LIVER_METASTASES_ONLY(FunctionInput.NONE),
     MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES(FunctionInput.NONE),

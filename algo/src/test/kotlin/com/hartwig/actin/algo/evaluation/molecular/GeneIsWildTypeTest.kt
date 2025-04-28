@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -255,7 +256,8 @@ class GeneIsWildTypeTest {
             .copy(
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK"))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -269,7 +271,8 @@ class GeneIsWildTypeTest {
             .copy(
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK"))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -284,7 +287,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            testedGenes = setOf("ALK"),
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
                                     TestVariantFactory.createMinimal()
@@ -311,7 +314,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            testedGenes = setOf("ALK"),
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 fusions = listOf(
                                     TestFusionFactory.createMinimal().copy(
@@ -329,5 +332,17 @@ class GeneIsWildTypeTest {
             )
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = function.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        Assertions.assertThat(result.undeterminedMessages)
+            .containsExactly("Wildtype of gene gene A undetermined (not tested for at least mutations)")
     }
 }

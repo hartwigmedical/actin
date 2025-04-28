@@ -5,11 +5,12 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import org.apache.logging.log4j.LogManager
 import java.time.LocalDate
+import org.apache.logging.log4j.LogManager
 
 private const val CLONAL_CUTOFF = 0.5
 
@@ -22,14 +23,18 @@ private enum class VariantClassification {
 private data class VariantAndProteinImpact(val variant: Variant, val proteinImpact: String)
 
 class GeneHasVariantWithProteinImpact(
-    private val gene: String,
+    override val gene: String,
     private val allowedProteinImpacts: Set<String>,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+) : MolecularEvaluationFunction(
+    targetCoveragePredicate = specific(
+        MolecularTestTarget.MUTATION,
+        "Mutation with protein impact(s) ${allowedProteinImpacts.joinToString()} in"
+    ),
+    maxTestAge = maxTestAge
+) {
 
     private val logger = LogManager.getLogger(GeneHasVariantWithProteinImpact::class.java)
-
-    override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
 

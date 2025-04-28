@@ -63,7 +63,7 @@ object TestMolecularFactory {
 
     fun createMinimalTestPanelRecord(): PanelRecord {
         return PanelRecord(
-            testedGenes = emptySet(),
+            specification = PanelSpecification(emptyMap()),
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = "minimal panel",
             date = null,
@@ -90,13 +90,19 @@ object TestMolecularFactory {
             characteristics = createMinimalTestCharacteristics(),
             immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
             date = null,
-            pharmaco = emptySet()
+            pharmaco = emptySet(),
+            specification = null
         )
     }
 
     fun createProperTestPanelRecord(): PanelRecord {
         return createMinimalTestPanelRecord().copy(
-            testedGenes = setOf("BRAF", "PTEN"),
+            specification = PanelSpecification(
+                mapOf(
+                    "BRAF" to listOf(MolecularTestTarget.MUTATION),
+                    "PTEN" to listOf(MolecularTestTarget.MUTATION)
+                )
+            ),
             testTypeDisplay = "proper panel",
             date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
             drivers = createProperTestDrivers(),
@@ -119,7 +125,15 @@ object TestMolecularFactory {
 
     fun createExhaustiveTestPanelRecord(): PanelRecord {
         return createProperTestPanelRecord().copy(
-            testedGenes = setOf("BRAF", "PTEN", "MYC", "MET", "EML4", "ALK"),
+            specification = PanelSpecification(
+                setOf(
+                    "BRAF",
+                    "PTEN",
+                    "MYC",
+                    "MET",
+                    "EML4",
+                    "ALK"
+                ).associateWith { listOf(MolecularTestTarget.MUTATION) }),
             testTypeDisplay = "exhaustive panel",
             drivers = createExhaustiveTestDrivers(),
             characteristics = createExhaustiveTestCharacteristics()
@@ -143,6 +157,9 @@ object TestMolecularFactory {
             tumorMutationalLoad = null
         )
     }
+
+    fun panelSpecifications(genes: Set<String>, targets: List<MolecularTestTarget> = listOf(MolecularTestTarget.MUTATION)) =
+        PanelSpecification(genes.associateWith { targets })
 
     private fun createProperTestCharacteristics(): MolecularCharacteristics {
         return MolecularCharacteristics(

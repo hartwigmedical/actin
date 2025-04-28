@@ -98,24 +98,11 @@ class StandardDataIngestionTest {
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
             ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
-            sequencingTestExtractor = StandardPriorSequencingTestExtractor(curationDatabase.sequencingTestCuration),
-            dataQualityMask = DataQualityMask(
-                PanelGeneList(
-                    mapOf(
-                        Regex("archer") to listOf(
-                            "ALK",
-                            "ROS1",
-                            "RET",
-                            "MET",
-                            "NTRK1",
-                            "NTRK2",
-                            "NTRK3",
-                            "NRG1"
-                        )
-                    )
-                ),
-                ClinicalConfiguration()
+            sequencingTestExtractor = StandardPriorSequencingTestExtractor(
+                curationDatabase.sequencingTestCuration,
+                curationDatabase.sequencingTestResultCuration
             ),
+            dataQualityMask = DataQualityMask(ClinicalConfiguration()),
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
