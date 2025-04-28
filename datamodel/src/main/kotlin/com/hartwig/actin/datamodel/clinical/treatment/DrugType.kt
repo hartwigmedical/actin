@@ -135,6 +135,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     KIT_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KIT TKI"),
     KRAS_G12C_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KRAS G12C inhibitor"),
     KRAS_OFF_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KRAS-off inhibitor"),
+    MAT2A_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MAT2A inhibitor"),
     MEK_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MEK inhibitor"),
     MEK1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MEK1 inhibitor"),
     MEK2_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MEK2 inhibitor"),
