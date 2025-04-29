@@ -72,12 +72,12 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
             variant.geneRole == GeneRole.TSG && (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT ||
                     isLossOfFunction(variant)) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
-                "Loss-of-function, biallelic"
+                "Loss of function, biallelic"
             }
 
             variant.geneRole == GeneRole.TSG &&
                     (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT || isLossOfFunction(variant)) -> {
-                "Loss-of-function"
+                "Loss of function"
             }
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)

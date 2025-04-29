@@ -248,7 +248,10 @@ class PanelVariantAnnotator(
     private fun annotateWithGeneAlteration(variant: Variant): Variant {
         val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val ckbGeneAlteration = evidenceDatabase.geneAlterationsForVariant(criteria).firstOrNull()
-        val otherGeneAlterations = evidenceDatabase.geneAlterationsForVariant(criteria, false) - ckbGeneAlteration
+        val otherGeneAlterations = evidenceDatabase.geneAlterationsForVariant(
+            criteria,
+            false
+        ) - ckbGeneAlteration // @KD: I am not 100% happy with this line of code (have worked on 10 alternatives, but can't get it right)
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, ckbGeneAlteration)
 
         return variant.copy(

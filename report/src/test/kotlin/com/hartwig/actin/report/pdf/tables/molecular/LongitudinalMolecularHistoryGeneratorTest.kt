@@ -42,7 +42,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             )
         )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
-        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)\nGain of function", HIGH, VAF, NOT_DETECTED)
+        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF, NOT_DETECTED)
     }
 
     @Test
@@ -64,11 +64,11 @@ class LongitudinalMolecularHistoryGeneratorTest {
             )
         )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
-        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)\nGain of function", HIGH, VAF)
-        assertRow(result, 1, "KRAS G12C\n(Tier I)", "Mutation (Gain of function)\nGain of function", HIGH, VAF)
-        assertRow(result, 2, "KRAS G12D\n(Tier I)", "Mutation (Gain of function)\nGain of function", HIGH, VAF)
+        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF)
+        assertRow(result, 1, "KRAS G12C\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF)
+        assertRow(result, 2, "KRAS G12D\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF)
         assertRow(result, 3, "BRAF - KRAS fusion\n(Tier I)", "Known fusion\nGain of function", "Low", DETECTED)
-        assertRow(result, 4, "BRAF V600E\n(Tier II)", "Mutation (Gain of function)\nGain of function", HIGH, VAF)
+        assertRow(result, 4, "BRAF V600E\n(Tier II)", "Mutation (Gain of function)", HIGH, VAF)
     }
 
     @Test

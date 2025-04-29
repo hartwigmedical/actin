@@ -117,29 +117,29 @@ class MolecularDriverEntryFactoryTest {
         assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
         assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
         assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (Hotspot with no protein effect)")
-        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function)")
-        assertVariantType(tsgHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function, biallelic)")
+        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function)")
+        assertVariantType(tsgHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function, biallelic)")
         assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot)")
         assertVariantType(tsgHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
         assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
         assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot, biallelic)")
         assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
         assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
-        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function)")
-        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function, biallelic)")
+        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function)")
+        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function, biallelic)")
         assertVariantType(
             tsgNoHotspot.copy(
                 proteinEffect = ProteinEffect.UNKNOWN,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
                     .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            ), "Mutation (Loss-of-function)"
+            ), "Mutation (Loss of function)"
         )
         assertVariantType(
             tsgNoHotspotBi.copy(
                 proteinEffect = ProteinEffect.UNKNOWN,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
                     .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            ), "Mutation (Loss-of-function, biallelic)"
+            ), "Mutation (Loss of function, biallelic)"
         )
         assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot)")
         assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")

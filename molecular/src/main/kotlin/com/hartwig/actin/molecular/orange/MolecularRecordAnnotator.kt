@@ -24,9 +24,9 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-val LOGGER: Logger = LogManager.getLogger(MolecularRecordAnnotator::class.java)
-
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
+
+    private val logger: Logger = LogManager.getLogger(MolecularRecordAnnotator::class.java)
 
     override fun annotate(input: MolecularRecord): MolecularRecord {
         return input.copy(
@@ -91,7 +91,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         val alteration = GeneAlterationFactory.convertAlteration(variant.gene, geneAlteration)
 
         if (!variant.isHotspot && isServeHotspot) {
-            LOGGER.info("Overwriting isHotspot to true and setting driverLikelihood to HIGH for ${variant.event}")
+            logger.info("Overwriting isHotspot to true and setting driverLikelihood to HIGH for ${variant.event}")
         }
 
         val variantWithGeneAlteration = variant.copy(

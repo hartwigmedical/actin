@@ -39,7 +39,8 @@ class KnownEventResolverTest {
             .build()
         val knownGene = knownGeneWithName("gene 1")
         val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build()
-        val resolver = KnownEventResolver(knownEvents, knownEvents, knownEvents.genes())
+        val filteredKnownEvents = ImmutableKnownEvents.builder().addCodons(codon).addExons(exon).addGenes(knownGene).build()
+        val resolver = KnownEventResolver(knownEvents, filteredKnownEvents, knownEvents.genes())
 
         val hotspotMatch = VariantMatchCriteria(
             isReportable = true,
@@ -52,7 +53,8 @@ class KnownEventResolverTest {
             alt = "T"
         )
 
-        assertThat(resolver.resolveForVariant(hotspotMatch)).isEqualTo(listOf(hotspot))
+        assertThat(resolver.resolveForVariant(hotspotMatch, fromFilteredKnownEvents = false)).isEqualTo(listOf(hotspot))
+        assertThat(resolver.resolveForVariant(hotspotMatch, fromFilteredKnownEvents = true)).isEqualTo(listOf(codon))
 
         val codonMatch = hotspotMatch.copy(position = 9)
         assertThat(resolver.resolveForVariant(codonMatch)).isEqualTo(listOf(codon))
