@@ -84,7 +84,7 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should assign correct driver types to copy number drivers`() {
-        assertCopyNumberType(CopyNumberType.LOSS, "Loss")
+        assertCopyNumberType(CopyNumberType.DEL, "Deletion")
         assertCopyNumberType(CopyNumberType.FULL_GAIN, "Amplification")
         assertCopyNumberType(CopyNumberType.PARTIAL_GAIN, "Amplification")
         assertCopyNumberType(CopyNumberType.NONE, "Copy Number")

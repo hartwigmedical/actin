@@ -90,10 +90,10 @@ class ResistanceEvidenceMatcherTest {
             )
         ).molecularHistory
 
-        val hasLoss = MolecularTestFactory.withCopyNumber(
+        val hasDel = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "BRAF",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                 isReportable = true
             )
         ).molecularHistory
@@ -101,7 +101,7 @@ class ResistanceEvidenceMatcherTest {
         val amplificationFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasAmplification)
         assertThat(amplificationFound).isTrue()
 
-        val amplificationNotFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasLoss)
+        val amplificationNotFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasDel)
         assertThat(amplificationNotFound).isFalse()
     }
 
