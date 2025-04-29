@@ -65,7 +65,7 @@ class HasCancerWithNeuroendocrineComponentTest {
                         drivers = baseMolecular.drivers.copy(
                             copyNumbers = listOf(
                                 TestCopyNumberFactory.createMinimal().copy(
-                                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                                     isReportable = true,
                                     gene = "TP53"
                                 )

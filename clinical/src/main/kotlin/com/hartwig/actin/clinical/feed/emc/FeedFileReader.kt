@@ -73,13 +73,14 @@ class FeedFileReader<T : FeedEntry>(
     private val feedFilePreprocessor: FeedFilePreprocessor = FeedFilePreprocessor(),
     private val clinicalFeedCreator: (List<FeedResult<T>>) -> EmcClinicalFeed
 ) {
-    private val reader = CsvMapper().apply {
-        enable(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS)
-        enable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS)
-        enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-        setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+    private val reader = CsvMapper.builder()
+        .enable(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS)
+        .enable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS)
+        .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+        .build().apply {
+            propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
         registerModule(JavaTimeModule())
         registerModule(
             SimpleModule().addDeserializer(

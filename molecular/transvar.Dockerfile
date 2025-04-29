@@ -1,4 +1,17 @@
-FROM eclipse-temurin:11-jre@sha256:7e474f2d1d3d1291c152d97ee3b9b6689b81e0d535326d8bfc680db35de0969b
+FROM ubuntu:22.04
 
-RUN apt-get update && apt-get install -fy unzip python-pip python2-dev zlib1g-dev libncurses5-dev  \
-    && python2 -m pip install TransVar==2.3.4.20161215
+RUN apt-get update && apt-get install -fy \
+    locales \
+    unzip \
+    python-pip \
+    python2-dev \
+    zlib1g-dev \
+    libncurses5-dev \
+    openjdk-17-jre \
+    && locale-gen en_US.UTF-8 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+RUN python2 -m pip install TransVar==2.3.4.20161215

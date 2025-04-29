@@ -3,11 +3,7 @@
   "patient": {
     "gender": "FEMALE",
     "birthYear": 5,
-    "registrationDate": {
-      "year": 2020,
-      "month": 1,
-      "day": 1
-    },
+    "registrationDate": "2020-01-01",
     "questionnaireDate": null
   },
   "tumor": {
@@ -136,18 +132,10 @@
           "extensionCode": null
         }
       ],
-      "evaluatedDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "evaluatedDate": "2020-01-01",
       "source": "EHR",
       "grade": 5,
-      "endDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "endDate": "2020-01-01",
       "comorbidityClass": "TOXICITY"
     },
     {
@@ -198,23 +186,8 @@
   ],
   "priorSequencingTests": [
     {
-      "test": "Archer FP Lung Target",
-      "testedGenes": [
-        "ALK",
-        "ROS1",
-        "RET",
-        "MET",
-        "NTRK1",
-        "NTRK2",
-        "NTRK3",
-        "NRG1",
-        "KRAS"
-      ],
-      "date": {
-        "year": 2024,
-        "month": 7,
-        "day": 15
-      },
+      "test": "Archer FP - Lung",
+      "date": "2024-07-15",
       "variants": [
         {
           "gene": "KRAS",
@@ -229,11 +202,7 @@
   ],
   "labValues": [
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "O2_SATURATION_BG",
       "comparator": "",
       "value": 88.0,
@@ -243,11 +212,7 @@
       "isOutsideRef": null
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "THROMBOCYTES_ABS",
       "comparator": "",
       "value": 252.0,
@@ -257,11 +222,7 @@
       "isOutsideRef": null
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "LYMPHOCYTES_ABS",
       "comparator": "",
       "value": 0.6,
@@ -271,11 +232,7 @@
       "isOutsideRef": null
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "HEMOGLOBIN",
       "comparator": "",
       "value": 7.7,
@@ -288,11 +245,7 @@
   "surgeries": [
     {
       "name": "diagnostics stomach translated",
-      "endDate": {
-        "year": 2021,
-        "month": 1,
-        "day": 1
-      },
+      "endDate": "2021-01-01",
       "status": "CANCELLED"
     }
   ],
@@ -346,11 +299,7 @@
   ],
   "bloodTransfusions": [
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "product": "Erytrocytes Filtered"
     }
   ],

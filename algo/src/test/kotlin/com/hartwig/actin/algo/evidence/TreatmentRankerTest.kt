@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteri
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -26,7 +26,7 @@ class TreatmentRankerTest {
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.PHASE_I,
+                    approvalStage = EvidenceLevelDetails.PHASE_I,
                     hasBenefit = true,
                     treatment = "treatment1",
                 )
@@ -35,7 +35,7 @@ class TreatmentRankerTest {
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.PRECLINICAL,
+                    approvalStage = EvidenceLevelDetails.PRECLINICAL,
                     hasBenefit = true,
                     treatment = "treatment2",
                 )
@@ -44,7 +44,7 @@ class TreatmentRankerTest {
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = true,
-                    approvalStage = EvidenceApprovalPhase.PHASE_III,
+                    approvalStage = EvidenceLevelDetails.PHASE_III,
                     hasBenefit = true,
                     treatment = "treatment3",
                 )
@@ -53,7 +53,7 @@ class TreatmentRankerTest {
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.GUIDELINE,
+                    approvalStage = EvidenceLevelDetails.GUIDELINE,
                     hasBenefit = true,
                     treatment = "treatment4",
                 )
@@ -78,13 +78,13 @@ class TreatmentRankerTest {
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.GUIDELINE,
+                    approvalStage = EvidenceLevelDetails.GUIDELINE,
                     hasBenefit = true,
                     treatment = "treatment1"
                 ), treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.FDA_APPROVED,
+                    approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
                     treatment = "treatment1",
                     event = "BRAF mut"
@@ -104,14 +104,14 @@ class TreatmentRankerTest {
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.FDA_APPROVED,
+                    approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
                     treatment = "treatment1"
                 ),
                 treatmentEvidence(
                     isOnLabel = false,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.FDA_APPROVED,
+                    approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
                     treatment = "treatment1",
                 )
@@ -130,14 +130,14 @@ class TreatmentRankerTest {
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.GUIDELINE,
+                    approvalStage = EvidenceLevelDetails.GUIDELINE,
                     hasBenefit = true,
                     treatment = "treatment1"
                 ),
                 treatmentEvidence(
                     isOnLabel = true,
                     isCategoryEvent = false,
-                    approvalStage = EvidenceApprovalPhase.FDA_APPROVED,
+                    approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
                     treatment = "treatment1",
                 )
@@ -187,7 +187,7 @@ class TreatmentRankerTest {
         treatment: String,
         isOnLabel: Boolean,
         isCategoryEvent: Boolean,
-        approvalStage: EvidenceApprovalPhase,
+        approvalStage: EvidenceLevelDetails,
         hasBenefit: Boolean,
         event: String = "BRAF V600E"
     ) = TestTreatmentEvidenceFactory.create(

@@ -25,7 +25,7 @@ internal object CopyNumberLookup {
                 event == GeneEvent.AMPLIFICATION
             }
 
-            CopyNumberType.LOSS -> {
+            CopyNumberType.DEL -> {
                 event == GeneEvent.DELETION
             }
 

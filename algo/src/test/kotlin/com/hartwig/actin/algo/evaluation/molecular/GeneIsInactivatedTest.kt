@@ -5,6 +5,8 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomo
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicrosatelliteStabilityAndVariant
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -17,6 +19,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val GENE = "gene A"
@@ -29,12 +32,12 @@ class GeneIsInactivatedTest {
         gene = GENE, isReportable = true, geneRole = GeneRole.TSG, proteinEffect = ProteinEffect.LOSS_OF_FUNCTION
     )
 
-    private val matchingLoss = TestCopyNumberFactory.createMinimal().copy(
+    private val matchingDel = TestCopyNumberFactory.createMinimal().copy(
         gene = GENE,
         isReportable = true,
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
     )
 
     private val matchingVariant = TestVariantFactory.createMinimal().copy(
@@ -91,21 +94,21 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun `Should pass with matching TSG loss`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss)))
+    fun `Should pass with matching TSG deletion`() {
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withCopyNumber(matchingDel)))
     }
 
     @Test
-    fun `Should warn when TSG loss is not reportable`() {
+    fun `Should warn when TSG deletion is not reportable`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(isReportable = false)))
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingDel.copy(isReportable = false)))
         )
     }
 
     @Test
     fun `Should warn when lost gene is an oncogene`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(geneRole = GeneRole.ONCO)))
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingDel.copy(geneRole = GeneRole.ONCO)))
         )
     }
 
@@ -113,7 +116,7 @@ class GeneIsInactivatedTest {
     fun `Should warn when lost gene implies gain of function`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
+            function.evaluate(MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
         )
     }
 
@@ -159,14 +162,14 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun `Should warn when loss is only on non-canonical transcript`() {
+    fun `Should warn when deletion is only on non-canonical transcript`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(
-                    matchingLoss.copy(
+                    matchingDel.copy(
                         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
-                        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS))
+                        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL))
                     )
                 )
             )
@@ -307,6 +310,18 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = function.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        Assertions.assertThat(result.undeterminedMessages)
+            .containsExactly("Inactivation of gene gene A undetermined (not tested for mutations or deletions)")
     }
 
     private fun assertResultForVariant(result: EvaluationResult, variant: Variant) {

@@ -16,6 +16,8 @@ import com.hartwig.serve.datamodel.molecular.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
 import java.time.LocalDate
 
+const val SOURCE_EVENT_URL : String = "sourceEventUrl"
+
 object TestServeMolecularFactory {
 
     fun createHotspotCriterium(
@@ -131,7 +133,7 @@ object TestServeMolecularFactory {
     fun createActionableEvent(
         sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
         sourceEvent: String = "",
-        sourceUrls: Set<String> = emptySet()
+        sourceUrls: Set<String> = setOf(SOURCE_EVENT_URL)
     ): ActionableEvent {
         return object : ActionableEvent {
             override fun sourceDate(): LocalDate {

@@ -5,7 +5,7 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.ReportContentProvider
-import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -66,22 +66,12 @@ class SummaryChapter(
     }
 
     private fun addSummaryTable(document: Document) {
-        val contentWidth = contentWidth()
-        val table = Tables.createSingleColWithWidth(contentWidth)
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val valueWidth = contentWidth - keyWidth
-        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, contentWidth, interpretedCohorts)
+        val valueWidth = contentWidth() - keyWidth
+        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, interpretedCohorts)
 
-        generators.flatMap { generator ->
-            sequenceOf(
-                Cells.createTitle(generator.title()),
-                Cells.create(generator.contents()),
-                Cells.createEmpty(),
-                Cells.createEmpty()
-            )
-        }
-            .dropLast(2)
-            .forEach(table::addCell)
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }
 

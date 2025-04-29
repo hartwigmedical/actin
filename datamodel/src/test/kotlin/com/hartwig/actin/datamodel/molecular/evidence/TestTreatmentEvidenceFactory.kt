@@ -2,6 +2,8 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 import java.time.LocalDate
 
+const val SOURCE_EVENT_URL : String = "sourceEventUrl"
+
 object TestTreatmentEvidenceFactory {
 
     fun approved() =
@@ -9,7 +11,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "approved",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
         )
 
@@ -18,7 +20,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label experimental",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceApprovalPhase.CLINICAL_STUDY,
+            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
@@ -27,7 +29,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label experimental",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.B,
-            evidenceLevelDetails = EvidenceApprovalPhase.CLINICAL_STUDY,
+            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
             evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
         )
 
@@ -36,7 +38,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label pre-clinical",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.C,
-            evidenceLevelDetails = EvidenceApprovalPhase.PRECLINICAL,
+            evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
@@ -45,7 +47,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label pre-clinical",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.D,
-            evidenceLevelDetails = EvidenceApprovalPhase.PRECLINICAL,
+            evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
@@ -54,7 +56,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label known resistant",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
         )
 
@@ -63,7 +65,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label known resistant",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.A,
-            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
         )
 
@@ -72,7 +74,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "on-label suspect resistant",
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.C,
-            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
         )
 
@@ -81,7 +83,7 @@ object TestTreatmentEvidenceFactory {
             treatment = "off-label suspect resistant",
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.C,
-            evidenceLevelDetails = EvidenceApprovalPhase.GUIDELINE,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
         )
 
@@ -90,21 +92,28 @@ object TestTreatmentEvidenceFactory {
         isOnLabel: Boolean,
         sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
         sourceEvent: String = "",
-        isCategoryEvent: Boolean = false,
+        evidenceType: EvidenceType = EvidenceType.DELETION,
         matchedCancerType: String = "",
         excludedCancerSubTypes: Set<String> = emptySet(),
         evidenceLevel: EvidenceLevel,
-        evidenceLevelDetails: EvidenceApprovalPhase,
-        evidenceDirection: EvidenceDirection
+        evidenceLevelDetails: EvidenceLevelDetails,
+        evidenceDirection: EvidenceDirection,
+        evidenceYear: Int = 2021,
+        sourceUrl: String = SOURCE_EVENT_URL
     ) = TreatmentEvidence(
         treatment = treatment,
-        molecularMatch = MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
+        molecularMatch = TestMolecularMatchDetailsFactory.create(
+            sourceDate = sourceDate,
+            sourceEvent = sourceEvent,
+            sourceEvidenceType = evidenceType,
+            sourceUrl = sourceUrl
+        ),
         applicableCancerType = CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
         isOnLabel = isOnLabel,
         evidenceLevel = evidenceLevel,
         evidenceLevelDetails = evidenceLevelDetails,
         evidenceDirection = evidenceDirection,
-        evidenceYear = 2021,
+        evidenceYear = evidenceYear,
         efficacyDescription = "efficacy description"
     )
 }

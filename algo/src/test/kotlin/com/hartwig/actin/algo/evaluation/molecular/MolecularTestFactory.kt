@@ -181,9 +181,9 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMicrosatelliteStabilityAndLoss(isUnstable: Boolean?, loss: CopyNumber): PatientRecord {
+    fun withMicrosatelliteStabilityAndDeletion(isUnstable: Boolean?, del: CopyNumber): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(microsatelliteStability = createTestMicrosatelliteStability(isUnstable)), loss
+            baseMolecular.characteristics.copy(microsatelliteStability = createTestMicrosatelliteStability(isUnstable)), del
         )
     }
 
@@ -210,9 +210,9 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withHomologousRecombinationAndLoss(isHrDeficient: Boolean?, loss: CopyNumber): PatientRecord {
+    fun withHomologousRecombinationAndDeletion(isHrDeficient: Boolean?, del: CopyNumber): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), loss
+            baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), del
         )
     }
 

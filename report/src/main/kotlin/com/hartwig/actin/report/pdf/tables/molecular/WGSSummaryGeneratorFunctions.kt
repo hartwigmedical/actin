@@ -49,7 +49,7 @@ object WGSSummaryGeneratorFunctions {
 
             val hasTmbData = createTmbCells(molecular, isShort, table)
 
-            val tableContents = generateTableContents(isShort, summarizer, molecular, keyWidth, valueWidth)
+            val tableContents = generateTableContents(isShort, summarizer, molecular)
 
             val filteredContents = tableContents
                 .filterNot { (_, value) -> (value.contains(Formats.VALUE_NONE) || value.contains(Formats.VALUE_UNKNOWN)) && isShort }
@@ -181,7 +181,27 @@ object WGSSummaryGeneratorFunctions {
         return if (list.isEmpty()) Formats.VALUE_NONE else list.joinToString(Formats.COMMA_SEPARATOR)
     }
 
-    private fun getOrderedKeys(isShort: Boolean): List<String> {
+    private fun generateTableContents(
+        isShort: Boolean,
+        summarizer: MolecularDriversSummarizer,
+        molecular: MolecularTest
+    ): List<Pair<String, String>> {
+        val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular)
+        val orderedKeys = determineOrderedKeys(isShort)
+        val keyToValueMap = mapOf(
+            "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
+            "HR status" to characteristicsGenerator.createHRStatusString(),
+            "High driver mutations" to formatList(summarizer.keyVariants()),
+            "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
+            "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
+            "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
+            "Gene fusions" to formatList(summarizer.keyFusionEvents()),
+            "Virus detection" to formatList(summarizer.keyVirusEvents()),
+        )
+        return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
+    }
+
+    private fun determineOrderedKeys(isShort: Boolean): List<String> {
         return if (isShort) {
             listOf(
                 "High driver mutations",
@@ -206,23 +226,5 @@ object WGSSummaryGeneratorFunctions {
                 "",
             )
         }
-    }
-
-    private fun generateTableContents(
-        isShort: Boolean, summarizer: MolecularDriversSummarizer, molecular: MolecularTest, keyWidth: Float, valueWidth: Float
-    ): List<Pair<String, String>> {
-        val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
-        val orderedKeys = getOrderedKeys(isShort)
-        val keyToValueMap = mapOf(
-            "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
-            "HR status" to characteristicsGenerator.createHRStatusString(),
-            "High driver mutations" to formatList(summarizer.keyVariants()),
-            "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
-            "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
-            "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
-            "Gene fusions" to formatList(summarizer.keyFusionEvents()),
-            "Virus detection" to formatList(summarizer.keyVirusEvents()),
-        )
-        return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
     }
 }

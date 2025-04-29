@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 object TreatmentEvidenceFunctions {
@@ -68,14 +68,14 @@ object TreatmentEvidenceFunctions {
     }
 
     private fun isPreclinical(evidence: TreatmentEvidence): Boolean {
-        return evidence.evidenceLevelDetails == EvidenceApprovalPhase.PRECLINICAL
+        return evidence.evidenceLevelDetails == EvidenceLevelDetails.PRECLINICAL
     }
 
     fun prioritizeNonCategoryEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
         return groupBySourceEvent(treatmentEvidenceSet).flatMap { (_, evidencesInEvent) ->
             groupByTreatmentAndCancerType(evidencesInEvent).mapNotNull { (_, evidences) ->
-                val highestCategoryEvidence = evidences.filter { it.molecularMatch.isCategoryEvent }.minByOrNull { it.evidenceLevel }
-                val highestNonCategoryEvidence = evidences.filter { !it.molecularMatch.isCategoryEvent }.minByOrNull { it.evidenceLevel }
+                val highestCategoryEvidence = evidences.filter { it.molecularMatch.sourceEvidenceType.isCategoryEvent() }.minByOrNull { it.evidenceLevel }
+                val highestNonCategoryEvidence = evidences.filter { !it.molecularMatch.sourceEvidenceType.isCategoryEvent() }.minByOrNull { it.evidenceLevel }
 
                 highestNonCategoryEvidence ?: highestCategoryEvidence
             }
@@ -105,7 +105,7 @@ object TreatmentEvidenceFunctions {
     fun sortTreatmentEvidence(evidence: List<TreatmentEvidence>): Set<TreatmentEvidence> {
         return evidence
             .sortedWith(compareBy<TreatmentEvidence> { it.evidenceLevel }
-                .thenBy { it.molecularMatch.isCategoryEvent }
+                .thenBy { it.molecularMatch.sourceEvidenceType.isCategoryEvent() }
                 .thenByDescending { it.isOnLabel })
             .toSet()
     }

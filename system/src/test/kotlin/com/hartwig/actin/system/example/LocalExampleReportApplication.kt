@@ -45,8 +45,8 @@ private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
 
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
-    Locale.setDefault(Locale("en", "US"))
-    val localOutputPath = System.getProperty("user.dir") 
+    Locale.setDefault(Locale.US)
+    val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
         val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(EXAMPLE_TO_RUN)
@@ -56,7 +56,7 @@ fun main() {
             examplePatientRecordJson,
             exampleTreatmentMatchJson,
             localOutputPath,
-            ExampleFunctions.createExhaustiveEnvironmentConfiguration(LocalDate.now())
+            ExampleFunctions.createExampleEnvironmentConfiguration(LocalDate.now())
         )
     } catch (exception: ParseException) {
         LocalExampleReportApplication.LOGGER.warn(exception)

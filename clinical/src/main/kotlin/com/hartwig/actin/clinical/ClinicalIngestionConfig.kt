@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical
 
+import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
+import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
@@ -25,7 +27,7 @@ data class ClinicalIngestionConfig(
     val treatmentDirectory: String,
     val outputDirectory: String,
     val feedFormat: FeedFormat,
-    val panelGeneListTsv: String?,
+    val overridesYaml: String?
 ) {
 
     companion object {
@@ -43,7 +45,6 @@ data class ClinicalIngestionConfig(
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val LOG_DEBUG = "log_debug"
         private const val FEED_FORMAT = "feed_format"
-        private const val PANEL_GENE_LIST_TSV = "panel_gene_list_tsv"
 
         fun createOptions(): Options {
             val options = Options()
@@ -57,17 +58,13 @@ data class ClinicalIngestionConfig(
             options.addOption(ATC_OVERRIDES_TSV, true, "Path to TSV file containing ATC code overrides")
             options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment data")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to")
-            options.addOption(
-                PANEL_GENE_LIST_TSV,
-                true,
-                "Path to TSV file containing panel test names and their corresponding tested genes"
-            )
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(
                 FEED_FORMAT,
                 true,
                 "The format of the feed. Accepted values [${FeedFormat.entries.joinToString()}]. Default is ${FeedFormat.EMC_TSV.name}."
             )
+            options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             return options
         }
 
@@ -88,7 +85,7 @@ data class ClinicalIngestionConfig(
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 feedFormat = ApplicationConfig.optionalValue(cmd, FEED_FORMAT)?.let { FeedFormat.valueOf(it) } ?: FeedFormat.EMC_TSV,
-                panelGeneListTsv = ApplicationConfig.optionalFile(cmd, PANEL_GENE_LIST_TSV)
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
     }

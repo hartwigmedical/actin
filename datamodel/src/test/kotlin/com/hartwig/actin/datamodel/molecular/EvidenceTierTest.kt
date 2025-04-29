@@ -3,8 +3,9 @@ package com.hartwig.actin.datamodel.molecular
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.evidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
@@ -25,7 +26,7 @@ class EvidenceTierTest {
     @Test
     fun `Should infer an evidence tier of II when A or B level evidence off-label or is category variant`() {
         assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A, isOnLabel = false))).isEqualTo(EvidenceTier.II)
-        assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A, isOnLabel = true, isCategoryEvent = true))).isEqualTo(EvidenceTier.II)
+        assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A, isOnLabel = true, evidenceType = EvidenceType.ACTIVATION))).isEqualTo(EvidenceTier.II)
         assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.B, isOnLabel = false))).isEqualTo(EvidenceTier.II)
     }
 
@@ -48,14 +49,14 @@ class EvidenceTierTest {
     private fun driverWithEvidence(
         evidenceLevel: EvidenceLevel,
         isOnLabel: Boolean = true,
-        evidenceLevelDetails: EvidenceApprovalPhase = EvidenceApprovalPhase.CLINICAL_STUDY,
-        isCategoryEvent: Boolean = false
+        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+        evidenceType: EvidenceType = EvidenceType.HOTSPOT_MUTATION,
     ): Driver {
         return mockDriver(
             TestTreatmentEvidenceFactory.create(
                 treatment = "mock treatment",
                 isOnLabel = isOnLabel,
-                isCategoryEvent = isCategoryEvent,
+                evidenceType = evidenceType,
                 evidenceLevel = evidenceLevel,
                 evidenceLevelDetails = evidenceLevelDetails,
                 evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()

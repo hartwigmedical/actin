@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evidence
 
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceApprovalPhase
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 
 enum class TumorMatch {
     ON_LABEL,
@@ -17,7 +17,7 @@ data class ScoringMatch(val tumorMatch: TumorMatch, val variantMatch: VariantMat
 
 data class ScoringConfig(val categoryMatchLevels: Map<ScoringMatch, Int>, val approvalPhaseLevel: ScoringLevel)
 
-data class ScoringLevel(val scoring: Map<EvidenceApprovalPhase, Int>)
+data class ScoringLevel(val scoring: Map<EvidenceLevelDetails, Int>)
 
 fun create() = ScoringConfig(
     mapOf(
@@ -30,17 +30,17 @@ fun create() = ScoringConfig(
     ),
     ScoringLevel(
         mapOf(
-            EvidenceApprovalPhase.UNKNOWN to 0,
-            EvidenceApprovalPhase.FDA_APPROVED to 100,
-            EvidenceApprovalPhase.GUIDELINE to 95,
-            EvidenceApprovalPhase.PHASE_III to 90,
-            EvidenceApprovalPhase.PHASE_II to 90,
-            EvidenceApprovalPhase.PHASE_IB_II to 40,
-            EvidenceApprovalPhase.PHASE_I to 35,
-            EvidenceApprovalPhase.PHASE_0 to 30,
-            EvidenceApprovalPhase.CLINICAL_STUDY to 30,
-            EvidenceApprovalPhase.CASE_REPORTS_SERIES to 25,
-            EvidenceApprovalPhase.PRECLINICAL to 10
+            EvidenceLevelDetails.UNKNOWN to 0,
+            EvidenceLevelDetails.FDA_APPROVED to 100,
+            EvidenceLevelDetails.GUIDELINE to 95,
+            EvidenceLevelDetails.PHASE_III to 90,
+            EvidenceLevelDetails.PHASE_II to 90,
+            EvidenceLevelDetails.PHASE_IB_II to 40,
+            EvidenceLevelDetails.PHASE_I to 35,
+            EvidenceLevelDetails.PHASE_0 to 30,
+            EvidenceLevelDetails.CLINICAL_STUDY to 30,
+            EvidenceLevelDetails.CASE_REPORTS_SERIES to 25,
+            EvidenceLevelDetails.PRECLINICAL to 10
         )
     )
 )

@@ -6,7 +6,7 @@ data class TreatmentEvidence(
     val applicableCancerType: CancerType,
     val isOnLabel: Boolean,
     val evidenceLevel: EvidenceLevel,
-    val evidenceLevelDetails: EvidenceApprovalPhase,
+    val evidenceLevelDetails: EvidenceLevelDetails,
     val evidenceDirection: EvidenceDirection,
     val evidenceYear: Int,
     val efficacyDescription: String

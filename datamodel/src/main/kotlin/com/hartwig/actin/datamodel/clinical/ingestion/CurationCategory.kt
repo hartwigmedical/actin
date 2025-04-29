@@ -17,6 +17,7 @@ enum class CurationCategory(val categoryName: String) {
     MOLECULAR_TEST_IHC("Molecular Test IHC"),
     MOLECULAR_TEST_PDL1("Molecular Test PDL1"),
     SEQUENCING_TEST("Sequencing Test"),
+    SEQUENCING_TEST_RESULT("Sequencing Test Result"),
     NON_ONCOLOGICAL_HISTORY("Non Oncological History"),
     ONCOLOGICAL_HISTORY("Oncological History"),
     PERIOD_BETWEEN_UNIT_INTERPRETATION("Period Between Unit Interpretation"),

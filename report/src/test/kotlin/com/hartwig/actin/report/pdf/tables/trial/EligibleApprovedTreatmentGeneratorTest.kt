@@ -15,20 +15,11 @@ import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_SUB_LOCATION
 import com.hartwig.actin.report.pdf.getCellContents
-import com.hartwig.actin.report.pdf.getWrappedTable
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val WIDTH = 10F
-
 class EligibleApprovedTreatmentGeneratorTest {
-
-    @Test
-    fun `Should return approved treatments if available`() {
-        val contents = eligibleTreatmentsTable(treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch())
-        assertThat(getCellContents(contents, 0, 0)).isEqualTo("Pembrolizumab")
-    }
 
     @Test
     fun `Should return Potential SOC if it is a cancer of unknown primary`() {
@@ -67,7 +58,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             treatmentMatch,
             EnvironmentConfiguration.create(null)
         )
-        return getWrappedTable(EligibleApprovedTreatmentGenerator(report, WIDTH))
+        return EligibleApprovedTreatmentGenerator(report).contents()
     }
 }
 

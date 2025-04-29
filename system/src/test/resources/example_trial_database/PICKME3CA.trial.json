@@ -1,7 +1,7 @@
 {
   "identification": {
     "trialId": "METC 05",
-    "open": true,
+    "open": false,
     "acronym": "PICKME3CA",
     "title": "A phase 1/2 trial of ABC123 +/- platinum doublet in PIK3CA-mutated solid cancer",
     "nctId": "NCT00000020",
@@ -96,7 +96,7 @@
       "metadata": {
         "cohortId": "A",
         "evaluable": true,
-        "open": true,
+        "open": false,
         "slotsAvailable": true,
         "blacklist": false,
         "description": "Dose expansion - monotherapy - NSCLC"
@@ -122,7 +122,7 @@
       "metadata": {
         "cohortId": "B",
         "evaluable": true,
-        "open": true,
+        "open": false,
         "slotsAvailable": true,
         "blacklist": false,
         "description": "Dose expansion - monotherapy - Other cancer types"
