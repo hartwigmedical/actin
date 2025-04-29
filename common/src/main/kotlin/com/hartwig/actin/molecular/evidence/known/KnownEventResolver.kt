@@ -35,7 +35,7 @@ class KnownEventResolver(
     }
 
     fun resolveForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
-        // Assume a homozygous disruption always has the same annotation as a loss.
+        // Assume a homozygous disruption always has the same annotation as a deletion.
         return CopyNumberLookup.findForHomozygousDisruption(filteredKnownEvents.copyNumbers(), homozygousDisruption)
             ?: GeneLookup.find(aggregatedKnownGenes, homozygousDisruption.gene)
     }
