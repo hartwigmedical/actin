@@ -11,45 +11,45 @@ object TumorMetastasisEvaluator {
     fun evaluate(
         hasLesions: Boolean?,
         hasSuspectedLesions: Boolean?,
-        requestedCategoryType: String,
+        requestedLesionCategory: String,
         tumorDoids: Set<String>?,
         doidModel: DoidModel
     ): Evaluation {
-        val doidsToMatch = when (requestedCategoryType) {
+        val doidToMatch = when (requestedLesionCategory) {
             TumorDetails.BONE -> DoidConstants.BONE_CANCER_DOID
             TumorDetails.LIVER -> DoidConstants.LIVER_CANCER_DOID
             TumorDetails.LYMPH_NODE -> DoidConstants.LYMPH_NODE_CANCER_DOID
             TumorDetails.LUNG -> DoidConstants.LUNG_CANCER_DOID
             else -> null
         }
-        val isPrimaryTumor = if (doidsToMatch != null) DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidsToMatch) else false
-        val messageType = requestedCategoryType.lowercase()
+        val primaryTumorIsOfRequestedLesionCategory = if (doidToMatch != null) DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch) else false
+        val messageString = requestedLesionCategory.lowercase()
 
         return when {
-            hasLesions == true && !isPrimaryTumor  -> {
-                EvaluationFactory.pass("Has $messageType metastases")
+            hasLesions == true && !primaryTumorIsOfRequestedLesionCategory  -> {
+                EvaluationFactory.pass("Has $messageString metastases")
             }
 
             hasLesions == true -> {
-                EvaluationFactory.undetermined("Has $messageType lesions but unsure if considered metastases because of primary $messageType cancer")
+                EvaluationFactory.undetermined("Has $messageString lesions but unsure if considered metastases because of primary $messageString cancer")
             }
 
-            hasSuspectedLesions == true && !isPrimaryTumor -> {
-                EvaluationFactory.warn("Has suspected $messageType metastases")
+            hasSuspectedLesions == true && !primaryTumorIsOfRequestedLesionCategory -> {
+                EvaluationFactory.warn("Has suspected $messageString metastases")
             }
 
             hasSuspectedLesions == true -> {
-                EvaluationFactory.undetermined("Has suspected $messageType lesions but unsure if considered metastases because of primary $messageType cancer")
+                EvaluationFactory.undetermined("Has suspected $messageString lesions but unsure if considered metastases because of primary $messageString cancer")
             }
 
-            hasLesions == null && isPrimaryTumor -> {
-                EvaluationFactory.undetermined("Has primary $messageType cancer but undetermined if patient may have $messageType metastases")
+            hasLesions == null && primaryTumorIsOfRequestedLesionCategory -> {
+                EvaluationFactory.undetermined("Has primary $messageString cancer but undetermined if patient may have $messageString metastases")
             }
 
-            hasLesions == null -> EvaluationFactory.undetermined("Missing $messageType metastasis data")
+            hasLesions == null -> EvaluationFactory.undetermined("Missing $messageString metastasis data")
 
             else -> {
-                EvaluationFactory.fail("No $messageType metastases")
+                EvaluationFactory.fail("No $messageString metastases")
             }
         }
     }

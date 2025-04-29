@@ -12,7 +12,7 @@ class HasLungMetastases(private val doidModel: DoidModel) : EvaluationFunction {
         return TumorMetastasisEvaluator.evaluate(
             record.tumor.hasLungLesions,
             record.tumor.hasSuspectedLungLesions,
-            TumorDetails.LUNG.lowercase(),
+            TumorDetails.LUNG,
             record.tumor.doids,
             doidModel
         )

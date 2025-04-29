@@ -10,7 +10,7 @@ class HasBoneMetastases(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return TumorMetastasisEvaluator.evaluate(
-            record.tumor.hasBoneLesions, record.tumor.hasSuspectedBoneLesions, TumorDetails.BONE.lowercase(), record.tumor.doids, doidModel
+            record.tumor.hasBoneLesions, record.tumor.hasSuspectedBoneLesions, TumorDetails.BONE, record.tumor.doids, doidModel
         )
     }
 }

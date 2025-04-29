@@ -10,7 +10,7 @@ class HasLiverMetastases(private val doidModel: DoidModel) : EvaluationFunction 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return TumorMetastasisEvaluator.evaluate(
-            record.tumor.hasLiverLesions, record.tumor.hasSuspectedLiverLesions, TumorDetails.LIVER.lowercase(), record.tumor.doids, doidModel
+            record.tumor.hasLiverLesions, record.tumor.hasSuspectedLiverLesions, TumorDetails.LIVER, record.tumor.doids, doidModel
         )
     }
 }

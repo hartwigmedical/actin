@@ -12,7 +12,7 @@ class HasLymphNodeMetastases(private val doidModel: DoidModel) : EvaluationFunct
         return TumorMetastasisEvaluator.evaluate(
             record.tumor.hasLymphNodeLesions,
             record.tumor.hasSuspectedLymphNodeLesions,
-            TumorDetails.LYMPH_NODE.lowercase(),
+            TumorDetails.LYMPH_NODE,
             record.tumor.doids,
             doidModel
         )
