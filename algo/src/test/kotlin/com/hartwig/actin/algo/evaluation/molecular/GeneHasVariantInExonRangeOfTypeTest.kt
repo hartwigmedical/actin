@@ -348,7 +348,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient and exon range`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
@@ -356,6 +356,17 @@ class GeneHasVariantInExonRangeOfTypeTest {
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(result.undeterminedMessages).containsExactly("Mutation in exon range 1 to 2 of type insertion in gene gene A undetermined (not tested for at least mutations)")
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient and single exon`() {
+        val result = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON, VariantTypeInput.INSERT).evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessages).containsExactly("Mutation in exon 1 of type insertion in gene gene A undetermined (not tested for at least mutations)")
     }
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = affectedExon)
