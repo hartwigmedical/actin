@@ -2,10 +2,14 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -87,14 +91,118 @@ class MolecularDriverEntryFactoryTest {
     }
 
     @Test
-    fun `Should assign correct driver type to variant drivers`() {
-        assertVariantType(TestMolecularFactory.createProperVariant().copy(isHotspot = true, proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
-        assertVariantType(TestMolecularFactory.createProperVariant().copy(isHotspot = true, proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
-        // add all different options here.
+    fun `Should assign correct driver type to variant drivers with gene role ONCO`() {
+        val oncoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.ONCO, isHotspot = true)
+        val oncoNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.ONCO, isHotspot = false)
+
+        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
+        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
+        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (Hotspot with no protein effect)")
+        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot)")
+        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function)")
+        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
+        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot)")
+        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function)")
+    }
+
+    @Test
+    fun `Should assign correct driver type to variant drivers with gene role TSG`() {
+        val tsgHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isHotspot = true)
+        val tsgHotspotBi = tsgHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val tsgNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isHotspot = false)
+        val tsgNoHotspotBi = tsgNoHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+
+        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
+        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
+        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (Hotspot with no protein effect)")
+        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function)")
+        assertVariantType(tsgHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function, biallelic)")
+        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot)")
+        assertVariantType(tsgHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
+        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
+        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function)")
+        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss-of-function, biallelic)")
+        assertVariantType(
+            tsgNoHotspot.copy(
+                proteinEffect = ProteinEffect.UNKNOWN,
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
+                    .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+            ), "Mutation (Loss-of-function)"
+        )
+        assertVariantType(
+            tsgNoHotspotBi.copy(
+                proteinEffect = ProteinEffect.UNKNOWN,
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
+                    .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+            ), "Mutation (Loss-of-function, biallelic)"
+        )
+        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot)")
+        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
+    }
+
+    @Test
+    fun `Should assign correct driver type to variant drivers with gene role BOTH`() {
+        val bothHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isHotspot = true)
+        val bothHotspotBi = bothHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+
+        val bothNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isHotspot = false)
+        val bothNoHotspotBi =
+            bothNoHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+
+        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
+        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
+        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (Hotspot with no protein effect)")
+        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot)")
+        assertVariantType(bothHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
+        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot)")
+        assertVariantType(bothHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
+        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
+        assertVariantType(bothNoHotspotBi.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot)")
+        assertVariantType(bothNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot)")
+        assertVariantType(bothNoHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
+    }
+
+    @Test
+    fun `Should assign correct driver type to variant drivers with unknown gene role`() {
+        val unknownHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isHotspot = true)
+        val unknownBi = unknownHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+
+        val unknownNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isHotspot = false)
+        val unknownNoHotspotBi =
+            unknownNoHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+
+        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
+        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
+        assertVariantType(
+            unknownHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED),
+            "Mutation (Hotspot with no protein effect)"
+        )
+        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot)")
+        assertVariantType(unknownBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
+        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot)")
+        assertVariantType(unknownBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
+        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
+        assertVariantType(unknownNoHotspotBi.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot)")
+        assertVariantType(unknownNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot)")
+        assertVariantType(unknownNoHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
     }
 
     private fun assertVariantType(variant: Variant, expectedDriverType: String) {
-        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = listOf(variant), copyNumbers = emptyList()))
+        val record = TestMolecularFactory.createProperTestMolecularRecord()
+            .copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = listOf(variant), copyNumbers = emptyList()))
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)
     }

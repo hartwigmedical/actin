@@ -54,19 +54,60 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     private fun formatMutationType(variant: Variant): String {
         return when {
-            variant.isHotspot && variant.proteinEffect == ProteinEffect.UNKNOWN -> "Hotspot with unknown protein effect"
-            variant.isHotspot && (variant.proteinEffect == ProteinEffect.NO_EFFECT || variant.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED) -> "Hotspot with no protein effect"
-            variant.proteinEffect == ProteinEffect.NO_EFFECT || variant.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED -> "No protein effect"
-            variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> "Gain of function"
-            variant.geneRole == GeneRole.ONCO && variant.isHotspot && (variant.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION || variant.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED) -> "Hotspot"
-            variant.geneRole == GeneRole.TSG && (variant.isHotspot || variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT) && (variant.extendedVariantDetails?.isBiallelic == true) && (variant.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION || variant.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED) -> "Loss-of-function, biallelic"
-            variant.geneRole == GeneRole.TSG && (variant.isHotspot || variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT) && (variant.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION || variant.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED) -> "Loss-of-function"
-            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH) && variant.isHotspot && (variant.extendedVariantDetails?.isBiallelic == true) -> "Hotspot, biallelic"
-            variant.geneRole == GeneRole.TSG && (variant.extendedVariantDetails?.isBiallelic == true) -> "No known hotspot, biallelic"
-            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH) && (variant.extendedVariantDetails?.isBiallelic == true) -> "No known hotspot, biallelic"
-            else -> "No known hotspot"
+            variant.isHotspot && variant.proteinEffect == ProteinEffect.UNKNOWN -> {
+                "Hotspot with unknown protein effect"
+            }
+
+            variant.isHotspot && isNoEffect(variant) -> {
+                "Hotspot with no protein effect"
+            }
+
+            isNoEffect(variant) -> {
+                "No protein effect"
+            }
+
+            variant.geneRole == GeneRole.ONCO && isGainOfFunction(variant) -> {
+                "Gain of function"
+            }
+
+            variant.geneRole == GeneRole.TSG && (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT ||
+                    isLossOfFunction(variant)) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "Loss-of-function, biallelic"
+            }
+
+            variant.geneRole == GeneRole.TSG &&
+                    (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT || isLossOfFunction(variant)) -> {
+                "Loss-of-function"
+            }
+
+            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)
+                    && variant.isHotspot && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "Hotspot, biallelic"
+            }
+
+            variant.isHotspot -> {
+                "Hotspot"
+            }
+
+            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG) &&
+                    (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "No known hotspot, biallelic"
+            }
+
+            else -> {
+                "No known hotspot"
+            }
         }
     }
+
+    private fun isNoEffect(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.NO_EFFECT, ProteinEffect.NO_EFFECT_PREDICTED)
+
+    private fun isGainOfFunction(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.GAIN_OF_FUNCTION, ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+
+    private fun isLossOfFunction(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.LOSS_OF_FUNCTION, ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
 
     private fun formatCopyNumberString(copyNumber: Double): String {
         val boundedCopyNumber = copyNumber.coerceAtLeast(0.0)
