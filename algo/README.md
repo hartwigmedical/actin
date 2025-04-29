@@ -668,7 +668,7 @@ Systemic corticosteroids ("H02" or "M01BA") <br>
 *Where <atcLevel> is a level defined above in 3] and <category> is X OR a member of the set of ATC codes derived from X using the table
 below in 5]
 **Where <atcLevel> is a level defined above in 3] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived
-from "Gonadorelin" using the table below in 5]
+from "Gonadotropin agonists" or "Gonadotropin antagonists" using the table below in 5]
 ***Categories are mapped to corresponding Treatment 'Categories' and 'Types'
 
 5] Cancer therapy list (with corresponding ATC level codes between brackets): <br>
