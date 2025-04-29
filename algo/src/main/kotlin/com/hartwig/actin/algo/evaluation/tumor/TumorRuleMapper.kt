@@ -229,7 +229,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasLiverMetastasesCreator(): FunctionCreator {
-        return { HasLiverMetastases() }
+        return { HasLiverMetastases(doidModel()) }
     }
 
     private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
@@ -243,7 +243,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasKnownCnsMetastasesCreator(): FunctionCreator {
-        return { HasKnownCnsMetastases() }
+        return { HasKnownCnsMetastases(doidModel()) }
     }
 
     private fun hasKnownActiveCnsMetastasesCreator(): FunctionCreator {
@@ -251,7 +251,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasKnownBrainMetastasesCreator(): FunctionCreator {
-        return { HasKnownBrainMetastases() }
+        return { HasKnownBrainMetastases(doidModel()) }
     }
 
     private fun hasKnownActiveBrainMetastasesCreator(): FunctionCreator {
@@ -267,7 +267,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasBoneMetastasesCreator(): FunctionCreator {
-        return { HasBoneMetastases() }
+        return { HasBoneMetastases(doidModel()) }
     }
 
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
@@ -281,11 +281,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasLungMetastasesCreator(): FunctionCreator {
-        return { HasLungMetastases() }
+        return { HasLungMetastases(doidModel()) }
     }
 
     private fun hasLymphNodeMetastasesCreator(): FunctionCreator {
-        return { HasLymphNodeMetastases() }
+        return { HasLymphNodeMetastases(doidModel()) }
     }
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {

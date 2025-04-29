@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasBoneMetastasesTest {
-    private val function: HasBoneMetastases = HasBoneMetastases()
+    private val function: HasBoneMetastases = HasBoneMetastases(TestDoidModelFactory.createMinimalTestDoidModel())
 
     @Test
     fun shouldBeUndeterminedWhenHasBoneLesionsIsNull() {
