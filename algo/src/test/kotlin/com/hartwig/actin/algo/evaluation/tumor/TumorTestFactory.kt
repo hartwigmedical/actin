@@ -164,24 +164,6 @@ internal object TumorTestFactory {
         )
     }
 
-    fun withBrainAndCnsLesionsAndDoids(
-        hasBrainLesions: Boolean?,
-        hasCnsLesions: Boolean?,
-        hasSuspectedBrainLesions: Boolean? = false,
-        hasSuspectedCnsLesions: Boolean? = false,
-        doids: Set<String>? = null
-    ): PatientRecord {
-        return withTumorDetails(
-            TumorDetails(
-                hasBrainLesions = hasBrainLesions,
-                hasCnsLesions = hasCnsLesions,
-                hasSuspectedBrainLesions = hasSuspectedBrainLesions,
-                hasSuspectedCnsLesions = hasSuspectedCnsLesions,
-                doids = doids
-            )
-        )
-    }
-
     fun withActiveBrainAndCnsLesionStatus(
         hasBrainLesions: Boolean?,
         hasActiveBrainLesions: Boolean?,
@@ -204,10 +186,6 @@ internal object TumorTestFactory {
 
     fun withBrainLesions(hasBrainLesions: Boolean?, hasSuspectedBrainLesions: Boolean? = false): PatientRecord {
         return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions, hasSuspectedBrainLesions = hasSuspectedBrainLesions))
-    }
-
-    fun withBrainLesionsAndDoids(hasBrainLesions: Boolean?, hasSuspectedBrainLesions: Boolean? = false, doids: Set<String>? = null): PatientRecord {
-        return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions, hasSuspectedBrainLesions = hasSuspectedBrainLesions, doids = doids))
     }
 
     fun withBrainLesionStatus(

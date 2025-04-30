@@ -50,16 +50,19 @@ class TumorDetailsExtractor(
         val otherLesions = filterCurateOtherLesions(curatedOtherLesions?.configs)
         val otherSuspectedLesions = filterCurateOtherLesions(curatedOtherLesions?.configs, true)
 
-        val (hasBrainLesions, hasSuspectedBrainLesions, brainLesionsMinCount) = determineLesionPresence(
-            lesionLocationConfigMap,
-            LesionLocationCategory.BRAIN,
-            questionnaire.hasBrainLesions
-        )
-        val (hasCnsLesions, hasSuspectedCnsLesions, cnsLesionsMinCount) = determineLesionPresence(
-            lesionLocationConfigMap,
-            LesionLocationCategory.CNS,
-            questionnaire.hasCnsLesions
-        )
+        val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" ||
+                primaryTumorDetails.primaryTumorType == "Glioma"
+
+        val (hasBrainLesions, hasSuspectedBrainLesions, brainLesionsMinCount) = if (hasBrainOrGliomaTumor) {
+            Triple(false, false, null)
+        } else {
+            determineLesionPresence(lesionLocationConfigMap, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions)
+        }
+        val (hasCnsLesions, hasSuspectedCnsLesions, cnsLesionsMinCount) = if (hasBrainOrGliomaTumor) {
+            Triple(false, false, null)
+        } else {
+            determineLesionPresence(lesionLocationConfigMap, LesionLocationCategory.CNS, questionnaire.hasCnsLesions)
+        }
         val (hasBoneLesions, hasSuspectedBoneLesions, boneLesionsMinCount) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.BONE,
@@ -84,11 +87,11 @@ class TumorDetailsExtractor(
             hasMeasurableDisease = questionnaire.hasMeasurableDisease,
             hasBrainLesions = hasBrainLesions,
             hasSuspectedBrainLesions = hasSuspectedBrainLesions,
-            hasActiveBrainLesions = questionnaire.hasActiveBrainLesions,
+            hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveBrainLesions,
             brainLesionsMinCount = brainLesionsMinCount,
             hasCnsLesions = hasCnsLesions,
             hasSuspectedCnsLesions = hasSuspectedCnsLesions,
-            hasActiveCnsLesions = questionnaire.hasActiveCnsLesions,
+            hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveCnsLesions,
             cnsLesionsMinCount = cnsLesionsMinCount,
             hasBoneLesions = hasBoneLesions,
             hasSuspectedBoneLesions = hasSuspectedBoneLesions,

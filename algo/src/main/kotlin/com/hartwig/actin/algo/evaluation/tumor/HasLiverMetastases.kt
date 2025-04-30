@@ -4,13 +4,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.doid.DoidModel
 
-class HasLiverMetastases(private val doidModel: DoidModel) : EvaluationFunction {
+class HasLiverMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return TumorMetastasisEvaluator.evaluate(
-            record.tumor.hasLiverLesions, record.tumor.hasSuspectedLiverLesions, TumorDetails.LIVER, record.tumor.doids, doidModel
+            record.tumor.hasLiverLesions, record.tumor.hasSuspectedLiverLesions, TumorDetails.LIVER.lowercase()
         )
     }
 }
