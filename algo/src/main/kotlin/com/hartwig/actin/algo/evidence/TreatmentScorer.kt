@@ -22,7 +22,7 @@ class TreatmentScorer {
 
     fun score(treatment: TreatmentEvidence): Score {
         val onLabel = if (treatment.isOnLabel) TumorMatch.ON_LABEL else TumorMatch.OFF_LABEL
-        val exactVariant = if (treatment.molecularMatch.isCategoryEvent) VariantMatch.CATEGORY else VariantMatch.EXACT
+        val exactVariant = if (treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()) VariantMatch.CATEGORY else VariantMatch.EXACT
         val config = create()
         val scoringMatch = ScoringMatch(onLabel, exactVariant)
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1

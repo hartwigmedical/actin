@@ -60,7 +60,7 @@ fun saturatingDiminishingReturnsScore(
 
 fun main() {
 
-    for (s in listOf("957")) {
+    for (s in listOf("958")) {
         try {
             val case = "case_$s"
             val patientRecordPath = System.getProperty("user.home") + "/Code/actin/$case.patient_record.json"

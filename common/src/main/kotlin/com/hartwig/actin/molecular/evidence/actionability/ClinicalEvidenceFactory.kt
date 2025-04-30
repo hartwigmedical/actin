@@ -44,8 +44,7 @@ object ClinicalEvidenceFactory {
                 event.sourceDate(),
                 event.sourceEvent(),
                 evidenceType,
-                event.sourceUrls().first(),
-                event.c
+                event.sourceUrls().first()
             )
         }.toSet()
     }
@@ -56,8 +55,7 @@ object ClinicalEvidenceFactory {
         sourceDate: LocalDate,
         sourceEvent: String,
         evidenceType: EvidenceType,
-        sourceUrl: String,
-        isCategoryEvent: Boolean
+        sourceUrl: String
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
@@ -66,8 +64,7 @@ object ClinicalEvidenceFactory {
                 sourceDate = sourceDate,
                 sourceEvent = sourceEvent,
                 sourceEvidenceType = evidenceType,
-                sourceUrl = sourceUrl, 
-                isCategoryEvent = 
+                sourceUrl = sourceUrl
             ),
             applicableCancerType = CancerType(
                 matchedCancerType = evidence.indication().applicableType().name(),
