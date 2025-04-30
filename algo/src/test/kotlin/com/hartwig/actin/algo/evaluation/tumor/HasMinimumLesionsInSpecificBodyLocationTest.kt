@@ -7,9 +7,11 @@ import org.junit.Test
 
 class HasMinimumLesionsInSpecificBodyLocationTest {
 
-    private val functionRequiringTwoLesionsInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(2, BodyLocationCategory.LUNG)
-    private val functionRequiringOneLesionInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, BodyLocationCategory.LUNG)
-    private val functionRequiringOneLesionInNonEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, BodyLocationCategory.BLADDER)
+    private val evaluableCategory = BodyLocationCategory.LUNG
+    private val nonEvaluableCategory = BodyLocationCategory.BLADDER
+    private val functionRequiringTwoLesionsInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(2, evaluableCategory)
+    private val functionRequiringOneLesionInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, evaluableCategory)
+    private val functionRequiringOneLesionInNonEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, nonEvaluableCategory)
 
     @Test
     fun `Should be pass in case of known lesions in requested body location and requiring at most one lesion`() {
