@@ -7,12 +7,14 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnair
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.spyk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -428,6 +430,39 @@ class TumorDetailsExtractorTest {
             )
         )
         assertThat(evaluation.lesionLocationEvaluatedInputs).isEqualTo(lesions.map(String::lowercase).toSet())
+    }
+
+    @Test
+    fun `Should set brain and CNS lesion variables to false in case of primary brain tumor`() {
+        val tumorDetailsExtractor =
+            spyk(TumorDetailsExtractor(TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(), tumorStageDeriver))
+        every {
+            tumorDetailsExtractor.curateTumorDetails(
+                inputTumorLocation = any(),
+                inputTumorType = any(),
+                patientId = any()
+            )
+        } returns (baseTumor.copy(primaryTumorLocation = "Brain") to CurationExtractionEvaluation())
+
+        val tumor = baseTumor.copy(
+            hasBrainLesions = null,
+            hasActiveBrainLesions = null,
+            hasSuspectedBrainLesions = null,
+            hasCnsLesions = null,
+            hasActiveCnsLesions = null,
+            hasSuspectedCnsLesions = null
+        )
+        val questionnaire = emptyQuestionnaire()
+        val expected = tumor.copy(
+            primaryTumorLocation = "Brain",
+            hasBrainLesions = false,
+            hasActiveBrainLesions = false,
+            hasSuspectedBrainLesions = false,
+            hasCnsLesions = false,
+            hasActiveCnsLesions = false,
+            hasSuspectedCnsLesions = false,
+        )
+        assertTumorExtraction(tumorDetailsExtractor, questionnaire, expected)
     }
 
     @Test
