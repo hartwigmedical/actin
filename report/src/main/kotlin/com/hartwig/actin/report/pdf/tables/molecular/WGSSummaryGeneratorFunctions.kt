@@ -46,7 +46,7 @@ object WGSSummaryGeneratorFunctions {
             if (!isShort) {
                 val cuppaMode = molecular.characteristics.predictedTumorOrigin?.cuppaMode()
                 if (cuppaMode == CuppaMode.WGTS) {
-                    table.addCell(Cells.createKey("Molecular tissue of origin prediction (WGTS)"))
+                    table.addCell(Cells.createKey("Molecular tissue of origin prediction(WGTS)"))
                 } else {
                     table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
                 }
