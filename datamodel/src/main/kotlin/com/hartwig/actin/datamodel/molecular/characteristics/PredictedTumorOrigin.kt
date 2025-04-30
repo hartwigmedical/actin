@@ -10,10 +10,6 @@ data class PredictedTumorOrigin(val predictions: List<CupPrediction>) {
         return bestPrediction().likelihood
     }
 
-    fun cuppaMode(): CuppaMode? {
-        return bestPrediction().cuppaMode
-    }
-
     private fun bestPrediction(): CupPrediction {
         return predictions.maxBy(CupPrediction::likelihood)
     }
