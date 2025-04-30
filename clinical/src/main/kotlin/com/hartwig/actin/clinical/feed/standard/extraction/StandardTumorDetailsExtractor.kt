@@ -72,12 +72,28 @@ class StandardTumorDetailsExtractor(
         stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
         derivedStages = null,
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
-        hasBrainLesions = hasBrainLesions(lesions),
+        hasBrainLesions = if (hasBrainOrGliomaTumor(
+                ehrPatientRecord.tumorDetails.tumorLocation,
+                ehrPatientRecord.tumorDetails.tumorType
+            )
+        ) false else hasBrainLesions(lesions),
         hasSuspectedBrainLesions = null,
-        hasActiveBrainLesions = hasBrainLesions(lesions, true),
-        hasCnsLesions = if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
+        hasActiveBrainLesions = if (hasBrainOrGliomaTumor(
+                ehrPatientRecord.tumorDetails.tumorLocation,
+                ehrPatientRecord.tumorDetails.tumorType
+            )
+        ) false else hasBrainLesions(lesions, true),
+        hasCnsLesions = if (hasBrainOrGliomaTumor(
+                ehrPatientRecord.tumorDetails.tumorLocation,
+                ehrPatientRecord.tumorDetails.tumorType
+            )
+        ) false else if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
         hasSuspectedCnsLesions = null,
-        hasActiveCnsLesions = if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
+        hasActiveCnsLesions = if (hasBrainOrGliomaTumor(
+                ehrPatientRecord.tumorDetails.tumorLocation,
+                ehrPatientRecord.tumorDetails.tumorType
+            )
+        ) false else if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
         hasSuspectedBoneLesions = null,
         hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
@@ -91,6 +107,10 @@ class StandardTumorDetailsExtractor(
         biopsyLocation = null,
         rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
     )
+
+    private fun hasBrainOrGliomaTumor(tumorLocation: String, tumorType: String): Boolean {
+        return (tumorLocation == "Brain" || tumorType == "Glioma")
+    }
 
     private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory, active: Boolean? = null): Boolean {
         return lesions.any { it.category == location && (active == null || it.active == active) && (it.suspected == null || it.suspected == false) }
