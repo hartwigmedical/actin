@@ -6,5 +6,5 @@ data class CupPrediction(
     val snvPairwiseClassifier: Double,
     val genomicPositionClassifier: Double,
     val featureClassifier: Double,
-    val cuppaMode: CuppaMode? = null
+    val cuppaMode: CuppaMode
 )

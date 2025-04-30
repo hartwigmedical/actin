@@ -27,7 +27,7 @@ object CharacteristicsExtraction {
         return MolecularCharacteristics(
             purity = purple.fit().purity(),
             ploidy = purple.fit().ploidy(),
-            predictedTumorOrigin = determinePredictedTumorOrigin(record.cuppa(), record),
+            predictedTumorOrigin = determinePredictedTumorOrigin(record.cuppa()),
             microsatelliteStability = determineMicrosatelliteStability(purple.characteristics()),
             homologousRecombination = determineHomologousRecombination(record.chord()),
             tumorMutationalBurden = determineTumorMutationalBurden(purple.characteristics()),
@@ -35,9 +35,9 @@ object CharacteristicsExtraction {
         )
     }
 
-    private fun determinePredictedTumorOrigin(cuppa: CuppaData?, record: OrangeRecord): PredictedTumorOrigin? {
+    private fun determinePredictedTumorOrigin(cuppa: CuppaData?): PredictedTumorOrigin? {
         return cuppa?.let {
-            PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions(), record))
+            PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions(), CuppaMode.valueOf(it.mode().toString())))
         }
     }
 
@@ -116,11 +116,11 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>, record: OrangeRecord): List<CupPrediction> {
-        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction, record) }
+    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>, cuppaMode: CuppaMode): List<CupPrediction> {
+        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction, cuppaMode) }
     }
 
-    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction, record: OrangeRecord): CupPrediction {
+    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction, cuppaMode: CuppaMode): CupPrediction {
         if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
             cuppaPrediction.featureClassifier() == null
         ) {
@@ -136,7 +136,7 @@ object CharacteristicsExtraction {
             snvPairwiseClassifier = cuppaPrediction.snvPairwiseClassifier()!!,
             genomicPositionClassifier = cuppaPrediction.genomicPositionClassifier()!!,
             featureClassifier = cuppaPrediction.featureClassifier()!!,
-            cuppaMode = CuppaMode.valueOf(record.cuppa()?.mode().toString())
+            cuppaMode = cuppaMode
         )
     }
 }

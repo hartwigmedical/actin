@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
@@ -31,7 +32,16 @@ class EligibleApprovedTreatmentGeneratorTest {
                 TestMolecularFactory.createMinimalTestMolecularRecord().copy(
                     characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                         predictedTumorOrigin = PredictedTumorOrigin(
-                            listOf(CupPrediction("colorectal", 0.9, 0.0, 0.0, 0.0))
+                            listOf(
+                                CupPrediction(
+                                    "colorectal",
+                                    0.9,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    cuppaMode = CuppaMode.WGS
+                                )
+                            )
                         )
                     )
                 )
