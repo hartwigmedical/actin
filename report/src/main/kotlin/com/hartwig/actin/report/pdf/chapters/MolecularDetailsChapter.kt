@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
@@ -63,23 +62,12 @@ class MolecularDetailsChapter(
             )
             if (molecular.hasSufficientQualityButLowPurity()) {
                 val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"
-                val cuppaMode = molecular.characteristics.predictedTumorOrigin?.cuppaMode()
-                if (cuppaMode == CuppaMode.WGTS) {
-                    orangeMolecularTable.addCell(
-                        Cells.createContentNoBorder(
-                            ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
-                                    "DNA aberrations might not have been detected & predicted tumor origin (WGTS) results may be less reliable")
-                        )
+                orangeMolecularTable.addCell(
+                    Cells.createContentNoBorder(
+                        ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
+                                "DNA aberrations might not have been detected & predicted tumor origin results may be less reliable")
                     )
-                } else {
-                    orangeMolecularTable.addCell(
-                        Cells.createContentNoBorder(
-                            ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
-                                    "DNA aberrations might not have been detected & predicted tumor origin results may be less reliable")
-                        )
-                    )
-                }
-
+                )
             }
 
             val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
