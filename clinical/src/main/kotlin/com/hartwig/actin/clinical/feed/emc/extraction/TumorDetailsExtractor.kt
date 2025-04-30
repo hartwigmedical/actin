@@ -53,31 +53,31 @@ class TumorDetailsExtractor(
         val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" ||
                 primaryTumorDetails.primaryTumorType == "Glioma"
 
-        val (hasBrainLesions, hasSuspectedBrainLesions, brainLesionsMinCount) = if (hasBrainOrGliomaTumor) {
-            Triple(false, false, null)
+        val (hasBrainLesions, hasSuspectedBrainLesions) = if (hasBrainOrGliomaTumor) {
+            Pair(false, false)
         } else {
             determineLesionPresence(lesionLocationConfigMap, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions)
         }
-        val (hasCnsLesions, hasSuspectedCnsLesions, cnsLesionsMinCount) = if (hasBrainOrGliomaTumor) {
-            Triple(false, false, null)
+        val (hasCnsLesions, hasSuspectedCnsLesions) = if (hasBrainOrGliomaTumor) {
+            Pair(false, false)
         } else {
             determineLesionPresence(lesionLocationConfigMap, LesionLocationCategory.CNS, questionnaire.hasCnsLesions)
         }
-        val (hasBoneLesions, hasSuspectedBoneLesions, boneLesionsMinCount) = determineLesionPresence(
+        val (hasBoneLesions, hasSuspectedBoneLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.BONE,
             questionnaire.hasBoneLesions
         )
-        val (hasLiverLesions, hasSuspectedLiverLesions, liverLesionsMinCount) = determineLesionPresence(
+        val (hasLiverLesions, hasSuspectedLiverLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.LIVER,
             questionnaire.hasLiverLesions
         )
-        val (hasLungLesions, hasSuspectedLungLesions, lungLesionsMinCount) = determineLesionPresence(
+        val (hasLungLesions, hasSuspectedLungLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.LUNG
         )
-        val (hasLymphNodeLesions, hasSuspectedLymphNodeLesions, lymphNodeLesionsMinCount) = determineLesionPresence(
+        val (hasLymphNodeLesions, hasSuspectedLymphNodeLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.LYMPH_NODE
         )
@@ -88,23 +88,17 @@ class TumorDetailsExtractor(
             hasBrainLesions = hasBrainLesions,
             hasSuspectedBrainLesions = hasSuspectedBrainLesions,
             hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveBrainLesions,
-            brainLesionsMinCount = brainLesionsMinCount,
             hasCnsLesions = hasCnsLesions,
             hasSuspectedCnsLesions = hasSuspectedCnsLesions,
             hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveCnsLesions,
-            cnsLesionsMinCount = cnsLesionsMinCount,
             hasBoneLesions = hasBoneLesions,
             hasSuspectedBoneLesions = hasSuspectedBoneLesions,
-            boneLesionsMinCount = boneLesionsMinCount,
             hasLiverLesions = hasLiverLesions,
             hasSuspectedLiverLesions = hasSuspectedLiverLesions,
-            liverLesionsMinCount = liverLesionsMinCount,
             hasLungLesions = hasLungLesions,
             hasSuspectedLungLesions = hasSuspectedLungLesions,
-            lungLesionsMinCount = lungLesionsMinCount,
             hasLymphNodeLesions = hasLymphNodeLesions,
             hasSuspectedLymphNodeLesions = hasSuspectedLymphNodeLesions,
-            lymphNodeLesionsMinCount = lymphNodeLesionsMinCount,
             otherLesions = otherLesions,
             otherSuspectedLesions = otherSuspectedLesions,
             biopsyLocation = curatedBiopsyLocation?.config()?.location,
@@ -194,23 +188,22 @@ class TumorDetailsExtractor(
         lesionLocationConfigMap: Map<LesionLocationCategory?, List<LesionLocationConfig>>?,
         lesionLocationCategory: LesionLocationCategory,
         hasLesionsQuestionnaire: Boolean? = null
-    ): Triple<Boolean?, Boolean?, Int?> {
+    ): Pair<Boolean?, Boolean?> {
 
         val lesionsConfig = lesionLocationConfigMap?.get(lesionLocationCategory)
 
         if (lesionsConfig.isNullOrEmpty()) {
-            return Triple(hasLesionsQuestionnaire, null, if (hasLesionsQuestionnaire == true) 1 else null)
+            return Pair(hasLesionsQuestionnaire, null)
         }
 
         val hasLesions = lesionsConfig.any { it.suspected != true }.takeIf { it }
         val hasSuspectedLesions = lesionsConfig.any { it.suspected == true }.takeIf { it }
-        val minCount = lesionsConfig.size
 
         if ((hasLesions == true || hasSuspectedLesions == true) && hasLesionsQuestionnaire != true) {
             logger.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")
         }
 
-        return Triple(if (hasLesions == true) true else hasLesionsQuestionnaire, hasSuspectedLesions, minCount)
+        return Pair(if (hasLesions == true) true else hasLesionsQuestionnaire, hasSuspectedLesions)
     }
 
     companion object {

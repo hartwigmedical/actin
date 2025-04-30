@@ -75,23 +75,17 @@ class StandardTumorDetailsExtractor(
         hasBrainLesions = hasBrainLesions(lesions),
         hasSuspectedBrainLesions = null,
         hasActiveBrainLesions = hasBrainLesions(lesions, true),
-        brainLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.BRAIN),
         hasCnsLesions = if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
         hasSuspectedCnsLesions = null,
         hasActiveCnsLesions = if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
-        cnsLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.BRAIN),
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
         hasSuspectedBoneLesions = null,
-        boneLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.BONE),
         hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
         hasSuspectedLiverLesions = null,
-        liverLesionsMinCount = determineLesionsMinCount(lesions, LesionLocationCategory.LIVER),
         hasLungLesions = null,
         hasSuspectedLungLesions = null,
-        lungLesionsMinCount = null,
         hasLymphNodeLesions = null,
         hasSuspectedLymphNodeLesions = null,
-        lymphNodeLesionsMinCount = null,
         otherLesions = null,
         otherSuspectedLesions = null,
         biopsyLocation = null,
@@ -104,14 +98,6 @@ class StandardTumorDetailsExtractor(
 
     private fun hasBrainLesions(lesions: List<LesionLocationConfig>, active: Boolean? = null) =
         if (active == true) hasLesions(lesions, LesionLocationCategory.BRAIN, true) else hasLesions(lesions, LesionLocationCategory.BRAIN)
-
-    private fun determineLesionsMinCount(
-        lesions: List<LesionLocationConfig>,
-        location: LesionLocationCategory,
-        active: Boolean? = null
-    ): Int? {
-        return if (hasLesions(lesions, location, active)) 1 else null
-    }
 
     private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
         val categories = LesionLocationCategory.entries.toSet().map { e -> e.name.uppercase() }

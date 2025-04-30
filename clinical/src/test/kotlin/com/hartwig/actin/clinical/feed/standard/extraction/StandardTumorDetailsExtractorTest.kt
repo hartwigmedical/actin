@@ -40,22 +40,16 @@ private val TUMOR_DETAILS = TumorDetails(
     hasBrainLesions = false,
     hasActiveBrainLesions = false,
     hasSuspectedBrainLesions = null,
-    brainLesionsMinCount = null,
     hasCnsLesions = null,
     hasActiveCnsLesions = null,
     hasSuspectedCnsLesions = null,
-    cnsLesionsMinCount = null,
     hasBoneLesions = false,
     hasSuspectedBoneLesions = null,
-    boneLesionsMinCount = null,
     hasLiverLesions = false,
     hasSuspectedLiverLesions = null,
-    liverLesionsMinCount = null,
     hasLungLesions = null,
     hasSuspectedLungLesions = null,
-    lungLesionsMinCount = null,
     hasLymphNodeLesions = null,
-    lymphNodeLesionsMinCount = null,
     otherLesions = null,
     otherSuspectedLesions = null,
     biopsyLocation = null,
@@ -160,8 +154,7 @@ class StandardTumorDetailsExtractorTest {
             )
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
-                hasLiverLesions = true,
-                liverLesionsMinCount = 1,
+                hasLiverLesions = true
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
@@ -183,9 +176,7 @@ class StandardTumorDetailsExtractorTest {
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
                 hasBrainLesions = true,
-                brainLesionsMinCount = 1,
-                hasCnsLesions = true,
-                cnsLesionsMinCount = 1
+                hasCnsLesions = true
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
@@ -208,10 +199,8 @@ class StandardTumorDetailsExtractorTest {
             TUMOR_DETAILS.copy(
                 hasBrainLesions = true,
                 hasActiveBrainLesions = true,
-                brainLesionsMinCount = 1,
                 hasCnsLesions = true,
                 hasActiveCnsLesions = true,
-                cnsLesionsMinCount = 1
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
