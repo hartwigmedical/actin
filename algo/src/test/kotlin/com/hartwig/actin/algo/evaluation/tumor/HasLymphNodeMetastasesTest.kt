@@ -12,7 +12,7 @@ class HasLymphNodeMetastasesTest {
     fun `Should be undetermined when unknown if has lymph node lesions`() {
         val undetermined = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, null))
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
-        assertThat(undetermined.undeterminedMessages).contains("Missing lymph node metastasis data")
+        assertThat(undetermined.undeterminedMessages).contains("Undetermined if patient has lymph node metastases (missing lesion data)")
     }
 
     @Test
@@ -32,7 +32,7 @@ class HasLymphNodeMetastasesTest {
     @Test
     fun `Should warn when has suspected lymph node lesions only`() {
         val warn = function.evaluate(TumorTestFactory.withLymphNodeLesions(false, true))
-        val message = "Lymph node metastases present but only suspected lesions"
+        val message = "Has suspected lymph node metastases hence uncertain if actually has lymph node metastases"
         assertEvaluation(EvaluationResult.WARN, warn)
         listOf(warn.warnMessages).forEach {
             assertThat(it).contains(message)
@@ -40,10 +40,10 @@ class HasLymphNodeMetastasesTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when no suspected lymph node lesions but unknown certain lymph node lesions`() {
-        val fail = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, false))
-        assertEvaluation(EvaluationResult.UNDETERMINED, fail)
-        assertThat(fail.undeterminedMessages).contains("Missing lymph node metastasis data")
+    fun `Should be undetermined when no suspected lymph node lesions but unknown certain lymph node lesions`() {
+        val undetermined = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, false))
+        assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
+        assertThat(undetermined.undeterminedMessages).contains("Undetermined if patient has lymph node metastases (missing lesion data)")
     }
 
     @Test
