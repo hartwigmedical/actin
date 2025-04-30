@@ -70,7 +70,6 @@ class MolecularDetailsChapter(
                                 "DNA aberrations might not have been detected & predicted tumor origin${cuppaModeIsWGTS} results may be less reliable")
                     )
                 )
-
             }
 
             val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
