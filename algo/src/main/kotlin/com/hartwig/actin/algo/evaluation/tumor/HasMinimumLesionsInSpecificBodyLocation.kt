@@ -7,26 +7,28 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 
 class HasMinimumLesionsInSpecificBodyLocation(
-    private val minimumLesions: Int, private val bodyLocation: BodyLocationCategory
+    private val minLesions: Int, private val bodyLocation: BodyLocationCategory
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val messageEnding = "at least $minimumLesions lesions in ${bodyLocation.display()}"
+        val messageEnding = "at least $minLesions lesions in ${bodyLocation.display()}"
 
-        val (hasLesions, hasSuspectedLesions, minCount) = with(record.tumor) {
+        val (hasLesions, hasSuspectedLesions) = with(record.tumor) {
             when (bodyLocation) {
-                BodyLocationCategory.BONE -> Triple(hasBoneLesions, hasSuspectedBoneLesions, boneLesionsMinCount)
-                BodyLocationCategory.BRAIN -> Triple(hasBrainLesions, hasSuspectedBrainLesions, brainLesionsMinCount)
-                BodyLocationCategory.CNS -> Triple(hasCnsLesions, hasSuspectedCnsLesions, cnsLesionsMinCount)
-                BodyLocationCategory.LIVER -> Triple(hasLiverLesions, hasSuspectedLiverLesions, liverLesionsMinCount)
-                BodyLocationCategory.LUNG -> Triple(hasLungLesions, hasSuspectedLungLesions, lungLesionsMinCount)
-                BodyLocationCategory.LYMPH_NODE -> Triple(hasLymphNodeLesions, hasSuspectedLymphNodeLesions, lymphNodeLesionsMinCount)
+                BodyLocationCategory.BONE -> Pair(hasBoneLesions, hasSuspectedBoneLesions)
+                BodyLocationCategory.BRAIN -> Pair(hasBrainLesions, hasSuspectedBrainLesions)
+                BodyLocationCategory.CNS -> Pair(hasCnsLesions, hasSuspectedCnsLesions)
+                BodyLocationCategory.LIVER -> Pair(hasLiverLesions, hasSuspectedLiverLesions)
+                BodyLocationCategory.LUNG -> Pair(hasLungLesions, hasSuspectedLungLesions)
+                BodyLocationCategory.LYMPH_NODE -> Pair(hasLymphNodeLesions, hasSuspectedLymphNodeLesions)
                 else -> return EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
             }
         }
 
         return when {
-            (minCount ?: 0) >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
+            minLesions <= 1 && hasLesions == true -> {
+                EvaluationFactory.pass("Patient has $messageEnding")
+            }
 
             hasLesions != false || hasSuspectedLesions == true -> {
                 EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
