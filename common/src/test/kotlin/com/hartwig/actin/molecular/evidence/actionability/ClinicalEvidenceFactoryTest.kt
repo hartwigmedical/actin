@@ -35,7 +35,7 @@ class ClinicalEvidenceFactoryTest {
     fun `Should convert SERVE on-label hotspot evidence to treatment evidence`() {
         val result =
             ClinicalEvidenceFactory.create(
-                onLabelEvidences = listOf(
+                tumorSpecificEvidence = listOf(
                     TestServeEvidenceFactory.create(
                         treatment = "on-label",
                         indication = TestServeFactory.createIndicationWithTypeAndExcludedTypes(
@@ -48,7 +48,7 @@ class ClinicalEvidenceFactoryTest {
                         evidenceDirection = EvidenceDirection.NO_BENEFIT
                     )
                 ),
-                offLabelEvidences = emptyList(),
+                offTumorEvidences = emptyList(),
                 matchingCriteriaAndIndicationsPerEligibleTrial = emptyMap()
             )
 
@@ -74,8 +74,8 @@ class ClinicalEvidenceFactoryTest {
     fun `Should convert SERVE off-label range evidence to treatment evidence`() {
         val result =
             ClinicalEvidenceFactory.create(
-                onLabelEvidences = emptyList(),
-                offLabelEvidences = listOf(
+                tumorSpecificEvidence = emptyList(),
+                offTumorEvidences = listOf(
                     TestServeEvidenceFactory.create(
                         treatment = "off-label",
                         indication = TestServeFactory.createIndicationWithTypeAndExcludedTypes(
@@ -131,8 +131,8 @@ class ClinicalEvidenceFactoryTest {
 
         val result =
             ClinicalEvidenceFactory.create(
-                onLabelEvidences = emptyList(),
-                offLabelEvidences = emptyList(),
+                tumorSpecificEvidence = emptyList(),
+                offTumorEvidences = emptyList(),
                 matchingCriteriaAndIndicationsPerEligibleTrial = mapOf(
                     TestServeTrialFactory.create(
                         nctId = "NCT00000001",
@@ -212,8 +212,8 @@ class ClinicalEvidenceFactoryTest {
         )
 
         val result = ClinicalEvidenceFactory.create(
-            onLabelEvidences = emptyList(),
-            offLabelEvidences = emptyList(),
+            tumorSpecificEvidence = emptyList(),
+            offTumorEvidences = emptyList(),
             matchingCriteriaAndIndicationsPerEligibleTrial = matchesPerTrial
         )
 
@@ -251,8 +251,8 @@ class ClinicalEvidenceFactoryTest {
 
         assertThatIllegalStateException().isThrownBy {
             ClinicalEvidenceFactory.create(
-                onLabelEvidences = emptyList(),
-                offLabelEvidences = emptyList(),
+                tumorSpecificEvidence = emptyList(),
+                offTumorEvidences = emptyList(),
                 matchingCriteriaAndIndicationsPerEligibleTrial = createTestMatchingCriteriaAndIndicationMap(invalidUrlTrial)
             )
         }
@@ -261,8 +261,8 @@ class ClinicalEvidenceFactoryTest {
 
         assertThatIllegalStateException().isThrownBy {
             ClinicalEvidenceFactory.create(
-                onLabelEvidences = emptyList(),
-                offLabelEvidences = emptyList(),
+                tumorSpecificEvidence = emptyList(),
+                offTumorEvidences = emptyList(),
                 matchingCriteriaAndIndicationsPerEligibleTrial = createTestMatchingCriteriaAndIndicationMap(emptyUrlTrial)
             )
         }

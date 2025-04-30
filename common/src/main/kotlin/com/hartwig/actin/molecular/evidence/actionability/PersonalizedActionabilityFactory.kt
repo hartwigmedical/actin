@@ -3,24 +3,21 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.serve.datamodel.common.Indication
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+
+const val ADVANCED_SOLID_TUMOR_DOID = "162"
 
 class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<String>) {
 
     fun create(match: ActionabilityMatch): ClinicalEvidence {
-        val (onLabelEvidences, offLabelEvidences) = partitionEvidences(match.evidenceMatches)
 
         return ClinicalEvidenceFactory.create(
-            onLabelEvidences = onLabelEvidences,
-            offLabelEvidences = offLabelEvidences,
+            tumorSpecificEvidence = match.evidenceMatches.filter { isOnLabel(it.indication()) },
+            tumorAgnosticEvidence = match.evidenceMatches.filter { matchDoid(it.indication(), setOf(ADVANCED_SOLID_TUMOR_DOID)) },
+            offTumorEvidences = match.evidenceMatches.filter { !isOnLabel(it.indication()) },
             matchingCriteriaAndIndicationsPerEligibleTrial = determineOnLabelTrials(match.matchingCriteriaPerTrialMatch)
         )
-    }
-
-    private fun partitionEvidences(evidence: List<EfficacyEvidence>): Pair<List<EfficacyEvidence>, List<EfficacyEvidence>> {
-        return evidence.partition { isOnLabel(it.indication()) }
     }
 
     private fun determineOnLabelTrials(matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>):
@@ -32,8 +29,12 @@ class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<Strin
     }
 
     private fun isOnLabel(indication: Indication): Boolean {
-        return expandedTumorDoids.contains(indication.applicableType().doid()) &&
-                indication.excludedSubTypes().none { expandedTumorDoids.contains(it.doid()) }
+        return matchDoid(indication, expandedTumorDoids)
+    }
+
+    private fun matchDoid(indication: Indication, doidsToMatch: Set<String>): Boolean {
+        return doidsToMatch.contains(indication.applicableType().doid()) &&
+                indication.excludedSubTypes().none { doidsToMatch.contains(it.doid()) }
     }
 
     companion object {

@@ -3,8 +3,9 @@ package com.hartwig.actin.algo.evidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 
 enum class TumorMatch {
-    ON_LABEL,
-    OFF_LABEL
+    EXACT,
+    INEXACT,
+    OTHER
 }
 
 enum class VariantMatch {
@@ -21,12 +22,15 @@ data class ScoringLevel(val scoring: Map<EvidenceLevelDetails, Int>)
 
 fun create() = ScoringConfig(
     mapOf(
-        ScoringMatch(TumorMatch.ON_LABEL, VariantMatch.EXACT) to 20,
-        ScoringMatch(TumorMatch.ON_LABEL, VariantMatch.CATEGORY) to 19,
-        ScoringMatch(TumorMatch.ON_LABEL, VariantMatch.CATEGORY_OTHER) to 18,
-        ScoringMatch(TumorMatch.OFF_LABEL, VariantMatch.EXACT) to 17,
-        ScoringMatch(TumorMatch.OFF_LABEL, VariantMatch.CATEGORY) to 16,
-        ScoringMatch(TumorMatch.OFF_LABEL, VariantMatch.CATEGORY_OTHER) to 15,
+        ScoringMatch(TumorMatch.EXACT, VariantMatch.EXACT) to 20,
+        ScoringMatch(TumorMatch.EXACT, VariantMatch.CATEGORY) to 19,
+        ScoringMatch(TumorMatch.EXACT, VariantMatch.CATEGORY_OTHER) to 18,
+        ScoringMatch(TumorMatch.INEXACT, VariantMatch.EXACT) to 17,
+        ScoringMatch(TumorMatch.INEXACT, VariantMatch.CATEGORY) to 16,
+        ScoringMatch(TumorMatch.INEXACT, VariantMatch.CATEGORY_OTHER) to 15,
+        ScoringMatch(TumorMatch.OTHER, VariantMatch.EXACT) to 14,
+        ScoringMatch(TumorMatch.OTHER, VariantMatch.CATEGORY) to 13,
+        ScoringMatch(TumorMatch.OTHER, VariantMatch.CATEGORY_OTHER) to 12,
     ),
     ScoringLevel(
         mapOf(

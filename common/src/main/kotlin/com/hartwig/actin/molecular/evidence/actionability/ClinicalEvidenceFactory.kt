@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.TumorMatch
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
@@ -22,24 +23,29 @@ import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 object ClinicalEvidenceFactory {
 
     fun create(
-        onLabelEvidences: List<EfficacyEvidence>,
-        offLabelEvidences: List<EfficacyEvidence>,
+        tumorSpecificEvidence: List<EfficacyEvidence>,
+        tumorAgnosticEvidence: List<EfficacyEvidence>,
+        offTumorEvidences: List<EfficacyEvidence>,
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): ClinicalEvidence {
-        val onLabelTreatmentEvidences = convertToTreatmentEvidences(isOnLabel = true, evidences = onLabelEvidences)
-        val offLabelTreatmentEvidences = convertToTreatmentEvidences(isOnLabel = false, evidences = offLabelEvidences)
 
         return ClinicalEvidence(
-            treatmentEvidence = onLabelTreatmentEvidences + offLabelTreatmentEvidences,
+            treatmentEvidence = convertToTreatmentEvidences(
+                tumorMatch = TumorMatch.SPECIFIC,
+                evidences = tumorSpecificEvidence
+            ) + convertToTreatmentEvidences(
+                tumorMatch = TumorMatch.AGNOSTIC,
+                evidences = tumorAgnosticEvidence
+            ) + convertToTreatmentEvidences(tumorMatch = TumorMatch.OFF, offTumorEvidences),
             eligibleTrials = convertToExternalTrials(matchingCriteriaAndIndicationsPerEligibleTrial)
         )
     }
 
-    private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
+    private fun convertToTreatmentEvidences(tumorMatch: TumorMatch, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
             val (evidenceType, event) = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
             createTreatmentEvidence(
-                isOnLabel,
+                tumorMatch,
                 evidence,
                 event.sourceDate(),
                 event.sourceEvent(),
@@ -50,7 +56,7 @@ object ClinicalEvidenceFactory {
     }
 
     private fun createTreatmentEvidence(
-        isOnLabel: Boolean,
+        tumorMatch: TumorMatch,
         evidence: EfficacyEvidence,
         sourceDate: LocalDate,
         sourceEvent: String,
@@ -59,7 +65,7 @@ object ClinicalEvidenceFactory {
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
-            isOnLabel = isOnLabel,
+            tumorMatch = tumorMatch,
             molecularMatch = MolecularMatchDetails(
                 sourceDate = sourceDate,
                 sourceEvent = sourceEvent,
