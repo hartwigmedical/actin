@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -26,7 +27,7 @@ object CharacteristicsExtraction {
         return MolecularCharacteristics(
             purity = purple.fit().purity(),
             ploidy = purple.fit().ploidy(),
-            predictedTumorOrigin = determinePredictedTumorOrigin(record.cuppa()),
+            predictedTumorOrigin = determinePredictedTumorOrigin(record.cuppa(), record),
             microsatelliteStability = determineMicrosatelliteStability(purple.characteristics()),
             homologousRecombination = determineHomologousRecombination(record.chord()),
             tumorMutationalBurden = determineTumorMutationalBurden(purple.characteristics()),
@@ -34,9 +35,9 @@ object CharacteristicsExtraction {
         )
     }
 
-    private fun determinePredictedTumorOrigin(cuppa: CuppaData?): PredictedTumorOrigin? {
+    private fun determinePredictedTumorOrigin(cuppa: CuppaData?, record: OrangeRecord): PredictedTumorOrigin? {
         return cuppa?.let {
-            PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions()))
+            PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions(), record))
         }
     }
 
@@ -115,11 +116,11 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>): List<CupPrediction> {
-        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction) }
+    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>, record: OrangeRecord): List<CupPrediction> {
+        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction, record) }
     }
 
-    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
+    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction, record: OrangeRecord): CupPrediction {
         if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
             cuppaPrediction.featureClassifier() == null
         ) {
@@ -134,7 +135,8 @@ object CharacteristicsExtraction {
             likelihood = cuppaPrediction.likelihood(),
             snvPairwiseClassifier = cuppaPrediction.snvPairwiseClassifier()!!,
             genomicPositionClassifier = cuppaPrediction.genomicPositionClassifier()!!,
-            featureClassifier = cuppaPrediction.featureClassifier()!!
+            featureClassifier = cuppaPrediction.featureClassifier()!!,
+            cuppaMode = CuppaMode.valueOf(record.cuppa()?.mode().toString())
         )
     }
 }
