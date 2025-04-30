@@ -23,9 +23,9 @@ class TreatmentScorer {
 
     fun score(treatment: TreatmentEvidence): Score {
         val tumorMatch = when (treatment.tumorMatch) {
-            TumorMatch.SPECIFIC -> com.hartwig.actin.algo.evidence.TumorMatch.EXACT
-            TumorMatch.AGNOSTIC -> com.hartwig.actin.algo.evidence.TumorMatch.INEXACT
-            TumorMatch.OFF -> com.hartwig.actin.algo.evidence.TumorMatch.OTHER
+            TumorMatch.SPECIFIC -> com.hartwig.actin.algo.evidence.TumorMatch.PATIENT
+            TumorMatch.AGNOSTIC -> com.hartwig.actin.algo.evidence.TumorMatch.ALL
+            TumorMatch.OFF -> com.hartwig.actin.algo.evidence.TumorMatch.ANY
         }
         val exactVariant = if (treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()) VariantMatch.CATEGORY else VariantMatch.EXACT
         val config = create()

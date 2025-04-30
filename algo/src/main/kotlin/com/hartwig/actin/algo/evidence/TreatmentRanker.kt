@@ -35,11 +35,7 @@ class TreatmentRanker {
 
             val diminishedScores = it.scores.groupBy { s -> Triple(parseGene(s.event), s.scoringMatch.tumorMatch, (s.score < 0)) }
                 .mapValues { v ->
-                    saturatingDiminishingReturnsScore(if (v.value.any { s -> s.scoringMatch.variantMatch == VariantMatch.EXACT }) {
-                        v.value.map { s -> if (s.scoringMatch.variantMatch != VariantMatch.EXACT) s.copy(score = 0.0) else s }
-                    } else {
-                        v.value
-                    })
+                    saturatingDiminishingReturnsScore(v.value)
                 }.flatMap { g ->
                     g.value
                 }
