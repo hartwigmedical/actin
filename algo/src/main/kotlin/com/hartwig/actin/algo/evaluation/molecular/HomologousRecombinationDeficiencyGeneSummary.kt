@@ -15,13 +15,13 @@ data class HomologousRecombinationDeficiencyGeneSummary(
     val hrdGenesWithNonBiallelicNonHotspotNonHighDriver: Set<String>,
     val hrdGenesWithBiallelicNonHotspotHighDriver: Set<String>,
     val hrdGenesWithBiallelicNonHotspotNonHighDriver: Set<String>,
-    val hrdGenesWithDeletionOrPartialLoss: Set<String>,
+    val hrdGenesWithDeletionOrPartialDel: Set<String>,
     val hrdGenesWithHomozygousDisruption: Set<String>,
     val hrdGenesWithNonHomozygousDisruption : Set<String>
 ) {
 
     val hrdGenesWithBiallelicDriver = (hrdGenesWithBiallelicHotspot + hrdGenesWithBiallelicNonHotspotHighDriver +
-            hrdGenesWithBiallelicNonHotspotNonHighDriver + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialLoss)
+            hrdGenesWithBiallelicNonHotspotNonHighDriver + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialDel)
     val hrdGenesWithNonBiallelicDriver = (hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot +
             hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
 
@@ -51,8 +51,8 @@ data class HomologousRecombinationDeficiencyGeneSummary(
                 )
                 .mapValues { it.value.toSet() }
 
-            val hrdGenesWithDeletionOrPartialLoss = drivers.copyNumbers
-                .filter { it.canonicalImpact.type == CopyNumberType.LOSS && it.gene in MolecularConstants.HRD_GENES }
+            val hrdGenesWithDeletionOrPartialDel = drivers.copyNumbers
+                .filter { it.canonicalImpact.type == CopyNumberType.DEL && it.gene in MolecularConstants.HRD_GENES }
                 .map(GeneAlteration::gene)
                 .toSet()
             val hrdGenesWithHomozygousDisruption = drivers.homozygousDisruptions.filter { it.gene in MolecularConstants.HRD_GENES }
@@ -70,7 +70,7 @@ data class HomologousRecombinationDeficiencyGeneSummary(
                 hrdGenesWithNonBiallelicNonHotspotNonHighDriver = hrdVariantGroups[NON_BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER] ?: emptySet(),
                 hrdGenesWithBiallelicNonHotspotHighDriver = hrdVariantGroups[BIALLELIC_NON_HOTSPOT_HIGH_DRIVER] ?: emptySet(),
                 hrdGenesWithBiallelicNonHotspotNonHighDriver = hrdVariantGroups[BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER] ?: emptySet(),
-                hrdGenesWithDeletionOrPartialLoss = hrdGenesWithDeletionOrPartialLoss,
+                hrdGenesWithDeletionOrPartialDel = hrdGenesWithDeletionOrPartialDel,
                 hrdGenesWithHomozygousDisruption = hrdGenesWithHomozygousDisruption,
                 hrdGenesWithNonHomozygousDisruption = hrdGenesWithNonHomozygousDisruption
             )

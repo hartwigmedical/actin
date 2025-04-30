@@ -6,7 +6,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleGainDeletion
 import com.hartwig.hmftools.datamodel.purple.PurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
@@ -31,14 +31,14 @@ object DriverEventFactory {
         )
     }
 
-    fun gainLossEvent(gainLoss: PurpleGainLoss): String {
-        return when (gainLoss.interpretation()) {
+    fun gainDelEvent(gainDel: PurpleGainDeletion): String {
+        return when (gainDel.interpretation()) {
             CopyNumberInterpretation.PARTIAL_GAIN, CopyNumberInterpretation.FULL_GAIN -> {
-                gainLoss.gene() + " amp"
+                gainDel.gene() + " amp"
             }
 
-            CopyNumberInterpretation.PARTIAL_LOSS, CopyNumberInterpretation.FULL_LOSS -> {
-                gainLoss.gene() + " del"
+            CopyNumberInterpretation.PARTIAL_DEL, CopyNumberInterpretation.FULL_DEL -> {
+                gainDel.gene() + " del"
             }
         }
     }

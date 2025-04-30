@@ -618,7 +618,7 @@
             {
               "canonicalImpact": {
                 "transcriptId": "",
-                "type": "LOSS",
+                "type": "DEL",
                 "minCopies": 0,
                 "maxCopies": 0
               },
@@ -638,7 +638,7 @@
             {
               "canonicalImpact": {
                 "transcript": "",
-                "type": "LOSS",
+                "type": "DEL",
                 "minCopies": 0,
                 "maxCopies": 0
               },

@@ -65,7 +65,7 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
             copyNumbers = listOf(
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "BRCA2",
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
                 ),
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "BRCA1",
@@ -73,7 +73,7 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
                 ),
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "Unmatched",
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
                 )
             ),
             homozygousDisruptions = listOf(
@@ -94,7 +94,7 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
         assertThat(summary.hrdGenesWithNonBiallelicNonHotspotNonHighDriver).containsExactlyInAnyOrder("RAD51C")
         assertThat(summary.hrdGenesWithBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("PALB2")
         assertThat(summary.hrdGenesWithBiallelicNonHotspotNonHighDriver).containsExactlyInAnyOrder("BRCA2")
-        assertThat(summary.hrdGenesWithDeletionOrPartialLoss).containsExactlyInAnyOrder("BRCA2")
+        assertThat(summary.hrdGenesWithDeletionOrPartialDel).containsExactlyInAnyOrder("BRCA2")
         assertThat(summary.hrdGenesWithHomozygousDisruption).containsExactlyInAnyOrder("PALB2")
         assertThat(summary.hrdGenesWithNonHomozygousDisruption).containsExactlyInAnyOrder("RAD51C")
     }

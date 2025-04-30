@@ -51,7 +51,7 @@ class MolecularDriversSummarizerTest {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, fullAmpGene, DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.LOSS, "loss", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.DEL, "deletion", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.FULL_GAIN, "low", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false)
         )
@@ -65,9 +65,9 @@ class MolecularDriversSummarizerTest {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.LOSS, EXPECTED_GENE, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.LOSS, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.LOSS, "non-reportable", DriverLikelihood.HIGH, false)
+            copyNumber(CopyNumberType.DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.DEL, "low", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.DEL, "non-reportable", DriverLikelihood.HIGH, false)
         )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         assertExpectedListResult(summarizer(molecularDrivers).keyDeletedGenes())
@@ -123,7 +123,7 @@ class MolecularDriversSummarizerTest {
                     "key virus",
                     "key gain",
                     "expected amplification",
-                    "expected loss",
+                    "expected deletion",
                     "expected key disruption",
                     "expected non-reportable fusion"
                 )
@@ -139,7 +139,7 @@ class MolecularDriversSummarizerTest {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "expected amplification", null, false),
-            copyNumber(CopyNumberType.LOSS, "expected loss", DriverLikelihood.HIGH, false),
+            copyNumber(CopyNumberType.DEL, "expected deletion", DriverLikelihood.HIGH, false),
             copyNumber(CopyNumberType.FULL_GAIN, "no evidence", DriverLikelihood.LOW, true)
         )
         val homozygousDisruptions = listOf(

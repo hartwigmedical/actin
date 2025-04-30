@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleGainDeletion
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
@@ -48,10 +48,10 @@ class DriverEventFactoryTest {
 
     @Test
     fun `Should generate events for copy numbers`() {
-        assertThat(DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.FULL_GAIN))).isEqualTo("MYC amp")
-        assertThat(DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.PARTIAL_GAIN))).isEqualTo("MYC amp")
-        assertThat(DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.FULL_LOSS))).isEqualTo("PTEN del")
-        assertThat(DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.PARTIAL_LOSS))).isEqualTo("PTEN del")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.FULL_GAIN))).isEqualTo("MYC amp")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.PARTIAL_GAIN))).isEqualTo("MYC amp")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.FULL_DEL))).isEqualTo("PTEN del")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.PARTIAL_DEL))).isEqualTo("PTEN del")
     }
 
     @Test
@@ -101,8 +101,8 @@ class DriverEventFactoryTest {
             .build()
     }
 
-    private fun gainLoss(gene: String, interpretation: CopyNumberInterpretation): PurpleGainLoss {
-        return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(interpretation).build()
+    private fun gainDel(gene: String, interpretation: CopyNumberInterpretation): PurpleGainDeletion {
+        return TestPurpleFactory.gainDelBuilder().gene(gene).interpretation(interpretation).build()
     }
 
     private fun virus(name: String, interpretation: VirusInterpretation?): VirusInterpreterEntry {
