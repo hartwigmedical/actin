@@ -18,7 +18,7 @@ private const val PADDING_RIGHT = 25
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : TableGenerator {
 
     override fun title(): String {
-        val cuppaModeIsWGTS = if (molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS) " (WGTS)" else ""
+        val cuppaModeIsWGTS = if (isWGTS()) " (WGTS)" else ""
         return "Predicted tumor origin${cuppaModeIsWGTS}"
     }
 
@@ -67,12 +67,14 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             addClassifierRow(
                 "(3) Driver genes and passenger characteristics", predictions, CupPrediction::featureClassifier, table
             )
-            addClassifierRow(
-                "(4) SNV genomic localisation distribution", predictions, CupPrediction::expressionPairWiseClassifier, table
-            )
-            addClassifierRow(
-                "(5) Driver genes and passenger characteristics", predictions, CupPrediction::altSjCohortClassifier, table
-            )
+            if (isWGTS()){
+                addClassifierRow(
+                    "(4) Gene expression ", predictions, CupPrediction::expressionPairWiseClassifier, table
+                )
+                addClassifierRow(
+                    "(5) Alternative splice junctions", predictions, CupPrediction::altSjCohortClassifier, table
+                )
+            }
             table.addCell(
                 Cells.createSpanningSubNote(
                     String.format(
@@ -88,22 +90,17 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
     private fun addClassifierRow(
         classifierText: String, predictions: List<CupPrediction>, classifierFunction: (CupPrediction) -> Double?, table: Table
     ) {
-        if (predictions.map(classifierFunction).all { it == null })
-            return
-
         table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
         predictions
             .asSequence()
             .map(classifierFunction)
-            .map {
-                if(it == null){
-                    "N/A"
-                } else {
-                    Formats.percentage(it)
-                }
-            }
+            .map { it?.let(Formats::percentage) ?: "N/A" }
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
         repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
+    }
+
+    private fun isWGTS(): Boolean {
+        return molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS
     }
 }
