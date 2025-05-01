@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -9,8 +10,6 @@ import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.KnownEvents
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
@@ -35,11 +34,7 @@ class KnownEventResolver(
         val isHotspot = HotspotFunctions.isHotspot(serveAlteration)
                 || findHotspot(knownEvents.hotspots(), variantMatchCriteria) != null
 
-        return object : VariantAlteration {
-            override val gene: String = alteration.gene
-            override val geneRole: GeneRole = alteration.geneRole
-            override val isAssociatedWithDrugResistance: Boolean? = alteration.isAssociatedWithDrugResistance
-            override val proteinEffect: ProteinEffect = alteration.proteinEffect
+        return object : VariantAlteration, GeneAlteration by alteration {
             override val isHotspot: Boolean = isHotspot
         }
     }

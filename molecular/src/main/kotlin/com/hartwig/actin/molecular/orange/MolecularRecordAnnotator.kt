@@ -74,7 +74,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateDrivers(drivers: Drivers): Drivers {
         return drivers.copy(
-            variants = drivers.variants.map { annotateVariant(it) },
+            variants = reannotateDriverlikelihood(drivers.variants.map { annotateVariant(it) }),
             copyNumbers = drivers.copyNumbers.map { annotateCopyNumber(it) },
             homozygousDisruptions = drivers.homozygousDisruptions.map { annotateHomozygousDisruption(it) },
             disruptions = drivers.disruptions.map { annotateDisruption(it) },
@@ -99,6 +99,17 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
         val evidence = evidenceDatabase.evidenceForVariant(MatchingCriteriaFunctions.createVariantCriteria(variantWithGeneAlteration))
         return variantWithGeneAlteration.copy(evidence = evidence)
+    }
+
+    private fun reannotateDriverlikelihood(variants: List<Variant>): List<Variant> {
+        val variantsByGene = variants.groupBy { it.gene }
+        return variantsByGene.flatMap { (_, geneVariants) ->
+            val maxDriverLikelihood =
+                (geneVariants.minOfOrNull { it.driverLikelihood?.ordinal ?: -1 })?.let { DriverLikelihood.entries[it] }
+            geneVariants.map { variant ->
+                variant.copy(driverLikelihood = maxDriverLikelihood)
+            }
+        }
     }
 
     private fun annotateCopyNumber(copyNumber: CopyNumber): CopyNumber {
