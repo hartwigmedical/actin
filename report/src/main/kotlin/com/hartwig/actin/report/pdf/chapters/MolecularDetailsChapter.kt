@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
