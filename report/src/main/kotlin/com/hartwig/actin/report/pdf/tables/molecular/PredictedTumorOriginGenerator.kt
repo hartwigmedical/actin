@@ -67,6 +67,12 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             addClassifierRow(
                 "(3) Driver genes and passenger characteristics", predictions, CupPrediction::featureClassifier, table
             )
+            addClassifierRow(
+                "(4) SNV genomic localisation distribution", predictions, CupPrediction::expressionPairWiseClassifier, table
+            )
+            addClassifierRow(
+                "(5) Driver genes and passenger characteristics", predictions, CupPrediction::altSjCohortClassifier, table
+            )
             table.addCell(
                 Cells.createSpanningSubNote(
                     String.format(
@@ -80,13 +86,22 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
     }
 
     private fun addClassifierRow(
-        classifierText: String, predictions: List<CupPrediction>, classifierFunction: (CupPrediction) -> Double, table: Table
+        classifierText: String, predictions: List<CupPrediction>, classifierFunction: (CupPrediction) -> Double?, table: Table
     ) {
+        if (predictions.map(classifierFunction).all { it == null })
+            return
+
         table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
         predictions
             .asSequence()
             .map(classifierFunction)
-            .map(Formats::percentage)
+            .map {
+                if(it == null){
+                    "N/A"
+                } else {
+                    Formats.percentage(it)
+                }
+            }
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
         repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
