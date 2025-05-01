@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFacto
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
@@ -45,7 +46,7 @@ class PanelCopyNumberAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { geneAlterationsForVariant(any()) } returns emptyList()
+        every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createMinimalVariantAlteration(GENE)
     }
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()

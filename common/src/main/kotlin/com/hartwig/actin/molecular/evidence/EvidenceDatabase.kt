@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
@@ -33,8 +34,8 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
     }
 
-    fun geneAlterationsForVariant(variant: VariantMatchCriteria, fromFilteredKnownEvents: Boolean = true): List<GeneAlteration> {
-        return knownEventResolver.resolveForVariant(variant, fromFilteredKnownEvents)
+    fun variantAlterationForVariant(variant: VariantMatchCriteria): VariantAlteration {
+        return knownEventResolver.resolveForVariant(variant)
     }
 
     fun evidenceForVariant(variant: VariantMatchCriteria): ClinicalEvidence {

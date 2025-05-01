@@ -28,7 +28,7 @@ class EvidenceDatabaseTest {
             driverLikelihood = DriverLikelihood.HIGH,
             isReportable = true
         )
-        assertThat(database.geneAlterationsForVariant(variant)).isNotNull()
+        assertThat(database.variantAlterationForVariant(variant)).isNotNull()
         assertEvidence(database.evidenceForVariant(variant), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 

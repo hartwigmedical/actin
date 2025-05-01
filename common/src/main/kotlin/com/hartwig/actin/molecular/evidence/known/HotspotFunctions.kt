@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.hotspot
+package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect

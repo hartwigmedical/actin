@@ -18,7 +18,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
-import com.hartwig.actin.molecular.hotspot.HotspotFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import org.apache.logging.log4j.LogManager
@@ -85,18 +84,15 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     fun annotateVariant(variant: Variant): Variant {
-        val geneAlteration =
-            evidenceDatabase.geneAlterationsForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant)).firstOrNull()
-        val isServeHotspot = HotspotFunctions.isHotspot(geneAlteration)
-        val alteration = GeneAlterationFactory.convertAlteration(variant.gene, geneAlteration)
+        val alteration = evidenceDatabase.variantAlterationForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant))
 
-        if (!variant.isHotspot && isServeHotspot) {
+        if (!variant.isHotspot && alteration.isHotspot) {
             logger.info("Overwriting isHotspot to true and setting driverLikelihood to HIGH for ${variant.event}")
         }
 
         val variantWithGeneAlteration = variant.copy(
-            isHotspot = variant.isHotspot || isServeHotspot,
-            driverLikelihood = if (isServeHotspot) DriverLikelihood.HIGH else variant.driverLikelihood,
+            isHotspot = alteration.isHotspot,
+            driverLikelihood = if (alteration.isHotspot) DriverLikelihood.HIGH else variant.driverLikelihood,
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance

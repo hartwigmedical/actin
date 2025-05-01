@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.hotspot
 
+import com.hartwig.actin.molecular.evidence.known.HotspotFunctions
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat

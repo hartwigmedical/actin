@@ -2,11 +2,13 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import io.mockk.every
 import io.mockk.mockk
@@ -28,15 +30,11 @@ private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
 
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 
-private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.ONCO)
-    .withProteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.GAIN_OF_FUNCTION)
-    .withAssociatedWithDrugResistance(true)
+private val HOTSPOT =
+    TestVariantAlterationFactory.createProperVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
 
-private val NON_HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.ONCO)
-    .withProteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.NO_EFFECT)
-    .withAssociatedWithDrugResistance(false)
+private val NON_HOTSPOT =
+    TestVariantAlterationFactory.createProperVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
 
 class MolecularRecordAnnotatorTest {
 
@@ -67,28 +65,28 @@ class MolecularRecordAnnotatorTest {
     @Test
     fun `Should overwrite driverlikelihood and isHotspot for variant that is hotspot according to serve`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { geneAlterationsForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns listOf(HOTSPOT)
+            every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
         assertThat(annotated.isHotspot).isTrue()
         assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(annotated.proteinEffect.name).isEqualTo(HOTSPOT.proteinEffect().name)
-        assertThat(annotated.geneRole.name).isEqualTo(HOTSPOT.geneRole().name)
+        assertThat(annotated.proteinEffect.name).isEqualTo(HOTSPOT.proteinEffect.name)
+        assertThat(annotated.geneRole.name).isEqualTo(HOTSPOT.geneRole.name)
     }
 
     @Test
     fun `Should not overwrite driverlikelihood and isHotspot for variant that is no hotspot according to serve`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { geneAlterationsForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns listOf(NON_HOTSPOT)
+            every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
         assertThat(annotated.isHotspot).isEqualTo(VARIANT.isHotspot)
         assertThat(annotated.driverLikelihood).isEqualTo(VARIANT.driverLikelihood)
-        assertThat(annotated.proteinEffect.name).isEqualTo(NON_HOTSPOT.proteinEffect().name)
-        assertThat(annotated.geneRole.name).isEqualTo(NON_HOTSPOT.geneRole().name)
+        assertThat(annotated.proteinEffect.name).isEqualTo(NON_HOTSPOT.proteinEffect.name)
+        assertThat(annotated.geneRole.name).isEqualTo(NON_HOTSPOT.geneRole.name)
     }
 }

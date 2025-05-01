@@ -8,13 +8,16 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
+import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
-import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -22,29 +25,30 @@ class KnownEventResolverTest {
 
     @Test
     fun `Should resolve known events for variants`() {
-        val hotspot = TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build()
+        val gene = "gene 1"
+        val hotspot = TestServeKnownFactory.hotspotBuilder().gene(gene).chromosome("12").position(10).ref("A").alt("T").build()
         val codon = TestServeKnownFactory.codonBuilder()
-            .gene("gene 1")
+            .gene(gene)
             .chromosome("12")
             .start(9)
             .end(11)
             .applicableMutationType(MutationType.ANY)
             .build()
         val exon = TestServeKnownFactory.exonBuilder()
-            .gene("gene 1")
+            .gene(gene)
             .chromosome("12")
             .start(5)
             .end(15)
             .applicableMutationType(MutationType.ANY)
             .build()
-        val knownGene = knownGeneWithName("gene 1")
+        val knownGene = knownGeneWithName(gene)
         val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build()
         val filteredKnownEvents = ImmutableKnownEvents.builder().addCodons(codon).addExons(exon).addGenes(knownGene).build()
         val resolver = KnownEventResolver(knownEvents, filteredKnownEvents, knownEvents.genes())
 
         val hotspotMatch = VariantMatchCriteria(
             isReportable = true,
-            gene = "gene 1",
+            gene = gene,
             codingEffect = CodingEffect.MISSENSE,
             type = VariantType.SNV,
             chromosome = "12",
@@ -53,20 +57,24 @@ class KnownEventResolverTest {
             alt = "T"
         )
 
-        assertThat(resolver.resolveForVariant(hotspotMatch, fromFilteredKnownEvents = false)).isEqualTo(listOf(hotspot))
-        assertThat(resolver.resolveForVariant(hotspotMatch, fromFilteredKnownEvents = true)).isEqualTo(listOf(codon))
+        val alterationHotspot =
+            TestVariantAlterationFactory.createProperVariantAlteration(gene, GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, null, true)
+        val alterationNoHotspot =
+            TestVariantAlterationFactory.createProperVariantAlteration(gene, GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, null, false)
+
+        checkEquality(resolver.resolveForVariant(hotspotMatch), alterationHotspot)
 
         val codonMatch = hotspotMatch.copy(position = 9)
-        assertThat(resolver.resolveForVariant(codonMatch)).isEqualTo(listOf(codon))
+        checkEquality(resolver.resolveForVariant(codonMatch), alterationNoHotspot)
 
         val exonMatch = hotspotMatch.copy(position = 6)
-        assertThat(resolver.resolveForVariant(exonMatch)).isEqualTo(listOf(exon))
+        checkEquality(resolver.resolveForVariant(exonMatch), alterationNoHotspot)
 
         val geneMatch = hotspotMatch.copy(position = 1)
         assertThat(resolver.resolveForVariant(geneMatch)).isNotNull
 
         val wrongGene = hotspotMatch.copy(gene = "other")
-        assertThat(resolver.resolveForVariant(wrongGene)).isEqualTo(emptyList<KnownGene>())
+        checkEquality(resolver.resolveForVariant(wrongGene), TestVariantAlterationFactory.createMinimalVariantAlteration("other"))
     }
 
     @Test
@@ -125,5 +133,13 @@ class KnownEventResolverTest {
 
     private fun knownGeneWithName(name: String?): ImmutableKnownGene {
         return TestServeKnownFactory.geneBuilder().gene(name!!).build()
+    }
+
+    private fun checkEquality(variantAlteration1: VariantAlteration, variantAlteration2: VariantAlteration) {
+        assertThat(variantAlteration1.gene).isEqualTo(variantAlteration2.gene)
+        assertThat(variantAlteration1.geneRole).isEqualTo(variantAlteration2.geneRole)
+        assertThat(variantAlteration1.proteinEffect).isEqualTo(variantAlteration2.proteinEffect)
+        assertThat(variantAlteration1.isAssociatedWithDrugResistance).isEqualTo(variantAlteration2.isAssociatedWithDrugResistance)
+        assertThat(variantAlteration1.isHotspot).isEqualTo(variantAlteration2.isHotspot)
     }
 }

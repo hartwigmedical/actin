@@ -13,8 +13,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
-import com.hartwig.actin.molecular.hotspot.HotspotFunctions
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
@@ -247,18 +245,13 @@ class PanelVariantAnnotator(
 
     private fun annotateWithGeneAlteration(variant: Variant): Variant {
         val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val ckbGeneAlteration = evidenceDatabase.geneAlterationsForVariant(criteria).firstOrNull()
-        val otherGeneAlterations = evidenceDatabase.geneAlterationsForVariant(
-            criteria,
-            false
-        ) - ckbGeneAlteration // @KD: I am not 100% happy with this line of code (have worked on 10 alternatives, but can't get it right)
-        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, ckbGeneAlteration)
+        val alteration = evidenceDatabase.variantAlterationForVariant(criteria)
 
         return variant.copy(
-            isHotspot = HotspotFunctions.isHotspot(ckbGeneAlteration) || otherGeneAlterations.isNotEmpty(),
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+            isHotspot = alteration.isHotspot,
+            geneRole = alteration.geneRole,
+            proteinEffect = alteration.proteinEffect,
+            isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
     }
 
