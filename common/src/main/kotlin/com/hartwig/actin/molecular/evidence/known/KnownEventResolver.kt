@@ -39,7 +39,8 @@ class KnownEventResolver(
         //    - If hotspot exists across other sources -> create VariantAlteration with isHotspot = true, and geneRole from CKB (if found).
         // TODO (CB): Consider what to do with codons/exons, proposal:
         //  1. For CKB, always use them -> if a variant matches with a knownExon with GAIN_OF_FUNCTION it should become a hotspot. 
-        //  2. For other sources, only use variant and codon since we don't know protein effect. 
+        //  2. For other sources, only use variant since we don't know protein effect and 
+        //     this would be consistent with pipeline hotspot annotation. 
     }
      */
 
