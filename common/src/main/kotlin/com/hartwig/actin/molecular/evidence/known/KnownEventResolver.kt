@@ -29,6 +29,20 @@ class KnownEventResolver(
             ?: GeneLookup.find(aggregatedKnownGenes, variantMatchCriteria.gene)?.let { listOf(it) } ?: emptyList()
     }
 
+    /*
+    fun resolveForVariant(variant: VariantMatchCriteria): VariantAlteration {
+        // VariantAlteration is a data class with all fields from GeneAlteration + isHotspot (boolean)
+        // 1. Look into gene alterations from CKB-only. If exists -> use (isHotspot = true when protein effect is gain/loss)
+        // 2. If not exists:
+        //    - Lookup hotspot across all sources and pick first match (this won't include a CKB entry by design). 
+        //    - Lookup gene alteration for gene (GeneLookup).
+        //    - If hotspot exists across other sources -> create VariantAlteration with isHotspot = true, and geneRole from CKB (if found).
+        // TODO (CB): Consider what to do with codons/exons, proposal:
+        //  1. For CKB, always use them -> if a variant matches with a knownExon with GAIN_OF_FUNCTION it should become a hotspot. 
+        //  2. For other sources, only use variant and codon since we don't know protein effect. 
+    }
+     */
+
     fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {
         return CopyNumberLookup.findForCopyNumber(filteredKnownEvents.copyNumbers(), copyNumber)
             ?: GeneLookup.find(aggregatedKnownGenes, copyNumber.gene)
