@@ -136,7 +136,9 @@ object CharacteristicsExtraction {
             snvPairwiseClassifier = cuppaPrediction.snvPairwiseClassifier()!!,
             genomicPositionClassifier = cuppaPrediction.genomicPositionClassifier()!!,
             featureClassifier = cuppaPrediction.featureClassifier()!!,
-            cuppaMode = cuppaMode
+            cuppaMode = cuppaMode,
+            expressionPairWiseClassifier= cuppaPrediction.expressionPairwiseClassifier(),
+            altSjCohortClassifier = cuppaPrediction.altSjCohortClassifier()
         )
     }
 }
