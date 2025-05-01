@@ -63,11 +63,10 @@ class MolecularDetailsChapter(
             )
             if (molecular.hasSufficientQualityButLowPurity()) {
                 val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"
-                val cuppaModeIsWGTS = if(molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS) " (WGTS)" else ""
                 orangeMolecularTable.addCell(
                     Cells.createContentNoBorder(
                         ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
-                                "DNA aberrations might not have been detected & predicted tumor origin${cuppaModeIsWGTS} results may be less reliable")
+                                "DNA aberrations might not have been detected & predicted tumor origin results may be less reliable")
                     )
                 )
             }

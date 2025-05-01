@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -17,7 +18,8 @@ private const val PADDING_RIGHT = 25
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : TableGenerator {
 
     override fun title(): String {
-        return "Predicted tumor origin"
+        val cuppaModeIsWGTS = if (molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS) " (WGTS)" else ""
+        return "Predicted tumor origin${cuppaModeIsWGTS}"
     }
 
     override fun forceKeepTogether(): Boolean {
