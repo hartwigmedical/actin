@@ -68,7 +68,7 @@ object TestClinicalEvidenceMatcherFactory {
 
         return ClinicalEvidenceMatcher(
             clinicalEvidenceFactory = ClinicalEvidenceFactory(
-                EvidenceCancerTypeResolver.create(
+                CancerTypeApplicabilityResolver.create(
                     TestDoidModelFactory.createMinimalTestDoidModel(),
                     setOf(MATCHING_DOID)
                 )

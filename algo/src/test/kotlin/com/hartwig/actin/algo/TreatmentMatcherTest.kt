@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
-import com.hartwig.actin.datamodel.algo.TreatmentEvidenceRanking
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -69,7 +68,6 @@ class TreatmentMatcherTest {
         trialMatches = trialMatches,
         standardOfCareMatches = null,
         maxMolecularTestAge = MAX_AGE,
-        treatmentEvidenceRanking = TreatmentEvidenceRanking(emptyList())
     )
 
     @Test

@@ -17,6 +17,6 @@ data class TreatmentEvidence(
     val evidenceYear: Int,
     val efficacyDescription: String
 ) {
-    val isOnLabel = cancerTypeMatchApplicability == CancerTypeMatchApplicability.SPECIFIC_TYPE || cancerTypeMatchApplicability == CancerTypeMatchApplicability.ALL_TYPES
+    fun isOnLabel() = cancerTypeMatchApplicability == CancerTypeMatchApplicability.SPECIFIC_TYPE || cancerTypeMatchApplicability == CancerTypeMatchApplicability.ALL_TYPES
 }
  

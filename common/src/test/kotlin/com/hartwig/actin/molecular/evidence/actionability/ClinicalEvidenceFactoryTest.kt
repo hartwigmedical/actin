@@ -18,10 +18,13 @@ import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.trial.ActionableTrial
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails as ServeEvidenceLevelDetails
@@ -30,7 +33,7 @@ private val BASE_ACTIONABLE_EVENT = TestServeMolecularFactory.createActionableEv
 
 class ClinicalEvidenceFactoryTest {
 
-    private val cancerTypeResolver = mockk<EvidenceCancerTypeResolver>()
+    private val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver>()
     val factory = ClinicalEvidenceFactory(cancerTypeResolver)
 
     @Test
@@ -161,9 +164,9 @@ class ClinicalEvidenceFactoryTest {
         val matchingEvent2 = TestServeMolecularFactory.createActionableEvent(sourceDate = LocalDate.of(2023, 1, 1), sourceEvent = "event 2")
 
 
-       /* val matchingIndication1 = TestServeFactory.createIndicationWithTypeAndExcludedTypes(type = "matched 1", excludedTypes = emptySet())
+        val matchingIndication1 = TestServeFactory.createIndicationWithTypeAndExcludedTypes(type = "matched 1", excludedTypes = emptySet())
         val matchingIndication2 =
-            TestServeFactory.createIndicationWithTypeAndExcludedTypes(type = "matched 2", excludedTypes = setOf("excluded"))*/
+            TestServeFactory.createIndicationWithTypeAndExcludedTypes(type = "matched 2", excludedTypes = setOf("excluded"))
         val country = TestServeFactory.createCountry(
             name = "Netherlands",
             hospitalsPerCity = mapOf(
@@ -180,8 +183,12 @@ class ClinicalEvidenceFactoryTest {
             title = "test trial",
             acronym = "test trial acronym",
             countries = setOf(country),
+            indications = setOf(matchingIndication1, matchingIndication2),
             urls = setOf("invalid url", "https://clinicaltrials.gov/study/NCT00000001")
         )
+        every { cancerTypeResolver.resolve(matchingIndication1) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+        every { cancerTypeResolver.resolve(matchingIndication2) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+
         val result =
             factory.create(
                 ActionabilityMatch(
@@ -245,24 +252,25 @@ class ClinicalEvidenceFactoryTest {
         val indication2 = TestServeFactory.createIndicationWithTypeAndExcludedTypes(type = "type 2")
 
         val matchesPerTrial = mapOf(
-            TestServeTrialFactory.create(nctId = "NCT00000001", urls = setOf("https://clinicaltrials.gov/study/NCT00000001")) to
-                    Pair(
-                        setOf(TestServeMolecularFactory.createHotspotCriterium(event1)),
-                        setOf(indication1)
-                    ),
-            TestServeTrialFactory.create(nctId = "NCT00000002", urls = setOf("https://clinicaltrials.gov/study/NCT00000002")) to
-                    Pair(
-                        setOf(TestServeMolecularFactory.createHotspotCriterium(event2)),
-                        setOf(indication2)
-                    )
+            TestServeTrialFactory.create(
+                nctId = "NCT00000001",
+                urls = setOf("https://clinicaltrials.gov/study/NCT00000001"),
+                indications = setOf(indication1)
+            ) to setOf(
+                TestServeMolecularFactory.createHotspotCriterium(event1)
+            ),
+            TestServeTrialFactory.create(
+                nctId = "NCT00000002",
+                urls = setOf("https://clinicaltrials.gov/study/NCT00000002"),
+                indications = setOf(indication2)
+            ) to setOf(
+                TestServeMolecularFactory.createHotspotCriterium(event2)
+            ),
         )
 
-        val result = ClinicalEvidenceFactory.create(
-            specificCancerTypeEvidences = emptyList(),
-            offTumorEvidences = emptyList(),
-            tumorAgnosticEvidence = emptyList(),
-            matchingCriteriaAndIndicationsPerEligibleTrial = matchesPerTrial
-        )
+        every { cancerTypeResolver.resolve(indication1) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+        every { cancerTypeResolver.resolve(indication2) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+        val result = factory.create(ActionabilityMatch(emptyList(), matchesPerTrial))
 
         val expectedClinicalEvidence = TestClinicalEvidenceFactory.withEligibleTrials(
             setOf(
@@ -302,37 +310,41 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should throw exception on invalid or no URL for external trial`() {
-        val invalidUrlTrial = TestServeTrialFactory.create(nctId = "NCT00000001", urls = setOf("this is not a valid url"))
+        every { cancerTypeResolver.resolve(any()) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+
+        val invalidUrlTrial = TestServeTrialFactory.create(
+            nctId = "NCT00000001",
+            urls = setOf("this is not a valid url"),
+            indications = setOf(TestServeFactory.createEmptyIndication())
+        )
 
         assertThatIllegalStateException().isThrownBy {
-            ClinicalEvidenceFactory.create(
-                specificCancerTypeEvidences = emptyList(),
-                offTumorEvidences = emptyList(),
-                tumorAgnosticEvidence = emptyList(),
-                matchingCriteriaAndIndicationsPerEligibleTrial = createTestMatchingCriteriaAndIndicationMap(invalidUrlTrial)
+            factory.create(
+                ActionabilityMatch(
+                    emptyList(), createTestMatchingCriteriaAndIndicationMap(invalidUrlTrial)
+                )
             )
         }
 
-        val emptyUrlTrial = TestServeTrialFactory.create(nctId = "NCT00000001", urls = emptySet())
+        val emptyUrlTrial = TestServeTrialFactory.create(
+            nctId = "NCT00000001",
+            urls = emptySet(),
+            indications = setOf(TestServeFactory.createEmptyIndication())
+        )
 
         assertThatIllegalStateException().isThrownBy {
-            ClinicalEvidenceFactory.create(
-                specificCancerTypeEvidences = emptyList(),
-                offTumorEvidences = emptyList(),
-                tumorAgnosticEvidence = emptyList(),
-                matchingCriteriaAndIndicationsPerEligibleTrial = createTestMatchingCriteriaAndIndicationMap(emptyUrlTrial)
+            factory.create(
+                ActionabilityMatch(
+                    emptyList(), createTestMatchingCriteriaAndIndicationMap(emptyUrlTrial)
+                )
             )
         }
     }
 
     private fun createTestMatchingCriteriaAndIndicationMap(trial: ActionableTrial):
-            Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
+            Map<ActionableTrial, Set<MolecularCriterium>> {
         return mapOf(
-            trial to
-                    Pair(
-                        setOf(TestServeMolecularFactory.createHotspotCriterium()),
-                        setOf(TestServeFactory.createEmptyIndication())
-                    )
+            trial to setOf(TestServeMolecularFactory.createHotspotCriterium())
         )
-    }*/
+    }
 }

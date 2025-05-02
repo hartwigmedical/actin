@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFacto
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -37,7 +38,7 @@ private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        isOnLabel = true
+        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE
     )
 )
 

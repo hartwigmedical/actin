@@ -21,7 +21,7 @@ class ClinicalEvidenceMatcherFactory(
             .filter { it.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE }
             .mapNotNull { trial -> removeNonApplicableMolecularCriteria(trial) }
         return create(
-            ClinicalEvidenceFactory(EvidenceCancerTypeResolver.create(doidModel, tumorDoids)),
+            ClinicalEvidenceFactory(CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)),
             filteredEvidences,
             curatedTrials
         )

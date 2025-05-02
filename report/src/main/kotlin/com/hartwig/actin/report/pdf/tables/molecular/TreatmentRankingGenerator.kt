@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.algo.TreatmentEvidenceRanking
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.treatment.TreatmentEvidenceRanking
 import com.itextpdf.layout.element.Table
 
 class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentEvidenceRanking, private val width: Float) : TableGenerator {

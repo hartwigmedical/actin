@@ -9,7 +9,7 @@ object TreatmentEvidenceFunctions {
     data class TreatmentEvidenceContent(val treatment: String, val cancerTypesWithDate: String, val isResistant: Boolean)
 
     fun filterTreatmentEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>, isOnLabel: Boolean?): Set<TreatmentEvidence> {
-        val (onLabelEvidence, offLabelEvidence) = treatmentEvidenceSet.partition { it.isOnLabel }
+        val (onLabelEvidence, offLabelEvidence) = treatmentEvidenceSet.partition { it.isOnLabel() }
         val onLabelHighestEvidenceLevels = getHighestEvidenceLevelPerTreatment(onLabelEvidence)
 
         val evidence = when (isOnLabel) {
@@ -106,7 +106,7 @@ object TreatmentEvidenceFunctions {
         return evidence
             .sortedWith(compareBy<TreatmentEvidence> { it.evidenceLevel }
                 .thenBy { it.molecularMatch.sourceEvidenceType.isCategoryEvent() }
-                .thenByDescending { it.isOnLabel })
+                .thenByDescending { it.isOnLabel() })
             .toSet()
     }
 }

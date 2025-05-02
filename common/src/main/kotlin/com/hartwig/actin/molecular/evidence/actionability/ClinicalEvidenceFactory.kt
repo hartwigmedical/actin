@@ -20,7 +20,7 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.time.LocalDate
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
-class ClinicalEvidenceFactory(private val cancerTypeResolver: EvidenceCancerTypeResolver) {
+class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver) {
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(

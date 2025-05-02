@@ -1,8 +1,8 @@
-package com.hartwig.actin.datamodel.algo
+package com.hartwig.actin.treatment
 
 data class RankedTreatment(
     val treatment: String,
-    val events: List<String>,
+    val events: Set<String>,
     val score: Double,
 )
 

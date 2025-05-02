@@ -7,13 +7,17 @@ import com.hartwig.actin.report.pdf.tables.molecular.OffLabelMolecularClinicalEv
 import com.hartwig.actin.report.pdf.tables.molecular.OnLabelMolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.TreatmentRankingGenerator
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.treatment.TreatmentEvidenceRanking
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class MolecularEvidenceChapter(val report: Report, override val include: Boolean) : ReportChapter {
+class MolecularEvidenceChapter(
+    val report: Report,
+    private val treatmentEvidenceRanking: TreatmentEvidenceRanking,
+    override val include: Boolean
+) : ReportChapter {
 
     private val molecularHistory = report.patientRecord.molecularHistory
-    private val ranking = report.treatmentMatch.treatmentEvidenceRanking
 
     override fun name(): String {
         return "Molecular Evidence"
@@ -27,6 +31,7 @@ class MolecularEvidenceChapter(val report: Report, override val include: Boolean
         addChapterTitle(document)
         addMolecularEvidenceTable(document)
         addEfficacyDescriptionTable(document)
+        if (report.config.includeTreatmentEvidenceRanking) addTreatmentEvidenceRankingTable(document)
     }
 
     private fun addMolecularEvidenceTable(document: Document) {
@@ -43,5 +48,11 @@ class MolecularEvidenceChapter(val report: Report, override val include: Boolean
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
-    
+
+    private fun addTreatmentEvidenceRankingTable(document: Document) {
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        val generator = TreatmentRankingGenerator(treatmentEvidenceRanking, contentWidth())
+        TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
+        document.add(table)
+    }
 }

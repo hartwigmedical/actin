@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteri
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
@@ -15,19 +16,17 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
-@Ignore
-class TreatmentRankerTest {
+class TreatmentRankingModelTest {
 
     @Test
-    fun `Should add scoring for guideline, benefit, on-label, exact`() {
-        val ranker = TreatmentRanker()
+    fun `Should add scoring for guideline, benefit, patient's tumor, exact variant`() {
+        val ranker = TreatmentRankingModel(EvidenceScoringModel())
         val patientRecord = patientRecord(
             createVariant(
-                treatmentEvidence(
-                    isOnLabel = true,
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.PHASE_I,
                     hasBenefit = true,
@@ -35,8 +34,8 @@ class TreatmentRankerTest {
                 )
             ),
             createVariant(
-                treatmentEvidence(
-                    isOnLabel = true,
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.PRECLINICAL,
                     hasBenefit = true,
@@ -44,8 +43,8 @@ class TreatmentRankerTest {
                 )
             ),
             createVariant(
-                treatmentEvidence(
-                    isOnLabel = true,
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = true,
                     approvalStage = EvidenceLevelDetails.PHASE_III,
                     hasBenefit = true,
@@ -53,8 +52,8 @@ class TreatmentRankerTest {
                 )
             ),
             createVariant(
-                treatmentEvidence(
-                    isOnLabel = true,
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.GUIDELINE,
                     hasBenefit = true,
@@ -62,7 +61,7 @@ class TreatmentRankerTest {
                 )
             )
         )
-        val rank = ranker.rank(patientRecord).sorted()
+        val rank = ranker.rank(patientRecord).ranking
         assertThat(rank[0].treatment).isEqualTo("treatment4")
         assertThat(rank[0].score).isEqualTo(1900.0)
         assertThat(rank[1].treatment).isEqualTo("treatment3")
@@ -75,44 +74,60 @@ class TreatmentRankerTest {
 
     @Test
     fun `Should sum scores for a single treatment on different events`() {
-        val ranker = TreatmentRanker()
+        val ranker = TreatmentRankingModel(EvidenceScoringModel())
         val patientRecord = patientRecord(
             createVariant(
+                gene = "KRAS",
+                treatmentEvidence =
                 treatmentEvidence(
-                    isOnLabel = true,
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.GUIDELINE,
                     hasBenefit = true,
-                    treatment = "treatment1"
-                ), treatmentEvidence(
-                    isOnLabel = true,
+                    treatment = "treatment1",
+                    event = "KRAS G12C"
+                )
+            ), createVariant(
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
                     treatment = "treatment1",
-                    event = "BRAF mut"
+                    event = "BRAF V600E"
                 )
             )
         )
-        val rank = ranker.rank(patientRecord).sorted()
-        assertThat(rank[0].treatment).isEqualTo("treatment1")
-        assertThat(rank[0].score).isEqualTo(3900.0)
+        val rank = ranker.rank(patientRecord)
+        assertThat(rank.ranking[0].treatment).isEqualTo("treatment1")
+        assertThat(rank.ranking[0].score).isEqualTo(3900.0)
     }
 
     @Test
     fun `Should sum scores for a single treatment on different tumor types`() {
-        val ranker = TreatmentRanker()
+        val ranker = TreatmentRankingModel(EvidenceScoringModel())
         val patientRecord = patientRecord(
             createVariant(
-                treatmentEvidence(
-                    isOnLabel = true,
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
                     treatment = "treatment1"
-                ),
-                treatmentEvidence(
-                    isOnLabel = false,
+                )
+            ),
+            createVariant(
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.ALL_TYPES,
+                    isCategoryEvent = false,
+                    approvalStage = EvidenceLevelDetails.FDA_APPROVED,
+                    hasBenefit = true,
+                    treatment = "treatment1",
+                )
+            ),
+            createVariant(
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.OTHER_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
@@ -120,25 +135,54 @@ class TreatmentRankerTest {
                 )
             )
         )
-        val rank = ranker.rank(patientRecord).sorted()
-        assertThat(rank[0].treatment).isEqualTo("treatment1")
-        assertThat(rank[0].score).isEqualTo(3700.0)
+        val rank = ranker.rank(patientRecord)
+        assertThat(rank.ranking[0].treatment).isEqualTo("treatment1")
+        assertThat(rank.ranking[0].score).isEqualTo(5100.0)
+    }
+
+    @Test
+    fun `Should sum scores for a single treatment with both benefit and resistance`() {
+        val ranker = TreatmentRankingModel(EvidenceScoringModel())
+        val patientRecord = patientRecord(
+            createVariant(
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+                    isCategoryEvent = false,
+                    approvalStage = EvidenceLevelDetails.FDA_APPROVED,
+                    hasBenefit = true,
+                    treatment = "treatment1"
+                )
+            ), createVariant(
+                treatmentEvidence =
+                treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+                    isCategoryEvent = false,
+                    approvalStage = EvidenceLevelDetails.GUIDELINE,
+                    hasBenefit = false,
+                    treatment = "treatment1",
+                )
+            )
+        )
+        val rank = ranker.rank(patientRecord)
+        assertThat(rank.ranking[0].treatment).isEqualTo("treatment1")
+        assertThat(rank.ranking[0].score).isEqualTo(100.0)
     }
 
     @Test
     fun `Should diminish returns single treatment, same tumor type, variant`() {
-        val ranker = TreatmentRanker()
+        val ranker = TreatmentRankingModel(EvidenceScoringModel())
         val patientRecord = patientRecord(
             createVariant(
-                treatmentEvidence(
-                    isOnLabel = true,
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.GUIDELINE,
                     hasBenefit = true,
                     treatment = "treatment1"
-                ),
-                treatmentEvidence(
-                    isOnLabel = true,
+                )
+            ), createVariant(
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
@@ -146,7 +190,7 @@ class TreatmentRankerTest {
                 )
             )
         )
-        val rank = ranker.rank(patientRecord).sorted()
+        val rank = ranker.rank(patientRecord).ranking
         assertThat(rank[0].treatment).isEqualTo("treatment1")
         assertThat(rank[0].score).isEqualTo(2950.0)
     }
@@ -180,15 +224,16 @@ class TreatmentRankerTest {
         )
     )
 
-    private fun createVariant(vararg treatmentEvidence: TreatmentEvidence) = TestVariantFactory.createMinimal().copy(
+    private fun createVariant(gene: String = "BRAF", treatmentEvidence: TreatmentEvidence) = TestVariantFactory.createMinimal().copy(
+        gene = gene,
         evidence = TestClinicalEvidenceFactory.createEmpty().copy(
-            treatmentEvidence = treatmentEvidence.toSet()
+            treatmentEvidence = setOf(treatmentEvidence)
         )
     )
 
     private fun treatmentEvidence(
         treatment: String,
-        isOnLabel: Boolean,
+        cancerTypeMatchApplicability: CancerTypeMatchApplicability,
         isCategoryEvent: Boolean,
         approvalStage: EvidenceLevelDetails,
         hasBenefit: Boolean,
@@ -196,7 +241,7 @@ class TreatmentRankerTest {
     ) = TestTreatmentEvidenceFactory.create(
         treatment = treatment,
         sourceEvent = event,
-        isOnLabel = isOnLabel,
+        cancerTypeMatchApplicability = cancerTypeMatchApplicability,
         evidenceType = if (isCategoryEvent) EvidenceType.ANY_MUTATION else EvidenceType.HOTSPOT_MUTATION,
         evidenceLevelDetails = approvalStage,
         evidenceDirection = EvidenceDirection(hasBenefit, hasBenefit, !hasBenefit, true),

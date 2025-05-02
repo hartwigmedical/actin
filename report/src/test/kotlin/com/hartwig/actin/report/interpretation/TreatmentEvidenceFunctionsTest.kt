@@ -45,7 +45,7 @@ class TreatmentEvidenceFunctionsTest {
             offLabelCategoryLevelA.copy(TREATMENT),
             offLabelCategoryLevelB.copy(TREATMENT)
         )
-        val onLabel = evidence.filter { it.isOnLabel }
+        val onLabel = evidence.filter { it.isOnLabel() }
         val onLabelHighestEvidencePerTreatment = TreatmentEvidenceFunctions.getHighestEvidenceLevelPerTreatment(onLabel)
         val result = TreatmentEvidenceFunctions.filterOffLabelEvidence(evidence, onLabelHighestEvidencePerTreatment)
         assertThat(result).containsExactlyElementsOf(emptySet())
@@ -196,7 +196,7 @@ class TreatmentEvidenceFunctionsTest {
 
     private fun createTreatmentEvidence(
         treatment: String = TREATMENT,
-        isOnLabel: Boolean = true,
+        cancerTypeMatchApplicability: CancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
         direction: EvidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
         entryDate: LocalDate = LocalDate.EPOCH,
@@ -208,7 +208,7 @@ class TreatmentEvidenceFunctionsTest {
     ): TreatmentEvidence {
         return TestTreatmentEvidenceFactory.create(
             treatment = treatment,
-            isOnLabel = isOnLabel,
+            cancerTypeMatchApplicability = cancerTypeMatchApplicability,
             evidenceLevel = evidenceLevel,
             evidenceDirection = direction,
             sourceDate = entryDate,

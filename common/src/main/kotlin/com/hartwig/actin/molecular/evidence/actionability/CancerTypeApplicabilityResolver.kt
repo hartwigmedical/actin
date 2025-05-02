@@ -6,7 +6,7 @@ import com.hartwig.serve.datamodel.common.Indication
 
 const val ADVANCED_SOLID_TUMOR_DOID = "162"
 
-class EvidenceCancerTypeResolver(private val expandedTumorDoids: Set<String>) {
+class CancerTypeApplicabilityResolver(private val expandedTumorDoids: Set<String>) {
 
     fun resolve(indication: Indication): CancerTypeMatchApplicability {
         return when {
@@ -27,8 +27,8 @@ class EvidenceCancerTypeResolver(private val expandedTumorDoids: Set<String>) {
     }
 
     companion object {
-        fun create(doidModel: DoidModel, tumorDoids: Set<String>): EvidenceCancerTypeResolver {
-            return EvidenceCancerTypeResolver(expandDoids(doidModel, tumorDoids))
+        fun create(doidModel: DoidModel, tumorDoids: Set<String>): CancerTypeApplicabilityResolver {
+            return CancerTypeApplicabilityResolver(expandDoids(doidModel, tumorDoids))
         }
 
         private fun expandDoids(doidModel: DoidModel, doids: Set<String>): Set<String> {
