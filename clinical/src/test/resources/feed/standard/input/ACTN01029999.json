@@ -233,10 +233,10 @@
     "tumorGradeDifferentiation": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\r\n\r\n\r\nimmunohistochemie ERBB2 3+\n\n",
     "tumorStage": "IV",
     "tumorStageDate": "2020-01-01T10:10:00",
-    "lesionSite": "brain",
     "lesions": [
       {
         "location": "brain",
+        "active": true,
         "sublocation": null,
         "diagnosisDate": "2020-01-01"
       }

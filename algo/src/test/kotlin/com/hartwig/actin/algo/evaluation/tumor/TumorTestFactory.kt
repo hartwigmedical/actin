@@ -276,13 +276,11 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions))
     }
 
-    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false, count: Int? = 1): PatientRecord {
+    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false): PatientRecord {
         return withTumorDetails(
             TumorDetails(
                 hasLungLesions = hasLungLesions,
-                hasSuspectedLungLesions = hasSuspectedLungLesions,
-                lungLesionsCount = count
-            )
+                hasSuspectedLungLesions = hasSuspectedLungLesions)
         )
     }
 
