@@ -69,7 +69,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             )
             if (isWGTS()){
                 addClassifierRow(
-                    "(4) Gene expression ", predictions, CupPrediction::expressionPairWiseClassifier, table
+                    "(4) Gene expression", predictions, CupPrediction::expressionPairWiseClassifier, table
                 )
                 addClassifierRow(
                     "(5) Alternative splice junctions", predictions, CupPrediction::altSjCohortClassifier, table
