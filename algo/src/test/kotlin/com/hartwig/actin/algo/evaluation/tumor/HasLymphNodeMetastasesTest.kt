@@ -32,7 +32,7 @@ class HasLymphNodeMetastasesTest {
     @Test
     fun `Should warn when has suspected lymph node lesions only`() {
         val warn = function.evaluate(TumorTestFactory.withLymphNodeLesions(false, true))
-        val message = "Has suspected lymph node metastases hence uncertain if actually has lymph node metastases"
+        val message = "Has suspected lymph node metastases and not yet confirmed"
         assertEvaluation(EvaluationResult.WARN, warn)
         listOf(warn.warnMessages).forEach {
             assertThat(it).contains(message)

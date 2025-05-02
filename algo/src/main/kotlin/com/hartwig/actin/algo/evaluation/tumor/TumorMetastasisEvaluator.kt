@@ -12,7 +12,7 @@ object TumorMetastasisEvaluator {
             }
 
             hasSuspectedLesions == true -> {
-                EvaluationFactory.warn("Has suspected $metastasisType metastases hence uncertain if actually has $metastasisType metastases")
+                EvaluationFactory.warn("Has suspected $metastasisType metastases and not yet confirmed")
             }
 
             hasLesions == null -> EvaluationFactory.undetermined("Undetermined if patient has $metastasisType metastases (missing lesion data)")
