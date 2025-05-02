@@ -21,7 +21,6 @@ class MolecularResultsAreKnownForPromoterOfGeneTest {
 
     private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): IHCTest {
         return MolecularTestFactory.ihcTest(
-            test = "IHC",
             item = gene,
             impliesIndeterminate = impliesPotentialDeterminateStatus
         )

@@ -10,22 +10,18 @@ import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
-
 private const val MOLECULAR_TEST_INPUT = "Molecular test input"
+private const val IHC = "IHC"
 
-private const val MOLECULAR_TEST_INTERPRETATION_IHC = "Molecular test interpretation IHC"
-private const val MOLECULAR_TEST_INTERPRETATION_PDL1 = "Molecular test interpretation PD-L1"
+class IHCTestsExtractorTest {
 
-
-class MolecularTestsExtractorTest {
-
-    val extractor = MolecularTestsExtractor(
+    val extractor = IHCTestsExtractor(
         TestCurationFactory.curationDatabase(
             IHCTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
                 curated = IHCTest(
-                    impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_IHC, item = "item"
+                    impliesPotentialIndeterminateStatus = false, item = "item"
                 )
             )
         ),
@@ -34,7 +30,7 @@ class MolecularTestsExtractorTest {
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
                 curated = IHCTest(
-                    impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_PDL1, item = "item"
+                    impliesPotentialIndeterminateStatus = false, item = "item 2"
                 )
             )
         )
@@ -48,8 +44,8 @@ class MolecularTestsExtractorTest {
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = ihcInputs, pdl1TestResults = pdl1Inputs)
         val (molecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(molecularTests).hasSize(2)
-        assertThat(molecularTests[0].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_IHC)
-        assertThat(molecularTests[1].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_PDL1)
+        assertThat(molecularTests[0].test).isEqualTo(IHC)
+        assertThat(molecularTests[1].test).isEqualTo(IHC)
 
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(

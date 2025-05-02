@@ -10,7 +10,7 @@ class HasAvailablePDL1StatusTest {
     fun `Should pass if record contains PD-L1 IHC test`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, HasAvailablePDL1Status().evaluate(
-                MolecularTestFactory.withIHCTests(listOf(MolecularTestFactory.ihcTest(test = "IHC", item = "PD-L1")))
+                MolecularTestFactory.withIHCTests(listOf(MolecularTestFactory.ihcTest(item = "PD-L1")))
             )
         )
     }

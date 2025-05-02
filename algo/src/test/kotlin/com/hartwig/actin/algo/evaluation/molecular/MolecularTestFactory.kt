@@ -33,7 +33,6 @@ internal object MolecularTestFactory {
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
     fun ihcTest(
-        test: String = "",
         item: String = "",
         measure: String? = null,
         scoreText: String? = null,
@@ -42,7 +41,6 @@ internal object MolecularTestFactory {
         scoreValuePrefix: String? = null
     ): IHCTest {
         return IHCTest(
-            test = test,
             item = item,
             measure = measure,
             scoreText = scoreText,

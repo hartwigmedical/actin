@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
-private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
 private const val REFERENCE = 2
 
@@ -21,7 +20,7 @@ class ProteinHasLimitedExpressionByIHCTest {
 
     @Test
     fun `Should evaluate to undetermined when no IHC test of correct protein present in record`() {
-        val test = ihcTest(test = IHC, item = "other", scoreValue = 1.0)
+        val test = ihcTest(item = "other", scoreValue = 1.0)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIHCTests(test)))
     }
 
@@ -50,6 +49,6 @@ class ProteinHasLimitedExpressionByIHCTest {
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
         ihcTest(
-            test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+            item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }

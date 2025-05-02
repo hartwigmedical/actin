@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
-private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
 
 class ProteinHasExactExpressionByIHCTest {
@@ -50,6 +49,6 @@ class ProteinHasExactExpressionByIHCTest {
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
         MolecularTestFactory.ihcTest(
-            test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+            item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }

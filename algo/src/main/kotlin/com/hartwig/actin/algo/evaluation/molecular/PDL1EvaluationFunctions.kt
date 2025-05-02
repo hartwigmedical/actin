@@ -22,9 +22,9 @@ object PDL1EvaluationFunctions {
     fun evaluatePDL1byIHC(
         record: PatientRecord, measure: String?, pdl1Reference: Double, doidModel: DoidModel?, evaluateMaxPDL1: Boolean
     ): Evaluation {
-        val molecularTests = record.ihcTests
+        val ihcTests = record.ihcTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
-        val pdl1TestsWithRequestedMeasurement = IhcTestFilter.allPDL1Tests(molecularTests, measure, isLungCancer)
+        val pdl1TestsWithRequestedMeasurement = IhcTestFilter.allPDL1Tests(ihcTests, measure, isLungCancer)
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
@@ -68,7 +68,7 @@ object PDL1EvaluationFunctions {
                 )
             }
 
-            IhcTestFilter.allPDL1Tests(molecularTests).isNotEmpty() -> {
+            IhcTestFilter.allPDL1Tests(ihcTests).isNotEmpty() -> {
                 EvaluationFactory.recoverableFail("PD-L1 tests not in correct unit ($measure)")
             }
 

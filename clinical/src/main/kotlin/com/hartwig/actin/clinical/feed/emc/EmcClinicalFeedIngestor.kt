@@ -14,11 +14,12 @@ import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.ComorbidityExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.IHCTestsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.MolecularTestsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.OncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.PriorPrimaryExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.SequencingTestExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
@@ -50,7 +51,8 @@ class EmcClinicalFeedIngestor(
     private val comorbidityExtractor: ComorbidityExtractor,
     private val oncologicalHistoryExtractor: OncologicalHistoryExtractor,
     private val priorPrimaryExtractor: PriorPrimaryExtractor,
-    private val molecularTestsExtractor: MolecularTestsExtractor,
+    private val ihcTestsExtractor: IHCTestsExtractor,
+    private val sequencingTestExtractor: SequencingTestExtractor,
     private val labValueExtractor: LabValueExtractor,
     private val medicationExtractor: MedicationExtractor,
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
@@ -70,7 +72,8 @@ class EmcClinicalFeedIngestor(
             val (comorbidities, clinicalStatus) = comorbidityExtraction.extracted
             val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorPrimaryExtraction = priorPrimaryExtractor.extract(patientId, questionnaire)
-            val molecularTestsExtraction = molecularTestsExtractor.extract(patientId, questionnaire)
+            val ihcTestsExtraction = ihcTestsExtractor.extract(patientId, questionnaire)
+            val sequencingTestExtraction = sequencingTestExtractor.extract(patientId, questionnaire)
             val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries)
             val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusionEntries)
             val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries)
@@ -84,8 +87,8 @@ class EmcClinicalFeedIngestor(
                 clinicalStatus = clinicalStatus,
                 oncologicalHistory = oncologicalHistoryExtraction.extracted,
                 priorPrimaries = priorPrimaryExtraction.extracted,
-                ihcTests = molecularTestsExtraction.extracted,
-                sequencingTests = emptyList(),
+                ihcTests = ihcTestsExtraction.extracted,
+                sequencingTests = sequencingTestExtraction.extracted,
                 labValues = labValuesExtraction.extracted,
                 surgeries = surgeryExtraction.extracted,
                 bodyWeights = extractBodyWeights(feedRecord),
@@ -101,7 +104,8 @@ class EmcClinicalFeedIngestor(
                 comorbidityExtraction,
                 oncologicalHistoryExtraction,
                 priorPrimaryExtraction,
-                molecularTestsExtraction,
+                ihcTestsExtraction,
+                sequencingTestExtraction,
                 labValuesExtraction,
                 bloodTransfusionsExtraction,
                 medicationExtraction,
@@ -237,7 +241,8 @@ class EmcClinicalFeedIngestor(
                 comorbidityExtractor = ComorbidityExtractor.create(curationDatabaseContext),
                 oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
                 priorPrimaryExtractor = PriorPrimaryExtractor.create(curationDatabaseContext),
-                molecularTestsExtractor = MolecularTestsExtractor.create(curationDatabaseContext),
+                ihcTestsExtractor = IHCTestsExtractor.create(curationDatabaseContext),
+                sequencingTestExtractor = SequencingTestExtractor.create(curationDatabaseContext),
                 labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
                 medicationExtractor = MedicationExtractor.create(
                     curationDatabaseContext,

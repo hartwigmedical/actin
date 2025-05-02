@@ -11,7 +11,7 @@ private const val MAX_PDL1 = 2.0
 
 class HasLimitedPDL1ByIHCTest {
     private val function = HasLimitedPDL1ByIHC(MEASURE, MAX_PDL1)
-    private val pdl1Test = MolecularTestFactory.ihcTest(test = "IHC", item = "PD-L1", measure = MEASURE)
+    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = MEASURE)
 
     @Test
     fun `Should pass when test value is below max`() {

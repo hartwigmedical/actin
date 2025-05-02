@@ -27,7 +27,7 @@ class HasKnownHPVStatusTest {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
-            ihcTests = listOf(MolecularTestFactory.ihcTest(test = "IHC", item = "Something"))
+            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "Something"))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
@@ -40,7 +40,7 @@ class HasKnownHPVStatusTest {
             ihcTests =
                 listOf(
                     MolecularTestFactory.ihcTest(
-                        test = "IHC", item = "HPV", impliesIndeterminate = true
+                        item = "HPV", impliesIndeterminate = true
                     )
                 )
         )
@@ -52,11 +52,7 @@ class HasKnownHPVStatusTest {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
-            ihcTests = listOf(
-                MolecularTestFactory.ihcTest(
-                    test = "IHC", item = "HPV", impliesIndeterminate = false
-                )
-            )
+            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
@@ -64,7 +60,7 @@ class HasKnownHPVStatusTest {
     @Test
     fun `Should pass if no WGS performed but correct test is in molecularTest`() {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            ihcTests = listOf(MolecularTestFactory.ihcTest(test = "IHC", item = "HPV", impliesIndeterminate = false))
+            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
@@ -77,7 +73,6 @@ class HasKnownHPVStatusTest {
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
                     ihcTests = listOf(
                         MolecularTestFactory.ihcTest(
-                            test = "IHC",
                             item = "Something",
                             impliesIndeterminate = false
                         )

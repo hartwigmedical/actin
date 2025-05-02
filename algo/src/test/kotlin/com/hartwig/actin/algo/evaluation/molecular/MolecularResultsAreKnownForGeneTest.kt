@@ -121,7 +121,6 @@ class MolecularResultsAreKnownForGeneTest {
                 ).copy(
                     ihcTests = listOf(
                         MolecularTestFactory.ihcTest(
-                            test = "IHC",
                             item = "gene 1",
                             impliesIndeterminate = false
                         )
@@ -140,7 +139,6 @@ class MolecularResultsAreKnownForGeneTest {
                     ihcTests =
                         listOf(
                             MolecularTestFactory.ihcTest(
-                                test = "IHC",
                                 item = "gene 1",
                                 impliesIndeterminate = false
                             )

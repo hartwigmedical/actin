@@ -8,7 +8,15 @@ data class PathologyReport(
     val source: String,
     val lab: String? = null,
     val diagnosis: String,
-    val tissueDate: LocalDate,
-    val authorisationDate: LocalDate,
+    val externalDate: LocalDate? = null,
+    val tissueDate: LocalDate? = null,
+    val authorisationDate: LocalDate? = null,
     val report: String
-)
+) {
+    val isSourceInternal: Boolean
+        get() = source.equals(INTERNAL_SOURCE, ignoreCase = true)
+
+    companion object {
+        private const val INTERNAL_SOURCE = "internal"
+    }
+}

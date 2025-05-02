@@ -1,14 +1,20 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.interpretation.IHCTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles.PALETTE_MID_GREY
 import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Table
 import org.apache.logging.log4j.LogManager
 
@@ -32,20 +38,49 @@ class MolecularSummaryGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createSingleCol()
 
-        patientRecord.pathologyReports
-            ?.takeIf { reports -> reports.any { !it.tissueId.isNullOrBlank() } }
-            ?.let {
-                val generator = PathologyReportsOverviewGenerator(patientRecord.pathologyReports)
-                table.addCell(Cells.createSubTitle(generator.title()))
-                table.addCell(Cells.create(generator.contents()))
-                table.addCell(Cells.createEmpty())
-            }
+        val table = Tables.createSingleCol().setBorder(SolidBorder(PALETTE_MID_GREY, 0.25f))
 
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
-        for (molecularTest in nonIhcTestsIncludedInTrialMatching.sortedByDescending { it.date }) {
+        val ihcTestsFiltered = IhcTestFilter.mostRecentOrUnknownDateIhcTests(patientRecord.ihcTests).toList()
+        val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
+            nonIhcTestsIncludedInTrialMatching,
+            ihcTestsFiltered,
+            patientRecord.pathologyReports
+        ).filterValues { (molecularTest, ihcTests) -> molecularTest.isNotEmpty() && ihcTests.isNotEmpty() }
+
+        for ((pathologyReport, tests) in groupedByPathologyReport) {
+            val (molecularTest, ihcTests) = tests
+            pathologyReport?.let {
+                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = pathologyReport)))
+                val reportTable = Tables.createSingleCol()
+                content(pathologyReport, molecularTest, ihcTests, reportTable)
+                table.addCell(Cells.create(reportTable))
+            } ?: run {
+                if (!patientRecord.pathologyReports.isNullOrEmpty()) {
+                    table.addCell(Cells.createTitle("Other Tests"))
+                }
+                content(pathologyReport, molecularTest, ihcTests, table)
+            }
+        }
+
+        if (ihcTestsFiltered.isEmpty()) {
+            val molecularResultGenerator = IHCResultGenerator(ihcTestsFiltered, keyWidth, valueWidth, IHCTestInterpreter())
+            table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
+            table.addCell(Cells.create(molecularResultGenerator.contents()))
+        }
+
+        return table
+    }
+
+    private fun content(
+        pathologyReport: PathologyReport?,
+        molecularTests: List<MolecularTest>,
+        ihcTests: List<IHCTest>,
+        table: Table
+    ) {
+        for (molecularTest in molecularTests.sortedByDescending { it.date }) {
             if ((molecularTest as? MolecularRecord)?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     logger.warn("Generating WGS results for non-WGS sample")
@@ -54,6 +89,7 @@ class MolecularSummaryGenerator(
                     isShort,
                     patientRecord,
                     molecularTest,
+                    pathologyReport,
                     cohorts,
                     keyWidth,
                     valueWidth
@@ -68,9 +104,12 @@ class MolecularSummaryGenerator(
             }
         }
 
-        val molecularResultGenerator = IHCResultGenerator(patientRecord, keyWidth, valueWidth, IHCTestInterpreter())
-        table.addCell(Cells.createEmpty())
-        table.addCell(Cells.create(molecularResultGenerator.contents()))
-        return table
+        ihcTests.takeIf { it.isNotEmpty() }?.let {
+            val molecularResultGenerator = IHCResultGenerator(ihcTests, keyWidth, valueWidth, IHCTestInterpreter())
+            table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
+            table.addCell(Cells.create(molecularResultGenerator.contents()))
+        }
     }
+
+
 }

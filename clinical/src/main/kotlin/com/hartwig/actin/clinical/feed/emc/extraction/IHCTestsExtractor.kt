@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 
-class MolecularTestsExtractor(
+class IHCTestsExtractor(
     private val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
     private val molecularTestPdl1Curation: CurationDatabase<IHCTestConfig>,
 ) {
@@ -32,7 +32,7 @@ class MolecularTestsExtractor(
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
-            MolecularTestsExtractor(
+            IHCTestsExtractor(
                 curationDatabaseContext.molecularTestIhcCuration,
                 curationDatabaseContext.molecularTestPdl1Curation
             )

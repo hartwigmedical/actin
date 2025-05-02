@@ -19,14 +19,13 @@ import java.time.LocalDate
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val PRIOR_IHC_TEST =
-    IHCTest(test = "IHC", item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
+    IHCTest(item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
 private const val MICROSCOPIE_LINE = "TTF1 negatief"
 
 private const val PATHOLOGY_REPORT =
     "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
 private val MOLECULAR_TEST =
     IHCTest(
-        test = "Archer FP Lung Target",
         item = "EGFR",
         measure = "c.2573T>G",
         measureDate = LocalDate.parse("2024-03-25"),

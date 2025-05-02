@@ -91,10 +91,12 @@ data class ProvidedPathologyReport(
     val lab: String? = null,
     @Description("Diagnosis written in the pathology reports")
     val diagnosis: String,
-    @Description("Date of tissue collection")
-    val tissueDate: LocalDate,
-    @Description("Latest date of report authorization")
-    val authorisationDate: LocalDate,
+    @Description("Date of the external report (not clear what this data represents) - present only when the source is external")
+    val externalDate: LocalDate? = null,
+    @Description("Date of tissue collection - present only when the source is external")
+    val tissueDate: LocalDate? = null,
+    @Description("Latest date of report authorization - present only when the source is external")
+    val authorisationDate: LocalDate? = null,
     @Description("Raw pathology report of molecular test results.")
     val rawPathologyReport: String
 )

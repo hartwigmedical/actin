@@ -37,6 +37,7 @@ class EmcClinicalFeedIngestorTest {
             mockk { every { extract(any(), any()) }.returns(ExtractionResult(emptyList(), CurationExtractionEvaluation())) },
             mockk { every { extract(any(), any()) }.returns(ExtractionResult(emptyList(), CurationExtractionEvaluation())) },
             mockk { every { extract(any(), any()) }.returns(ExtractionResult(emptyList(), CurationExtractionEvaluation())) },
+            mockk { every { extract(any(), any()) }.returns(ExtractionResult(emptyList(), CurationExtractionEvaluation())) },
         )
 
         val (_, patientIngestionResult, _) = emcClinicalFeedIngestor.ingest().first()

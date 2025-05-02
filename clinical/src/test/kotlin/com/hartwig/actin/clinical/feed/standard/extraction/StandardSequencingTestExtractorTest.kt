@@ -230,12 +230,18 @@ class StandardSequencingTestExtractorTest {
         every { testResultCuration.find(FREE_TEXT) } returns setOf(
             SequencingTestResultConfig(
                 input = FREE_TEXT,
-                ignore = true
+                ignore = true,
+                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
+            ),
+            SequencingTestResultConfig(
+                input = FREE_TEXT,
+                ignore = false,
+                curated = ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN)
             )
         )
         val result = extractionResult(
             ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = "erroneous", freeText = FREE_TEXT),
-            ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN)
+            ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN, freeText = FREE_TEXT)
         )
         assertThat(result.extracted[0].variants).containsExactly(SequencedVariant(gene = GENE, hgvsProteinImpact = PROTEIN))
     }

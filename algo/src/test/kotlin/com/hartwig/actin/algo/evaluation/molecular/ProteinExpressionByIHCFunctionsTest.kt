@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
-private const val IHC = "IHC"
 private const val PROTEIN = "PD-L1"
 
 class ProteinExpressionByIHCFunctionsTest {
@@ -24,7 +23,7 @@ class ProteinExpressionByIHCFunctionsTest {
 
     @Test
     fun `Should evaluate to undetermined when no IHC test of correct protein present in record`() {
-        val test = ihcTest(test = IHC, item = "other", scoreValue = 1.0)
+        val test = ihcTest(item = "other", scoreValue = 1.0)
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIHCTests(test))
     }
 
@@ -89,5 +88,5 @@ class ProteinExpressionByIHCFunctionsTest {
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
-        ihcTest(test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText)
+        ihcTest(item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText)
 }

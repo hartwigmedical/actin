@@ -56,10 +56,10 @@ class IHCExtractorTest {
     }
 
     private fun positiveIHC(gene: String, date: LocalDate? = null): IHCTest {
-        return IHCTest(test = "IHC", item = gene, measureDate = date, scoreText = "Positive")
+        return IHCTest(item = gene, measureDate = date, scoreText = "Positive")
     }
 
     private fun negativeIHC(gene: String, date: LocalDate? = null): IHCTest {
-        return IHCTest(test = "IHC", item = gene, measureDate = date, scoreText = "Negative")
+        return IHCTest(item = gene, measureDate = date, scoreText = "Negative")
     }
 }

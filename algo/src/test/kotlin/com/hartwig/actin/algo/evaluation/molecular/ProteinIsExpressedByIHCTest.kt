@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import org.junit.Test
 
-private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
 
 class ProteinIsExpressedByIHCTest {
@@ -36,6 +35,6 @@ class ProteinIsExpressedByIHCTest {
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
         MolecularTestFactory.ihcTest(
-            test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+            item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }
