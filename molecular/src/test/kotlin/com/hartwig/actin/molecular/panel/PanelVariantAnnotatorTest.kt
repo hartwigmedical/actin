@@ -160,14 +160,7 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variants for hotspot according to CKB`() {
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
-        assertThat(annotated.isHotspot).isTrue()
-        assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-    }
-
-    @Test
-    fun `Should annotate variants for hotspot according to DOCM`() {
+    fun `Should annotate variant that is hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
             every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
             every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT_DOCM
@@ -181,7 +174,7 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variants for non-hotspot`() {
+    fun `Should annotate variant that is no hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
             every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
             every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT

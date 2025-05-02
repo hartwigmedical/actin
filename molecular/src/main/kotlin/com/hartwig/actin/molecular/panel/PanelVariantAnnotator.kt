@@ -53,7 +53,7 @@ class PanelVariantAnnotator(
         val paveAnnotations = annotateWithPave(transvarVariants)
 
         val annotatedVariants =
-            createVariants(transvarVariants, paveAnnotations, variantExtractions).map { annotateWithGeneAlteration(it) }
+            createVariants(transvarVariants, paveAnnotations, variantExtractions).map { annotateWithVariantAlteration(it) }
         return annotateWithDriverLikelihood(annotatedVariants).map { annotateWithEvidence(it) }
     }
 
@@ -243,7 +243,7 @@ class PanelVariantAnnotator(
         }
     }
 
-    private fun annotateWithGeneAlteration(variant: Variant): Variant {
+    private fun annotateWithVariantAlteration(variant: Variant): Variant {
         val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val alteration = evidenceDatabase.variantAlterationForVariant(criteria)
 

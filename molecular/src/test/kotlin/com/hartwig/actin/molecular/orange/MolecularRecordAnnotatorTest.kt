@@ -63,7 +63,7 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variant that is hotspot according to serve`() {
+    fun `Should annotate variant that is hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
             every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
@@ -77,28 +77,28 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variant that is no hotspot according to serve`() {
+    fun `Should annotate variant that is no hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
             every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
-        assertThat(annotated.isHotspot).isEqualTo(VARIANT.isHotspot)
+        assertThat(annotated.isHotspot).isFalse()
         assertThat(annotated.driverLikelihood).isEqualTo(VARIANT.driverLikelihood)
         assertThat(annotated.proteinEffect.name).isEqualTo(NON_HOTSPOT.proteinEffect.name)
         assertThat(annotated.geneRole.name).isEqualTo(NON_HOTSPOT.geneRole.name)
     }
 
     @Test
-    fun `Should annotate driver likelihood on gene level`() {
+    fun `Should reannotate driver likelihood on gene level`() {
         val variants = listOf(
             TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH),
             TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.MEDIUM),
             TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.LOW),
             TestVariantFactory.createMinimal()
         )
-        val output = annotator.annotateDriverLikelihood(variants)
+        val output = annotator.reannotateDriverLikelihood(variants)
         assertThat(output.all { it.driverLikelihood == DriverLikelihood.HIGH }).isTrue()
     }
 }
