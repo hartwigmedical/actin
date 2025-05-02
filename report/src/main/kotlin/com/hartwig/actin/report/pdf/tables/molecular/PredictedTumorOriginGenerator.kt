@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -17,7 +18,8 @@ private const val PADDING_RIGHT = 25
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : TableGenerator {
 
     override fun title(): String {
-        return "Predicted tumor origin"
+        val cuppaModeIsWGTS = if (isWGTS()) " (WGTS)" else ""
+        return "Predicted tumor origin${cuppaModeIsWGTS}"
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -65,6 +67,14 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             addClassifierRow(
                 "(3) Driver genes and passenger characteristics", predictions, CupPrediction::featureClassifier, table
             )
+            if (isWGTS()){
+                addClassifierRow(
+                    "(4) Gene expression", predictions, CupPrediction::expressionPairWiseClassifier, table
+                )
+                addClassifierRow(
+                    "(5) Alternative splice junctions", predictions, CupPrediction::altSjCohortClassifier, table
+                )
+            }
             table.addCell(
                 Cells.createSpanningSubNote(
                     String.format(
@@ -78,15 +88,19 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
     }
 
     private fun addClassifierRow(
-        classifierText: String, predictions: List<CupPrediction>, classifierFunction: (CupPrediction) -> Double, table: Table
+        classifierText: String, predictions: List<CupPrediction>, classifierFunction: (CupPrediction) -> Double?, table: Table
     ) {
         table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
         predictions
             .asSequence()
             .map(classifierFunction)
-            .map(Formats::percentage)
+            .map { it?.let(Formats::percentage) ?: "N/A" }
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
         repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
+    }
+
+    private fun isWGTS(): Boolean {
+        return molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS
     }
 }
