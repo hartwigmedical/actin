@@ -74,8 +74,8 @@ class StandardTumorDetailsExtractor(
             hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
             hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions),
             hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions, true),
-            hasCnsLesions = determineCnsLesions(hasBrainOrGliomaTumor, lesions).first,
-            hasActiveCnsLesions = determineCnsLesions(hasBrainOrGliomaTumor, lesions).second,
+            hasCnsLesions = deriveCnsLesions(hasBrainOrGliomaTumor, lesions).first,
+            hasActiveCnsLesions = deriveCnsLesions(hasBrainOrGliomaTumor, lesions).second,
             hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
             hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
             rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
@@ -89,7 +89,7 @@ class StandardTumorDetailsExtractor(
     private fun hasBrainLesions(lesions: List<LesionLocationConfig>, active: Boolean? = null) =
         if (active == true) hasLesions(lesions, LesionLocationCategory.BRAIN, true) else hasLesions(lesions, LesionLocationCategory.BRAIN)
 
-    private fun determineCnsLesions(hasBrainOrGliomaTumor: Boolean, lesions: List<LesionLocationConfig>): Pair<Boolean?, Boolean?> {
+    private fun deriveCnsLesions(hasBrainOrGliomaTumor: Boolean, lesions: List<LesionLocationConfig>): Pair<Boolean?, Boolean?> {
         val hasCnsLesions = if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null
         val hasActiveCnsLesions = if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null
         return if (hasBrainOrGliomaTumor) Pair(false, false) else Pair(hasCnsLesions, hasActiveCnsLesions)

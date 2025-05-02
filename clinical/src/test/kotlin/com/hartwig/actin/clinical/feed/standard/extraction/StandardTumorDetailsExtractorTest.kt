@@ -207,6 +207,37 @@ class StandardTumorDetailsExtractorTest {
     }
 
     @Test
+    fun `Should set (active) brain and (active) CNS lesions to false in case of primary brain tumor`() {
+        val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
+            every { find("Brain | tumorType") } returns setOf(
+                PrimaryTumorConfig(
+                    input = "Brain | tumorType",
+                    doids = setOf(DOID),
+                    primaryTumorLocation = "Brain",
+                    primaryTumorSubLocation = TUMOR_SUB_LOCATION,
+                    primaryTumorType = TUMOR_TYPE,
+                    primaryTumorSubType = TUMOR_SUB_TYPE,
+                    ignore = false,
+                    primaryTumorExtraDetails = "tumorExtraDetails"
+                )
+            )
+        }
+        val extractor = StandardTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
+        val result =
+            extractor.extract(EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorLocation = "Brain")))
+        assertThat(result.extracted).isEqualTo(
+            TUMOR_DETAILS.copy(
+                primaryTumorLocation = "Brain",
+                hasBrainLesions = false,
+                hasActiveBrainLesions = false,
+                hasCnsLesions = false,
+                hasActiveCnsLesions = false,
+            )
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
     fun `Should extract raw pathology report text from patient record if provided`() {
         setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG)
         val base = EHR_PATIENT_RECORD
