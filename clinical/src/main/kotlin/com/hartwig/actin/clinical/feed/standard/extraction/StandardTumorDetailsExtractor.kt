@@ -65,19 +65,15 @@ class StandardTumorDetailsExtractor(
         lesions: List<LesionLocationConfig>
     ) = TumorDetails(
         primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
-        primaryTumorSubLocation = null,
         primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
-        primaryTumorSubType = null,
         doids = emptySet(),
         stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
-        derivedStages = null,
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
         hasBrainLesions = if (hasBrainOrGliomaTumor(
                 ehrPatientRecord.tumorDetails.tumorLocation,
                 ehrPatientRecord.tumorDetails.tumorType
             )
         ) false else hasBrainLesions(lesions),
-        hasSuspectedBrainLesions = null,
         hasActiveBrainLesions = if (hasBrainOrGliomaTumor(
                 ehrPatientRecord.tumorDetails.tumorLocation,
                 ehrPatientRecord.tumorDetails.tumorType
@@ -88,23 +84,13 @@ class StandardTumorDetailsExtractor(
                 ehrPatientRecord.tumorDetails.tumorType
             )
         ) false else if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
-        hasSuspectedCnsLesions = null,
         hasActiveCnsLesions = if (hasBrainOrGliomaTumor(
                 ehrPatientRecord.tumorDetails.tumorLocation,
                 ehrPatientRecord.tumorDetails.tumorType
             )
         ) false else if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
-        hasSuspectedBoneLesions = null,
         hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
-        hasSuspectedLiverLesions = null,
-        hasLungLesions = null,
-        hasSuspectedLungLesions = null,
-        hasLymphNodeLesions = null,
-        hasSuspectedLymphNodeLesions = null,
-        otherLesions = null,
-        otherSuspectedLesions = null,
-        biopsyLocation = null,
         rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
     )
 

@@ -101,7 +101,6 @@ class TumorDetailsExtractor(
             otherLesions = otherLesions,
             otherSuspectedLesions = otherSuspectedLesions,
             biopsyLocation = curatedBiopsyLocation?.config()?.location,
-            rawPathologyReport = null
         )
 
         val tumorDetailsWithDerivedStages = tumorDetails.copy(derivedStages = tumorStageDeriver.derive(tumorDetails))
