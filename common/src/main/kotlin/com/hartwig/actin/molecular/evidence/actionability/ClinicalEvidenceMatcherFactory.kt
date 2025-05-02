@@ -20,10 +20,11 @@ class ClinicalEvidenceMatcherFactory(
         val curatedTrials = trials
             .filter { it.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE }
             .mapNotNull { trial -> removeNonApplicableMolecularCriteria(trial) }
-
-        val personalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
-
-        return create(personalizedActionabilityFactory, filteredEvidences, curatedTrials)
+        return create(
+            ClinicalEvidenceFactory(EvidenceCancerTypeResolver.create(doidModel, tumorDoids)),
+            filteredEvidences,
+            curatedTrials
+        )
     }
 
     private fun isMolecularCriteriumApplicable(molecularCriterium: MolecularCriterium): Boolean {
@@ -49,7 +50,7 @@ class ClinicalEvidenceMatcherFactory(
     }
 
     private fun create(
-        personalizedActionabilityFactory: PersonalizedActionabilityFactory,
+        clinicalEvidenceFactory: ClinicalEvidenceFactory,
         evidences: List<EfficacyEvidence>,
         trials: List<ActionableTrial>
     ): ClinicalEvidenceMatcher {
@@ -62,7 +63,7 @@ class ClinicalEvidenceMatcherFactory(
         val signatureEvidence = SignatureEvidence.create(evidences, trials)
 
         return ClinicalEvidenceMatcher(
-            personalizedActionabilityFactory = personalizedActionabilityFactory,
+            clinicalEvidenceFactory = clinicalEvidenceFactory,
             variantEvidence = variantEvidence,
             copyNumberEvidence = copyNumberEvidence,
             disruptionEvidence = disruptionEvidence,

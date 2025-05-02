@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
@@ -8,16 +9,19 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val TREATMENT = "treatment"
 
 class TreatmentEvidenceFunctionsTest {
 
     private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level")
-    private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "offLabel category level", isOnLabel = false)
+    private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(
+        treatment = "offLabel category level",
+        cancerTypeMatchApplicability = CancerTypeMatchApplicability.OTHER_TYPE
+    )
     private val offLabelCategoryLevelB = offLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
     private val onLabelCategoryLevelB = onLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
     private val onLabelNonCategoryLevelA = onLabelCategoryLevelA.copy(
@@ -134,7 +138,10 @@ class TreatmentEvidenceFunctionsTest {
         )
         val levelBCategory = levelACategory.copy(evidenceLevel = EvidenceLevel.B)
         val levelBNonCategory = levelACategory.copy(
-            molecularMatch = levelACategory.molecularMatch.copy(sourceEvent = "nonCat event", sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION),
+            molecularMatch = levelACategory.molecularMatch.copy(
+                sourceEvent = "nonCat event",
+                sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
+            ),
             evidenceLevel = EvidenceLevel.B
         )
         val levelCNonCategory = levelBNonCategory.copy(evidenceLevel = EvidenceLevel.C)
@@ -199,7 +206,8 @@ class TreatmentEvidenceFunctionsTest {
         evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
         matchedCancerType: String = "",
     ): TreatmentEvidence {
-        return TestTreatmentEvidenceFactory.create(treatment = treatment,
+        return TestTreatmentEvidenceFactory.create(
+            treatment = treatment,
             isOnLabel = isOnLabel,
             evidenceLevel = evidenceLevel,
             evidenceDirection = direction,
@@ -208,6 +216,7 @@ class TreatmentEvidenceFunctionsTest {
             evidenceType = evidenceType,
             sourceEvent = sourceEvent,
             evidenceLevelDetails = evidenceLevelDetails,
-            matchedCancerType = matchedCancerType)
+            matchedCancerType = matchedCancerType
+        )
     }
 }

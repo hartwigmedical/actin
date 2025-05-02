@@ -1,9 +1,9 @@
-package com.hartwig.actin.algo.evidence
+package com.hartwig.actin.treatment
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.TumorMatch
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 
 data class Score(
     val event: String,
@@ -22,14 +22,14 @@ data class Score(
 class TreatmentScorer {
 
     fun score(treatment: TreatmentEvidence): Score {
-        val tumorMatch = when (treatment.tumorMatch) {
-            TumorMatch.SPECIFIC -> com.hartwig.actin.algo.evidence.TumorMatch.PATIENT
-            TumorMatch.AGNOSTIC -> com.hartwig.actin.algo.evidence.TumorMatch.ALL
-            TumorMatch.OFF -> com.hartwig.actin.algo.evidence.TumorMatch.ANY
+        val cancerTypeApplicability = when (treatment.cancerTypeMatchApplicability) {
+            CancerTypeMatchApplicability.SPECIFIC_TYPE -> TumorMatch.PATIENT
+            CancerTypeMatchApplicability.ALL_TYPES -> TumorMatch.ALL
+            CancerTypeMatchApplicability.OTHER_TYPE -> TumorMatch.ANY
         }
         val exactVariant = if (treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()) VariantMatch.CATEGORY else VariantMatch.EXACT
         val config = create()
-        val scoringMatch = ScoringMatch(tumorMatch, exactVariant)
+        val scoringMatch = ScoringMatch(cancerTypeApplicability, exactVariant)
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
         val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
         val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0

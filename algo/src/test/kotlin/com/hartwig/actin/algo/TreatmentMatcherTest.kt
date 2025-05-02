@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.calendar.CurrentDateProvider
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evidence.TreatmentRanker
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
@@ -60,8 +59,7 @@ class TreatmentMatcherTest {
         CurrentDateProvider(),
         EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
         null,
-        MAX_AGE,
-        TreatmentRanker()
+        MAX_AGE
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
@@ -113,8 +111,7 @@ class TreatmentMatcherTest {
             CurrentDateProvider(),
             EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
             null,
-            MAX_AGE,
-            TreatmentRanker()
+            MAX_AGE
         )
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")

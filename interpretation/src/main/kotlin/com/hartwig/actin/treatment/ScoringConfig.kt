@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evidence
+package com.hartwig.actin.treatment
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 

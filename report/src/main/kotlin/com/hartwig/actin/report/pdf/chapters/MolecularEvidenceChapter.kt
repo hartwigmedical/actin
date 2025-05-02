@@ -27,7 +27,6 @@ class MolecularEvidenceChapter(val report: Report, override val include: Boolean
         addChapterTitle(document)
         addMolecularEvidenceTable(document)
         addEfficacyDescriptionTable(document)
-        if (report.config.includeTreatmentEvidenceRanking) addTreatmentRankingTable(document)
     }
 
     private fun addMolecularEvidenceTable(document: Document) {
@@ -44,11 +43,5 @@ class MolecularEvidenceChapter(val report: Report, override val include: Boolean
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
-
-    private fun addTreatmentRankingTable(document: Document) {
-        val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = TreatmentRankingGenerator(ranking, contentWidth())
-        addGenerators(listOf(generator), table, true)
-        document.add(table)
-    }
+    
 }

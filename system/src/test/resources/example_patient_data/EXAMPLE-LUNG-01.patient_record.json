@@ -390,7 +390,7 @@
                       "matchedCancerType": "Lung non-small cell carcinoma",
                       "excludedCancerSubTypes": []
                     },
-                    "isOnLabel": true,
+                    "cancerTypeMatchApplicability": "SPECIFIC_TYPE",
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -414,7 +414,7 @@
                       "matchedCancerType": "Lung non-small cell carcinoma",
                       "excludedCancerSubTypes": []
                     },
-                    "isOnLabel": true,
+                    "cancerTypeMatchApplicability": "SPECIFIC_TYPE",
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -555,7 +555,7 @@
                       "matchedCancerType": "Lung non-small cell carcinoma",
                       "excludedCancerSubTypes": []
                     },
-                    "isOnLabel": true,
+                    "cancerTypeMatchApplicability": "SPECIFIC_TYPE",
                     "evidenceLevel": "D",
                     "evidenceLevelDetails": "CASE_REPORTS_SERIES",
                     "evidenceDirection": {

@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
@@ -14,7 +15,6 @@ private const val MATCHING_DOID = "matching doid"
 object TestClinicalEvidenceMatcherFactory {
 
     fun createProper(): ClinicalEvidenceMatcher {
-        val personalizedActionabilityFactory = PersonalizedActionabilityFactory(setOf(MATCHING_DOID))
 
         val evidences = listOf(
             TestServeEvidenceFactory.createEvidenceForHotspot(),
@@ -67,7 +67,12 @@ object TestClinicalEvidenceMatcherFactory {
         )
 
         return ClinicalEvidenceMatcher(
-            personalizedActionabilityFactory = personalizedActionabilityFactory,
+            clinicalEvidenceFactory = ClinicalEvidenceFactory(
+                EvidenceCancerTypeResolver.create(
+                    TestDoidModelFactory.createMinimalTestDoidModel(),
+                    setOf(MATCHING_DOID)
+                )
+            ),
             variantEvidence = VariantEvidence.create(evidences, trials),
             copyNumberEvidence = CopyNumberEvidence.create(evidences, trials),
             disruptionEvidence = DisruptionEvidence.create(evidences, trials),

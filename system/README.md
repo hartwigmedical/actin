@@ -32,9 +32,9 @@ When making a reporting change, the workflow is as follows:
 - Developer should check that the differences match up with the change they intended to make and nothing else. The text comparison will be
   seen
   directly in the test result. The image diffs can be found in `target/test-classes/EXAMPLE.actin.pdf.diff.*`
-    - If something unexpected changes, fix it.
-    - When only the intended change, we simply copy the new report from `target/test-classes` into the `example_reports` directory and the
-      test passes.
+- If something unexpected changes, fix it.
+- When only the intended change, we simply copy the new report from `target/test-classes` into the `example_reports` directory and the
+  test passes.
 
 N.B.: This test also depends on the locale of the JVM it is running under. If your test passes locally but not on the build
 server, or under Maven but not Intellij, check the versions of the involved JVMs as locale-related default behaviour sometimes

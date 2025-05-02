@@ -8,6 +8,7 @@ import com.itextpdf.layout.element.Table
 
 class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentEvidenceRanking, private val width: Float) : TableGenerator {
     override fun title() = "Treatment ranking"
+    override fun forceKeepTogether() = false
 
     override fun contents(): Table {
         val columnWidth = width / 3

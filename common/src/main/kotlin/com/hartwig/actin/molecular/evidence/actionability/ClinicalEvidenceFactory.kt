@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
@@ -12,7 +13,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.TumorMatch
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
@@ -20,32 +20,22 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.time.LocalDate
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
-object ClinicalEvidenceFactory {
+class ClinicalEvidenceFactory(private val cancerTypeResolver: EvidenceCancerTypeResolver) {
 
-    fun create(
-        tumorSpecificEvidence: List<EfficacyEvidence>,
-        tumorAgnosticEvidence: List<EfficacyEvidence>,
-        offTumorEvidences: List<EfficacyEvidence>,
-        matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
-    ): ClinicalEvidence {
-
+    fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
-            treatmentEvidence = convertToTreatmentEvidences(
-                tumorMatch = TumorMatch.SPECIFIC,
-                evidences = tumorSpecificEvidence
-            ) + convertToTreatmentEvidences(
-                tumorMatch = TumorMatch.AGNOSTIC,
-                evidences = tumorAgnosticEvidence
-            ) + convertToTreatmentEvidences(tumorMatch = TumorMatch.OFF, offTumorEvidences),
-            eligibleTrials = convertToExternalTrials(matchingCriteriaAndIndicationsPerEligibleTrial)
+            treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches),
+            eligibleTrials = convertToExternalTrials(determineOnLabelTrials(actionabilityMatch.matchingCriteriaPerTrialMatch))
         )
     }
 
-    private fun convertToTreatmentEvidences(tumorMatch: TumorMatch, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
+    private fun convertToTreatmentEvidences(
+        evidences: List<EfficacyEvidence>
+    ): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
             val (evidenceType, event) = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
             createTreatmentEvidence(
-                tumorMatch,
+                cancerTypeResolver.resolve(evidence.indication()),
                 evidence,
                 event.sourceDate(),
                 event.sourceEvent(),
@@ -56,7 +46,7 @@ object ClinicalEvidenceFactory {
     }
 
     private fun createTreatmentEvidence(
-        tumorMatch: TumorMatch,
+        cancerTypeApplicability: CancerTypeMatchApplicability,
         evidence: EfficacyEvidence,
         sourceDate: LocalDate,
         sourceEvent: String,
@@ -65,7 +55,7 @@ object ClinicalEvidenceFactory {
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
-            tumorMatch = tumorMatch,
+            cancerTypeMatchApplicability = cancerTypeApplicability,
             molecularMatch = MolecularMatchDetails(
                 sourceDate = sourceDate,
                 sourceEvent = sourceEvent,
@@ -88,6 +78,15 @@ object ClinicalEvidenceFactory {
             efficacyDescription = evidence.efficacyDescription()
         )
     }
+
+    private fun determineOnLabelTrials(matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>):
+            Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
+        return matchingCriteriaPerTrialMatch.mapValues { (trial, criteria) ->
+            criteria to trial.indications().filter { cancerTypeResolver.resolve(it) == CancerTypeMatchApplicability.SPECIFIC_TYPE }.toSet()
+        }
+            .filter { (_, criteriaAndIndications) -> criteriaAndIndications.second.isNotEmpty() }
+    }
+
 
     private fun convertToExternalTrials(
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
