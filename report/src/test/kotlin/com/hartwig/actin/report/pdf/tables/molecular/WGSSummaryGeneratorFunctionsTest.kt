@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -23,13 +24,15 @@ class WGSSummaryGeneratorFunctionsTest {
             snvPairwiseClassifier = 0.979,
             genomicPositionClassifier = 0.99,
             featureClassifier = 0.972,
+            cuppaMode = CuppaMode.WGS
         ),
         CupPrediction(
             cancerType = "Lung",
             likelihood = 0.20,
             snvPairwiseClassifier = 0.0009,
             genomicPositionClassifier = 0.011,
-            featureClassifier = 0.0102
+            featureClassifier = 0.0102,
+            cuppaMode = CuppaMode.WGS
         ),
     )
     private val inconclusiveCharacteristics =

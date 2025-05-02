@@ -41,7 +41,6 @@ object EhrTestData {
         tumorStageDate = LocalDate.of(2024, 2, 29)
     )
 
-
     fun createEhrTreatmentHistory() = ProvidedTreatmentHistory(
         treatmentName = TREATMENT_NAME,
         administeredCycles = 1,

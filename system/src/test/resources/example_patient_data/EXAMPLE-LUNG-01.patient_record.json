@@ -20,19 +20,13 @@
     "derivedStages": null,
     "hasMeasurableDisease": true,
     "hasBrainLesions": false,
-    "brainLesionsCount": null,
     "hasActiveBrainLesions": false,
     "hasCnsLesions": false,
-    "cnsLesionsCount": null,
     "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
-    "boneLesionsCount": null,
     "hasLiverLesions": true,
-    "liverLesionsCount": 1,
     "hasLungLesions": true,
-    "lungLesionsCount": 1,
     "hasLymphNodeLesions": false,
-    "lymphNodeLesionsCount": null,
     "otherLesions": [],
     "biopsyLocation": "Lung",
     "rawPathologyReport": null
@@ -789,14 +783,16 @@
                 "likelihood": 0.98,
                 "snvPairwiseClassifier": 0.6,
                 "genomicPositionClassifier": 0.7,
-                "featureClassifier": 0.8
+                "featureClassifier": 0.8,
+                "cuppaMode": "WGS"
               },
               {
                 "cancerType": "Colorectum/Small intestine/Appendix",
                 "likelihood": 0.02,
                 "snvPairwiseClassifier": 0.01,
                 "genomicPositionClassifier": 0.02,
-                "featureClassifier": 0.03
+                "featureClassifier": 0.03,
+                "cuppaMode": "WGS"
               }
             ]
           },
