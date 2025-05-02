@@ -64,7 +64,8 @@ class StandardTumorDetailsExtractor(
         ehrPatientRecord: ProvidedPatientRecord,
         lesions: List<LesionLocationConfig>
     ): TumorDetails {
-        val hasBrainOrGliomaTumor = ehrPatientRecord.tumorDetails.tumorLocation == "Brain" || ehrPatientRecord.tumorDetails.tumorType == "Glioma"
+        val hasBrainOrGliomaTumor =
+            ehrPatientRecord.tumorDetails.tumorLocation == "Brain" || ehrPatientRecord.tumorDetails.tumorType == "Glioma"
         return TumorDetails(
             primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
             primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
@@ -73,8 +74,8 @@ class StandardTumorDetailsExtractor(
             hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
             hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions),
             hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions, true),
-            hasCnsLesions = if (hasBrainOrGliomaTumor) false else if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
-            hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
+            hasCnsLesions = determineCnsLesions(hasBrainOrGliomaTumor, lesions).first,
+            hasActiveCnsLesions = determineCnsLesions(hasBrainOrGliomaTumor, lesions).second,
             hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
             hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
             rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
@@ -87,6 +88,12 @@ class StandardTumorDetailsExtractor(
 
     private fun hasBrainLesions(lesions: List<LesionLocationConfig>, active: Boolean? = null) =
         if (active == true) hasLesions(lesions, LesionLocationCategory.BRAIN, true) else hasLesions(lesions, LesionLocationCategory.BRAIN)
+
+    private fun determineCnsLesions(hasBrainOrGliomaTumor: Boolean, lesions: List<LesionLocationConfig>): Pair<Boolean?, Boolean?> {
+        val hasCnsLesions = if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null
+        val hasActiveCnsLesions = if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null
+        return if (hasBrainOrGliomaTumor) Pair(false, false) else Pair(hasCnsLesions, hasActiveCnsLesions)
+    }
 
     private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
         val categories = LesionLocationCategory.entries.toSet().map { e -> e.name.uppercase() }
