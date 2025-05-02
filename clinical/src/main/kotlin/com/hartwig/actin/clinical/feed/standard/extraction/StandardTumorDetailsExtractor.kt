@@ -63,39 +63,22 @@ class StandardTumorDetailsExtractor(
     private fun tumorDetails(
         ehrPatientRecord: ProvidedPatientRecord,
         lesions: List<LesionLocationConfig>
-    ) = TumorDetails(
-        primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
-        primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
-        doids = emptySet(),
-        stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
-        hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
-        hasBrainLesions = if (hasBrainOrGliomaTumor(
-                ehrPatientRecord.tumorDetails.tumorLocation,
-                ehrPatientRecord.tumorDetails.tumorType
-            )
-        ) false else hasBrainLesions(lesions),
-        hasActiveBrainLesions = if (hasBrainOrGliomaTumor(
-                ehrPatientRecord.tumorDetails.tumorLocation,
-                ehrPatientRecord.tumorDetails.tumorType
-            )
-        ) false else hasBrainLesions(lesions, true),
-        hasCnsLesions = if (hasBrainOrGliomaTumor(
-                ehrPatientRecord.tumorDetails.tumorLocation,
-                ehrPatientRecord.tumorDetails.tumorType
-            )
-        ) false else if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
-        hasActiveCnsLesions = if (hasBrainOrGliomaTumor(
-                ehrPatientRecord.tumorDetails.tumorLocation,
-                ehrPatientRecord.tumorDetails.tumorType
-            )
-        ) false else if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
-        hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
-        hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
-        rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
-    )
-
-    private fun hasBrainOrGliomaTumor(tumorLocation: String, tumorType: String): Boolean {
-        return (tumorLocation == "Brain" || tumorType == "Glioma")
+    ): TumorDetails {
+        val hasBrainOrGliomaTumor = ehrPatientRecord.tumorDetails.tumorLocation == "Brain" || ehrPatientRecord.tumorDetails.tumorType == "Glioma"
+        return TumorDetails(
+            primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
+            primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
+            doids = emptySet(),
+            stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
+            hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
+            hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions),
+            hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions, true),
+            hasCnsLesions = if (hasBrainOrGliomaTumor) false else if (hasBrainLesions(lesions)) hasBrainLesions(lesions) else null,
+            hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else if (hasBrainLesions(lesions, true)) hasBrainLesions(lesions, true) else null,
+            hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
+            hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
+            rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
+        )
     }
 
     private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory, active: Boolean? = null): Boolean {
