@@ -35,11 +35,13 @@ class EligibleApprovedTreatmentGeneratorTest {
                             listOf(
                                 CupPrediction(
                                     "colorectal",
-                                    0.9,
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    cuppaMode = CuppaMode.WGS
+                                    0.99,
+                                    0.98,
+                                    0.96,
+                                    0.84,
+                                    0.82,
+                                    0.93,
+                                    CuppaMode.WGTS
                                 )
                             )
                         )

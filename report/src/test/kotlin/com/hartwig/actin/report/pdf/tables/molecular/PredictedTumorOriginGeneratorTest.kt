@@ -17,14 +17,14 @@ class PredictedTumorOriginGeneratorTest {
                 predictedTumorOrigin = PredictedTumorOrigin(
                     listOf(
                         CupPrediction(
-                            "",
-                            20.0,
-                            0.0,
-                            0.0,
-                            0.0,
-                            0.0,
-                            0.0,
-                            cuppaMode = CuppaMode.WGTS
+                            "Melanoma",
+                            0.99,
+                            0.98,
+                            0.96,
+                            0.84,
+                            0.82,
+                            0.93,
+                            CuppaMode.WGTS
                         )
                     )
                 )
@@ -35,8 +35,8 @@ class PredictedTumorOriginGeneratorTest {
         assertThat(table.title()).isEqualTo("Predicted tumor origin (WGTS)")
 
         assertThat(getCellContents(table.contents(), 5, 0)).isEqualTo("(4) Gene expression")
-        assertThat(getCellContents(table.contents(), 5, 1)).isEqualTo("0%")
+        assertThat(getCellContents(table.contents(), 5, 1)).isEqualTo("82%")
         assertThat(getCellContents(table.contents(), 6, 0)).isEqualTo("(5) Alternative splice junctions")
-        assertThat(getCellContents(table.contents(), 5, 1)).isEqualTo("0%")
+        assertThat(getCellContents(table.contents(), 6, 1)).isEqualTo("93%")
     }
 }
