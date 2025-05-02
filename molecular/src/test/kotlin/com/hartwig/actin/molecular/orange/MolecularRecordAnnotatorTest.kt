@@ -31,10 +31,10 @@ private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 
 private val HOTSPOT =
-    TestVariantAlterationFactory.createProperVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
+    TestVariantAlterationFactory.createVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
 
 private val NON_HOTSPOT =
-    TestVariantAlterationFactory.createProperVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
+    TestVariantAlterationFactory.createVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
 
 class MolecularRecordAnnotatorTest {
 

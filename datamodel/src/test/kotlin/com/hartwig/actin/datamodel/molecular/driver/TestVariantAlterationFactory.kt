@@ -2,24 +2,12 @@ package com.hartwig.actin.datamodel.molecular.driver
 
 object TestVariantAlterationFactory {
 
-    fun createMinimalVariantAlteration(
-        gene: String
-    ): VariantAlteration {
-        return object : VariantAlteration {
-            override val gene: String = gene
-            override val geneRole: GeneRole = GeneRole.UNKNOWN
-            override val proteinEffect: ProteinEffect = ProteinEffect.UNKNOWN
-            override val isAssociatedWithDrugResistance: Boolean? = null
-            override val isHotspot: Boolean = false
-        }
-    }
-
-    fun createProperVariantAlteration(
+    fun createVariantAlteration(
         gene: String,
-        geneRole: GeneRole,
-        proteinEffect: ProteinEffect,
-        isAssociatedWithDrugResistance: Boolean?,
-        isHotspot: Boolean
+        geneRole: GeneRole = GeneRole.UNKNOWN,
+        proteinEffect: ProteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance: Boolean? = null,
+        isHotspot: Boolean = false
     ): VariantAlteration {
         return object : VariantAlteration {
             override val gene: String = gene

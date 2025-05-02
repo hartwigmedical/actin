@@ -44,7 +44,7 @@ class PanelAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createMinimalVariantAlteration(GENE)
+        every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
     }
     private val panelVariantAnnotator = mockk<PanelVariantAnnotator> {
         every { annotate(any()) } returns emptyList()

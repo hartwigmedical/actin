@@ -107,18 +107,17 @@ private val PAVE_ANNOTATION = PaveResponse(
 )
 
 private val HOTSPOT_CKB =
-    TestVariantAlterationFactory.createProperVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
+    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
 
-private val HOTSPOT_DOCM =
-    TestVariantAlterationFactory.createProperVariantAlteration(GENE, GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, null, true)
+private val HOTSPOT_DOCM = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = true)
 
 private val NON_HOTSPOT =
-    TestVariantAlterationFactory.createProperVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
+    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
 
 class PanelVariantAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createMinimalVariantAlteration(GENE)
+        every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
         every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT_CKB
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
@@ -170,7 +169,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variants for hotspot according to DOCM`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createMinimalVariantAlteration(GENE)
+            every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
             every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT_DOCM
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
             every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
@@ -184,7 +183,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variants for non-hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createMinimalVariantAlteration(GENE)
+            every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
             every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
             every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH

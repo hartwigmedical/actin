@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory.KNOWN_EVENT_SOURCES
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
@@ -25,16 +26,17 @@ class KnownEventResolver(
 ) {
 
     fun resolveForVariant(variantMatchCriteria: VariantMatchCriteria): VariantAlteration {
-        val serveAlteration = findHotspot(filteredKnownEvents.hotspots(), variantMatchCriteria)
+        val ckbAlteration = findHotspot(filteredKnownEvents.hotspots(), variantMatchCriteria)
             ?: findCodon(filteredKnownEvents.codons(), variantMatchCriteria)
             ?: findExon(filteredKnownEvents.exons(), variantMatchCriteria)
             ?: GeneLookup.find(aggregatedKnownGenes, variantMatchCriteria.gene)
 
-        val alteration = GeneAlterationFactory.convertAlteration(variantMatchCriteria.gene, serveAlteration)
-        val isHotspot = HotspotFunctions.isHotspot(serveAlteration)
-                || findHotspot(knownEvents.hotspots(), variantMatchCriteria) != null
+        val otherHotspots = knownEvents.hotspots().filter { it.sources().none { source -> source in KNOWN_EVENT_SOURCES } }.toSet()
 
-        return object : VariantAlteration, GeneAlteration by alteration {
+        val geneAlteration = GeneAlterationFactory.convertAlteration(variantMatchCriteria.gene, ckbAlteration)
+        val isHotspot = HotspotFunctions.isHotspot(ckbAlteration) || findHotspot(otherHotspots, variantMatchCriteria) != null
+
+        return object : VariantAlteration, GeneAlteration by geneAlteration {
             override val isHotspot: Boolean = isHotspot
         }
     }

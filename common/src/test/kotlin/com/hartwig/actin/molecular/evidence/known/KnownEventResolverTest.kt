@@ -8,73 +8,119 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.MutationType
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private const val GENE = "gene 1"
+private val HOTSPOT_MATCH = VariantMatchCriteria(
+    isReportable = true,
+    gene = GENE,
+    codingEffect = CodingEffect.MISSENSE,
+    type = VariantType.SNV,
+    chromosome = "12",
+    position = 10,
+    ref = "A",
+    alt = "T"
+)
+
 class KnownEventResolverTest {
 
     @Test
+    fun `Should resolve known event when variant is hotspot in CKB and in pipeline`() {
+        val hotspotCkb = TestServeKnownFactory.hotspotBuilder().gene(GENE).chromosome("12").position(10).ref("A").alt("T")
+            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION).sources(setOf(Knowledgebase.CKB)).build()
+        val hotspotDocm = TestServeKnownFactory.hotspotBuilder().gene(GENE).chromosome("12").position(10).ref("A").alt("T")
+            .sources(setOf(Knowledgebase.DOCM)).build()
+        val knownGene = knownGeneWithName(GENE)
+        val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb, hotspotDocm).addGenes(knownGene).build()
+        val filteredKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
+        val resolver = KnownEventResolver(knownEvents, filteredKnownEvents, knownEvents.genes())
+
+        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(
+            GENE,
+            proteinEffect = com.hartwig.actin.datamodel.molecular.driver.ProteinEffect.GAIN_OF_FUNCTION,
+            isHotspot = true
+        )
+        checkEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+    }
+
+    @Test
+    fun `Should resolve known event when variant is hotspot in CKB and in pipeline - wel in pipeline`() {
+        val hotspotDocm = TestServeKnownFactory.hotspotBuilder().gene(GENE).chromosome("12").position(10).ref("A").alt("T")
+            .sources(setOf(Knowledgebase.DOCM)).build()
+        val knownGene = knownGeneWithName(GENE)
+        val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDocm).addGenes(knownGene).build()
+        val filteredKnownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
+        val resolver = KnownEventResolver(knownEvents, filteredKnownEvents, knownEvents.genes())
+
+        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = true)
+        checkEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+    }
+
+    @Test
+    fun `Should resolve known event when variant is no hotspot in either source`() {
+        val hotspotCkb = TestServeKnownFactory.hotspotBuilder().gene(GENE).chromosome("12").position(10).ref("A").alt("T")
+            .proteinEffect(ProteinEffect.NO_EFFECT).sources(setOf(Knowledgebase.CKB)).build()
+        val knownGene = knownGeneWithName(GENE)
+        val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
+        val resolver = KnownEventResolver(knownEvents, knownEvents, knownEvents.genes())
+
+        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(
+            GENE,
+            proteinEffect = com.hartwig.actin.datamodel.molecular.driver.ProteinEffect.NO_EFFECT,
+            isHotspot = false
+        )
+        checkEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+    }
+
+    @Test
     fun `Should resolve known events for variants`() {
-        val gene = "gene 1"
-        val hotspot = TestServeKnownFactory.hotspotBuilder().gene(gene).chromosome("12").position(10).ref("A").alt("T").build()
+        val hotspot = TestServeKnownFactory.hotspotBuilder().gene(GENE).chromosome("12").position(10).ref("A").alt("T").build()
         val codon = TestServeKnownFactory.codonBuilder()
-            .gene(gene)
+            .gene(GENE)
             .chromosome("12")
             .start(9)
             .end(11)
             .applicableMutationType(MutationType.ANY)
             .build()
         val exon = TestServeKnownFactory.exonBuilder()
-            .gene(gene)
+            .gene(GENE)
             .chromosome("12")
             .start(5)
             .end(15)
             .applicableMutationType(MutationType.ANY)
             .build()
-        val knownGene = knownGeneWithName(gene)
+        val knownGene = knownGeneWithName(GENE)
         val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build()
         val filteredKnownEvents = ImmutableKnownEvents.builder().addCodons(codon).addExons(exon).addGenes(knownGene).build()
         val resolver = KnownEventResolver(knownEvents, filteredKnownEvents, knownEvents.genes())
 
-        val hotspotMatch = VariantMatchCriteria(
-            isReportable = true,
-            gene = gene,
-            codingEffect = CodingEffect.MISSENSE,
-            type = VariantType.SNV,
-            chromosome = "12",
-            position = 10,
-            ref = "A",
-            alt = "T"
-        )
+        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = true)
+        val noHotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = false)
 
-        val alterationHotspot =
-            TestVariantAlterationFactory.createProperVariantAlteration(gene, GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, null, true)
-        val alterationNoHotspot =
-            TestVariantAlterationFactory.createProperVariantAlteration(gene, GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, null, false)
+        checkEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
 
-        checkEquality(resolver.resolveForVariant(hotspotMatch), alterationHotspot)
+        val codonMatch = HOTSPOT_MATCH.copy(position = 9)
+        checkEquality(resolver.resolveForVariant(codonMatch), noHotspotAlteration)
 
-        val codonMatch = hotspotMatch.copy(position = 9)
-        checkEquality(resolver.resolveForVariant(codonMatch), alterationNoHotspot)
+        val exonMatch = HOTSPOT_MATCH.copy(position = 6)
+        checkEquality(resolver.resolveForVariant(exonMatch), noHotspotAlteration)
 
-        val exonMatch = hotspotMatch.copy(position = 6)
-        checkEquality(resolver.resolveForVariant(exonMatch), alterationNoHotspot)
-
-        val geneMatch = hotspotMatch.copy(position = 1)
+        val geneMatch = HOTSPOT_MATCH.copy(position = 1)
         assertThat(resolver.resolveForVariant(geneMatch)).isNotNull
 
-        val wrongGene = hotspotMatch.copy(gene = "other")
-        checkEquality(resolver.resolveForVariant(wrongGene), TestVariantAlterationFactory.createMinimalVariantAlteration("other"))
+        val wrongGene = HOTSPOT_MATCH.copy(gene = "other")
+        checkEquality(resolver.resolveForVariant(wrongGene), TestVariantAlterationFactory.createVariantAlteration("other"))
     }
 
     @Test
