@@ -8,14 +8,14 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.evidence.actionability.ActionableToEvidences
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
-import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcherFactory
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
+import com.hartwig.actin.molecular.evidence.actionability.DefaultClinicalEvidenceMatcherFactory
 import com.hartwig.actin.molecular.evidence.actionability.DisruptionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
@@ -43,22 +43,26 @@ class ResistanceEvidenceMatcher(
         }.distinctBy { it.event }
     }
 
+
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTests = molecularHistory.molecularTests
 
-        val variantEvidence = VariantEvidence.create(evidences = listOf(evidence), trials = emptyList())
-        val copyNumberEvidence = CopyNumberEvidence.create(evidences = listOf(evidence), trials = emptyList())
-        val disruptionEvidence = DisruptionEvidence.create(evidences = listOf(evidence), trials = emptyList())
-        val homDisEvidence = HomozygousDisruptionEvidence.create(evidences = listOf(evidence), trials = emptyList())
-        val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
+        // seems like we should need an actionableToEvidences from each MolecularTest in the history? so we need to pass it in? TODO
+        val actionableToEvidences: ActionableToEvidences = emptyMap()
+
+        val variantEvidence = VariantEvidence.create(actionableToEvidences, trials = emptyList())
+        val copyNumberEvidence = CopyNumberEvidence.create(actionableToEvidences, trials = emptyList())
+        val disruptionEvidence = DisruptionEvidence.create(actionableToEvidences, trials = emptyList())
+        val homDisEvidence = HomozygousDisruptionEvidence.create(actionableToEvidences, trials = emptyList())
+        val fusionEvidence = FusionEvidence.create(actionableToEvidences, trials = emptyList())
 
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                            variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
+//                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(it).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
@@ -66,8 +70,8 @@ class ResistanceEvidenceMatcher(
                 codons().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                            variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
+//                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(it).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
@@ -75,8 +79,8 @@ class ResistanceEvidenceMatcher(
                 exons().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                            variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
+//                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(it).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
@@ -85,12 +89,12 @@ class ResistanceEvidenceMatcher(
                     molecularTests.any { molecularTest ->
                         with(molecularTest.drivers) {
                             val variantMatch = variants.any {
-                                val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                                variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
+//                                val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                                variantEvidence.findMatches(it).evidenceMatches.isNotEmpty()
                             }
                             val fusionMatch = fusions.any {
-                                val fusionCriteria = MatchingCriteriaFunctions.createFusionCriteria(it)
-                                fusionEvidence.findMatches(fusionCriteria).evidenceMatches.isNotEmpty()
+//                                val fusionCriteria = MatchingCriteriaFunctions.createFusionCriteria(it)
+                                fusionEvidence.findMatches(it).evidenceMatches.isNotEmpty()
                             }
                             variantMatch || fusionMatch ||
                                     copyNumbers.any { copyNumberEvidence.findMatches(it).evidenceMatches.isNotEmpty() } ||
@@ -103,8 +107,8 @@ class ResistanceEvidenceMatcher(
                 fusions().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.fusions.any {
-                            val fusionCriteria = MatchingCriteriaFunctions.createFusionCriteria(it)
-                            fusionEvidence.findMatches(fusionCriteria).evidenceMatches.isNotEmpty()
+//                            val fusionCriteria = MatchingCriteriaFunctions.createFusionCriteria(it)
+                            fusionEvidence.findMatches(it).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
@@ -178,8 +182,10 @@ class ResistanceEvidenceMatcher(
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
 
-            val clinicalEvidenceMatcherFactory = ClinicalEvidenceMatcherFactory(doidModel, tumorDoids)
-            val actionableEventMatcher = clinicalEvidenceMatcherFactory.create(evidences = onLabelNonPositiveEvidence, trials = emptyList())
+            val clinicalEvidenceMatcherFactory =
+                DefaultClinicalEvidenceMatcherFactory(doidModel, tumorDoids, evidences = onLabelNonPositiveEvidence, trials = emptyList())
+            val actionableEventMatcher =
+                clinicalEvidenceMatcherFactory.create(molecularTest = molecularHistory.molecularTests.first())  // TODO hack just passing in first test, need to reorganize
 
             return ResistanceEvidenceMatcher(onLabelNonPositiveEvidence, treatmentDatabase, actionableEventMatcher, molecularHistory)
         }

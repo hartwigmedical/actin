@@ -19,8 +19,15 @@ private val OTHER_TRIAL = TestServeTrialFactory.createTrialForCharacteristic(Tum
 
 class VirusEvidenceTest {
 
+    private val hpv = TestMolecularFactory.minimalVirus().copy(type = VirusType.HUMAN_PAPILLOMA_VIRUS, isReportable = true)
+    private val ebv = TestMolecularFactory.minimalVirus().copy(type = VirusType.EPSTEIN_BARR_VIRUS, isReportable = true)
+
     private val virusEvidence = VirusEvidence.create(
-        evidences = listOf(HPV_EVIDENCE, EBV_EVIDENCE, OTHER_EVIDENCE),
+//        evidences = listOf(HPV_EVIDENCE, EBV_EVIDENCE, OTHER_EVIDENCE),
+        actionableToEvidences = mapOf(
+            hpv to setOf(HPV_EVIDENCE),
+            ebv to setOf(EBV_EVIDENCE)
+        ),
         trials = listOf(HPV_TRIAL, EBV_TRIAL, OTHER_TRIAL)
     )
 

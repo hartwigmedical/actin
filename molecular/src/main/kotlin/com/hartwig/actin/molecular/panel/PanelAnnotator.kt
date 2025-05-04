@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
+import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
 
 private const val TMB_HIGH_CUTOFF = 10.0
 private const val PLOIDY = 2.0
@@ -20,10 +21,16 @@ class PanelAnnotator(
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+    private val panelEvidenceAnnotator: PanelEvidenceAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<PriorSequencingTest, PanelRecord> {
 
     override fun annotate(input: PriorSequencingTest): PanelRecord {
+//        return interpret(input)
+        return panelEvidenceAnnotator.annotate(interpret(input))
+    }
+
+    fun interpret(input: PriorSequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletedGenes)
@@ -50,7 +57,8 @@ class PanelAnnotator(
                     MicrosatelliteStability(
                         microsatelliteIndelsPerMb = null,
                         isUnstable = it,
-                        evidenceDatabase.evidenceForMicrosatelliteStatus(it)
+                        evidence = ClinicalEvidenceFactory.empty()
+//                        evidenceDatabase.evidenceForMicrosatelliteStatus(it)
                     )
                 },
                 homologousRecombination = null,
@@ -59,7 +67,8 @@ class PanelAnnotator(
                     TumorMutationalBurden(
                         score = it,
                         isHigh = isHigh,
-                        evidenceDatabase.evidenceForTumorMutationalBurdenStatus(isHigh)
+                        evidence = ClinicalEvidenceFactory.empty()
+//                        evidenceDatabase.evidenceForTumorMutationalBurdenStatus(isHigh)
                     )
                 },
                 tumorMutationalLoad = null

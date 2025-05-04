@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
@@ -7,12 +8,21 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 
-class ClinicalEvidenceMatcherFactory(
-    private val doidModel: DoidModel,
-    private val tumorDoids: Set<String>
-) {
 
-    fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): ClinicalEvidenceMatcher {
+// TODO didn't need an interface for this before, can we do without it?
+interface ClinicalEvidenceMatcherFactory {
+    fun create(molecularTest: MolecularTest): ClinicalEvidenceMatcher
+}
+
+// TODO better name than default? standard? will there be more than one?
+class DefaultClinicalEvidenceMatcherFactory(
+    private val doidModel: DoidModel,
+    private val tumorDoids: Set<String>,
+    private val evidences: List<EfficacyEvidence>,
+    private val trials: List<ActionableTrial>,
+) : ClinicalEvidenceMatcherFactory {
+
+    override fun create(molecularTest: MolecularTest): ClinicalEvidenceMatcher {
         val filteredEvidences = evidences
             .filter { it.source() == ActionabilityConstants.EVIDENCE_SOURCE }
             .filter { isMolecularCriteriumApplicable(it.molecularCriterium()) }
@@ -22,8 +32,9 @@ class ClinicalEvidenceMatcherFactory(
             .mapNotNull { trial -> removeNonApplicableMolecularCriteria(trial) }
 
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
+        val actionableToEvidences = actionableToEvidences(filteredEvidences, molecularTest)
 
-        return create(personalizedActionabilityFactory, filteredEvidences, curatedTrials)
+        return create(personalizedActionabilityFactory, filteredEvidences, curatedTrials, actionableToEvidences)
     }
 
     private fun isMolecularCriteriumApplicable(molecularCriterium: MolecularCriterium): Boolean {
@@ -48,17 +59,25 @@ class ClinicalEvidenceMatcherFactory(
         }
     }
 
+    private fun actionableToEvidences(evidences: List<EfficacyEvidence>, molecularTest: MolecularTest): ActionableToEvidences {
+        val combinedEvidenceMatcher = CombinedEvidenceMatcher(evidences)  // TODO build a factory, pay some tariffs
+        return combinedEvidenceMatcher.match(molecularTest)
+    }
+
     private fun create(
         personalizedActionabilityFactory: PersonalizedActionabilityFactory,
         evidences: List<EfficacyEvidence>,
-        trials: List<ActionableTrial>
+        trials: List<ActionableTrial>,
+        actionableToEvidences: ActionableToEvidences
     ): ClinicalEvidenceMatcher {
-        val variantEvidence = VariantEvidence.create(evidences, trials)
-        val copyNumberEvidence = CopyNumberEvidence.create(evidences, trials)
-        val disruptionEvidence = DisruptionEvidence.create(evidences, trials)
-        val homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(evidences, trials)
-        val fusionEvidence = FusionEvidence.create(evidences, trials)
-        val virusEvidence = VirusEvidence.create(evidences, trials)
+        val variantEvidence = VariantEvidence.create(actionableToEvidences, trials)
+        val copyNumberEvidence = CopyNumberEvidence.create(actionableToEvidences, trials)
+        val disruptionEvidence = DisruptionEvidence.create(actionableToEvidences, trials)
+        val homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableToEvidences, trials)
+        val fusionEvidence = FusionEvidence.create(actionableToEvidences, trials)
+        val virusEvidence = VirusEvidence.create(actionableToEvidences, trials)
+
+        // TODO: signature evidence is not matched on an event type, how do we handle a signature in combination with molecular events
         val signatureEvidence = SignatureEvidence.create(evidences, trials)
 
         return ClinicalEvidenceMatcher(
@@ -69,7 +88,7 @@ class ClinicalEvidenceMatcherFactory(
             homozygousDisruptionEvidence = homozygousDisruptionEvidence,
             fusionEvidence = fusionEvidence,
             virusEvidence = virusEvidence,
-            signatureEvidence = signatureEvidence
+            signatureEvidence = signatureEvidence,
         )
     }
 }

@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -21,9 +21,14 @@ private val INACT_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene
 private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHla()
 
 class CopyNumberEvidenceTest {
+    private val actionableToEvidences: ActionableToEvidences = mapOf(
+        create("gene 1", CopyNumberType.FULL_GAIN) to setOf(AMP_EVIDENCE_FOR_GENE, OTHER_EVIDENCE),
+        create("gene 1", CopyNumberType.LOSS) to setOf(DEL_EVIDENCE_FOR_GENE),
+        create("gene 1", CopyNumberType.NONE) to setOf(INACT_EVIDENCE_FOR_GENE),
+    )
 
     private val copyNumberEvidence = CopyNumberEvidence.create(
-        evidences = listOf(AMP_EVIDENCE_FOR_GENE, DEL_EVIDENCE_FOR_GENE, INACT_EVIDENCE_FOR_GENE, OTHER_EVIDENCE),
+        actionableToEvidences = actionableToEvidences,
         trials = listOf(AMP_TRIAL_FOR_GENE, DEL_TRIAL_FOR_GENE, INACT_TRIAL_FOR_GENE, OTHER_TRIAL)
     )
 

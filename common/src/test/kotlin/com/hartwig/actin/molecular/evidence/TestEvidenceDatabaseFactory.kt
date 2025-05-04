@@ -6,6 +6,7 @@ import com.hartwig.actin.molecular.evidence.known.TestKnownEventResolverFactory
 object TestEvidenceDatabaseFactory {
 
     fun createProperDatabase(): EvidenceDatabase {
-        return EvidenceDatabase(TestKnownEventResolverFactory.createProper(), TestClinicalEvidenceMatcherFactory.createProper())
+//        return EvidenceDatabase(TestKnownEventResolverFactory.createProper(), TestClinicalEvidenceMatcherFactory.createProper())
+        return EvidenceDatabase(TestKnownEventResolverFactory.createProper(), TestClinicalEvidenceMatcherFactory())
     }
 }

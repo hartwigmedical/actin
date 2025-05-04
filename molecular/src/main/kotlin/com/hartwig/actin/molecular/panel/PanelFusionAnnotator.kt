@@ -4,18 +4,15 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
 
 class PanelFusionAnnotator(
-    private val evidenceDatabase: EvidenceDatabase,
+//    private val evidenceDatabase: EvidenceDatabase,
     private val knownFusionCache: KnownFusionCache,
     private val ensembleDataCache: EnsemblDataCache
 ) {
@@ -24,7 +21,7 @@ class PanelFusionAnnotator(
 
     fun annotate(fusions: Set<SequencedFusion>, skippedExons: Set<SequencedSkippedExons>): List<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
-            .map { annotateFusion(it) }
+//            .map { annotateFusion(it) }
     }
 
     fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood {
@@ -118,15 +115,15 @@ class PanelFusionAnnotator(
         return transcript
     }
 
-    private fun annotateFusion(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
-        val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
-            GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
-        }
-        val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
-        val fusionWithGeneAlteration =
-            fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusionWithGeneAlteration))
-        return fusionWithGeneAlteration.copy(evidence = evidence)
-    }
+//    private fun annotateFusion(fusion: Fusion): Fusion {
+//        val knownFusion = evidenceDatabase.lookupKnownFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
+//        val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
+//            GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
+//        }
+//        val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
+//        val fusionWithGeneAlteration =
+//            fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
+//        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusionWithGeneAlteration))
+//        return fusionWithGeneAlteration.copy(evidence = evidence)
+//    }
 }

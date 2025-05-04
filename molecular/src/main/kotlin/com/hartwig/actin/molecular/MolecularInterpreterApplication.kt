@@ -24,6 +24,7 @@ import com.hartwig.actin.molecular.panel.IHCAnnotator
 import com.hartwig.actin.molecular.panel.IHCExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
+import com.hartwig.actin.molecular.panel.PanelEvidenceAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
 import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
@@ -39,13 +40,13 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
@@ -80,7 +81,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
 
         val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
+        val clinicalMolecularTests =
+            interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
@@ -159,8 +161,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val paveLite = PaveLite(ensemblDataCache, false)
 
         val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
-        val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
-        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(evidenceDatabase, ensemblDataCache)
+        val panelFusionAnnotator = PanelFusionAnnotator(knownFusionCache, ensemblDataCache)
+        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
+        val panelEvidenceAnnotator = PanelEvidenceAnnotator(
+            evidenceDatabase,
+        )
 
         val sequencingMolecularTests = interpretPriorSequencingMolecularTests(
             clinical.priorSequencingTests,
@@ -168,6 +173,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelEvidenceAnnotator,
             panelSpecifications
         )
 
@@ -186,6 +192,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+        panelEvidenceAnnotator: PanelEvidenceAnnotator,
         panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         return MolecularInterpreter(
@@ -199,6 +206,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelVariantAnnotator,
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
+                panelEvidenceAnnotator,
                 panelSpecifications
             ),
         ).run(priorSequencingTests)

@@ -35,6 +35,11 @@ object ClinicalEvidenceFactory {
         )
     }
 
+    fun empty() = ClinicalEvidence(
+        treatmentEvidence = emptySet(),
+        eligibleTrials = emptySet()
+    )
+    
     private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
             val (evidenceType, event) = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())

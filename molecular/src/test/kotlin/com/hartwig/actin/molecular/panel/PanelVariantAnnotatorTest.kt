@@ -145,8 +145,12 @@ class PanelVariantAnnotatorTest {
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { geneAlterationForVariant(any()) } returns null
         every { geneAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
+        every { clinicalEvidenceMatcher(any()) } returns mockk {
+            every { matchForVariant(any()) } returns EMPTY_MATCH
+            every { matchForVariant(VARIANT) } returns ACTIONABILITY_MATCH
+        }
+//        every { evidenceForVariant(any()) } returns EMPTY_MATCH
+//        every { evidenceForVariant(VARIANT) } returns ACTIONABILITY_MATCH
     }
     private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
         every { evaluate(any(), any(), any()) } returns null

@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,14 +26,34 @@ private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHla()
 
 class FusionEvidenceTest {
 
+    private val matchingFusion = TestMolecularFactory.createProperFusion().copy(
+        geneStart = "gene 1",
+        geneEnd = "gene 2",
+        driverType = FusionDriverType.KNOWN_PAIR,
+        fusedExonUp = 5,
+        fusedExonDown = 8,
+        isReportable = true,
+    )
+//    private val matchingFusion = FusionMatchCriteria(
+//        isReportable = true,
+//        geneStart = "gene 1",
+//        geneEnd = "gene 2",
+//        fusedExonUp = 5,
+//        fusedExonDown = 8,
+//        driverType = FusionDriverType.KNOWN_PAIR
+//    )
+
     private val fusionEvidence = FusionEvidence.create(
-        evidences = listOf(
-            FUSION_EVIDENCE_FOR_GENE,
-            DEL_EVIDENCE_FOR_GENE,
-            ANY_EVIDENCE_FOR_GENE,
-            SPECIFIC_FUSION_EVIDENCE,
-            OTHER_FUSION_EVIDENCE,
-            OTHER_EVIDENCE
+//        evidences = listOf(
+//            FUSION_EVIDENCE_FOR_GENE,
+//            DEL_EVIDENCE_FOR_GENE,
+//            ANY_EVIDENCE_FOR_GENE,
+//            SPECIFIC_FUSION_EVIDENCE,
+//            OTHER_FUSION_EVIDENCE,
+//            OTHER_EVIDENCE
+//        ),
+        actionableToEvidences = mapOf(
+            matchingFusion to setOf(FUSION_EVIDENCE_FOR_GENE)
         ),
         trials = listOf(
             FUSION_TRIAL_FOR_GENE,
@@ -43,15 +63,6 @@ class FusionEvidenceTest {
             OTHER_FUSION_TRIAL,
             OTHER_TRIAL
         )
-    )
-
-    private val matchingFusion = FusionMatchCriteria(
-        isReportable = true,
-        geneStart = "gene 1",
-        geneEnd = "gene 2",
-        fusedExonUp = 5,
-        fusedExonDown = 8,
-        driverType = FusionDriverType.KNOWN_PAIR
     )
 
     @Test

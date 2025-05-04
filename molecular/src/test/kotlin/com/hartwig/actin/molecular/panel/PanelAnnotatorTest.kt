@@ -42,7 +42,7 @@ private const val TEST_NAME = "test"
 class PanelAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
+//        every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { geneAlterationForVariant(any()) } returns null
     }
     private val panelVariantAnnotator = mockk<PanelVariantAnnotator> {
@@ -55,12 +55,15 @@ class PanelAnnotatorTest {
         every { annotate(any<Set<SequencedAmplification>>()) } returns emptyList()
     }
 
+    private val panelEvidenceAnnotator = mockk<PanelEvidenceAnnotator>()
+
     private val annotator =
         PanelAnnotator(
             evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelEvidenceAnnotator,
             PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )
 
@@ -107,8 +110,12 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate microsatellite status with evidence`() {
-        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
-        every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
+//        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
+//        every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
+        every { evidenceDatabase.clinicalEvidenceMatcher(any()) } returns mockk {
+            every { matchForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
+            every { matchForMicrosatelliteStatus(false) } returns EMPTY_MATCH
+        }
 
         val panelWithMSI = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = true))
         assertThat(panelWithMSI.characteristics.microsatelliteStability!!.evidence).isEqualTo(ON_LABEL_MATCH)
@@ -122,8 +129,12 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate tumor mutational burden with evidence`() {
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
+//        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
+//        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
+        every { evidenceDatabase.clinicalEvidenceMatcher(any()) } returns mockk {
+            every { matchForHighTumorMutationalBurden(true) } returns ON_LABEL_MATCH
+            every { matchForHighTumorMutationalBurden(false) } returns EMPTY_MATCH
+        }
 
         val panelWithHighTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 200.0))
         assertThat(panelWithHighTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(ON_LABEL_MATCH)

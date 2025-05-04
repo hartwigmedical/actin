@@ -23,7 +23,10 @@ private val OTHER_TRIAL =
 class HomozygousDisruptionEvidenceTest {
 
     private val homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(
-        evidences = listOf(ANY_EVIDENCE_FOR_GENE, AMP_EVIDENCE_FOR_GENE, INACT_EVIDENCE_FOR_GENE, OTHER_EVIDENCE),
+//        evidences = listOf(ANY_EVIDENCE_FOR_GENE, AMP_EVIDENCE_FOR_GENE, INACT_EVIDENCE_FOR_GENE, OTHER_EVIDENCE),
+        actionableToEvidences = mapOf(
+            TestMolecularFactory.minimalHomozygousDisruption() to setOf(ANY_EVIDENCE_FOR_GENE, INACT_EVIDENCE_FOR_GENE)
+        ),
         trials = listOf(ANY_TRIAL_FOR_GENE, AMP_TRIAL_FOR_GENE, INACT_TRIAL_FOR_GENE, OTHER_TRIAL)
     )
 

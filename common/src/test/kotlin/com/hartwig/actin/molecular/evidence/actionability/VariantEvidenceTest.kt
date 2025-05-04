@@ -2,11 +2,12 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
@@ -65,16 +66,37 @@ private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHla()
 
 class VariantEvidenceTest {
 
+    private val matchingVariant = TestVariantFactory.createMinimal().copy(
+        gene = "gene 1",
+        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE),
+        type = VariantType.SNV,
+        chromosome = "1",
+        position = 5,
+        ref = "A",
+        alt = "T",
+        driverLikelihood = DriverLikelihood.HIGH,
+        isReportable = true
+    )
+
     private val variantEvidence = VariantEvidence.create(
-        evidences = listOf(
-            EVIDENCE_FOR_HOTSPOT,
-            EVIDENCE_FOR_CODON,
-            EVIDENCE_FOR_EXON,
-            ACT_EVIDENCE_FOR_GENE,
-            ANY_EVIDENCE_FOR_GENE,
-            AMP_EVIDENCE_FOR_GENE,
-            OTHER_EVIDENCE
+        actionableToEvidences = mapOf(
+            matchingVariant to setOf(
+                EVIDENCE_FOR_HOTSPOT,
+                EVIDENCE_FOR_CODON,
+                EVIDENCE_FOR_EXON,
+                ACT_EVIDENCE_FOR_GENE,
+                ANY_EVIDENCE_FOR_GENE
+            )
         ),
+//        evidences = listOf(
+//            EVIDENCE_FOR_HOTSPOT,
+//            EVIDENCE_FOR_CODON,
+//            EVIDENCE_FOR_EXON,
+//            ACT_EVIDENCE_FOR_GENE,
+//            ANY_EVIDENCE_FOR_GENE,
+//            AMP_EVIDENCE_FOR_GENE,
+//            OTHER_EVIDENCE
+//        ),
         trials = listOf(
             TRIAL_FOR_HOTSPOT,
             TRIAL_FOR_CODON,
@@ -86,17 +108,6 @@ class VariantEvidenceTest {
         )
     )
 
-    private val matchingVariant = VariantMatchCriteria(
-        gene = "gene 1",
-        codingEffect = CodingEffect.MISSENSE,
-        type = VariantType.SNV,
-        chromosome = "1",
-        position = 5,
-        ref = "A",
-        alt = "T",
-        driverLikelihood = DriverLikelihood.HIGH,
-        isReportable = true
-    )
 
     @Test
     fun `Should determine evidence and trials for matching hotpot`() {
@@ -129,7 +140,9 @@ class VariantEvidenceTest {
 
     @Test
     fun `Should skip codon and exon evidence on non-matching type`() {
-        val nonMatchingType = matchingVariant.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        val nonMatchingType = matchingVariant.copy(
+            canonicalImpact = matchingVariant.canonicalImpact.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        )
 
         val matches = variantEvidence.findMatches(nonMatchingType)
         assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(

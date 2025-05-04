@@ -2,17 +2,19 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -33,12 +35,21 @@ private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
 private val FULLY_SPECIFIED_SEQUENCED_FUSION =
     SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
 
+// TODO safe to drop this?
 private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE_START,
     geneEnd = GENE_END,
     fusedExonUp = null,
     fusedExonDown = null,
+    driverType = FusionDriverType.KNOWN_PAIR
+)
+
+private val FUSION = TestMolecularFactory.createProperFusion().copy(
+    geneStart = GENE_START,
+    geneEnd = GENE_END,
+    proteinEffect = ProteinEffect.UNKNOWN,
+    isReportable = true,
     driverType = FusionDriverType.KNOWN_PAIR
 )
 
@@ -51,12 +62,32 @@ private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = FusionMatchCriteria(
     driverType = FusionDriverType.KNOWN_PAIR
 )
 
+private val FULLY_SPECIFIED_FUSION = TestMolecularFactory.createProperFusion().copy(
+    geneStart = GENE_START,
+    geneEnd = GENE_END,
+    proteinEffect = ProteinEffect.UNKNOWN,
+    isReportable = true,
+    driverType = FusionDriverType.KNOWN_PAIR
+)
+
 private val EXON_SKIP_FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE,
     geneEnd = GENE,
     fusedExonUp = FUSED_EXON_UP,
     fusedExonDown = FUSED_EXON_DOWN,
+    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
+)
+
+// TODO drop the above matching criteria, or construct from this if both needed. also, maybe createMinimalFusion()
+//  needs to be added to the test factory
+private val EXON_SKIP_FUSION = TestMolecularFactory.createProperFusion().copy(
+    geneStart = GENE,
+    geneEnd = GENE,
+    fusedExonUp = FUSED_EXON_UP,
+    fusedExonDown = FUSED_EXON_DOWN,
+    proteinEffect = ProteinEffect.UNKNOWN,
+    isReportable = true,
     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
 )
 
@@ -75,7 +106,10 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
 class PanelFusionAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
+        every { clinicalEvidenceMatcher(any()) } returns mockk {
+            every { matchForVariant(any()) } returns EMPTY_MATCH
+        }
+//        every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { geneAlterationForVariant(any()) } returns null
     }
 
@@ -83,7 +117,7 @@ class PanelFusionAnnotatorTest {
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
 
-    private val annotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensembleDataCache)
+    private val annotator = PanelFusionAnnotator(knownFusionCache, ensembleDataCache)
 
     @Test
     fun `Should determine fusion driver likelihood`() {
@@ -154,7 +188,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate fusion specified with genes only`() {
         setupKnownFusionCache()
-        setupEvidenceForFusion(FUSION_MATCH_CRITERIA)
+        setupEvidenceForFusion(FUSION)
         val annotated = annotator.annotate(setOf(SEQUENCED_FUSION), emptySet())
 
         assertThat(annotated).containsExactly(
@@ -187,7 +221,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate fully specified fusion`() {
         setupKnownFusionCache()
-        setupEvidenceForFusion(FULLY_SPECIFIED_FUSION_MATCH_CRITERIA)
+        setupEvidenceForFusion(FULLY_SPECIFIED_FUSION)
         val annotated = annotator.annotate(setOf(FULLY_SPECIFIED_SEQUENCED_FUSION), emptySet())
 
         assertThat(annotated).containsExactly(
@@ -210,7 +244,8 @@ class PanelFusionAnnotatorTest {
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                        isOnLabel = true)
+                        isOnLabel = true
+                    )
                 )
             )
         )
@@ -284,9 +319,15 @@ class PanelFusionAnnotatorTest {
         every { knownFusionCache.hasKnownFusion(GENE_START, GENE_END) } returns true
     }
 
-    private fun setupEvidenceForFusion(fusionMatchCriteria: FusionMatchCriteria) {
+    private fun setupEvidenceForFusion(fusion: Fusion) {
+
+        // TODO having both a match criteria and the fusion in different api's seems suspcious
+        val fusionMatchCriteria = MatchingCriteriaFunctions.createFusionCriteria(fusion)
         every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
-        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ON_LABEL_MATCH
+        every { evidenceDatabase.clinicalEvidenceMatcher(any()) } returns mockk {
+            every { matchForFusion(fusion) } returns ON_LABEL_MATCH
+        }
+//        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ON_LABEL_MATCH
     }
 
     private fun setupKnownFusionCacheForExonDeletion() {
@@ -298,6 +339,8 @@ class PanelFusionAnnotatorTest {
 
     private fun setupEvidenceDatabaseWithNoEvidence() {
         every { evidenceDatabase.lookupKnownFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns null
-        every { evidenceDatabase.evidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns TestClinicalEvidenceFactory.createEmpty()
+        every { evidenceDatabase.clinicalEvidenceMatcher(any()) } returns mockk {
+            every { matchForFusion(EXON_SKIP_FUSION) } returns EMPTY_MATCH
+        }
     }
 }

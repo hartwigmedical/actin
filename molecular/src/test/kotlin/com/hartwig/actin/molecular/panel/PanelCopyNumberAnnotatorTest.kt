@@ -2,18 +2,18 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -44,13 +44,13 @@ private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
 class PanelCopyNumberAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
+//        every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { geneAlterationForVariant(any()) } returns null
     }
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
 
-    private val annotator = PanelCopyNumberAnnotator(evidenceDatabase, ensembleDataCache)
+    private val annotator = PanelCopyNumberAnnotator(ensembleDataCache)
 
     @Test
     fun `Should annotate gene amplification with evidence for canonical transcript`() {
@@ -108,7 +108,10 @@ class PanelCopyNumberAnnotatorTest {
 
     private fun setupEvidenceForCopyNumber() {
         every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns AMPLIFICATION
-        every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.clinicalEvidenceMatcher(any()) } returns mockk {
+            every { matchForCopyNumber(any()) } returns ACTIONABILITY_MATCH
+        }
+//        every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
     }
 
     private fun setupEnsemblDataCacheForCopyNumber() {

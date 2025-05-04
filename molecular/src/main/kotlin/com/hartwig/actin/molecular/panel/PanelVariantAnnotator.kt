@@ -69,9 +69,10 @@ class PanelVariantAnnotator(
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
 
-        val annotatedVariants =
-            createVariants(transvarVariants, paveAnnotations, variantExtractions).map { annotateWithGeneAlteration(it) }
-        return annotateWithDriverLikelihood(annotatedVariants).map { annotateWithEvidence(it) }
+        return createVariants(transvarVariants, paveAnnotations, variantExtractions)
+            .map { annotateWithGeneAlteration(it) }
+            .let { annotateWithDriverLikelihood(it) }
+//            .map { annotateWithEvidence(it) }
     }
 
     private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
@@ -288,9 +289,9 @@ class PanelVariantAnnotator(
         }
     }
 
-    private fun annotateWithEvidence(variant: Variant): Variant {
-        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val evidence = evidenceDatabase.evidenceForVariant(criteria)
-        return variant.copy(evidence = evidence)
-    }
+//    private fun annotateWithEvidence(variant: Variant): Variant {
+//        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+//        val evidence = evidenceDatabase.evidenceForVariant(variant)
+//        return variant.copy(evidence = evidence)
+//    }
 }

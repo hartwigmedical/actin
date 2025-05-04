@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
@@ -8,6 +10,8 @@ import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
 import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -32,11 +36,12 @@ private val MATCHING_DISRUPTION = TestMolecularFactory.minimalDisruption().copy(
 class ClinicalEvidenceMatcherFactoryTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val factory = ClinicalEvidenceMatcherFactory(doidModel, setOf(MATCH_DOID))
+//    val factory = DefaultClinicalEvidenceMatcherFactory(doidModel, setOf(MATCH_DOID), emptyList(), emptyList())
 
     @Test
     fun `Should create clinical evidence matcher on empty inputs`() {
-        val matcher = factory.create(evidences = emptyList(), trials = emptyList())
+        val matcher = factory(doidModel, setOf(MATCH_DOID), emptyList(), emptyList())
+            .create(TestMolecularFactory.createMinimalTestMolecularRecord())
 
         assertThat(matcher).isNotNull()
     }
@@ -49,7 +54,8 @@ class ClinicalEvidenceMatcherFactoryTest {
             molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = APPLICABLE_GENE)
         )
 
-        val matcher = factory.create(evidences = listOf(VALID_EVIDENCE, unknownSourceEvidence), trials = emptyList())
+        val matcher = factory(doidModel, setOf(MATCH_DOID), evidences = listOf(VALID_EVIDENCE, unknownSourceEvidence), trials = emptyList())
+            .create(createMolecularTest())
 
         val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
         assertThat(matches.treatmentEvidence).hasSize(1)
@@ -63,7 +69,8 @@ class ClinicalEvidenceMatcherFactoryTest {
             molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = ApplicabilityFiltering.NON_APPLICABLE_GENES.first())
         )
 
-        val matcher = factory.create(evidences = listOf(VALID_EVIDENCE, nonApplicableEvidence), trials = emptyList())
+        val matcher = factory(doidModel, setOf(MATCH_DOID), evidences = listOf(VALID_EVIDENCE, nonApplicableEvidence), trials = emptyList())
+            .create(createMolecularTest())
 
         val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
         assertThat(matches.treatmentEvidence).hasSize(1)
@@ -78,7 +85,8 @@ class ClinicalEvidenceMatcherFactoryTest {
             anyMolecularCriteria = setOf(TestServeMolecularFactory.createGeneCriterium(gene = APPLICABLE_GENE))
         )
 
-        val matcher = factory.create(evidences = emptyList(), trials = listOf(VALID_TRIAL, unknownSourceTrial))
+        val matcher = factory(doidModel, setOf(MATCH_DOID), evidences = emptyList(), trials = listOf(VALID_TRIAL, unknownSourceTrial))
+            .create(createMolecularTest())
 
         val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
         assertThat(matches.eligibleTrials).hasSize(1)
@@ -105,13 +113,28 @@ class ClinicalEvidenceMatcherFactoryTest {
             )
         )
 
-        val matcher = factory.create(
+        val matcher = factory(
+            doidModel = doidModel,
+            tumorDoids = setOf(MATCH_DOID),
             evidences = emptyList(),
             trials = listOf(VALID_TRIAL, applicableAndNonApplicableCriteriaTrial, nonApplicableCriteriaTrial)
-        )
+        ).create(createMolecularTest())
 
         val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
         assertThat(matches.eligibleTrials).hasSize(2)
     }
 
+    private fun factory(
+        doidModel: DoidModel,
+        tumorDoids: Set<String>,
+        evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>
+    ): ClinicalEvidenceMatcherFactory {
+        // It seems suspicous to have to have a method to create the factory, then call it with another param
+        // to create the instance. its a factory factory lol. maybe the abstraction isn't quite right
+        return DefaultClinicalEvidenceMatcherFactory(doidModel, tumorDoids, evidences, trials)
+    }
+
+    private fun createMolecularTest(): MolecularTest {
+        TODO()
+    }
 }
