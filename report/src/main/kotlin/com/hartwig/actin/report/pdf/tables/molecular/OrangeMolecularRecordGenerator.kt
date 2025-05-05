@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -13,14 +13,12 @@ import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.layout.element.Table
 
 class OrangeMolecularRecordGenerator(
-    private val patientRecord: PatientRecord,
     private val trials: Set<ExternalTrialSummary>,
     private val cohorts: List<InterpretedCohort>,
     private val width: Float,
-    private val molecular: MolecularRecord
+    private val molecular: MolecularRecord,
+    private val pathologyReport: PathologyReport?
 ) : TableGenerator {
-
-    private val pathologyReport = PathologyReportFunctions.getPathologyReport(patientRecord, molecular.date)
 
     override fun title(): String {
         val title = "${molecular.experimentType.display()} (${molecular.sampleId}"
@@ -34,7 +32,7 @@ class OrangeMolecularRecordGenerator(
 
     override fun contents(): Table {
 
-        val table = Tables.createSingleColWithWidth(width).addCell(Cells.createEmpty())
+        val table = Tables.createSingleColWithWidth(width)
 
         if (molecular.hasSufficientQualityButLowPurity()) {
             val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"

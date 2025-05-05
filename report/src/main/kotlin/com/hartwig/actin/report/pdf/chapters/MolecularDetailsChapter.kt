@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.IHCTestInterpreter
@@ -66,26 +67,15 @@ class MolecularDetailsChapter(
         }
 
         val orangeMolecularTable = Tables.createSingleColWithWidth(contentWidth())
-        val outerTableWidth = orangeMolecularTable.width.value - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
-        val innerTableWidth = orangeMolecularTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
-
         orangeMolecularRecord?.also { molecular ->
             val pathologyReport = if (orangePathologyReport.isNotEmpty()) orangePathologyReport.first() else null
-            pathologyReport?.let {
-                orangeMolecularTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = pathologyReport)))
-            }
-            OrangeMolecularRecordGenerator(report.patientRecord, trials, cohorts, innerTableWidth, molecular)
-                .apply {
-                    val table = Tables.createSingleColWithWidth(outerTableWidth)
-                    table.addCell(Cells.createTitle(title()))
-                    table.addCell(Cells.create(contents()))
-                    orangeMolecularTable.addCell(Cells.create(table))
-                }
-            pathologyReport?.let {
+            val (molecularTest, ihcTests) = pathologyReport?.let {
                 groupedByPathologyReport[pathologyReport]?.let { (molecularTest, ihcTests) ->
-                    content(pathologyReport, molecularTest, ihcTests, cohorts, orangeMolecularTable)
+                    molecularTest to ihcTests
                 }
-            }
+            } ?: (emptyList<MolecularTest>() to emptyList())
+            contentPerPathologyReport(pathologyReport, molecular, molecularTest, ihcTests, cohorts, orangeMolecularTable)
+
         } ?: run { orangeMolecularTable.addCell(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed")) }
         document.add(orangeMolecularTable)
 
@@ -95,15 +85,11 @@ class MolecularDetailsChapter(
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         for ((pathologyReport, tests) in filteredGroupedByPathologyReport) {
-            val (molecularTest, ihcTests) = tests
-            pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = it)))
+            pathologyReport ?: filteredGroupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
+                table.addCell(Cells.createTitle("Other Tests"))
             }
-            filteredGroupedByPathologyReport.keys.takeIf { it.size > 1 }
-                ?.let { table.addCell(Cells.createTitle("Other Tests")) }
-            content(pathologyReport, molecularTest, ihcTests, cohorts, table)
+            contentPerPathologyReport(pathologyReport, null, tests.first, tests.second, cohorts, table)
         }
-
         document.add(table)
     }
 
@@ -123,16 +109,32 @@ class MolecularDetailsChapter(
     }
 
 
-    private fun content(
+    private fun contentPerPathologyReport(
         pathologyReport: PathologyReport?,
+        orangeMolecularRecord: MolecularRecord?,
         externalPanelResults: List<MolecularTest>,
         ihcTests: List<IHCTest>,
         cohorts: List<InterpretedCohort>,
         topTable: Table
     ) {
+
+        pathologyReport?.let {
+            topTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = it)))
+        }
+
         val innerTableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = innerTableWidth - keyWidth
+
+        val orangeGenerator = orangeMolecularRecord?.let {
+            OrangeMolecularRecordGenerator(
+                trials,
+                cohorts,
+                innerTableWidth,
+                orangeMolecularRecord,
+                pathologyReport
+            )
+        }
 
         val wgsSummaryGenerators = externalPanelResults.map { panel ->
             WGSSummaryGenerator(true, report.patientRecord, panel, pathologyReport, cohorts, keyWidth, valueWidth)
@@ -143,7 +145,7 @@ class MolecularDetailsChapter(
         }
 
         TableGeneratorFunctions.addGenerators(
-            wgsSummaryGenerators + listOfNotNull(ihcGenerator),
+            listOfNotNull(orangeGenerator) + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
             topTable,
             overrideTitleFormatToSubtitle = false
         )
