@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
+import com.hartwig.hmftools.pavereverse.ReversePave
 
 private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
     ServeProteinEffect.LOSS_OF_FUNCTION,
@@ -85,6 +86,7 @@ class PanelVariantAnnotator(
     }
 
     private fun transvarAnnotation(sequencedVariant: SequencedVariant): TransvarVariant? {
+        /*
         val externalVariantAnnotation =
             variantResolver.resolve(
                 sequencedVariant.gene,
@@ -98,6 +100,8 @@ class PanelVariantAnnotator(
         }
 
         return externalVariantAnnotation
+         */
+        return null
     }
 
     private fun annotateWithPave(transvarVariants: Map<String, TransvarVariant>): Map<String, PaveResponse> {

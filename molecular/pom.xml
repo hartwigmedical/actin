@@ -35,6 +35,11 @@
             <artifactId>pave</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hartwig.hmftools</groupId>
+            <artifactId>pave-reverse</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
         </dependency>
