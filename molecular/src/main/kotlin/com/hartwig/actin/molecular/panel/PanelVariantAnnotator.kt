@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -25,13 +26,16 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.ImpactDisplay.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.hmftools.common.genome.refgenome.RefGenomeInterface
+import com.hartwig.hmftools.pavereverse.ReversePave
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import org.apache.logging.log4j.LogManager
+import java.io.File
+import java.net.URISyntaxException
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
-import com.hartwig.hmftools.pavereverse.ReversePave
 
 private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
     ServeProteinEffect.LOSS_OF_FUNCTION,
@@ -61,6 +65,7 @@ class PanelVariantAnnotator(
     private val variantResolver: VariantAnnotator,
     private val paver: Paver,
     private val paveLite: PaveLite,
+    private val refGenome: RefGenomeInterface
 ) {
 
     private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
@@ -86,13 +91,22 @@ class PanelVariantAnnotator(
     }
 
     private fun transvarAnnotation(sequencedVariant: SequencedVariant): TransvarVariant? {
-        /*
+
+        val resourceUrl = javaClass.getClassLoader().getResource("ensembl_mini")
+        try {
+            checkNotNull(resourceUrl)
+            val ensemblDataDir = File(resourceUrl.toURI())
+            val reversePave = ReversePave(ensemblDataDir, RefGenomeVersion.V38, refGenome)
+        } catch (e: URISyntaxException) {
+            throw RuntimeException(e)
+        }
         val externalVariantAnnotation =
-            variantResolver.resolve(
+            /*variantResolver.resolve(
                 sequencedVariant.gene,
                 sequencedVariant.transcript,
                 sequencedVariant.hgvsCodingOrProteinImpact()
-            )
+            )*/
+            null
 
         if (externalVariantAnnotation == null) {
             logger.error("Unable to resolve variant '$sequencedVariant' in variant annotator. See prior warnings.")
@@ -100,8 +114,6 @@ class PanelVariantAnnotator(
         }
 
         return externalVariantAnnotation
-         */
-        return null
     }
 
     private fun annotateWithPave(transvarVariants: Map<String, TransvarVariant>): Map<String, PaveResponse> {
