@@ -12,9 +12,7 @@ import com.hartwig.actin.report.interpretation.IHCTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Styles.PALETTE_MID_GREY
 import com.hartwig.actin.report.pdf.util.Tables
-import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Table
 import org.apache.logging.log4j.LogManager
 
@@ -39,8 +37,7 @@ class MolecularSummaryGenerator(
 
     override fun contents(): Table {
 
-        val table = Tables.createSingleCol().setBorder(SolidBorder(PALETTE_MID_GREY, 0.25f))
-
+        val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
         val ihcTestsFiltered = IhcTestFilter.mostRecentOrUnknownDateIhcTests(patientRecord.ihcTests).toList()
@@ -48,7 +45,7 @@ class MolecularSummaryGenerator(
             nonIhcTestsIncludedInTrialMatching,
             ihcTestsFiltered,
             patientRecord.pathologyReports
-        ).filterValues { (molecularTest, ihcTests) -> molecularTest.isNotEmpty() && ihcTests.isNotEmpty() }
+        ).filterValues { (molecularTest, ihcTests) -> molecularTest.isNotEmpty() || ihcTests.isNotEmpty() }
 
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (molecularTest, ihcTests) = tests
@@ -58,7 +55,7 @@ class MolecularSummaryGenerator(
                 content(pathologyReport, molecularTest, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
             } ?: run {
-                if (!patientRecord.pathologyReports.isNullOrEmpty()) {
+                if (groupedByPathologyReport.keys.size > 1) {
                     table.addCell(Cells.createTitle("Other Tests"))
                 }
                 content(pathologyReport, molecularTest, ihcTests, table)
