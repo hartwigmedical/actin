@@ -7,8 +7,9 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 
 const val MAX_TO_DISPLAY = 3
-const val MANY_LOCATIONS = "$MAX_TO_DISPLAY+ locations"
-const val SEE_LINK = " - see link"
+private const val MANY_LOCATIONS = "$MAX_TO_DISPLAY+ locations"
+private const val SEE_LINK = " - see link"
+const val MANY_LOCATIONS_SEE_LINK = "$MANY_LOCATIONS$SEE_LINK"
 
 object TrialLocations {
 

@@ -75,7 +75,7 @@ class MolecularDriversGenerator(
                         it.locations,
                         false
                     )
-                }" else ""
+                })" else ""
             }"
         }
     }
