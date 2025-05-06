@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
@@ -40,7 +40,7 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
-        val ihcTestsFiltered = IhcTestFilter.mostRecentOrUnknownDateIhcTests(patientRecord.ihcTests).toList()
+        val ihcTestsFiltered = IHCTestFilter.mostRecentOrUnknownDateIhcTests(patientRecord.ihcTests).toList()
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             emptyList(),
             nonIhcTestsIncludedInTrialMatching,

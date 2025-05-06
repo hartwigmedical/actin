@@ -12,9 +12,9 @@ private const val PROTEIN = "PD-L1"
 class ProteinExpressionByIHCFunctionsTest {
 
     private val referenceLevel = 2
-    private val limitedFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.LIMITED)
-    private val sufficientFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.SUFFICIENT)
-    private val exactFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.EXACT)
+    private val limitedFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IHCExpressionComparisonType.LIMITED)
+    private val sufficientFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IHCExpressionComparisonType.SUFFICIENT)
+    private val exactFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IHCExpressionComparisonType.EXACT)
 
     @Test
     fun `Should evaluate to undetermined when no IHC tests present in record`() {

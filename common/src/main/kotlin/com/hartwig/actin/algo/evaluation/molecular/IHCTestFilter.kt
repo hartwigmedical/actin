@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.datamodel.clinical.IHCTest
 
-object IhcTestFilter {
+object IHCTestFilter {
 
     private const val PD_L1 = "PD-L1"
 

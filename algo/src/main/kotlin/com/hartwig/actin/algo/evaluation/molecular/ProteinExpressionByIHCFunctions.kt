@@ -9,18 +9,18 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IHCTest
 
-enum class IhcExpressionComparisonType {
+enum class IHCExpressionComparisonType {
     LIMITED,
     SUFFICIENT,
     EXACT
 }
 
 class ProteinExpressionByIHCFunctions(
-    private val protein: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType
+    private val protein: String, private val referenceExpressionLevel: Int, private val comparisonType: IHCExpressionComparisonType
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.ihcTests, protein)
+        val ihcTests = IHCTestFilter.allIHCTestsForProtein(record.ihcTests, protein)
         val evaluationsVersusReference = ihcTests.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue -> evaluateValue(ihcTest, scoreValue) }
         }.toSet()
@@ -31,9 +31,9 @@ class ProteinExpressionByIHCFunctions(
         }
 
         val comparisonText = when (comparisonType) {
-            IhcExpressionComparisonType.LIMITED -> "at most"
-            IhcExpressionComparisonType.SUFFICIENT -> "at least"
-            IhcExpressionComparisonType.EXACT -> "exactly"
+            IHCExpressionComparisonType.LIMITED -> "at most"
+            IHCExpressionComparisonType.SUFFICIENT -> "at least"
+            IHCExpressionComparisonType.EXACT -> "exactly"
         }
 
         return when {
@@ -57,18 +57,18 @@ class ProteinExpressionByIHCFunctions(
 
     private fun evaluateValue(ihcTest: IHCTest, scoreValue: Double): EvaluationResult {
         return when (comparisonType) {
-            IhcExpressionComparisonType.SUFFICIENT -> {
+            IHCExpressionComparisonType.SUFFICIENT -> {
                 evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
             }
 
-            IhcExpressionComparisonType.EXACT -> {
+            IHCExpressionComparisonType.EXACT -> {
                 when (referenceExpressionLevel.toLong() == Math.round(scoreValue) && ihcTest.scoreValuePrefix.isNullOrEmpty()) {
                     true -> EvaluationResult.PASS
                     false -> EvaluationResult.FAIL
                 }
             }
 
-            IhcExpressionComparisonType.LIMITED -> {
+            IHCExpressionComparisonType.LIMITED -> {
                 evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
             }
         }

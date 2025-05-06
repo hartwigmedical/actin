@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.molecular
 
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allIHCTestsForProtein
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allPDL1Tests
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter.allIHCTestsForProtein
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter.allPDL1Tests
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-class IhcTestFilterTest {
+class IHCTestFilterTest {
 
     @Test
     fun `Should filter prior ihc tests for PDL1`() {
@@ -48,7 +48,7 @@ class IhcTestFilterTest {
         val test2 = test1.copy(measureDate = LocalDate.of(2025, 2, 11))
         val test3 = test1.copy(measureDate = LocalDate.of(2024, 2, 11))
         val test4 = ihcTest(item = "protein 2", measureDate = LocalDate.of(2023, 2, 11))
-        assertThat(IhcTestFilter.mostRecentOrUnknownDateIhcTests(listOf(test1, test2, test3, test4)))
+        assertThat(IHCTestFilter.mostRecentOrUnknownDateIhcTests(listOf(test1, test2, test3, test4)))
             .containsOnly(test1, test2, test4)
     }
 
@@ -57,7 +57,7 @@ class IhcTestFilterTest {
         val test1 = ihcTest(item = "protein 1", measureDate = LocalDate.of(2024, 2, 2))
         val test2 = test1.copy()
         val test3 = test1.copy(scoreValue = 2.0)
-        assertThat(IhcTestFilter.mostRecentOrUnknownDateIhcTests(listOf(test1, test2, test3))).containsOnly(test1, test3)
+        assertThat(IHCTestFilter.mostRecentOrUnknownDateIhcTests(listOf(test1, test2, test3))).containsOnly(test1, test3)
     }
 
     private fun ihcTest(item: String = "", measure: String? = null, measureDate: LocalDate? = null): IHCTest {
