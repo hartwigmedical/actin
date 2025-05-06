@@ -5,10 +5,11 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
-import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
+import com.hartwig.actin.report.interpretation.TrialAcronymAndLocations
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.TrialLocations
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
@@ -43,14 +44,11 @@ class MolecularDriversGenerator(
         val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrials)
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
-        factory.create().forEach { entry: MolecularDriverEntry ->
+        factory.create().forEach { entry ->
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.display()))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
-            table.addCell(
-                Cells.createContent(entry.actinTrials.joinToString(", ")
-                { "${it.trialAcronym} ${if (it.locations.isNotEmpty()) "(${it.locations.joinToString()})" else ""}" })
-            )
+            table.addCell(Cells.createContent(formatActinTrials(entry.actinTrials)))
             table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event]?.let { concatEligibleTrials(it) } ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
@@ -64,6 +62,22 @@ class MolecularDriversGenerator(
 
     private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
         return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
+    }
+
+    private fun formatActinTrials(actinTrials: Set<TrialAcronymAndLocations>): String {
+        return actinTrials.joinToString(", ")
+        {
+            "${it.trialAcronym} ${
+                if (it.locations.isNotEmpty()) "(${
+                    TrialLocations.actinTrialLocation(
+                        null,
+                        null,
+                        it.locations,
+                        false
+                    )
+                })" else ""
+            }"
+        }
     }
 
     private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrialSummary>): String {
