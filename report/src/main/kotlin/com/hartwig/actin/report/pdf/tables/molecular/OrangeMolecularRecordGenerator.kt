@@ -27,7 +27,7 @@ class OrangeMolecularRecordGenerator(
     }
 
     override fun forceKeepTogether(): Boolean {
-        return true
+        return false
     }
 
     override fun contents(): Table {
