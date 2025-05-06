@@ -89,7 +89,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "Rheumatoid arthritis",
@@ -254,7 +254,7 @@
       "isTrialMedication": false
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
       "test": "IHC",
       "item": "PD-L1",

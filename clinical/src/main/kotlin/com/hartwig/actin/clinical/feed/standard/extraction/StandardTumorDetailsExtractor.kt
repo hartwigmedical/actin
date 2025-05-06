@@ -1,17 +1,17 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 
 class StandardTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
@@ -77,8 +77,7 @@ class StandardTumorDetailsExtractor(
             hasCnsLesions = deriveCnsLesions(hasBrainOrGliomaTumor, lesions).first,
             hasActiveCnsLesions = deriveCnsLesions(hasBrainOrGliomaTumor, lesions).second,
             hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
-            hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
-            rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
+            hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER)
         )
     }
 

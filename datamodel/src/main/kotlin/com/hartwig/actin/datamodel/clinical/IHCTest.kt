@@ -4,8 +4,7 @@ import java.time.LocalDate
 
 const val IHC_TEST_TYPE = "IHC"
 
-data class PriorIHCTest(
-    val test: String = IHC_TEST_TYPE,
+data class IHCTest(
     val item: String? = null,
     val measure: String? = null,
     val measureDate: LocalDate? = null,
@@ -14,4 +13,6 @@ data class PriorIHCTest(
     val scoreValue: Double? = null,
     val scoreValueUnit: String? = null,
     val impliesPotentialIndeterminateStatus: Boolean = false
-)
+) {
+    val test: String = IHC_TEST_TYPE
+}

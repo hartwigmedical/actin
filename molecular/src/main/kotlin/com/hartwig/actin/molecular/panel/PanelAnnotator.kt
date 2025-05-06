@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
@@ -21,9 +21,9 @@ class PanelAnnotator(
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
     private val panelSpecifications: PanelSpecifications
-) : MolecularAnnotator<PriorSequencingTest, PanelRecord> {
+) : MolecularAnnotator<SequencingTest, PanelRecord> {
 
-    override fun annotate(input: PriorSequencingTest): PanelRecord {
+    override fun annotate(input: SequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletedGenes)

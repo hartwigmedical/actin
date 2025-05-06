@@ -6,21 +6,21 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
-import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val TEST = "test"
 private const val CURATED_TEST = "test"
@@ -31,7 +31,7 @@ private const val PROTEIN = "protein"
 private val BASE_MOLECULAR_TEST = ProvidedMolecularTest(
     test = TEST, date = TEST_DATE, results = emptySet(), testedGenes = setOf(GENE)
 )
-private val BASE_PRIOR_SEQUENCING = PriorSequencingTest(
+private val BASE_SEQUENCING_TEST = SequencingTest(
     test = TEST,
     date = TEST_DATE
 )
@@ -40,13 +40,13 @@ private const val FUSION_GENE_DOWN = "fusionDown"
 private const val AMPLIFIED_GENE = "amplifiedGene"
 private const val FREE_TEXT = "free text"
 
-class StandardPriorSequencingTestExtractorTest {
+class StandardSequencingTestExtractorTest {
 
     private val testCuration = mockk<CurationDatabase<SequencingTestConfig>> {
         every { find(TEST) } returns setOf(SequencingTestConfig(TEST, false, CURATED_TEST))
     }
     private val testResultCuration = mockk<CurationDatabase<SequencingTestResultConfig>>()
-    val extractor = StandardPriorSequencingTestExtractor(testCuration, testResultCuration)
+    val extractor = StandardSequencingTestExtractor(testCuration, testResultCuration)
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
@@ -94,7 +94,7 @@ class StandardPriorSequencingTestExtractorTest {
             )
         )
         assertResultContains(
-            result, BASE_PRIOR_SEQUENCING.copy(
+            result, BASE_SEQUENCING_TEST.copy(
                 variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
             )
         )
@@ -109,7 +109,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         assertResultContains(
             result,
-            BASE_PRIOR_SEQUENCING.copy(
+            BASE_SEQUENCING_TEST.copy(
                 fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN))
             )
         )
@@ -124,7 +124,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         assertResultContains(
             result,
-            BASE_PRIOR_SEQUENCING.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE)))
+            BASE_SEQUENCING_TEST.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE)))
         )
     }
 
@@ -132,7 +132,7 @@ class StandardPriorSequencingTestExtractorTest {
     fun `Should extract sequencing with exon skipping`() {
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, exonSkipStart = 1, exonSkipEnd = 2))
         assertResultContains(
-            result, BASE_PRIOR_SEQUENCING.copy(
+            result, BASE_SEQUENCING_TEST.copy(
                 skippedExons = setOf(
                     SequencedSkippedExons(gene = GENE, exonStart = 1, exonEnd = 2)
                 )
@@ -144,7 +144,7 @@ class StandardPriorSequencingTestExtractorTest {
     fun `Should extract sequencing with TMB and MSI`() {
         val result = extractionResult(ProvidedMolecularTestResult(tmb = 1.0, msi = true))
         assertResultContains(
-            result, BASE_PRIOR_SEQUENCING.copy(
+            result, BASE_SEQUENCING_TEST.copy(
                 tumorMutationalBurden = 1.0,
                 isMicrosatelliteUnstable = true
             )
@@ -155,7 +155,7 @@ class StandardPriorSequencingTestExtractorTest {
     fun `Should extract sequenced deleted genes`() {
         val result = extractionResult(ProvidedMolecularTestResult(deletedGene = GENE))
         assertResultContains(
-            result, BASE_PRIOR_SEQUENCING.copy(
+            result, BASE_SEQUENCING_TEST.copy(
                 deletedGenes = setOf(SequencedDeletedGene(GENE))
             )
         )
@@ -171,7 +171,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
         assertResultContains(
-            result, BASE_PRIOR_SEQUENCING.copy(
+            result, BASE_SEQUENCING_TEST.copy(
                 variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
             )
         )
@@ -230,12 +230,18 @@ class StandardPriorSequencingTestExtractorTest {
         every { testResultCuration.find(FREE_TEXT) } returns setOf(
             SequencingTestResultConfig(
                 input = FREE_TEXT,
-                ignore = true
+                ignore = true,
+                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
+            ),
+            SequencingTestResultConfig(
+                input = FREE_TEXT,
+                ignore = false,
+                curated = ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN)
             )
         )
         val result = extractionResult(
             ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = "erroneous", freeText = FREE_TEXT),
-            ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN)
+            ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN, freeText = FREE_TEXT)
         )
         assertThat(result.extracted[0].variants).containsExactly(SequencedVariant(gene = GENE, hgvsProteinImpact = PROTEIN))
     }
@@ -257,9 +263,9 @@ class StandardPriorSequencingTestExtractorTest {
         EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST.copy(results = result.toSet())))
     )
 
-    private fun assertResultContains(result: ExtractionResult<List<PriorSequencingTest>>, priorSequencingTest: PriorSequencingTest) {
+    private fun assertResultContains(result: ExtractionResult<List<SequencingTest>>, sequencingTest: SequencingTest) {
         assertThat(result.extracted).hasSize(1)
-        assertThat(result.extracted[0]).isEqualTo(priorSequencingTest)
+        assertThat(result.extracted[0]).isEqualTo(sequencingTest)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 }

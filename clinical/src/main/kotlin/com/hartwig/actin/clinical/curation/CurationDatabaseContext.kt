@@ -21,7 +21,7 @@ import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
+import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
@@ -46,7 +46,7 @@ import com.hartwig.actin.icd.IcdModel
 data class CurationDatabaseContext(
     val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>,
     val treatmentHistoryEntryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
-    val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>,
+    val secondPrimaryCuration: CurationDatabase<PriorPrimaryConfig>,
     val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
     val comorbidityCuration: CurationDatabase<ComorbidityConfig>,
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,

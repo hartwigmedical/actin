@@ -73,7 +73,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [
+  "priorPrimaries": [
     {
       "tumorLocation": "Skin",
       "tumorSubLocation": "",
@@ -146,8 +146,8 @@
       "name": "Drug",
       "icdCodes": [
         {
-            "mainCode": "4A8Z",
-            "extensionCode": null
+          "mainCode": "4A8Z",
+          "extensionCode": null
         }
       ],
       "type": "allergy",
@@ -178,7 +178,7 @@
       "comorbidityClass": "ECG"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -190,7 +190,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [],
+  "sequencingTests": [],
   "labValues": [
     {
       "date": "2020-08-08",

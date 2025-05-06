@@ -6,24 +6,26 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
-import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
-import com.hartwig.actin.datamodel.clinical.SequencedFusion
-import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
-import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.amplifications
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.geneDeletions
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.msi
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.skippedExons
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.tmb
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.variants
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import kotlin.reflect.full.memberProperties
 
-class StandardPriorSequencingTestExtractor(
+class StandardSequencingTestExtractor(
     private val testCuration: CurationDatabase<SequencingTestConfig>,
     private val testResultCuration: CurationDatabase<SequencingTestResultConfig>
 ) :
-    StandardDataExtractor<List<PriorSequencingTest>> {
+    StandardDataExtractor<List<SequencingTest>> {
 
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
+    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<SequencingTest>> {
         val extracted = ehrPatientRecord.molecularTests.mapNotNull { test ->
             val testCurationConfig =
                 CurationResponse.createFromConfigs(
@@ -47,7 +49,7 @@ class StandardPriorSequencingTestExtractor(
                     if (allResults.isNotEmpty()) {
                         ExtractionResult(
                             listOf(
-                                PriorSequencingTest(
+                                SequencingTest(
                                     test = testCuration.curatedName,
                                     date = test.date,
                                     variants = variants(allResults),
@@ -104,56 +106,4 @@ class StandardPriorSequencingTestExtractor(
     private fun checkAllFieldsNull(result: ProvidedMolecularTestResult) =
         ProvidedMolecularTestResult::class.memberProperties.filter { it.name != "freeText" }.all { it.get(result) == null }
 
-    private fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
-        allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene, it.transcript) } }.toSet()
-
-    private fun tmb(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.tmb }
-
-    private fun msi(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.msi }
-
-    private fun skippedExons(
-        results: Set<ProvidedMolecularTestResult>
-    ) = results.mapNotNull { result ->
-        result.exonSkipStart?.let { exonSkipStart ->
-            SequencedSkippedExons(
-                result.gene!!,
-                result.exonSkipStart!!,
-                result.exonSkipEnd ?: exonSkipStart,
-                result.transcript
-            )
-        }
-    }.toSet()
-
-    private fun amplifications(results: Set<ProvidedMolecularTestResult>) =
-        results.mapNotNull { it.amplifiedGene?.let { gene -> SequencedAmplification(gene, it.transcript) } }.toSet()
-
-    private fun fusions(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
-            .map { result ->
-                SequencedFusion(
-                    result.fusionGeneUp,
-                    result.fusionGeneDown,
-                    result.fusionTranscriptUp,
-                    result.fusionTranscriptDown,
-                    result.fusionExonUp,
-                    result.fusionExonDown
-                )
-            }.toSet()
-
-    private fun variants(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.hgvsCodingImpact != null || result.hgvsProteinImpact != null }
-            .map { result ->
-                SequencedVariant(
-                    result.vaf,
-                    result.gene
-                        ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
-                    result.hgvsCodingImpact,
-                    result.hgvsProteinImpact,
-                    result.transcript,
-                    result.codon,
-                    result.exon
-                )
-            }.toSet()
 }

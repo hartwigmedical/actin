@@ -11,7 +11,7 @@ private const val MEASURE = "measure"
 class HasSufficientPDL1ByIHCTest {
     private val minPdl1 = 2.0
     private val function = HasSufficientPDL1ByIHC(MEASURE, minPdl1)
-    private val pdl1Test = MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = MEASURE)
+    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = MEASURE)
 
     @Test
     fun `Should pass when test value is above min`() {

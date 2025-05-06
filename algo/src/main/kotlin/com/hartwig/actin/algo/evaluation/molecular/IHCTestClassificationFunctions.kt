@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 
 object IHCTestClassificationFunctions {
 
@@ -11,16 +11,16 @@ object IHCTestClassificationFunctions {
         UNKNOWN
     }
 
-    fun classifyHer2Test(test: PriorIHCTest): TestResult {
+    fun classifyHer2Test(test: IHCTest): TestResult {
         return classifyTest(test, "+", 2, 3, 3)
     }
 
-    fun classifyPrOrErTest(test: PriorIHCTest): TestResult {
+    fun classifyPrOrErTest(test: IHCTest): TestResult {
         return classifyTest(test, "%", 1, 10, 100)
     }
 
     private fun classifyTest(
-        test: PriorIHCTest, unit: String, negativeUpperBound: Int, positiveLowerBound: Int, positiveUpperBound: Int
+        test: IHCTest, unit: String, negativeUpperBound: Int, positiveLowerBound: Int, positiveUpperBound: Int
     ): TestResult {
         val scoreValue = test.scoreValue?.toInt()
         return when {

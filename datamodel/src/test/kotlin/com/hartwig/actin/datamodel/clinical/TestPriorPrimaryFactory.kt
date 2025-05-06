@@ -1,9 +1,9 @@
 package com.hartwig.actin.datamodel.clinical
 
-object TestPriorSecondPrimaryFactory {
+object TestPriorPrimaryFactory {
 
-    fun createMinimal(): PriorSecondPrimary {
-        return PriorSecondPrimary(
+    fun createMinimal(): PriorPrimary {
+        return PriorPrimary(
             tumorLocation = "",
             tumorSubLocation = "",
             tumorType = "",

@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunction
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
@@ -25,12 +25,12 @@ class HasBreastCancerWithPositiveReceptorOfType(
         val tumorDoids = record.tumor.doids
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
-        val targetPriorMolecularTests = record.priorIHCTests.filter { it.item == receptorType.display() }
+        val targetMolecularTests = record.ihcTests.filter { it.item == receptorType.display() }
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
         val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
                 || expandedDoidSet.contains(DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
 
-        val testSummary = summarizeTests(targetPriorMolecularTests)
+        val testSummary = summarizeTests(targetMolecularTests)
         val positiveArguments = TestResult.POSITIVE in testSummary || targetReceptorPositiveInDoids
         val negativeArguments = TestResult.NEGATIVE in testSummary || targetReceptorNegativeInDoids
 
@@ -49,7 +49,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
 
             !isBreastCancer -> EvaluationFactory.fail("No breast cancer")
 
-            targetPriorMolecularTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
+            targetMolecularTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
                 return if (targetHer2AndErbb2Amplified) {
                     EvaluationFactory.undetermined(
                         "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
@@ -93,12 +93,12 @@ class HasBreastCancerWithPositiveReceptorOfType(
         }
     }
 
-    private fun summarizeTests(targetPriorIHCTests: List<PriorIHCTest>): Set<TestResult> {
+    private fun summarizeTests(targetIHCTests: List<IHCTest>): Set<TestResult> {
         val classifier = when (receptorType) {
             ReceptorType.ER, ReceptorType.PR -> ::classifyPrOrErTest
             ReceptorType.HER2 -> ::classifyHer2Test
         }
-        return targetPriorIHCTests.map(classifier).toSet()
+        return targetIHCTests.map(classifier).toSet()
     }
 
     companion object {

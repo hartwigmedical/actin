@@ -1,31 +1,27 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
-
 private const val MOLECULAR_TEST_INPUT = "Molecular test input"
+private const val IHC = "IHC"
 
-private const val MOLECULAR_TEST_INTERPRETATION_IHC = "Molecular test interpretation IHC"
-private const val MOLECULAR_TEST_INTERPRETATION_PDL1 = "Molecular test interpretation PD-L1"
+class IHCTestsExtractorTest {
 
-
-class PriorMolecularTestsExtractorTest {
-
-    val extractor = PriorMolecularTestsExtractor(
+    val extractor = IHCTestsExtractor(
         TestCurationFactory.curationDatabase(
             IHCTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
-                curated = PriorIHCTest(
-                    impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_IHC, item = "item"
+                curated = IHCTest(
+                    impliesPotentialIndeterminateStatus = false, item = "item"
                 )
             )
         ),
@@ -33,8 +29,8 @@ class PriorMolecularTestsExtractorTest {
             IHCTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
-                curated = PriorIHCTest(
-                    impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_PDL1, item = "item"
+                curated = IHCTest(
+                    impliesPotentialIndeterminateStatus = false, item = "item 2"
                 )
             )
         )
@@ -46,10 +42,10 @@ class PriorMolecularTestsExtractorTest {
         val pdl1Inputs = listOf(MOLECULAR_TEST_INPUT, CANNOT_CURATE)
 
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = ihcInputs, pdl1TestResults = pdl1Inputs)
-        val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(priorMolecularTests).hasSize(2)
-        assertThat(priorMolecularTests[0].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_IHC)
-        assertThat(priorMolecularTests[1].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_PDL1)
+        val (molecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(molecularTests).hasSize(2)
+        assertThat(molecularTests[0].test).isEqualTo(IHC)
+        assertThat(molecularTests[1].test).isEqualTo(IHC)
 
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(

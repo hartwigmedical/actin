@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.clinical
 
-data class PriorSecondPrimary(
+data class PriorPrimary(
     val tumorLocation: String,
     val tumorSubLocation: String,
     val tumorType: String,

@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
@@ -66,7 +66,7 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate test with panel specifications`() {
-        val annotatedPanel = annotator.annotate(createTestPriorSequencingTest())
+        val annotatedPanel = annotator.annotate(createTestSequencingTest())
         assertThat(annotatedPanel.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
         assertThat(annotatedPanel.testsGene("another gene") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
         assertThat(annotatedPanel.testsGene(GENE) { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
@@ -77,7 +77,7 @@ class PanelAnnotatorTest {
         val expected = mockk<Variant>()
         every { panelVariantAnnotator.annotate(setOf(ARCHER_VARIANT)) } returns listOf(expected)
 
-        val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(variants = setOf(ARCHER_VARIANT)))
+        val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(variants = setOf(ARCHER_VARIANT)))
         assertThat(annotatedPanel.drivers.variants).isEqualTo(listOf(expected))
     }
 
@@ -86,7 +86,7 @@ class PanelAnnotatorTest {
         val expected = mockk<Fusion>()
         every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(expected)
 
-        val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
+        val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
     }
 
@@ -95,13 +95,13 @@ class PanelAnnotatorTest {
         val expected = mockk<Fusion>()
         every { panelFusionAnnotator.annotate(emptySet(), setOf(ARCHER_SKIPPED_EXON)) } returns listOf(expected)
 
-        val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(skippedExons = setOf(ARCHER_SKIPPED_EXON)))
+        val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(skippedExons = setOf(ARCHER_SKIPPED_EXON)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
     }
 
     @Test
     fun `Should infer ploidy`() {
-        val annotated = annotator.annotate(createTestPriorSequencingTest())
+        val annotated = annotator.annotate(createTestSequencingTest())
         assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
     }
 
@@ -110,13 +110,13 @@ class PanelAnnotatorTest {
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
 
-        val panelWithMSI = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = true))
+        val panelWithMSI = annotator.annotate(createTestSequencingTest().copy(isMicrosatelliteUnstable = true))
         assertThat(panelWithMSI.characteristics.microsatelliteStability!!.evidence).isEqualTo(ON_LABEL_MATCH)
 
-        val panelWithMSS = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = false))
+        val panelWithMSS = annotator.annotate(createTestSequencingTest().copy(isMicrosatelliteUnstable = false))
         assertThat(panelWithMSS.characteristics.microsatelliteStability!!.evidence).isEqualTo(EMPTY_MATCH)
 
-        val panelWithoutMicrosatelliteStatus = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = null))
+        val panelWithoutMicrosatelliteStatus = annotator.annotate(createTestSequencingTest().copy(isMicrosatelliteUnstable = null))
         assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteStability).isNull()
     }
 
@@ -125,17 +125,17 @@ class PanelAnnotatorTest {
         every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
 
-        val panelWithHighTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 200.0))
+        val panelWithHighTmb = annotator.annotate(createTestSequencingTest().copy(tumorMutationalBurden = 200.0))
         assertThat(panelWithHighTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(ON_LABEL_MATCH)
 
-        val panelWithLowTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 2.0))
+        val panelWithLowTmb = annotator.annotate(createTestSequencingTest().copy(tumorMutationalBurden = 2.0))
         assertThat(panelWithLowTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(EMPTY_MATCH)
 
-        val panelWithoutTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = null))
+        val panelWithoutTmb = annotator.annotate(createTestSequencingTest().copy(tumorMutationalBurden = null))
         assertThat(panelWithoutTmb.characteristics.tumorMutationalBurden).isNull()
     }
 
-    private fun createTestPriorSequencingTest(): PriorSequencingTest {
-        return PriorSequencingTest(test = TEST_NAME)
+    private fun createTestSequencingTest(): SequencingTest {
+        return SequencingTest(test = TEST_NAME)
     }
 }

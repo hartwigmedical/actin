@@ -102,7 +102,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [
+  "priorPrimaries": [
     {
       "tumorLocation": "Skin",
       "tumorSubLocation": "neck",
@@ -451,7 +451,7 @@
       "isTrialMedication": false
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
       "test": "IHC",
       "item": "PD-L1",

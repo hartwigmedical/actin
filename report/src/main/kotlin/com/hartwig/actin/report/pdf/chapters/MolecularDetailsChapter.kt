@@ -1,28 +1,29 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter
+import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.IHCTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
-import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
-import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.IHCResultGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.element.Div
+import com.itextpdf.layout.element.Table
 
 class MolecularDetailsChapter(
     private val report: Report,
@@ -42,86 +43,86 @@ class MolecularDetailsChapter(
     override fun render(document: Document) {
         addChapterTitle(document)
         addMolecularDetails(document)
-        if (includeRawPathologyReport) report.patientRecord.tumor.rawPathologyReport?.let { addPathologyReport(document) }
+        if (includeRawPathologyReport)
+            addRawPathologyReport(document)
     }
 
     private fun addMolecularDetails(document: Document) {
-        val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val priorIHCResultGenerator =
-            PriorIHCResultGenerator(report.patientRecord, keyWidth, contentWidth() - keyWidth - 10, PriorIHCTestInterpreter())
-        val priorIHCResults = priorIHCResultGenerator.contents().setBorder(Border.NO_BORDER)
-        document.add(priorIHCResults)
 
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
-        val orangeMolecularTable = Tables.createSingleColWithWidth(contentWidth()).addCell(Cells.createEmpty())
-        report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.let { molecular ->
-            orangeMolecularTable.addCell(
-                Cells.createTitle("${molecular.experimentType.display()} (${molecular.sampleId}, ${date(molecular.date)})")
-            )
-            if (molecular.hasSufficientQualityButLowPurity()) {
-                val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"
-                orangeMolecularTable.addCell(
-                    Cells.createContentNoBorder(
-                        ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
-                                "DNA aberrations might not have been detected & predicted tumor origin results may be less reliable")
-                    )
-                )
-            }
-
-            val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
-            TableGeneratorFunctions.addGenerators(generators, orangeMolecularTable, overrideTitleFormatToSubtitle = true)
-
-            if (!molecular.hasSufficientQuality) {
-                orangeMolecularTable.addCell(
-                    Cells.createContent(
-                        ("No successful OncoAct WGS and/or tumor NGS panel could be "
-                                + "performed on the submitted biopsy (insufficient quality for reporting)")
-                    )
-                )
-            }
-        } ?: orangeMolecularTable.addCell(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
-        document.add(orangeMolecularTable)
-
+        val orangeMolecularRecord = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
-        for (panel in externalPanelResults) {
-            WGSSummaryGenerator(
-                true,
-                report.patientRecord,
-                panel,
-                cohorts,
-                keyWidth,
-                contentWidth() - keyWidth
-            ).apply {
+        val filteredIhcTests = IHCTestFilter.mostRecentOrUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
+        val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
+            listOfNotNull(orangeMolecularRecord),
+            externalPanelResults,
+            filteredIhcTests,
+            report.patientRecord.pathologyReports
+        ).filterValues { (orangeTests, molecularTest, ihcTests) ->
+            orangeTests.isNotEmpty() || molecularTest.isNotEmpty() || ihcTests.isNotEmpty()
+        }
+
+        if (orangeMolecularRecord == null) {
+            document.add(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
+        }
+
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        for ((pathologyReport, tests) in groupedByPathologyReport) {
+            pathologyReport ?: groupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
+                table.addCell(Cells.createTitle("Other Tests"))
+            }
+            val (orangeMolecularRecords, molecularTests, ihcTests) = tests
+            contentPerPathologyReport(pathologyReport, orangeMolecularRecords, molecularTests, ihcTests, cohorts, table)
+        }
+        document.add(table)
+    }
+
+    private fun addRawPathologyReport(document: Document) {
+        report.patientRecord.pathologyReports
+            ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
+            ?.let {
+                document.add(Div().setHeight(20F))
                 val table = Tables.createSingleColWithWidth(contentWidth())
-                table.addCell(Cells.createTitle(title()))
-                table.addCell(Cells.create(contents()))
+                val generator = PathologyReportGenerator(report.patientRecord.pathologyReports)
+                // KD: This table doesn't fit in the typical generator format since it contains one row but with a lot of lines.
+                table.addCell(Cells.createTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
                 document.add(table)
             }
+    }
+
+    private fun contentPerPathologyReport(
+        pathologyReport: PathologyReport?,
+        orangeMolecularRecord: List<MolecularRecord>,
+        externalPanelResults: List<MolecularTest>,
+        ihcTests: List<IHCTest>,
+        cohorts: List<InterpretedCohort>,
+        topTable: Table
+    ) {
+
+        pathologyReport?.let {
+            topTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = it)))
         }
-    }
 
-    private fun tumorDetailsGenerators(
-        molecular: MolecularRecord,
-        evaluated: List<InterpretedCohort>,
-        trials: Set<ExternalTrialSummary>
-    ): List<TableGenerator> {
-        return if (molecular.hasSufficientQuality) {
-            listOf(
-                PredictedTumorOriginGenerator(molecular),
-                MolecularDriversGenerator(molecular, evaluated, trials)
-            )
-        } else emptyList()
-    }
+        val tableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
+        val keyWidth = Formats.STANDARD_KEY_WIDTH
+        val valueWidth = tableWidth - keyWidth
 
-    private fun addPathologyReport(document: Document) {
-        document.add(Div().setHeight(20F))
-        val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = PathologyReportGenerator(report.patientRecord.tumor)
-        // KD: This table doesn't fit in the typical generator format since it contains one row but with a lot of lines. 
-        table.addCell(Cells.createTitle(generator.title()))
-        table.addCell(Cells.create(generator.contents()))
-        document.add(table)
+        val orangeGenerators = orangeMolecularRecord.map {
+            OrangeMolecularRecordGenerator(trials, cohorts, tableWidth, it, pathologyReport)
+        }
+        val wgsSummaryGenerators = externalPanelResults.map {
+            WGSSummaryGenerator(true, report.patientRecord, it, pathologyReport, cohorts, keyWidth, valueWidth)
+        }
+        val ihcGenerator = ihcTests.takeIf { it.isNotEmpty() }?.let {
+            IHCResultGenerator(ihcTests, keyWidth, valueWidth - 10, IHCTestInterpreter())
+        }
+        TableGeneratorFunctions.addGenerators(
+            orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
+            topTable,
+            overrideTitleFormatToSubtitle = false
+        )
     }
 }

@@ -2,10 +2,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import org.junit.Test
 
-private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
 
 class ProteinIsExpressedByIHCTest {
@@ -14,7 +13,7 @@ class ProteinIsExpressedByIHCTest {
     @Test
     fun canEvaluate() {
         // No prior tests
-        val priorTests = mutableListOf<PriorIHCTest>()
+        val priorTests = mutableListOf<IHCTest>()
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIHCTests(priorTests)))
 
         // Add test with no result
@@ -35,7 +34,7 @@ class ProteinIsExpressedByIHCTest {
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
-        MolecularTestFactory.priorIHCTest(
-            test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+        MolecularTestFactory.ihcTest(
+            item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }

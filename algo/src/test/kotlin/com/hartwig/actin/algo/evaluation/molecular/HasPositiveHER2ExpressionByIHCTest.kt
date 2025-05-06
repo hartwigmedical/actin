@@ -2,12 +2,12 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -55,9 +55,9 @@ class HasPositiveHER2ExpressionByIHCTest {
                 listOf(
                     ihcTest(scoreValue = 3.0, scoreValueUnit = "+"),
                     ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)
-                    )
                 )
             )
+        )
         assertEvaluation(EvaluationResult.PASS, evaluationValue)
         val evaluationText = function.evaluate(
             MolecularTestFactory.withIHCTests(
@@ -80,8 +80,11 @@ class HasPositiveHER2ExpressionByIHCTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 20, 20)
         )
         val evaluation = function.evaluate(
-            MolecularTestFactory.withCopyNumberAndPriorIHCTests(erbb2Amp, listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)))
+            MolecularTestFactory.withCopyNumberAndIHCTests(
+                erbb2Amp,
+                listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true))
             )
+        )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected)")
     }
@@ -92,9 +95,9 @@ class HasPositiveHER2ExpressionByIHCTest {
             MolecularTestFactory.withIHCTests(
                 listOf(
                     ihcTest(scoreValue = 2.0, scoreValueUnit = "+")
-                    )
                 )
             )
+        )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly("Undetermined if IHC HER2 score value(s) '2.0' is considered positive")
     }
@@ -107,9 +110,11 @@ class HasPositiveHER2ExpressionByIHCTest {
         assertEvaluation(EvaluationResult.FAIL, evaluation)
     }
 
-    private fun ihcTest(scoreValue: Double? = null, scoreValueUnit: String? = null, scoreText: String? = null,
-                        impliesPotentialIndeterminateStatus: Boolean = false): PriorIHCTest {
-        return PriorIHCTest(
+    private fun ihcTest(
+        scoreValue: Double? = null, scoreValueUnit: String? = null, scoreText: String? = null,
+        impliesPotentialIndeterminateStatus: Boolean = false
+    ): IHCTest {
+        return IHCTest(
             item = "HER2", scoreValue = scoreValue, scoreValueUnit = scoreValueUnit, scoreText = scoreText,
             impliesPotentialIndeterminateStatus = impliesPotentialIndeterminateStatus
         )

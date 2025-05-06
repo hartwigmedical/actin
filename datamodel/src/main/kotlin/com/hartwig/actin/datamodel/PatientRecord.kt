@@ -7,13 +7,14 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
+import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.clinical.PatientDetails
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.TumorDetails
@@ -27,8 +28,9 @@ data class PatientRecord(
     val tumor: TumorDetails,
     val clinicalStatus: ClinicalStatus,
     val oncologicalHistory: List<TreatmentHistoryEntry>,
-    val priorSecondPrimaries: List<PriorSecondPrimary>,
+    val priorPrimaries: List<PriorPrimary>,
     val comorbidities: List<Comorbidity>,
+    val ihcTests: List<IHCTest>,
     val labValues: List<LabValue>,
     val surgeries: List<Surgery>,
     val bodyWeights: List<BodyWeight>,
@@ -36,7 +38,7 @@ data class PatientRecord(
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
-    val priorIHCTests: List<PriorIHCTest>,
+    val pathologyReports: List<PathologyReport>?,
     val molecularHistory: MolecularHistory
 ) {
 
