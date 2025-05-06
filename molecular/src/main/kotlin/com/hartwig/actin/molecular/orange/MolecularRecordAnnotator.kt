@@ -106,7 +106,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         return variantsByGene.flatMap { (_, geneVariants) ->
             val maxDriverLikelihood = geneVariants.minOfOrNull { it.driverLikelihood?.ordinal ?: DriverLikelihood.entries.size }
             geneVariants.map { variant ->
-                variant.copy(driverLikelihood = maxDriverLikelihood?.let { DriverLikelihood.entries[it] })
+                variant.copy(driverLikelihood = maxDriverLikelihood?.let { if (variant.driverLikelihood != null) DriverLikelihood.entries[it] else null })
             }
         }
     }

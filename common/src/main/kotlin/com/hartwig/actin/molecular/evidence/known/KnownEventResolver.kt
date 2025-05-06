@@ -12,7 +12,6 @@ import com.hartwig.actin.molecular.evidence.matching.RangeMatching
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.serve.datamodel.molecular.KnownEvents
-import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
@@ -36,23 +35,27 @@ class KnownEventResolver(
         val geneAlteration = GeneAlterationFactory.convertAlteration(variantMatchCriteria.gene, ckbAlteration)
         val isHotspot = HotspotFunctions.isHotspot(ckbAlteration) || findHotspot(otherHotspots, variantMatchCriteria) != null
 
-        return object : VariantAlteration, GeneAlteration by geneAlteration {
-            override val isHotspot: Boolean = isHotspot
-        }
+        return VariantAlteration(
+            gene = geneAlteration.gene,
+            geneRole = geneAlteration.geneRole,
+            proteinEffect = geneAlteration.proteinEffect,
+            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
+            isHotspot = isHotspot
+        )
     }
 
-    fun resolveForCopyNumber(copyNumber: CopyNumber): ServeGeneAlteration? {
+    fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {
         return CopyNumberLookup.findForCopyNumber(filteredKnownEvents.copyNumbers(), copyNumber)
             ?: GeneLookup.find(aggregatedKnownGenes, copyNumber.gene)
     }
 
-    fun resolveForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ServeGeneAlteration? {
+    fun resolveForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
         // Assume a homozygous disruption always has the same annotation as a deletion.
         return CopyNumberLookup.findForHomozygousDisruption(filteredKnownEvents.copyNumbers(), homozygousDisruption)
             ?: GeneLookup.find(aggregatedKnownGenes, homozygousDisruption.gene)
     }
 
-    fun resolveForDisruption(disruption: Disruption): ServeGeneAlteration? {
+    fun resolveForDisruption(disruption: Disruption): GeneAlteration? {
         return GeneLookup.find(aggregatedKnownGenes, disruption.gene)
     }
 

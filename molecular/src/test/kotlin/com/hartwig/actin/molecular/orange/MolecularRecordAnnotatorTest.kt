@@ -96,9 +96,19 @@ class MolecularRecordAnnotatorTest {
             TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH),
             TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.MEDIUM),
             TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.LOW),
-            TestVariantFactory.createMinimal()
         )
         val output = annotator.reannotateDriverLikelihood(variants)
         assertThat(output.all { it.driverLikelihood == DriverLikelihood.HIGH }).isTrue()
+    }
+
+    @Test
+    fun `Should not reannotate driver likelihood when variant has driverlikelihood null`() {
+        val variants = listOf(
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH),
+            TestVariantFactory.createMinimal()
+        )
+        val output = annotator.reannotateDriverLikelihood(variants)
+        assertThat(output[0].driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(output[1].driverLikelihood).isNull()
     }
 }
