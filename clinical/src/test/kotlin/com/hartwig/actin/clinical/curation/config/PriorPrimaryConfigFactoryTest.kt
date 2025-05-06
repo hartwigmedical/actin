@@ -11,13 +11,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PriorPrimaryConfigFactoryTest {
-    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.SECOND_PRIMARY_TSV)
+    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.PRIOR_PRIMARY_TSV)
 
     @Test
-    fun `Should return SecondPrimaryConfig from valid inputs`() {
+    fun `Should return PriorPrimaryConfig from valid inputs`() {
         val curationDoidValidator = mockk<CurationDoidValidator>()
         every { curationDoidValidator.isValidCancerDoidSet(setOf("123")) } returns true
-        val config = SecondPrimaryConfigFactory(curationDoidValidator).create(
+        val config = PriorPrimaryConfigFactory(curationDoidValidator).create(
             fields,
             arrayOf(
                 "input",
@@ -38,24 +38,24 @@ class PriorPrimaryConfigFactoryTest {
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isFalse()
-        val secondPrimary = config.config.curated!!
-        assertThat(secondPrimary.tumorLocation).isEqualTo("tumorLocation")
-        assertThat(secondPrimary.tumorSubLocation).isEqualTo("tumorSubLocation")
-        assertThat(secondPrimary.tumorType).isEqualTo("tumorType")
-        assertThat(secondPrimary.tumorSubType).isEqualTo("tumorSubType")
-        assertThat(secondPrimary.doids).containsExactly("123")
-        assertThat(secondPrimary.diagnosedYear).isEqualTo(2023)
-        assertThat(secondPrimary.diagnosedMonth).isEqualTo(12)
-        assertThat(secondPrimary.treatmentHistory).isEqualTo("treatmentHistory")
-        assertThat(secondPrimary.lastTreatmentYear).isEqualTo(2023)
-        assertThat(secondPrimary.lastTreatmentMonth).isEqualTo(12)
+        val priorPrimary = config.config.curated!!
+        assertThat(priorPrimary.tumorLocation).isEqualTo("tumorLocation")
+        assertThat(priorPrimary.tumorSubLocation).isEqualTo("tumorSubLocation")
+        assertThat(priorPrimary.tumorType).isEqualTo("tumorType")
+        assertThat(priorPrimary.tumorSubType).isEqualTo("tumorSubType")
+        assertThat(priorPrimary.doids).containsExactly("123")
+        assertThat(priorPrimary.diagnosedYear).isEqualTo(2023)
+        assertThat(priorPrimary.diagnosedMonth).isEqualTo(12)
+        assertThat(priorPrimary.treatmentHistory).isEqualTo("treatmentHistory")
+        assertThat(priorPrimary.lastTreatmentYear).isEqualTo(2023)
+        assertThat(priorPrimary.lastTreatmentMonth).isEqualTo(12)
     }
 
     @Test
     fun `Should return validation errors when doids are invalid`() {
         val curationDoidValidator = mockk<CurationDoidValidator>()
         every { curationDoidValidator.isValidCancerDoidSet(setOf("123")) } returns false
-        val config = SecondPrimaryConfigFactory(curationDoidValidator).create(
+        val config = PriorPrimaryConfigFactory(curationDoidValidator).create(
             fields,
             arrayOf(
                 "input",
@@ -76,7 +76,7 @@ class PriorPrimaryConfigFactoryTest {
         assertThat(config.errors)
             .containsExactly(
                 CurationConfigValidationError(
-                    CurationCategory.SECOND_PRIMARY,
+                    CurationCategory.PRIOR_PRIMARY,
                     "input",
                     "doids",
                     "[123]",
@@ -89,7 +89,7 @@ class PriorPrimaryConfigFactoryTest {
     fun `Should return validation errors when tumor status is invalid`() {
         val curationDoidValidator = mockk<CurationDoidValidator>()
         every { curationDoidValidator.isValidCancerDoidSet(setOf("123")) } returns true
-        val config = SecondPrimaryConfigFactory(curationDoidValidator).create(
+        val config = PriorPrimaryConfigFactory(curationDoidValidator).create(
             fields,
             arrayOf(
                 "input",
@@ -110,7 +110,7 @@ class PriorPrimaryConfigFactoryTest {
         assertThat(config.errors)
             .containsExactly(
                 CurationConfigValidationError(
-                    CurationCategory.SECOND_PRIMARY,
+                    CurationCategory.PRIOR_PRIMARY,
                     "input",
                     "status",
                     "not a status",
@@ -121,9 +121,9 @@ class PriorPrimaryConfigFactoryTest {
     }
 
     @Test
-    fun `Should return no validation errors and null second primary when ignore string as input`() {
+    fun `Should return no validation errors and null prior primary when ignore string as input`() {
         val curationDoidValidator = mockk<CurationDoidValidator>()
-        val config = SecondPrimaryConfigFactory(curationDoidValidator).create(
+        val config = PriorPrimaryConfigFactory(curationDoidValidator).create(
             fields,
             arrayOf(
                 "input",

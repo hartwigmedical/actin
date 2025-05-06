@@ -60,9 +60,7 @@ class MolecularDetailsChapter(
             externalPanelResults,
             filteredIhcTests,
             report.patientRecord.pathologyReports
-        ).filterValues { (orangeTests, molecularTest, ihcTests) ->
-            orangeTests.isNotEmpty() || molecularTest.isNotEmpty() || ihcTests.isNotEmpty()
-        }
+        )
 
         if (orangeMolecularRecord == null && externalPanelResults.none {
                 it.testTypeDisplay == "WGS (OncoAct)" || it.testTypeDisplay == "OncoPanel"

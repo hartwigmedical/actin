@@ -22,7 +22,7 @@ import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
+import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
@@ -46,7 +46,7 @@ import com.hartwig.actin.icd.IcdModel
 data class CurationDatabaseContext(
     val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>,
     val treatmentHistoryEntryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
-    val secondPrimaryCuration: CurationDatabase<PriorPrimaryConfig>,
+    val priorPrimaryCuration: CurationDatabase<PriorPrimaryConfig>,
     val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
     val comorbidityCuration: CurationDatabase<ComorbidityConfig>,
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
@@ -68,7 +68,7 @@ data class CurationDatabaseContext(
         val unusedCurationConfigs = listOf(
             primaryTumorCuration,
             treatmentHistoryEntryCuration,
-            secondPrimaryCuration,
+            priorPrimaryCuration,
             lesionLocationCuration,
             comorbidityCuration,
             periodBetweenUnitCuration,
@@ -94,7 +94,7 @@ data class CurationDatabaseContext(
     fun validate() = listOf(
         primaryTumorCuration.validationErrors,
         treatmentHistoryEntryCuration.validationErrors,
-        secondPrimaryCuration.validationErrors,
+        priorPrimaryCuration.validationErrors,
         lesionLocationCuration.validationErrors,
         comorbidityCuration.validationErrors,
         periodBetweenUnitCuration.validationErrors,
@@ -127,12 +127,12 @@ data class CurationDatabaseContext(
                 TreatmentHistoryEntryConfigFactory(treatmentDatabase),
                 CurationCategory.ONCOLOGICAL_HISTORY
             ) { it.treatmentHistoryEntryEvaluatedInputs },
-            secondPrimaryCuration = CurationDatabaseReader.read(
+            priorPrimaryCuration = CurationDatabaseReader.read(
                 curationDir,
-                CurationDatabaseReader.SECOND_PRIMARY_TSV,
-                SecondPrimaryConfigFactory(curationDoidValidator),
-                CurationCategory.SECOND_PRIMARY
-            ) { it.secondPrimaryEvaluatedInputs },
+                CurationDatabaseReader.PRIOR_PRIMARY_TSV,
+                PriorPrimaryConfigFactory(curationDoidValidator),
+                CurationCategory.PRIOR_PRIMARY
+            ) { it.priorPrimaryEvaluatedInputs },
             lesionLocationCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.LESION_LOCATION_TSV,

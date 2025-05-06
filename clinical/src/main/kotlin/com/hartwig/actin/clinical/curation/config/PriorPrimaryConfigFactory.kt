@@ -7,20 +7,20 @@ import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.util.ResourceFile
 
-class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<PriorPrimaryConfig> {
+class PriorPrimaryConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<PriorPrimaryConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<PriorPrimaryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         if (!ignore) {
             val (validatedTumorStatus, tumorStatusValidationErrors) = validateMandatoryEnum<TumorStatus>(
-                CurationCategory.SECOND_PRIMARY,
+                CurationCategory.PRIOR_PRIMARY,
                 input,
                 "status",
                 fields,
                 parts
             ) { TumorStatus.valueOf(it) }
             val (validatedDoids, doidValidationErrors) = validateDoids(
-                CurationCategory.SECOND_PRIMARY,
+                CurationCategory.PRIOR_PRIMARY,
                 input,
                 "doids",
                 fields,

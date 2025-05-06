@@ -76,7 +76,7 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
     ) = CurationResponse.createFromConfigs(
         priorPrimaryCuration.find(input),
         patientId,
-        CurationCategory.SECOND_PRIMARY,
+        CurationCategory.PRIOR_PRIMARY,
         input,
         "prior primary",
         false

@@ -46,7 +46,7 @@ class MolecularSummaryGenerator(
             nonIhcTestsIncludedInTrialMatching,
             ihcTestsFiltered,
             patientRecord.pathologyReports
-        ).filterValues { (_, molecularTest, ihcTests) -> molecularTest.isNotEmpty() || ihcTests.isNotEmpty() }
+        )
 
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests

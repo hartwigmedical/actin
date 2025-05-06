@@ -11,7 +11,7 @@ import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import java.time.LocalDate
-import java.util.*
+import java.util.Locale
 
 private const val ROW_SPACING = 35f
 private const val VALUE_TEXT_Y_OFFSET = 18f
