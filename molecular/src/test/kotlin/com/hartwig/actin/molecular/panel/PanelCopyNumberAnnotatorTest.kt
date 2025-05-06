@@ -13,27 +13,21 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFacto
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val NON_CANONICAL_TRANSCRIPT = "non_canonical_transcript"
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-private val AMPLIFICATION = GeneAlterationFactory.convertAlteration(
-    "gene 1", TestServeKnownFactory.copyNumberBuilder().build().withGeneRole(ServeGeneRole.ONCO)
-        .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
-)
+private val AMPLIFICATION = TestGeneAlterationFactory.createGeneAlteration("gene 1", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, null)
 
 private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
     TestTreatmentEvidenceFactory.create(

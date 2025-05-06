@@ -5,7 +5,7 @@ import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 object TestKnownEventResolverFactory {
 
     fun createProper(): KnownEventResolver {
-        val knownEvents = ImmutableKnownEvents.builder()
+        val primaryKnownEvents = ImmutableKnownEvents.builder()
             .addHotspots(TestServeKnownFactory.hotspotBuilder().build())
             .addCodons(TestServeKnownFactory.codonBuilder().build())
             .addExons(TestServeKnownFactory.exonBuilder().build())
@@ -14,6 +14,8 @@ object TestKnownEventResolverFactory {
             .addFusions(TestServeKnownFactory.fusionBuilder().build())
             .build()
 
-        return KnownEventResolver(knownEvents, knownEvents, knownEvents.genes())
+        val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
+
+        return KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
     }
 }
