@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.known
 
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory.PRIMARY_KNOWN_EVENT_SOURCE
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import org.assertj.core.api.Assertions.assertThat
@@ -14,18 +15,18 @@ class KnownEventResolverFactoryTest {
 
     @Test
     fun `Should filter known events`() {
-        val hotspot1 = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource(), Knowledgebase.UNKNOWN).build()
-        val hotspot2 = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource()).build()
+        val hotspot1 = TestServeKnownFactory.hotspotBuilder().addSources(PRIMARY_KNOWN_EVENT_SOURCE, Knowledgebase.UNKNOWN).build()
+        val hotspot2 = TestServeKnownFactory.hotspotBuilder().addSources(PRIMARY_KNOWN_EVENT_SOURCE).build()
         val hotspot3 = TestServeKnownFactory.hotspotBuilder().addSources(Knowledgebase.UNKNOWN).build()
         val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot1, hotspot2, hotspot3).build()
 
-        val filtered = KnownEventResolverFactory.filterKnownEvents(knownEvents)
-        assertThat(filtered.hotspots().size.toLong()).isEqualTo(2)
-        assertThat(filtered.hotspots().contains(hotspot1)).isTrue()
-        assertThat(filtered.hotspots().contains(hotspot2)).isTrue()
-    }
+        val primaryKnownEvents = KnownEventResolverFactory.filterKnownEvents(knownEvents, true)
+        assertThat(primaryKnownEvents.hotspots().size.toLong()).isEqualTo(2)
+        assertThat(primaryKnownEvents.hotspots().contains(hotspot1)).isTrue()
+        assertThat(primaryKnownEvents.hotspots().contains(hotspot2)).isTrue()
 
-    private fun firstAllowedSource(): Knowledgebase {
-        return KnownEventResolverFactory.KNOWN_EVENT_SOURCES.iterator().next()
+        val secondaryKnownEvents = KnownEventResolverFactory.filterKnownEvents(knownEvents, false)
+        assertThat(secondaryKnownEvents.hotspots().size.toLong()).isEqualTo(1)
+        assertThat(secondaryKnownEvents.hotspots().contains(hotspot3)).isTrue()
     }
 }

@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
-import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory.KNOWN_EVENT_SOURCES
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
@@ -19,21 +18,20 @@ import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import com.hartwig.serve.datamodel.molecular.range.KnownExon
 
 class KnownEventResolver(
-    private val knownEvents: KnownEvents,
-    private val filteredKnownEvents: KnownEvents,
+    private val primaryKnownEvents: KnownEvents,
+    private val secondaryKnownEvents: KnownEvents,
     private val aggregatedKnownGenes: Set<KnownGene>
 ) {
 
     fun resolveForVariant(variantMatchCriteria: VariantMatchCriteria): VariantAlteration {
-        val ckbAlteration = findHotspot(filteredKnownEvents.hotspots(), variantMatchCriteria)
-            ?: findCodon(filteredKnownEvents.codons(), variantMatchCriteria)
-            ?: findExon(filteredKnownEvents.exons(), variantMatchCriteria)
+        val ckbAlteration = findHotspot(primaryKnownEvents.hotspots(), variantMatchCriteria)
+            ?: findCodon(primaryKnownEvents.codons(), variantMatchCriteria)
+            ?: findExon(primaryKnownEvents.exons(), variantMatchCriteria)
             ?: GeneLookup.find(aggregatedKnownGenes, variantMatchCriteria.gene)
 
-        val otherHotspots = knownEvents.hotspots().filter { it.sources().none { source -> source in KNOWN_EVENT_SOURCES } }.toSet()
-
         val geneAlteration = GeneAlterationFactory.convertAlteration(variantMatchCriteria.gene, ckbAlteration)
-        val isHotspot = HotspotFunctions.isHotspot(ckbAlteration) || findHotspot(otherHotspots, variantMatchCriteria) != null
+        val isHotspot =
+            HotspotFunctions.isHotspot(ckbAlteration) || findHotspot(secondaryKnownEvents.hotspots(), variantMatchCriteria) != null
 
         return VariantAlteration(
             gene = geneAlteration.gene,
@@ -44,23 +42,33 @@ class KnownEventResolver(
         )
     }
 
-    fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {
-        return CopyNumberLookup.findForCopyNumber(filteredKnownEvents.copyNumbers(), copyNumber)
-            ?: GeneLookup.find(aggregatedKnownGenes, copyNumber.gene)
+    fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration {
+        return GeneAlterationFactory.convertAlteration(
+            copyNumber.gene,
+            CopyNumberLookup.findForCopyNumber(primaryKnownEvents.copyNumbers(), copyNumber) ?: GeneLookup.find(
+                aggregatedKnownGenes,
+                copyNumber.gene
+            )
+        )
     }
 
-    fun resolveForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
+    fun resolveForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration {
         // Assume a homozygous disruption always has the same annotation as a deletion.
-        return CopyNumberLookup.findForHomozygousDisruption(filteredKnownEvents.copyNumbers(), homozygousDisruption)
-            ?: GeneLookup.find(aggregatedKnownGenes, homozygousDisruption.gene)
+        return GeneAlterationFactory.convertAlteration(
+            homozygousDisruption.gene,
+            CopyNumberLookup.findForHomozygousDisruption(primaryKnownEvents.copyNumbers(), homozygousDisruption) ?: GeneLookup.find(
+                aggregatedKnownGenes,
+                homozygousDisruption.gene
+            )
+        )
     }
 
-    fun resolveForDisruption(disruption: Disruption): GeneAlteration? {
-        return GeneLookup.find(aggregatedKnownGenes, disruption.gene)
+    fun resolveForDisruption(disruption: Disruption): GeneAlteration {
+        return GeneAlterationFactory.convertAlteration(disruption.gene, GeneLookup.find(aggregatedKnownGenes, disruption.gene))
     }
 
     fun resolveForFusion(fusion: FusionMatchCriteria): KnownFusion? {
-        return FusionLookup.find(filteredKnownEvents.fusions(), fusion)
+        return FusionLookup.find(primaryKnownEvents.fusions(), fusion)
     }
 
     private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: VariantMatchCriteria): KnownHotspot? {

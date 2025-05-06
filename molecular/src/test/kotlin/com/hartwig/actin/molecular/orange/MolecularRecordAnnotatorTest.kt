@@ -65,7 +65,7 @@ class MolecularRecordAnnotatorTest {
     @Test
     fun `Should annotate variant that is hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
+            every { alterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
         }
 
@@ -79,7 +79,7 @@ class MolecularRecordAnnotatorTest {
     @Test
     fun `Should annotate variant that is no hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT
+            every { alterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
         }
 

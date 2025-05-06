@@ -28,32 +28,32 @@ class EvidenceDatabaseTest {
             driverLikelihood = DriverLikelihood.HIGH,
             isReportable = true
         )
-        assertThat(database.variantAlterationForVariant(variant)).isNotNull()
+        assertThat(database.alterationForVariant(variant)).isNotNull()
         assertEvidence(database.evidenceForVariant(variant), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test
     fun `Should match evidence for gains and deletions`() {
         val del = createWithCopyNumberType(CopyNumberType.DEL)
-        assertThat(database.geneAlterationForCopyNumber(del)).isNotNull()
+        assertThat(database.alterationForCopyNumber(del)).isNotNull()
         assertEvidence(database.evidenceForCopyNumber(del), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
 
         val gain = createWithCopyNumberType(CopyNumberType.FULL_GAIN)
-        assertThat(database.geneAlterationForCopyNumber(gain)).isNotNull()
+        assertThat(database.alterationForCopyNumber(gain)).isNotNull()
         assertEvidence(database.evidenceForCopyNumber(gain), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test
     fun `Should match evidence for disruption`() {
         val disruption = TestMolecularFactory.minimalDisruption().copy(isReportable = true)
-        assertThat(database.geneAlterationForDisruption(disruption)).isNotNull()
+        assertThat(database.alterationForDisruption(disruption)).isNotNull()
         assertEvidence(database.evidenceForDisruption(disruption), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test
     fun `Should match evidence for homozygous disruption`() {
         val homozygousDisruption = TestMolecularFactory.minimalHomozygousDisruption()
-        assertThat(database.geneAlterationForHomozygousDisruption(homozygousDisruption)).isNotNull()
+        assertThat(database.alterationForHomozygousDisruption(homozygousDisruption)).isNotNull()
         assertEvidence(
             database.evidenceForHomozygousDisruption(homozygousDisruption),
             expectedTreatmentMatches = 2,

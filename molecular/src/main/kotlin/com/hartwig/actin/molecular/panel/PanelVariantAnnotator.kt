@@ -245,7 +245,7 @@ class PanelVariantAnnotator(
 
     private fun annotateWithVariantAlteration(variant: Variant): Variant {
         val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val alteration = evidenceDatabase.variantAlterationForVariant(criteria)
+        val alteration = evidenceDatabase.alterationForVariant(criteria)
 
         return variant.copy(
             isHotspot = alteration.isHotspot,

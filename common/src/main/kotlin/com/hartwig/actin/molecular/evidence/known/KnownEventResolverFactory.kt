@@ -13,24 +13,29 @@ import com.hartwig.serve.datamodel.molecular.range.KnownExon
 
 object KnownEventResolverFactory {
 
-    val KNOWN_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE)
+    val PRIMARY_KNOWN_EVENT_SOURCE = ActionabilityConstants.EVIDENCE_SOURCE
 
     fun create(knownEvents: KnownEvents): KnownEventResolver {
-        return KnownEventResolver(knownEvents, filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()))
+        val primaryKnownEvents = filterKnownEvents(knownEvents, isPrimary = true)
+        val secondaryKnownEvents = filterKnownEvents(knownEvents, isPrimary = false)
+        return KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, GeneAggregator.aggregate(knownEvents.genes()))
     }
 
-    fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
+    fun filterKnownEvents(
+        knownEvents: KnownEvents,
+        isPrimary: Boolean
+    ): KnownEvents {
         return ImmutableKnownEvents.builder()
-            .hotspots(filterKnown<KnownHotspot>(knownEvents.hotspots()))
-            .codons(filterKnown<KnownCodon>(knownEvents.codons()))
-            .exons(filterKnown<KnownExon>(knownEvents.exons()))
-            .genes(filterKnown<KnownGene>(knownEvents.genes()))
-            .copyNumbers(filterKnown<KnownCopyNumber>(knownEvents.copyNumbers()))
-            .fusions(filterKnown<KnownFusion>(knownEvents.fusions()))
+            .hotspots(filterKnown<KnownHotspot>(knownEvents.hotspots(), isPrimary))
+            .codons(filterKnown<KnownCodon>(knownEvents.codons(), isPrimary))
+            .exons(filterKnown<KnownExon>(knownEvents.exons(), isPrimary))
+            .genes(filterKnown<KnownGene>(knownEvents.genes(), isPrimary))
+            .copyNumbers(filterKnown<KnownCopyNumber>(knownEvents.copyNumbers(), isPrimary))
+            .fusions(filterKnown<KnownFusion>(knownEvents.fusions(), isPrimary))
             .build()
     }
 
-    private fun <T : KnownEvent> filterKnown(knowns: Set<T>): Set<T> {
-        return knowns.filter { it.sources().intersect(KNOWN_EVENT_SOURCES).isNotEmpty() }.toSet()
+    private fun <T : KnownEvent> filterKnown(knowns: Set<T>, isPrimary: Boolean): Set<T> {
+        return knowns.filter { it.sources().contains(PRIMARY_KNOWN_EVENT_SOURCE) == isPrimary }.toSet()
     }
 }

@@ -16,7 +16,7 @@ object HotspotComparator {
             .mapNotNull { variant ->
                 val criteria = createVariantCriteria(variant)
                 val knownEventResolver =
-                    KnownEventResolverFactory.create(KnownEventResolverFactory.filterKnownEvents(serveRecord.knownEvents()))
+                    KnownEventResolverFactory.create(KnownEventResolverFactory.filterKnownEvents(serveRecord.knownEvents(), true))
                 val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
                 val isHotspotServe = serveGeneAlteration.isHotspot
                 val isHotspotOrange = variant.hotspot() == HotspotType.HOTSPOT

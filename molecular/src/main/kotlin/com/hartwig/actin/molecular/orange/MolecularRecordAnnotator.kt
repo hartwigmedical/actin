@@ -84,7 +84,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     fun annotateVariant(variant: Variant): Variant {
-        val alteration = evidenceDatabase.variantAlterationForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant))
+        val alteration = evidenceDatabase.alterationForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant))
 
         if (!variant.isHotspot && alteration.isHotspot) {
             logger.info("Overwriting isHotspot to true and setting driverLikelihood to HIGH for ${variant.event}")
@@ -112,8 +112,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val alteration =
-            GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
+        val alteration = evidenceDatabase.alterationForCopyNumber(copyNumber)
         val copyNumberWithGeneAlteration = copyNumber.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
@@ -124,10 +123,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateHomozygousDisruption(homozygousDisruption: HomozygousDisruption): HomozygousDisruption {
-        val alteration = GeneAlterationFactory.convertAlteration(
-            homozygousDisruption.gene,
-            evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)
-        )
+        val alteration = evidenceDatabase.alterationForHomozygousDisruption(homozygousDisruption)
         val homozygousDisruptionWithGeneAlteration = homozygousDisruption.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
@@ -138,7 +134,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateDisruption(disruption: Disruption): Disruption {
-        val alteration = GeneAlterationFactory.convertAlteration(disruption.gene, evidenceDatabase.geneAlterationForDisruption(disruption))
+        val alteration = evidenceDatabase.alterationForDisruption(disruption)
         val disruptionWithGeneAlteration = disruption.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,

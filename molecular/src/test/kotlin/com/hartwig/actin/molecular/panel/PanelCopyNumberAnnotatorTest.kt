@@ -17,6 +17,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import io.mockk.every
@@ -29,8 +30,10 @@ import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProtei
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val NON_CANONICAL_TRANSCRIPT = "non_canonical_transcript"
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-private val AMPLIFICATION = TestServeKnownFactory.copyNumberBuilder().build().withGeneRole(ServeGeneRole.ONCO)
-    .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+private val AMPLIFICATION = GeneAlterationFactory.convertAlteration(
+    "gene 1", TestServeKnownFactory.copyNumberBuilder().build().withGeneRole(ServeGeneRole.ONCO)
+        .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+)
 
 private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
     TestTreatmentEvidenceFactory.create(
@@ -46,7 +49,7 @@ class PanelCopyNumberAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
     }
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
@@ -108,7 +111,7 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     private fun setupEvidenceForCopyNumber() {
-        every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns AMPLIFICATION
+        every { evidenceDatabase.alterationForCopyNumber(any()) } returns AMPLIFICATION
         every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
     }
 

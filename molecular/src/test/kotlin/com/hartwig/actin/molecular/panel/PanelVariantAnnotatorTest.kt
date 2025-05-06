@@ -117,8 +117,8 @@ private val NON_HOTSPOT =
 class PanelVariantAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-        every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT_CKB
+        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+        every { alterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT_CKB
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
     }
@@ -162,8 +162,8 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variant that is hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-            every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT_DOCM
+            every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+            every { alterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT_DOCM
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
             every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         }
@@ -176,8 +176,8 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variant that is no hotspot`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { variantAlterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-            every { variantAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT
+            every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+            every { alterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns NON_HOTSPOT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
             every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         }
