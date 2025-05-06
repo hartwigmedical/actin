@@ -124,7 +124,7 @@ class MolecularDetailsChapter(
         TableGeneratorFunctions.addGenerators(
             orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
             topTable,
-            overrideTitleFormatToSubtitle = false
+            overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
     }
 }

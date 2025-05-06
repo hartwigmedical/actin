@@ -63,12 +63,6 @@ class MolecularSummaryGenerator(
             }
         }
 
-        if (ihcTestsFiltered.isEmpty()) {
-            val molecularResultGenerator = IHCResultGenerator(ihcTestsFiltered, keyWidth, valueWidth, IHCTestInterpreter())
-            table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
-            table.addCell(Cells.create(molecularResultGenerator.contents()))
-        }
-
         return table
     }
 
@@ -102,11 +96,10 @@ class MolecularSummaryGenerator(
             }
         }
 
-        ihcTests.takeIf { it.isNotEmpty() }?.let {
-            val molecularResultGenerator = IHCResultGenerator(ihcTests, keyWidth, valueWidth, IHCTestInterpreter())
-            table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
-            table.addCell(Cells.create(molecularResultGenerator.contents()))
-        }
+        val molecularResultGenerator = IHCResultGenerator(ihcTests, keyWidth, valueWidth, IHCTestInterpreter())
+        table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
+        table.addCell(Cells.create(molecularResultGenerator.contents()))
+
     }
 
 

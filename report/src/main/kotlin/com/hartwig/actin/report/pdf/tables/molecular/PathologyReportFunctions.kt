@@ -29,7 +29,7 @@ object PathologyReportFunctions {
                         add(Text(" - ").addStyle(Styles.tableHighlightStyle()))
                     }
                 }
-                .add(Text(report.tissueId?.uppercase()).addStyle(Styles.tableTitleStyle()))
+                .add(Text(report.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()))
                 .apply {
                     if (report.isSourceInternal) {
                         add(Text(" (Collection date: ")).add(Text(date(report.tissueDate)).addStyle(Styles.tableHighlightStyle()))

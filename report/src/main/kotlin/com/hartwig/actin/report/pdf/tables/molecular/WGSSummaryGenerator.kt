@@ -26,7 +26,7 @@ class WGSSummaryGenerator(
 
     override fun title(): String {
         val title = molecular.testTypeDisplay ?: molecular.experimentType.display()
-        val suffix = if (pathologyReport?.tissueId.isNullOrBlank()) " (${date(molecular.date)})" else ""
+        val suffix = pathologyReport?.let { "" } ?: " (${date(molecular.date)})"
         return "$title$suffix"
     }
 
