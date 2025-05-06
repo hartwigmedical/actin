@@ -11,7 +11,6 @@ import org.junit.Test
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 private const val MOLECULAR_TEST_INPUT = "Molecular test input"
-private const val IHC = "IHC"
 
 class IHCTestsExtractorTest {
 
@@ -44,8 +43,6 @@ class IHCTestsExtractorTest {
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = ihcInputs, pdl1TestResults = pdl1Inputs)
         val (molecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(molecularTests).hasSize(2)
-        assertThat(molecularTests[0].test).isEqualTo(IHC)
-        assertThat(molecularTests[1].test).isEqualTo(IHC)
 
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(

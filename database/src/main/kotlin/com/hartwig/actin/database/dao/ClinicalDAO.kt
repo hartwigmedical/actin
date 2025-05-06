@@ -327,7 +327,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
             context.insertInto(
                 Tables.IHCTEST,
                 Tables.IHCTEST.PATIENTID,
-                Tables.IHCTEST.TEST,
                 Tables.IHCTEST.ITEM,
                 Tables.IHCTEST.MEASURE,
                 Tables.IHCTEST.MEASUREDATE,
@@ -339,7 +338,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    ihcTest.test,
                     ihcTest.item,
                     ihcTest.measure,
                     ihcTest.measureDate,

@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.report.interpretation.IHCTestInterpretation
 import com.hartwig.actin.report.interpretation.IHCTestInterpreter
-import com.hartwig.actin.report.interpretation.MolecularTestInterpretation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -31,15 +31,15 @@ class IHCResultGenerator(
         if (ihcTests.isEmpty()) {
             table.addCell(Cells.createSpanningValue("None", table).addStyle(Styles.tableKeyStyle()))
         } else {
-            interpreter.interpret(ihcTests).forEach { molecularTestInterpretation ->
-                molecularTestInterpretationContents(molecularTestInterpretation, table)
+            interpreter.interpret(ihcTests).forEach { ihcTestInterpretation ->
+                ihcTestInterpretationContents(ihcTestInterpretation, table)
             }
         }
         return table
     }
 
-    private fun molecularTestInterpretationContents(molecularTestInterpretation: MolecularTestInterpretation, table: Table) {
-        molecularTestInterpretation.results.sortedBy { it.sortPrecedence }
+    private fun ihcTestInterpretationContents(ihcTestInterpretation: IHCTestInterpretation, table: Table) {
+        ihcTestInterpretation.results.sortedBy { it.sortPrecedence }
             .groupBy { it.grouping }
             .forEach {
                 table.addCell(Cells.createKey(it.key))

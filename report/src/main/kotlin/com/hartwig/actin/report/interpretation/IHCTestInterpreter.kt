@@ -4,20 +4,22 @@ import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
 
+const val IHC_TEST_TYPE = "IHC"
+
 class IHCTestInterpreter {
 
     private val logger = LogManager.getLogger(IHCTestInterpreter::class.java)
 
-    private val interpretationBuilder = MolecularTestInterpretationBuilder()
+    private val interpretationBuilder = IHCTestInterpretationBuilder()
 
-    fun interpret(ihcTests: List<IHCTest>): List<MolecularTestInterpretation> {
+    fun interpret(ihcTests: List<IHCTest>): List<IHCTestInterpretation> {
         ihcTests.forEach(::interpret)
         return interpretationBuilder.build()
     }
 
     private fun interpret(test: IHCTest) {
         val item = test.item ?: ""
-        val type = test.test
+        val type = IHC_TEST_TYPE
         val date = test.measureDate
         val scoreText = test.scoreText
         val scoreValue = test.scoreValue
