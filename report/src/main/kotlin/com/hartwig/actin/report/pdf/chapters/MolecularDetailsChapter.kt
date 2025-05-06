@@ -64,7 +64,9 @@ class MolecularDetailsChapter(
             orangeTests.isNotEmpty() || molecularTest.isNotEmpty() || ihcTests.isNotEmpty()
         }
 
-        if (orangeMolecularRecord == null) {
+        if (orangeMolecularRecord == null && externalPanelResults.none {
+                it.testTypeDisplay == "WGS (OncoAct)" || it.testTypeDisplay == "OncoPanel"
+            }) {
             document.add(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
         }
 
