@@ -6,6 +6,7 @@ import com.hartwig.actin.report.interpretation.MolecularTestInterpretation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.date
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
@@ -28,7 +29,7 @@ class IHCResultGenerator(
 
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         if (ihcTests.isEmpty()) {
-            table.addCell(Cells.createSpanningValue("No prior IHC molecular tests", table))
+            table.addCell(Cells.createSpanningValue("None", table).addStyle(Styles.tableKeyStyle()))
         } else {
             interpreter.interpret(ihcTests).forEach { molecularTestInterpretation ->
                 molecularTestInterpretationContents(molecularTestInterpretation, table)
