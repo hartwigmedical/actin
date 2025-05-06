@@ -14,7 +14,6 @@ import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.IHCResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions
-import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions.date
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -57,42 +56,28 @@ class MolecularDetailsChapter(
         val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentOrUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
+            listOfNotNull(orangeMolecularRecord),
             externalPanelResults,
             filteredIhcTests,
             report.patientRecord.pathologyReports
-        )
-
-        val (orangePathologyReport, otherMolecularReports) = groupedByPathologyReport.keys.partition { key ->
-            key != null && orangeMolecularRecord != null && key.date == orangeMolecularRecord.date
+        ).filterValues { (orangeTests, molecularTest, ihcTests) ->
+            orangeTests.isNotEmpty() || molecularTest.isNotEmpty() || ihcTests.isNotEmpty()
         }
 
-        val orangeMolecularTable = Tables.createSingleColWithWidth(contentWidth())
-        orangeMolecularRecord?.also { molecular ->
-            val pathologyReport = if (orangePathologyReport.isNotEmpty()) orangePathologyReport.first() else null
-            val (molecularTest, ihcTests) = pathologyReport?.let {
-                groupedByPathologyReport[pathologyReport]?.let { (molecularTest, ihcTests) ->
-                    molecularTest to ihcTests
-                }
-            } ?: (emptyList<MolecularTest>() to emptyList())
-            contentPerPathologyReport(pathologyReport, molecular, molecularTest, ihcTests, cohorts, orangeMolecularTable)
-
-        } ?: run { orangeMolecularTable.addCell(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed")) }
-        document.add(orangeMolecularTable)
-
-        val filteredGroupedByPathologyReport = groupedByPathologyReport
-            .filterKeys { it in otherMolecularReports }
-            .filterValues { (molecularTest, ihcTests) -> molecularTest.isNotEmpty() || ihcTests.isNotEmpty() }
+        if (orangeMolecularRecord == null) {
+            document.add(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
+        }
 
         val table = Tables.createSingleColWithWidth(contentWidth())
-        for ((pathologyReport, tests) in filteredGroupedByPathologyReport) {
-            pathologyReport ?: filteredGroupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
+        for ((pathologyReport, tests) in groupedByPathologyReport) {
+            pathologyReport ?: groupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
                 table.addCell(Cells.createTitle("Other Tests"))
             }
-            contentPerPathologyReport(pathologyReport, null, tests.first, tests.second, cohorts, table)
+            val (orangeMolecularRecords, molecularTests, ihcTests) = tests
+            contentPerPathologyReport(pathologyReport, orangeMolecularRecords, molecularTests, ihcTests, cohorts, table)
         }
         document.add(table)
     }
-
 
     private fun addRawPathologyReport(document: Document) {
         report.patientRecord.pathologyReports
@@ -108,10 +93,9 @@ class MolecularDetailsChapter(
             }
     }
 
-
     private fun contentPerPathologyReport(
         pathologyReport: PathologyReport?,
-        orangeMolecularRecord: MolecularRecord?,
+        orangeMolecularRecord: List<MolecularRecord>,
         externalPanelResults: List<MolecularTest>,
         ihcTests: List<IHCTest>,
         cohorts: List<InterpretedCohort>,
@@ -122,30 +106,21 @@ class MolecularDetailsChapter(
             topTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = it)))
         }
 
-        val innerTableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
+        val tableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val valueWidth = innerTableWidth - keyWidth
+        val valueWidth = tableWidth - keyWidth
 
-        val orangeGenerator = orangeMolecularRecord?.let {
-            OrangeMolecularRecordGenerator(
-                trials,
-                cohorts,
-                innerTableWidth,
-                orangeMolecularRecord,
-                pathologyReport
-            )
+        val orangeGenerators = orangeMolecularRecord.map {
+            OrangeMolecularRecordGenerator(trials, cohorts, tableWidth, it, pathologyReport)
         }
-
-        val wgsSummaryGenerators = externalPanelResults.map { panel ->
-            WGSSummaryGenerator(true, report.patientRecord, panel, pathologyReport, cohorts, keyWidth, valueWidth)
+        val wgsSummaryGenerators = externalPanelResults.map {
+            WGSSummaryGenerator(true, report.patientRecord, it, pathologyReport, cohorts, keyWidth, valueWidth)
         }
-
         val ihcGenerator = ihcTests.takeIf { it.isNotEmpty() }?.let {
             IHCResultGenerator(ihcTests, keyWidth, valueWidth - 10, IHCTestInterpreter())
         }
-
         TableGeneratorFunctions.addGenerators(
-            listOfNotNull(orangeGenerator) + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
+            orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
             topTable,
             overrideTitleFormatToSubtitle = false
         )

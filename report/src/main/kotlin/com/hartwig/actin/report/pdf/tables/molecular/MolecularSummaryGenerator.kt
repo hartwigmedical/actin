@@ -42,23 +42,24 @@ class MolecularSummaryGenerator(
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
         val ihcTestsFiltered = IhcTestFilter.mostRecentOrUnknownDateIhcTests(patientRecord.ihcTests).toList()
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
+            emptyList(),
             nonIhcTestsIncludedInTrialMatching,
             ihcTestsFiltered,
             patientRecord.pathologyReports
-        ).filterValues { (molecularTest, ihcTests) -> molecularTest.isNotEmpty() || ihcTests.isNotEmpty() }
+        ).filterValues { (_, molecularTest, ihcTests) -> molecularTest.isNotEmpty() || ihcTests.isNotEmpty() }
 
         for ((pathologyReport, tests) in groupedByPathologyReport) {
-            val (molecularTest, ihcTests) = tests
+            val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
                 table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = pathologyReport)))
                 val reportTable = Tables.createSingleCol()
-                content(pathologyReport, molecularTest, ihcTests, reportTable)
+                content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
             } ?: run {
                 if (groupedByPathologyReport.keys.size > 1) {
                     table.addCell(Cells.createTitle("Other Tests"))
                 }
-                content(pathologyReport, molecularTest, ihcTests, table)
+                content(pathologyReport, molecularTests, ihcTests, table)
             }
         }
 
