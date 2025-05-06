@@ -45,7 +45,7 @@ class OrangeMolecularRecordGenerator(
         }
 
         val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
-        TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true)
+        TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true, skipWrappingFooter = true)
 
         if (!molecular.hasSufficientQuality) {
             table.addCell(
