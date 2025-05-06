@@ -15,7 +15,7 @@ class StandardPatientDetailsExtractor : StandardDataExtractor<PatientDetails> {
                 birthYear = ehrPatientRecord.patientDetails.birthYear,
                 registrationDate = ehrPatientRecord.patientDetails.registrationDate,
                 hasHartwigSequencing = ehrPatientRecord.patientDetails.hartwigMolecularDataExpected,
-                hospitalPatientId = ehrPatientRecord.patientDetails.hospitalPatientId
+                sourceId = ehrPatientRecord.patientDetails.hospitalPatientId
             ), CurationExtractionEvaluation()
         )
     }

@@ -22,7 +22,7 @@ private const val INITIAL_FONT_SIZE = 10f
 private const val MIN_FONT_SIZE = 6f
 private const val FONT_HEIGHT = 15f
 
-class SidePanel(private val patientId: String, private val hospitalPatientId: String?, private val reportDate: LocalDate) {
+class SidePanel(private val patientId: String, private val sourcePatientId: String?, private val reportDate: LocalDate) {
 
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
@@ -32,7 +32,7 @@ class SidePanel(private val patientId: String, private val hospitalPatientId: St
         canvas.fill()
         var sideTextIndex = 0
         val cv = Canvas(canvas, page.pageSize)
-        val (value, extra) = hospitalPatientId.takeUnless { it.isNullOrBlank() }?.let { it to patientId } ?: patientId to null
+        val (value, extra) = sourcePatientId.takeUnless { it.isNullOrBlank() }?.let { it to patientId } ?: patientId to null
         cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", value, extra))
         cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", date(reportDate)))
         canvas.release()

@@ -6,7 +6,7 @@
     "registrationDate": "2020-07-13",
     "questionnaireDate": "2021-08-16",
     "hasHartwigSequencing": true,
-    "hospitalPatientId": null
+    "sourceId": null
   },
   "tumor": {
     "primaryTumorLocation": "Ovary",

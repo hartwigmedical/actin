@@ -5,7 +5,7 @@
     "birthYear": 5,
     "registrationDate": "2020-01-01",
     "questionnaireDate": null,
-    "hospitalPatientId": "PT-1001"
+    "sourceId": "PT-1001"
   },
   "tumor": {
     "primaryTumorLocation": "Lung",

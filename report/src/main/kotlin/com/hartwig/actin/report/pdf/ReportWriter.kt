@@ -34,19 +34,19 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         Styles.initialize()
 
         val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
-        writePdfChapters(report.patientId, report.patientRecord.patient.hospitalPatientId, chapters, enableExtendedMode, report.reportDate)
+        writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, enableExtendedMode, report.reportDate)
     }
 
     private fun writePdfChapters(
         patientId: String,
-        hospitalPatientId: String?,
+        sourcePatientId: String?,
         chapters: List<ReportChapter>,
         enableExtendedMode: Boolean,
         reportDate: LocalDate
     ) {
         val doc = initializeReport(patientId, enableExtendedMode)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler: PageEventHandler = PageEventHandler.create(patientId, hospitalPatientId, reportDate)
+        val pageEventHandler: PageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]
