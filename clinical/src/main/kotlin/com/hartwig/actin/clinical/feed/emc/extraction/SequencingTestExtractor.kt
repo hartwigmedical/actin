@@ -28,9 +28,7 @@ class SequencingTestExtractor(
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
 
-
         val extracted = questionnaire.ihcTestResults.map { result ->
-
             val testCurationConfig =
                 CurationResponse.createFromConfigs(
                     testCuration.find(result),
@@ -48,7 +46,7 @@ class SequencingTestExtractor(
                     else -> config.curatedName
                 }
             }
-            
+
             curatedTestName?.let { name ->
                 val sequencingResults = CurationResponse.createFromConfigs(
                     testResultCuration.find(result),
@@ -90,7 +88,6 @@ class SequencingTestExtractor(
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }
     }
-
 
     companion object {
 
