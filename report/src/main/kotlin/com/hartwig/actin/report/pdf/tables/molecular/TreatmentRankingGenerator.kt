@@ -6,13 +6,14 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.treatment.TreatmentEvidenceRanking
 import com.itextpdf.layout.element.Table
 
-class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentEvidenceRanking, private val width: Float) : TableGenerator {
+class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentEvidenceRanking) : TableGenerator {
+    
     override fun title() = "Treatment ranking"
+    
     override fun forceKeepTogether() = false
 
     override fun contents(): Table {
-        val columnWidth = width / 3
-        val table = Tables.createFixedWidthCols(columnWidth, columnWidth, columnWidth)
+        val table = Tables.createRelativeWidthCols(1f, 1f, 1f)
         val header = listOf("Treatment", "Events", "Score").map(Cells::createHeader)
         val cells = treatmentEvidenceRanking.ranking.sortedBy { it.score }.reversed().flatMap {
             listOf(it.treatment, it.events.joinToString(), it.score.toString())
