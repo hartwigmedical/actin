@@ -16,9 +16,9 @@ import java.io.File
 import java.nio.file.Paths
 
 class Paver(
-    private val ensemblDataDir: String,
+    val ensemblDataDir: String,
     private val refGenomeFasta: String,
-    private val refGenomeVersion: PaveRefGenomeVersion,
+    val refGenomeVersion: PaveRefGenomeVersion,
     private val driverGenePanel: String,
     private val tempDir: String
 ) {
