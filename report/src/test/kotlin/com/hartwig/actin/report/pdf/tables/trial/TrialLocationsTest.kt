@@ -7,7 +7,7 @@ import org.junit.Test
 class TrialLocationsTest {
 
     @Test
-    fun `Should display all locations when count is small`() {
+    fun `Should display all locations when there are few locations`() {
         assertThat(TrialLocations.actinTrialLocation(null, null, setOf("1", "2"), false)).isEqualTo("1, 2")
 
         assertThat(
@@ -21,10 +21,10 @@ class TrialLocationsTest {
     }
 
     @Test
-    fun `Should display many-warning when there are many trials and no requesting source`() {
+    fun `Should display many-warning when there are many locations and no requesting source`() {
         assertThat(TrialLocations.actinTrialLocation(null, null, setOf("1", "2", "3", "4"), false)).isEqualTo("3+ locations")
         
-        assertThat(TrialLocations.actinTrialLocation(null, null, setOf("1", "2", "3", "4"), true)).isEqualTo("3+ locations - see link")
+        assertThat(TrialLocations.actinTrialLocation(null, null, setOf("1", "2", "3", "4"), true)).isEqualTo("3+ locations (see link)")
     }
 
     @Test
@@ -45,7 +45,7 @@ class TrialLocationsTest {
                 setOf("Example", "2", "3", "4"),
                 true
             )
-        ).isEqualTo("Example and 3 other locations - see link")
+        ).isEqualTo("Example and 3 other locations (see link)")
 
         assertThat(
             TrialLocations.actinTrialLocation(
@@ -54,6 +54,6 @@ class TrialLocationsTest {
                 setOf("Example", "2", "3", "4"),
                 true
             )
-        ).isEqualTo("Example and 3 other locations - see link")
+        ).isEqualTo("Example and 3 other locations (see link)")
     }
 } 
