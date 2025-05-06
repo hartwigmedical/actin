@@ -1,18 +1,18 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
+import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 
-class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatabase<SecondPrimaryConfig>) :
-    StandardDataExtractor<List<PriorSecondPrimary>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSecondPrimary>> {
+class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatabase<PriorPrimaryConfig>) :
+    StandardDataExtractor<List<PriorPrimary>> {
+    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorPrimary>> {
         val priorPrimaries = fromPriorPrimaries(ehrPatientRecord)
         val priorPrimariesFromOtherConditions = fromOtherConditions(ehrPatientRecord)
         val priorPrimariesFromTreatmentHistory = fromTreatmentHistory(ehrPatientRecord)
@@ -26,11 +26,11 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
         }
     }
 
-    private fun fromOtherConditions(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorSecondPrimary>>> {
+    private fun fromOtherConditions(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorPrimary>>> {
         return extractFromSecondarySource(ehrPatientRecord, ehrPatientRecord.priorOtherConditions) { it.name }
     }
 
-    private fun fromTreatmentHistory(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorSecondPrimary>>> {
+    private fun fromTreatmentHistory(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorPrimary>>> {
         return extractFromSecondarySource(ehrPatientRecord, ehrPatientRecord.treatmentHistory) { it.treatmentName }
     }
 
@@ -38,7 +38,7 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
         ehrPatientRecord: ProvidedPatientRecord,
         sourceList: List<T>,
         inputAccessor: (T) -> String
-    ): List<ExtractionResult<List<PriorSecondPrimary>>> {
+    ): List<ExtractionResult<List<PriorPrimary>>> {
         return sourceList.map {
             curate(ehrPatientRecord.patientDetails.hashedId, inputAccessor.invoke(it))
         }
@@ -51,7 +51,7 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
             }
     }
 
-    private fun fromPriorPrimaries(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorSecondPrimary>>> =
+    private fun fromPriorPrimaries(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorPrimary>>> =
         ehrPatientRecord.priorPrimaries.map {
             val input = "${it.tumorLocation} | ${it.tumorType}"
             val curatedPriorPrimary = curate(ehrPatientRecord.patientDetails.hashedId, input)

@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
@@ -13,6 +12,7 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import org.apache.logging.log4j.LogManager
 
 class TumorDetailsExtractor(
@@ -50,20 +50,16 @@ class TumorDetailsExtractor(
         val otherLesions = filterCurateOtherLesions(curatedOtherLesions?.configs)
         val otherSuspectedLesions = filterCurateOtherLesions(curatedOtherLesions?.configs, true)
 
-
-        val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" ||
-                primaryTumorDetails.primaryTumorType == "Glioma"
-
-        val (hasBrainLesions, hasSuspectedBrainLesions) = if (hasBrainOrGliomaTumor) {
-            Pair(false, false)
-        } else {
-            determineLesionPresence(lesionLocationConfigMap, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions)
-        }
-        val (hasCnsLesions, hasSuspectedCnsLesions) = if (hasBrainOrGliomaTumor) {
-            Pair(false, false)
-        } else {
-            determineLesionPresence(lesionLocationConfigMap, LesionLocationCategory.CNS, questionnaire.hasCnsLesions)
-        }
+        val (hasBrainLesions, hasSuspectedBrainLesions) = determineLesionPresence(
+            lesionLocationConfigMap,
+            LesionLocationCategory.BRAIN,
+            questionnaire.hasBrainLesions
+        )
+        val (hasCnsLesions, hasSuspectedCnsLesions) = determineLesionPresence(
+            lesionLocationConfigMap,
+            LesionLocationCategory.CNS,
+            questionnaire.hasCnsLesions
+        )
         val (hasBoneLesions, hasSuspectedBoneLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.BONE,
@@ -83,15 +79,16 @@ class TumorDetailsExtractor(
             LesionLocationCategory.LYMPH_NODE
         )
 
+        val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" || primaryTumorDetails.primaryTumorType == "Glioma"
+
         val tumorDetails = primaryTumorDetails.copy(
-            biopsyLocation = curatedBiopsyLocation?.config()?.location,
             stage = questionnaire.stage,
             hasMeasurableDisease = questionnaire.hasMeasurableDisease,
-            hasBrainLesions = hasBrainLesions,
-            hasSuspectedBrainLesions = hasSuspectedBrainLesions,
+            hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions,
+            hasSuspectedBrainLesions = if (hasBrainOrGliomaTumor) false else hasSuspectedBrainLesions,
             hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveBrainLesions,
-            hasCnsLesions = hasCnsLesions,
-            hasSuspectedCnsLesions = hasSuspectedCnsLesions,
+            hasCnsLesions = if (hasBrainOrGliomaTumor) false else hasCnsLesions,
+            hasSuspectedCnsLesions = if (hasBrainOrGliomaTumor) false else hasSuspectedCnsLesions,
             hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveCnsLesions,
             hasBoneLesions = hasBoneLesions,
             hasSuspectedBoneLesions = hasSuspectedBoneLesions,
@@ -102,7 +99,8 @@ class TumorDetailsExtractor(
             hasLymphNodeLesions = hasLymphNodeLesions,
             hasSuspectedLymphNodeLesions = hasSuspectedLymphNodeLesions,
             otherLesions = otherLesions,
-            otherSuspectedLesions = otherSuspectedLesions
+            otherSuspectedLesions = otherSuspectedLesions,
+            biopsyLocation = curatedBiopsyLocation?.config()?.location,
         )
 
         val tumorDetailsWithDerivedStages = tumorDetails.copy(derivedStages = tumorStageDeriver.derive(tumorDetails))
@@ -187,23 +185,23 @@ class TumorDetailsExtractor(
     private fun determineLesionPresence(
         lesionLocationConfigMap: Map<LesionLocationCategory?, List<LesionLocationConfig>>?,
         lesionLocationCategory: LesionLocationCategory,
-        hasLesion: Boolean? = null
+        hasLesionsQuestionnaire: Boolean? = null
     ): Pair<Boolean?, Boolean?> {
 
         val lesionsConfig = lesionLocationConfigMap?.get(lesionLocationCategory)
 
         if (lesionsConfig.isNullOrEmpty()) {
-            return Pair(hasLesion, null)
+            return Pair(hasLesionsQuestionnaire, null)
         }
 
-        val hasOtherLesions = lesionsConfig.any { it.suspected != true }.takeIf { it }
-        val hasSuspectedOtherLesions = lesionsConfig.any { it.suspected == true }.takeIf { it }
+        val hasLesions = lesionsConfig.any { it.suspected != true }.takeIf { it }
+        val hasSuspectedLesions = lesionsConfig.any { it.suspected == true }.takeIf { it }
 
-
-        if ((hasOtherLesions == true || hasSuspectedOtherLesions == true) && hasLesion == false) {
+        if ((hasLesions == true || hasSuspectedLesions == true) && hasLesionsQuestionnaire != true) {
             logger.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")
         }
-        return Pair(hasOtherLesions, hasSuspectedOtherLesions)
+
+        return Pair(if (hasLesions == true) true else hasLesionsQuestionnaire, hasSuspectedLesions)
     }
 
     companion object {

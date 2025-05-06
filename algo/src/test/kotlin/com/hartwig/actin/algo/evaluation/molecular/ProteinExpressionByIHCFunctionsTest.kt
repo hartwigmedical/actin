@@ -1,21 +1,20 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorIHCTest
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.ihcTest
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
-private const val IHC = "IHC"
 private const val PROTEIN = "PD-L1"
 
 class ProteinExpressionByIHCFunctionsTest {
 
     private val referenceLevel = 2
-    private val limitedFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.LIMITED)
-    private val sufficientFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.SUFFICIENT)
-    private val exactFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.EXACT)
+    private val limitedFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IHCExpressionComparisonType.LIMITED)
+    private val sufficientFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IHCExpressionComparisonType.SUFFICIENT)
+    private val exactFunction = ProteinExpressionByIHCFunctions(PROTEIN, referenceLevel, IHCExpressionComparisonType.EXACT)
 
     @Test
     fun `Should evaluate to undetermined when no IHC tests present in record`() {
@@ -24,19 +23,20 @@ class ProteinExpressionByIHCFunctionsTest {
 
     @Test
     fun `Should evaluate to undetermined when no IHC test of correct protein present in record`() {
-        val test = priorIHCTest(test = IHC, item = "other", scoreValue = 1.0)
+        val test = ihcTest(item = "other", scoreValue = 1.0)
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIHCTests(test))
     }
 
     @Test
     fun `Should evaluate to undetermined when only score text is provided and exact value is unclear`() {
-        val test = priorIHCTest(scoreText = "negative")
+        val test = MolecularTestFactory.ihcTest(scoreText = "negative")
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIHCTests(test))
     }
 
     @Test
     fun `Should evaluate to undetermined when exact value is unclear due to comparator`() {
-        val test = priorIHCTest(scoreValue = referenceLevel.toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN_OR_EQUAL)
+        val test =
+            MolecularTestFactory.ihcTest(scoreValue = referenceLevel.toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN_OR_EQUAL)
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIHCTests(test))
     }
 
@@ -53,7 +53,8 @@ class ProteinExpressionByIHCFunctionsTest {
 
     @Test
     fun `Should evaluate to undetermined when unclear if above requested value in sufficient function due to comparator`() {
-        val test = priorIHCTest(scoreValue = referenceLevel.minus(1).toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN)
+        val test =
+            MolecularTestFactory.ihcTest(scoreValue = referenceLevel.minus(1).toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN)
         assertEvaluation(EvaluationResult.UNDETERMINED, sufficientFunction.evaluate(MolecularTestFactory.withIHCTests(test)))
     }
 
@@ -65,7 +66,8 @@ class ProteinExpressionByIHCFunctionsTest {
 
     @Test
     fun `Should evaluate to undetermined when unclear if below requested value in limited function due to comparator`() {
-        val test = priorIHCTest(scoreValue = referenceLevel.plus(1).toDouble(), scoreValuePrefix = ValueComparison.SMALLER_THAN)
+        val test =
+            MolecularTestFactory.ihcTest(scoreValue = referenceLevel.plus(1).toDouble(), scoreValuePrefix = ValueComparison.SMALLER_THAN)
         assertEvaluation(EvaluationResult.UNDETERMINED, limitedFunction.evaluate(MolecularTestFactory.withIHCTests(test)))
     }
 
@@ -86,5 +88,5 @@ class ProteinExpressionByIHCFunctionsTest {
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
-        priorIHCTest(test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText)
+        ihcTest(item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText)
 }

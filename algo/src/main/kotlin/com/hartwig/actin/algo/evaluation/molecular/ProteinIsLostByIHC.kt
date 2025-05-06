@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class ProteinIsLostByIHC(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = IhcTestFilter.allIHCTestsForProtein(record.priorIHCTests, protein)
+        val ihcTests = IHCTestFilter.allIHCTestsForProtein(record.ihcTests, protein)
 
         return when {
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "loss" } -> {

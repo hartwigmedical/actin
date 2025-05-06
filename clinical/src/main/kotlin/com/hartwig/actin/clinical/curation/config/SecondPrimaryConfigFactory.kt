@@ -1,14 +1,14 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.util.ResourceFile
 
-class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<SecondPrimaryConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SecondPrimaryConfig> {
+class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<PriorPrimaryConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<PriorPrimaryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         if (!ignore) {
@@ -26,24 +26,24 @@ class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoid
                 fields,
                 parts
             ) { curationDoidValidator.isValidCancerDoidSet(it) }
-            val curatedPriorSecondPrimary =
-                validatedTumorStatus?.let { validatedDoids?.let { doids -> curatedPriorSecondPrimary(it, fields, parts, doids) } }
+            val curatedPriorPrimary =
+                validatedTumorStatus?.let { validatedDoids?.let { doids -> curatedPriorPrimary(it, fields, parts, doids) } }
             return ValidatedCurationConfig(
-                SecondPrimaryConfig(
+                PriorPrimaryConfig(
                     input = input,
                     ignore = false,
-                    curated = curatedPriorSecondPrimary
+                    curated = curatedPriorPrimary
                 ), tumorStatusValidationErrors + doidValidationErrors
             )
         } else {
-            return ValidatedCurationConfig(SecondPrimaryConfig(input = input, ignore = true, curated = null))
+            return ValidatedCurationConfig(PriorPrimaryConfig(input = input, ignore = true, curated = null))
         }
     }
 
-    private fun curatedPriorSecondPrimary(
+    private fun curatedPriorPrimary(
         tumorStatus: TumorStatus, fields: Map<String, Int>, parts: Array<String>, doids: Set<String>
-    ): PriorSecondPrimary {
-        return PriorSecondPrimary(
+    ): PriorPrimary {
+        return PriorPrimary(
             tumorLocation = parts[fields["tumorLocation"]!!],
             tumorSubLocation = parts[fields["tumorSubLocation"]!!],
             tumorType = parts[fields["tumorType"]!!],

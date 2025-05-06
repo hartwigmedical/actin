@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasAvailablePDL1Status : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (IhcTestFilter.allPDL1Tests(record.priorIHCTests).isNotEmpty()) {
+        return if (IHCTestFilter.allPDL1Tests(record.ihcTests).isNotEmpty()) {
             EvaluationFactory.recoverablePass("PD-L1 status available")
         } else {
             EvaluationFactory.recoverableFail("PD-L1 status not available")

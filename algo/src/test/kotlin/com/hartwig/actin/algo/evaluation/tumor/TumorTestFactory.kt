@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -51,14 +51,14 @@ internal object TumorTestFactory {
         )
     }
 
-    fun withDoidsAndAmplificationAndPriorMolecularTest(
+    fun withDoidsAndAmplificationAndMolecularTest(
         doids: Set<String>,
         amplifiedGene: String,
-        priorIHCTests: List<PriorIHCTest>
+        ihcTests: List<IHCTest>
     ): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            priorIHCTests = priorIHCTests,
+            ihcTests = ihcTests,
             molecularHistory = MolecularHistory(
                 listOf(
                     baseMolecular.copy(
@@ -276,13 +276,11 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions))
     }
 
-    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false, count: Int? = 1): PatientRecord {
+    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false): PatientRecord {
         return withTumorDetails(
             TumorDetails(
                 hasLungLesions = hasLungLesions,
-                hasSuspectedLungLesions = hasSuspectedLungLesions,
-                lungLesionsCount = count
-            )
+                hasSuspectedLungLesions = hasSuspectedLungLesions)
         )
     }
 
@@ -313,10 +311,10 @@ internal object TumorTestFactory {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(experimentType = type))))
     }
 
-    fun withIHCTestsAndDoids(priorIHCTests: List<PriorIHCTest>, doids: Set<String>?): PatientRecord {
+    fun withIHCTestsAndDoids(ihcTests: List<IHCTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            priorIHCTests = priorIHCTests
+            ihcTests = ihcTests
         )
     }
 }

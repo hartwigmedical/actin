@@ -8,10 +8,10 @@ data class ClinicalRecord(
     val tumor: TumorDetails,
     val clinicalStatus: ClinicalStatus,
     val oncologicalHistory: List<TreatmentHistoryEntry>,
-    val priorSecondPrimaries: List<PriorSecondPrimary>,
+    val priorPrimaries: List<PriorPrimary>,
     val comorbidities: List<Comorbidity>,
-    val priorIHCTests: List<PriorIHCTest>,
-    val priorSequencingTests: List<PriorSequencingTest>,
+    val ihcTests: List<IHCTest>,
+    val sequencingTests: List<SequencingTest>,
     val labValues: List<LabValue>,
     val surgeries: List<Surgery>,
     val bodyWeights: List<BodyWeight>,
@@ -19,6 +19,7 @@ data class ClinicalRecord(
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
+    val pathologyReports: List<PathologyReport>?
 ) {
 
     val otherConditions: List<OtherCondition>
