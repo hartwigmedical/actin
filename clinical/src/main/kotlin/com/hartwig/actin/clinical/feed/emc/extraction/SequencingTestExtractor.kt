@@ -24,11 +24,11 @@ class SequencingTestExtractor(
 ) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<SequencingTest>> {
-        if (questionnaire?.ihcTestResults?.isEmpty() == true) {
+        if (questionnaire == null || questionnaire.ihcTestResults.isNullOrEmpty()) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
 
-        val extracted = questionnaire?.ihcTestResults?.map { result ->
+        val extracted = questionnaire.ihcTestResults.map { result ->
             val testCurationConfig =
                 CurationResponse.createFromConfigs(
                     testCuration.find(result),
@@ -82,11 +82,11 @@ class SequencingTestExtractor(
 
             } ?: ExtractionResult(emptyList(), testCurationConfig.extractionEvaluation.copy(warnings = emptySet()))
         }
-        return extracted?.fold(
+        return extracted.fold(
             ExtractionResult(emptyList(), CurationExtractionEvaluation())
         ) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
-        } ?: ExtractionResult(emptyList(), CurationExtractionEvaluation())
+        }
     }
 
     companion object {

@@ -68,18 +68,19 @@ object PathologyReportFunctions {
         val matchedReports: Map<PathologyReport, Triple<List<MolecularRecord>, List<MolecularTest>, List<IHCTest>>> =
             pathologyReports.orEmpty().associateWith { report ->
                 Triple(
-                    orangeResultsByDate[report.date] ?: emptyList(),
-                    molecularTestsByDate[report.date] ?: emptyList(),
-                    ihcTestsByDate[report.date] ?: emptyList()
+                    orangeResultsByDate[report.date].orEmpty(),
+                    molecularTestsByDate[report.date].orEmpty(),
+                    ihcTestsByDate[report.date].orEmpty()
                 )
             }
 
-        val unmatchedEntry = (null to Triple(
-            orangeResultsByDate[null] ?: emptyList(),
-            molecularTestsByDate[null] ?: emptyList(),
-            ihcTestsByDate[null] ?: emptyList()
-        ))
-            .takeIf { it.second.first.isNotEmpty() || it.second.second.isNotEmpty() || it.second.third.isNotEmpty() }
+        val unmatchedEntry = Triple(
+            orangeResultsByDate[null].orEmpty(),
+            molecularTestsByDate[null].orEmpty(),
+            ihcTestsByDate[null].orEmpty()
+        )
+            .takeIf { it.toList().any { e -> e.isNotEmpty() } }
+            ?.let { null to it }
 
         return (matchedReports + listOfNotNull(unmatchedEntry))
             .filterValues { (orangeTests, molecularTest, ihcTests) ->
