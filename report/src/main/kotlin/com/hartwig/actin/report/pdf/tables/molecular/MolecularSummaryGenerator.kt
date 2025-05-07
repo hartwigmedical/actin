@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
@@ -51,7 +52,14 @@ class MolecularSummaryGenerator(
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = pathologyReport)))
+                table.addCell(
+                    Cells.create(
+                        PathologyReportFunctions.getPathologyReportSummary(
+                            report = pathologyReport,
+                            config = EnvironmentConfiguration()
+                        )
+                    )
+                )
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))

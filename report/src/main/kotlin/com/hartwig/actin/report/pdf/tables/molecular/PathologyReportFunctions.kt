@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
@@ -20,8 +21,14 @@ object PathologyReportFunctions {
             if (isSourceInternal) tissueDate else externalDate
         ) { "Expected one of tissueDate or externalDate to be non-null." }
 
-    fun getPathologyReportSummary(prefix: String? = null, prefixStyle: Style? = null, report: PathologyReport): Cell =
-        Cells.create(
+    fun getPathologyReportSummary(
+        prefix: String? = null,
+        prefixStyle: Style? = null,
+        report: PathologyReport,
+        config: EnvironmentConfiguration
+    ): Cell {
+        val labString = if (report.lab == null && report.isSourceInternal) config.requestingHospital else report.lab ?: "Unknown Lab"
+        return Cells.create(
             Paragraph().addAll(
                 listOfNotNull(
                     prefix?.let {
@@ -32,7 +39,7 @@ object PathologyReportFunctions {
                     },
                     listOf(
                         Text(report.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
-                        Text(" (${report.lab ?: "Unknown Lab"}").addStyle(Styles.tableHighlightStyle())
+                        Text(" ($labString").addStyle(Styles.tableHighlightStyle())
                     ),
                     if (report.isSourceInternal) {
                         listOf(
@@ -55,6 +62,7 @@ object PathologyReportFunctions {
                 ).flatten()
             )
         ).addStyle(Styles.tableContentStyle())
+    }
 
     fun groupTestsByPathologyReport(
         orangeMolecularRecords: List<MolecularRecord>,

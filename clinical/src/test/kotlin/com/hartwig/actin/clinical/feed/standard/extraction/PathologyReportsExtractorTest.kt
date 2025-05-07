@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPathologyReport
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +9,7 @@ import java.time.LocalDate
 
 class PathologyReportsExtractorTest {
 
-    private val extractor = PathologyReportsExtractor(createExampleEnvironmentConfiguration())
+    private val extractor = PathologyReportsExtractor()
     private val ehrPatientRecord = EhrTestData.createEhrPatientRecord()
     private val defaultDate = LocalDate.of(1970, 1, 1)
 
@@ -51,7 +50,7 @@ class PathologyReportsExtractorTest {
         val expected = PathologyReport(
             reportRequested = false,
             source = "internal",
-            lab = "hospital",
+            lab = null,
             diagnosis = "diagnosis",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
@@ -73,9 +72,5 @@ class PathologyReportsExtractorTest {
                 )
             )
         )
-    }
-
-    private fun createExampleEnvironmentConfiguration(): EnvironmentConfiguration {
-        return EnvironmentConfiguration.create(null).copy(requestingHospital = "hospital")
     }
 }

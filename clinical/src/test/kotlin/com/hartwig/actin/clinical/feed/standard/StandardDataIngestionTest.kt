@@ -26,7 +26,6 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunction
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.configuration.ClinicalConfiguration
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationRequirement
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationResult
@@ -105,7 +104,7 @@ class StandardDataIngestionTest {
                 curationDatabase.sequencingTestResultCuration
             ),
             dataQualityMask = DataQualityMask(ClinicalConfiguration()),
-            pathologyReportsExtractor = PathologyReportsExtractor(EnvironmentConfiguration())
+            pathologyReportsExtractor = PathologyReportsExtractor()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
