@@ -102,7 +102,7 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should not reannotate driver likelihood when variant has driverlikelihood null`() {
+    fun `Should not reannotate driver likelihood when variant has driver likelihood null`() {
         val variants = listOf(
             TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH),
             TestVariantFactory.createMinimal()
