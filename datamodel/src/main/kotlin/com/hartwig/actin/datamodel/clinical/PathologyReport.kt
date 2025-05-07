@@ -8,7 +8,7 @@ data class PathologyReport(
     val tissueId: String? = null,
     val reportRequested: Boolean,
     val source: String,
-    val lab: String? = null,
+    val lab: String?,
     val diagnosis: String,
     val externalDate: LocalDate? = null,
     val tissueDate: LocalDate? = null,

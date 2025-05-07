@@ -30,17 +30,20 @@ object PathologyReportFunctions {
                             Text(" - ").addStyle(Styles.tableHighlightStyle())
                         )
                     },
-                    listOf(Text(report.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle())),
+                    listOf(
+                        Text(report.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
+                        Text(" (${report.lab ?: "Unknown Lab"}").addStyle(Styles.tableHighlightStyle())
+                    ),
                     if (report.isSourceInternal) {
                         listOf(
-                            Text(" (Collection date: "),
+                            Text(", Collection date: "),
                             Text(date(report.tissueDate)).addStyle(Styles.tableHighlightStyle()),
                             Text(", Authorization date: "),
                             Text(date(report.authorisationDate)).addStyle(Styles.tableHighlightStyle())
                         )
                     } else {
                         listOf(
-                            Text(" (Report date: "),
+                            Text(", Report date: "),
                             Text(date(report.externalDate)).addStyle(Styles.tableHighlightStyle())
                         )
                     },

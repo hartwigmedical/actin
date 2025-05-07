@@ -30,6 +30,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsE
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.configuration.ClinicalConfiguration
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
@@ -184,7 +185,7 @@ class StandardDataIngestion(
                 curationDatabaseContext.sequencingTestResultCuration
             ),
             DataQualityMask(clinicalConfiguration),
-            PathologyReportsExtractor()
+            PathologyReportsExtractor(EnvironmentConfiguration())
         )
     }
 }
