@@ -20,6 +20,7 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
+import kotlin.Boolean
 
 const val MAX_TO_DISPLAY = 3
 const val MANY_SEE_LINK = "3+ locations - see link"
@@ -36,10 +37,11 @@ object TrialGeneratorFunctions {
         countryOfReference: Country?,
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        allowDeEmphasis: Boolean
+        allowDeEmphasis: Boolean,
+        includeConfiguration: Boolean,
     ) {
         sortedCohortsGroupedByTrial(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
-            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis)
+            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis, includeConfiguration)
         }
 
         externalTrials.forEach { trial ->
@@ -80,7 +82,8 @@ object TrialGeneratorFunctions {
         requestingSource: TrialSource?,
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        allowDeEmphasis: Boolean
+        allowDeEmphasis: Boolean,
+        includeConfiguration: Boolean,
     ) {
         table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis).setKeepTogether(true))
 
@@ -88,7 +91,8 @@ object TrialGeneratorFunctions {
             cohortsForTrial = cohortsForTrial,
             includeFeedback = includeFeedback,
             feedbackFunction = feedbackFunction,
-            requestingSource = requestingSource
+            requestingSource = requestingSource,
+            includeConfiguration = includeConfiguration,
         ).forEachIndexed { index, content ->
             addContentListToTable(
                 table,
@@ -155,7 +159,8 @@ object TrialGeneratorFunctions {
         cohortsForTrial: List<InterpretedCohort>,
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        requestingSource: TrialSource? = null
+        includeConfiguration: Boolean,
+        requestingSource: TrialSource? = null,
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohortsForTrial, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::molecularEvents)
@@ -185,7 +190,8 @@ object TrialGeneratorFunctions {
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
                     concatLocations(cohort.source, requestingSource, cohort.locations - commonLocations),
-                    if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
+                    if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null,
+                    if (includeConfiguration) concat(setOfNotNull("ignored".takeIf { cohort.ignore }, "non-evaluable".takeIf { !cohort.isEvaluable }), separator =" and ") else null,
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )
@@ -216,8 +222,8 @@ object TrialGeneratorFunctions {
         } else emptySet()
     }
 
-    private fun concat(strings: Set<String>, replaceEmptyWithNone: Boolean = true): String {
-        val joinedString = strings.sorted().joinToString(Formats.COMMA_SEPARATOR)
+    private fun concat(strings: Set<String>, replaceEmptyWithNone: Boolean = true, separator: String = Formats.COMMA_SEPARATOR): String {
+        val joinedString = strings.sorted().joinToString(separator)
         return if (replaceEmptyWithNone && joinedString.isEmpty()) Formats.VALUE_NONE else joinedString
     }
 }
