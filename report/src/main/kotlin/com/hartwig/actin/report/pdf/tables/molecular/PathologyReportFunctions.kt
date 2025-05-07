@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -56,16 +56,16 @@ object PathologyReportFunctions {
     fun groupTestsByPathologyReport(
         orangeMolecularRecords: List<MolecularRecord>,
         molecularTests: List<MolecularTest>,
-        ihcTests: List<IHCTest>,
+        ihcTests: List<IhcTest>,
         pathologyReports: List<PathologyReport>?
-    ): Map<PathologyReport?, Triple<List<MolecularRecord>, List<MolecularTest>, List<IHCTest>>> {
+    ): Map<PathologyReport?, Triple<List<MolecularRecord>, List<MolecularTest>, List<IhcTest>>> {
 
         val reportDates = pathologyReports.orEmpty().map { it.date }.toSet()
         val orangeResultsByDate = orangeMolecularRecords.groupBy { it.date.takeIf(reportDates::contains) }
         val molecularTestsByDate = molecularTests.groupBy { it.date.takeIf(reportDates::contains) }
         val ihcTestsByDate = ihcTests.groupBy { it.measureDate.takeIf(reportDates::contains) }
 
-        val matchedReports: Map<PathologyReport, Triple<List<MolecularRecord>, List<MolecularTest>, List<IHCTest>>> =
+        val matchedReports: Map<PathologyReport, Triple<List<MolecularRecord>, List<MolecularTest>, List<IhcTest>>> =
             pathologyReports.orEmpty().associateWith { report ->
                 Triple(
                     orangeResultsByDate[report.date].orEmpty(),

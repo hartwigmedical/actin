@@ -1,17 +1,17 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.IHCTestInterpreter
+import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
-import com.hartwig.actin.report.pdf.tables.molecular.IHCResultGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.IhcResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
@@ -54,7 +54,7 @@ class MolecularDetailsChapter(
 
         val orangeMolecularRecord = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
-        val filteredIhcTests = IHCTestFilter.mostRecentOrUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
+        val filteredIhcTests = IhcTestFilter.mostRecentOrUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             listOfNotNull(orangeMolecularRecord),
             externalPanelResults,
@@ -97,7 +97,7 @@ class MolecularDetailsChapter(
         pathologyReport: PathologyReport?,
         orangeMolecularRecord: List<MolecularRecord>,
         externalPanelResults: List<MolecularTest>,
-        ihcTests: List<IHCTest>,
+        ihcTests: List<IhcTest>,
         cohorts: List<InterpretedCohort>,
         topTable: Table
     ) {
@@ -117,7 +117,7 @@ class MolecularDetailsChapter(
             WGSSummaryGenerator(true, report.patientRecord, it, pathologyReport, cohorts, keyWidth, valueWidth)
         }
         val ihcGenerator =
-            IHCResultGenerator(ihcTests, keyWidth, valueWidth - 10, IHCTestInterpreter())
+            IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
 
         TableGeneratorFunctions.addGenerators(
             orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),

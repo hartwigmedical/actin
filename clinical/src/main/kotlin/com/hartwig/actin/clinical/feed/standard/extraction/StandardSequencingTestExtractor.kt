@@ -38,13 +38,13 @@ class StandardSequencingTestExtractor(
                 )
             testCurationConfig.config()?.let { testCuration ->
                 if (!testCuration.ignore) {
-                    val nonIHCTestResults = test.results.filter { it.ihcResult == null }.toSet()
-                    val (onlyFreeTextResults, populatedResults) = nonIHCTestResults
+                    val nonIhcTestResults = test.results.filter { it.ihcResult == null }.toSet()
+                    val (onlyFreeTextResults, populatedResults) = nonIhcTestResults
                         .partition { checkAllFieldsNull(it) }
                     val mandatoryCurationTestResults = curate(ehrPatientRecord, onlyFreeTextResults)
                     val optionalCurationTestResults = curate(ehrPatientRecord, populatedResults)
                     val allResults =
-                        removeCurated(removeCurated(nonIHCTestResults, mandatoryCurationTestResults), optionalCurationTestResults) +
+                        removeCurated(removeCurated(nonIhcTestResults, mandatoryCurationTestResults), optionalCurationTestResults) +
                                 extract(mandatoryCurationTestResults + optionalCurationTestResults)
                     if (allResults.isNotEmpty()) {
                         ExtractionResult(

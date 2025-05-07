@@ -3,13 +3,13 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.TestResult
-import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyHer2Test
-import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyPrOrErTest
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.TestResult
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.classifyHer2Test
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.classifyPrOrErTest
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
@@ -93,12 +93,12 @@ class HasBreastCancerWithPositiveReceptorOfType(
         }
     }
 
-    private fun summarizeTests(targetIHCTests: List<IHCTest>): Set<TestResult> {
+    private fun summarizeTests(targetIhcTests: List<IhcTest>): Set<TestResult> {
         val classifier = when (receptorType) {
             ReceptorType.ER, ReceptorType.PR -> ::classifyPrOrErTest
             ReceptorType.HER2 -> ::classifyHer2Test
         }
-        return targetIHCTests.map(classifier).toSet()
+        return targetIhcTests.map(classifier).toSet()
     }
 
     companion object {
