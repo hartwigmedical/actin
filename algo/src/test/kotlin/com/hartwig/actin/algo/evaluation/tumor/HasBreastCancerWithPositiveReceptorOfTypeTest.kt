@@ -229,9 +229,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(
-                        (createIhcTest("HER2", "Unclear"))
-                    ),
+                    listOf(createIhcTest("HER2", "Unclear")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
