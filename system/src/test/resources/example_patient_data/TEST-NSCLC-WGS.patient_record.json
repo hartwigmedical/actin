@@ -453,7 +453,6 @@
   ],
   "ihcTests": [
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,

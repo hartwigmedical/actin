@@ -19,7 +19,7 @@ class IHCExtractor : MolecularExtractor<IHCTest, IHCExtraction> {
     }
 
     private fun ihcFusionGenes(ihcTests: List<IHCTest>, scoreText: String): Set<String> {
-        return ihcTests.filter { it.test == "IHC" && it.item in IHC_FUSION_GENES && it.scoreText == scoreText }
+        return ihcTests.filter { it.item in IHC_FUSION_GENES && it.scoreText == scoreText }
             .mapNotNull { it.item }
             .toSet()
     }

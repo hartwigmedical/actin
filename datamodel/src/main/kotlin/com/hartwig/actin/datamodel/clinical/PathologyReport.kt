@@ -2,6 +2,8 @@ package com.hartwig.actin.datamodel.clinical
 
 import java.time.LocalDate
 
+private const val INTERNAL_SOURCE = "internal"
+
 data class PathologyReport(
     val tissueId: String? = null,
     val reportRequested: Boolean,
@@ -15,8 +17,4 @@ data class PathologyReport(
 ) {
     val isSourceInternal: Boolean
         get() = source.equals(INTERNAL_SOURCE, ignoreCase = true)
-
-    companion object {
-        private const val INTERNAL_SOURCE = "internal"
-    }
 }

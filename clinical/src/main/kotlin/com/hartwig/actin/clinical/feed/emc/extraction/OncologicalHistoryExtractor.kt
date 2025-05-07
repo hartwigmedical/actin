@@ -15,7 +15,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 
 class OncologicalHistoryExtractor(
     private val treatmentHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
-    private val secondPrimaryCuration: CurationDatabase<PriorPrimaryConfig>
+    private val priorPrimaryCuration: CurationDatabase<PriorPrimaryConfig>
 ) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<TreatmentHistoryEntry>> {
@@ -40,7 +40,7 @@ class OncologicalHistoryExtractor(
             }
             .map {
                 if (it.configs.isEmpty() &&
-                    secondPrimaryCuration.find(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
+                    priorPrimaryCuration.find(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
                         .isNotEmpty()
                 ) {
                     it.copy(extractionEvaluation = it.extractionEvaluation.copy(warnings = emptySet()))
@@ -58,7 +58,7 @@ class OncologicalHistoryExtractor(
         fun create(curationDatabaseContext: CurationDatabaseContext) =
             OncologicalHistoryExtractor(
                 treatmentHistoryCuration = curationDatabaseContext.treatmentHistoryEntryCuration,
-                secondPrimaryCuration = curationDatabaseContext.secondPrimaryCuration
+                priorPrimaryCuration = curationDatabaseContext.priorPrimaryCuration
             )
     }
 }

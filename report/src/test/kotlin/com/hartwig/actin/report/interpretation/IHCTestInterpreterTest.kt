@@ -15,8 +15,8 @@ class IHCTestInterpreterTest {
     fun `Should interpret IHC test based on score text`() {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", "Positive")))
         assertThat(result).containsExactly(
-            MolecularTestInterpretation(
-                "IHC", listOf(MolecularTestResultInterpretation("Positive", "HER2", DEFAULT_DATE))
+            IHCTestInterpretation(
+                "IHC", listOf(IHCTestResultInterpretation("Positive", "HER2", DEFAULT_DATE))
             )
         )
     }
@@ -25,8 +25,8 @@ class IHCTestInterpreterTest {
     fun `Should interpret IHC test based score value`() {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", scoreValue = 90.0, scoreValueUnit = "%")))
         assertThat(result).containsExactly(
-            MolecularTestInterpretation(
-                "IHC", listOf(MolecularTestResultInterpretation("HER2", "Score 90%", DEFAULT_DATE, 1))
+            IHCTestInterpretation(
+                "IHC", listOf(IHCTestResultInterpretation("HER2", "Score 90%", DEFAULT_DATE, 1))
             )
         )
     }
@@ -35,8 +35,8 @@ class IHCTestInterpreterTest {
     fun `Should correctly handle score based IHC test without unit`() {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", scoreValue = 90.0, scoreValueUnit = null)))
         assertThat(result).containsExactly(
-            MolecularTestInterpretation(
-                "IHC", listOf(MolecularTestResultInterpretation("HER2", "Score 90", DEFAULT_DATE, 1))
+            IHCTestInterpretation(
+                "IHC", listOf(IHCTestResultInterpretation("HER2", "Score 90", DEFAULT_DATE, 1))
             )
         )
     }
@@ -45,8 +45,8 @@ class IHCTestInterpreterTest {
     fun `Should correctly handle null date`() {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", "Positive").copy(measureDate = null)))
         assertThat(result).containsExactly(
-            MolecularTestInterpretation(
-                "IHC", listOf(MolecularTestResultInterpretation("Positive", "HER2", null))
+            IHCTestInterpretation(
+                "IHC", listOf(IHCTestResultInterpretation("Positive", "HER2", null))
             )
         )
     }

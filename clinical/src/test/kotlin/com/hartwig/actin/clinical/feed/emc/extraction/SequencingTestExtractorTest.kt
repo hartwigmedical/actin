@@ -83,7 +83,6 @@ class SequencingTestExtractorTest {
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
-
     @Test
     fun `Should respect ignore flag when curating free text`() {
         every { testResultCuration.find(TEST) } returns setOf(
