@@ -6,12 +6,11 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -348,7 +347,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient and exon range`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
@@ -356,6 +355,17 @@ class GeneHasVariantInExonRangeOfTypeTest {
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(result.undeterminedMessages).containsExactly("Mutation in exon range 1 to 2 of type insertion in gene gene A undetermined (not tested for at least mutations)")
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient and single exon`() {
+        val result = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON, VariantTypeInput.INSERT).evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessages).containsExactly("Mutation in exon 1 of type insertion in gene gene A undetermined (not tested for at least mutations)")
     }
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = affectedExon)

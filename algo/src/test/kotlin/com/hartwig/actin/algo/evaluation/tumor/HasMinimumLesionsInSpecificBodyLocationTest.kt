@@ -5,76 +5,123 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import org.junit.Test
 
-private const val REQUESTED_LESIONS = 2
-
 class HasMinimumLesionsInSpecificBodyLocationTest {
 
-    private val function = HasMinimumLesionsInSpecificBodyLocation(REQUESTED_LESIONS, BodyLocationCategory.LUNG)
-    private val bladderLesionFunction = HasMinimumLesionsInSpecificBodyLocation(2, BodyLocationCategory.BLADDER)
+    private val evaluableCategory = BodyLocationCategory.LUNG
+    private val nonEvaluableCategory = BodyLocationCategory.BLADDER
+    private val functionRequiringTwoLesionsInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(2, evaluableCategory)
+    private val functionRequiringOneLesionInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, evaluableCategory)
+    private val functionRequiringOneLesionInNonEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, nonEvaluableCategory)
 
     @Test
-    fun `Should pass for correct number of lesions in requested body location`() {
+    fun `Should be pass in case of known lesions in requested body location and requiring at most one lesion`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = REQUESTED_LESIONS))
+            functionRequiringOneLesionInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = true
+                )
+            )
         )
     }
 
     @Test
-    fun `Should assume that there is one lesion when lesions present in requested location but count is unknown`() {
-        val function = HasMinimumLesionsInSpecificBodyLocation(1, BodyLocationCategory.LUNG)
+    fun `Should be undetermined in case of known lesions in requested body location and requiring at least two lesions`() {
         assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = null))
+            EvaluationResult.UNDETERMINED,
+            functionRequiringTwoLesionsInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = true
+                )
+            )
         )
     }
 
     @Test
-    fun `Should fail for too small number of lesions in requested body location`() {
+    fun `Should be undetermined in case of suspected lesions whether requiring at least one or two lesions`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionRequiringOneLesionInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = false,
+                    hasSuspectedLungLesions = true
+                )
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionRequiringTwoLesionsInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = false,
+                    hasSuspectedLungLesions = true
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should be undetermined in case of missing known lesions information whether requiring at least one or two lesions`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionRequiringOneLesionInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = null
+                )
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionRequiringTwoLesionsInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = null
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail for neither known or suspected lesions in requested body location whether requiring one or two lesions`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = REQUESTED_LESIONS.minus(1)))
+            functionRequiringOneLesionInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = false,
+                    hasSuspectedLungLesions = false
+                )
+            )
         )
-    }
-
-    @Test
-    fun `Should fail for no lesions in requested body location`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = false, count = null))
+            functionRequiringTwoLesionsInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(
+                    hasLungLesions = false,
+                    hasSuspectedLungLesions = false
+                )
+            )
         )
     }
 
     @Test
-    fun `Should resolve to undetermined when data on presence and count of requested lesion is missing and requested minimum is more than zero`() {
+    fun `Should fail for no known lesions also if data on suspected lesions is missing  whether requiring one or two lesions`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionRequiringOneLesionInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = null)
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionRequiringTwoLesionsInEvaluableCategory.evaluate(
+                TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = null)
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if requested body location is of other type than bone, brain, cns, liver, lung or lymph node`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null, count = null))
-        )
-    }
-
-    @Test
-    fun `Should pass when data on presence and count of requested lesion is missing but requested minimum is zero`() {
-        val functionRequestingZeroLesions = HasMinimumLesionsInSpecificBodyLocation(0, BodyLocationCategory.LUNG)
-        assertEvaluation(
-            EvaluationResult.PASS,
-            functionRequestingZeroLesions.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null))
-        )
-    }
-
-    @Test
-    fun `Should evaluate to undetermined for suspected lesions in requested body location regardless the known lesion count`() {
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = true, count = 1))
-        )
-    }
-
-    @Test
-    fun `Should evaluate to undetermined if requested body location is of other type than bone, brain, cns, liver, lung or lymph node and number of other lesions is sufficient`() {
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            bladderLesionFunction.evaluate(TumorTestFactory.withOtherLesions(listOf("one", "two")))
+            functionRequiringOneLesionInNonEvaluableCategory.evaluate(TumorTestFactory.withOtherLesions(listOf("one", "two")))
         )
     }
 }

@@ -5,9 +5,6 @@ import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
-import com.hartwig.actin.report.interpretation.InterpretedCohortFunctions
-import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.countryNamesWithCities
-import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialFunctions.hospitalsAndCitiesInCountry
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -21,9 +18,6 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 import kotlin.Boolean
-
-const val MAX_TO_DISPLAY = 3
-const val MANY_SEE_LINK = "3+ locations - see link"
 
 data class ContentDefinition(val textEntries: List<String>, val deEmphasizeContent: Boolean)
 
@@ -52,18 +46,11 @@ object TrialGeneratorFunctions {
             table.addCell(contentFunction(trial.actinMolecularEvents.joinToString(", ")))
 
             val country = if (trial.countries.none { it.country == countryOfReference }) null else countryOfReference
-            table.addCell(contentFunction(externalTrialLocation(trial, country)))
+            table.addCell(contentFunction(TrialLocations.externalTrialLocation(trial, country)))
             if (includeFeedback) {
                 table.addCell(contentFunction(""))
             }
         }
-    }
-
-    private fun externalTrialLocation(trial: ExternalTrialSummary, countryOfReference: Country?): String {
-        return countryOfReference?.let {
-            val (hospitals, cities) = hospitalsAndCitiesInCountry(trial, it)
-            if (countryOfReference == Country.NETHERLANDS && hospitals != MANY_SEE_LINK) hospitals else cities
-        } ?: countryNamesWithCities(trial)
     }
 
     private fun sortedCohortsGroupedByTrial(
@@ -176,7 +163,7 @@ object TrialGeneratorFunctions {
                     listOfNotNull(
                         "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
-                        concatLocations(cohortsForTrial.first().source, requestingSource, commonLocations),
+                        TrialLocations.actinTrialLocation(cohortsForTrial.first().source, requestingSource, commonLocations, true),
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
@@ -189,28 +176,12 @@ object TrialGeneratorFunctions {
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
-                    concatLocations(cohort.source, requestingSource, cohort.locations - commonLocations),
+                    TrialLocations.actinTrialLocation(cohort.source, requestingSource, cohort.locations - commonLocations, true),
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null,
                     if (includeConfiguration) concat(setOfNotNull("ignored".takeIf { cohort.ignore }, "non-evaluable".takeIf { !cohort.isEvaluable }), separator =" and ") else null,
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )
-        }
-    }
-
-    private fun concatLocations(source: TrialSource?, requestingSource: TrialSource?, locations: Set<String>): String {
-        val showRequestingSite = requestingSource != null &&
-                InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(source, locations, requestingSource)
-
-        return when {
-            showRequestingSite && locations.size > MAX_TO_DISPLAY - 1 -> {
-                val otherLocationCount = locations.size - 1
-                "${requestingSource?.description} and $otherLocationCount other locations - see link"
-            }
-
-            locations.size > MAX_TO_DISPLAY -> MANY_SEE_LINK
-
-            else -> concat(locations, false)
         }
     }
 

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import org.junit.Test
 import java.time.LocalDate
 
@@ -14,26 +14,26 @@ class HasHistoryOfSecondMalignancyWithinYearsTest {
         val function = HasHistoryOfSecondMalignancyWithinYears(minDate)
 
         // No history in case of no second primary
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())))
 
         // One second primary but more than 3 years ago.
-        val tooOld: PriorSecondPrimary = PriorTumorTestFactory.priorSecondPrimary(lastTreatmentYear = 2018)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimary(tooOld)))
+        val tooOld: PriorPrimary = PriorTumorTestFactory.priorPrimary(lastTreatmentYear = 2018)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimary(tooOld)))
 
         // One Second primary same year, no month known.
-        val aroundCutoff: PriorSecondPrimary = PriorTumorTestFactory.priorSecondPrimary(lastTreatmentYear = 2019)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimary(aroundCutoff)))
+        val aroundCutoff: PriorPrimary = PriorTumorTestFactory.priorPrimary(lastTreatmentYear = 2019)
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(PriorTumorTestFactory.withPriorPrimary(aroundCutoff)))
 
         // One second primary but less than 3 years ago.
-        val notTooLongAgo: PriorSecondPrimary = PriorTumorTestFactory.priorSecondPrimary(lastTreatmentYear = 2019, lastTreatmentMonth = 9)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimary(notTooLongAgo)))
+        val notTooLongAgo: PriorPrimary = PriorTumorTestFactory.priorPrimary(lastTreatmentYear = 2019, lastTreatmentMonth = 9)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorPrimary(notTooLongAgo)))
 
         // One second primary but less than 4 years ago diagnosed
-        val diagnosedNotTooLongAgo: PriorSecondPrimary = PriorTumorTestFactory.priorSecondPrimary(diagnosedYear = 2019)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimary(diagnosedNotTooLongAgo)))
+        val diagnosedNotTooLongAgo: PriorPrimary = PriorTumorTestFactory.priorPrimary(diagnosedYear = 2019)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorPrimary(diagnosedNotTooLongAgo)))
 
         // One second primary no dates available
-        val noDates: PriorSecondPrimary = PriorTumorTestFactory.priorSecondPrimary()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimary(noDates)))
+        val noDates: PriorPrimary = PriorTumorTestFactory.priorPrimary()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(PriorTumorTestFactory.withPriorPrimary(noDates)))
     }
 }

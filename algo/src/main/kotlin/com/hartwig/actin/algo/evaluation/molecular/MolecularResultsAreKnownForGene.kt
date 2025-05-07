@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 
@@ -34,12 +34,12 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
             return EvaluationFactory.pass("Panel results available for $gene")
         }
 
-        val (indeterminatePriorIHCTestsForGene, conclusivePriorIHCTestsForGene) = record.priorIHCTests
+        val (indeterminateIhcTestsForGene, conclusiveIhcTestsForGene) = record.ihcTests
             .filter { it.item == gene }
-            .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
+            .partition(IhcTest::impliesPotentialIndeterminateStatus)
 
         return when {
-            conclusivePriorIHCTestsForGene.isNotEmpty() -> {
+            conclusiveIhcTestsForGene.isNotEmpty() -> {
                 EvaluationFactory.pass("$gene tested before in IHC test")
             }
 
@@ -56,7 +56,7 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
                 )
             }
 
-            indeterminatePriorIHCTestsForGene.isNotEmpty() -> {
+            indeterminateIhcTestsForGene.isNotEmpty() -> {
                 EvaluationFactory.undetermined("$gene IHC result available but indeterminate status")
             }
 

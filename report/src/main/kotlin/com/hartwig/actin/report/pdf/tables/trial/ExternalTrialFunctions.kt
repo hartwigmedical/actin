@@ -7,7 +7,7 @@ import com.hartwig.actin.report.trial.ExternalTrialSummary
 object ExternalTrialFunctions {
 
     private val format: (Collection<String>) -> String = { items ->
-        if (items.size > MAX_TO_DISPLAY) MANY_SEE_LINK else items.joinToString()
+        if (items.size > MAX_TO_DISPLAY) MANY_LOCATIONS_SEE_LINK else items.joinToString()
     }
 
     private fun formatHospitalsAndCities(hospitalsPerCity: Map<String, Set<Hospital>>): Pair<String, String> {

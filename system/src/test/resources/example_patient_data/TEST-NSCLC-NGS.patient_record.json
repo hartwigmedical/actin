@@ -28,19 +28,13 @@
     "derivedStages": null,
     "hasMeasurableDisease": true,
     "hasBrainLesions": false,
-    "brainLesionsCount": null,
     "hasActiveBrainLesions": false,
     "hasCnsLesions": false,
-    "cnsLesionsCount": null,
     "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
-    "boneLesionsCount": null,
     "hasLiverLesions": true,
-    "liverLesionsCount": 1,
     "hasLungLesions": true,
-    "lungLesionsCount": 1,
     "hasLymphNodeLesions": true,
-    "lymphNodeLesionsCount": 1,
     "otherLesions": [],
     "biopsyLocation": "Lung",
     "rawPathologyReport": null
@@ -195,7 +189,7 @@
       "bodyLocations": null
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "Acute myocardial infarction",
@@ -487,9 +481,8 @@
       "isTrialMedication": false
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,
@@ -599,10 +592,10 @@
                     ],
                     "evidenceLevelDetails": "CLINICAL_STUDY",
                     "applicableCancerTypes": [
-                        {
-                            "matchedCancerType": "Lung cancer",
-                            "excludedCancerSubTypes": []
-                        }
+                      {
+                        "matchedCancerType": "Lung cancer",
+                        "excludedCancerSubTypes": []
+                      }
                     ]
                   }
                 ],

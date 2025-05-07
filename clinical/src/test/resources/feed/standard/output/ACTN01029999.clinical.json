@@ -4,7 +4,8 @@
     "gender": "FEMALE",
     "birthYear": 5,
     "registrationDate": "2020-01-01",
-    "questionnaireDate": null
+    "questionnaireDate": null,
+    "sourceId": "PT-1001"
   },
   "tumor": {
     "primaryTumorLocation": "Lung",
@@ -18,21 +19,20 @@
     "stage": "IV",
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
-    "brainLesionsCount": 2,
+    "hasSuspectedBrainLesions": null,
     "hasActiveBrainLesions": true,
-    "hasCnsLesions": false,
-    "cnsLesionsCount": 0,
-    "hasActiveCnsLesions": false,
+    "hasCnsLesions": true,
+    "hasSuspectedCnsLesions": null,
+    "hasActiveCnsLesions": true,
     "hasBoneLesions": false,
-    "boneLesionsCount": 0,
+    "hasSuspectedBoneLesions": null,
     "hasLiverLesions": false,
-    "liverLesionsCount": 0,
-    "hasLungLesions": false,
-    "lungLesionsCount": 0,
-    "hasLymphNodeLesions": false,
-    "lymphNodeLesionsCount": 0,
-    "otherLesions": [],
-    "otherSuspectedLesions": [],
+    "hasSuspectedLiverLesions": null,
+    "hasLungLesions": null,
+    "hasSuspectedLungLesions": null,
+    "hasLymphNodeLesions": null,
+    "otherLesions": null,
+    "otherSuspectedLesions": null,
     "biopsyLocation": null
   },
   "clinicalStatus": {
@@ -93,7 +93,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "pain",
@@ -171,9 +171,8 @@
       "comorbidityClass": "INTOLERANCE"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "ERBB2",
       "measure": null,
       "measureDate": null,
@@ -184,7 +183,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [
+  "sequencingTests": [
     {
       "test": "Archer FP - Lung",
       "date": "2024-07-15",
@@ -303,5 +302,26 @@
       "product": "Erytrocytes Filtered"
     }
   ],
-  "medications": null
+  "medications": null,
+  "pathologyReports": [
+    {
+      "tissueId": "T-1000090",
+      "reportRequested": false,
+      "source": "internal",
+      "diagnosis": "diagnosis",
+      "tissueDate": "2020-01-01",
+      "authorisationDate": "2020-01-02",
+      "report": "RawPathologyReport"
+    },
+    {
+      "tissueId": "T-1000091",
+      "reportRequested": false,
+      "source": "external",
+      "lab": "ext lab",
+      "diagnosis": "diagnosis",
+      "tissueDate": "2020-02-01",
+      "authorisationDate": "2020-02-02",
+      "report": "Raw Pathology Report"
+    }
+  ]
 }

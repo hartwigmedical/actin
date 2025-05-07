@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
@@ -49,6 +50,7 @@ class CharacteristicsExtractionTest {
         assertThat(cupPrediction.snvPairwiseClassifier).isEqualTo(0.979, Offset.offset(EPSILON))
         assertThat(cupPrediction.genomicPositionClassifier).isEqualTo(0.99, Offset.offset(EPSILON))
         assertThat(cupPrediction.featureClassifier).isEqualTo(0.972, Offset.offset(EPSILON))
+        assertThat(cupPrediction.cuppaMode).isEqualTo(CuppaMode.WGS)
 
         val microsatelliteStability = characteristics.microsatelliteStability!!
         assertThat(microsatelliteStability.microsatelliteIndelsPerMb).isEqualTo(0.12, Offset.offset(EPSILON))
