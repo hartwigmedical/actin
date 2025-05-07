@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -20,8 +20,8 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
-import com.hartwig.actin.molecular.panel.IHCAnnotator
-import com.hartwig.actin.molecular.panel.IHCExtractor
+import com.hartwig.actin.molecular.panel.IhcAnnotator
+import com.hartwig.actin.molecular.panel.IhcExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
@@ -172,7 +172,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelSpecifications
         )
 
-        val ihcMolecularTests = interpretIHCMolecularTests(
+        val ihcMolecularTests = interpretIhcMolecularTests(
             clinical.ihcTests,
             panelFusionAnnotator
         )
@@ -205,13 +205,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         ).run(sequencingTests)
     }
 
-    private fun interpretIHCMolecularTests(
-        ihcTests: List<IHCTest>,
+    private fun interpretIhcMolecularTests(
+        ihcTests: List<IhcTest>,
         panelFusionAnnotator: PanelFusionAnnotator
     ): List<MolecularTest> {
         return MolecularInterpreter(
-            extractor = IHCExtractor(),
-            annotator = IHCAnnotator(panelFusionAnnotator),
+            extractor = IhcExtractor(),
+            annotator = IhcAnnotator(panelFusionAnnotator),
         ).run(ihcTests)
     }
 
