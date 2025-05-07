@@ -5,25 +5,25 @@ import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicabili
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
-data class Score(
+data class EvidenceScore(
     val event: String,
     val gene: String?,
     val scoringMatch: ScoringMatch,
     val evidenceLevelDetails: EvidenceLevelDetails,
-    val tumorType: CancerType,
+    val cancerType: CancerType,
     val score: Double,
     val evidenceDescription: String
-) : Comparable<Score> {
+) : Comparable<EvidenceScore> {
 
-    override fun compareTo(other: Score): Int {
+    override fun compareTo(other: EvidenceScore): Int {
         return score.compareTo(other.score)
     }
 }
 
 class EvidenceScoringModel {
 
-    fun score(treatment: TreatmentEvidence, gene: String?): Score {
-        val cancerTypeApplicability = when (treatment.cancerTypeMatchApplicability) {
+    fun score(treatment: TreatmentEvidence, gene: String?): EvidenceScore {
+        val cancerTypeApplicability = when (treatment.cancerTypeMatch.applicability) {
             CancerTypeMatchApplicability.SPECIFIC_TYPE -> TumorMatch.PATIENT
             CancerTypeMatchApplicability.ALL_TYPES -> TumorMatch.ALL
             CancerTypeMatchApplicability.OTHER_TYPE -> TumorMatch.ANY
@@ -34,14 +34,14 @@ class EvidenceScoringModel {
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
         val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
         val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
-        return Score(
+        return EvidenceScore(
             scoringMatch = scoringMatch,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             score = factor * score.toDouble(),
             event = treatment.molecularMatch.sourceEvent,
             gene = gene,
             evidenceDescription = treatment.efficacyDescription,
-            tumorType = treatment.applicableCancerType
+            cancerType = treatment.cancerTypeMatch.cancerType
         )
     }
 }

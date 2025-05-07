@@ -20,7 +20,7 @@ class TreatmentEvidenceFunctionsTest {
     private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level")
     private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(
         treatment = "offLabel category level",
-        cancerTypeMatchApplicability = CancerTypeMatchApplicability.OTHER_TYPE
+        cancerTypeMatch = onLabelCategoryLevelA.cancerTypeMatch.copy(applicability = CancerTypeMatchApplicability.OTHER_TYPE)
     )
     private val offLabelCategoryLevelB = offLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
     private val onLabelCategoryLevelB = onLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
@@ -123,8 +123,8 @@ class TreatmentEvidenceFunctionsTest {
         val evidence = listOf(treatment1, otherTreatment1, treatment2)
         val result = TreatmentEvidenceFunctions.groupByTreatmentAndCancerType(evidence)
         val expected = mapOf(
-            Pair(treatment1.treatment, treatment1.applicableCancerType.matchedCancerType) to listOf(treatment1, otherTreatment1),
-            Pair(treatment2.treatment, treatment2.applicableCancerType.matchedCancerType) to listOf(treatment2)
+            Pair(treatment1.treatment, treatment1.cancerTypeMatch.cancerType.matchedCancerType) to listOf(treatment1, otherTreatment1),
+            Pair(treatment2.treatment, treatment2.cancerTypeMatch.cancerType.matchedCancerType) to listOf(treatment2)
         )
         assertThat(result).containsExactlyEntriesOf(expected)
     }
@@ -134,7 +134,7 @@ class TreatmentEvidenceFunctionsTest {
         val levelACategory = onLabelCategoryLevelA.copy(
             treatment = "treatment",
             molecularMatch = onLabelCategoryLevelA.molecularMatch.copy(sourceEvent = "category event"),
-            applicableCancerType = CancerType("cancer 1", emptySet())
+            cancerTypeMatch = onLabelCategoryLevelA.cancerTypeMatch.copy(cancerType = CancerType("cancer 1", emptySet()))
         )
         val levelBCategory = levelACategory.copy(evidenceLevel = EvidenceLevel.B)
         val levelBNonCategory = levelACategory.copy(
@@ -158,7 +158,10 @@ class TreatmentEvidenceFunctionsTest {
         val treatmentEvidence = createTreatmentEvidence(evidenceYear = year, matchedCancerType = "Cancer type 1")
         val evidence = listOf(
             treatmentEvidence,
-            treatmentEvidence.copy(evidenceYear = year.minus(1), applicableCancerType = CancerType("Cancer type 2", emptySet())),
+            treatmentEvidence.copy(
+                evidenceYear = year.minus(1),
+                cancerTypeMatch = treatmentEvidence.cancerTypeMatch.copy(cancerType = CancerType("Cancer type 2", emptySet()))
+            ),
             treatmentEvidence.copy(treatment = "other treatment", evidenceDirection = TestEvidenceDirectionFactory.certainResistant())
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)

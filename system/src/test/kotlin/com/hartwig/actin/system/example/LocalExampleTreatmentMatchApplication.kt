@@ -62,7 +62,7 @@ class LocalExampleTreatmentMatchApplication {
 
     private fun createExampleRuleMappingResources(referenceDateProvider: ReferenceDateProvider): RuleMappingResources {
         val resourceDirectory =
-            listOf(System.getProperty("user.home"), "Code", "actin-resources-private").joinToString(File.separator)
+            listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private").joinToString(File.separator)
 
         val doidJson = listOf(resourceDirectory, "disease_ontology", "doid.json").joinToString(File.separator)
         val icdTsv = listOf(

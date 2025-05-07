@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
@@ -55,16 +56,17 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
-            cancerTypeMatchApplicability = cancerTypeApplicability,
+            cancerTypeMatch = CancerTypeMatchDetails(
+                cancerType = CancerType(
+                    matchedCancerType = evidence.indication().applicableType().name(),
+                    excludedCancerSubTypes = evidence.indication().excludedSubTypes().map { ct -> ct.name() }.toSet()
+                ), applicability = cancerTypeApplicability
+            ),
             molecularMatch = MolecularMatchDetails(
                 sourceDate = sourceDate,
                 sourceEvent = sourceEvent,
                 sourceEvidenceType = evidenceType,
                 sourceUrl = sourceUrl
-            ),
-            applicableCancerType = CancerType(
-                matchedCancerType = evidence.indication().applicableType().name(),
-                excludedCancerSubTypes = evidence.indication().excludedSubTypes().map { ct -> ct.name() }.toSet()
             ),
             evidenceLevel = EvidenceLevel.valueOf(evidence.evidenceLevel().name),
             evidenceLevelDetails = EvidenceLevelDetails.valueOf(evidence.evidenceLevelDetails().name),

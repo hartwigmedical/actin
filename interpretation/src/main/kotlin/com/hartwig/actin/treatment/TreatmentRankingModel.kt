@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import kotlin.math.exp
 
-data class TreatmentRankResult(val treatment: String, val scores: List<Score>) : Comparable<TreatmentRankResult> {
+data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceScore>) : Comparable<TreatmentRankResult> {
 
     val score = scores.sumOf { it.score }
 
@@ -55,11 +55,11 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
         })
     }
 
-    private fun geneTumorMatchAndBenefitVsResistance(s: Score) = Triple(s.gene, s.scoringMatch.tumorMatch, (s.score < 0))
+    private fun geneTumorMatchAndBenefitVsResistance(s: EvidenceScore) = Triple(s.gene, s.scoringMatch.tumorMatch, (s.score < 0))
 }
 
 fun saturatingDiminishingReturnsScore(
-    evidenceScores: List<Score>, slope: Double = 1.5, midpoint: Double = 1.0
+    evidenceScores: List<EvidenceScore>, slope: Double = 1.5, midpoint: Double = 1.0
 ) = evidenceScores.sortedDescending().withIndex().map { (index, score) ->
     score to if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
 }.map { it.first.copy(score = it.second) }

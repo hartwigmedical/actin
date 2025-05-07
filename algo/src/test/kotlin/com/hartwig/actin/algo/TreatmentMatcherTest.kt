@@ -67,7 +67,7 @@ class TreatmentMatcherTest {
         referenceDateIsLive = true,
         trialMatches = trialMatches,
         standardOfCareMatches = null,
-        maxMolecularTestAge = MAX_AGE,
+        maxMolecularTestAge = MAX_AGE
     )
 
     @Test

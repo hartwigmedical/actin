@@ -201,7 +201,7 @@ class TreatmentRankingModelTest {
     ) = TestPatientFactory.createProperTestPatientRecord().copy(
         molecularHistory = MolecularHistory(
             listOf(
-                TestMolecularFactory.createExhaustiveTestMolecularRecord().copy(
+                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
                     drivers = Drivers(
                         variants = variants.toList(),
                         copyNumbers = emptyList(),

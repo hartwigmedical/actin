@@ -11,7 +11,7 @@ enum class TumorMatch {
 enum class VariantMatch {
     EXACT,
     CATEGORY,
-    CATEGORY_OTHER
+    FUNCTIONAL_EFFECT_MATCH
 }
 
 data class ScoringMatch(val tumorMatch: TumorMatch, val variantMatch: VariantMatch)
@@ -24,13 +24,13 @@ fun create() = ScoringConfig(
     mapOf(
         ScoringMatch(TumorMatch.PATIENT, VariantMatch.EXACT) to 20,
         ScoringMatch(TumorMatch.PATIENT, VariantMatch.CATEGORY) to 19,
-        ScoringMatch(TumorMatch.PATIENT, VariantMatch.CATEGORY_OTHER) to 18,
+        ScoringMatch(TumorMatch.PATIENT, VariantMatch.FUNCTIONAL_EFFECT_MATCH) to 18,
         ScoringMatch(TumorMatch.ALL, VariantMatch.EXACT) to 17,
         ScoringMatch(TumorMatch.ALL, VariantMatch.CATEGORY) to 16,
-        ScoringMatch(TumorMatch.ALL, VariantMatch.CATEGORY_OTHER) to 15,
+        ScoringMatch(TumorMatch.ALL, VariantMatch.FUNCTIONAL_EFFECT_MATCH) to 15,
         ScoringMatch(TumorMatch.ANY, VariantMatch.EXACT) to 14,
         ScoringMatch(TumorMatch.ANY, VariantMatch.CATEGORY) to 13,
-        ScoringMatch(TumorMatch.ANY, VariantMatch.CATEGORY_OTHER) to 12,
+        ScoringMatch(TumorMatch.ANY, VariantMatch.FUNCTIONAL_EFFECT_MATCH) to 12,
     ),
     ScoringLevel(
         mapOf(

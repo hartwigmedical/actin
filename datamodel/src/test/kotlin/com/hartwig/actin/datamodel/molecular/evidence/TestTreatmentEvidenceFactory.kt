@@ -108,8 +108,10 @@ object TestTreatmentEvidenceFactory {
             sourceEvidenceType = evidenceType,
             sourceUrl = sourceUrl
         ),
-        applicableCancerType = CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
-        cancerTypeMatchApplicability = cancerTypeMatchApplicability,
+        cancerTypeMatch = CancerTypeMatchDetails(
+            CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
+            cancerTypeMatchApplicability
+        ),
         evidenceLevel = evidenceLevel,
         evidenceLevelDetails = evidenceLevelDetails,
         evidenceDirection = evidenceDirection,

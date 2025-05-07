@@ -74,8 +74,10 @@ object TreatmentEvidenceFunctions {
     fun prioritizeNonCategoryEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
         return groupBySourceEvent(treatmentEvidenceSet).flatMap { (_, evidencesInEvent) ->
             groupByTreatmentAndCancerType(evidencesInEvent).mapNotNull { (_, evidences) ->
-                val highestCategoryEvidence = evidences.filter { it.molecularMatch.sourceEvidenceType.isCategoryEvent() }.minByOrNull { it.evidenceLevel }
-                val highestNonCategoryEvidence = evidences.filter { !it.molecularMatch.sourceEvidenceType.isCategoryEvent() }.minByOrNull { it.evidenceLevel }
+                val highestCategoryEvidence =
+                    evidences.filter { it.molecularMatch.sourceEvidenceType.isCategoryEvent() }.minByOrNull { it.evidenceLevel }
+                val highestNonCategoryEvidence =
+                    evidences.filter { !it.molecularMatch.sourceEvidenceType.isCategoryEvent() }.minByOrNull { it.evidenceLevel }
 
                 highestNonCategoryEvidence ?: highestCategoryEvidence
             }
@@ -86,12 +88,12 @@ object TreatmentEvidenceFunctions {
         treatmentEvidence.groupBy { it.treatment }
 
     fun groupByTreatmentAndCancerType(treatmentEvidence: List<TreatmentEvidence>) =
-        treatmentEvidence.groupBy { Pair(it.treatment, it.applicableCancerType.matchedCancerType) }
+        treatmentEvidence.groupBy { Pair(it.treatment, it.cancerTypeMatch.cancerType.matchedCancerType) }
 
     fun generateEvidenceCellContents(evidenceList: List<TreatmentEvidence>): List<TreatmentEvidenceContent> {
         return groupByTreatment(evidenceList).map { (treatment, evidences) ->
             val cancerTypesWithYears = evidences
-                .groupBy { it.applicableCancerType.matchedCancerType }
+                .groupBy { it.cancerTypeMatch.cancerType.matchedCancerType }
                 .map { (cancerType, evidenceGroup) ->
                     val years = evidenceGroup.map { it.evidenceYear }.distinct().sorted()
                     "$cancerType (${years.joinToString(", ")})"
