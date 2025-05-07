@@ -17,7 +17,6 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
-import kotlin.Boolean
 
 data class ContentDefinition(val textEntries: List<String>, val deEmphasizeContent: Boolean)
 
