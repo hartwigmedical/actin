@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 
-internal object FusionLookup {
+object FusionLookup {
 
     fun find(knownFusions: Iterable<KnownFusion>, fusion: FusionMatchCriteria): KnownFusion? {
         var best: KnownFusion? = null
