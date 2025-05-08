@@ -29,12 +29,11 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtrac
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
-import com.hartwig.actin.configuration.ClinicalConfiguration
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.feed.datamodel.FeedPatientRecord
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -58,7 +57,6 @@ class StandardDataIngestion(
     private val bodyHeightExtractor: StandardBodyHeightExtractor,
     private val ihcTestExtractor: StandardIhcTestExtractor,
     private val sequencingTestExtractor: StandardSequencingTestExtractor,
-    private val dataQualityMask: DataQualityMask,
     private val pathologyReportsExtractor: PathologyReportsExtractor
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
@@ -88,7 +86,7 @@ class StandardDataIngestion(
     }
 
     private fun recordAndEvaluationFromPath(file: Path): Pair<ClinicalRecord, CurationExtractionEvaluation> {
-        val ehrPatientRecord = dataQualityMask.apply(mapper.readValue(Files.readString(file), ProvidedPatientRecord::class.java))
+        val ehrPatientRecord = mapper.readValue(Files.readString(file), FeedPatientRecord::class.java)
 
         val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
         val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
@@ -129,7 +127,7 @@ class StandardDataIngestion(
             .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
 
         return ClinicalRecord(
-            patientId = ehrPatientRecord.patientDetails.hashedId,
+            patientId = ehrPatientRecord.patientDetails.patientId,
             patient = patientDetails.extracted,
             tumor = tumorDetails.extracted,
             clinicalStatus = clinicalStatus.extracted,
@@ -157,8 +155,7 @@ class StandardDataIngestion(
             drugInteractionDatabase: DrugInteractionsDatabase,
             qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
-            treatmentDatabase: TreatmentDatabase,
-            clinicalConfiguration: ClinicalConfiguration
+            treatmentDatabase: TreatmentDatabase
         ) = StandardDataIngestion(
             directory,
             StandardMedicationExtractor(atcModel, drugInteractionDatabase, qtProlongatingDatabase, treatmentDatabase),
@@ -183,7 +180,6 @@ class StandardDataIngestion(
                 curationDatabaseContext.sequencingTestCuration,
                 curationDatabaseContext.sequencingTestResultCuration
             ),
-            DataQualityMask(clinicalConfiguration),
             PathologyReportsExtractor()
         )
     }

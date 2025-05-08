@@ -15,9 +15,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTes
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.variants
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
-import kotlin.reflect.full.memberProperties
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardSequencingTestExtractor(
     private val testCuration: CurationDatabase<SequencingTestConfig>,
@@ -25,27 +23,23 @@ class StandardSequencingTestExtractor(
 ) :
     StandardDataExtractor<List<SequencingTest>> {
 
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<SequencingTest>> {
-        val extracted = ehrPatientRecord.molecularTests.mapNotNull { test ->
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
+        val extracted = ehrPatientRecord.sequencingTests.mapNotNull { test ->
             val testCurationConfig =
                 CurationResponse.createFromConfigs(
-                    testCuration.find(test.test),
-                    ehrPatientRecord.patientDetails.hashedId,
+                    testCuration.find(test.name),
+                    ehrPatientRecord.patientDetails.patientId,
                     CurationCategory.SEQUENCING_TEST,
-                    test.test,
+                    test.name,
                     "sequencing test",
                     false
                 )
             testCurationConfig.config()?.let { testCuration ->
                 if (!testCuration.ignore) {
-                    val nonIhcTestResults = test.results.filter { it.ihcResult == null }.toSet()
-                    val (onlyFreeTextResults, populatedResults) = nonIhcTestResults
-                        .partition { checkAllFieldsNull(it) }
-                    val mandatoryCurationTestResults = curate(ehrPatientRecord, onlyFreeTextResults)
-                    val optionalCurationTestResults = curate(ehrPatientRecord, populatedResults)
-                    val allResults =
-                        removeCurated(removeCurated(nonIhcTestResults, mandatoryCurationTestResults), optionalCurationTestResults) +
-                                extract(mandatoryCurationTestResults + optionalCurationTestResults)
+                    val onlyFreeTextResults = test.results.toSet()
+                    val allResults = this.curate(ehrPatientRecord, onlyFreeTextResults)
+                        .flatMap { it.configs.mapNotNull(SequencingTestResultConfig::curated) }
+                        .toSet()
                     if (allResults.isNotEmpty()) {
                         ExtractionResult(
                             listOf(
@@ -61,7 +55,7 @@ class StandardSequencingTestExtractor(
                                     tumorMutationalBurden = tmb(allResults)
                                 )
                             ),
-                            mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
+                            this.curate(ehrPatientRecord, onlyFreeTextResults).map { curated -> curated.extractionEvaluation }
                                 .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
                         )
                     } else null
@@ -77,33 +71,14 @@ class StandardSequencingTestExtractor(
         }
     }
 
-    private fun removeCurated(
-        original: Set<ProvidedMolecularTestResult>,
-        curated: List<CurationResponse<SequencingTestResultConfig>>
-    ): Set<ProvidedMolecularTestResult> {
-        val freeTexts = curated.flatMap { it.configs }.map { it.input }.toSet()
-        return original.filter { it.freeText !in freeTexts }.toSet()
-    }
-
-    private fun extract(curationResults: List<CurationResponse<SequencingTestResultConfig>>) =
-        curationResults.flatMap { it.configs }.filter { !it.ignore }.mapNotNull { it.curated }
-
-    private fun curate(
-        ehrPatientRecord: ProvidedPatientRecord,
-        results: Collection<ProvidedMolecularTestResult>
-    ) = results.mapNotNull { result -> result.freeText }
-        .map { text ->
+    private fun curate(ehrPatientRecord: FeedPatientRecord, results: Collection<String>) = results.map { text ->
             CurationResponse.createFromConfigs(
                 testResultCuration.find(text),
-                ehrPatientRecord.patientDetails.hashedId,
+                ehrPatientRecord.patientDetails.patientId,
                 CurationCategory.SEQUENCING_TEST_RESULT,
                 text,
                 "sequencing test result",
                 false
             )
         }
-
-    private fun checkAllFieldsNull(result: ProvidedMolecularTestResult) =
-        ProvidedMolecularTestResult::class.memberProperties.filter { it.name != "freeText" }.all { it.get(result) == null }
-
 }

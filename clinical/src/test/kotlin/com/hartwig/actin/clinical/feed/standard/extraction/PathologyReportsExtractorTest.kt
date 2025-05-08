@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.datamodel.clinical.PathologyReport
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPathologyReport
+import com.hartwig.feed.datamodel.FeedPathology
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -23,10 +23,11 @@ class PathologyReportsExtractorTest {
     @Test
     fun `Should extract pathology reports from the tumor details pathology`() {
 
-        val providedPathologyReport = ProvidedPathologyReport(
+        val providedPathologyReport = FeedPathology(
+            tissueId = null,
             reportRequested = false,
-            source = "internal",
             diagnosis = "diagnosis",
+            lab = "lab",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
             rawPathologyReport = "rawPathologyReport"
@@ -39,7 +40,6 @@ class PathologyReportsExtractorTest {
                     providedPathologyReport.copy(
                         tissueId = "tissueId",
                         reportRequested = true,
-                        source = "external",
                         lab = "lab",
                         rawPathologyReport = "raw pathology report"
                     )

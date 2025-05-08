@@ -7,14 +7,14 @@ import com.hartwig.actin.clinical.curation.config.IhcTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 private const val IHC_STRING = "immunohistochemie"
 
 class StandardIhcTestExtractor(
     private val molecularTestCuration: CurationDatabase<IhcTestConfig>
 ) : StandardDataExtractor<List<IhcTest>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<IhcTest>> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<IhcTest>> {
         val extractedIhcTestsFromTumorDifferentiation = extractIhc(molecularTestCuration, ehrPatientRecord)
         val extractedFromOtherConditions = extractFromOtherConditions(ehrPatientRecord)
         val extractedFromTumorDifferentiation = extractFromTumorDifferentiation(ehrPatientRecord)
@@ -36,15 +36,13 @@ class StandardIhcTestExtractor(
         )
     }
 
-    private fun extractFromMolecularTests(ehrPatientRecord: ProvidedPatientRecord) =
-        ehrPatientRecord.molecularTests.asSequence()
-            .flatMap { it.results }
-            .mapNotNull { it.ihcResult }
+    private fun extractFromMolecularTests(ehrPatientRecord: FeedPatientRecord) =
+        ehrPatientRecord.ihcTests.asSequence()
             .mapNotNull {
-                val curations = listOf(it, "${ehrPatientRecord.patientDetails.hashedId} | $it").map { curationString ->
+                val curations = listOf(it.name, "${ehrPatientRecord.patientDetails.patientId} | $it").map { curationString ->
                     CurationResponse.createFromConfigs(
                         molecularTestCuration.find(curationString),
-                        ehrPatientRecord.patientDetails.hashedId,
+                        ehrPatientRecord.patientDetails.patientId,
                         CurationCategory.MOLECULAR_TEST_IHC,
                         curationString,
                         "molecular test",
@@ -72,7 +70,7 @@ class StandardIhcTestExtractor(
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
 
-    private fun extractFromTumorDifferentiation(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<IhcTest>>> =
+    private fun extractFromTumorDifferentiation(ehrPatientRecord: FeedPatientRecord): List<ExtractionResult<List<IhcTest>>> =
         ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")?.asSequence()
             ?.map { it.trim() }
             ?.filterNot { it.contains(IHC_STRING, ignoreCase = true) }
@@ -86,8 +84,8 @@ class StandardIhcTestExtractor(
                 )
             }?.toList() ?: emptyList()
 
-    private fun extractFromOtherConditions(ehrPatientRecord: ProvidedPatientRecord) =
-        ehrPatientRecord.priorOtherConditions.map {
+    private fun extractFromOtherConditions(ehrPatientRecord: FeedPatientRecord) =
+        ehrPatientRecord.otherConditions.map {
             curateFromSecondarySource(it.name, ehrPatientRecord)
         }.filter {
             it.configs.isNotEmpty()
@@ -100,10 +98,10 @@ class StandardIhcTestExtractor(
 
     private fun curateFromSecondarySource(
         input: String,
-        ehrPatientRecord: ProvidedPatientRecord,
+        ehrPatientRecord: FeedPatientRecord,
     ) = CurationResponse.createFromConfigs(
         molecularTestCuration.find(input),
-        ehrPatientRecord.patientDetails.hashedId,
+        ehrPatientRecord.patientDetails.patientId,
         CurationCategory.MOLECULAR_TEST_IHC,
         input,
         "molecular test ihc",
@@ -112,7 +110,7 @@ class StandardIhcTestExtractor(
 
 
     private fun extractIhc(
-        molecularTestCuration: CurationDatabase<IhcTestConfig>, ehrPatientRecord: ProvidedPatientRecord
+        molecularTestCuration: CurationDatabase<IhcTestConfig>, ehrPatientRecord: FeedPatientRecord
     ): List<ExtractionResult<List<IhcTest>>> {
         val linesWithIhc =
             ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")
@@ -121,7 +119,7 @@ class StandardIhcTestExtractor(
         return linesWithIhc.map { it.replace("\n", "").replace("\r", "") }.map {
             val curationResponse = CurationResponse.createFromConfigs(
                 molecularTestCuration.find(it),
-                ehrPatientRecord.patientDetails.hashedId,
+                ehrPatientRecord.patientDetails.patientId,
                 CurationCategory.MOLECULAR_TEST_IHC,
                 it,
                 "molecular test ihc",

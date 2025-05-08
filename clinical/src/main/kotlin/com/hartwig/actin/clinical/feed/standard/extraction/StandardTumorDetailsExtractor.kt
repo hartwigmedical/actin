@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
@@ -19,19 +19,19 @@ class StandardTumorDetailsExtractor(
     private val tumorStageDeriver: TumorStageDeriver
 ) : StandardDataExtractor<TumorDetails> {
 
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<TumorDetails> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<TumorDetails> {
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
 
-        val curatedTumorResponseFromOtherConditions = ehrPatientRecord.priorOtherConditions.map {
+        val curatedTumorResponseFromOtherConditions = ehrPatientRecord.otherConditions.map {
             CurationResponse.createFromConfigs(
                 primaryTumorConfigCurationDatabase.find(it.name),
-                ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
+                ehrPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
             )
         }.firstNotNullOfOrNull { it.config() }
 
         val curatedTumorResponse = CurationResponse.createFromConfigs(
             primaryTumorConfigCurationDatabase.find(input),
-            ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
+            ehrPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
 
         val lesionCurationResponse = extractFromLesionList(ehrPatientRecord)
@@ -60,17 +60,14 @@ class StandardTumorDetailsExtractor(
     ) = curatedTumorResponseFromOtherConditions?.let { CurationResponse(setOf(it), CurationExtractionEvaluation()) }
         ?: curatedTumorResponse
 
-    private fun tumorDetails(
-        ehrPatientRecord: ProvidedPatientRecord,
-        lesions: List<LesionLocationConfig>
-    ): TumorDetails {
+    private fun tumorDetails(ehrPatientRecord: FeedPatientRecord, lesions: List<LesionLocationConfig>): TumorDetails {
         val hasBrainOrGliomaTumor =
             ehrPatientRecord.tumorDetails.tumorLocation == "Brain" || ehrPatientRecord.tumorDetails.tumorType == "Glioma"
         return TumorDetails(
             primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
             primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
             doids = emptySet(),
-            stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
+            stage = ehrPatientRecord.tumorDetails.stage?.let { TumorStage.valueOf(it) },
             hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
             hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions),
             hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions(lesions, true),
@@ -82,7 +79,7 @@ class StandardTumorDetailsExtractor(
     }
 
     private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory, active: Boolean? = null): Boolean {
-        return lesions.any { it.category == location && (active == null || it.active == active) && (it.suspected == null || it.suspected == false) }
+        return lesions.any { it.category == location && (active == null || it.active == active) && (it.suspected == null || !it.suspected) }
     }
 
     private fun hasBrainLesions(lesions: List<LesionLocationConfig>, active: Boolean? = null) =
@@ -94,7 +91,7 @@ class StandardTumorDetailsExtractor(
         return if (hasBrainOrGliomaTumor) Pair(false, false) else Pair(hasCnsLesions, hasActiveCnsLesions)
     }
 
-    private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
+    private fun extractFromLesionList(patientRecord: FeedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
         val categories = LesionLocationCategory.entries.toSet().map { e -> e.name.uppercase() }
         return patientRecord.tumorDetails.lesions?.map {
             val locationAsEnumName = it.location.uppercase().replace(" ", "_")
@@ -110,7 +107,7 @@ class StandardTumorDetailsExtractor(
                     )
                 )
             } else {
-                lesionCurationResponse(patientRecord.patientDetails.hashedId, it.location)
+                lesionCurationResponse(patientRecord.patientDetails.patientId, it.location)
             }
         } ?: emptyList()
     }

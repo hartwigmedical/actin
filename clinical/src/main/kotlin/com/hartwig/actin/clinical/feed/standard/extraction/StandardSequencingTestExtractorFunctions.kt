@@ -12,11 +12,9 @@ object StandardSequencingTestExtractorFunctions {
     fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
         allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene, it.transcript) } }.toSet()
 
-    fun tmb(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.tmb }
+    fun tmb(results: Set<ProvidedMolecularTestResult>) = results.firstNotNullOfOrNull { result -> result.tmb }
 
-    fun msi(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.msi }
+    fun msi(results: Set<ProvidedMolecularTestResult>) = results.firstNotNullOfOrNull { result -> result.msi }
 
     fun skippedExons(
         results: Set<ProvidedMolecularTestResult>
