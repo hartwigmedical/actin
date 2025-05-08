@@ -1,14 +1,14 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.IHCTestInterpreter
+import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -40,7 +40,7 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
-        val ihcTestsFiltered = IHCTestFilter.mostRecentOrUnknownDateIhcTests(patientRecord.ihcTests).toList()
+        val ihcTestsFiltered = IhcTestFilter.mostRecentOrUnknownDateIhcTests(patientRecord.ihcTests).toList()
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             emptyList(),
             nonIhcTestsIncludedInTrialMatching,
@@ -76,7 +76,7 @@ class MolecularSummaryGenerator(
     private fun content(
         pathologyReport: PathologyReport?,
         molecularTests: List<MolecularTest>,
-        ihcTests: List<IHCTest>,
+        ihcTests: List<IhcTest>,
         table: Table
     ) {
         for (molecularTest in molecularTests.sortedByDescending { it.date }) {
@@ -103,7 +103,7 @@ class MolecularSummaryGenerator(
             }
         }
 
-        val molecularResultGenerator = IHCResultGenerator(ihcTests, keyWidth, valueWidth, IHCTestInterpreter())
+        val molecularResultGenerator = IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter())
         table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
         table.addCell(Cells.create(molecularResultGenerator.contents()))
 
