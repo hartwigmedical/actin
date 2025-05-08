@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class EvidenceScore(
     val event: String,
-    val gene: String?,
     val scoringMatch: ScoringMatch,
     val evidenceLevelDetails: EvidenceLevelDetails,
     val cancerType: CancerType,
@@ -20,28 +19,32 @@ data class EvidenceScore(
     }
 }
 
-class EvidenceScoringModel {
+class EvidenceScoringModel(val config: ScoringConfig) {
 
-    fun score(treatment: TreatmentEvidence, gene: String?): EvidenceScore {
+    fun score(treatment: TreatmentEvidence): EvidenceScore {
         val cancerTypeApplicability = when (treatment.cancerTypeMatch.applicability) {
             CancerTypeMatchApplicability.SPECIFIC_TYPE -> TumorMatch.PATIENT
             CancerTypeMatchApplicability.ALL_TYPES -> TumorMatch.ALL
             CancerTypeMatchApplicability.OTHER_TYPE -> TumorMatch.ANY
         }
         val exactVariant = if (treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()) VariantMatch.CATEGORY else VariantMatch.EXACT
-        val config = create()
         val scoringMatch = ScoringMatch(cancerTypeApplicability, exactVariant)
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
-        val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
-        val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
+        val factor = (config.categoryMatchLevels[scoringMatch] ?: throw noConfiguredMatchException(scoringMatch)) * direction
+        val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails]
+            ?: throw noConfigureEvidenceLevelException(treatment.evidenceLevelDetails)
         return EvidenceScore(
             scoringMatch = scoringMatch,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             score = factor * score.toDouble(),
             event = treatment.molecularMatch.sourceEvent,
-            gene = gene,
             evidenceDescription = treatment.efficacyDescription,
             cancerType = treatment.cancerTypeMatch.cancerType
         )
     }
+
+    private fun noConfigureEvidenceLevelException(evidenceLevelDetails: EvidenceLevelDetails) = illegalStateException(evidenceLevelDetails)
+    private fun noConfiguredMatchException(scoringMatch: ScoringMatch) = illegalStateException(scoringMatch)
+    private fun illegalStateException(missing: Any) =
+        IllegalStateException("Scoring config should have a score configured for [${missing}]. Check code in ScoringConfig.")
 }
