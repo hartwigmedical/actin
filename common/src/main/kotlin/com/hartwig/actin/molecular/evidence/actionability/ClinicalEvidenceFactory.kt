@@ -38,13 +38,16 @@ object ClinicalEvidenceFactory {
     private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
             val (evidenceType, event) = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
+            val treatment = evidence.treatment()
             createTreatmentEvidence(
                 isOnLabel,
                 evidence,
                 event.sourceDate(),
                 event.sourceEvent(),
                 evidenceType,
-                event.sourceUrls().first()
+                event.sourceUrls().first(),
+                treatment.treatmentApproachesDrugClass(),
+                treatment.treatmentApproachesTherapy()
             )
         }.toSet()
     }
@@ -55,7 +58,9 @@ object ClinicalEvidenceFactory {
         sourceDate: LocalDate,
         sourceEvent: String,
         evidenceType: EvidenceType,
-        sourceUrl: String
+        sourceUrl: String,
+        treatmentApproachesDrugClass: Set<String>,
+        treatmentApproachesTherapy: Set<String>
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
@@ -79,7 +84,9 @@ object ClinicalEvidenceFactory {
                 isCertain = evidence.evidenceDirection().isCertain
             ),
             evidenceYear = evidence.evidenceYear(),
-            efficacyDescription = evidence.efficacyDescription()
+            efficacyDescription = evidence.efficacyDescription(),
+            treatmentApproachesDrugClass = treatmentApproachesDrugClass,
+            treatmentApproachesTherapy = treatmentApproachesTherapy
         )
     }
 

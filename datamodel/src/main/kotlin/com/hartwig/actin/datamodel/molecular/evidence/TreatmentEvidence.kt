@@ -9,6 +9,8 @@ data class TreatmentEvidence(
     val evidenceLevelDetails: EvidenceLevelDetails,
     val evidenceDirection: EvidenceDirection,
     val evidenceYear: Int,
-    val efficacyDescription: String
+    val efficacyDescription: String,
+    val treatmentApproachesDrugClass: Set<String>,
+    val treatmentApproachesTherapy: Set<String>
 )
  

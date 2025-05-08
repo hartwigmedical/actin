@@ -393,7 +393,9 @@
                       "isCertain": true
                     },
                     "evidenceYear": 2016,
-                    "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations"
+                    "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations",
+                    "treatmentApproachesDrugClass": [],
+                    "treatmentApproachesTherapy": []
                   },
                   {
                     "treatment": "AFATINIB",
@@ -417,7 +419,9 @@
                       "isCertain": true
                     },
                     "evidenceYear": 2013,
-                    "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations"
+                    "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations",
+                    "treatmentApproachesDrugClass": [],
+                    "treatmentApproachesTherapy": []
                   }
                 ],
                 "eligibleTrials": [
@@ -558,7 +562,10 @@
                       "isCertain": true
                     },
                     "evidenceYear": 2015,
-                    "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer."
+                    "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer.",
+                    "treatmentApproachesDrugClass": [],
+                    "treatmentApproachesTherapy": []
+
                   }
                 ],
                 "eligibleTrials": [
