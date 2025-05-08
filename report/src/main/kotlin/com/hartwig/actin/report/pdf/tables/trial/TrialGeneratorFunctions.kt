@@ -177,7 +177,7 @@ object TrialGeneratorFunctions {
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
                     TrialLocations.actinTrialLocation(cohort.source, requestingSource, cohort.locations - commonLocations, true),
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null,
-                    if (includeConfiguration) concat(setOfNotNull("ignored".takeIf { cohort.ignore }, "non-evaluable".takeIf { !cohort.isEvaluable }), separator =" and ") else null,
+                    if (includeConfiguration) concat(setOfNotNull("Ignored".takeIf { cohort.ignore }, "Non-evaluable".takeIf { !cohort.isEvaluable }), separator =" and ") else null,
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )

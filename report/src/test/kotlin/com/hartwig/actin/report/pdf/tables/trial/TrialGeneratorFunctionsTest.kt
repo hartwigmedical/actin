@@ -244,11 +244,11 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("cohort1", "MSI", "site1", "non-evaluable"), true),
-                ContentDefinition(listOf("cohort2", "None", "site2", "ignored and non-evaluable"), false),
-                ContentDefinition(listOf("cohort1", "MSI", "site3", "ignored and non-evaluable"), true),
-                ContentDefinition(listOf("cohort2", "None", "site4", "ignored"), false),
-                ContentDefinition(listOf("cohort1", "MSI", "site5", "non-evaluable"), true),
+                ContentDefinition(listOf("cohort1", "MSI", "site1", "Non-evaluable"), true),
+                ContentDefinition(listOf("cohort2", "None", "site2", "Ignored and Non-evaluable"), false),
+                ContentDefinition(listOf("cohort1", "MSI", "site3", "Ignored and Non-evaluable"), true),
+                ContentDefinition(listOf("cohort2", "None", "site4", "Ignored"), false),
+                ContentDefinition(listOf("cohort1", "MSI", "site5", "Non-evaluable"), true),
             )
         )
     }
