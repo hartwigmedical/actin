@@ -2,11 +2,13 @@ package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 
 data class VariantMatchCriteria(
     val gene: String,
     val codingEffect: CodingEffect? = null,
+    val proteinEffect: ProteinEffect? = null,
     val type: VariantType? = null,
     val chromosome: String? = null,
     val position: Int? = null,
