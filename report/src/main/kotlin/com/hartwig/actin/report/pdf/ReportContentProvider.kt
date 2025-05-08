@@ -16,8 +16,8 @@ import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
-import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
@@ -120,7 +120,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         return listOfNotNull(
             clinicalHistoryGenerator,
             MolecularSummaryGenerator(
-                report = report,
+                patientRecord = report.patientRecord,
                 cohorts = cohorts,
                 keyWidth = keyWidth,
                 valueWidth = valueWidth,
