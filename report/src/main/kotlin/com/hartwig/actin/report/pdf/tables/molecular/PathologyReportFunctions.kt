@@ -26,7 +26,9 @@ object PathologyReportFunctions {
         pathologyReport: PathologyReport,
         requestingHospital: String?
     ): Cell {
-        val labString = if (pathologyReport.lab == null && pathologyReport.isSourceInternal) requestingHospital else pathologyReport.lab ?: "Unknown Lab"
+        val labString =
+            if (pathologyReport.lab == null && pathologyReport.isSourceInternal && requestingHospital != null) requestingHospital else pathologyReport.lab
+                ?: "Unknown Lab"
         return Cells.create(
             Paragraph().addAll(
                 listOfNotNull(
