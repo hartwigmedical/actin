@@ -18,28 +18,28 @@ class MolecularCharacteristicFormatTest {
     fun `Should format TMB high and low`() {
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
-                withTumorMutationalBurden(score = 61.0, isHigh = true),
+                withTumorMutationalBurden(score = 100.5, isHigh = true),
                 displayValue = true
             )
-        ).isEqualTo("TMB 61 mut/Mb")
+        ).isEqualTo("TMB 100.5 mut/Mb")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
-                withTumorMutationalBurden(score = 6.0, isHigh = true),
+                withTumorMutationalBurden(score = 100.5, isHigh = true),
                 displayValue = false
             )
         ).isEqualTo("TMB High")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
-                withTumorMutationalBurden(score = 6.0, isHigh = false),
+                withTumorMutationalBurden(score = 1.5, isHigh = false),
                 displayValue = true
             )
-        ).isEqualTo("TMB 6 mut/Mb")
+        ).isEqualTo("TMB 1.5 mut/Mb")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
-                withTumorMutationalBurden(score = 6.0, isHigh = false),
+                withTumorMutationalBurden(score = 1.5, isHigh = false),
                 displayValue = false
             )
         ).isEqualTo("TMB Low")
@@ -56,28 +56,28 @@ class MolecularCharacteristicFormatTest {
     fun `Should format TML high and low`() {
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
-                withTumorMutationalLoad(score = 160, isHigh = true),
+                withTumorMutationalLoad(score = 100, isHigh = true),
                 displayValue = true
             )
-        ).isEqualTo("TML 160")
+        ).isEqualTo("TML 100")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
-                withTumorMutationalLoad(score = 160, isHigh = true),
+                withTumorMutationalLoad(score = 100, isHigh = true),
                 displayValue = false
             )
         ).isEqualTo("TML High")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
-                withTumorMutationalLoad(score = 42, isHigh = false),
+                withTumorMutationalLoad(score = 1, isHigh = false),
                 displayValue = true
             )
-        ).isEqualTo("TML 42")
+        ).isEqualTo("TML 1")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
-                withTumorMutationalLoad(score = 42, isHigh = false),
+                withTumorMutationalLoad(score = 1, isHigh = false),
                 displayValue = false
             )
         ).isEqualTo("TML Low")
