@@ -25,9 +25,9 @@ object MolecularCharacteristicFormat {
         } else {
             isHigh?.let { i ->
                 value?.let { v ->
-                    "${formHighLow(i)}${if (includeValue) " (${Formats.singleDigitNumber(v)})" else ""}"
+                    "${formatHighLow(i)}${if (includeValue) " (${Formats.singleDigitNumber(v)})" else ""}"
                 }
-            } ?: throw IllegalArgumentException("if tmb/tml value is null so must isHigh and vice-versa")
+            } ?: throw IllegalArgumentException("if TMB/TML value is null so must isHigh and vice-versa")
         }
     }
 
@@ -37,10 +37,10 @@ object MolecularCharacteristicFormat {
     }
 
     private fun formatHighLowCharacteristic(isHigh: Boolean?): String {
-        return isHigh?.let { formHighLow(it) } ?: Formats.VALUE_UNKNOWN
+        return isHigh?.let { formatHighLow(it) } ?: Formats.VALUE_UNKNOWN
     }
 
-    private fun formHighLow(i: Boolean) = if (i) "High" else "Low"
+    private fun formatHighLow(i: Boolean) = if (i) "High" else "Low"
 
     fun formatMicrosatelliteStability(molecularCharacteristics: MolecularCharacteristics): String {
         return molecularCharacteristics.microsatelliteStability?.isUnstable?.let { isUnstable -> if (isUnstable) "Unstable" else "Stable" }
