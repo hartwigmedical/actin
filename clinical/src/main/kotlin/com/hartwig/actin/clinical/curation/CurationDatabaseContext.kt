@@ -4,8 +4,8 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.EcgConfigFactory
-import com.hartwig.actin.clinical.curation.config.IHCTestConfig
-import com.hartwig.actin.clinical.curation.config.IHCTestConfigFactory
+import com.hartwig.actin.clinical.curation.config.IhcTestConfig
+import com.hartwig.actin.clinical.curation.config.IhcTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
 import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
@@ -50,8 +50,8 @@ data class CurationDatabaseContext(
     val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
     val comorbidityCuration: CurationDatabase<ComorbidityConfig>,
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
-    val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
-    val molecularTestPdl1Curation: CurationDatabase<IHCTestConfig>,
+    val molecularTestIhcCuration: CurationDatabase<IhcTestConfig>,
+    val molecularTestPdl1Curation: CurationDatabase<IhcTestConfig>,
     val sequencingTestCuration: CurationDatabase<SequencingTestConfig>,
     val sequencingTestResultCuration: CurationDatabase<SequencingTestResultConfig>,
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
@@ -149,13 +149,13 @@ data class CurationDatabaseContext(
             molecularTestIhcCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV,
-                IHCTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
+                IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
                 CurationCategory.MOLECULAR_TEST_IHC
             ) { it.molecularTestEvaluatedInputs },
             molecularTestPdl1Curation = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_PDL1_TSV,
-                IHCTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
+                IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
                 CurationCategory.MOLECULAR_TEST_PDL1
             ) { it.molecularTestEvaluatedInputs },
             sequencingTestCuration = CurationDatabaseReader.read(

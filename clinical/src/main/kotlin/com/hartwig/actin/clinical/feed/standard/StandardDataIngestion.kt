@@ -18,7 +18,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExt
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardIHCTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardIhcTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
@@ -56,7 +56,7 @@ class StandardDataIngestion(
     private val patientDetailsExtractor: StandardPatientDetailsExtractor,
     private val bodyWeightExtractor: StandardBodyWeightExtractor,
     private val bodyHeightExtractor: StandardBodyHeightExtractor,
-    private val ihcTestExtractor: StandardIHCTestExtractor,
+    private val ihcTestExtractor: StandardIhcTestExtractor,
     private val sequencingTestExtractor: StandardSequencingTestExtractor,
     private val dataQualityMask: DataQualityMask,
     private val pathologyReportsExtractor: PathologyReportsExtractor
@@ -178,7 +178,7 @@ class StandardDataIngestion(
             StandardPatientDetailsExtractor(),
             StandardBodyWeightExtractor(),
             StandardBodyHeightExtractor(),
-            StandardIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            StandardIhcTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             StandardSequencingTestExtractor(
                 curationDatabaseContext.sequencingTestCuration,
                 curationDatabaseContext.sequencingTestResultCuration

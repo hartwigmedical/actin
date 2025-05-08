@@ -10,7 +10,7 @@ data class ClinicalRecord(
     val oncologicalHistory: List<TreatmentHistoryEntry>,
     val priorPrimaries: List<PriorPrimary>,
     val comorbidities: List<Comorbidity>,
-    val ihcTests: List<IHCTest>,
+    val ihcTests: List<IhcTest>,
     val sequencingTests: List<SequencingTest>,
     val labValues: List<LabValue>,
     val surgeries: List<Surgery>,
