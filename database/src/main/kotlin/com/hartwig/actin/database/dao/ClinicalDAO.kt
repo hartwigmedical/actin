@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -322,12 +322,11 @@ internal class ClinicalDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writeMolecularTests(patientId: String, ihcTests: List<IHCTest>) {
+    private fun writeMolecularTests(patientId: String, ihcTests: List<IhcTest>) {
         for (ihcTest in ihcTests) {
             context.insertInto(
                 Tables.IHCTEST,
                 Tables.IHCTEST.PATIENTID,
-                Tables.IHCTEST.TEST,
                 Tables.IHCTEST.ITEM,
                 Tables.IHCTEST.MEASURE,
                 Tables.IHCTEST.MEASUREDATE,
@@ -339,7 +338,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    ihcTest.test,
                     ihcTest.item,
                     ihcTest.measure,
                     ihcTest.measureDate,

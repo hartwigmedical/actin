@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -17,57 +17,85 @@ object PathologyReportFunctions {
 
     val PathologyReport.date: LocalDate
         get() = requireNotNull(
-            if (isSourceInternal) tissueDate else externalDate
-        ) { "Expected one of tissueDate or externalDate to be non-null." }
+            tissueDate ?: authorisationDate ?: reportDate
+        ) { "Expected one of tissueDate, authorisationDate or reportDate to be non-null." }
 
-    fun getPathologyReportSummary(prefix: String? = null, prefixStyle: Style? = null, report: PathologyReport): Cell =
-        Cells.create(
-            Paragraph()
-                .apply {
+    fun getPathologyReportSummary(
+        prefix: String? = null,
+        prefixStyle: Style? = null,
+        pathologyReport: PathologyReport
+    ): Cell {
+        return Cells.create(
+            Paragraph().addAll(
+                listOfNotNull(
                     prefix?.let {
-                        add(Text(prefix).addStyle(prefixStyle))
-                        add(Text(" - ").addStyle(Styles.tableHighlightStyle()))
-                    }
-                }
-                .add(Text(report.tissueId?.uppercase()).addStyle(Styles.tableTitleStyle()))
-                .apply {
-                    if (report.isSourceInternal) {
-                        add(Text(" (Collection date: ")).add(Text(date(report.tissueDate)).addStyle(Styles.tableHighlightStyle()))
-                        add(Text(", Authorization date: ")).add(Text(date(report.authorisationDate)).addStyle(Styles.tableHighlightStyle()))
-                    } else {
-                        add(Text(" (Report date: ")).add(Text(date(report.externalDate)).addStyle(Styles.tableHighlightStyle()))
-                    }
-                }
-                .add(Text(", Diagnosis: "))
-                .add(Text(report.diagnosis).addStyle(Styles.tableHighlightStyle())).add(Text(")"))
+                        listOf(
+                            Text(prefix).addStyle(prefixStyle),
+                            Text(" - ").addStyle(Styles.tableHighlightStyle())
+                        )
+                    },
+                    listOf(
+                        Text(pathologyReport.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
+                        Text(" ($pathologyReport.lab").addStyle(Styles.tableHighlightStyle())
+                    ),
+                    pathologyReport.tissueDate?.let {
+                        getTextWithLabel(", Collection date: ", pathologyReport.tissueDate)
+                    },
+                    pathologyReport.authorisationDate?.let {
+                        getTextWithLabel(", Authorization date: ", pathologyReport.authorisationDate)
+                    },
+                    pathologyReport.reportDate?.let {
+                        getTextWithLabel(", Report date: ", pathologyReport.reportDate)
+                    },
+                    listOf(
+                        Text(", Diagnosis: "),
+                        Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
+                        Text(")")
+                    )
+                ).flatten()
+            )
         ).addStyle(Styles.tableContentStyle())
+    }
+
+    private fun getTextWithLabel(label: String, date: LocalDate?) =
+        listOf(
+            Text(label),
+            Text(date(date)).addStyle(Styles.tableHighlightStyle())
+        )
 
     fun groupTestsByPathologyReport(
         orangeMolecularRecords: List<MolecularRecord>,
         molecularTests: List<MolecularTest>,
-        ihcTests: List<IHCTest>,
+        ihcTests: List<IhcTest>,
         pathologyReports: List<PathologyReport>?
-    ): Map<PathologyReport?, Triple<List<MolecularRecord>, List<MolecularTest>, List<IHCTest>>> {
+    ): Map<PathologyReport?, Triple<List<MolecularRecord>, List<MolecularTest>, List<IhcTest>>> {
 
         val reportDates = pathologyReports.orEmpty().map { it.date }.toSet()
+        val orangeResultsByDate = orangeMolecularRecords.groupBy { it.date.takeIf(reportDates::contains) }
+        val molecularTestsByDate = molecularTests.groupBy { it.date.takeIf(reportDates::contains) }
+        val ihcTestsByDate = ihcTests.groupBy { it.measureDate.takeIf(reportDates::contains) }
 
-        val (matchedOrangeResults, unmatchedOrangeResults) = orangeMolecularRecords.partition { it.date in reportDates }
-        val (matchedMolecularTests, unmatchedMolecularTests) = molecularTests.partition { it.date in reportDates }
-        val (matchedIhcTests, unmatchedIHCTests) = ihcTests.partition { it.measureDate in reportDates }
-
-        val matchedReports: Map<PathologyReport, Triple<List<MolecularRecord>, List<MolecularTest>, List<IHCTest>>> =
+        val matchedReports: Map<PathologyReport, Triple<List<MolecularRecord>, List<MolecularTest>, List<IhcTest>>> =
             pathologyReports.orEmpty().associateWith { report ->
                 Triple(
-                    matchedOrangeResults.filter { it.date == report.date },
-                    matchedMolecularTests.filter { it.date == report.date },
-                    matchedIhcTests.filter { it.measureDate == report.date }
+                    orangeResultsByDate[report.date].orEmpty(),
+                    molecularTestsByDate[report.date].orEmpty(),
+                    ihcTestsByDate[report.date].orEmpty()
                 )
             }
 
-        val unmatchedEntry = (null to Triple(unmatchedOrangeResults, unmatchedMolecularTests, unmatchedIHCTests))
-            .takeIf { unmatchedOrangeResults.isNotEmpty() || unmatchedMolecularTests.isNotEmpty() || unmatchedIHCTests.isNotEmpty() }
+        val unmatchedEntry = Triple(
+            orangeResultsByDate[null].orEmpty(),
+            molecularTestsByDate[null].orEmpty(),
+            ihcTestsByDate[null].orEmpty()
+        )
+            .takeIf { it.toList().any { e -> e.isNotEmpty() } }
+            ?.let { null to it }
 
         return (matchedReports + listOfNotNull(unmatchedEntry))
+            .filterValues { (orangeTests, molecularTest, ihcTests) ->
+                orangeTests.isNotEmpty() || molecularTest.isNotEmpty() || ihcTests.isNotEmpty()
+            }
             .toList()
             .sortedWith(compareBy(nullsLast(reverseOrder())) { it.first?.date })
             .toMap(LinkedHashMap())

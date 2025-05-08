@@ -68,13 +68,13 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : 
         }
     }
 
-    private fun createTMLStatusString(): String? {
+    fun createTMLStatusString(): String? {
         val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad?.score
         val hasHighTumorMutationalLoad = molecular.characteristics.tumorMutationalLoad?.isHigh
         return if (hasHighTumorMutationalLoad == null || tumorMutationalLoad == null) {
             null
         } else {
-            MolecularCharacteristicFormat.formatHighLowCharacteristic(tumorMutationalLoad, hasHighTumorMutationalLoad)
+            MolecularCharacteristicFormat.formatValueAndHighLowCharacteristic(tumorMutationalLoad, hasHighTumorMutationalLoad, true)
         }
     }
 
@@ -91,7 +91,11 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : 
         if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN)
         }
-        val value = MolecularCharacteristicFormat.formatHighLowCharacteristic(tumorMutationalBurden, hasHighTumorMutationalBurden)
+        val value = MolecularCharacteristicFormat.formatValueAndHighLowCharacteristic(
+            tumorMutationalBurden,
+            hasHighTumorMutationalBurden,
+            true
+        )
         val cell = if (wgsMolecular?.hasSufficientQualityAndPurity() == true) {
             Cells.createContent(value)
         } else {

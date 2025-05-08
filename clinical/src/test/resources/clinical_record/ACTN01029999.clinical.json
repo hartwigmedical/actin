@@ -233,7 +233,6 @@
   ],
   "ihcTests": [
     {
-      "test": "IHC",
       "item": "ERBB2",
       "measure": null,
       "measureDate": null,
@@ -244,7 +243,6 @@
       "impliesPotentialIndeterminateStatus": false
     },
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "measureDate": null,

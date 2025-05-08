@@ -22,7 +22,7 @@ class OrangeMolecularRecordGenerator(
 
     override fun title(): String {
         val title = "${molecular.experimentType.display()} (${molecular.sampleId}"
-        val suffix = if (pathologyReport?.tissueId.isNullOrBlank()) ", ${date(molecular.date)})" else ")"
+        val suffix = pathologyReport?.let { ")" } ?: ", ${date(molecular.date)})"
         return "$title$suffix"
     }
 

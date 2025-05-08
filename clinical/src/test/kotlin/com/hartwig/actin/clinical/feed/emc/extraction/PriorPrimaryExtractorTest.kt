@@ -55,12 +55,12 @@ class PriorPrimaryExtractorTest {
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
                 PATIENT_ID,
-                CurationCategory.SECOND_PRIMARY,
+                CurationCategory.PRIOR_PRIMARY,
                 CANNOT_CURATE,
                 "Could not find second primary or treatment history config for input '$CANNOT_CURATE'"
             )
         )
-        assertThat(evaluation.secondPrimaryEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
+        assertThat(evaluation.priorPrimaryEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
     }
 
     @Test

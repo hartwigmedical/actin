@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.IHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -54,7 +54,7 @@ internal object TumorTestFactory {
     fun withDoidsAndAmplificationAndMolecularTest(
         doids: Set<String>,
         amplifiedGene: String,
-        ihcTests: List<IHCTest>
+        ihcTests: List<IhcTest>
     ): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
@@ -280,7 +280,8 @@ internal object TumorTestFactory {
         return withTumorDetails(
             TumorDetails(
                 hasLungLesions = hasLungLesions,
-                hasSuspectedLungLesions = hasSuspectedLungLesions)
+                hasSuspectedLungLesions = hasSuspectedLungLesions
+            )
         )
     }
 
@@ -311,7 +312,7 @@ internal object TumorTestFactory {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(experimentType = type))))
     }
 
-    fun withIHCTestsAndDoids(ihcTests: List<IHCTest>, doids: Set<String>?): PatientRecord {
+    fun withIhcTestsAndDoids(ihcTests: List<IhcTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
             ihcTests = ihcTests

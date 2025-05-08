@@ -65,7 +65,7 @@ object TestClinicalFactory {
             oncologicalHistory = createTreatmentHistory(),
             priorPrimaries = createTestPriorPrimaries(),
             comorbidities = createTestOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
-            ihcTests = createTestMolecularTests(),
+            ihcTests = createTestIhcTests(),
             labValues = createTestLabValues(),
             surgeries = createTestSurgeries(),
             bodyWeights = createTestBodyWeights(),
@@ -286,9 +286,9 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestMolecularTests(): List<IHCTest> {
+    private fun createTestIhcTests(): List<IhcTest> {
         return listOf(
-            IHCTest(
+            IhcTest(
                 item = "EGFR",
                 measure = null,
                 scoreText = "c.2240_2254del",
@@ -297,7 +297,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            IHCTest(
+            IhcTest(
                 item = "Something",
                 measure = null,
                 scoreText = "GEEN mutaties aangetoond",
@@ -306,7 +306,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            IHCTest(
+            IhcTest(
                 item = "PD-L1",
                 measure = null,
                 measureDate = LocalDate.of(2024, 10, 1),
@@ -316,7 +316,7 @@ object TestClinicalFactory {
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
-            IHCTest(
+            IhcTest(
                 item = "PD-L1",
                 measure = null,
                 measureDate = LocalDate.of(2023, 10, 1),
@@ -326,7 +326,7 @@ object TestClinicalFactory {
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
-            IHCTest(
+            IhcTest(
                 item = "HER2",
                 measure = null,
                 scoreText = "Positive",
@@ -335,7 +335,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            IHCTest(
+            IhcTest(
                 item = "FGFR3::TACC3",
                 measure = null,
                 scoreText = "Positive",
@@ -508,12 +508,11 @@ object TestClinicalFactory {
         return listOf(
             PathologyReport(
                 tissueId = "T-10100",
-                reportRequested = true,
-                source = "internal",
+                lab = "NKI-AvL",
                 diagnosis = "long*onderkwab*rechts*biopt*niet-kleincellig carcinoom",
                 tissueDate = FIXED_DATE,
                 authorisationDate = FIXED_DATE,
-                report = "raw pathology report"
+                report = "raw pathology report",
             )
         )
     }

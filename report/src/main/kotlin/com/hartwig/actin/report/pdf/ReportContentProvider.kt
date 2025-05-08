@@ -36,6 +36,7 @@ import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.hartwig.actin.treatment.EvidenceScoringModel
 import com.hartwig.actin.treatment.TreatmentRankingModel
+import com.hartwig.actin.treatment.createScoringConfig
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -48,7 +49,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         enableExtendedMode,
         report.config.filterOnSOCExhaustionAndTumorType
     )
-    private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel())
+    private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
     fun provideChapters(): List<ReportChapter> {
         val (includeEfficacyEvidenceDetailsChapter, includeTrialMatchingDetailsChapter) = when {

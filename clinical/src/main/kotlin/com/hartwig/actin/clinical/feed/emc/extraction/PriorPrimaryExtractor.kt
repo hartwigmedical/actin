@@ -33,14 +33,14 @@ class PriorPrimaryExtractor(
                 CurationResponse.createFromConfigs(
                     priorPrimaryCuration.find(it),
                     patientId,
-                    CurationCategory.SECOND_PRIMARY,
+                    CurationCategory.PRIOR_PRIMARY,
                     it,
                     "second primary or treatment history"
                 )
             }
             .map {
                 if (it.configs.isEmpty() &&
-                    treatmentHistoryCuration.find(it.extractionEvaluation.secondPrimaryEvaluatedInputs.first())
+                    treatmentHistoryCuration.find(it.extractionEvaluation.priorPrimaryEvaluatedInputs.first())
                         .isNotEmpty()
                 ) {
                     it.copy(extractionEvaluation = it.extractionEvaluation.copy(warnings = emptySet()))
@@ -57,7 +57,7 @@ class PriorPrimaryExtractor(
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
             PriorPrimaryExtractor(
-                priorPrimaryCuration = curationDatabaseContext.secondPrimaryCuration,
+                priorPrimaryCuration = curationDatabaseContext.priorPrimaryCuration,
                 treatmentHistoryCuration = curationDatabaseContext.treatmentHistoryEntryCuration
             )
     }

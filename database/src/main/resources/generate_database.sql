@@ -131,7 +131,6 @@ DROP TABLE IF EXISTS `ihcTest`;
 CREATE TABLE `ihcTest`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `test` varchar(50) NOT NULL,
     `item` varchar(50),
     `measure` varchar(50),
     `measureDate` DATE,

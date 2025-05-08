@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExt
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardIHCTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardIhcTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
@@ -93,12 +93,12 @@ class StandardDataIngestionTest {
                 curationDatabase.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
-            secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
+            secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.priorPrimaryCuration),
 
             patientDetailsExtractor = StandardPatientDetailsExtractor(),
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
-            ihcTestExtractor = StandardIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
+            ihcTestExtractor = StandardIhcTestExtractor(curationDatabase.molecularTestIhcCuration),
             sequencingTestExtractor = StandardSequencingTestExtractor(
                 curationDatabase.sequencingTestCuration,
                 curationDatabase.sequencingTestResultCuration

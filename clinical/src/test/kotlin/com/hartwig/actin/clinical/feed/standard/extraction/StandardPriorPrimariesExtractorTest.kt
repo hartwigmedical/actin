@@ -83,7 +83,7 @@ class StandardPriorPrimariesExtractorTest {
                 lastTreatmentMonth = DIAGNOSIS_DATE.monthValue
             )
         )
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -95,7 +95,7 @@ class StandardPriorPrimariesExtractorTest {
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 patientId = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
-                category = CurationCategory.SECOND_PRIMARY,
+                category = CurationCategory.PRIOR_PRIMARY,
                 feedInput = PRIOR_PRIMARY_INPUT,
                 message = "Could not find prior primary config for input '$PRIOR_PRIMARY_INPUT'"
             )
@@ -134,7 +134,7 @@ class StandardPriorPrimariesExtractorTest {
             )
         )
         assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY, LUNG_PRIOR_SECOND_PRIMARY)
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(OTHER_CONDITION_INPUT)))
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(OTHER_CONDITION_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -157,7 +157,7 @@ class StandardPriorPrimariesExtractorTest {
             )
         )
         assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY, LUNG_PRIOR_SECOND_PRIMARY)
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(TREATMENT_HISTORY_INPUT)))
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(TREATMENT_HISTORY_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -179,7 +179,7 @@ class StandardPriorPrimariesExtractorTest {
                 lastTreatmentMonth = DIAGNOSIS_DATE.monthValue
             )
         )
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 }

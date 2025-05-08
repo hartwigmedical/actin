@@ -20,7 +20,7 @@ data class ScoringConfig(val categoryMatchLevels: Map<ScoringMatch, Int>, val ap
 
 data class ScoringLevel(val scoring: Map<EvidenceLevelDetails, Int>)
 
-fun create() = ScoringConfig(
+fun createScoringConfig() = ScoringConfig(
     mapOf(
         ScoringMatch(TumorMatch.PATIENT, VariantMatch.EXACT) to 20,
         ScoringMatch(TumorMatch.PATIENT, VariantMatch.CATEGORY) to 19,

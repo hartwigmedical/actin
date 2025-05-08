@@ -30,7 +30,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
     }
 
     @Test
-    fun `Should Pass when Prior Primary has different treatment history`() {
+    fun `Should pass when prior primary has different treatment history`() {
         val suspectTumorTypeWithOther = priorPrimary("other")
         assertEvaluation(
             EvaluationResult.PASS,

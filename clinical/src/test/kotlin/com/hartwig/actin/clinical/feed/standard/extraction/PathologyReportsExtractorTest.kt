@@ -10,42 +10,19 @@ import java.time.LocalDate
 class PathologyReportsExtractorTest {
 
     private val extractor = PathologyReportsExtractor()
-
     private val ehrPatientRecord = EhrTestData.createEhrPatientRecord()
-
     private val defaultDate = LocalDate.of(1970, 1, 1)
 
     @Test
-    fun `Should extract empty patology reports list when no pathology report is provided`() {
+    fun `Should extract empty pathology reports list when no pathology report is provided`() {
         assertThat(extractor.extract(ehrPatientRecord).extracted).isEmpty()
     }
 
     @Test
-    fun `Should extract one pathology reports from the TumorDetails rawPathologyReport`() {
-        val record = ehrPatientRecord.copy(tumorDetails = ehrPatientRecord.tumorDetails.copy(rawPathologyReport = "raw pathology report"))
-        val extracted = extractor.extract(record).extracted
-        println(extracted)
-        assertThat(extracted).isNotEmpty()
-        assertThat(extracted).isEqualTo(
-            listOf(
-                PathologyReport(
-                    reportRequested = false,
-                    source = "",
-                    diagnosis = "",
-                    tissueDate = defaultDate,
-                    authorisationDate = defaultDate,
-                    report = "raw pathology report"
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should extract pathology reports from the tumor details pathology`() {
-
         val providedPathologyReport = ProvidedPathologyReport(
             reportRequested = false,
-            source = "internal",
+            lab = "NKI-AvL",
             diagnosis = "diagnosis",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
@@ -59,18 +36,16 @@ class PathologyReportsExtractorTest {
                     providedPathologyReport.copy(
                         tissueId = "tissueId",
                         reportRequested = true,
-                        source = "external",
                         lab = "lab",
+                        reportDate = defaultDate,
                         rawPathologyReport = "raw pathology report"
                     )
                 )
             )
         )
 
-
         val expected = PathologyReport(
-            reportRequested = false,
-            source = "internal",
+            lab = "NKI-AvL",
             diagnosis = "diagnosis",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
@@ -84,9 +59,8 @@ class PathologyReportsExtractorTest {
                 expected,
                 expected.copy(
                     tissueId = "tissueId",
-                    reportRequested = true,
-                    source = "external",
                     lab = "lab",
+                    reportDate = defaultDate,
                     report = "raw pathology report"
                 )
             )

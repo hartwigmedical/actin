@@ -22,7 +22,7 @@ class TreatmentRankingModelTest {
 
     @Test
     fun `Should add scoring for guideline, benefit, patient's tumor, exact variant`() {
-        val ranker = TreatmentRankingModel(EvidenceScoringModel())
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
         val patientRecord = patientRecord(
             createVariant(
                 treatmentEvidence = treatmentEvidence(
@@ -74,7 +74,7 @@ class TreatmentRankingModelTest {
 
     @Test
     fun `Should sum scores for a single treatment on different events`() {
-        val ranker = TreatmentRankingModel(EvidenceScoringModel())
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
         val patientRecord = patientRecord(
             createVariant(
                 gene = "KRAS",
@@ -105,7 +105,7 @@ class TreatmentRankingModelTest {
 
     @Test
     fun `Should sum scores for a single treatment on different tumor types`() {
-        val ranker = TreatmentRankingModel(EvidenceScoringModel())
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
         val patientRecord = patientRecord(
             createVariant(
                 treatmentEvidence = treatmentEvidence(
@@ -142,7 +142,7 @@ class TreatmentRankingModelTest {
 
     @Test
     fun `Should sum scores for a single treatment with both benefit and resistance`() {
-        val ranker = TreatmentRankingModel(EvidenceScoringModel())
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
         val patientRecord = patientRecord(
             createVariant(
                 treatmentEvidence = treatmentEvidence(
@@ -170,7 +170,7 @@ class TreatmentRankingModelTest {
 
     @Test
     fun `Should diminish returns single treatment, same tumor type, variant`() {
-        val ranker = TreatmentRankingModel(EvidenceScoringModel())
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
         val patientRecord = patientRecord(
             createVariant(
                 treatmentEvidence = treatmentEvidence(

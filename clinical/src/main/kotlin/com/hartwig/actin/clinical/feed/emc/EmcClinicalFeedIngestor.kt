@@ -14,7 +14,7 @@ import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.ComorbidityExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.IHCTestsExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.IhcTestsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.OncologicalHistoryExtractor
@@ -51,7 +51,7 @@ class EmcClinicalFeedIngestor(
     private val comorbidityExtractor: ComorbidityExtractor,
     private val oncologicalHistoryExtractor: OncologicalHistoryExtractor,
     private val priorPrimaryExtractor: PriorPrimaryExtractor,
-    private val ihcTestsExtractor: IHCTestsExtractor,
+    private val ihcTestsExtractor: IhcTestsExtractor,
     private val sequencingTestExtractor: SequencingTestExtractor,
     private val labValueExtractor: LabValueExtractor,
     private val medicationExtractor: MedicationExtractor,
@@ -241,7 +241,7 @@ class EmcClinicalFeedIngestor(
                 comorbidityExtractor = ComorbidityExtractor.create(curationDatabaseContext),
                 oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
                 priorPrimaryExtractor = PriorPrimaryExtractor.create(curationDatabaseContext),
-                ihcTestsExtractor = IHCTestsExtractor.create(curationDatabaseContext),
+                ihcTestsExtractor = IhcTestsExtractor.create(curationDatabaseContext),
                 sequencingTestExtractor = SequencingTestExtractor.create(curationDatabaseContext),
                 labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
                 medicationExtractor = MedicationExtractor.create(

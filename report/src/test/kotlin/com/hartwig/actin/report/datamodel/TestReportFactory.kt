@@ -47,7 +47,6 @@ object TestReportFactory {
     }
 
     fun createExhaustiveTestReportWithOtherLocations(): Report {
-
         val matches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
         val trialMatch1 = matches[0]
         val trialMatch2 = matches[1]
