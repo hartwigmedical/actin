@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
-import com.hartwig.actin.clinical.feed.standard.EhrTestData
+import com.hartwig.actin.clinical.feed.standard.FeedTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
@@ -14,8 +14,8 @@ import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
+import com.hartwig.feed.datamodel.FeedSequencingTest
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -28,8 +28,8 @@ private const val GENE = "gene"
 private const val CODING = "coding"
 private val TEST_DATE = LocalDate.of(2024, 7, 25)
 private const val PROTEIN = "protein"
-private val BASE_MOLECULAR_TEST = ProvidedMolecularTest(
-    test = TEST, date = TEST_DATE, results = emptySet(), testedGenes = setOf(GENE)
+private val BASE_MOLECULAR_TEST = FeedSequencingTest(
+    name = TEST, date = TEST_DATE, results = emptyList(), testedGenes = listOf(GENE)
 )
 private val BASE_SEQUENCING_TEST = SequencingTest(
     test = TEST,
@@ -50,7 +50,7 @@ class StandardSequencingTestExtractorTest {
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
-        val result = extractor.extract(EhrTestData.createEhrPatientRecord().copy(molecularTests = emptyList()))
+        val result = extractor.extract(FeedTestData.FEED_PATIENT_RECORD.copy(sequencingTests = emptyList()))
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -58,7 +58,7 @@ class StandardSequencingTestExtractorTest {
     @Test
     fun `Should return curation warning when test name is not curated`() {
         every { testCuration.find(TEST) } returns emptySet()
-        val result = extractor.extract(EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST)))
+        val result = extractor.extract(FeedTestData.FEED_PATIENT_RECORD.copy(sequencingTests = listOf(BASE_MOLECULAR_TEST)))
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
@@ -73,11 +73,11 @@ class StandardSequencingTestExtractorTest {
     @Test
     fun `Should curate test name and extract sequencing with test, date, and tested genes`() {
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(
-                molecularTests = listOf(
+            FeedTestData.FEED_PATIENT_RECORD.copy(
+                sequencingTests = listOf(
                     BASE_MOLECULAR_TEST.copy(
-                        testedGenes = setOf(GENE),
-                        results = setOf(ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN))
+                        testedGenes = listOf(GENE),
+                        results = listOf("$GENE-$PROTEIN")
                     )
                 )
             )
@@ -246,21 +246,8 @@ class StandardSequencingTestExtractorTest {
         assertThat(result.extracted[0].variants).containsExactly(SequencedVariant(gene = GENE, hgvsProteinImpact = PROTEIN))
     }
 
-    @Test
-    fun `Should filter IHC tests from the final result`() {
-        val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(
-                molecularTests = listOf(
-                    BASE_MOLECULAR_TEST.copy(results = setOf(ProvidedMolecularTestResult(ihcResult = "ihc")))
-                )
-            )
-        )
-        assertThat(result.extracted).isEmpty()
-    }
-
-
-    private fun extractionResult(vararg result: ProvidedMolecularTestResult) = extractor.extract(
-        EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST.copy(results = result.toSet())))
+    private fun extractionResult(vararg result: String) = extractor.extract(
+        FeedTestData.FEED_PATIENT_RECORD.copy(sequencingTests = listOf(BASE_MOLECULAR_TEST.copy(results = result.toList())))
     )
 
     private fun assertResultContains(result: ExtractionResult<List<SequencingTest>>, sequencingTest: SequencingTest) {

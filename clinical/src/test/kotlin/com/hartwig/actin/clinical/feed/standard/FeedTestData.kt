@@ -15,9 +15,9 @@ const val OTHER_CONDITION_INPUT = "prior condition"
 const val TREATMENT_HISTORY_INPUT = "treatment name"
 private val DATE_Y2023_M02_D23 = LocalDate.of(2024, 2, 23)
 
-object EhrTestData {
+object FeedTestData {
 
-    fun createEhrPatientRecord() = FeedPatientRecord(
+    val FEED_PATIENT_RECORD = FeedPatientRecord(
         patientDetails = FeedPatientDetail(
             patientId = HASHED_ID_IN_BASE64,
             birthYear = 2024,
@@ -25,10 +25,22 @@ object EhrTestData {
             registrationDate = DATE_Y2023_M02_D23,
             hartwigMolecularDataExpected = false
         ),
-        tumorDetails = createEhrTumorDetail()
+        tumorDetails = createFeedTumorDetail()
     )
 
-    private fun createEhrTumorDetail() = FeedTumorDetail(
+    val FEED_TREATMENT_HISTORY = DatedEntry(
+        name = TREATMENT_NAME,
+        startDate = DATE_Y2023_M02_D23,
+        endDate = LocalDate.of(2024, 2, 27),
+    )
+
+    fun createFeedSurgery(surgeryName: String? = SURGERY_NAME) = FeedSurgery(
+        name = surgeryName,
+        endDate = LocalDate.of(2024, 2, 23),
+        status = "FINISHED"
+    )
+
+    private fun createFeedTumorDetail() = FeedTumorDetail(
         diagnosisDate = DATE_Y2023_M02_D23,
         tumorLocation = "tumorLocation",
         tumorType = "tumorType",
@@ -38,17 +50,5 @@ object EhrTestData {
         tumorGradeDifferentiation = "tumorGradeDifferentiation",
         stage = "IV",
         tumorStageDate = LocalDate.of(2024, 2, 29)
-    )
-
-    fun createEhrTreatmentHistory() = DatedEntry(
-        name = TREATMENT_NAME,
-        startDate = DATE_Y2023_M02_D23,
-        endDate = LocalDate.of(2024, 2, 27),
-    )
-
-    fun createEhrSurgery(surgeryName: String? = SURGERY_NAME) = FeedSurgery(
-        name = surgeryName,
-        endDate = LocalDate.of(2024, 2, 23),
-        status = "FINISHED"
     )
 }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.clinical.feed.standard.EhrTestData
+import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.feed.datamodel.FeedPathology
 import org.assertj.core.api.Assertions.assertThat
@@ -10,12 +10,11 @@ import java.time.LocalDate
 class PathologyReportsExtractorTest {
 
     private val extractor = PathologyReportsExtractor()
-    private val ehrPatientRecord = EhrTestData.createEhrPatientRecord()
     private val defaultDate = LocalDate.of(1970, 1, 1)
 
     @Test
     fun `Should extract empty pathology reports list when no pathology report is provided`() {
-        assertThat(extractor.extract(ehrPatientRecord).extracted).isEmpty()
+        assertThat(extractor.extract(FEED_PATIENT_RECORD).extracted).isEmpty()
     }
 
     @Test
@@ -31,8 +30,8 @@ class PathologyReportsExtractorTest {
             rawPathologyReport = "rawPathologyReport"
         )
 
-        val record = ehrPatientRecord.copy(
-            tumorDetails = ehrPatientRecord.tumorDetails.copy(
+        val record = FEED_PATIENT_RECORD.copy(
+            tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
                 pathology = listOf(
                     providedPathologyReport,
                     providedPathologyReport.copy(

@@ -25,20 +25,20 @@ class StandardSequencingTestExtractor(
 
     override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
         val extracted = ehrPatientRecord.sequencingTests.mapNotNull { test ->
-            val testCurationConfig =
-                CurationResponse.createFromConfigs(
-                    testCuration.find(test.name),
-                    ehrPatientRecord.patientDetails.patientId,
-                    CurationCategory.SEQUENCING_TEST,
-                    test.name,
-                    "sequencing test",
-                    false
-                )
-            testCurationConfig.config()?.let { testCuration ->
-                if (!testCuration.ignore) {
+            val testCurationConfig = CurationResponse.createFromConfigs(
+                testCuration.find(test.name),
+                ehrPatientRecord.patientDetails.patientId,
+                CurationCategory.SEQUENCING_TEST,
+                test.name,
+                "sequencing test",
+                false
+            )
+
+            testCurationConfig.config()?.takeUnless { it.ignore }?.let { testCuration ->
                     val onlyFreeTextResults = test.results.toSet()
-                    val allResults = this.curate(ehrPatientRecord, onlyFreeTextResults)
-                        .flatMap { it.configs.mapNotNull(SequencingTestResultConfig::curated) }
+                    val allResults = this.curate(onlyFreeTextResults, ehrPatientRecord.patientDetails.patientId)
+                        .flatMap { it.configs }
+                        .filterNot { it.ignore }
                         .toSet()
                     if (allResults.isNotEmpty()) {
                         ExtractionResult(
@@ -55,13 +55,10 @@ class StandardSequencingTestExtractor(
                                     tumorMutationalBurden = tmb(allResults)
                                 )
                             ),
-                            this.curate(ehrPatientRecord, onlyFreeTextResults).map { curated -> curated.extractionEvaluation }
+                            this.curate(onlyFreeTextResults, ehrPatientRecord.patientDetails.patientId).map { curated -> curated.extractionEvaluation }
                                 .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
                         )
                     } else null
-                } else {
-                    null
-                }
             } ?: ExtractionResult(emptyList(), testCurationConfig.extractionEvaluation)
         }
         return extracted.fold(
@@ -71,10 +68,10 @@ class StandardSequencingTestExtractor(
         }
     }
 
-    private fun curate(ehrPatientRecord: FeedPatientRecord, results: Collection<String>) = results.map { text ->
+    private fun curate(results: Collection<String>, patientId: String) = results.map { text ->
             CurationResponse.createFromConfigs(
                 testResultCuration.find(text),
-                ehrPatientRecord.patientDetails.patientId,
+                patientId,
                 CurationCategory.SEQUENCING_TEST_RESULT,
                 text,
                 "sequencing test result",
