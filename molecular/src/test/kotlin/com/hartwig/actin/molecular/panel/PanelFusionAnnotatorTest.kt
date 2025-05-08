@@ -4,13 +4,13 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -83,7 +83,7 @@ class PanelFusionAnnotatorTest {
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
 
-    private val annotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensembleDataCache)
+    private val annotator = PanelFusionAnnotator(knownFusionCache, ensembleDataCache)
 
     @Test
     fun `Should determine fusion driver likelihood`() {
@@ -171,15 +171,7 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START::$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEvidence(
-                    TestTreatmentEvidenceFactory.create(
-                        treatment = "treatment",
-                        isOnLabel = true,
-                        evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                    )
-                )
+                evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
     }
@@ -204,14 +196,7 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START::$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEvidence(
-                    TestTreatmentEvidenceFactory.create(
-                        treatment = "treatment",
-                        evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                        isOnLabel = true)
-                )
+                evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
     }

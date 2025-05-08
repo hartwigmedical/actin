@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
@@ -55,12 +56,17 @@ class PanelAnnotatorTest {
         every { annotate(any<Set<SequencedAmplification>>()) } returns emptyList()
     }
 
+    private val panelEvidenceAnnotator = mockk<PanelEvidenceAnnotator> {
+        every { annotate(any()) } answers { firstArg() }
+    }
+
     private val annotator =
         PanelAnnotator(
             evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelEvidenceAnnotator,
             PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )
 
@@ -83,11 +89,24 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate fusion`() {
-        val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(expected)
+        val interpretedFusion = TestMolecularFactory.createMinimalFusion().copy(
+            geneStart = GENE,
+            geneEnd = OTHER_GENE,
+        )
+
+        val annotatedFusion = interpretedFusion.copy(
+            evidence = ON_LABEL_MATCH
+        )
+
+        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(interpretedFusion)
+        every { panelEvidenceAnnotator.annotate(any()) } returns TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                fusions = listOf(annotatedFusion)
+            )
+        )
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
-        assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
+        assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(annotatedFusion))
     }
 
     @Test

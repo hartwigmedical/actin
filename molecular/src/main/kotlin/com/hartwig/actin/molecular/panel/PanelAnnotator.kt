@@ -20,10 +20,15 @@ class PanelAnnotator(
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+    private val panelEvidenceAnnotator: PanelEvidenceAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<PriorSequencingTest, PanelRecord> {
 
     override fun annotate(input: PriorSequencingTest): PanelRecord {
+        return panelEvidenceAnnotator.annotate(interpret(input))
+    }
+
+    fun interpret(input: PriorSequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletedGenes)

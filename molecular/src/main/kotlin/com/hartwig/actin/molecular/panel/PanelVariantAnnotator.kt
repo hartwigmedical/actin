@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
@@ -10,10 +9,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
@@ -55,8 +50,6 @@ fun eventString(paveResponse: PaveResponse): String {
 }
 
 class PanelVariantAnnotator(
-    private val evidenceDatabase: EvidenceDatabase,
-    private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
     private val variantResolver: VariantAnnotator,
     private val paver: Paver,
     private val paveLite: PaveLite,
@@ -69,9 +62,7 @@ class PanelVariantAnnotator(
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
 
-        val annotatedVariants =
-            createVariants(transvarVariants, paveAnnotations, variantExtractions).map { annotateWithGeneAlteration(it) }
-        return annotateWithDriverLikelihood(annotatedVariants).map { annotateWithEvidence(it) }
+        return createVariants(transvarVariants, paveAnnotations, variantExtractions)
     }
 
     private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
@@ -258,39 +249,5 @@ class PanelVariantAnnotator(
             PaveVariantEffect.NON_CODING_TRANSCRIPT -> VariantEffect.NON_CODING_TRANSCRIPT
             PaveVariantEffect.OTHER -> VariantEffect.OTHER
         }
-    }
-
-    private fun annotateWithGeneAlteration(variant: Variant): Variant {
-        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
-        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
-
-        return variant.copy(
-            isHotspot = isHotspot(serveGeneAlteration),
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
-        )
-    }
-
-    private fun annotateWithDriverLikelihood(variants: List<Variant>): List<Variant> {
-        val variantsByGene = variants.groupBy { it.gene }
-        return variantsByGene.map {
-            val geneRole = it.value.map { variant -> variant.geneRole }.first()
-            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
-            likelihood to it.value
-        }.flatMap {
-            it.second.map { variant ->
-                variant.copy(
-                    driverLikelihood = DriverLikelihood.from(it.first)
-                )
-            }
-        }
-    }
-
-    private fun annotateWithEvidence(variant: Variant): Variant {
-        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val evidence = evidenceDatabase.evidenceForVariant(criteria)
-        return variant.copy(evidence = evidence)
     }
 }
