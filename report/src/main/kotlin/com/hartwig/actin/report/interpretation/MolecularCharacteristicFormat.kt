@@ -7,14 +7,17 @@ import com.hartwig.actin.report.pdf.util.Formats
 object MolecularCharacteristicFormat {
 
     fun formatTumorMutationalBurden(molecularCharacteristics: MolecularCharacteristics, displayValue: Boolean) =
-        "TMB " + if (displayValue) formatValueCharacteristic(molecularCharacteristics.tumorMutationalBurden?.score, "mut/Mb") else formatHighLowCharacteristic(
+        "TMB " + if (displayValue) formatValueCharacteristic(
+            molecularCharacteristics.tumorMutationalBurden?.score,
+            "mut/Mb"
+        ) else formatHighLowCharacteristic(
             molecularCharacteristics.tumorMutationalBurden?.isHigh
         )
 
     fun formatTumorMutationalLoad(molecularCharacteristics: MolecularCharacteristics, displayValue: Boolean) =
-        "TML " + if (displayValue) formatValueCharacteristic(molecularCharacteristics.tumorMutationalLoad?.score) else formatHighLowCharacteristic(
-            molecularCharacteristics.tumorMutationalLoad?.isHigh
-        )
+        "TML " + if (displayValue) formatValueCharacteristic(
+            molecularCharacteristics.tumorMutationalLoad?.score
+        ) else formatHighLowCharacteristic(molecularCharacteristics.tumorMutationalLoad?.isHigh)
 
     fun formatValueAndHighLowCharacteristic(value: Number?, isHigh: Boolean?, includeValue: Boolean): String {
         return if (value == null && isHigh == null) {
