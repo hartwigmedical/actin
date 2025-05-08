@@ -508,9 +508,7 @@ object TestClinicalFactory {
         return listOf(
             PathologyReport(
                 tissueId = "T-10100",
-                reportRequested = true,
-                source = "internal",
-                lab = "lab",
+                lab = "NKI-AvL",
                 diagnosis = "long*onderkwab*rechts*biopt*niet-kleincellig carcinoom",
                 tissueDate = FIXED_DATE,
                 authorisationDate = FIXED_DATE,
