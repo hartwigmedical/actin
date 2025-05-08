@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
@@ -24,10 +23,10 @@ object PathologyReportFunctions {
     fun getPathologyReportSummary(
         prefix: String? = null,
         prefixStyle: Style? = null,
-        report: PathologyReport,
-        config: EnvironmentConfiguration
+        pathologyReport: PathologyReport,
+        requestingHospital: String?
     ): Cell {
-        val labString = if (report.lab == null && report.isSourceInternal) config.requestingHospital else report.lab ?: "Unknown Lab"
+        val labString = if (pathologyReport.lab == null && pathologyReport.isSourceInternal) requestingHospital else pathologyReport.lab ?: "Unknown Lab"
         return Cells.create(
             Paragraph().addAll(
                 listOfNotNull(
@@ -38,25 +37,25 @@ object PathologyReportFunctions {
                         )
                     },
                     listOf(
-                        Text(report.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
+                        Text(pathologyReport.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
                         Text(" ($labString").addStyle(Styles.tableHighlightStyle())
                     ),
-                    if (report.isSourceInternal) {
+                    if (pathologyReport.isSourceInternal) {
                         listOf(
                             Text(", Collection date: "),
-                            Text(date(report.tissueDate)).addStyle(Styles.tableHighlightStyle()),
+                            Text(date(pathologyReport.tissueDate)).addStyle(Styles.tableHighlightStyle()),
                             Text(", Authorization date: "),
-                            Text(date(report.authorisationDate)).addStyle(Styles.tableHighlightStyle())
+                            Text(date(pathologyReport.authorisationDate)).addStyle(Styles.tableHighlightStyle())
                         )
                     } else {
                         listOf(
                             Text(", Report date: "),
-                            Text(date(report.externalDate)).addStyle(Styles.tableHighlightStyle())
+                            Text(date(pathologyReport.externalDate)).addStyle(Styles.tableHighlightStyle())
                         )
                     },
                     listOf(
                         Text(", Diagnosis: "),
-                        Text(report.diagnosis).addStyle(Styles.tableHighlightStyle()),
+                        Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
                         Text(")")
                     )
                 ).flatten()

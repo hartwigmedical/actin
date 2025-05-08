@@ -120,7 +120,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         return listOfNotNull(
             clinicalHistoryGenerator,
             MolecularSummaryGenerator(
-                patientRecord = report.patientRecord,
+                report = report,
                 cohorts = cohorts,
                 keyWidth = keyWidth,
                 valueWidth = valueWidth,

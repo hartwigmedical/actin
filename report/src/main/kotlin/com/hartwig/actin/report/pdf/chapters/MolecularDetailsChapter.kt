@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.algo.evaluation.molecular.IHCTestFilter
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.clinical.IHCTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
@@ -107,8 +106,8 @@ class MolecularDetailsChapter(
             topTable.addCell(
                 Cells.create(
                     PathologyReportFunctions.getPathologyReportSummary(
-                        report = it,
-                        config = EnvironmentConfiguration()
+                        pathologyReport = it,
+                        requestingHospital = report.requestingHospital
                     )
                 )
             )
