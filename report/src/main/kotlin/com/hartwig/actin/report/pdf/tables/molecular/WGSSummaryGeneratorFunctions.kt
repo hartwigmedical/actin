@@ -89,17 +89,17 @@ object WGSSummaryGeneratorFunctions {
         isShort: Boolean,
         table: Table
     ): Boolean {
-        val tmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular, returnOnlyTmb = true)
-        val tmlAndTmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
         val tmlUnknownAndTmbKnown =
             molecular.characteristics.tumorMutationalLoad == null && molecular.characteristics.tumorMutationalBurden != null
         val tmlAndTmbKnown =
             molecular.characteristics.tumorMutationalLoad != null && molecular.characteristics.tumorMutationalBurden != null
         if (tmlUnknownAndTmbKnown) {
+            val tmbStatus = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, true)
             table.addCell(Cells.createKey("Tumor mutational burden"))
             table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmbStatus))
             return true
         } else if (!isShort || tmlAndTmbKnown) {
+            val tmlAndTmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
             table.addCell(Cells.createKey("Tumor mutational load / burden"))
             table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmlAndTmbStatus))
             return true
@@ -172,10 +172,10 @@ object WGSSummaryGeneratorFunctions {
         return Cells.create(paragraph)
     }
 
-    private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest, returnOnlyTmb: Boolean = false): String {
+    private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
         val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics, true)
         val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, true)
-        return if (!returnOnlyTmb) String.format("%s / %s", tmlString, tmbString) else tmbString
+        return String.format("%s / %s", tmlString, tmbString)
     }
 
     private fun formatList(list: List<String>): String {
