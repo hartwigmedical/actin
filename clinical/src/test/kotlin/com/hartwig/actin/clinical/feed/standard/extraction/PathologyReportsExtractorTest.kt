@@ -23,11 +23,9 @@ class PathologyReportsExtractorTest {
         val providedPathologyReport = ProvidedPathologyReport(
             reportRequested = false,
             source = "internal",
-            lab = null,
             diagnosis = "diagnosis",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
-            externalDate = null,
             rawPathologyReport = "rawPathologyReport"
         )
 
@@ -50,7 +48,6 @@ class PathologyReportsExtractorTest {
         val expected = PathologyReport(
             reportRequested = false,
             source = "internal",
-            lab = null,
             diagnosis = "diagnosis",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
