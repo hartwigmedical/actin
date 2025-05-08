@@ -20,6 +20,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.treatment.TreatmentEvidenceRanking
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Div
@@ -62,12 +63,6 @@ class MolecularDetailsChapter(
             report.patientRecord.pathologyReports
         )
 
-        if (orangeMolecularRecord == null && externalPanelResults.none {
-                it.testTypeDisplay == "WGS (OncoAct)" || it.testTypeDisplay == "OncoPanel"
-            }) {
-            document.add(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
-        }
-
         val table = Tables.createSingleColWithWidth(contentWidth())
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             pathologyReport ?: groupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
@@ -103,7 +98,7 @@ class MolecularDetailsChapter(
     ) {
 
         pathologyReport?.let {
-            topTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = it)))
+            topTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(pathologyReport = it)))
         }
 
         val tableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE

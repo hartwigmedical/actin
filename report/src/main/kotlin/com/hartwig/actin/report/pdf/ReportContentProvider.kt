@@ -16,8 +16,8 @@ import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
-import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
@@ -34,6 +34,9 @@ import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
+import com.hartwig.actin.treatment.EvidenceScoringModel
+import com.hartwig.actin.treatment.TreatmentRankingModel
+import com.hartwig.actin.treatment.createScoringConfig
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -46,6 +49,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         enableExtendedMode,
         report.config.filterOnSOCExhaustionAndTumorType
     )
+    private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
     fun provideChapters(): List<ReportChapter> {
         val (includeEfficacyEvidenceDetailsChapter, includeTrialMatchingDetailsChapter) = when {
@@ -87,7 +91,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            MolecularEvidenceChapter(report, include = report.config.includeMolecularEvidenceChapter),
+            MolecularEvidenceChapter(
+                report,
+                treatmentRankingModel.rank(report.patientRecord),
+                include = report.config.includeMolecularEvidenceChapter
+            ),
             TrialMatchingOtherResultsChapter(
                 report,
                 report.config.includeIneligibleTrialsInSummary,

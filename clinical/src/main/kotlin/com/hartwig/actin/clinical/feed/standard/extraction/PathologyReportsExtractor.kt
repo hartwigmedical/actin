@@ -11,12 +11,11 @@ class PathologyReportsExtractor : StandardDataExtractor<List<PathologyReport>> {
             ehrPatientRecord.tumorDetails.pathology.takeIf { it.isNotEmpty() }?.map {
                 PathologyReport(
                     tissueId = it.tissueId,
-                    reportRequested = it.reportRequested,
-                    source = it.source,
                     lab = it.lab,
                     diagnosis = it.diagnosis,
                     tissueDate = it.tissueDate,
                     authorisationDate = it.authorisationDate,
+                    reportDate = it.reportDate,
                     report = it.rawPathologyReport
                 )
             } ?: emptyList(), CurationExtractionEvaluation()

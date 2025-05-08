@@ -10,9 +10,7 @@ import java.time.LocalDate
 class PathologyReportsExtractorTest {
 
     private val extractor = PathologyReportsExtractor()
-
     private val ehrPatientRecord = EhrTestData.createEhrPatientRecord()
-
     private val defaultDate = LocalDate.of(1970, 1, 1)
 
     @Test
@@ -26,8 +24,8 @@ class PathologyReportsExtractorTest {
         val providedPathologyReport = FeedPathology(
             tissueId = null,
             reportRequested = false,
+            lab = "NKI-AvL",
             diagnosis = "diagnosis",
-            lab = "lab",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
             rawPathologyReport = "rawPathologyReport"
@@ -41,6 +39,7 @@ class PathologyReportsExtractorTest {
                         tissueId = "tissueId",
                         reportRequested = true,
                         lab = "lab",
+                        reportDate = defaultDate,
                         rawPathologyReport = "raw pathology report"
                     )
                 )
@@ -48,8 +47,7 @@ class PathologyReportsExtractorTest {
         )
 
         val expected = PathologyReport(
-            reportRequested = false,
-            source = "internal",
+            lab = "NKI-AvL",
             diagnosis = "diagnosis",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
@@ -63,9 +61,8 @@ class PathologyReportsExtractorTest {
                 expected,
                 expected.copy(
                     tissueId = "tissueId",
-                    reportRequested = true,
-                    source = "external",
                     lab = "lab",
+                    reportDate = defaultDate,
                     report = "raw pathology report"
                 )
             )
