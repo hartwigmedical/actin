@@ -89,15 +89,19 @@ object WGSSummaryGeneratorFunctions {
         isShort: Boolean,
         table: Table
     ): Boolean {
-        val tmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
-        if (!isShort || tmbStatus != "TML ${Formats.VALUE_UNKNOWN} / TMB ${Formats.VALUE_UNKNOWN}") {
+        val tmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular, returnOnlyTmb = true)
+        val tmlAndTmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
+        val tmlUnknownAndTmbKnown =
+            molecular.characteristics.tumorMutationalLoad == null && molecular.characteristics.tumorMutationalBurden != null
+        val tmlAndTmbKnown =
+            molecular.characteristics.tumorMutationalLoad != null && molecular.characteristics.tumorMutationalBurden != null
+        if (tmlUnknownAndTmbKnown) {
+            table.addCell(Cells.createKey("Tumor mutational burden"))
+            table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmbStatus))
+            return true
+        } else if (!isShort || tmlAndTmbKnown) {
             table.addCell(Cells.createKey("Tumor mutational load / burden"))
-            table.addCell(
-                tumorMutationalLoadAndTumorMutationalBurdenStatusCell(
-                    molecular,
-                    tmbStatus
-                )
-            )
+            table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmlAndTmbStatus))
             return true
         }
         return false
@@ -168,10 +172,10 @@ object WGSSummaryGeneratorFunctions {
         return Cells.create(paragraph)
     }
 
-    private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
-        val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics, displayValue = true)
-        val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, displayValue = true)
-        return String.format("%s / %s", tmlString, tmbString)
+    private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest, returnOnlyTmb: Boolean = false): String {
+        val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics, true)
+        val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, true)
+        return if (!returnOnlyTmb) String.format("%s / %s", tmlString, tmbString) else tmbString
     }
 
     private fun formatList(list: List<String>): String {
