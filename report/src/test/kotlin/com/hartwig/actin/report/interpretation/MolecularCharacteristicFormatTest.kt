@@ -18,7 +18,7 @@ class MolecularCharacteristicFormatTest {
     fun `Should format TMB high and low`() {
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(withTumorMutationalBurden(score = 61.0, isHigh = true), displayValue = true)
-        ).isEqualTo("TMB 61")
+        ).isEqualTo("TMB 61 mut/Mb")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(withTumorMutationalBurden(score = 6.0, isHigh = true), displayValue = false)
@@ -26,7 +26,7 @@ class MolecularCharacteristicFormatTest {
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(withTumorMutationalBurden(score = 6.0, isHigh = false), displayValue = true)
-        ).isEqualTo("TMB 6")
+        ).isEqualTo("TMB 6 mut/Mb")
 
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(withTumorMutationalBurden(score = 6.0, isHigh = false), displayValue = false)

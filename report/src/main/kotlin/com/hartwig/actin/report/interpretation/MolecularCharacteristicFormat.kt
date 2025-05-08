@@ -7,16 +7,16 @@ import com.hartwig.actin.report.pdf.util.Formats
 object MolecularCharacteristicFormat {
 
     fun formatTumorMutationalBurden(molecularCharacteristics: MolecularCharacteristics, displayValue: Boolean) =
-        "TMB " + if (displayValue) formatValueCharacteristic(molecularCharacteristics.tumorMutationalBurden?.score) else formatEnumCharacteristic(
+        "TMB " + if (displayValue) formatValueCharacteristic(molecularCharacteristics.tumorMutationalBurden?.score, "mut/Mb") else formatHighLowCharacteristic(
             molecularCharacteristics.tumorMutationalBurden?.isHigh
         )
 
     fun formatTumorMutationalLoad(molecularCharacteristics: MolecularCharacteristics, displayValue: Boolean) =
-        "TML " + if (displayValue) formatValueCharacteristic(molecularCharacteristics.tumorMutationalLoad?.score) else formatEnumCharacteristic(
+        "TML " + if (displayValue) formatValueCharacteristic(molecularCharacteristics.tumorMutationalLoad?.score) else formatHighLowCharacteristic(
             molecularCharacteristics.tumorMutationalLoad?.isHigh
         )
 
-    fun formatEnumAndValueCharacteristic(value: Number?, isHigh: Boolean?, includeValue: Boolean = true): String {
+    fun formatValueAndHighLowCharacteristic(value: Number?, isHigh: Boolean?, includeValue: Boolean): String {
         return if (value == null && isHigh == null) {
             Formats.VALUE_UNKNOWN
         } else {
@@ -28,12 +28,13 @@ object MolecularCharacteristicFormat {
         }
     }
 
-    private fun formatEnumCharacteristic(isHigh: Boolean?): String {
-        return isHigh?.let { formHighLow(it) } ?: Formats.VALUE_UNKNOWN
+    private fun formatValueCharacteristic(value: Number?, unit: String? = null): String {
+        val unitString = if (unit != null) " $unit" else ""
+        return value?.let { "${Formats.singleDigitNumber(it)}$unitString" } ?: Formats.VALUE_UNKNOWN
     }
 
-    private fun formatValueCharacteristic(value: Number?): String {
-        return value?.let { Formats.singleDigitNumber(it) } ?: Formats.VALUE_UNKNOWN
+    private fun formatHighLowCharacteristic(isHigh: Boolean?): String {
+        return isHigh?.let { formHighLow(it) } ?: Formats.VALUE_UNKNOWN
     }
 
     private fun formHighLow(i: Boolean) = if (i) "High" else "Low"

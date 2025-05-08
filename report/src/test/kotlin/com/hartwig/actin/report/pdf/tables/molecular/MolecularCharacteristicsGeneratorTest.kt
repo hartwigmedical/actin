@@ -63,8 +63,7 @@ class MolecularCharacteristicsGeneratorTest {
     @Test
     fun `Should display TML correctly`() {
         val tml = withTumorMutationalLoad(value = 100, isHigh = true)
-        assertThat(MolecularCharacteristicsGenerator(tml).createTMLStatusString())
-            .isEqualTo("High (100)")
+        assertThat(MolecularCharacteristicsGenerator(tml).createTMLStatusString()).isEqualTo("High (100)")
     }
 
     private fun withHomologousRecombinationStatusAndType(
