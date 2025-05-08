@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
-import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
+import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -17,7 +17,7 @@ import com.itextpdf.layout.element.Table
 import org.apache.logging.log4j.LogManager
 
 class MolecularSummaryGenerator(
-    private val patientRecord: PatientRecord,
+    private val report: Report,
     private val cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
@@ -26,6 +26,7 @@ class MolecularSummaryGenerator(
 ) : TableGenerator {
 
     private val logger = LogManager.getLogger(MolecularSummaryGenerator::class.java)
+    private val patientRecord = report.patientRecord
 
     override fun title(): String {
         return "Recent molecular results"
@@ -36,7 +37,6 @@ class MolecularSummaryGenerator(
     }
 
     override fun contents(): Table {
-
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
@@ -51,7 +51,14 @@ class MolecularSummaryGenerator(
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = pathologyReport)))
+                table.addCell(
+                    Cells.create(
+                        PathologyReportFunctions.getPathologyReportSummary(
+                            pathologyReport = pathologyReport,
+                            requestingHospital = report.requestingHospital
+                        )
+                    )
+                )
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
@@ -101,6 +108,4 @@ class MolecularSummaryGenerator(
         table.addCell(Cells.create(molecularResultGenerator.contents()))
 
     }
-
-
 }

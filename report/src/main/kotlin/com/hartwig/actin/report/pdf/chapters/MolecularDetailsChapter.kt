@@ -103,7 +103,14 @@ class MolecularDetailsChapter(
     ) {
 
         pathologyReport?.let {
-            topTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = it)))
+            topTable.addCell(
+                Cells.create(
+                    PathologyReportFunctions.getPathologyReportSummary(
+                        pathologyReport = it,
+                        requestingHospital = report.requestingHospital
+                    )
+                )
+            )
         }
 
         val tableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE

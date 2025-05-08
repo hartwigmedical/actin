@@ -510,10 +510,11 @@ object TestClinicalFactory {
                 tissueId = "T-10100",
                 reportRequested = true,
                 source = "internal",
+                lab = "lab",
                 diagnosis = "long*onderkwab*rechts*biopt*niet-kleincellig carcinoom",
                 tissueDate = FIXED_DATE,
                 authorisationDate = FIXED_DATE,
-                report = "raw pathology report"
+                report = "raw pathology report",
             )
         )
     }

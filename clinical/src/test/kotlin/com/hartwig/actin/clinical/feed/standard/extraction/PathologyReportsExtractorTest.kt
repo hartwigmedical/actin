@@ -10,9 +10,7 @@ import java.time.LocalDate
 class PathologyReportsExtractorTest {
 
     private val extractor = PathologyReportsExtractor()
-
     private val ehrPatientRecord = EhrTestData.createEhrPatientRecord()
-
     private val defaultDate = LocalDate.of(1970, 1, 1)
 
     @Test
@@ -22,7 +20,6 @@ class PathologyReportsExtractorTest {
 
     @Test
     fun `Should extract pathology reports from the tumor details pathology`() {
-
         val providedPathologyReport = ProvidedPathologyReport(
             reportRequested = false,
             source = "internal",
@@ -41,6 +38,7 @@ class PathologyReportsExtractorTest {
                         reportRequested = true,
                         source = "external",
                         lab = "lab",
+                        externalDate = defaultDate,
                         rawPathologyReport = "raw pathology report"
                     )
                 )
@@ -66,6 +64,7 @@ class PathologyReportsExtractorTest {
                     reportRequested = true,
                     source = "external",
                     lab = "lab",
+                    externalDate = defaultDate,
                     report = "raw pathology report"
                 )
             )

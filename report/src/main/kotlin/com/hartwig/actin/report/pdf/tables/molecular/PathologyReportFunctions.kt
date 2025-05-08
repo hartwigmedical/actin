@@ -20,8 +20,14 @@ object PathologyReportFunctions {
             if (isSourceInternal) tissueDate else externalDate
         ) { "Expected one of tissueDate or externalDate to be non-null." }
 
-    fun getPathologyReportSummary(prefix: String? = null, prefixStyle: Style? = null, report: PathologyReport): Cell =
-        Cells.create(
+    fun getPathologyReportSummary(
+        prefix: String? = null,
+        prefixStyle: Style? = null,
+        pathologyReport: PathologyReport,
+        requestingHospital: String?
+    ): Cell {
+        val labString = if (pathologyReport.isSourceInternal && requestingHospital != null) requestingHospital else pathologyReport.lab ?: "Unknown Lab"
+        return Cells.create(
             Paragraph().addAll(
                 listOfNotNull(
                     prefix?.let {
@@ -30,28 +36,32 @@ object PathologyReportFunctions {
                             Text(" - ").addStyle(Styles.tableHighlightStyle())
                         )
                     },
-                    listOf(Text(report.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle())),
-                    if (report.isSourceInternal) {
+                    listOf(
+                        Text(pathologyReport.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
+                        Text(" ($labString").addStyle(Styles.tableHighlightStyle())
+                    ),
+                    if (pathologyReport.isSourceInternal) {
                         listOf(
-                            Text(" (Collection date: "),
-                            Text(date(report.tissueDate)).addStyle(Styles.tableHighlightStyle()),
+                            Text(", Collection date: "),
+                            Text(date(pathologyReport.tissueDate)).addStyle(Styles.tableHighlightStyle()),
                             Text(", Authorization date: "),
-                            Text(date(report.authorisationDate)).addStyle(Styles.tableHighlightStyle())
+                            Text(date(pathologyReport.authorisationDate)).addStyle(Styles.tableHighlightStyle())
                         )
                     } else {
                         listOf(
-                            Text(" (Report date: "),
-                            Text(date(report.externalDate)).addStyle(Styles.tableHighlightStyle())
+                            Text(", Report date: "),
+                            Text(date(pathologyReport.externalDate)).addStyle(Styles.tableHighlightStyle())
                         )
                     },
                     listOf(
                         Text(", Diagnosis: "),
-                        Text(report.diagnosis).addStyle(Styles.tableHighlightStyle()),
+                        Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
                         Text(")")
                     )
                 ).flatten()
             )
         ).addStyle(Styles.tableContentStyle())
+    }
 
     fun groupTestsByPathologyReport(
         orangeMolecularRecords: List<MolecularRecord>,
