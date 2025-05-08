@@ -12,7 +12,6 @@ import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Cell
@@ -21,10 +20,6 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
 object WGSSummaryGeneratorFunctions {
-
-    fun createMolecularSummaryTitle(molecular: MolecularTest): String {
-        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} (${date(molecular.date)})"
-    }
 
     fun createMolecularSummaryTable(
         isShort: Boolean,
@@ -174,8 +169,8 @@ object WGSSummaryGeneratorFunctions {
     }
 
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
-        val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics)
-        val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics)
+        val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics, displayValue = true)
+        val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, displayValue = true)
         return String.format("%s / %s", tmlString, tmbString)
     }
 
