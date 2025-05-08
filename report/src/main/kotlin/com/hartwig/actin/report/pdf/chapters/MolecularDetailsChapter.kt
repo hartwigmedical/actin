@@ -62,12 +62,6 @@ class MolecularDetailsChapter(
             report.patientRecord.pathologyReports
         )
 
-        if (orangeMolecularRecord == null && externalPanelResults.none {
-                it.testTypeDisplay == "WGS (OncoAct)" || it.testTypeDisplay == "OncoPanel"
-            }) {
-            document.add(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
-        }
-
         val table = Tables.createSingleColWithWidth(contentWidth())
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             pathologyReport ?: groupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
