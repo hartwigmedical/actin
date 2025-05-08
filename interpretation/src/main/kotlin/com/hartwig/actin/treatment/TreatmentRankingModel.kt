@@ -28,8 +28,10 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
 
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
         val actionables = record.molecularHistory.molecularTests.asSequence().flatMap {
-            (it.drivers.fusions + it.drivers.variants + it.drivers.copyNumbers + it.drivers.homozygousDisruptions + it.drivers.disruptions + it.drivers.viruses) +
-                    it.characteristics.microsatelliteStability + it.characteristics.homologousRecombination + it.characteristics.tumorMutationalLoad + it.characteristics.tumorMutationalBurden
+            it.drivers.fusions + it.drivers.variants + it.drivers.copyNumbers +
+                    it.drivers.homozygousDisruptions + it.drivers.disruptions + it.drivers.viruses +
+                    it.characteristics.microsatelliteStability + it.characteristics.homologousRecombination +
+                    it.characteristics.tumorMutationalLoad + it.characteristics.tumorMutationalBurden
         }.filterNotNull()
 
         val treatmentEvidencesWithTarget = treatmentEvidencesWithTargets(actionables)
