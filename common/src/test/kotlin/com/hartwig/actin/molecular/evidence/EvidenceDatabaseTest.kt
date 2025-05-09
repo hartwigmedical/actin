@@ -28,32 +28,27 @@ class EvidenceDatabaseTest {
             driverLikelihood = DriverLikelihood.HIGH,
             isReportable = true
         )
-        assertThat(database.alterationForVariant(variant)).isNotNull()
         assertEvidence(database.evidenceForVariant(variant), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test
     fun `Should match evidence for gains and deletions`() {
         val del = createWithCopyNumberType(CopyNumberType.DEL)
-        assertThat(database.alterationForCopyNumber(del)).isNotNull()
         assertEvidence(database.evidenceForCopyNumber(del), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
 
         val gain = createWithCopyNumberType(CopyNumberType.FULL_GAIN)
-        assertThat(database.alterationForCopyNumber(gain)).isNotNull()
         assertEvidence(database.evidenceForCopyNumber(gain), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test
     fun `Should match evidence for disruption`() {
         val disruption = TestMolecularFactory.minimalDisruption().copy(isReportable = true)
-        assertThat(database.alterationForDisruption(disruption)).isNotNull()
         assertEvidence(database.evidenceForDisruption(disruption), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test
     fun `Should match evidence for homozygous disruption`() {
         val homozygousDisruption = TestMolecularFactory.minimalHomozygousDisruption()
-        assertThat(database.alterationForHomozygousDisruption(homozygousDisruption)).isNotNull()
         assertEvidence(
             database.evidenceForHomozygousDisruption(homozygousDisruption),
             expectedTreatmentMatches = 2,
@@ -71,7 +66,6 @@ class EvidenceDatabaseTest {
             fusedExonDown = 0,
             driverType = FusionDriverType.NONE,
         )
-        assertThat(database.lookupKnownFusion(fusion)).isNotNull()
         assertEvidence(database.evidenceForFusion(fusion), expectedTreatmentMatches = 2, expectedTrialMatches = 2)
     }
 

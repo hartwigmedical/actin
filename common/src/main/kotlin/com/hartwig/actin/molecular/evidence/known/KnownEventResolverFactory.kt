@@ -16,26 +16,23 @@ object KnownEventResolverFactory {
     val PRIMARY_KNOWN_EVENT_SOURCE = ActionabilityConstants.EVIDENCE_SOURCE
 
     fun create(knownEvents: KnownEvents): KnownEventResolver {
-        val primaryKnownEvents = filterKnownEvents(knownEvents, filterPrimaryEvents = true)
-        val secondaryKnownEvents = filterKnownEvents(knownEvents, filterPrimaryEvents = false)
+        val primaryKnownEvents = includeKnownEvents(knownEvents, includePrimaryEvents = true)
+        val secondaryKnownEvents = includeKnownEvents(knownEvents, includePrimaryEvents = false)
         return KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, GeneAggregator.aggregate(knownEvents.genes()))
     }
 
-    fun filterKnownEvents(
-        knownEvents: KnownEvents,
-        filterPrimaryEvents: Boolean
-    ): KnownEvents {
+    fun includeKnownEvents(knownEvents: KnownEvents, includePrimaryEvents: Boolean): KnownEvents {
         return ImmutableKnownEvents.builder()
-            .hotspots(filterKnown<KnownHotspot>(knownEvents.hotspots(), filterPrimaryEvents))
-            .codons(filterKnown<KnownCodon>(knownEvents.codons(), filterPrimaryEvents))
-            .exons(filterKnown<KnownExon>(knownEvents.exons(), filterPrimaryEvents))
-            .genes(filterKnown<KnownGene>(knownEvents.genes(), filterPrimaryEvents))
-            .copyNumbers(filterKnown<KnownCopyNumber>(knownEvents.copyNumbers(), filterPrimaryEvents))
-            .fusions(filterKnown<KnownFusion>(knownEvents.fusions(), filterPrimaryEvents))
+            .hotspots(filterKnown<KnownHotspot>(knownEvents.hotspots(), includePrimaryEvents))
+            .codons(filterKnown<KnownCodon>(knownEvents.codons(), includePrimaryEvents))
+            .exons(filterKnown<KnownExon>(knownEvents.exons(), includePrimaryEvents))
+            .genes(filterKnown<KnownGene>(knownEvents.genes(), includePrimaryEvents))
+            .copyNumbers(filterKnown<KnownCopyNumber>(knownEvents.copyNumbers(), includePrimaryEvents))
+            .fusions(filterKnown<KnownFusion>(knownEvents.fusions(), includePrimaryEvents))
             .build()
     }
 
-    private fun <T : KnownEvent> filterKnown(knowns: Set<T>, filterPrimaryEvents: Boolean): Set<T> {
-        return knowns.filter { it.sources().contains(PRIMARY_KNOWN_EVENT_SOURCE) == filterPrimaryEvents }.toSet()
+    private fun <T : KnownEvent> filterKnown(knowns: Set<T>, includePrimaryEvents: Boolean): Set<T> {
+        return knowns.filter { it.sources().contains(PRIMARY_KNOWN_EVENT_SOURCE) == includePrimaryEvents }.toSet()
     }
 }

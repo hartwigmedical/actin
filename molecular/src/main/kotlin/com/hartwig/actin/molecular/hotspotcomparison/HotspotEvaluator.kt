@@ -8,7 +8,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 
-object HotspotComparator {
+object HotspotEvaluator {
 
     fun annotateHotspots(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedHotspot> {
         val knownGenes = serveRecord.knownEvents().genes().map(KnownGene::gene).toSet()
@@ -16,9 +16,9 @@ object HotspotComparator {
             .mapNotNull { variant ->
                 val criteria = createVariantCriteria(variant)
                 val knownEventResolver =
-                    KnownEventResolverFactory.create(KnownEventResolverFactory.filterKnownEvents(serveRecord.knownEvents(), true))
-                val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
-                val isHotspotServe = serveGeneAlteration.isHotspot
+                    KnownEventResolverFactory.create(KnownEventResolverFactory.includeKnownEvents(serveRecord.knownEvents(), true))
+                val serveVariantAlteration = knownEventResolver.resolveForVariant(criteria)
+                val isHotspotServe = serveVariantAlteration.isHotspot
                 val isHotspotOrange = variant.hotspot() == HotspotType.HOTSPOT
                 if (isHotspotServe || isHotspotOrange) {
                     AnnotatedHotspot(

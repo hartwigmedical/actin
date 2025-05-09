@@ -20,13 +20,10 @@ class KnownEventResolverFactoryTest {
         val hotspot3 = TestServeKnownFactory.hotspotBuilder().addSources(Knowledgebase.UNKNOWN).build()
         val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot1, hotspot2, hotspot3).build()
 
-        val primaryKnownEvents = KnownEventResolverFactory.filterKnownEvents(knownEvents, true)
-        assertThat(primaryKnownEvents.hotspots().size.toLong()).isEqualTo(2)
-        assertThat(primaryKnownEvents.hotspots().contains(hotspot1)).isTrue()
-        assertThat(primaryKnownEvents.hotspots().contains(hotspot2)).isTrue()
+        val primaryKnownEvents = KnownEventResolverFactory.includeKnownEvents(knownEvents, true)
+        assertThat(primaryKnownEvents.hotspots()).containsExactlyInAnyOrder(hotspot1, hotspot2)
 
-        val secondaryKnownEvents = KnownEventResolverFactory.filterKnownEvents(knownEvents, false)
-        assertThat(secondaryKnownEvents.hotspots().size.toLong()).isEqualTo(1)
-        assertThat(secondaryKnownEvents.hotspots().contains(hotspot3)).isTrue()
+        val secondaryKnownEvents = KnownEventResolverFactory.includeKnownEvents(knownEvents, false)
+        assertThat(secondaryKnownEvents.hotspots()).containsExactlyInAnyOrder(hotspot3)
     }
 }

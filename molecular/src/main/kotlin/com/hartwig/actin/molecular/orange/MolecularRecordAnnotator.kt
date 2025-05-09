@@ -9,10 +9,10 @@ import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihoodComparator
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
@@ -104,10 +104,8 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     fun reannotateDriverLikelihood(variants: List<Variant>): List<Variant> {
         val variantsByGene = variants.groupBy { it.gene }
         return variantsByGene.flatMap { (_, geneVariants) ->
-            val maxDriverLikelihood = geneVariants.minOfOrNull { it.driverLikelihood?.ordinal ?: DriverLikelihood.entries.size }
-            geneVariants.map { variant ->
-                variant.copy(driverLikelihood = maxDriverLikelihood?.let { if (variant.driverLikelihood != null) DriverLikelihood.entries[it] else null })
-            }
+            val maxDriverLikelihood = geneVariants.map { it.driverLikelihood }.sortedWith(DriverLikelihoodComparator()).firstOrNull()
+            geneVariants.map { variant -> variant.copy(driverLikelihood = if (variant.driverLikelihood != null) maxDriverLikelihood else null) }
         }
     }
 
@@ -146,10 +144,8 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateFusion(fusion: Fusion): Fusion {
         val knownFusion = evidenceDatabase.lookupKnownFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
-        val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
-            GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
-        }
-        val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
+        val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
+        val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
         val fusionWithGeneAlteration =
             fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
         val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusionWithGeneAlteration))

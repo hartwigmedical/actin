@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.known
 
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory.PRIMARY_KNOWN_EVENT_SOURCE
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
@@ -15,7 +16,10 @@ object HotspotFunctions {
     )
 
     fun isHotspot(geneAlteration: GeneAlteration?): Boolean {
-        return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) &&
-                geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
+        return if ((geneAlteration is KnownHotspot && geneAlteration.sources().contains(PRIMARY_KNOWN_EVENT_SOURCE)) ||
+            (geneAlteration is KnownCodon && geneAlteration.sources().contains(PRIMARY_KNOWN_EVENT_SOURCE))
+        ) {
+            geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
+        } else geneAlteration is KnownHotspot
     }
 }

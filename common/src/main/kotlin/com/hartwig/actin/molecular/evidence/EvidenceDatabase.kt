@@ -66,7 +66,7 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForDisruption(disruption)
     }
 
-    fun lookupKnownFusion(fusion: FusionMatchCriteria): KnownFusion? {
+    fun lookupKnownFusion(fusion: FusionMatchCriteria): KnownFusion {
         return knownEventResolver.resolveForFusion(fusion)
     }
 

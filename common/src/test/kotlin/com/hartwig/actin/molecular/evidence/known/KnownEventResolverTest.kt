@@ -39,14 +39,14 @@ private val HOTSPOT_MATCH = VariantMatchCriteria(
 
 class KnownEventResolverTest {
 
-    private val hotspotDocm = createHotspot(Knowledgebase.DOCM)
+    private val hotspotDoCM = createHotspot(Knowledgebase.DOCM)
     private val knownGene = knownGeneWithName(GENE)
 
     @Test
-    fun `Should resolve variant when variant is hotspot in CKB and in DOCM`() {
+    fun `Should resolve variant when variant is hotspot in CKB and in DoCM`() {
         val hotspotCkb = createHotspot(Knowledgebase.CKB, proteinEffect = ServeProteinEffect.GAIN_OF_FUNCTION)
         val primaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
-        val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDocm).build()
+        val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDoCM).build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
         val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(
@@ -58,9 +58,9 @@ class KnownEventResolverTest {
     }
 
     @Test
-    fun `Should resolve variant when variant is hotspot in DOCM and not present in CKB`() {
+    fun `Should resolve variant when variant is hotspot in DoCM and not present in CKB`() {
         val primaryKnownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
-        val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDocm).build()
+        val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDoCM).build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
         val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = true)
@@ -93,10 +93,10 @@ class KnownEventResolverTest {
     }
 
     @Test
-    fun `Should resolve variant when variant is hotspot in DOCM`() {
+    fun `Should resolve variant when variant is hotspot in DoCM`() {
         val hotspotCkb = createHotspot(Knowledgebase.CKB, ServeProteinEffect.NO_EFFECT)
         val primaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
-        val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDocm).build()
+        val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDoCM).build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
         val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(
@@ -140,7 +140,7 @@ class KnownEventResolverTest {
         assertEquality(resolver.resolveForVariant(exonMatch), noHotspotAlteration)
 
         val geneMatch = HOTSPOT_MATCH.copy(position = 1)
-        assertThat(resolver.resolveForVariant(geneMatch)).isNotNull
+        assertEquality(resolver.resolveForVariant(geneMatch), noHotspotAlteration)
 
         val wrongGene = HOTSPOT_MATCH.copy(gene = "other")
         assertEquality(resolver.resolveForVariant(wrongGene), TestVariantAlterationFactory.createVariantAlteration("other"))
@@ -164,10 +164,7 @@ class KnownEventResolverTest {
         assertEquality(resolver.resolveForCopyNumber(ampGene1), TestGeneAlterationFactory.createGeneAlteration("gene 1"))
 
         val ampGene2 = ampGene1.copy(gene = "gene 2")
-        assertThat(resolver.resolveForCopyNumber(ampGene2)).isNotNull
-
-        val ampGene3 = ampGene1.copy(gene = "gene 3")
-        assertEquality(resolver.resolveForCopyNumber(ampGene3), TestGeneAlterationFactory.createGeneAlteration("gene 3"))
+        assertEquality(resolver.resolveForCopyNumber(ampGene2), TestGeneAlterationFactory.createGeneAlteration("gene 2"))
 
         val homDisruptionGene1 = minimalHomozygousDisruption().copy(gene = "gene 1")
         assertEquality(
@@ -176,19 +173,13 @@ class KnownEventResolverTest {
         )
 
         val homDisruptionGene2 = homDisruptionGene1.copy(gene = "gene 2")
-        assertThat(resolver.resolveForHomozygousDisruption(homDisruptionGene2)).isNotNull
-
-        val homDisruptionGene3 = homDisruptionGene1.copy(gene = "gene 3")
         assertEquality(
-            resolver.resolveForHomozygousDisruption(homDisruptionGene3),
-            TestGeneAlterationFactory.createGeneAlteration("gene 3")
+            resolver.resolveForHomozygousDisruption(homDisruptionGene2),
+            TestGeneAlterationFactory.createGeneAlteration("gene 2")
         )
 
         val disruptionGene1 = minimalDisruption().copy(gene = "gene 1")
-        assertThat(resolver.resolveForDisruption(disruptionGene1)).isNotNull
-
-        val disruptionGene2 = disruptionGene1.copy(gene = "gene 2")
-        assertThat(resolver.resolveForDisruption(disruptionGene2)).isNotNull
+        assertEquality(resolver.resolveForDisruption(disruptionGene1), TestGeneAlterationFactory.createGeneAlteration("gene 1"))
 
         val disruptionGene3 = disruptionGene1.copy(gene = "gene 3")
         assertEquality(resolver.resolveForDisruption(disruptionGene3), TestGeneAlterationFactory.createGeneAlteration("gene 3"))
@@ -206,7 +197,8 @@ class KnownEventResolverTest {
         assertThat(resolver.resolveForFusion(fusionMatch)).isEqualTo(fusion)
 
         val fusionMismatch = fusionMatch.copy(geneStart = "down", geneEnd = "up")
-        assertThat(resolver.resolveForFusion(fusionMismatch)).isNull()
+        val otherFusion = TestServeKnownFactory.fusionBuilder().geneUp("down").geneDown("up").build()
+        assertThat(resolver.resolveForFusion(fusionMismatch)).isEqualTo(otherFusion)
     }
 
     private fun createHotspot(

@@ -24,14 +24,15 @@ class KnownEventResolver(
 ) {
 
     fun resolveForVariant(variantMatchCriteria: VariantMatchCriteria): VariantAlteration {
-        val ckbAlteration = findHotspot(primaryKnownEvents.hotspots(), variantMatchCriteria)
+        val primaryAlteration = findHotspot(primaryKnownEvents.hotspots(), variantMatchCriteria)
             ?: findCodon(primaryKnownEvents.codons(), variantMatchCriteria)
             ?: findExon(primaryKnownEvents.exons(), variantMatchCriteria)
             ?: GeneLookup.find(aggregatedKnownGenes, variantMatchCriteria.gene)
 
-        val geneAlteration = GeneAlterationFactory.convertAlteration(variantMatchCriteria.gene, ckbAlteration)
-        val isHotspot =
-            HotspotFunctions.isHotspot(ckbAlteration) || findHotspot(secondaryKnownEvents.hotspots(), variantMatchCriteria) != null
+        val secondaryAlteration = findHotspot(secondaryKnownEvents.hotspots(), variantMatchCriteria)
+
+        val geneAlteration = GeneAlterationFactory.convertAlteration(variantMatchCriteria.gene, primaryAlteration)
+        val isHotspot = HotspotFunctions.isHotspot(primaryAlteration) || HotspotFunctions.isHotspot(secondaryAlteration)
 
         return VariantAlteration(
             gene = geneAlteration.gene,
@@ -67,7 +68,7 @@ class KnownEventResolver(
         return GeneAlterationFactory.convertAlteration(disruption.gene, GeneLookup.find(aggregatedKnownGenes, disruption.gene))
     }
 
-    fun resolveForFusion(fusion: FusionMatchCriteria): KnownFusion? {
+    fun resolveForFusion(fusion: FusionMatchCriteria): KnownFusion {
         return FusionLookup.find(primaryKnownEvents.fusions(), fusion)
     }
 

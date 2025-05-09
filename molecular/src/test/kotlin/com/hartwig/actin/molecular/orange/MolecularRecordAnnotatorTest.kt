@@ -15,6 +15,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val GENE = "gene 1"
 private val VARIANT = TestVariantFactory.createMinimal()
 private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
     gene = VARIANT.gene,
@@ -93,9 +94,9 @@ class MolecularRecordAnnotatorTest {
     @Test
     fun `Should reannotate driver likelihood on gene level`() {
         val variants = listOf(
-            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH),
-            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.MEDIUM),
-            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.LOW),
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH, gene = GENE),
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.MEDIUM, gene = GENE),
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.LOW, gene = GENE),
         )
         val output = annotator.reannotateDriverLikelihood(variants)
         assertThat(output.all { it.driverLikelihood == DriverLikelihood.HIGH }).isTrue()
@@ -104,11 +105,23 @@ class MolecularRecordAnnotatorTest {
     @Test
     fun `Should not reannotate driver likelihood when variant has driver likelihood null`() {
         val variants = listOf(
-            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH),
-            TestVariantFactory.createMinimal()
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH, gene = GENE),
+            TestVariantFactory.createMinimal().copy(driverLikelihood = null, gene = GENE)
         )
         val output = annotator.reannotateDriverLikelihood(variants)
         assertThat(output[0].driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
         assertThat(output[1].driverLikelihood).isNull()
+    }
+
+    @Test
+    fun `Should not reannotate driver likelihood for variants on different genes`() {
+        val variants = listOf(
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.HIGH, gene = GENE),
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.MEDIUM, gene = "other gene"),
+            TestVariantFactory.createMinimal().copy(driverLikelihood = DriverLikelihood.MEDIUM, gene = GENE),
+        )
+        val output = annotator.reannotateDriverLikelihood(variants)
+        assertThat(output.filter { it.gene == GENE }.all { it.driverLikelihood == DriverLikelihood.HIGH }).isTrue()
+        assertThat(output.filter { it.gene == "other gene" }.all { it.driverLikelihood == DriverLikelihood.MEDIUM }).isTrue()
     }
 }
