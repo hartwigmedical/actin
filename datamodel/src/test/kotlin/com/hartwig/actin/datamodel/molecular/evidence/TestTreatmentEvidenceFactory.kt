@@ -117,7 +117,6 @@ object TestTreatmentEvidenceFactory {
         evidenceDirection = evidenceDirection,
         evidenceYear = evidenceYear,
         efficacyDescription = "efficacy description",
-        emptySet(),
         emptySet()
     )
 }

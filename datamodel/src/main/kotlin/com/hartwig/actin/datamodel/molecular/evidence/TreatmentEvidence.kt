@@ -10,8 +10,7 @@ data class TreatmentEvidence(
     val evidenceDirection: EvidenceDirection,
     val evidenceYear: Int,
     val efficacyDescription: String,
-    val treatmentApproachesDrugClass: Set<String>,
-    val treatmentApproachesTherapy: Set<String>
+    val treatmentTypes: Set<String>
 ) {
     fun isOnLabel() = cancerTypeMatch.applicability.isOnLabel()
 }

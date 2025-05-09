@@ -60,8 +60,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
             ),
             evidenceYear = evidence.evidenceYear(),
             efficacyDescription = evidence.efficacyDescription(),
-            treatmentApproachesDrugClass = treatment.treatmentApproachesDrugClass(),
-            treatmentApproachesTherapy = treatment.treatmentApproachesTherapy()
+            treatmentTypes = treatment.treatmentApproachesDrugClass() + treatment.treatmentApproachesTherapy()
         )
     }
 
