@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
@@ -69,7 +70,7 @@ private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
     TestTreatmentEvidenceFactory.create(
         treatment = "treatment",
-        isOnLabel = true,
+        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
@@ -200,7 +201,7 @@ class PanelVariantAnnotatorTest {
                 treatmentEvidence = setOf(
                     TestTreatmentEvidenceFactory.create(
                         treatment = "treatment",
-                        isOnLabel = true,
+                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),

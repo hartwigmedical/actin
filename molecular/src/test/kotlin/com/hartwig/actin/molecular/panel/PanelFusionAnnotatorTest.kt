@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFacto
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -70,7 +71,7 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        isOnLabel = true
+        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE
     )
 )
 
@@ -179,7 +180,7 @@ class PanelFusionAnnotatorTest {
                 evidence = TestClinicalEvidenceFactory.withEvidence(
                     TestTreatmentEvidenceFactory.create(
                         treatment = "treatment",
-                        isOnLabel = true,
+                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
@@ -215,8 +216,7 @@ class PanelFusionAnnotatorTest {
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                        isOnLabel = true
-                    )
+                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE)
                 )
             )
         )

@@ -2,6 +2,7 @@ package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -181,18 +182,21 @@ object TestMolecularFactory {
                     snvPairwiseClassifier = 0.979,
                     genomicPositionClassifier = 0.99,
                     featureClassifier = 0.972,
+                    cuppaMode = CuppaMode.WGS
                 ), CupPrediction(
                     cancerType = "Lung",
                     likelihood = 0.001,
                     snvPairwiseClassifier = 0.0009,
                     genomicPositionClassifier = 0.011,
-                    featureClassifier = 0.0102
+                    featureClassifier = 0.0102,
+                    cuppaMode = CuppaMode.WGS
                 ), CupPrediction(
                     cancerType = "Esophagus/Stomach",
                     likelihood = 0.0016,
                     snvPairwiseClassifier = 0.0004,
                     genomicPositionClassifier = 0.006,
-                    featureClassifier = 0.0002
+                    featureClassifier = 0.0002,
+                    cuppaMode = CuppaMode.WGS
                 )
             )
         )

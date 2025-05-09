@@ -88,6 +88,7 @@ object ExampleFunctions {
                 includeLongitudinalMolecularChapter = true,
                 includeMolecularEvidenceChapter = true,
                 includeRawPathologyReport = true,
+                includeTreatmentEvidenceRanking = true,
                 reportDate = reportDate
             )
         )

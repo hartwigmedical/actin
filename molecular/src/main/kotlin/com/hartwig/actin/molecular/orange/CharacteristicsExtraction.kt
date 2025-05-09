@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -36,7 +37,7 @@ object CharacteristicsExtraction {
 
     private fun determinePredictedTumorOrigin(cuppa: CuppaData?): PredictedTumorOrigin? {
         return cuppa?.let {
-            PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions()))
+            PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions(), CuppaMode.valueOf(it.mode().toString())))
         }
     }
 
@@ -115,11 +116,11 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>): List<CupPrediction> {
-        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction) }
+    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>, cuppaMode: CuppaMode): List<CupPrediction> {
+        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction, cuppaMode) }
     }
 
-    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
+    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction, cuppaMode: CuppaMode): CupPrediction {
         if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
             cuppaPrediction.featureClassifier() == null
         ) {
@@ -134,7 +135,10 @@ object CharacteristicsExtraction {
             likelihood = cuppaPrediction.likelihood(),
             snvPairwiseClassifier = cuppaPrediction.snvPairwiseClassifier()!!,
             genomicPositionClassifier = cuppaPrediction.genomicPositionClassifier()!!,
-            featureClassifier = cuppaPrediction.featureClassifier()!!
+            featureClassifier = cuppaPrediction.featureClassifier()!!,
+            expressionPairWiseClassifier = cuppaPrediction.expressionPairwiseClassifier(),
+            altSjCohortClassifier = cuppaPrediction.altSjCohortClassifier(),
+            cuppaMode = cuppaMode
         )
     }
 }

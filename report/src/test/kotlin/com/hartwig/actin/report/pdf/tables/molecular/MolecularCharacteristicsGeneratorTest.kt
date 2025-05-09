@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -59,6 +60,12 @@ class MolecularCharacteristicsGeneratorTest {
             .isEqualTo("Deficient (0.81) - BRCA2-type (BRCA2 value: 0.78)")
     }
 
+    @Test
+    fun `Should display TML correctly`() {
+        val tml = withTumorMutationalLoad(value = 100, isHigh = true)
+        assertThat(MolecularCharacteristicsGenerator(tml).createTMLStatusString()).isEqualTo("High (100)")
+    }
+
     private fun withHomologousRecombinationStatusAndType(
         isHrd: Boolean,
         hrScore: Double = 0.0,
@@ -75,6 +82,22 @@ class MolecularCharacteristicsGeneratorTest {
                     type = homologousRecombinationType,
                     brca1Value = brca1Value,
                     brca2Value = brca2Value,
+                    evidence = TestClinicalEvidenceFactory.createEmpty()
+                )
+            )
+        )
+    }
+
+    private fun withTumorMutationalLoad(
+        isHigh: Boolean,
+        value: Int,
+    ): MolecularTest {
+        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+        return base.copy(
+            characteristics = base.characteristics.copy(
+                tumorMutationalLoad = TumorMutationalLoad(
+                    score = value,
+                    isHigh = isHigh,
                     evidence = TestClinicalEvidenceFactory.createEmpty()
                 )
             )

@@ -45,10 +45,12 @@ data class ProvidedPatientDetail(
     val gender: String,
     @Description("Registration data of this patient with ACTIN")
     val registrationDate: LocalDate,
-    @Description("Base64 encoded SHA-256 hash of source hospital's identifier.")
+    @Description("Base64 encoded SHA-256 hash of source hospital's identifier")
     val hashedId: String,
     @Description("Flag to indicate there is pending Hartwig analysis data for this patient")
-    val hartwigMolecularDataExpected: Boolean
+    val hartwigMolecularDataExpected: Boolean,
+    @Description("Hospital specific Patient Id")
+    val hospitalPatientId: String? = null
 )
 
 @JacksonSerializable
@@ -71,8 +73,28 @@ data class ProvidedTumorDetail(
     val lesions: List<ProvidedLesion>? = null,
     @Description("Deprecated: currently use to store radiology report. Should move to lesions")
     val lesionSite: String? = null,
-    @Description("Raw pathology report of molecular test results.")
-    val rawPathologyReport: String? = null
+    @Description("Raw pathology reports")
+    val pathology: List<ProvidedPathologyReport>? = null,
+)
+
+@JacksonSerializable
+data class ProvidedPathologyReport(
+    @Description("Tissue Id")
+    val tissueId: String? = null,
+    @Description("Indication on whether the report was requested")
+    val reportRequested: Boolean,
+    @Description("Lab that performed the report")
+    val lab: String,
+    @Description("Diagnosis written in the pathology reports")
+    val diagnosis: String,
+    @Description("Date of tissue collection - present only when the source is internal")
+    val tissueDate: LocalDate? = null,
+    @Description("Latest date of report authorization - present only when the source is internal")
+    val authorisationDate: LocalDate? = null,
+    @Description("Date of the report (not clear what this data represents) - used when tissueDate and authorisationDate and not known")
+    val reportDate: LocalDate? = null,
+    @Description("Raw pathology report of molecular test results")
+    val rawPathologyReport: String
 )
 
 @JacksonSerializable
@@ -120,7 +142,7 @@ data class ProvidedMolecularTest(
     val date: LocalDate? = null,
     @Description("Name of the source system from which the data came (eg. PALGA, DNA-DB)")
     val datasource: String? = null,
-    @Description("List of genes that were tested.")
+    @Description("List of genes that were tested")
     val testedGenes: Set<String>? = null,
     val results: Set<ProvidedMolecularTestResult>
 )
@@ -163,9 +185,9 @@ data class ProvidedMolecularTestResult(
     val deletedGene: String? = null,
     @Description("Flag should be set to indicate a negative result for a gene (ie. nothing was found)")
     val noMutationsFound: Boolean? = null,
-    @Description("Free text for a test result which does not fit into any of the other fields. This value will be curated.")
+    @Description("Free text for a test result which does not fit into any of the other fields. This value will be curated")
     val freeText: String? = null,
-    @Description("Result of microsatellite instability test.")
+    @Description("Result of microsatellite instability test")
     val msi: Boolean? = null,
     @Description("Tumor mutational burden in m/MB (eg. 8.0)")
     val tmb: Double? = null,
@@ -324,7 +346,7 @@ data class ProvidedAllergy(
 data class ProvidedWhoEvaluation(
     @Description("WHO performance status (eg. 1)")
     val status: Int,
-    @Description("Date of WHO evaluation.")
+    @Description("Date of WHO evaluation")
     val evaluationDate: LocalDate
 )
 
@@ -332,7 +354,7 @@ data class ProvidedWhoEvaluation(
 data class ProvidedSurgery(
     @Description("Name of surgery (eg. Diagnostics stomach)")
     val surgeryName: String?,
-    @Description("Date of completion, if applicable.")
+    @Description("Date of completion, if applicable")
     val endDate: LocalDate,
     @Description("Status of surgery (eg. complete)")
     val status: String
@@ -344,7 +366,7 @@ data class ProvidedLesion(
     val location: String,
     @Description("Diagnosis date of the lesion")
     val diagnosisDate: LocalDate,
-    @Description("Whether this lesion considered active, only applicable to brain or CNS lesions.")
+    @Description("Whether this lesion considered active, only applicable to brain or CNS lesions")
     val active: Boolean? = null
 )
 
