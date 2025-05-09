@@ -32,9 +32,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         evidences: List<EfficacyEvidence>
     ): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
-            createTreatmentEvidence(
-                cancerTypeResolver.resolve(evidence.indication()),
-                evidence)
+            createTreatmentEvidence(cancerTypeResolver.resolve(evidence.indication()), evidence)
         }.toSet()
     }
 
@@ -74,8 +72,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         }
             .filter { (_, criteriaAndIndications) -> criteriaAndIndications.second.isNotEmpty() }
     }
-
-
+    
     private fun convertToExternalTrials(
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): Set<ExternalTrial> {
