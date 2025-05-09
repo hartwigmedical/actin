@@ -21,8 +21,8 @@
   ],
   "bloodTransfusions": [
     {
-      "evaluationTime": "2020-01-01T10:10:00",
-      "product": "Erytrocytes Filtered"
+      "evaluationDate": "2020-01-01T10:10:00",
+      "name": "Erytrocytes Filtered"
     }
   ],
   "complications": [
@@ -41,7 +41,7 @@
   ],
   "labValues": [
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Neutrof. granulocyten",
       "measureCode": "dc_NeutrGran",
       "category": "Hematologie",
@@ -53,7 +53,7 @@
       "refFlag": "N"
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "O2-Saturatie gemeten",
       "measureCode": "bg_O2Sgem",
       "category": "Bloedgas analyse",
@@ -65,7 +65,7 @@
       "refFlag": "H"
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Trombocyten",
       "measureCode": "Plt",
       "category": "Hematologie",
@@ -77,7 +77,7 @@
       "refFlag": "N"
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Lymfocyten",
       "measureCode": "dc_Lymfo",
       "category": "Cellen (Automaat)",
@@ -89,7 +89,7 @@
       "refFlag": "L"
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Hemoglobine",
       "measureCode": "Hb",
       "category": "Hematologie",
@@ -108,13 +108,16 @@
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "administrationRoute": "oraal",
-      "dosage": 3.5,
-      "dosageUnit": "piece",
-      "frequency": 3.5,
-      "frequencyUnit": "day",
-      "periodBetweenDosagesValue": 3.5,
-      "periodBetweenDosagesUnit": null,
-      "administrationOnlyIfNeeded": true,
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "piece",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
       "isTrial": true,
       "isSelfCare": true
     },
@@ -124,23 +127,26 @@
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "administrationRoute": "oraal",
-      "dosage": 3.5,
-      "dosageUnit": "mg",
-      "frequency": 3.5,
-      "frequencyUnit": "day",
-      "periodBetweenDosagesValue": 3.5,
-      "periodBetweenDosagesUnit": null,
-      "administrationOnlyIfNeeded": true,
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
       "isTrial": false,
       "isSelfCare": false
     }
   ],
   "patientDetails": {
-    "hashedId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
+    "patientId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
     "birthYear": 5,
     "gender": "Female",
     "registrationDate": "2020-01-01",
-    "hospitalPatientId": "PT-1001"
+    "sourceId": "PT-1001"
   },
   "molecularTests": [
     {
@@ -205,7 +211,7 @@
   ],
   "treatmentHistory": [
     {
-      "treatmentName": "capecitabine and oxi",
+      "name": "capecitabine and oxi",
       "intention": null,
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",

@@ -38,7 +38,7 @@ class StandardIhcTestExtractor(
 
     private fun extractFromMolecularTests(ehrPatientRecord: FeedPatientRecord) =
         ehrPatientRecord.ihcTests.asSequence().mapNotNull {
-            val curations = listOf(it.name, "${ehrPatientRecord.patientDetails.patientId} | $it").map { curationString ->
+            val curations = listOf(it.name, "${ehrPatientRecord.patientDetails.patientId} | ${it.name}").map { curationString ->
                 CurationResponse.createFromConfigs(
                     molecularTestCuration.find(curationString),
                     ehrPatientRecord.patientDetails.patientId,

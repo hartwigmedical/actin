@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
@@ -14,7 +13,6 @@ import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.feed.datamodel.FeedSequencingTest
 import io.mockk.every
 import io.mockk.mockk
@@ -31,14 +29,11 @@ private const val PROTEIN = "protein"
 private val BASE_MOLECULAR_TEST = FeedSequencingTest(
     name = TEST, date = TEST_DATE, results = emptyList(), testedGenes = listOf(GENE)
 )
-private val BASE_SEQUENCING_TEST = SequencingTest(
-    test = TEST,
-    date = TEST_DATE
-)
-private const val FUSION_GENE_UP = "fusionUp"
-private const val FUSION_GENE_DOWN = "fusionDown"
-private const val AMPLIFIED_GENE = "amplifiedGene"
+private val BASE_SEQUENCING_TEST = SequencingTest(test = TEST, date = TEST_DATE)
 private const val FREE_TEXT = "free text"
+private val PATIENT_WITH_TEST_RESULT = FeedTestData.FEED_PATIENT_RECORD.copy(
+    sequencingTests = listOf(BASE_MOLECULAR_TEST.copy(results = listOf(FREE_TEXT)))
+)
 
 class StandardSequencingTestExtractorTest {
 
@@ -50,7 +45,7 @@ class StandardSequencingTestExtractorTest {
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
-        val result = extractor.extract(FeedTestData.FEED_PATIENT_RECORD.copy(sequencingTests = emptyList()))
+        val result = extractor.extract(FeedTestData.FEED_PATIENT_RECORD)
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -71,30 +66,21 @@ class StandardSequencingTestExtractorTest {
     }
 
     @Test
-    fun `Should curate test name and extract sequencing with test, date, and tested genes`() {
-        val result = extractor.extract(
-            FeedTestData.FEED_PATIENT_RECORD.copy(
-                sequencingTests = listOf(
-                    BASE_MOLECULAR_TEST.copy(
-                        testedGenes = listOf(GENE),
-                        results = listOf("$GENE-$PROTEIN")
-                    )
-                )
-            )
-        )
-        assertThat(result.extracted[0].date).isEqualTo(TEST_DATE)
-        assertThat(result.extracted[0].test).isEqualTo(CURATED_TEST)
+    fun `Should curate test name and extract sequencing with test name and date`() {
+        setUpSequencingTestResultCuration()
+        with(extractedResult().extracted.single()) {
+            assertThat(date).isEqualTo(TEST_DATE)
+            assertThat(test).isEqualTo(CURATED_TEST)
+        }
     }
 
     @Test
     fun `Should extract sequencing with variants`() {
-        val result = extractionResult(
-            ProvidedMolecularTestResult(
-                gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN
-            )
+        setUpSequencingTestResultCuration(
+            SequencingTestResultConfig(input = FREE_TEXT, gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN)
         )
         assertResultContains(
-            result, BASE_SEQUENCING_TEST.copy(
+            BASE_SEQUENCING_TEST.copy(
                 variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
             )
         )
@@ -102,157 +88,102 @@ class StandardSequencingTestExtractorTest {
 
     @Test
     fun `Should extract sequencing with fusions`() {
-        val result = extractionResult(
-            ProvidedMolecularTestResult(
-                fusionGeneUp = FUSION_GENE_UP, fusionGeneDown = FUSION_GENE_DOWN
-            )
+        val fusionGeneUp = "fusionUp"
+        val fusionGeneDown = "fusionDown"
+        setUpSequencingTestResultCuration(
+            SequencingTestResultConfig(input = FREE_TEXT, fusionGeneUp = fusionGeneUp, fusionGeneDown = fusionGeneDown)
         )
-        assertResultContains(
-            result,
-            BASE_SEQUENCING_TEST.copy(
-                fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN))
-            )
-        )
+        assertResultContains(BASE_SEQUENCING_TEST.copy(fusions = setOf(SequencedFusion(geneUp = fusionGeneUp, geneDown = fusionGeneDown))))
     }
 
     @Test
     fun `Should extract sequencing with amplifications`() {
-        val result = extractionResult(
-            ProvidedMolecularTestResult(
-                amplifiedGene = AMPLIFIED_GENE
-            )
-        )
-        assertResultContains(
-            result,
-            BASE_SEQUENCING_TEST.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE)))
-        )
+        val amplifiedGene = "amplifiedGene"
+        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, amplifiedGene = amplifiedGene))
+        assertResultContains(BASE_SEQUENCING_TEST.copy(amplifications = setOf(SequencedAmplification(gene = amplifiedGene))))
     }
 
     @Test
     fun `Should extract sequencing with exon skipping`() {
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, exonSkipStart = 1, exonSkipEnd = 2))
+        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, gene = GENE, exonSkipStart = 1, exonSkipEnd = 2))
         assertResultContains(
-            result, BASE_SEQUENCING_TEST.copy(
-                skippedExons = setOf(
-                    SequencedSkippedExons(gene = GENE, exonStart = 1, exonEnd = 2)
-                )
-            )
+            BASE_SEQUENCING_TEST.copy(skippedExons = setOf(SequencedSkippedExons(gene = GENE, exonStart = 1, exonEnd = 2)))
         )
     }
 
     @Test
     fun `Should extract sequencing with TMB and MSI`() {
-        val result = extractionResult(ProvidedMolecularTestResult(tmb = 1.0, msi = true))
-        assertResultContains(
-            result, BASE_SEQUENCING_TEST.copy(
-                tumorMutationalBurden = 1.0,
-                isMicrosatelliteUnstable = true
-            )
-        )
+        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, tmb = 1.0, msi = true))
+        assertResultContains(BASE_SEQUENCING_TEST.copy(tumorMutationalBurden = 1.0, isMicrosatelliteUnstable = true))
     }
 
     @Test
     fun `Should extract sequenced deleted genes`() {
-        val result = extractionResult(ProvidedMolecularTestResult(deletedGene = GENE))
-        assertResultContains(
-            result, BASE_SEQUENCING_TEST.copy(
-                deletedGenes = setOf(SequencedDeletedGene(GENE))
-            )
-        )
+        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, deletedGene = GENE))
+        assertResultContains(BASE_SEQUENCING_TEST.copy(deletedGenes = setOf(SequencedDeletedGene(GENE))))
     }
 
     @Test
     fun `Should curate any free text results`() {
-        every { testResultCuration.find(FREE_TEXT) } returns setOf(
-            SequencingTestResultConfig(
-                input = FREE_TEXT,
-                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
-            )
-        )
-        val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
-        assertResultContains(
-            result, BASE_SEQUENCING_TEST.copy(
-                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
-            )
-        )
+        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, gene = GENE, hgvsCodingImpact = CODING))
+        assertResultContains(BASE_SEQUENCING_TEST.copy(variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))))
     }
 
     @Test
-    fun `Should return curation warnings for uncurated free text when all other fields are null`() {
-        every { testResultCuration.find(FREE_TEXT) } returns emptySet()
-        val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
-        assertThat(result.evaluation.warnings).hasSize(1)
-        assertThat(result.evaluation.warnings.first()).isEqualTo(
-            CurationWarning(
-                patientId = HASHED_ID_IN_BASE64,
-                category = CurationCategory.SEQUENCING_TEST_RESULT,
-                feedInput = FREE_TEXT,
-                message = "Could not find sequencing test result config for input '$FREE_TEXT'"
+    fun `Should return curation warnings for uncurated free text`() {
+        setUpSequencingTestResultCuration()
+        with(extractedResult()) {
+            assertThat(evaluation.warnings).hasSize(1)
+            assertThat(evaluation.warnings.first()).isEqualTo(
+                CurationWarning(
+                    patientId = HASHED_ID_IN_BASE64,
+                    category = CurationCategory.SEQUENCING_TEST_RESULT,
+                    feedInput = FREE_TEXT,
+                    message = "Could not find sequencing test result config for input '$FREE_TEXT'"
+                )
             )
-        )
-    }
-
-    @Test
-    fun `Should not return curation warnings for uncurated free text when some fields are not null`() {
-        every { testResultCuration.find(FREE_TEXT) } returns emptySet()
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
-        assertThat(result.evaluation.warnings).isEmpty()
+        }
     }
 
     @Test
     fun `Should respect ignore flag when curating free text`() {
-        every { testResultCuration.find(FREE_TEXT) } returns setOf(
+        setUpSequencingTestResultCuration(
             SequencingTestResultConfig(
                 input = FREE_TEXT,
                 ignore = true
             )
         )
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
-        assertThat(result.evaluation.warnings).isEmpty()
-        assertThat(result.extracted.isEmpty())
+        with(extractedResult()) {
+            assertThat(evaluation.warnings).isEmpty()
+            assertThat(extracted.isEmpty())
+        }
     }
 
     @Test
     fun `Should allow for ignoring of full tests`() {
         every { testCuration.find(TEST) } returns setOf(
-            SequencingTestConfig(
-                input = TEST,
-                ignore = true,
-                curatedName = "<ignore>"
-            )
+            SequencingTestConfig(input = TEST, ignore = true, curatedName = "<ignore>")
         )
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
-        assertThat(result.extracted).isEmpty()
+        assertThat(extractedResult().extracted).isEmpty()
     }
 
     @Test
     fun `Should allow for ignoring of individual test results`() {
-        every { testResultCuration.find(FREE_TEXT) } returns setOf(
-            SequencingTestResultConfig(
-                input = FREE_TEXT,
-                ignore = true,
-                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
-            ),
-            SequencingTestResultConfig(
-                input = FREE_TEXT,
-                ignore = false,
-                curated = ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN)
-            )
+        setUpSequencingTestResultCuration(
+            SequencingTestResultConfig(input = FREE_TEXT, ignore = true, gene = GENE, hgvsCodingImpact = CODING),
+            SequencingTestResultConfig(input = FREE_TEXT, ignore = false, gene = GENE, hgvsProteinImpact = PROTEIN)
         )
-        val result = extractionResult(
-            ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = "erroneous", freeText = FREE_TEXT),
-            ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN, freeText = FREE_TEXT)
-        )
-        assertThat(result.extracted[0].variants).containsExactly(SequencedVariant(gene = GENE, hgvsProteinImpact = PROTEIN))
+        assertThat(extractedResult().extracted[0].variants).containsExactly(SequencedVariant(gene = GENE, hgvsProteinImpact = PROTEIN))
     }
 
-    private fun extractionResult(vararg result: String) = extractor.extract(
-        FeedTestData.FEED_PATIENT_RECORD.copy(sequencingTests = listOf(BASE_MOLECULAR_TEST.copy(results = result.toList())))
-    )
+    private fun setUpSequencingTestResultCuration(vararg curationConfigs: SequencingTestResultConfig) {
+        every { testResultCuration.find(FREE_TEXT) } returns curationConfigs.toSet()
+    }
 
-    private fun assertResultContains(result: ExtractionResult<List<SequencingTest>>, sequencingTest: SequencingTest) {
-        assertThat(result.extracted).hasSize(1)
-        assertThat(result.extracted[0]).isEqualTo(sequencingTest)
-        assertThat(result.evaluation.warnings).isEmpty()
+    private fun extractedResult() = extractor.extract(PATIENT_WITH_TEST_RESULT)
+
+    private fun assertResultContains(sequencingTest: SequencingTest) = with(extractedResult()) {
+        assertThat(extracted).containsExactly(sequencingTest)
+        assertThat(evaluation.warnings).isEmpty()
     }
 }

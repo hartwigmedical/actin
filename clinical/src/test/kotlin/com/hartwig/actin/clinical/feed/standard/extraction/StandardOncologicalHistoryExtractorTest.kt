@@ -7,7 +7,6 @@ import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.feed.standard.FeedTestData
 import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
-import com.hartwig.actin.clinical.feed.standard.MODIFICATION_NAME
 import com.hartwig.actin.clinical.feed.standard.TREATMENT_NAME
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
@@ -22,12 +21,10 @@ import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 private val TREATMENT_START = LocalDate.of(2021, 4, 1)
 private val TREATMENT_END = LocalDate.of(2021, 5, 1)
-private val MODIFICATION_START = LocalDate.of(2021, 6, 1)
 private val FEED_TREATMENT_HISTORY = FeedTestData.FEED_TREATMENT_HISTORY
     .copy(name = TREATMENT_NAME, startDate = TREATMENT_START, endDate = TREATMENT_END)
 
@@ -40,17 +37,14 @@ private val OTHER_CONDITION = DatedEntry(
     endDate = OTHER_CONDITION_END,
 )
 private val TREATMENT = DrugTreatment("drug", drugs = emptySet())
-private val MODIFICATION_TREATMENT = DrugTreatment("modification", drugs = emptySet())
 
-private val CURATED_TREATMENT_START = LocalDate.of(2020, 1, 1)
-private val CURATED_TREATMENT_END = LocalDate.of(2020, 2, 1)
-private val CURATED_MODIFICATION_START = LocalDate.of(2020, 3, 1)
 private val CURATED_TREATMENT_STAGE = TreatmentStage(
     treatment = TREATMENT,
     cycles = 1,
-    startYear = CURATED_TREATMENT_START.year,
-    startMonth = CURATED_TREATMENT_END.monthValue
+    startYear = LocalDate.of(2020, 2, 1).year,
+    startMonth = LocalDate.of(2020, 2, 1).monthValue
 )
+
 private val CURATED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntryConfig(
     TREATMENT_NAME,
     false,
@@ -65,41 +59,7 @@ private val CURATED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntryConfig(
         trialAcronym = "trialAcronym",
     )
 )
-private val CURATED_MODIFICATION_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntryConfig(
-    TREATMENT_NAME,
-    false,
-    TreatmentHistoryEntry(
-        treatments = setOf(MODIFICATION_TREATMENT),
-        treatmentHistoryDetails = TreatmentHistoryDetails()
-    )
-)
 
-private val EXPECTED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntry(
-    startYear = TREATMENT_START.year,
-    startMonth = TREATMENT_START.monthValue,
-    treatments = CURATED_TREATMENT_HISTORY_ENTRY.curated!!.treatments,
-    intents = setOf(Intent.PALLIATIVE),
-    treatmentHistoryDetails = TreatmentHistoryDetails(
-        stopYear = TREATMENT_END.year,
-        stopMonth = TREATMENT_END.monthValue,
-        stopReason = StopReason.TOXICITY,
-        bestResponse = TreatmentResponse.COMPLETE_RESPONSE,
-        bodyLocations = setOf("bone"),
-        bodyLocationCategories = setOf(BodyLocationCategory.BONE),
-        switchToTreatments = listOf(
-            TreatmentStage(
-                treatment = MODIFICATION_TREATMENT,
-                cycles = 2,
-                startYear = MODIFICATION_START.year,
-                startMonth = MODIFICATION_START.monthValue
-            )
-        ),
-        cycles = 1,
-        maintenanceTreatment = CURATED_TREATMENT_STAGE,
-    ),
-    isTrial = false,
-    trialAcronym = "trialAcronym",
-)
 private val EXPECTED_TREATMENT_HISTORY_FROM_PRIOR_OTHER_CONDITION = TreatmentHistoryEntry(
     startYear = OTHER_CONDITION_START.year,
     startMonth = OTHER_CONDITION_START.monthValue,
@@ -113,28 +73,11 @@ private val EXPECTED_TREATMENT_HISTORY_FROM_PRIOR_OTHER_CONDITION = TreatmentHis
         bodyLocationCategories = setOf(BodyLocationCategory.BONE),
         switchToTreatments = null,
         cycles = null,
-        maintenanceTreatment = TreatmentStage(
-            treatment = TREATMENT,
-            cycles = 1,
-            startYear = CURATED_MODIFICATION_START.year,
-            startMonth = CURATED_TREATMENT_END.monthValue
-        ),
+        maintenanceTreatment = CURATED_TREATMENT_STAGE,
     ),
     isTrial = false,
     trialAcronym = "trialAcronym",
     intents = setOf(Intent.PALLIATIVE)
-)
-private val EXPECTED_TREATMENT_HISTORY_FALLBACK = EXPECTED_TREATMENT_HISTORY_ENTRY.copy(
-    treatmentHistoryDetails = EXPECTED_TREATMENT_HISTORY_ENTRY.treatmentHistoryDetails?.copy(
-        switchToTreatments = listOf(
-            TreatmentStage(
-                treatment = TREATMENT,
-                cycles = 2,
-                startYear = MODIFICATION_START.year,
-                startMonth = MODIFICATION_START.monthValue
-            )
-        )
-    )
 )
 
 class StandardOncologicalHistoryExtractorTest {
@@ -160,31 +103,46 @@ class StandardOncologicalHistoryExtractorTest {
     }
 
     @Test
-    fun `Should extract treatment with modifications using curated treatment, curated modification and provided response, stop reason, stop date`() {
-        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(CURATED_TREATMENT_HISTORY_ENTRY)
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(CURATED_MODIFICATION_TREATMENT_HISTORY_ENTRY)
+    fun `Should extract treatment with modifications`() {
+        val modificationTreatmentStage = TreatmentStage(
+            DrugTreatment("modification", drugs = emptySet()), 2, 2021, 6
+        )
 
-        val result = extractor.extract(FEED_PATIENT_RECORD.copy(treatmentHistory = listOf(FEED_TREATMENT_HISTORY)))
-
-        assertThat(result.evaluation.warnings).isEmpty()
-        assertThat(result.extracted).isEqualTo(listOf(EXPECTED_TREATMENT_HISTORY_ENTRY))
-    }
-
-    @Test
-    fun `Should extract treatment with modifications using curated intent when provided`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
-            CURATED_TREATMENT_HISTORY_ENTRY.copy(
-                curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(
-                    intents = setOf(Intent.ADJUVANT)
-                )
+            TreatmentHistoryEntryConfig(
+                TREATMENT_NAME,
+                false,
+                CURATED_TREATMENT_HISTORY_ENTRY.curated?.let { entry ->
+                    entry.copy(
+                        treatmentHistoryDetails = entry.treatmentHistoryDetails?.copy(
+                            switchToTreatments = listOf(modificationTreatmentStage)
+                        )
+                    )
+                }
             )
         )
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(CURATED_MODIFICATION_TREATMENT_HISTORY_ENTRY)
 
         val result = extractor.extract(FEED_PATIENT_RECORD.copy(treatmentHistory = listOf(FEED_TREATMENT_HISTORY)))
 
         assertThat(result.evaluation.warnings).isEmpty()
-        assertThat(result.extracted).isEqualTo(listOf(EXPECTED_TREATMENT_HISTORY_ENTRY.copy(intents = setOf(Intent.ADJUVANT))))
+        assertThat(result.extracted).containsExactly(
+            TreatmentHistoryEntry(
+                startYear = TREATMENT_START.year,
+                startMonth = TREATMENT_START.monthValue,
+                treatments = CURATED_TREATMENT_HISTORY_ENTRY.curated!!.treatments,
+                intents = setOf(Intent.PALLIATIVE),
+                treatmentHistoryDetails = TreatmentHistoryDetails(
+                    stopYear = TREATMENT_END.year,
+                    stopMonth = TREATMENT_END.monthValue,
+                    bodyLocations = setOf("bone"),
+                    bodyLocationCategories = setOf(BodyLocationCategory.BONE),
+                    switchToTreatments = listOf(modificationTreatmentStage),
+                    maintenanceTreatment = CURATED_TREATMENT_STAGE,
+                ),
+                isTrial = false,
+                trialAcronym = "trialAcronym",
+            )
+        )
     }
 
     @Test
@@ -193,7 +151,6 @@ class StandardOncologicalHistoryExtractorTest {
             CURATED_TREATMENT_HISTORY_ENTRY.copy(curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(startYear = 2024, startMonth = 10))
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(duplicatedCuration)
         every { treatmentCurationDatabase.find(OTHER_CONDITION_NAME) } returns setOf(duplicatedCuration)
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(CURATED_MODIFICATION_TREATMENT_HISTORY_ENTRY)
 
         val result = extractor.extract(
             FEED_PATIENT_RECORD.copy(
@@ -226,13 +183,6 @@ class StandardOncologicalHistoryExtractorTest {
                 )
             )
         )
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(
-            CURATED_TREATMENT_HISTORY_ENTRY.copy(
-                curated = EXPECTED_TREATMENT_HISTORY_ENTRY.copy(
-                    treatments = setOf(MODIFICATION_TREATMENT)
-                )
-            )
-        )
         val result = extractor.extract(
             FEED_PATIENT_RECORD.copy(treatmentHistory = listOf(FEED_TREATMENT_HISTORY))
         )
@@ -243,62 +193,6 @@ class StandardOncologicalHistoryExtractorTest {
         assertThat(result.extracted[0].treatmentHistoryDetails?.stopMonth).isEqualTo(7)
         assertThat(result.extracted[0].treatmentHistoryDetails?.stopReason).isEqualTo(StopReason.PROGRESSIVE_DISEASE)
         assertThat(result.extracted[0].treatmentHistoryDetails?.bestResponse).isEqualTo(TreatmentResponse.MIXED)
-    }
-
-    @Test
-    fun `Should fallback to original treatment for modification when no curation available and return a warning`() {
-        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
-            CURATED_TREATMENT_HISTORY_ENTRY
-        )
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns emptySet()
-        val result = extractor.extract(
-            FEED_PATIENT_RECORD.copy(
-                treatmentHistory = listOf(FEED_TREATMENT_HISTORY)
-            )
-        )
-        assertThat(result.extracted).containsExactly(
-            EXPECTED_TREATMENT_HISTORY_FALLBACK
-        )
-        assertThat(result.evaluation.warnings).containsExactly(
-            CurationWarning(
-                message = "Could not find treatment history config for input '$MODIFICATION_NAME'",
-                patientId = HASHED_ID_IN_BASE64,
-                category = CurationCategory.ONCOLOGICAL_HISTORY,
-                feedInput = MODIFICATION_NAME
-            )
-        )
-    }
-
-    @Test
-    fun `Should fallback to original treatment for modification and return no warnings if curation is ignored`() {
-        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
-            CURATED_TREATMENT_HISTORY_ENTRY
-        )
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(
-            CURATED_TREATMENT_HISTORY_ENTRY.copy(ignore = true)
-        )
-        val result = extractor.extract(
-            FEED_PATIENT_RECORD.copy(
-                treatmentHistory = listOf(FEED_TREATMENT_HISTORY)
-            )
-        )
-        assertThat(result.extracted).containsExactly(EXPECTED_TREATMENT_HISTORY_FALLBACK)
-        assertThat(result.evaluation.warnings).isEmpty()
-    }
-
-    @Test
-    fun `Should throw exception if modification cannot fall back to original treatment`() {
-        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
-            CURATED_TREATMENT_HISTORY_ENTRY.copy(curated = EXPECTED_TREATMENT_HISTORY_ENTRY.copy(treatments = emptySet()))
-        )
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns emptySet()
-        assertThatThrownBy {
-            extractor.extract(
-                FEED_PATIENT_RECORD.copy(
-                    treatmentHistory = listOf(FEED_TREATMENT_HISTORY)
-                )
-            )
-        }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test

@@ -32,16 +32,15 @@ private val BRAIN_PRIOR_SECOND_PRIMARY = PriorPrimary(
 )
 
 private val DIAGNOSIS_DATE = LocalDate.of(2024, 2, 23)
+private val LAST_TREATMENT_DATE = LocalDate.of(2024, 10, 23)
 
 private const val PRIOR_PRIMARY_INPUT = "$BRAIN_LOCATION | $TYPE"
-private val FEED_PRIOR_PRIMARY = DatedEntry(name = PRIOR_PRIMARY_INPUT, startDate = DIAGNOSIS_DATE)
 
 private val PATIENT_RECORD = FeedTestData.FEED_PATIENT_RECORD.copy(
-    priorPrimaries = listOf(FEED_PRIOR_PRIMARY)
+    priorPrimaries = listOf(DatedEntry(name = PRIOR_PRIMARY_INPUT, startDate = DIAGNOSIS_DATE, endDate = LAST_TREATMENT_DATE))
 )
 
-private val UNUSED_DATE = LocalDate.of(2023, 1, 1)
-private val FEED_OTHER_CONDITION = DatedEntry(name = OTHER_CONDITION_INPUT, startDate = UNUSED_DATE)
+private val FEED_OTHER_CONDITION = DatedEntry(name = OTHER_CONDITION_INPUT, startDate = LocalDate.of(2023, 1, 1))
 
 private val SECOND_PRIMARY_CONFIG = PriorPrimaryConfig(
     ignore = false,
@@ -68,7 +67,14 @@ class StandardPriorPrimariesExtractorTest {
             )
         )
         val result = extractor.extract(PATIENT_RECORD)
-        assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY)
+        assertThat(result.extracted).containsExactly(
+                BRAIN_PRIOR_SECOND_PRIMARY.copy(
+                    diagnosedMonth = DIAGNOSIS_DATE.monthValue,
+                    diagnosedYear = DIAGNOSIS_DATE.year,
+                    lastTreatmentYear = LAST_TREATMENT_DATE.year,
+                    lastTreatmentMonth = LAST_TREATMENT_DATE.monthValue
+                )
+        )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -161,8 +167,8 @@ class StandardPriorPrimariesExtractorTest {
             BRAIN_PRIOR_SECOND_PRIMARY.copy(
                 diagnosedMonth = DIAGNOSIS_DATE.monthValue,
                 diagnosedYear = DIAGNOSIS_DATE.year,
-                lastTreatmentYear = DIAGNOSIS_DATE.year,
-                lastTreatmentMonth = DIAGNOSIS_DATE.monthValue
+                lastTreatmentYear = LAST_TREATMENT_DATE.year,
+                lastTreatmentMonth = LAST_TREATMENT_DATE.monthValue
             )
         )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
