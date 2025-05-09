@@ -25,7 +25,7 @@ data class ProvidedPatientRecord(
     val complications: List<ProvidedComplication> = emptyList(),
     val labValues: List<ProvidedLabValue> = emptyList(),
     val medications: List<ProvidedMedication>? = emptyList(),
-    val molecularTests: List<ProvidedMolecularTest> = emptyList(),
+    val molecularTests: List<ProvidedMolecularTest>? = emptyList(),
     val patientDetails: ProvidedPatientDetail,
     val priorOtherConditions: List<ProvidedOtherCondition> = emptyList(),
     val surgeries: List<ProvidedSurgery> = emptyList(),
@@ -70,7 +70,7 @@ data class ProvidedTumorDetail(
     @Description("Has measurable disease")
     val measurableDisease: Boolean? = null,
     val measurableDiseaseDate: LocalDate? = null,
-    val lesions: List<ProvidedLesion>? = null,
+    val lesions: ProvidedLesionDetail? = null,
     @Description("Deprecated: currently use to store radiology report. Should move to lesions")
     val lesionSite: String? = null,
     @Description("Raw pathology reports")
@@ -361,13 +361,17 @@ data class ProvidedSurgery(
 )
 
 @JacksonSerializable
-data class ProvidedLesion(
-    @Description("Location of lesion (eg. brain)")
-    val location: String,
-    @Description("Diagnosis date of the lesion")
-    val diagnosisDate: LocalDate,
-    @Description("Whether this lesion considered active, only applicable to brain or CNS lesions")
-    val active: Boolean? = null
+data class ProvidedLesionDetail(
+    @Description("Patient has lesion in brain")
+    val hasBrainLesions: Boolean? = null,
+    @Description("Patient has active lesion in brain")
+    val hasActiveBrainLesions: Boolean? = null,
+    @Description("Patient has lesion in bone")
+    val hasBoneLesions: Boolean? = null,
+    @Description("Patient has lesion in liver")
+    val hasLiverLesions: Boolean? = null,
+    @Description("Date of questionnaire")
+    val questionnaireDate: LocalDate
 )
 
 enum class ProvidedGender {

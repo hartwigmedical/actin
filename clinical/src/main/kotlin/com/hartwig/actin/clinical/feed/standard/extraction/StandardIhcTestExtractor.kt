@@ -37,7 +37,7 @@ class StandardIhcTestExtractor(
     }
 
     private fun extractFromMolecularTests(ehrPatientRecord: ProvidedPatientRecord) =
-        ehrPatientRecord.molecularTests.asSequence()
+        ehrPatientRecord.molecularTests.orEmpty().asSequence()
             .flatMap { it.results }
             .mapNotNull { it.ihcResult }
             .mapNotNull {

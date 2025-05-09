@@ -26,7 +26,7 @@ class StandardSequencingTestExtractor(
     StandardDataExtractor<List<SequencingTest>> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<SequencingTest>> {
-        val extracted = ehrPatientRecord.molecularTests.mapNotNull { test ->
+        val extracted = ehrPatientRecord.molecularTests.orEmpty().mapNotNull { test ->
             val testCurationConfig =
                 CurationResponse.createFromConfigs(
                     testCuration.find(test.test),
