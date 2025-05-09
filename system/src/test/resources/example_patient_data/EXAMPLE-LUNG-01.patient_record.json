@@ -373,6 +373,7 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "OSIMERTINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
@@ -395,11 +396,11 @@
                       "isCertain": true
                     },
                     "evidenceYear": 2016,
-                    "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations",
-                    "treatmentTypes": []
+                    "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations"
                   },
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
@@ -422,8 +423,7 @@
                       "isCertain": true
                     },
                     "evidenceYear": 2013,
-                    "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations",
-                    "treatmentTypes": []
+                    "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations"
                   }
                 ],
                 "eligibleTrials": [
@@ -544,6 +544,7 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
@@ -566,9 +567,7 @@
                       "isCertain": true
                     },
                     "evidenceYear": 2015,
-                    "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer.",
-                    "treatmentTypes": []
-
+                    "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer."
                   }
                 ],
                 "eligibleTrials": [

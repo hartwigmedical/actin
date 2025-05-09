@@ -43,6 +43,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val treatment = evidence.treatment()
         return TreatmentEvidence(
             treatment = treatment.name(),
+            treatmentTypes = treatment.treatmentApproachesDrugClass() + treatment.treatmentApproachesTherapy(),
             molecularMatch = createMolecularMatchDetails(evidence.molecularCriterium()),
             cancerTypeMatch = CancerTypeMatchDetails(
                 cancerType = CancerType(
@@ -59,8 +60,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
                 isCertain = evidence.evidenceDirection().isCertain
             ),
             evidenceYear = evidence.evidenceYear(),
-            efficacyDescription = evidence.efficacyDescription(),
-            treatmentTypes = treatment.treatmentApproachesDrugClass() + treatment.treatmentApproachesTherapy()
+            efficacyDescription = evidence.efficacyDescription()
         )
     }
 
