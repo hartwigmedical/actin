@@ -36,7 +36,6 @@ class MolecularSummaryGenerator(
     }
 
     override fun contents(): Table {
-
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
@@ -51,7 +50,7 @@ class MolecularSummaryGenerator(
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(report = pathologyReport)))
+                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(pathologyReport = pathologyReport)))
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
@@ -101,6 +100,4 @@ class MolecularSummaryGenerator(
         table.addCell(Cells.create(molecularResultGenerator.contents()))
 
     }
-
-
 }

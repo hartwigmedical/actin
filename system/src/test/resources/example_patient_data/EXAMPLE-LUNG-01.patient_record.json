@@ -379,11 +379,13 @@
                       "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -405,11 +407,13 @@
                       "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -548,11 +552,13 @@
                       "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "D",
                     "evidenceLevelDetails": "CASE_REPORTS_SERIES",
                     "evidenceDirection": {

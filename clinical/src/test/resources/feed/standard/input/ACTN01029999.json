@@ -248,7 +248,7 @@
       {
         "tissueId": "T-1000090",
         "reportRequested": false,
-        "source": "internal",
+        "lab": "NKI-AvL",
         "diagnosis": "diagnosis",
         "tissueDate": "2020-01-01T10:10:00",
         "authorisationDate": "2020-01-02T10:10:00",
@@ -257,11 +257,9 @@
       {
         "tissueId": "T-1000091",
         "reportRequested": false,
-        "source": "external",
         "lab": "ext lab",
         "diagnosis": "diagnosis",
-        "tissueDate": "2020-02-01T10:10:00",
-        "authorisationDate": "2020-02-02T10:10:00",
+        "reportDate": "2020-02-01T10:10:00",
         "rawPathologyReport": "Raw Pathology Report"
       }
     ]

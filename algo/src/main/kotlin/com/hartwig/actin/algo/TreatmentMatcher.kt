@@ -4,11 +4,10 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
+import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
-import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.datamodel.PatientRecord
-
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial

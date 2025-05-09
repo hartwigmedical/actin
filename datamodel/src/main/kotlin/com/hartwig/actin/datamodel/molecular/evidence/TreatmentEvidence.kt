@@ -1,10 +1,10 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+
 data class TreatmentEvidence(
     val treatment: String,
     val molecularMatch: MolecularMatchDetails,
-    val applicableCancerType: CancerType,
-    val isOnLabel: Boolean,
+    val cancerTypeMatch: CancerTypeMatchDetails,
     val evidenceLevel: EvidenceLevel,
     val evidenceLevelDetails: EvidenceLevelDetails,
     val evidenceDirection: EvidenceDirection,
@@ -12,5 +12,7 @@ data class TreatmentEvidence(
     val efficacyDescription: String,
     val treatmentApproachesDrugClass: Set<String>,
     val treatmentApproachesTherapy: Set<String>
-)
+) {
+    fun isOnLabel() = cancerTypeMatch.applicability.isOnLabel()
+}
  
