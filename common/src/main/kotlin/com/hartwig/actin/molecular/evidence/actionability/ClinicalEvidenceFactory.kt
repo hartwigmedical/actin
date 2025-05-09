@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
@@ -46,7 +45,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val treatment = evidence.treatment()
         return TreatmentEvidence(
             treatment = treatment.name(),
-            molecularMatch = extractMolecularMatchDetails(evidence.molecularCriterium()),
+            molecularMatch = createMolecularMatchDetails(evidence.molecularCriterium()),
             cancerTypeMatch = CancerTypeMatchDetails(
                 cancerType = CancerType(
                     matchedCancerType = evidence.indication().applicableType().name(),
@@ -101,7 +100,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         }.toSet()
 
         val molecularMatches = matchingCriteria.map {
-            extractMolecularMatchDetails(it)
+            createMolecularMatchDetails(it)
         }.toSet()
 
         val applicableCancerTypes = matchingIndications.map { indication ->
@@ -133,7 +132,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         )
     }
 
-    private fun extractMolecularMatchDetails(molecularCriterium: MolecularCriterium): MolecularMatchDetails {
+    private fun createMolecularMatchDetails(molecularCriterium: MolecularCriterium): MolecularMatchDetails {
         val (evidenceType, event) = ActionableEventExtraction.extractEvent(molecularCriterium)
         return MolecularMatchDetails(
             sourceDate = event.sourceDate(),
