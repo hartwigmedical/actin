@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedLesionDetail
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientDetail
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedSurgery
@@ -33,7 +34,13 @@ object EhrTestData {
         diagnosisDate = DATE_Y2023_M02_D23,
         tumorLocation = "tumorLocation",
         tumorType = "tumorType",
-        lesions = emptyList(),
+        lesions = ProvidedLesionDetail(
+            hasBrainLesions = false,
+            hasActiveBrainLesions = false,
+            hasBoneLesions = false,
+            hasLiverLesions = false,
+            questionnaireDate = DATE_Y2023_M02_D23
+        ),
         measurableDiseaseDate = DATE_Y2023_M02_D23,
         measurableDisease = true,
         tumorGradeDifferentiation = "tumorGradeDifferentiation",

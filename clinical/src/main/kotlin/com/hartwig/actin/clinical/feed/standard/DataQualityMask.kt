@@ -21,7 +21,7 @@ private fun ProvidedPatientRecord.useOnlyPriorOtherConditions() = this.copy(
 )
 
 private fun ProvidedPatientRecord.removeAllEmptyMolecularTestResults() =
-    this.copy(molecularTests = this.molecularTests.map {
+    this.copy(molecularTests = this.molecularTests?.map {
         it.copy(results = it.results.filterNot { r -> r.isAllFieldsExceptGeneNull() }.toSet())
     })
 

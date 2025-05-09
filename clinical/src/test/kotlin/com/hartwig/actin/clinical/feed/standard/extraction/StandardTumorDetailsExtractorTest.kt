@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
@@ -10,7 +9,6 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedLesion
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
 import io.mockk.every
 import io.mockk.mockk
@@ -80,13 +78,10 @@ class StandardTumorDetailsExtractorTest {
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
         every { find(OTHER_CONDITION_INPUT) } returns emptySet()
     }
-    private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
-        every { find(any()) } returns emptySet()
-    }
     private val tumorStageDeriver = mockk<TumorStageDeriver> {
         every { derive(any()) } returns null
     }
-    private val extractor = StandardTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
+    private val extractor = StandardTumorDetailsExtractor(tumorCuration, tumorStageDeriver)
 
     @Test
     fun `Should curate primary tumor and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
@@ -146,17 +141,11 @@ class StandardTumorDetailsExtractorTest {
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
                     tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(
-                        lesions = listOf(
-                            ProvidedLesion("liver", DIAGNOSIS_DATE, true)
-                        )
+                        lesions = EHR_PATIENT_RECORD.tumorDetails.lesions?.copy(hasLiverLesions = true, questionnaireDate = DIAGNOSIS_DATE)
                     )
                 )
             )
-        assertThat(result.extracted).isEqualTo(
-            TUMOR_DETAILS.copy(
-                hasLiverLesions = true
-            )
-        )
+        assertThat(result.extracted).isEqualTo(TUMOR_DETAILS.copy(hasLiverLesions = true))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -167,9 +156,7 @@ class StandardTumorDetailsExtractorTest {
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
                     tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(
-                        lesions = listOf(
-                            ProvidedLesion("brain", DIAGNOSIS_DATE, false)
-                        )
+                        lesions = EHR_PATIENT_RECORD.tumorDetails.lesions?.copy(hasBrainLesions = true, questionnaireDate = DIAGNOSIS_DATE)
                     )
                 )
             )
@@ -189,8 +176,8 @@ class StandardTumorDetailsExtractorTest {
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
                     tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(
-                        lesions = listOf(
-                            ProvidedLesion("brain", DIAGNOSIS_DATE, true)
+                        lesions = EHR_PATIENT_RECORD.tumorDetails.lesions?.copy(
+                            hasBrainLesions = true, hasActiveBrainLesions = true, questionnaireDate = DIAGNOSIS_DATE
                         )
                     )
                 )
@@ -222,7 +209,7 @@ class StandardTumorDetailsExtractorTest {
                 )
             )
         }
-        val extractor = StandardTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
+        val extractor = StandardTumorDetailsExtractor(tumorCuration, tumorStageDeriver)
         val result =
             extractor.extract(EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorLocation = "Brain")))
         assertThat(result.extracted).isEqualTo(

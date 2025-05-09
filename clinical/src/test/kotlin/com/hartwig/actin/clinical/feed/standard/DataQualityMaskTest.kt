@@ -35,7 +35,7 @@ class DataQualityMaskTest {
                 )
             )
         val result = dataQualityMask.apply(ehrPatientRecord)
-        assertThat(result.molecularTests[0].results).containsOnly(nonEmptyVariant)
+        assertThat(result.molecularTests!![0].results).containsOnly(nonEmptyVariant)
     }
 
     @Test
