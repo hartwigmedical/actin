@@ -9,9 +9,9 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class HotspotComparisonConfig(
-        val orangeJson: String,
-        val serveDirectory: String,
-        val outputDirectory: String
+    val orangeJson: String,
+    val serveDirectory: String,
+    val outputDirectory: String
 ) {
 
     companion object {
@@ -37,9 +37,9 @@ data class HotspotComparisonConfig(
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
             return HotspotComparisonConfig(
-                    orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
-                    serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
-                    outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
+                orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
+                serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }
     }
