@@ -36,6 +36,7 @@ object InterpretedCohortFactory {
                         isOpen = identification.open,
                         hasSlotsAvailable = identification.open,
                         ignore = false,
+                        isEvaluable = true,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
                         isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
@@ -61,6 +62,7 @@ object InterpretedCohortFactory {
                         isOpen = identification.open && cohortMatch.metadata.open,
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         ignore = cohortMatch.metadata.ignore,
+                        isEvaluable = true,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
                         isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation ||
@@ -91,6 +93,7 @@ object InterpretedCohortFactory {
                     isOpen = identification.open && cohortMetadata.open,
                     hasSlotsAvailable = cohortMetadata.slotsAvailable,
                     ignore = cohortMetadata.ignore,
+                    isEvaluable = false,
                     molecularEvents = emptySet(),
                     isPotentiallyEligible = false,
                     isMissingMolecularResultForEvaluation = false,

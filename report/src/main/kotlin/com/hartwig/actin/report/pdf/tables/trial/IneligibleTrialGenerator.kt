@@ -13,7 +13,8 @@ class IneligibleTrialGenerator(
     private val title: String,
     private val footNote: String?,
     private val includeIneligibilityColumn: Boolean,
-    private val allowDeEmphasis: Boolean
+    private val allowDeEmphasis: Boolean,
+    private val includeConfiguration: Boolean,
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -30,10 +31,13 @@ class IneligibleTrialGenerator(
         val molecularColWidth = 1f
         val locationColWidth = 1f
         val ineligibilityColWidth = 3f
+        val configColWidth = 3f
 
         val table =
             if (includeIneligibilityColumn) {
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, ineligibilityColWidth)
+            } else if (includeConfiguration) {
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
             } else {
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
             }
@@ -45,6 +49,9 @@ class IneligibleTrialGenerator(
         if (includeIneligibilityColumn) {
             table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
+        if (includeConfiguration) {
+            table.addHeaderCell(Cells.createHeader("Configuration"))
+        }
         
         addTrialsToTable(
             table = table,
@@ -54,7 +61,8 @@ class IneligibleTrialGenerator(
             countryOfReference = null,
             includeFeedback = includeIneligibilityColumn,
             feedbackFunction = InterpretedCohort::fails,
-            allowDeEmphasis = allowDeEmphasis
+            allowDeEmphasis = allowDeEmphasis,
+            includeConfiguration = includeConfiguration
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -85,7 +93,8 @@ class IneligibleTrialGenerator(
                 title = title,
                 footNote = footNote,
                 includeIneligibilityColumn = true,
-                allowDeEmphasis = true
+                allowDeEmphasis = true,
+                includeConfiguration = false
             )
         }
 
@@ -103,7 +112,8 @@ class IneligibleTrialGenerator(
                 title = title,
                 footNote = null,
                 includeIneligibilityColumn = false,
-                allowDeEmphasis = false
+                allowDeEmphasis = false,
+                includeConfiguration = true
             )
         }
     }
