@@ -36,6 +36,21 @@ object TestClinicalFactory {
     private const val DAYS_UNTIL_MEDICATION_END = 15
     private const val YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS = 3
 
+    fun createMinimalTestClinicalRecord(
+        patientId: String,
+        gender: Gender,
+        birthYear: Int,
+        doids: Set<String>
+    ): ClinicalRecord {
+        var clinicalRecord = createMinimalTestClinicalRecord()
+        clinicalRecord = clinicalRecord.copy(
+            patientId = patientId,
+            patient = clinicalRecord.patient.copy(gender = gender, birthYear = birthYear),
+            tumor = clinicalRecord.tumor.copy(doids = doids)
+        )
+        return clinicalRecord
+    }
+
     fun createMinimalTestClinicalRecord(): ClinicalRecord {
         return ClinicalRecord(
             patientId = TestPatientFactory.TEST_PATIENT,
