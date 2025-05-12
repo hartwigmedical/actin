@@ -15,6 +15,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.efficacy.Treatment
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
@@ -43,7 +44,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val treatment = evidence.treatment()
         return TreatmentEvidence(
             treatment = treatment.name(),
-            treatmentTypes = treatment.treatmentApproachesDrugClass() + treatment.treatmentApproachesTherapy(),
+            treatmentTypes = determineTreatmentTypes(treatment),
             molecularMatch = createMolecularMatchDetails(evidence.molecularCriterium()),
             cancerTypeMatch = CancerTypeMatchDetails(
                 cancerType = CancerType(
@@ -62,6 +63,10 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
             evidenceYear = evidence.evidenceYear(),
             efficacyDescription = evidence.efficacyDescription()
         )
+    }
+
+    private fun determineTreatmentTypes(treatment: Treatment) : Set<String> {
+        return treatment.treatmentApproachesDrugClass().ifEmpty { treatment.treatmentApproachesTherapy() }
     }
 
     private fun determineOnLabelTrials(matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>):
