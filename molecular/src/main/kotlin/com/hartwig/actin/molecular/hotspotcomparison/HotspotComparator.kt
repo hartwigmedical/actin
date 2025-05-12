@@ -1,6 +1,12 @@
 package com.hartwig.actin.molecular.hotspotcomparison
 
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.panel.isHotspot
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
@@ -15,7 +21,7 @@ object HotspotComparator {
         val knownGenes = serveRecord.knownEvents().genes().map(KnownGene::gene).toSet()
         return orange.purple().allSomaticVariants().filter { it.gene() in knownGenes }
             .mapNotNull { variant ->
-                val criteria = createVariantCriteria(variant)
+                val criteria = createMinimalVariantForMatching(variant)
                 val knownEventResolver = KnownEventResolverFactory.create(serveRecord.knownEvents())
                 val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
                 val isHotspotServe = isHotspot(serveGeneAlteration)
@@ -38,25 +44,34 @@ object HotspotComparator {
             }
     }
 
-    private fun createVariantCriteria(variant: PurpleVariant) =
+    private fun createMinimalVariantForMatching(variant: PurpleVariant) =
         Variant(
             gene = variant.gene(),
             chromosome = variant.chromosome(),
             position = variant.position(),
             ref = variant.ref(),
             alt = variant.alt(),
-            isReportable = variant.reported(),
-            type = TODO(),
-            variantAlleleFrequency = TODO(),
-            canonicalImpact = TODO(),
-            otherImpacts = TODO(),
-            extendedVariantDetails = TODO(),
-            isHotspot = TODO(),
-            event = TODO(),
-            driverLikelihood = TODO(),
-            evidence = TODO(),
-            geneRole = TODO(),
-            proteinEffect = TODO(),
-            isAssociatedWithDrugResistance = TODO(),
+            type = VariantType.UNDEFINED,
+            variantAlleleFrequency = null,
+            canonicalImpact = TranscriptVariantImpact(
+                transcriptId = "",
+                hgvsCodingImpact = "",
+                hgvsProteinImpact = "",
+                affectedCodon = 0,
+                isSpliceRegion = false,
+                effects = emptySet(),
+                codingEffect = CodingEffect.NONE,
+                affectedExon = null
+            ),
+            otherImpacts = emptySet(),
+            extendedVariantDetails = null,
+            isHotspot = false,
+            isReportable = false,
+            event = "",
+            driverLikelihood = null,
+            evidence = ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet()),
+            geneRole = GeneRole.UNKNOWN,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = false
         )
 }
