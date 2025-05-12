@@ -85,7 +85,7 @@ class StandardMedicationExtractorTest {
             diagnosisDate = LocalDate.of(2024, 2, 23),
             tumorLocation = "tumorLocation",
             tumorType = "tumorType",
-            lesions = emptyList(),
+            lesions = null,
             measurableDiseaseDate = LocalDate.of(2024, 2, 23),
             measurableDisease = false,
             tumorGradeDifferentiation = "tumorGradeDifferentiation",

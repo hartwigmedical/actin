@@ -102,6 +102,7 @@ object TestTreatmentEvidenceFactory {
         sourceUrl: String = SOURCE_EVENT_URL
     ) = TreatmentEvidence(
         treatment = treatment,
+        treatmentTypes = emptySet(),
         molecularMatch = TestMolecularMatchDetailsFactory.create(
             sourceDate = sourceDate,
             sourceEvent = sourceEvent,

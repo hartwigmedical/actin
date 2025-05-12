@@ -166,11 +166,7 @@ class StandardDataIngestion(
             StandardComorbidityExtractor(curationDatabaseContext.comorbidityCuration),
             StandardOncologicalHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
             StandardClinicalStatusExtractor(),
-            StandardTumorDetailsExtractor(
-                curationDatabaseContext.primaryTumorCuration,
-                curationDatabaseContext.lesionLocationCuration,
-                TumorStageDeriver.create(doidModel)
-            ),
+            StandardTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, TumorStageDeriver.create(doidModel)),
             StandardPriorPrimariesExtractor(curationDatabaseContext.priorPrimaryCuration),
             StandardPatientDetailsExtractor(),
             StandardBodyWeightExtractor(),

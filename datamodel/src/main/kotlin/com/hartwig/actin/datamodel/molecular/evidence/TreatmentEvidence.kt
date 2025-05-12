@@ -3,6 +3,7 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 data class TreatmentEvidence(
     val treatment: String,
+    val treatmentTypes: Set<String>,
     val molecularMatch: MolecularMatchDetails,
     val cancerTypeMatch: CancerTypeMatchDetails,
     val evidenceLevel: EvidenceLevel,

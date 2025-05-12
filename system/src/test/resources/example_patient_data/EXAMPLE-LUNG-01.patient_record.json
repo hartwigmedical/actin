@@ -373,6 +373,7 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "OSIMERTINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
@@ -399,6 +400,7 @@
                   },
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
@@ -542,6 +544,7 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",

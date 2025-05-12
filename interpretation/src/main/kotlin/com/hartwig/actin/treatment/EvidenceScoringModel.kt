@@ -30,9 +30,8 @@ class EvidenceScoringModel(val config: ScoringConfig) {
         val exactVariant = if (treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()) VariantMatch.CATEGORY else VariantMatch.EXACT
         val scoringMatch = ScoringMatch(cancerTypeApplicability, exactVariant)
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
-        val factor = (config.categoryMatchLevels[scoringMatch] ?: throw noConfiguredMatchException(scoringMatch)) * direction
-        val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails]
-            ?: throw noConfigureEvidenceLevelException(treatment.evidenceLevelDetails)
+        val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
+        val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
         return EvidenceScore(
             scoringMatch = scoringMatch,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
@@ -42,9 +41,4 @@ class EvidenceScoringModel(val config: ScoringConfig) {
             cancerType = treatment.cancerTypeMatch.cancerType
         )
     }
-
-    private fun noConfigureEvidenceLevelException(evidenceLevelDetails: EvidenceLevelDetails) = illegalStateException(evidenceLevelDetails)
-    private fun noConfiguredMatchException(scoringMatch: ScoringMatch) = illegalStateException(scoringMatch)
-    private fun illegalStateException(missing: Any) =
-        IllegalStateException("Scoring config should have a score configured for [${missing}]. Check code in ScoringConfig.")
 }

@@ -10,7 +10,6 @@ import java.time.LocalDate
 const val HASHED_ID_IN_BASE64 = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0="
 const val TREATMENT_NAME = "treatmentName"
 const val SURGERY_NAME = "surgeryName"
-const val MODIFICATION_NAME = "modificationName"
 const val OTHER_CONDITION_INPUT = "prior condition"
 const val TREATMENT_HISTORY_INPUT = "treatment name"
 private val DATE_Y2023_M02_D23 = LocalDate.of(2024, 2, 23)
@@ -45,6 +44,10 @@ object FeedTestData {
         tumorLocation = "tumorLocation",
         tumorType = "tumorType",
         lesions = emptyList(),
+        hasBrainLesions = false,
+        hasActiveBrainLesions = false,
+        hasBoneLesions = false,
+        hasLiverLesions = false,
         measurableDiseaseDate = DATE_Y2023_M02_D23,
         measurableDisease = true,
         tumorGradeDifferentiation = "tumorGradeDifferentiation",

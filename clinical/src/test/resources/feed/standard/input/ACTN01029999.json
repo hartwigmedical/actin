@@ -6,8 +6,7 @@
       "endDate": "2020-01-01T10:10:00",
       "verificationStatus": "Confirmed",
       "clinicalStatus": "Active",
-      "severity": "Unknown",
-      "category": "Medication"
+      "severity": "Unknown"
     },
     {
       "name": "Nikkel",
@@ -15,8 +14,7 @@
       "endDate": "2020-01-01T10:10:00",
       "verificationStatus": "Confirmed",
       "clinicalStatus": "Active",
-      "severity": "Unknown",
-      "category": "Other"
+      "severity": "Unknown"
     }
   ],
   "bloodTransfusions": [
@@ -28,13 +26,11 @@
   "complications": [
     {
       "name": "Overige",
-      "categories": [],
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01"
     },
     {
       "name": "Uncurateable",
-      "categories": [],
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01"
     }
@@ -44,61 +40,51 @@
       "date": "2020-01-01T10:10:00",
       "measure": "Neutrof. granulocyten",
       "measureCode": "dc_NeutrGran",
-      "category": "Hematologie",
       "value": "3.7",
       "unit": "10E9/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "N"
+      "comparator": null
     },
     {
       "date": "2020-01-01T10:10:00",
       "measure": "O2-Saturatie gemeten",
       "measureCode": "bg_O2Sgem",
-      "category": "Bloedgas analyse",
       "value": "88",
       "unit": "%",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "H"
+      "comparator": null
     },
     {
       "date": "2020-01-01T10:10:00",
       "measure": "Trombocyten",
       "measureCode": "Plt",
-      "category": "Hematologie",
       "value": "252",
       "unit": "10E9/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "N"
+      "comparator": null
     },
     {
       "date": "2020-01-01T10:10:00",
       "measure": "Lymfocyten",
       "measureCode": "dc_Lymfo",
-      "category": "Cellen (Automaat)",
       "value": "0.6",
       "unit": "10E9/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "L"
+      "comparator": null
     },
     {
       "date": "2020-01-01T10:10:00",
       "measure": "Hemoglobine",
       "measureCode": "Hb",
-      "category": "Hematologie",
       "value": "7.7",
       "unit": "mmol/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "N"
+      "comparator": null
     }
   ],
   "medications": [
@@ -146,21 +132,19 @@
     "birthYear": 5,
     "gender": "Female",
     "registrationDate": "2020-01-01",
+    "hartwigMolecularDataExpected": true,
     "sourceId": "PT-1001"
   },
-  "molecularTests": [
+  "sequencingTests": [
     {
-      "test": "Archer",
+      "name": "Archer",
       "date": "2024-07-15",
       "results": [
-        {
-          "gene": "KRAS",
-          "hgvsCodingImpact": "c.34G>T"
-        }
+        "KRAS c.34G>T"
       ]
     }
   ],
-  "priorOtherConditions": [
+  "otherConditions": [
     {
       "name": "pijn bij maligne neoplasma van longen",
       "startDate": "2020-01-01T10:10:00",
@@ -174,17 +158,17 @@
   ],
   "surgeries": [
     {
-      "surgeryName": "<CRYO Skelet door Radioloog",
+      "name": "<CRYO Skelet door Radioloog",
       "endDate": "2020-01-01T10:10:00",
       "status": "FINISHED"
     },
     {
-      "surgeryName": "diagnostics stomach",
+      "name": "diagnostics stomach",
       "endDate": "2021-01-01T10:10:00",
       "status": "CANCELLED"
     },
     {
-      "surgeryName": "Geen ingreep- operatie uitgesteld",
+      "name": "Geen ingreep- operatie uitgesteld",
       "endDate": "2024-01-01T10:10:00",
       "status": "FINISHED"
     }
@@ -192,18 +176,12 @@
   "toxicities": [
     {
       "name": "Dysphagia",
-      "categories": [
-        "GASTROINTESTINAL DISORDERS"
-      ],
       "evaluatedDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "grade": 5
     },
     {
       "name": "Pain",
-      "categories": [
-        "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
-      ],
       "evaluatedDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "grade": 5
@@ -212,44 +190,24 @@
   "treatmentHistory": [
     {
       "name": "capecitabine and oxi",
-      "intention": null,
-      "startDate": "2020-01-01T10:10:00",
-      "endDate": "2020-01-01T10:10:00",
-      "stopReason": null,
-      "stopReasonDate": "2020-01-01T10:10:00",
-      "response": null,
-      "responseDate": "2020-01-01T10:10:00",
-      "intendedCycles": 5,
-      "administeredCycles": 5,
-      "modifications": [
-        {
-          "date": "2020-01-01T10:10:00",
-          "cycle": 6,
-          "name": "capecitabine and oxi"
-        }
-      ],
-      "grade2Toxicities": null,
-      "grade2ToxicitiesDate": "2020-01-01T10:10:00",
-      "administeredInStudy": true
+      "startDate": "2020-01-01",
+      "endDate": "2020-01-01"
     }
   ],
   "tumorDetails": {
-    "diagnosisDate": "2020-01-01T10:10:00",
+    "diagnosisDate": "2020-01-01",
     "tumorLocation": "long",
     "tumorType": "metastase adenocarcinoom",
     "tumorGradeDifferentiation": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\r\n\r\n\r\nimmunohistochemie ERBB2 3+\n\n",
-    "tumorStage": "IV",
+    "stage": "IV",
     "tumorStageDate": "2020-01-01T10:10:00",
-    "lesions": [
-      {
-        "location": "brain",
-        "active": true,
-        "sublocation": null,
-        "diagnosisDate": "2020-01-01"
-      }
-    ],
+    "hasBoneLesions": false,
+    "hasBrainLesions": true,
+    "hasActiveBrainLesions": true,
+    "hasLiverLesions": false,
+    "lesions": [],
     "measurableDisease": true,
-    "measurableDiseaseDate": "2020-01-01T10:10:00",
+    "measurableDiseaseDate": "2020-01-01",
     "pathology": [
       {
         "tissueId": "T-1000090",

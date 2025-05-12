@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
@@ -11,7 +10,6 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.feed.datamodel.DatedEntry
-import com.hartwig.feed.datamodel.FeedLesion
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -71,20 +69,15 @@ private val EHR_PRIOR_OTHER_CONDITION = DatedEntry(
     startDate = UNUSED_DATE
 )
 
-private val DIAGNOSIS_DATE = LocalDate.of(2024, 8, 1)
-
 class StandardTumorDetailsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
         every { find(OTHER_CONDITION_INPUT) } returns emptySet()
     }
-    private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
-        every { find(any()) } returns emptySet()
-    }
     private val tumorStageDeriver = mockk<TumorStageDeriver> {
         every { derive(any()) } returns null
     }
-    private val extractor = StandardTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
+    private val extractor = StandardTumorDetailsExtractor(tumorCuration, tumorStageDeriver)
 
     @Test
     fun `Should curate primary tumor and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
@@ -138,23 +131,15 @@ class StandardTumorDetailsExtractorTest {
     }
 
     @Test
-    fun `Should extract lesions from provided tumor details lesion list`() {
+    fun `Should assign lesions from feed tumor details`() {
         setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG)
         val result =
             extractor.extract(
                 FEED_PATIENT_RECORD.copy(
-                    tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
-                        lesions = listOf(
-                            FeedLesion("liver", DIAGNOSIS_DATE, true)
-                        )
-                    )
+                    tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(hasLiverLesions = true)
                 )
             )
-        assertThat(result.extracted).isEqualTo(
-            TUMOR_DETAILS.copy(
-                hasLiverLesions = true
-            )
-        )
+        assertThat(result.extracted).isEqualTo(TUMOR_DETAILS.copy(hasLiverLesions = true))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -164,11 +149,7 @@ class StandardTumorDetailsExtractorTest {
         val result =
             extractor.extract(
                 FEED_PATIENT_RECORD.copy(
-                    tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
-                        lesions = listOf(
-                            FeedLesion("brain", DIAGNOSIS_DATE, false)
-                        )
-                    )
+                    tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(hasBrainLesions = true)
                 )
             )
         assertThat(result.extracted).isEqualTo(
@@ -186,11 +167,7 @@ class StandardTumorDetailsExtractorTest {
         val result =
             extractor.extract(
                 FEED_PATIENT_RECORD.copy(
-                    tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
-                        lesions = listOf(
-                            FeedLesion("brain", DIAGNOSIS_DATE, true)
-                        )
-                    )
+                    tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(hasBrainLesions = true, hasActiveBrainLesions = true)
                 )
             )
         assertThat(result.extracted).isEqualTo(
@@ -220,7 +197,7 @@ class StandardTumorDetailsExtractorTest {
                 )
             )
         }
-        val extractor = StandardTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
+        val extractor = StandardTumorDetailsExtractor(tumorCuration, tumorStageDeriver)
         val result =
             extractor.extract(FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(tumorLocation = "Brain")))
         assertThat(result.extracted).isEqualTo(
