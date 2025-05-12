@@ -132,7 +132,7 @@
     "birthYear": 5,
     "gender": "Female",
     "registrationDate": "2020-01-01",
-    "hartwigMolecularDataExpected": true,
+    "hartwigMolecularDataExpected": false,
     "sourceId": "PT-1001"
   },
   "sequencingTests": [
@@ -140,7 +140,7 @@
       "name": "Archer",
       "date": "2024-07-15",
       "results": [
-        "KRAS c.34G>T"
+        "KRAS G12F"
       ]
     }
   ],
