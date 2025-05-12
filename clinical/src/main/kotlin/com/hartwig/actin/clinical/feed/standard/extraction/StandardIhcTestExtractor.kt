@@ -73,7 +73,7 @@ class StandardIhcTestExtractor(
             }
 
     private fun extractFromTumorDifferentiation(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<IhcTest>>> =
-        ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")?.asSequence()
+        ehrPatientRecord.tumorDetails.pathology?.asSequence()?.flatMap { it.rawPathologyReport.split("\n") }
             ?.map { it.trim() }
             ?.filterNot { it.contains(IHC_STRING, ignoreCase = true) }
             ?.map { curateFromSecondarySource(it, ehrPatientRecord) }
@@ -115,7 +115,7 @@ class StandardIhcTestExtractor(
         molecularTestCuration: CurationDatabase<IhcTestConfig>, ehrPatientRecord: ProvidedPatientRecord
     ): List<ExtractionResult<List<IhcTest>>> {
         val linesWithIhc =
-            ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")
+            ehrPatientRecord.tumorDetails.pathology?.flatMap { it.rawPathologyReport.split("\n") }
                 ?.filter { it.contains(IHC_STRING, ignoreCase = true) }
                 ?: emptyList()
         return linesWithIhc.map { it.replace("\n", "").replace("\r", "") }.map {

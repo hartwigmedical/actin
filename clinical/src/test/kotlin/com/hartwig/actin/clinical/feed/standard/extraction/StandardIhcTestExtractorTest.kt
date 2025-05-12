@@ -11,18 +11,23 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedPathologyReport
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val IHC_TEST = IhcTest(item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
 private const val MICROSCOPIE_LINE = "TTF1 negatief"
 
-private const val PATHOLOGY_REPORT =
-    "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
+private val PATHOLOGY_REPORT = ProvidedPathologyReport(
+    lab = "lab",
+    diagnosis = "diagnosis",
+    reportRequested = true,
+    rawPathologyReport = "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
+)
 private val IHC_TEST_EGFR =
     IhcTest(
         item = "EGFR",
@@ -34,7 +39,7 @@ private val IHC_TEST_EGFR =
 
 private val EHR_PATIENT_RECORD = createEhrPatientRecord()
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
-    EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = PATHOLOGY_REPORT))
+    EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(pathology = listOf(PATHOLOGY_REPORT)))
 private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
 
 
@@ -141,8 +146,12 @@ class StandardIhcTestExtractorTest {
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
                     tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(
-                        tumorGradeDifferentiation = PATHOLOGY_REPORT.replace(
-                            IHC_LINE, ""
+                        pathology = listOf(
+                            PATHOLOGY_REPORT.copy(
+                                rawPathologyReport = PATHOLOGY_REPORT.rawPathologyReport.replace(
+                                    IHC_LINE, ""
+                                )
+                            )
                         )
                     )
                 )
