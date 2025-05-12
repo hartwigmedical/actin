@@ -1,15 +1,14 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisruption
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.driver.VariantType
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -40,10 +39,10 @@ class KnownEventResolverTest {
         val knownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build()
         val resolver = KnownEventResolver(knownEvents, knownEvents.genes())
 
-        val hotspotMatch = VariantMatchCriteria(
+        val hotspotMatch = TestMolecularFactory.createMinimalVariant().copy(
             isReportable = true,
             gene = "gene 1",
-            codingEffect = CodingEffect.MISSENSE,
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
             type = VariantType.SNV,
             chromosome = "12",
             position = 10,
@@ -112,8 +111,8 @@ class KnownEventResolverTest {
         val knownEvents = ImmutableKnownEvents.builder().addFusions(fusion).build()
         val resolver = KnownEventResolver(knownEvents, knownEvents.genes())
 
-        val fusionMatch =
-            FusionMatchCriteria(isReportable = true, geneStart = "up", geneEnd = "down", driverType = FusionDriverType.KNOWN_PAIR)
+        val fusionMatch = TestMolecularFactory.createMinimalFusion()
+            .copy(isReportable = true, geneStart = "up", geneEnd = "down", driverType = FusionDriverType.KNOWN_PAIR)
         assertThat(resolver.resolveForFusion(fusionMatch)).isEqualTo(fusion)
 
         val fusionMismatch = fusionMatch.copy(geneStart = "down", geneEnd = "up")

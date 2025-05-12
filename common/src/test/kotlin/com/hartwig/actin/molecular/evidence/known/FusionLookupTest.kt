@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.evidence.known
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val FUSION_CRITERIA = FusionMatchCriteria(
+private val FUSION_CRITERIA = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,
     geneStart = "up",
     geneEnd = "down",

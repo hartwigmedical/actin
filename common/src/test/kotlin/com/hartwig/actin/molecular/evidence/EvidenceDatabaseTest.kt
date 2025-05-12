@@ -1,15 +1,12 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -19,15 +16,12 @@ class EvidenceDatabaseTest {
 
     @Test
     fun `Should match evidence for variants`() {
-        val variant = VariantMatchCriteria(
-            gene = "",
-            chromosome = "",
-            position = 0,
-            ref = "",
-            alt = "",
-            driverLikelihood = DriverLikelihood.HIGH,
-            isReportable = true
+
+        val variant = TestMolecularFactory.createMinimalVariant().copy(
+            isReportable = true,
+            driverLikelihood = DriverLikelihood.HIGH
         )
+
         assertThat(database.geneAlterationForVariant(variant)).isNotNull()
         assertEvidence(database.evidenceForVariant(variant), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
@@ -63,13 +57,8 @@ class EvidenceDatabaseTest {
 
     @Test
     fun `Should match evidence for fusion`() {
-        val fusion = FusionMatchCriteria(
+        val fusion = TestMolecularFactory.createMinimalFusion().copy(
             isReportable = true,
-            geneStart = "",
-            fusedExonUp = 0,
-            geneEnd = "",
-            fusedExonDown = 0,
-            driverType = FusionDriverType.NONE,
         )
         assertThat(database.lookupKnownFusion(fusion)).isNotNull()
         assertEvidence(database.evidenceForFusion(fusion), expectedTreatmentMatches = 2, expectedTrialMatches = 2)

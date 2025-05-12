@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 
 class ClinicalEvidenceMatcher(
     private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
@@ -35,7 +35,7 @@ class ClinicalEvidenceMatcher(
         return personalizedActionabilityFactory.create(signatureEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad))
     }
 
-    fun matchForVariant(variant: VariantMatchCriteria): ClinicalEvidence {
+    fun matchForVariant(variant: Variant): ClinicalEvidence {
         return personalizedActionabilityFactory.create(variantEvidence.findMatches(variant))
     }
 
@@ -51,7 +51,7 @@ class ClinicalEvidenceMatcher(
         return personalizedActionabilityFactory.create(disruptionEvidence.findMatches(disruption))
     }
 
-    fun matchForFusion(fusion: FusionMatchCriteria): ClinicalEvidence {
+    fun matchForFusion(fusion: Fusion): ClinicalEvidence {
         return personalizedActionabilityFactory.create(fusionEvidence.findMatches(fusion))
     }
 

@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
@@ -7,9 +8,9 @@ import com.hartwig.serve.datamodel.molecular.MutationType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val VARIANT_CRITERIA = VariantMatchCriteria(
+private val VARIANT_CRITERIA = TestMolecularFactory.createMinimalVariant().copy(
     gene = "gene 1",
-    codingEffect = CodingEffect.MISSENSE,
+    canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
     type = VariantType.SNV,
     chromosome = "12",
     position = 13,
@@ -45,6 +46,9 @@ class RangeMatchingTest {
 
     @Test
     fun `Should return false on non-matching coding effect`() {
-        assertThat(RangeMatching.isMatch(RANGE, VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONE))).isFalse()
+        assertThat(RangeMatching.isMatch(RANGE, VARIANT_CRITERIA
+            .copy(canonicalImpact = VARIANT_CRITERIA.canonicalImpact.copy(
+                codingEffect = CodingEffect.NONE)))
+        ).isFalse()
     }
 }

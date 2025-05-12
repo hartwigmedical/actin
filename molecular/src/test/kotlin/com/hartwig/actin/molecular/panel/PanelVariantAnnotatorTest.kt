@@ -18,7 +18,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFacto
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
@@ -81,18 +80,21 @@ private val VARIANT = Variant(
     isAssociatedWithDrugResistance = true
 )
 
-private val VARIANT_MATCH_CRITERIA =
-    VariantMatchCriteria(
-        gene = GENE,
-        codingEffect = CodingEffect.MISSENSE,
-        type = VariantType.SNV,
-        chromosome = CHROMOSOME,
-        position = POSITION,
-        ref = REF,
-        alt = ALT,
-        driverLikelihood = DriverLikelihood.HIGH,
-        isReportable = true,
-    )
+private val UNANNOTATED_VARIANT = VARIANT.copy(
+    isHotspot = false,
+    geneRole = GeneRole.UNKNOWN,
+    proteinEffect = ProteinEffect.UNKNOWN,
+    driverLikelihood = null,
+    isAssociatedWithDrugResistance = null,
+)
+
+private val ANNOTATED_VARIANT = VARIANT.copy(
+    isHotspot = true,
+    geneRole = GeneRole.ONCO,
+    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+    driverLikelihood = DriverLikelihood.HIGH,
+    isAssociatedWithDrugResistance = true,
+)
 
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
@@ -144,9 +146,9 @@ class PanelVariantAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { geneAlterationForVariant(any()) } returns null
-        every { geneAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
+        every { geneAlterationForVariant(UNANNOTATED_VARIANT.copy(driverLikelihood = null)) } returns HOTSPOT
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
+        every { evidenceForVariant(ANNOTATED_VARIANT) } returns ACTIONABILITY_MATCH
     }
     private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
         every { evaluate(any(), any(), any()) } returns null
@@ -184,6 +186,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variants with gene alteration data`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
+        println("V1: $VARIANT")
         assertThat(annotated.isHotspot).isTrue()
         assertThat(annotated.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(annotated.isAssociatedWithDrugResistance).isTrue()

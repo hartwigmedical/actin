@@ -1,14 +1,14 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 
@@ -33,11 +33,11 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
     }
 
-    fun geneAlterationForVariant(variant: VariantMatchCriteria): GeneAlteration? {
+    fun geneAlterationForVariant(variant: Variant): GeneAlteration? {
         return knownEventResolver.resolveForVariant(variant)
     }
 
-    fun evidenceForVariant(variant: VariantMatchCriteria): ClinicalEvidence {
+    fun evidenceForVariant(variant: Variant): ClinicalEvidence {
         return clinicalEvidenceMatcher.matchForVariant(variant)
     }
 
@@ -65,11 +65,11 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForDisruption(disruption)
     }
 
-    fun lookupKnownFusion(fusion: FusionMatchCriteria): KnownFusion? {
+    fun lookupKnownFusion(fusion: Fusion): KnownFusion? {
         return knownEventResolver.resolveForFusion(fusion)
     }
 
-    fun evidenceForFusion(fusion: FusionMatchCriteria): ClinicalEvidence {
+    fun evidenceForFusion(fusion: Fusion): ClinicalEvidence {
         return clinicalEvidenceMatcher.matchForFusion(fusion)
     }
 

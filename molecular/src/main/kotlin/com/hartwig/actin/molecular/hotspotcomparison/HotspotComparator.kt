@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.hotspotcomparison
 
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.panel.isHotspot
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -39,14 +39,24 @@ object HotspotComparator {
     }
 
     private fun createVariantCriteria(variant: PurpleVariant) =
-        VariantMatchCriteria(
+        Variant(
             gene = variant.gene(),
             chromosome = variant.chromosome(),
             position = variant.position(),
             ref = variant.ref(),
             alt = variant.alt(),
-            type = null,
-            codingEffect = null,
-            isReportable = variant.reported()
+            isReportable = variant.reported(),
+            type = TODO(),
+            variantAlleleFrequency = TODO(),
+            canonicalImpact = TODO(),
+            otherImpacts = TODO(),
+            extendedVariantDetails = TODO(),
+            isHotspot = TODO(),
+            event = TODO(),
+            driverLikelihood = TODO(),
+            evidence = TODO(),
+            geneRole = TODO(),
+            proteinEffect = TODO(),
+            isAssociatedWithDrugResistance = TODO(),
         )
 }

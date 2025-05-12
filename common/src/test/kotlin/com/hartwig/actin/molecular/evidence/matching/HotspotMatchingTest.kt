@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
@@ -17,10 +18,10 @@ private val ACTIONABLE_HOTSPOT = ImmutableActionableHotspot.builder()
     .addVariants(VARIANT_ANNOTATION, VARIANT_ANNOTATION2)
     .build()
 
-private val MATCHING_CRITERIA =
-    VariantMatchCriteria(gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T", isReportable = true)
-private val MATCHING_CRITERIA2 =
-    VariantMatchCriteria(gene = "gene 1", chromosome = "12", position = 11, ref = "C", alt = "G", isReportable = true)
+private val MATCHING_CRITERIA = TestMolecularFactory.createMinimalVariant()
+    .copy(gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T", isReportable = true)
+private val MATCHING_CRITERIA2 = TestMolecularFactory.createMinimalVariant()
+    .copy(gene = "gene 1", chromosome = "12", position = 11, ref = "C", alt = "G", isReportable = true)
 
 class HotspotMatchingTest {
 
