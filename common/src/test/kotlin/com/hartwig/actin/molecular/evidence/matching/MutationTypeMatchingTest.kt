@@ -8,7 +8,7 @@ import com.hartwig.serve.datamodel.molecular.MutationType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val VARIANT_CRITERIA = TestMolecularFactory.createMinimalVariant().copy(
+private val VARIANT = TestMolecularFactory.createMinimalVariant().copy(
     gene = "gene 1",
     canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
     type = VariantType.SNV,
@@ -23,27 +23,27 @@ class MutationTypeMatchingTest {
 
     @Test
     fun `Should not match for all mutation types when coding effect is none`() {
-        val nonCoding = VARIANT_CRITERIA.withCodingEffect(CodingEffect.NONE)
+        val nonCoding = VARIANT.withCodingEffect(CodingEffect.NONE)
         val nothing = emptySet<MutationType>()
         assertMatch(nonCoding, nothing)
     }
 
     @Test
     fun `Should match for nonsense or frameshift`() {
-        val nonsenseOrFrameshift = VARIANT_CRITERIA.withCodingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        val nonsenseOrFrameshift = VARIANT.withCodingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT)
         assertMatch(nonsenseOrFrameshift, setOf(MutationType.NONSENSE_OR_FRAMESHIFT, MutationType.ANY))
     }
 
     @Test
     fun `Should match for splice`() {
-        val splice = VARIANT_CRITERIA.withCodingEffect(CodingEffect.SPLICE)
+        val splice = VARIANT.withCodingEffect(CodingEffect.SPLICE)
         assertThat(MutationTypeMatching.matches(MutationType.SPLICE, splice)).isTrue()
         assertThat(MutationTypeMatching.matches(MutationType.ANY, splice)).isTrue()
     }
 
     @Test
     fun `Should match for inframe missense`() {
-        val inframe = VARIANT_CRITERIA.copy(
+        val inframe = VARIANT.copy(
             type = VariantType.MNV,
             ref = "AAG",
             alt = "TTG"
@@ -54,7 +54,7 @@ class MutationTypeMatchingTest {
 
     @Test
     fun `Should match for inframe deletion`() {
-        val inframeDeletion = VARIANT_CRITERIA.copy(
+        val inframeDeletion = VARIANT.copy(
             type = VariantType.DELETE,
             ref = "ATGATG",
             alt = "TTT"
@@ -64,7 +64,7 @@ class MutationTypeMatchingTest {
 
     @Test
     fun `Should match for inframe insertion`() {
-        val inframeInsertion = VARIANT_CRITERIA.copy(
+        val inframeInsertion = VARIANT.copy(
             type = VariantType.INSERT,
             ref = "TTT",
             alt = "ATGATG"
@@ -74,7 +74,7 @@ class MutationTypeMatchingTest {
 
     @Test
     fun `Should match for snv missense`() {
-        val missense = VARIANT_CRITERIA.copy(type = VariantType.SNV)
+        val missense = VARIANT.copy(type = VariantType.SNV)
             .withCodingEffect(CodingEffect.MISSENSE)
         assertMatch(missense, setOf(MutationType.MISSENSE, MutationType.ANY))
     }
