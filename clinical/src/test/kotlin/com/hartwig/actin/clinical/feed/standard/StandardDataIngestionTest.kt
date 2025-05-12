@@ -90,7 +90,6 @@ class StandardDataIngestionTest {
             clinicalStatusExtractor = StandardClinicalStatusExtractor(),
             tumorDetailsExtractor = StandardTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
-                curationDatabase.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
             secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.priorPrimaryCuration),
