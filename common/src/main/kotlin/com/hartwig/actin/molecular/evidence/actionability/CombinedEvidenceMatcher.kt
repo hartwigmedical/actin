@@ -21,6 +21,8 @@ import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+typealias EvidencesForActionable = Map<Actionable, Set<EfficacyEvidence>>
+
 class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     val LOGGER: Logger = LogManager.getLogger(CombinedEvidenceMatcher::class.java)
 

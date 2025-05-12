@@ -1,9 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-
-typealias EvidencesForActionable = Map<Actionable, Set<EfficacyEvidence>>
 
 sealed class ActionabilityMatchResult {
 
