@@ -37,8 +37,8 @@ class StandardIhcTestExtractor(
     }
 
     private fun extractFromMolecularTests(ehrPatientRecord: FeedPatientRecord) =
-        ehrPatientRecord.ihcTests.asSequence().mapNotNull {
-            val curations = listOf(it.name, "${ehrPatientRecord.patientDetails.patientId} | ${it.name}").map { curationString ->
+        ehrPatientRecord.ihcTests.asSequence().mapNotNull { entry ->
+            val curations = listOf(entry.name, "${ehrPatientRecord.patientDetails.patientId} | ${entry.name}").map { curationString ->
                 CurationResponse.createFromConfigs(
                     molecularTestCuration.find(curationString),
                     ehrPatientRecord.patientDetails.patientId,
@@ -48,57 +48,32 @@ class StandardIhcTestExtractor(
                     false
                 )
             }
-            if (curations.any { c -> c.config()?.ignore == true }) {
+            if (curations.any { it.config()?.ignore == true }) {
                 null
             } else {
-                curations.firstOrNull { c -> c.config() != null }
-                    ?: curations.firstOrNull { c -> c.extractionEvaluation.warnings.isNotEmpty() }
+                curations.firstOrNull { it.config() != null } ?: curations.firstOrNull { it.extractionEvaluation.warnings.isNotEmpty() }
             }
         }
-            .map {
-                ExtractionResult(
-                    it.configs.mapNotNull { config -> config.curated },
-                    it.extractionEvaluation
-                )
-            }.fold(
-                ExtractionResult(
-                    emptyList<IhcTest>(),
-                    CurationExtractionEvaluation()
-                )
-            ) { acc, result ->
+            .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
+            .fold(ExtractionResult(emptyList<IhcTest>(), CurationExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
 
     private fun extractFromTumorDifferentiation(ehrPatientRecord: FeedPatientRecord): List<ExtractionResult<List<IhcTest>>> =
-        ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")?.asSequence()
-            ?.map { it.trim() }
-            ?.filterNot { it.contains(IHC_STRING, ignoreCase = true) }
-            ?.map { curateFromSecondarySource(it, ehrPatientRecord) }
-            ?.filter {
-                it.configs.isNotEmpty()
-            }?.map {
-                ExtractionResult(
-                    it.configs.mapNotNull { config -> config.curated },
-                    it.extractionEvaluation
-                )
-            }?.toList() ?: emptyList()
+        ehrPatientRecord.tumorDetails.pathology.asSequence().flatMap { it.rawPathologyReport.split("\n") }
+            .map { it.trim() }
+            .filterNot { it.contains(IHC_STRING, ignoreCase = true) }
+            .map { curateFromSecondarySource(it, ehrPatientRecord) }
+            .filter { it.configs.isNotEmpty() }
+            .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
+            .toList()
 
     private fun extractFromOtherConditions(ehrPatientRecord: FeedPatientRecord) =
-        ehrPatientRecord.otherConditions.map {
-            curateFromSecondarySource(it.name, ehrPatientRecord)
-        }.filter {
-            it.configs.isNotEmpty()
-        }.map {
-            ExtractionResult(
-                it.configs.mapNotNull { config -> config.curated },
-                it.extractionEvaluation
-            )
-        }
+        ehrPatientRecord.otherConditions.map { curateFromSecondarySource(it.name, ehrPatientRecord) }
+            .filter { it.configs.isNotEmpty() }
+            .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
 
-    private fun curateFromSecondarySource(
-        input: String,
-        ehrPatientRecord: FeedPatientRecord,
-    ) = CurationResponse.createFromConfigs(
+    private fun curateFromSecondarySource(input: String, ehrPatientRecord: FeedPatientRecord) = CurationResponse.createFromConfigs(
         molecularTestCuration.find(input),
         ehrPatientRecord.patientDetails.patientId,
         CurationCategory.MOLECULAR_TEST_IHC,
@@ -110,23 +85,23 @@ class StandardIhcTestExtractor(
     private fun extractIhc(
         molecularTestCuration: CurationDatabase<IhcTestConfig>, ehrPatientRecord: FeedPatientRecord
     ): List<ExtractionResult<List<IhcTest>>> {
-        val linesWithIhc = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")
-            ?.filter { it.contains(IHC_STRING, ignoreCase = true) }
-            ?: emptyList()
-        return linesWithIhc.map { it.replace("\n", "").replace("\r", "") }.map {
-            val curationResponse = CurationResponse.createFromConfigs(
-                molecularTestCuration.find(it),
-                ehrPatientRecord.patientDetails.patientId,
-                CurationCategory.MOLECULAR_TEST_IHC,
-                it,
-                "molecular test ihc",
-                false
-            )
-            ExtractionResult(
-                curationResponse.configs.mapNotNull { config -> config.curated },
-                curationResponse.extractionEvaluation
-            )
-        }
+        return ehrPatientRecord.tumorDetails.pathology.flatMap { it.rawPathologyReport.split("\n") }
+            .filter { it.contains(IHC_STRING, ignoreCase = true) }
+            .map {
+                val cleaned = it.replace("\n", "").replace("\r", "")
+                val curationResponse = CurationResponse.createFromConfigs(
+                    molecularTestCuration.find(cleaned),
+                    ehrPatientRecord.patientDetails.patientId,
+                    CurationCategory.MOLECULAR_TEST_IHC,
+                    cleaned,
+                    "molecular test ihc",
+                    false
+                )
+                ExtractionResult(
+                    curationResponse.configs.mapNotNull { config -> config.curated },
+                    curationResponse.extractionEvaluation
+                )
+            }
     }
 }
 

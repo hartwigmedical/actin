@@ -363,14 +363,7 @@
       "diagnosis": "diagnosis",
       "tissueDate": "2020-01-01",
       "authorisationDate": "2020-01-02",
-      "report": "RawPathologyReport"
-    },
-    {
-      "tissueId": "T-1000091",
-      "lab": "ext lab",
-      "diagnosis": "diagnosis",
-      "reportDate": "2020-02-01",
-      "report": "Raw Pathology Report"
+      "report": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\n\n\nimmunohistochemie ERBB2 3+\n\n"
     }
   ]
 }

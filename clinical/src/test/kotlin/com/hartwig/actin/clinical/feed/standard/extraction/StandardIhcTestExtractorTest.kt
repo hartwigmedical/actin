@@ -9,18 +9,24 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedPathology
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val IHC_TEST = IhcTest(item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
 private const val MICROSCOPIE_LINE = "TTF1 negatief"
 
-private const val PATHOLOGY_REPORT =
-    "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
+private val PATHOLOGY_REPORT = FeedPathology(
+    lab = "lab",
+    diagnosis = "diagnosis",
+    reportRequested = true,
+    rawPathologyReport = "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n",
+    tissueId = "",
+)
 private val IHC_TEST_EGFR =
     IhcTest(
         item = "EGFR",
@@ -31,9 +37,9 @@ private val IHC_TEST_EGFR =
     )
 
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
-    FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = PATHOLOGY_REPORT))
-private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
+    FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(pathology = listOf(PATHOLOGY_REPORT)))
 
+private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
 
 class StandardIhcTestExtractorTest {
 
@@ -117,7 +123,16 @@ class StandardIhcTestExtractorTest {
         )
         val result = extractor.extract(
             FEED_PATIENT_RECORD.copy(
-                tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = PATHOLOGY_REPORT.replace(IHC_LINE, ""))
+                tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
+                    pathology = listOf(
+                        PATHOLOGY_REPORT.copy(
+                            rawPathologyReport = PATHOLOGY_REPORT.rawPathologyReport.replace(
+                                IHC_LINE, ""
+                            )
+                        )
+                    )
+
+                )
             )
         )
         assertThat(result.extracted).containsExactly(IHC_TEST_EGFR, anotherMolecularTest)

@@ -319,7 +319,10 @@
     },
     "molecularTests": {
       "description": "none",
-      "type": "array",
+      "type": [
+        "array",
+        "null"
+      ],
       "items": {
         "type": "object",
         "properties": {
@@ -391,7 +394,7 @@
                     "string",
                     "null"
                   ],
-                  "description": "Free text for a test result which does not fit into any of the other fields. This value will be curated."
+                  "description": "Free text for a test result which does not fit into any of the other fields. This value will be curated"
                 },
                 "fusionExonDown": {
                   "type": [
@@ -468,7 +471,7 @@
                     "boolean",
                     "null"
                   ],
-                  "description": "Result of microsatellite instability test."
+                  "description": "Result of microsatellite instability test"
                 },
                 "noMutationsFound": {
                   "type": [
@@ -507,14 +510,14 @@
             "description": "Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)"
           },
           "testedGenes": {
-            "description": "List of genes that were tested.",
+            "description": "List of genes that were tested",
             "type": [
               "array",
               "null"
             ],
             "items": {
               "type": "string",
-              "description": "List of genes that were tested."
+              "description": "List of genes that were tested"
             }
           }
         },
@@ -542,7 +545,14 @@
         },
         "hashedId": {
           "type": "string",
-          "description": "Base64 encoded SHA-256 hash of source hospital's identifier."
+          "description": "Base64 encoded SHA-256 hash of source hospital's identifier"
+        },
+        "hospitalPatientId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Hospital specific Patient Id"
         },
         "registrationDate": {
           "type": "string",
@@ -646,7 +656,7 @@
           "endDate": {
             "type": "string",
             "format": "date",
-            "description": "Date of completion, if applicable."
+            "description": "Date of completion, if applicable"
           },
           "status": {
             "type": "string",
@@ -832,7 +842,10 @@
       "type": "object",
       "properties": {
         "diagnosisDate": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "date",
           "description": "Date of diagnosis"
         },
@@ -844,37 +857,49 @@
           "description": "Deprecated: currently use to store radiology report. Should move to lesions"
         },
         "lesions": {
-          "description": "none",
           "type": [
-            "array",
+            "object",
             "null"
           ],
-          "items": {
-            "type": "object",
-            "properties": {
-              "active": {
-                "type": [
-                  "boolean",
-                  "null"
-                ],
-                "description": "Whether this lesion considered active, only applicable to brain or CNS lesions."
-              },
-              "diagnosisDate": {
-                "type": "string",
-                "format": "date",
-                "description": "Diagnosis date of the lesion"
-              },
-              "location": {
-                "type": "string",
-                "description": "Location of lesion (eg. brain)"
-              }
+          "properties": {
+            "hasActiveBrainLesions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Patient has active lesion in brain"
             },
-            "required": [
-              "diagnosisDate",
-              "location"
-            ],
-            "description": "none"
-          }
+            "hasBoneLesions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Patient has lesion in bone"
+            },
+            "hasBrainLesions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Patient has lesion in brain"
+            },
+            "hasLiverLesions": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Patient has lesion in liver"
+            },
+            "questionnaireDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of questionnaire"
+            }
+          },
+          "required": [
+            "questionnaireDate"
+          ],
+          "description": "none"
         },
         "measurableDisease": {
           "type": [
@@ -891,12 +916,71 @@
           "format": "date",
           "description": "none"
         },
-        "rawPathologyReport": {
+        "pathology": {
+          "description": "Raw pathology reports",
           "type": [
-            "string",
+            "array",
             "null"
           ],
-          "description": "Raw pathology report of molecular test results."
+          "items": {
+            "type": "object",
+            "properties": {
+              "authorisationDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date",
+                "description": "Latest date of report authorization - present only when the source is internal"
+              },
+              "diagnosis": {
+                "type": "string",
+                "description": "Diagnosis written in the pathology reports"
+              },
+              "lab": {
+                "type": "string",
+                "description": "Lab that performed the report"
+              },
+              "rawPathologyReport": {
+                "type": "string",
+                "description": "Raw pathology report of molecular test results"
+              },
+              "reportDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date",
+                "description": "Date of the report (not clear what this data represents) - used when tissueDate and authorisationDate and not known"
+              },
+              "reportRequested": {
+                "type": "boolean",
+                "description": "Indication on whether the report was requested"
+              },
+              "tissueDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date",
+                "description": "Date of tissue collection - present only when the source is internal"
+              },
+              "tissueId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Tissue Id"
+              }
+            },
+            "required": [
+              "diagnosis",
+              "lab",
+              "rawPathologyReport",
+              "reportRequested"
+            ],
+            "description": "Raw pathology reports"
+          }
         },
         "tumorGradeDifferentiation": {
           "type": [
@@ -930,7 +1014,6 @@
         }
       },
       "required": [
-        "diagnosisDate",
         "tumorLocation",
         "tumorType"
       ],
@@ -945,7 +1028,7 @@
           "evaluationDate": {
             "type": "string",
             "format": "date",
-            "description": "Date of WHO evaluation."
+            "description": "Date of WHO evaluation"
           },
           "status": {
             "type": "integer",
@@ -966,7 +1049,6 @@
     "complications",
     "labValues",
     "measurements",
-    "molecularTests",
     "patientDetails",
     "priorOtherConditions",
     "priorPrimaries",
