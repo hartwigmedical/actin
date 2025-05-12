@@ -2,22 +2,22 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 
 internal object TumorTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestOrangeRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))
@@ -51,14 +51,14 @@ internal object TumorTestFactory {
         )
     }
 
-    fun withDoidsAndAmplificationAndPriorMolecularTest(
+    fun withDoidsAndAmplificationAndMolecularTest(
         doids: Set<String>,
         amplifiedGene: String,
-        priorIHCTests: List<PriorIHCTest>
+        ihcTests: List<IhcTest>
     ): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            priorIHCTests = priorIHCTests,
+            ihcTests = ihcTests,
             molecularHistory = MolecularHistory(
                 listOf(
                     baseMolecular.copy(
@@ -276,12 +276,11 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions))
     }
 
-    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false, count: Int? = 1): PatientRecord {
+    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false): PatientRecord {
         return withTumorDetails(
             TumorDetails(
                 hasLungLesions = hasLungLesions,
-                hasSuspectedLungLesions = hasSuspectedLungLesions,
-                lungLesionsCount = count
+                hasSuspectedLungLesions = hasSuspectedLungLesions
             )
         )
     }
@@ -313,10 +312,10 @@ internal object TumorTestFactory {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(experimentType = type))))
     }
 
-    fun withIHCTestsAndDoids(priorIHCTests: List<PriorIHCTest>, doids: Set<String>?): PatientRecord {
+    fun withIhcTestsAndDoids(ihcTests: List<IhcTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            priorIHCTests = priorIHCTests
+            ihcTests = ihcTests
         )
     }
 }

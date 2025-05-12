@@ -3,16 +3,8 @@
   "patient": {
     "gender": "FEMALE",
     "birthYear": 1975,
-    "registrationDate": {
-      "year": 2025,
-      "month": 2,
-      "day": 20
-    },
-    "questionnaireDate": {
-      "year": 2025,
-      "month": 2,
-      "day": 20
-    },
+    "registrationDate": "2025-02-20",
+    "questionnaireDate": "2025-02-20",
     "hasHartwigSequencing": true
   },
   "tumor": {
@@ -28,19 +20,13 @@
     "derivedStages": null,
     "hasMeasurableDisease": true,
     "hasBrainLesions": false,
-    "brainLesionsCount": null,
     "hasActiveBrainLesions": false,
     "hasCnsLesions": false,
-    "cnsLesionsCount": null,
     "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
-    "boneLesionsCount": null,
     "hasLiverLesions": true,
-    "liverLesionsCount": 1,
     "hasLungLesions": true,
-    "lungLesionsCount": 1,
     "hasLymphNodeLesions": false,
-    "lymphNodeLesionsCount": null,
     "otherLesions": [],
     "biopsyLocation": "Lung",
     "rawPathologyReport": null
@@ -103,7 +89,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "Rheumatoid arthritis",
@@ -116,11 +102,7 @@
   ],
   "labValues": [
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "ALAT",
       "name": "Alanine aminotransferase",
       "comparator": "",
@@ -131,11 +113,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "ASAT",
       "name": "Aspartate aminotransferase",
       "comparator": "",
@@ -146,11 +124,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "TOTAL_BILIRUBIN",
       "name": "total bilirubin",
       "comparator": "",
@@ -161,11 +135,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "Hb",
       "name": "hemoglobin",
       "comparator": "",
@@ -176,11 +146,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "THROMBOCYTES_ABS",
       "name": "absolute thrombocyte count",
       "comparator": "",
@@ -191,11 +157,7 @@
       "isOutsideRef": true
     },
     {
-      "date": {
-        "year": 2025,
-        "month": 1,
-        "day": 15
-      },
+      "date": "2025-01-15",
       "code": "LYMPHOCYTES_ABS_EDA",
       "name": "absolute lymphocyte count eDA",
       "comparator": "",
@@ -209,11 +171,7 @@
   "surgeries": [
     {
       "name": "Cholecystectomy",
-      "endDate": {
-        "year": 2024,
-        "month": 8,
-        "day": 1
-      },
+      "endDate": "2024-08-01",
       "status": "FINISHED"
     }
   ],
@@ -259,11 +217,7 @@
   ],
   "bloodTransfusions": [
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 20
-      },
+      "date": "2024-09-20",
       "product": "ERTHROCYTES_FILTERED"
     }
   ],
@@ -282,11 +236,7 @@
         "periodBetweenUnit": "DAYS",
         "ifNeeded": false
       },
-      "startDate": {
-        "year": 2023,
-        "month": 2,
-        "day": 1
-      },
+      "startDate": "2023-02-01",
       "stopDate": null,
       "drug": null,
       "cypInteractions": [
@@ -304,9 +254,8 @@
       "isTrialMedication": false
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,
@@ -386,11 +335,7 @@
         "hasSufficientQuality": true,
         "testTypeDisplay": null,
         "experimentType": "HARTWIG_WHOLE_GENOME",
-        "date": {
-          "year": 2025,
-          "month": 2,
-          "day": 22
-        },
+        "date": "2025-02-22",
         "drivers": {
           "variants": [
             {
@@ -428,20 +373,20 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "OSIMERTINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
-                      "sourceDate": {
-                        "year": 2012,
-                        "month": 1,
-                        "day": 1
-                      },
+                      "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -455,20 +400,20 @@
                   },
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
-                      "sourceDate": {
-                        "year": 2012,
-                        "month": 1,
-                        "day": 1
-                      },
+                      "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
-                      "isCategoryEvent": false
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -485,15 +430,13 @@
                   {
                     "nctId": "NCT00000006",
                     "title": "EGFR-L858R-TRIAL",
+                    "treatments": [],
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
@@ -530,15 +473,13 @@
                   {
                     "nctId": "NCT00000007",
                     "title": "EGFR-BE",
+                    "treatments": [],
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR L858R",
-                        "isCategoryEvent": false
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
@@ -603,20 +544,20 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
-                      "sourceDate": {
-                        "year": 2012,
-                        "month": 1,
-                        "day": 1
-                      },
+                      "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
-                      "isCategoryEvent": false
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "D",
                     "evidenceLevelDetails": "CASE_REPORTS_SERIES",
                     "evidenceDirection": {
@@ -633,15 +574,13 @@
                   {
                     "nctId": "NCT00000008",
                     "title": "EGFR-C797S-TRIAL",
+                    "treatments": [],
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "EGFR C797S",
-                        "isCategoryEvent": false
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
@@ -759,15 +698,13 @@
                   {
                     "nctId": "NCT00000009",
                     "title": "KRAS-G12C-TRIAL-DE",
+                    "treatments": [],
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2012,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2012-01-01",
                         "sourceEvent": "KRAS G12C",
-                        "isCategoryEvent": false
+                        "sourceEvidenceType": "ACTIVATION",
+                        "sourceUrl": ""
                       }
                     ],
                     "applicableCancerTypes": [
@@ -802,7 +739,7 @@
             {
               "canonicalImpact": {
                 "transcriptId": "",
-                "type": "LOSS",
+                "type": "DEL",
                 "minCopies": 0,
                 "maxCopies": 0
               },
@@ -831,10 +768,10 @@
               "isAssociatedWithDrugResistance": true,
               "geneTranscriptStart": "116312446",
               "geneTranscriptEnd": "116438440",
-              "fusedExonUp": 14,
-              "fusedExonDown": 14,
+              "fusedExonUp": 13,
+              "fusedExonDown": 15,
               "isReportable": true,
-              "event": "MET_MET",
+              "event": "MET::MET",
               "driverLikelihood": "HIGH",
               "evidence": {
                 "treatmentEvidence": [],
@@ -854,39 +791,53 @@
                 "likelihood": 0.98,
                 "snvPairwiseClassifier": 0.6,
                 "genomicPositionClassifier": 0.7,
-                "featureClassifier": 0.8
+                "featureClassifier": 0.8,
+                "cuppaMode": "WGS"
               },
               {
                 "cancerType": "Colorectum/Small intestine/Appendix",
                 "likelihood": 0.02,
                 "snvPairwiseClassifier": 0.01,
                 "genomicPositionClassifier": 0.02,
-                "featureClassifier": 0.03
+                "featureClassifier": 0.03,
+                "cuppaMode": "WGS"
               }
             ]
           },
-          "isMicrosatelliteUnstable": false,
-          "microsatelliteEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "microsatelliteStability": {
+            "microsatelliteIndelsPerMb": 0.0,
+            "isUnstable": false,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "homologousRecombinationScore": 0.0,
-          "isHomologousRecombinationDeficient": false,
-          "homologousRecombinationEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "homologousRecombination": {
+            "score": 0.0,
+            "isDeficient": false,
+            "type": "NONE",
+            "brca1Value": 0.0,
+            "brca2Value": 0.0,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "tumorMutationalBurden": 14.0,
-          "hasHighTumorMutationalBurden": true,
-          "tumorMutationalBurdenEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "tumorMutationalBurden": {
+            "score": 14.0,
+            "isHigh": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           },
-          "tumorMutationalLoad": 160,
-          "hasHighTumorMutationalLoad": true,
-          "tumorMutationalLoadEvidence": {
-            "treatmentEvidence": [],
-            "eligibleTrials": []
+          "tumorMutationalLoad": {
+            "score": 160,
+            "isHigh": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
           }
         },
         "evidenceSource": "External"

@@ -3,12 +3,9 @@
   "patient": {
     "gender": "FEMALE",
     "birthYear": 5,
-    "registrationDate": {
-      "year": 2020,
-      "month": 1,
-      "day": 1
-    },
-    "questionnaireDate": null
+    "registrationDate": "2020-01-01",
+    "questionnaireDate": null,
+    "sourceId": "PT-1001"
   },
   "tumor": {
     "primaryTumorLocation": "Lung",
@@ -22,21 +19,20 @@
     "stage": "IV",
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
-    "brainLesionsCount": 2,
+    "hasSuspectedBrainLesions": null,
     "hasActiveBrainLesions": true,
-    "hasCnsLesions": false,
-    "cnsLesionsCount": 0,
-    "hasActiveCnsLesions": false,
+    "hasCnsLesions": true,
+    "hasSuspectedCnsLesions": null,
+    "hasActiveCnsLesions": true,
     "hasBoneLesions": false,
-    "boneLesionsCount": 0,
+    "hasSuspectedBoneLesions": null,
     "hasLiverLesions": false,
-    "liverLesionsCount": 0,
-    "hasLungLesions": false,
-    "lungLesionsCount": 0,
-    "hasLymphNodeLesions": false,
-    "lymphNodeLesionsCount": 0,
-    "otherLesions": [],
-    "otherSuspectedLesions": [],
+    "hasSuspectedLiverLesions": null,
+    "hasLungLesions": null,
+    "hasSuspectedLungLesions": null,
+    "hasLymphNodeLesions": null,
+    "otherLesions": null,
+    "otherSuspectedLesions": null,
     "biopsyLocation": null
   },
   "clinicalStatus": {
@@ -97,7 +93,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "pain",
@@ -136,18 +132,10 @@
           "extensionCode": null
         }
       ],
-      "evaluatedDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "evaluatedDate": "2020-01-01",
       "source": "EHR",
       "grade": 5,
-      "endDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "endDate": "2020-01-01",
       "comorbidityClass": "TOXICITY"
     },
     {
@@ -183,9 +171,8 @@
       "comorbidityClass": "INTOLERANCE"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "ERBB2",
       "measure": null,
       "measureDate": null,
@@ -196,24 +183,10 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [
+  "sequencingTests": [
     {
-      "test": "Archer FP Lung Target",
-      "noMutationGenes": [
-        "ALK",
-        "ROS1",
-        "RET",
-        "MET",
-        "NTRK1",
-        "NTRK2",
-        "NTRK3",
-        "NRG1"
-      ],
-      "date": {
-        "year": 2024,
-        "month": 7,
-        "day": 15
-      },
+      "test": "Archer FP - Lung",
+      "date": "2024-07-15",
       "variants": [
         {
           "gene": "KRAS",
@@ -228,11 +201,7 @@
   ],
   "labValues": [
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "O2_SATURATION_BG",
       "comparator": "",
       "value": 88.0,
@@ -242,11 +211,7 @@
       "isOutsideRef": null
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "THROMBOCYTES_ABS",
       "comparator": "",
       "value": 252.0,
@@ -256,11 +221,7 @@
       "isOutsideRef": null
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "LYMPHOCYTES_ABS",
       "comparator": "",
       "value": 0.6,
@@ -270,11 +231,7 @@
       "isOutsideRef": null
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "measurement": "HEMOGLOBIN",
       "comparator": "",
       "value": 7.7,
@@ -287,11 +244,7 @@
   "surgeries": [
     {
       "name": "diagnostics stomach translated",
-      "endDate": {
-        "year": 2021,
-        "month": 1,
-        "day": 1
-      },
+      "endDate": "2021-01-01",
       "status": "CANCELLED"
     }
   ],
@@ -345,13 +298,26 @@
   ],
   "bloodTransfusions": [
     {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
+      "date": "2020-01-01",
       "product": "Erytrocytes Filtered"
     }
   ],
-  "medications": null
+  "medications": null,
+  "pathologyReports": [
+    {
+      "tissueId": "T-1000090",
+      "lab": "NKI-AvL",
+      "diagnosis": "diagnosis",
+      "tissueDate": "2020-01-01",
+      "authorisationDate": "2020-01-02",
+      "report": "RawPathologyReport"
+    },
+    {
+      "tissueId": "T-1000091",
+      "lab": "ext lab",
+      "diagnosis": "diagnosis",
+      "reportDate": "2020-02-01",
+      "report": "Raw Pathology Report"
+    }
+  ]
 }

@@ -33,7 +33,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
                 }
             }
             for (copyNumber in test.drivers.copyNumbers) {
-                if (copyNumber.canonicalImpact.type == CopyNumberType.LOSS && copyNumber.gene == gene) {
+                if (copyNumber.canonicalImpact.type == CopyNumberType.DEL && copyNumber.gene == gene) {
                     hrdGenesWithBiallelicDriver.add(gene)
                 }
             }
@@ -48,7 +48,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
                 }
             }
         }
-        return when (test.characteristics.isHomologousRecombinationDeficient) {
+        return when (test.characteristics.homologousRecombination?.isDeficient) {
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(

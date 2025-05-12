@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -12,7 +13,10 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentType
 
-class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<OrangeRecord, MolecularRecord> {
+private const val ONCO_PANEL = "OncoPanel"
+
+class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpecifications: PanelSpecifications) :
+    MolecularExtractor<OrangeRecord, MolecularRecord> {
 
     override fun extract(input: List<OrangeRecord>): List<MolecularRecord> {
         return input.map(::interpret)
@@ -21,7 +25,6 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
     fun interpret(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
         val driverExtractor = DriverExtractor.create(geneFilter)
-        val characteristicsExtractor = CharacteristicsExtractor()
 
         return MolecularRecord(
             sampleId = record.sampleId(),
@@ -34,10 +37,11 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
             isContaminated = isContaminated(record),
             hasSufficientPurity = hasSufficientPurity(record),
             hasSufficientQuality = hasSufficientQuality(record),
-            characteristics = characteristicsExtractor.extract(record),
+            characteristics = CharacteristicsExtraction.extract(record),
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record),
-            pharmaco = PharmacoExtraction.extract(record)
+            pharmaco = PharmacoExtraction.extract(record),
+            specification = if (record.experimentType() == OrangeExperimentType.TARGETED) panelSpecifications.genesForPanel(ONCO_PANEL) else null
         )
     }
 

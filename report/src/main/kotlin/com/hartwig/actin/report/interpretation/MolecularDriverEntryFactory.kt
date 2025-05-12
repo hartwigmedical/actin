@@ -36,9 +36,9 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromVariant(variant: Variant): MolecularDriverEntry {
-        val biallelicIndicator = if (variant.extendedVariantDetails?.isBiallelic == true) "Biallelic " else ""
-        val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
-        val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"
+        val mutationTypeString = if (variant.isHotspot) "Hotspot" else "No known hotspot"
+        val biallelicIndicator = if (variant.extendedVariantDetails?.isBiallelic == true) ", biallelic" else ""
+        val driverType = "Mutation ($mutationTypeString$biallelicIndicator)"
 
         val variantAndTotalCopies = variant.extendedVariantDetails?.let { details ->
             listOf(min(details.variantCopyNumber, details.totalCopyNumber), details.totalCopyNumber)
@@ -75,7 +75,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     private fun getDriverType(type: CopyNumberType): String {
         return when (type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> "Amplification"
-            CopyNumberType.LOSS -> "Loss"
+            CopyNumberType.DEL -> "Deletion"
             CopyNumberType.NONE -> "Copy Number"
         }
     }

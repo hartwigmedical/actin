@@ -11,8 +11,8 @@ import java.util.function.Predicate
 class CopyNumberEvidence(
     private val amplificationEvidences: List<EfficacyEvidence>,
     private val amplificationTrialMatcher: ActionableTrialMatcher,
-    private val lossEvidences: List<EfficacyEvidence>,
-    private val lossTrialMatcher: ActionableTrialMatcher
+    private val deletionEvidences: List<EfficacyEvidence>,
+    private val deletionTrialMatcher: ActionableTrialMatcher
 ) : ActionabilityMatcher<CopyNumber> {
 
     override fun findMatches(event: CopyNumber): ActionabilityMatch {
@@ -21,8 +21,8 @@ class CopyNumberEvidence(
                 findMatches(event, amplificationEvidences, amplificationTrialMatcher)
             }
 
-            CopyNumberType.LOSS -> {
-                findMatches(event, lossEvidences, lossTrialMatcher)
+            CopyNumberType.DEL -> {
+                findMatches(event, deletionEvidences, deletionTrialMatcher)
             }
 
             else -> {
@@ -47,20 +47,20 @@ class CopyNumberEvidence(
 
     companion object {
         private val AMPLIFICATION_EVENTS = setOf(GeneEvent.AMPLIFICATION)
-        private val LOSS_EVENTS = setOf(GeneEvent.DELETION)
+        private val DELETION_EVENTS = setOf(GeneEvent.DELETION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): CopyNumberEvidence {
             val amplificationEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, AMPLIFICATION_EVENTS)
             val amplificationTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, AMPLIFICATION_EVENTS)
 
-            val lossEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, LOSS_EVENTS)
-            val lossTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, LOSS_EVENTS)
+            val deletionEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, DELETION_EVENTS)
+            val deletionTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, DELETION_EVENTS)
 
             return CopyNumberEvidence(
                 amplificationEvidences,
                 amplificationTrialMatcher,
-                lossEvidences,
-                lossTrialMatcher
+                deletionEvidences,
+                deletionTrialMatcher
             )
         }
     }

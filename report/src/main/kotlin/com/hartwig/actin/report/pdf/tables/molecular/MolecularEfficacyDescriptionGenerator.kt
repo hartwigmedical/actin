@@ -7,19 +7,25 @@ import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filter
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.sortTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
+import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHistory) : TableGenerator {
 
     override fun title(): String {
         return "Efficacy evidence description"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
-        val table = Table(1).setWidth(width)
+        val table = Tables.createSingleCol()
         val sortedEvidence = DriverTableFunctions.allDrivers(molecularHistory)
             .flatMap { it.second }
             .flatMap { filterTreatmentEvidence(it.evidence.treatmentEvidence, null) }
@@ -34,24 +40,28 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
     }
 
     private fun createEventCells(event: String, evidences: List<TreatmentEvidence>): List<Cell> {
-        val eventHeaderCell = Cells.createContent(Paragraph(event).setBold().setFontSize(8f))
+        val eventHeaderCell = Cells.createContent(Paragraph(event).setFont(Styles.fontBold()).setFontSize(8f))
         val eventSubTableCell = createEventSubTable(evidences)
         return listOf(eventHeaderCell, eventSubTableCell)
     }
 
     private fun createEventSubTable(evidences: List<TreatmentEvidence>): Cell {
-        val subTable = Table(4).setWidth(width)
+        val subTable = Tables.createMultiCol(4)
         evidences.flatMap { createEvidenceCells(it) }.forEach(subTable::addCell)
         return Cells.createContentNoBorder(subTable)
     }
 
     private fun createEvidenceCells(evidence: TreatmentEvidence): List<Cell> {
-        val treatmentCell = Cells.createContentNoBorder(Paragraph("${evidence.treatment}:").setItalic().setBold().setFontSize(7f))
+        val treatmentCell =
+            Cells.createContentNoBorder(Paragraph("${evidence.treatment}:").setFont(Styles.fontItalicBold()).setFontSize(7f))
         val evidenceLevelAndDateCell = Cells.createContentNoBorder(
             Paragraph("Level ${evidence.evidenceLevel.name} (${evidence.evidenceYear})").setFontSize(6f)
         )
-        val cancerTypeCell =
-            Cells.createContentNoBorder(Paragraph(evidence.applicableCancerType.matchedCancerType).setBold().setFontSize(6f))
+
+        val cancerTypeCell = Cells.createContentNoBorder(
+            Paragraph(evidence.cancerTypeMatch.cancerType.matchedCancerType)
+                .setFont(Styles.fontBold()).setFontSize(6f)
+        )
 
         val descriptionCell = Paragraph(evidence.efficacyDescription).setFontSize(6.5f)
 

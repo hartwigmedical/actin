@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -42,15 +43,15 @@ data class ActivationProfile(
 private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation(
-    private val gene: String,
+    override val gene: String,
     private val codonsToIgnore: List<String>?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
-
-    override fun genes() = listOf(gene)
-
+) : MolecularEvaluationFunction(
+    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in"),
+    maxTestAge = maxTestAge
+) {
     override fun evaluate(test: MolecularTest): Evaluation {
-        val hasHighMutationalLoad = test.characteristics.hasHighTumorMutationalLoad
+        val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         val evidenceSource = test.evidenceSource
         val variantCharacteristics =
             test.drivers.variants.filter { it.gene == gene }
@@ -105,9 +106,7 @@ class GeneHasActivatingMutation(
         }
     }
 
-    private fun evaluateVariant(
-        variant: Variant, hasHighMutationalLoad: Boolean?
-    ): ActivationProfile {
+    private fun evaluateVariant(variant: Variant, hasHighMutationalLoad: Boolean?): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
         val isGainOfFunction =
             variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
@@ -182,10 +181,12 @@ class GeneHasActivatingMutation(
                 ),
                 EventsWithMessages(
                     activatingVariantsNoHotspotAndNoGainOfFunction,
-                    "$gene potentially activating mutation(s) ${activatingVariantsNoHotspotAndNoGainOfFunction?.let {
+                    "$gene potentially activating mutation(s) ${
+                        activatingVariantsNoHotspotAndNoGainOfFunction?.let {
                             concatVariants(it, gene)
                         }
-                    } with high driver likelihood - however not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                    } with high driver likelihood - " +
+                            "however not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,

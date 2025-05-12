@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
@@ -12,12 +12,11 @@ import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class LongitudinalMolecularHistoryGenerator(
-    private val molecularHistory: MolecularHistory, private val cohorts: List<InterpretedCohort>, private val width: Float
-) : TableGenerator {
+class LongitudinalMolecularHistoryGenerator(private val molecularHistory: MolecularHistory, private val cohorts: List<InterpretedCohort>) :
+    TableGenerator {
 
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
@@ -29,6 +28,10 @@ class LongitudinalMolecularHistoryGenerator(
         return "Molecular history"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         val eventVAFMapByTest = molecularHistory.molecularTests.sortedBy { it.date }
             .associateWith { test ->
@@ -36,7 +39,7 @@ class LongitudinalMolecularHistoryGenerator(
             }
 
         val columnCount = 3 + eventVAFMapByTest.size
-        val table = Table(columnCount).setWidth(width)
+        val table = Tables.createMultiCol(columnCount)
 
         val headers = listOf("Event", "Description", "Driver likelihood") + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
@@ -63,13 +66,13 @@ class LongitudinalMolecularHistoryGenerator(
             .forEach { table.addCell(Cells.createContent(it)) }
 
         characteristicRow(table, eventVAFMapByTest.keys, "TMB") {
-            it.characteristics.tumorMutationalBurden?.toString() ?: ""
+            it.characteristics.tumorMutationalBurden?.score?.toString() ?: ""
         }
         characteristicRow(table, eventVAFMapByTest.keys, "MSI", ::msiText)
-        return makeWrapping(table)
+        return table
     }
 
-    private fun msiText(it: MolecularTest) = when (it.characteristics.isMicrosatelliteUnstable) {
+    private fun msiText(it: MolecularTest) = when (it.characteristics.microsatelliteStability?.isUnstable) {
         false -> "Stable"
         true -> "Unstable"
         null -> ""

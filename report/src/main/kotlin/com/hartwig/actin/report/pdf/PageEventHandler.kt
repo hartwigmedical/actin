@@ -3,22 +3,21 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.report.pdf.components.Footer
 import com.hartwig.actin.report.pdf.components.Header
 import com.hartwig.actin.report.pdf.components.SidePanel
-import com.itextpdf.kernel.events.Event
-import com.itextpdf.kernel.events.IEventHandler
-import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfOutline
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination
 import java.time.LocalDate
 
 class PageEventHandler private constructor(private val header: Header, private val footer: Footer, private val sidePanel: SidePanel) :
-    IEventHandler {
+    AbstractPdfDocumentEventHandler() {
 
     private var chapterTitle = "Undefined"
     private var firstPageOfChapter = true
     private var outline: PdfOutline? = null
-
-    override fun handleEvent(event: Event) {
+    override fun onAcceptedEvent(event: AbstractPdfDocumentEvent?) {
         val documentEvent = event as PdfDocumentEvent
         if (documentEvent.type == PdfDocumentEvent.START_PAGE) {
             val page = documentEvent.page
@@ -53,8 +52,8 @@ class PageEventHandler private constructor(private val header: Header, private v
     }
 
     companion object {
-        fun create(patientId: String, reportDate: LocalDate): PageEventHandler {
-            return PageEventHandler(Header(), Footer(), SidePanel(patientId, reportDate))
+        fun create(patientId: String, sourcePatientId: String?, reportDate: LocalDate): PageEventHandler {
+            return PageEventHandler(Header(), Footer(), SidePanel(patientId, sourcePatientId, reportDate))
         }
     }
 }

@@ -2,15 +2,17 @@ package com.hartwig.actin.molecular.orange.datamodel.purple
 
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.HotspotType
+import com.hartwig.hmftools.datamodel.purple.ImmutableChromosomalRearrangements
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleAllelicDepth
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleCharacteristics
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleDriver
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGainDeletion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleVariant
+import com.hartwig.hmftools.datamodel.purple.ImmutableTumorStats
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleFittedPurityMethod
@@ -34,16 +36,32 @@ object TestPurpleFactory {
             .qc(purpleQCBuilder().build())
     }
 
+    fun tumorStatsBuilder(): ImmutableTumorStats.Builder {
+        return ImmutableTumorStats.builder()
+            .maxDiploidProportion(0.0)
+            .hotspotMutationCount(0)
+            .hotspotStructuralVariantCount(0)
+            .smallVariantAlleleReadCount(0)
+            .structuralVariantTumorFragmentCount(0)
+            .bafCount(0)
+    }
+
     fun characteristicsBuilder(): ImmutablePurpleCharacteristics.Builder {
         return ImmutablePurpleCharacteristics.builder()
+            .microsatelliteIndelsPerMb(0.0)
             .microsatelliteStatus(PurpleMicrosatelliteStatus.UNKNOWN)
             .tumorMutationalBurdenPerMb(0.0)
             .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.UNKNOWN)
             .tumorMutationalLoad(0)
             .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.UNKNOWN)
             .wholeGenomeDuplication(false)
-            .microsatelliteIndelsPerMb(0.0)
             .svTumorMutationalBurden(0)
+    }
+
+    fun chromosomalRearrangementsBuilder(): ImmutableChromosomalRearrangements.Builder {
+        return ImmutableChromosomalRearrangements.builder()
+            .hasTrisomy1q(false)
+            .hasCodeletion1p19q(false)
     }
 
     fun driverBuilder(): ImmutablePurpleDriver.Builder {
@@ -88,10 +106,10 @@ object TestPurpleFactory {
             .reported(false)
     }
 
-    fun gainLossBuilder(): ImmutablePurpleGainLoss.Builder {
-        return ImmutablePurpleGainLoss.builder()
+    fun gainDelBuilder(): ImmutablePurpleGainDeletion.Builder {
+        return ImmutablePurpleGainDeletion.builder()
             .gene("")
-            .interpretation(CopyNumberInterpretation.FULL_LOSS)
+            .interpretation(CopyNumberInterpretation.FULL_DEL)
             .minCopies(0.0)
             .maxCopies(0.0)
             .chromosome("")
@@ -105,6 +123,8 @@ object TestPurpleFactory {
             .gene("")
             .chromosome("")
             .chromosomeBand("")
+            .transcript("")
+            .isCanonical(false)
             .minCopyNumber(0.0)
             .maxCopyNumber(0.0)
             .minMinorAlleleCopyNumber(0.0)
@@ -113,8 +133,10 @@ object TestPurpleFactory {
     fun purpleQCBuilder(): ImmutablePurpleQC.Builder {
         return ImmutablePurpleQC.builder()
             .status(emptySet())
+            .addAllGermlineAberrations(emptySet())
             .amberMeanDepth(0)
             .contamination(0.0)
+            .totalCopyNumberSegments(0)
             .unsupportedCopyNumberSegments(0)
             .deletedGenes(0)
     }

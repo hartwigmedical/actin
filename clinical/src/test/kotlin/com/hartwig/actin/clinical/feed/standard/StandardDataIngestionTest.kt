@@ -1,33 +1,35 @@
 package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationRequirement
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationResult
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestDrugInteractionsFactory
 import com.hartwig.actin.clinical.curation.TestQtProlongatingFactory
+import com.hartwig.actin.clinical.feed.standard.extraction.PathologyReportsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardIhcTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.configuration.ClinicalConfiguration
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationRequirement
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.icd.TestIcdFactory
@@ -88,17 +90,20 @@ class StandardDataIngestionTest {
             clinicalStatusExtractor = StandardClinicalStatusExtractor(),
             tumorDetailsExtractor = StandardTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
-                curationDatabase.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
-            secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
+            secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.priorPrimaryCuration),
 
             patientDetailsExtractor = StandardPatientDetailsExtractor(),
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
-            ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
-            sequencingTestExtractor = StandardPriorSequencingTestExtractor(curationDatabase.sequencingTestCuration),
-            dataQualityMask = DataQualityMask()
+            ihcTestExtractor = StandardIhcTestExtractor(curationDatabase.molecularTestIhcCuration),
+            sequencingTestExtractor = StandardSequencingTestExtractor(
+                curationDatabase.sequencingTestCuration,
+                curationDatabase.sequencingTestResultCuration
+            ),
+            dataQualityMask = DataQualityMask(ClinicalConfiguration()),
+            pathologyReportsExtractor = PathologyReportsExtractor()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()

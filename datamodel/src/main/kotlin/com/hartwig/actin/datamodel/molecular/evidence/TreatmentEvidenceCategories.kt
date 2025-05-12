@@ -45,5 +45,5 @@ object TreatmentEvidenceCategories {
     private fun filterOnLabel(
         treatmentEvidence: Collection<TreatmentEvidence>,
         onLabel: Boolean?
-    ) = treatmentEvidence.filter { onLabel?.let { l -> l == it.isOnLabel } ?: true }
+    ) = treatmentEvidence.filter { onLabel?.let { l -> l == it.isOnLabel() } ?: true }
 }

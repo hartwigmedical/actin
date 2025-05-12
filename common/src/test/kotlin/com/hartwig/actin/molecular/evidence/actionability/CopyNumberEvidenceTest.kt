@@ -37,10 +37,10 @@ class CopyNumberEvidenceTest {
     }
 
     @Test
-    fun `Should determine evidence and trials for losses`() {
-        val loss = create("gene 1", CopyNumberType.LOSS)
+    fun `Should determine evidence and trials for deletions`() {
+        val del = create("gene 1", CopyNumberType.DEL)
 
-        val matches = copyNumberEvidence.findMatches(loss)
+        val matches = copyNumberEvidence.findMatches(del)
         assertThat(matches.evidenceMatches).containsExactly(DEL_EVIDENCE_FOR_GENE)
         assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(mapOf(DEL_TRIAL_FOR_GENE to DEL_TRIAL_FOR_GENE.anyMolecularCriteria()))
     }
@@ -53,18 +53,18 @@ class CopyNumberEvidenceTest {
         assertThat(ampMatches.evidenceMatches).isEmpty()
         assertThat(ampMatches.matchingCriteriaPerTrialMatch).isEmpty()
 
-        val lossOnOtherGene = create("other gene", CopyNumberType.LOSS)
+        val delOnOtherGene = create("other gene", CopyNumberType.DEL)
 
-        val lossMatches = copyNumberEvidence.findMatches(lossOnOtherGene)
-        assertThat(lossMatches.evidenceMatches).isEmpty()
-        assertThat(lossMatches.matchingCriteriaPerTrialMatch).isEmpty()
+        val delMatches = copyNumberEvidence.findMatches(delOnOtherGene)
+        assertThat(delMatches.evidenceMatches).isEmpty()
+        assertThat(delMatches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 
     @Test
-    fun `Should not match evidence and trials for no amp or loss`() {
-        val noAmpOrLoss = create("gene 1", CopyNumberType.NONE)
+    fun `Should not match evidence and trials for no amp or deletion`() {
+        val noAmpOrDel = create("gene 1", CopyNumberType.NONE)
 
-        val matches = copyNumberEvidence.findMatches(noAmpOrLoss)
+        val matches = copyNumberEvidence.findMatches(noAmpOrDel)
         assertThat(matches.evidenceMatches).isEmpty()
         assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }

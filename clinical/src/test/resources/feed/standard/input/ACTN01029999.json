@@ -139,11 +139,12 @@
     "hashedId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
     "birthYear": 5,
     "gender": "Female",
-    "registrationDate": "2020-01-01"
+    "registrationDate": "2020-01-01",
+    "hospitalPatientId": "PT-1001"
   },
   "molecularTests": [
     {
-      "test": "Archer FP Lung Target",
+      "test": "Archer",
       "date": "2024-07-15",
       "results": [
         {
@@ -233,16 +234,34 @@
     "tumorGradeDifferentiation": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\r\n\r\n\r\nimmunohistochemie ERBB2 3+\n\n",
     "tumorStage": "IV",
     "tumorStageDate": "2020-01-01T10:10:00",
-    "lesionSite": "brain",
-    "lesions": [
-      {
-        "location": "brain",
-        "sublocation": null,
-        "diagnosisDate": "2020-01-01"
-      }
-    ],
+    "lesions": {
+      "hasBoneLesions": false,
+      "hasBrainLesions": true,
+      "hasActiveBrainLesions": true,
+      "hasLiverLesions": false,
+      "questionnaireDate": "2020-01-01"
+    },
     "measurableDisease": true,
-    "measurableDiseaseDate": "2020-01-01T10:10:00"
+    "measurableDiseaseDate": "2020-01-01T10:10:00",
+    "pathology": [
+      {
+        "tissueId": "T-1000090",
+        "reportRequested": false,
+        "lab": "NKI-AvL",
+        "diagnosis": "diagnosis",
+        "tissueDate": "2020-01-01T10:10:00",
+        "authorisationDate": "2020-01-02T10:10:00",
+        "rawPathologyReport": "RawPathologyReport"
+      },
+      {
+        "tissueId": "T-1000091",
+        "reportRequested": false,
+        "lab": "ext lab",
+        "diagnosis": "diagnosis",
+        "reportDate": "2020-02-01T10:10:00",
+        "rawPathologyReport": "Raw Pathology Report"
+      }
+    ]
   },
   "priorPrimaries": [],
   "measurements": [

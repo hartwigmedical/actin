@@ -14,7 +14,11 @@ class ResistanceEvidenceGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return ""
+        return "Resistance evidence"
+    }
+
+    override fun forceKeepTogether(): Boolean {
+        return false
     }
 
     override fun contents(): Table {
@@ -31,7 +35,7 @@ class ResistanceEvidenceGenerator(
                         )
                     )
             } else {
-                val table = Tables.createFixedWidthCols(3f, 2f, 3f, 2f).setWidth(width)
+                val table = Tables.createRelativeWidthCols(3f, 2f, 3f, 2f).setWidth(width)
                 table.addHeaderCell(Cells.createHeader("Treatment"))
                 table.addHeaderCell(Cells.createHeader("Mutation"))
                 table.addHeaderCell(Cells.createHeader("Evidence level"))

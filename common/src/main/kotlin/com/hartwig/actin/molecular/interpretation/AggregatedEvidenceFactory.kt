@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.interpretation
 
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import com.hartwig.actin.util.MapFunctions
@@ -23,39 +23,37 @@ object AggregatedEvidenceFactory {
     private fun aggregateCharacteristicsEvidence(characteristics: MolecularCharacteristics): List<AggregatedEvidence> {
         return listOfNotNull(
             aggregatedEvidenceForCharacteristic(
-                characteristics.isMicrosatelliteUnstable,
                 MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE,
-                characteristics.microsatelliteEvidence,
-                "microsatellite stability"
+                characteristics.microsatelliteStability?.isUnstable,
+                characteristics.microsatelliteStability?.evidence
             ),
             aggregatedEvidenceForCharacteristic(
-                characteristics.isHomologousRecombinationDeficient,
                 MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT,
-                characteristics.homologousRecombinationEvidence,
-                "homologous recombination deficiency"
+                characteristics.homologousRecombination?.isDeficient,
+                characteristics.homologousRecombination?.evidence
             ),
             aggregatedEvidenceForCharacteristic(
-                characteristics.hasHighTumorMutationalBurden,
                 MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_BURDEN,
-                characteristics.tumorMutationalBurdenEvidence,
-                "high tumor mutational burden"
+                characteristics.tumorMutationalBurden?.isHigh,
+                characteristics.tumorMutationalBurden?.evidence
             ),
             aggregatedEvidenceForCharacteristic(
-                characteristics.hasHighTumorMutationalLoad,
                 MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD,
-                characteristics.tumorMutationalLoadEvidence,
-                "high tumor mutational load"
+                characteristics.tumorMutationalLoad?.isHigh,
+                characteristics.tumorMutationalLoad?.evidence
             )
         )
     }
 
     private fun aggregatedEvidenceForCharacteristic(
-        characteristic: Boolean?, event: String, evidence: ClinicalEvidence?, characteristicName: String
+        characteristic: String,
+        hasCharacteristic: Boolean?,
+        evidence: ClinicalEvidence?
     ): AggregatedEvidence? {
-        if (characteristic == true) {
-            return createAggregatedEvidence(event, evidence)
+        if (hasCharacteristic == true) {
+            return createAggregatedEvidence(characteristic, evidence)
         } else if (hasEvidence(evidence)) {
-            LOGGER.warn("There is evidence for $characteristicName without presence of signature")
+            LOGGER.warn("There is evidence for $characteristic without presence of signature")
         }
         return null
     }

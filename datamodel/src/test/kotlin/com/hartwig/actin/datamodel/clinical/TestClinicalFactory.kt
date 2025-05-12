@@ -36,6 +36,21 @@ object TestClinicalFactory {
     private const val DAYS_UNTIL_MEDICATION_END = 15
     private const val YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS = 3
 
+    fun createMinimalTestClinicalRecord(
+        patientId: String,
+        gender: Gender,
+        birthYear: Int,
+        doids: Set<String>
+    ): ClinicalRecord {
+        var clinicalRecord = createMinimalTestClinicalRecord()
+        clinicalRecord = clinicalRecord.copy(
+            patientId = patientId,
+            patient = clinicalRecord.patient.copy(gender = gender, birthYear = birthYear),
+            tumor = clinicalRecord.tumor.copy(doids = doids)
+        )
+        return clinicalRecord
+    }
+
     fun createMinimalTestClinicalRecord(): ClinicalRecord {
         return ClinicalRecord(
             patientId = TestPatientFactory.TEST_PATIENT,
@@ -43,17 +58,18 @@ object TestClinicalFactory {
             tumor = TumorDetails(),
             clinicalStatus = ClinicalStatus(),
             oncologicalHistory = emptyList(),
-            priorSecondPrimaries = emptyList(),
+            priorPrimaries = emptyList(),
             comorbidities = emptyList(),
-            priorIHCTests = emptyList(),
-            priorSequencingTests = emptyList(),
+            ihcTests = emptyList(),
+            sequencingTests = emptyList(),
             labValues = emptyList(),
             surgeries = emptyList(),
             bodyWeights = emptyList(),
             bodyHeights = emptyList(),
             vitalFunctions = emptyList(),
             bloodTransfusions = emptyList(),
-            medications = emptyList()
+            medications = emptyList(),
+            pathologyReports = emptyList()
         )
     }
 
@@ -62,15 +78,16 @@ object TestClinicalFactory {
             tumor = createTestTumorDetails(),
             clinicalStatus = createTestClinicalStatus(),
             oncologicalHistory = createTreatmentHistory(),
-            priorSecondPrimaries = createTestPriorSecondPrimaries(),
+            priorPrimaries = createTestPriorPrimaries(),
             comorbidities = createTestOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
-            priorIHCTests = createTestPriorMolecularTests(),
+            ihcTests = createTestIhcTests(),
             labValues = createTestLabValues(),
             surgeries = createTestSurgeries(),
             bodyWeights = createTestBodyWeights(),
             vitalFunctions = createTestVitalFunctions(),
             bloodTransfusions = createTestBloodTransfusions(),
-            medications = createTestMedications()
+            medications = createTestMedications(),
+            pathologyReports = createTestPathologyReports()
         )
     }
 
@@ -251,9 +268,9 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPriorSecondPrimaries(): List<PriorSecondPrimary> {
+    private fun createTestPriorPrimaries(): List<PriorPrimary> {
         return listOf(
-            PriorSecondPrimary(
+            PriorPrimary(
                 tumorLocation = "Lung",
                 tumorSubLocation = "",
                 tumorType = "Carcinoma",
@@ -277,16 +294,16 @@ object TestClinicalFactory {
             ),
             OtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
-                icdCodes = setOf(IcdCode("QB50.1",  null)),
+                icdCodes = setOf(IcdCode("QB50.1", null)),
                 year = 2023,
                 month = 10
             )
         )
     }
 
-    fun createTestPriorMolecularTests(): List<PriorIHCTest> {
+    private fun createTestIhcTests(): List<IhcTest> {
         return listOf(
-            PriorIHCTest(
+            IhcTest(
                 item = "EGFR",
                 measure = null,
                 scoreText = "c.2240_2254del",
@@ -295,7 +312,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IhcTest(
                 item = "Something",
                 measure = null,
                 scoreText = "GEEN mutaties aangetoond",
@@ -304,7 +321,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IhcTest(
                 item = "PD-L1",
                 measure = null,
                 measureDate = LocalDate.of(2024, 10, 1),
@@ -314,7 +331,7 @@ object TestClinicalFactory {
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IhcTest(
                 item = "PD-L1",
                 measure = null,
                 measureDate = LocalDate.of(2023, 10, 1),
@@ -324,7 +341,7 @@ object TestClinicalFactory {
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IhcTest(
                 item = "HER2",
                 measure = null,
                 scoreText = "Positive",
@@ -333,7 +350,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorIHCTest(
+            IhcTest(
                 item = "FGFR3::TACC3",
                 measure = null,
                 scoreText = "Positive",
@@ -494,7 +511,25 @@ object TestClinicalFactory {
     }
 
     private fun createTestBloodTransfusions(): List<BloodTransfusion> {
-        return listOf(BloodTransfusion(date = FIXED_DATE.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()), product = "Thrombocyte concentrate"))
+        return listOf(
+            BloodTransfusion(
+                date = FIXED_DATE.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()),
+                product = "Thrombocyte concentrate"
+            )
+        )
+    }
+
+    private fun createTestPathologyReports(): List<PathologyReport> {
+        return listOf(
+            PathologyReport(
+                tissueId = "T-10100",
+                lab = "NKI-AvL",
+                diagnosis = "long*onderkwab*rechts*biopt*niet-kleincellig carcinoom",
+                tissueDate = FIXED_DATE,
+                authorisationDate = FIXED_DATE,
+                report = "raw pathology report",
+            )
+        )
     }
 
     private fun createTestMedications(): List<Medication> {

@@ -16,7 +16,7 @@ class CurationDatabaseReader {
 
         const val PRIMARY_TUMOR_TSV = "primary_tumor.tsv"
         const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
-        const val SECOND_PRIMARY_TSV = "second_primary.tsv"
+        const val PRIOR_PRIMARY_TSV = "prior_primary.tsv"
         const val LESION_LOCATION_TSV = "lesion_location.tsv"
         const val NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv"
         const val ECG_TSV = "ecg.tsv"
@@ -27,6 +27,7 @@ class CurationDatabaseReader {
         const val MOLECULAR_TEST_IHC_TSV = "molecular_test_ihc.tsv"
         const val MOLECULAR_TEST_PDL1_TSV = "molecular_test_pdl1.tsv"
         const val SEQUENCING_TEST_TSV = "sequencing_test.tsv"
+        const val SEQUENCING_TEST_RESULT_TSV = "sequencing_test_result.tsv"
         const val MEDICATION_NAME_TSV = "medication_name.tsv"
         const val MEDICATION_DOSAGE_TSV = "medication_dosage.tsv"
         const val INTOLERANCE_TSV = "intolerance.tsv"

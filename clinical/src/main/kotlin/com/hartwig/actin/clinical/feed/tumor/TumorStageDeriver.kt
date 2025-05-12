@@ -8,8 +8,9 @@ import com.hartwig.actin.doid.DoidModel
 import java.util.function.Predicate
 
 class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>, Set<TumorStage>>) {
+
     fun derive(tumor: TumorDetails): Set<TumorStage>? {
-        return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids) && hasNoTumorStage(tumor)) {
+        return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids) && tumor.stage == null) {
             derivationRules.entries.firstOrNull { it.key.test(tumor) }
                 ?.value
         } else {
@@ -30,10 +31,6 @@ class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>
                     ) to setOf(TumorStage.I, TumorStage.II),
                 )
             )
-        }
-
-        private fun hasNoTumorStage(tumor: TumorDetails): Boolean {
-            return tumor.stage == null
         }
 
         private fun hasAtLeastCategorizedLesions(min: Int, doidModel: DoidModel): Predicate<TumorDetails> {
@@ -90,20 +87,7 @@ class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>
         }
 
         private fun evaluateMetastases(hasLesions: Boolean, tumor: TumorDetails, doidToMatch: String, doidModel: DoidModel): Boolean {
-            // Currently only for lung cancer multiple lesions are resolved to stage III/IV
-            return if (checkingLungMetastasesForLungCancer(doidModel, doidToMatch, tumor.doids) && tumor.lungLesionsCount != null) {
-                tumor.lungLesionsCount!! >= 2
-            } else {
-                (hasLesions) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumor.doids, doidToMatch)
-            }
-        }
-
-        private fun checkingLungMetastasesForLungCancer(doidModel: DoidModel, doidToMatch: String, tumorDoids: Set<String>?): Boolean {
-            return DoidEvaluationFunctions.isOfDoidType(
-                doidModel,
-                tumorDoids,
-                DoidConstants.LUNG_CANCER_DOID
-            ) && doidToMatch == DoidConstants.LUNG_CANCER_DOID
+               return (hasLesions) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumor.doids, doidToMatch)
         }
     }
 }

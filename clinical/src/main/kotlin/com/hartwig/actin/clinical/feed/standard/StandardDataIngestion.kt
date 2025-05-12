@@ -7,30 +7,32 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
+import com.hartwig.actin.clinical.feed.standard.extraction.PathologyReportsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardIhcTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.configuration.ClinicalConfiguration
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.doid.DoidModel
 import java.nio.file.Files
@@ -54,9 +56,10 @@ class StandardDataIngestion(
     private val patientDetailsExtractor: StandardPatientDetailsExtractor,
     private val bodyWeightExtractor: StandardBodyWeightExtractor,
     private val bodyHeightExtractor: StandardBodyHeightExtractor,
-    private val ihcTestExtractor: StandardPriorIHCTestExtractor,
-    private val sequencingTestExtractor: StandardPriorSequencingTestExtractor,
-    private val dataQualityMask: DataQualityMask
+    private val ihcTestExtractor: StandardIhcTestExtractor,
+    private val sequencingTestExtractor: StandardSequencingTestExtractor,
+    private val dataQualityMask: DataQualityMask,
+    private val pathologyReportsExtractor: PathologyReportsExtractor
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -72,6 +75,7 @@ class StandardDataIngestion(
                     record,
                     PatientIngestionResult(
                         record.patientId,
+                        record.patient.registrationDate,
                         if (evaluation.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN,
                         curationResultsFromWarnings(evaluation.warnings),
                         emptySet(),
@@ -101,6 +105,7 @@ class StandardDataIngestion(
         val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
         val ihcTests = ihcTestExtractor.extract(ehrPatientRecord)
         val sequencingTests = sequencingTestExtractor.extract(ehrPatientRecord)
+        val pathologyReports = pathologyReportsExtractor.extract(ehrPatientRecord)
 
         val patientEvaluation = listOf(
             patientDetails,
@@ -117,7 +122,8 @@ class StandardDataIngestion(
             bodyHeights,
             secondPrimaries,
             ihcTests,
-            sequencingTests
+            sequencingTests,
+            pathologyReports
         )
             .map { e -> e.evaluation }
             .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
@@ -136,9 +142,10 @@ class StandardDataIngestion(
             surgeries = surgeries.extracted,
             bodyWeights = bodyWeights.extracted,
             bodyHeights = bodyHeights.extracted,
-            priorSecondPrimaries = secondPrimaries.extracted,
-            priorIHCTests = ihcTests.extracted,
-            priorSequencingTests = sequencingTests.extracted
+            priorPrimaries = secondPrimaries.extracted,
+            ihcTests = ihcTests.extracted,
+            sequencingTests = sequencingTests.extracted,
+            pathologyReports = pathologyReports.extracted
         ) to patientEvaluation
     }
 
@@ -150,7 +157,8 @@ class StandardDataIngestion(
             drugInteractionDatabase: DrugInteractionsDatabase,
             qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
-            treatmentDatabase: TreatmentDatabase
+            treatmentDatabase: TreatmentDatabase,
+            clinicalConfiguration: ClinicalConfiguration
         ) = StandardDataIngestion(
             directory,
             StandardMedicationExtractor(atcModel, drugInteractionDatabase, qtProlongatingDatabase, treatmentDatabase),
@@ -163,16 +171,19 @@ class StandardDataIngestion(
             StandardClinicalStatusExtractor(),
             StandardTumorDetailsExtractor(
                 curationDatabaseContext.primaryTumorCuration,
-                curationDatabaseContext.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
-            StandardPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
+            StandardPriorPrimariesExtractor(curationDatabaseContext.priorPrimaryCuration),
             StandardPatientDetailsExtractor(),
             StandardBodyWeightExtractor(),
             StandardBodyHeightExtractor(),
-            StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
-            StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
-            DataQualityMask()
+            StandardIhcTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            StandardSequencingTestExtractor(
+                curationDatabaseContext.sequencingTestCuration,
+                curationDatabaseContext.sequencingTestResultCuration
+            ),
+            DataQualityMask(clinicalConfiguration),
+            PathologyReportsExtractor()
         )
     }
 }

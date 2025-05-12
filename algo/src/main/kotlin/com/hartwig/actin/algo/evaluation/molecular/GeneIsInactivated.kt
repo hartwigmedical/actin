@@ -4,17 +4,20 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import java.time.LocalDate
 
-class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
-
-    override fun genes() = listOf(gene)
+class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(
+        targetCoveragePredicate = or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION, messagePrefix = "Inactivation of"),
+        maxTestAge = maxTestAge
+    ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
@@ -25,7 +28,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
         val evidenceSource = test.evidenceSource
 
         sequenceOf(
-            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type == CopyNumberType.LOSS } }
+            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type == CopyNumberType.DEL } }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver -> inactivationEventsOnNonCanonicalTranscript.add(geneAlterationDriver.event) }
@@ -33,7 +36,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
         val drivers = test.drivers
         sequenceOf(
             drivers.homozygousDisruptions.asSequence(),
-            drivers.copyNumbers.asSequence().filter { it.canonicalImpact.type == CopyNumberType.LOSS }
+            drivers.copyNumbers.asSequence().filter { it.canonicalImpact.type == CopyNumberType.DEL }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver ->
@@ -56,7 +59,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
         val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
-        val hasHighMutationalLoad = test.characteristics.hasHighTumorMutationalLoad
+        val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         for (variant in drivers.variants) {
             if (variant.gene == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
                 if (!variant.isReportable) {
@@ -90,8 +93,8 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
                     } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && extendedVariant?.isBiallelic == true) {
                         reportableNonDriverBiallelicVariantsOther.add(variant.event)
                     } else if (
-                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRecombinationDeficient == true)
-                        || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.isMicrosatelliteUnstable == true)
+                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.homologousRecombination?.isDeficient == true)
+                        || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.microsatelliteStability?.isUnstable == true)
                     ) {
                         reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                     }

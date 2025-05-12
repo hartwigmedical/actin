@@ -38,6 +38,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
             EligibilityRule.HAS_AT_MOST_X_DISTANT_METASTASES to hasLimitedDistantMetastasesCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_METASTASES to meetsSpecificCriteriaRegardingMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES_ONLY to hasOnlyLiverMetastasesCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
@@ -68,6 +69,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST to hasMeasurableDiseaseRecistCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RANO to hasMeasurableDiseaseRanoCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA to hasSpecificProgressiveDiseaseCriteriaCreator(),
+            EligibilityRule.HAS_RAPID_PROGRESSIVE_DISEASE to hasRapidProgressiveDiseaseCreator(),
             EligibilityRule.HAS_INJECTION_AMENABLE_LESION to hasInjectionAmenableLesionCreator(),
             EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION to hasMRIVolumeAmenableLesionCreator(),
             EligibilityRule.HAS_EVIDENCE_OF_CNS_HEMORRHAGE_BY_MRI to hasEvidenceOfCNSHemorrhageByMRICreator(),
@@ -171,8 +173,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasSpecificTnmTScoreCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val score = functionInputResolver().createOneStringInput(function)
-            HasTnmTScore(score)
+            val scores = functionInputResolver().createManyTnmTInput(function)
+            HasTnmTScore(scores)
         }
     }
 
@@ -226,6 +228,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             val maxDistantMetastases = functionInputResolver().createOneIntegerInput(function)
             HasLimitedDistantMetastases(maxDistantMetastases)
         }
+    }
+
+    private fun meetsSpecificCriteriaRegardingMetastasesCreator(): FunctionCreator {
+        return { MeetsSpecificCriteriaRegardingMetastases(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasLiverMetastasesCreator(): FunctionCreator {
@@ -340,6 +346,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasSpecificProgressiveDiseaseCriteriaCreator(): FunctionCreator {
         return { HasSpecificProgressiveDiseaseCriteria() }
+    }
+
+    private fun hasRapidProgressiveDiseaseCreator(): FunctionCreator {
+        return { HasRapidProgressiveDisease() }
     }
 
     private fun hasInjectionAmenableLesionCreator(): FunctionCreator {

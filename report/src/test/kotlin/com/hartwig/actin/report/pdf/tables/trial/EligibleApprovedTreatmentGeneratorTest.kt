@@ -10,25 +10,17 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_SUB_LOCATION
 import com.hartwig.actin.report.pdf.getCellContents
-import com.hartwig.actin.report.pdf.getWrappedTable
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val width: Float = 10F
-
 class EligibleApprovedTreatmentGeneratorTest {
-    @Test
-    fun `Should return approved treatments if available`() {
-        val contents = eligibleTreatmentsTable(treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch())
-        assertThat(getCellContents(contents, 0, 0)).isEqualTo("Pembrolizumab")
-    }
 
     @Test
     fun `Should return Potential SOC if it is a cancer of unknown primary`() {
@@ -37,11 +29,20 @@ class EligibleApprovedTreatmentGeneratorTest {
 
         val molecularHistory = MolecularHistory(
             listOf(
-                TestMolecularFactory.createMinimalTestOrangeRecord().copy(
-                    characteristics = MolecularCharacteristics(
+                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                    characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                         predictedTumorOrigin = PredictedTumorOrigin(
                             listOf(
-                                CupPrediction("colorectal", 0.9, 0.0, 0.0, 0.0)
+                                CupPrediction(
+                                    "colorectal",
+                                    0.99,
+                                    0.98,
+                                    0.96,
+                                    0.84,
+                                    0.82,
+                                    0.93,
+                                    CuppaMode.WGTS
+                                )
                             )
                         )
                     )
@@ -69,7 +70,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             treatmentMatch,
             EnvironmentConfiguration.create(null)
         )
-        return getWrappedTable(EligibleApprovedTreatmentGenerator(report, width))
+        return EligibleApprovedTreatmentGenerator(report).contents()
     }
 }
 

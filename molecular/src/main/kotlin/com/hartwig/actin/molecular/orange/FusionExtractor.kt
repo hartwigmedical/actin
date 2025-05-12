@@ -11,7 +11,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
-internal class FusionExtractor(private val geneFilter: GeneFilter) {
+class FusionExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(linx: LinxRecord): List<Fusion> {
         return linx.allSomaticFusions().filter { fusion ->

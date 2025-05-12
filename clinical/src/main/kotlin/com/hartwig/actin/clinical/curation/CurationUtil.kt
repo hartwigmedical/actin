@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
 object CurationUtil {
+
     private const val IGNORE = "<ignore>"
     private const val DELIMITER = ";"
 

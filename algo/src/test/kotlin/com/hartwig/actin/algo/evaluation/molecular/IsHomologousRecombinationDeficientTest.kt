@@ -2,13 +2,13 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.junit.Test
 
 class IsHomologousRecombinationDeficientTest {
@@ -20,25 +20,25 @@ class IsHomologousRecombinationDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant())
+                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant())
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = true))
+                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     null,
                     TestVariantFactory.createMinimal().copy(isReportable = true, gene = hrdGene)
                 )
@@ -47,22 +47,22 @@ class IsHomologousRecombinationDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = true))
+                MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndLoss(
+                MolecularTestFactory.withHomologousRecombinationAndDeletion(
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
-                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                         gene = hrdGene
                     )
                 )
@@ -71,7 +71,7 @@ class IsHomologousRecombinationDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndHomozygousDisruption(
+                MolecularTestFactory.withHomologousRecombinationAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = hrdGene)
                 )
             )
@@ -79,19 +79,19 @@ class IsHomologousRecombinationDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationAndDisruption(
                     true, TestDisruptionFactory.createMinimal().copy(gene = hrdGene)
                 )
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant(isReportable = false)))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant(isReportable = false)))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true,
                     TestVariantFactory.createMinimal().copy(
                         gene = "other gene",
@@ -103,7 +103,7 @@ class IsHomologousRecombinationDeficientTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(false, hrdVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(false, hrdVariant(isReportable = true)))
         )
     }
 

@@ -3,14 +3,14 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -22,20 +22,20 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     fun `Should fail when HRD status unknown and no reportable drivers in HR genes`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant()))
         )
     }
 
     @Test
-    fun `Should fail when HRD with loss of BRCA1`() {
+    fun `Should fail when HRD with deletion of BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndLoss(
+                MolecularTestFactory.withHomologousRecombinationAndDeletion(
                     true,
                     TestCopyNumberFactory.createMinimal()
                         .copy(
-                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                             gene = "BRCA1",
                             driverLikelihood = DriverLikelihood.HIGH
                         )
@@ -49,7 +49,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true, hrdVariant(isReportable = true, isHotspot = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
             )
@@ -60,7 +60,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     fun `Should fail when no HRD`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(false, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(false, hrdVariant()))
         )
     }
 
@@ -69,7 +69,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant(gene = "RAD51C", isReportable = true))
+                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant(gene = "RAD51C", isReportable = true))
             )
         )
     }
@@ -78,7 +78,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     fun `Should warn when HRD and only a non reportable mutation in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant()))
         )
     }
 
@@ -87,7 +87,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true,
                     hrdVariant(isReportable = true, isBiallelic = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
@@ -100,7 +100,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true,
                     hrdVariant(isReportable = true, isBiallelic = true)
                 )
@@ -113,7 +113,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true,
                     hrdVariant(isReportable = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
@@ -126,7 +126,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true,
                     hrdVariant(isReportable = true)
                 )
@@ -137,7 +137,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     @Test
     fun `Should ignore variants with allelic status is unknown in BRCA1`() {
         val result = function.evaluate(
-            MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+            MolecularTestFactory.withHomologousRecombinationAndVariant(
                 true,
                 TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isHotspot = true)
             )
@@ -151,7 +151,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationAndDisruption(
                     true,
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
@@ -165,7 +165,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true, hrdVariant(gene = "RAD51C", true)
                 )
             )
@@ -177,7 +177,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationAndDisruption(
                     true,
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
@@ -191,7 +191,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant())
+                MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant())
             )
         )
     }
@@ -201,7 +201,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariantAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationAndVariantAndDisruption(
                     true,
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true),
@@ -216,7 +216,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndHomozygousDisruption(
+                MolecularTestFactory.withHomologousRecombinationAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = "BRCA1")
                 )
             )
@@ -228,7 +228,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true, hrdVariant("RAD51C", true, true, true, DriverLikelihood.HIGH)
                 )
             )

@@ -16,20 +16,23 @@ object TestExternalTrialFactory {
     fun create(
         nctId: String = "",
         title: String = "",
+        acronym: String? = null,
         source: String = "",
+        treatments: Set<String> = emptySet(),
         countries: Set<CountryDetails> = emptySet(),
         molecularMatches: Set<MolecularMatchDetails> = emptySet(),
         applicableCancerTypes: Set<CancerType> = emptySet(),
-        therapyNames: Set<String> = emptySet()
+        url: String = ""
     ): ExternalTrial {
         return ExternalTrial(
             nctId = nctId,
             title = title,
+            acronym = acronym,
             source = source,
+            treatments = treatments,
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            therapyNames = therapyNames,
         )
     }
 }

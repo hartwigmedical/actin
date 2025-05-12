@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import java.time.LocalDate
+import java.util.function.Predicate
 
 data class MolecularRecord(
     val sampleId: String,
@@ -14,6 +15,7 @@ data class MolecularRecord(
     val isContaminated: Boolean,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>,
+    val specification: PanelSpecification?,
     override val hasSufficientPurity: Boolean,
     override val hasSufficientQuality: Boolean,
     override val testTypeDisplay: String? = null,
@@ -24,8 +26,13 @@ data class MolecularRecord(
     override val evidenceSource: String,
 ) : MolecularTest {
 
-    override fun testsGene(gene: String) =
-        if (experimentType == ExperimentType.HARTWIG_TARGETED) drivers.copyNumbers.any { gene == it.gene } else true
+    override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
+        if (experimentType == ExperimentType.HARTWIG_TARGETED) isTestedInTargetedPanel(gene, molecularTestTargets) else true
+
+    private fun isTestedInTargetedPanel(
+        gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>
+    ) = specification?.testsGene(gene, molecularTestTargets)
+        ?: throw IllegalStateException("If experiment type is ${ExperimentType.HARTWIG_TARGETED} then a panel specification must be included")
 
     override fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity

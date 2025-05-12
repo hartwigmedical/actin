@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
-internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter) {
+class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractHomozygousDisruptions(linx: LinxRecord): List<HomozygousDisruption> {
         val relevantHomozygousDisruptions = relevantHomozygousDisruptions(linx)

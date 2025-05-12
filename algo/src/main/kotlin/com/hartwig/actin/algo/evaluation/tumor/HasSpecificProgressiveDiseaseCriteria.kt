@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasSpecificProgressiveDiseaseCriteria : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined("Tumor progression according to specific criteria undetermined")
+        return EvaluationFactory.undetermined("Tumor progression according to specific criteria undetermined")
     }
 }

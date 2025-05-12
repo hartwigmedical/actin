@@ -108,7 +108,7 @@ object TestServeTrialFactory {
         source: Knowledgebase = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
         nctId: String = "NCT00000001",
         title: String = "",
-        acronym: String = "",
+        acronym: String? = null,
         countries: Set<Country> = emptySet(),
         indications: Set<Indication> = emptySet(),
         anyMolecularCriteria: Set<MolecularCriterium> = emptySet(),

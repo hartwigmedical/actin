@@ -65,23 +65,23 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
-            EligibilityRule.LOSS_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsLostByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC to proteinIsExpressedByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_EXACTLY_Z to proteinHasExactExpressionByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_AT_LEAST_Z to proteinHasSufficientExpressionByIHCCreator(),
-            EligibilityRule.EXPRESSION_OF_PROTEIN_X_OF_GENE_Y_BY_IHC_OF_AT_MOST_Z to proteinHasLimitedExpressionByIHCCreator(),
-            EligibilityRule.PROTEIN_X_OF_GENE_Y_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
-            EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator("CPS"),
-            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIHCCreator("CPS"),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("TPS", doidModel()),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIHCCreator("TPS", doidModel()),
-            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("TAP"),
-            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIHCCreator("TAP"),
-            EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("IC"),
-            EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("TC"),
+            EligibilityRule.LOSS_OF_PROTEIN_X_BY_IHC to proteinIsLostByIhcCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIhcCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIhcCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIhcCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIhcCreator(),
+            EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIhcCreator(),
+            EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIhcCreator(),
+            EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(),
+            EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(),
+            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator("CPS"),
+            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator("CPS"),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("TPS", doidModel()),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator("TPS", doidModel()),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("TAP"),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator("TAP"),
+            EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("IC"),
+            EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("TC"),
             EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to { HasAvailablePDL1Status() },
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to { HasPSMAPositivePETScan() },
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable() },
@@ -90,7 +90,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable(maxMolecularTestAge()) },
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable() },
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
-            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
+            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator(),
+            EligibilityRule.HAS_PROTEIN_X_POLYMORPHISM_Y to hasProteinPolymorphismCreator()
         )
     }
 
@@ -281,77 +282,74 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun proteinIsLostByIHCCreator(): FunctionCreator {
+    private fun proteinIsLostByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
-            ProteinIsLostByIHC(protein, gene, maxMolecularTestAge())
+            ProteinIsLostByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 
-    private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
+    private fun proteinIsExpressedByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
-            ProteinIsExpressedByIHC(protein, gene, maxMolecularTestAge())
+            ProteinIsExpressedByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 
-    private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
+    private fun proteinHasExactExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
+            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            ProteinHasExactExpressionByIhc(protein, expressionLevel)
         }
     }
 
-    private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
+    private fun proteinHasSufficientExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
-            ProteinHasSufficientExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
+            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            ProteinHasSufficientExpressionByIhc(protein, expressionLevel)
         }
     }
 
-    private fun proteinIsWildTypeByIHCCreator(): FunctionCreator {
+    private fun proteinIsWildTypeByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene) = functionInputResolver().createOneProteinOneGeneInput(function)
-            ProteinIsWildTypeByIHC(protein, gene, maxMolecularTestAge())
+            ProteinIsWildTypeByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 
-    private fun hasPositiveHER2ExpressionByIHCCreator(): FunctionCreator {
-        return { HasPositiveHER2ExpressionByIHC(maxMolecularTestAge()) }
+    private fun hasPositiveHER2ExpressionByIhcCreator(): FunctionCreator {
+        return { HasPositiveHER2ExpressionByIhc(maxMolecularTestAge()) }
     }
 
-    private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
+    private fun proteinHasLimitedExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, gene, expressionLevel) = functionInputResolver().createOneProteinOneGeneOneIntegerInput(function)
-            ProteinHasLimitedExpressionByIHC(protein, gene, expressionLevel, maxMolecularTestAge())
+            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            ProteinHasLimitedExpressionByIhc(protein, expressionLevel)
         }
     }
 
-    private fun hasSufficientPDL1ByMeasureByIHCCreator(measure: String? = null): FunctionCreator {
+    private fun hasSufficientPDL1ByMeasureByIhcCreator(measure: String? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val minPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasSufficientPDL1ByIHC(measure, minPDL1.toDouble())
+            HasSufficientPDL1ByIhc(measure, minPDL1.toDouble())
         }
     }
 
-    private fun hasLimitedPDL1ByMeasureByIHCCreator(measure: String? = null): FunctionCreator {
+    private fun hasLimitedPDL1ByMeasureByIhcCreator(measure: String? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasLimitedPDL1ByIHC(measure, maxPDL1.toDouble())
+            HasLimitedPDL1ByIhc(measure, maxPDL1.toDouble())
         }
     }
 
-    private fun hasSufficientPDL1ByDoubleMeasureByIHCCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
+    private fun hasSufficientPDL1ByDoubleMeasureByIhcCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val minPDL1 = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientPDL1ByIHC(measure, minPDL1, doidModel)
+            HasSufficientPDL1ByIhc(measure, minPDL1, doidModel)
         }
     }
 
-    private fun hasLimitedPDL1ByDoubleMeasureByIHCCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
+    private fun hasLimitedPDL1ByDoubleMeasureByIhcCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPDL1 = functionInputResolver().createOneDoubleInput(function)
-            HasLimitedPDL1ByIHC(measure, maxPDL1, doidModel)
+            HasLimitedPDL1ByIhc(measure, maxPDL1, doidModel)
         }
     }
 
@@ -375,6 +373,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val (chromosome1, chromosome2) = functionInputResolver().createTwoStringsInput(function)
             HasCodeletionOfChromosomeArms(chromosome1, chromosome2)
+        }
+    }
+
+    private fun hasProteinPolymorphismCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (protein, polymorphism) = functionInputResolver().createOneProteinOneStringInput(function)
+            ProteinHasPolymorphism(protein, polymorphism)
         }
     }
 

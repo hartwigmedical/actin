@@ -11,10 +11,10 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val isHRD = test.characteristics.isHomologousRecombinationDeficient
+        val isHRD = test.characteristics.homologousRecombination?.isDeficient
 
         with(HomologousRecombinationDeficiencyGeneSummary.createForDrivers(test.drivers)) {
-            val genesToFindWithDeletionOrPartialLoss = genesInGenesToFind(hrdGenesWithDeletionOrPartialLoss)
+            val genesToFindWithDeletionOrPartialDel = genesInGenesToFind(hrdGenesWithDeletionOrPartialDel)
             val genesToFindWithBiallelicHotspot = genesInGenesToFind(hrdGenesWithBiallelicHotspot)
             val genesToFindWithNonBiallelicHotspot = genesInGenesToFind(hrdGenesWithNonBiallelicHotspot)
 
@@ -72,8 +72,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     )
                 }
 
-                genesToFindWithDeletionOrPartialLoss.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with ${concat(genesToFindWithDeletionOrPartialLoss)} deletion or partial loss")
+                genesToFindWithDeletionOrPartialDel.isNotEmpty() -> {
+                    EvaluationFactory.fail("Tumor is HRD with ${concat(genesToFindWithDeletionOrPartialDel)} deletion or partial deletion")
                 }
 
                 warnEvaluations.isNotEmpty() -> {

@@ -35,7 +35,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
         )
 
         val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
-            "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
+            "Gonadotropin agonists" to setOf(DrugType.GONADOTROPIN_AGONIST),
+            "Gonadotropin antagonists" to setOf(DrugType.GONADOTROPIN_ANTAGONIST),
             "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
             "Monoclonal antibodies and antibody drug conjugates" to setOf(
                 DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY,
@@ -51,6 +52,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "L01A" to setOf(DrugType.ALKYLATING_AGENT),
             "L01XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
             "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
+            "L01EB" to setOf(DrugType.EGFR_TYROSINE_KINASE_INHIBITOR),
             "Nitrosoureas" to setOf(DrugType.NITROSOUREAS)
         )
 
@@ -69,7 +71,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Colony stimulating factors" to convertToAtcLevel(setOf("L03AA"), atcTree),
                     "Coumarin derivative" to convertToAtcLevel(setOf("B01AA"), atcTree),
                     "Endocrine therapy" to convertToAtcLevel(setOf("L02"), atcTree),
-                    "Gonadorelin" to convertToAtcLevel(setOf("H01CC", "H01CA", "G03XA", "L02AE"), atcTree),
+                    "Gonadotropin agonists" to convertToAtcLevel(setOf("H01CA", "L02AE"), atcTree),
+                    "Gonadotropin antagonists" to convertToAtcLevel(setOf("H01CC", "G03XA"), atcTree),
                     "Hypomethylating agents" to convertToAtcLevel(setOf("L01BC07", "L01BC08"), atcTree),
                     "Immunostimulants" to convertToAtcLevel(setOf("L03"), atcTree),
                     "Immunosuppressants" to convertToAtcLevel(setOf("L04"), atcTree),

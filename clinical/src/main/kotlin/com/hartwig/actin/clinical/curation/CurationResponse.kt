@@ -22,7 +22,6 @@ data class CurationResponse<T>(
     }
 
     companion object {
-
         fun <T : CurationConfig> createFromConfigs(
             configs: Set<T>,
             patientId: String,
@@ -88,7 +87,7 @@ data class CurationResponse<T>(
             val evaluation = when (curationCategory) {
                 CurationCategory.PRIMARY_TUMOR -> CurationExtractionEvaluation(primaryTumorEvaluatedInputs = evaluatedInputs)
                 CurationCategory.ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = evaluatedInputs)
-                CurationCategory.SECOND_PRIMARY -> CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = evaluatedInputs)
+                CurationCategory.PRIOR_PRIMARY -> CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = evaluatedInputs)
                 CurationCategory.LESION_LOCATION -> CurationExtractionEvaluation(lesionLocationEvaluatedInputs = evaluatedInputs)
                 CurationCategory.NON_ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.ECG -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
@@ -96,12 +95,14 @@ data class CurationResponse<T>(
                 CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION -> CurationExtractionEvaluation(
                     periodBetweenUnitEvaluatedInputs = evaluatedInputs
                 )
+
                 CurationCategory.COMORBIDITY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.COMPLICATION -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.TOXICITY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MOLECULAR_TEST_IHC -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MOLECULAR_TEST_PDL1 -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.SEQUENCING_TEST -> CurationExtractionEvaluation(sequencingTestEvaluatedInputs = evaluatedInputs)
+                CurationCategory.SEQUENCING_TEST_RESULT -> CurationExtractionEvaluation(sequencingTestResultEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_NAME -> CurationExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_DOSAGE -> CurationExtractionEvaluation(medicationDosageEvaluatedInputs = evaluatedInputs)
                 CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)

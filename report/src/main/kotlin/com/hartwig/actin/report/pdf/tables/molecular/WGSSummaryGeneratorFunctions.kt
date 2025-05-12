@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -11,7 +12,6 @@ import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Cell
@@ -20,10 +20,6 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
 object WGSSummaryGeneratorFunctions {
-
-    fun createMolecularSummaryTitle(molecular: MolecularTest): String {
-        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} (${date(molecular.date)})"
-    }
 
     fun createMolecularSummaryTable(
         isShort: Boolean,
@@ -43,13 +39,14 @@ object WGSSummaryGeneratorFunctions {
 
         if (wgsMolecular?.hasSufficientQuality != false) {
             if (!isShort) {
-                table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
+                val cuppaModeIsWGTS = if (molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS) " (WGTS)" else ""
+                table.addCell(Cells.createKey("Molecular tissue of origin prediction${cuppaModeIsWGTS}"))
                 table.addCell(tumorOriginPredictionCell(molecular))
             }
 
             val hasTmbData = createTmbCells(molecular, isShort, table)
 
-            val tableContents = generateTableContents(isShort, summarizer, molecular, keyWidth, valueWidth)
+            val tableContents = generateTableContents(isShort, summarizer, molecular)
 
             val filteredContents = tableContents
                 .filterNot { (_, value) -> (value.contains(Formats.VALUE_NONE) || value.contains(Formats.VALUE_UNKNOWN)) && isShort }
@@ -92,15 +89,19 @@ object WGSSummaryGeneratorFunctions {
         isShort: Boolean,
         table: Table
     ): Boolean {
-        val tmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
-        if (!isShort || tmbStatus != "TML ${Formats.VALUE_UNKNOWN} / TMB ${Formats.VALUE_UNKNOWN}") {
+        val tmlUnknownAndTmbKnown =
+            molecular.characteristics.tumorMutationalLoad == null && molecular.characteristics.tumorMutationalBurden != null
+        val tmlAndTmbKnown =
+            molecular.characteristics.tumorMutationalLoad != null && molecular.characteristics.tumorMutationalBurden != null
+        if (tmlUnknownAndTmbKnown) {
+            val tmbStatus = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, true)
+            table.addCell(Cells.createKey("Tumor mutational burden"))
+            table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmbStatus))
+            return true
+        } else if (!isShort || tmlAndTmbKnown) {
+            val tmlAndTmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
             table.addCell(Cells.createKey("Tumor mutational load / burden"))
-            table.addCell(
-                tumorMutationalLoadAndTumorMutationalBurdenStatusCell(
-                    molecular,
-                    tmbStatus
-                )
-            )
+            table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmlAndTmbStatus))
             return true
         }
         return false
@@ -172,8 +173,8 @@ object WGSSummaryGeneratorFunctions {
     }
 
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
-        val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics)
-        val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics)
+        val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics, true)
+        val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, true)
         return String.format("%s / %s", tmlString, tmbString)
     }
 
@@ -181,7 +182,27 @@ object WGSSummaryGeneratorFunctions {
         return if (list.isEmpty()) Formats.VALUE_NONE else list.joinToString(Formats.COMMA_SEPARATOR)
     }
 
-    private fun getOrderedKeys(isShort: Boolean): List<String> {
+    private fun generateTableContents(
+        isShort: Boolean,
+        summarizer: MolecularDriversSummarizer,
+        molecular: MolecularTest
+    ): List<Pair<String, String>> {
+        val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular)
+        val orderedKeys = determineOrderedKeys(isShort)
+        val keyToValueMap = mapOf(
+            "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
+            "HR status" to characteristicsGenerator.createHRStatusString(),
+            "High driver mutations" to formatList(summarizer.keyVariants()),
+            "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
+            "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
+            "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
+            "Gene fusions" to formatList(summarizer.keyFusionEvents()),
+            "Virus detection" to formatList(summarizer.keyVirusEvents()),
+        )
+        return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
+    }
+
+    private fun determineOrderedKeys(isShort: Boolean): List<String> {
         return if (isShort) {
             listOf(
                 "High driver mutations",
@@ -206,23 +227,5 @@ object WGSSummaryGeneratorFunctions {
                 "",
             )
         }
-    }
-
-    private fun generateTableContents(
-        isShort: Boolean, summarizer: MolecularDriversSummarizer, molecular: MolecularTest, keyWidth: Float, valueWidth: Float
-    ): List<Pair<String, String>> {
-        val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
-        val orderedKeys = getOrderedKeys(isShort)
-        val keyToValueMap = mapOf(
-            "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
-            "HR status" to characteristicsGenerator.createHRStatusString(),
-            "High driver mutations" to formatList(summarizer.keyVariants()),
-            "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
-            "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
-            "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
-            "Gene fusions" to formatList(summarizer.keyFusionEvents()),
-            "Virus detection" to formatList(summarizer.keyVirusEvents()),
-        )
-        return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
     }
 }

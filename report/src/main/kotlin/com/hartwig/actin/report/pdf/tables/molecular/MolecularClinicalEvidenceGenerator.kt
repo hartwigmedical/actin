@@ -5,33 +5,32 @@ import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularClinicalEvidenceGenerator(
-    val molecularHistory: MolecularHistory,
-    private val width: Float,
-    private val isOnLabel: Boolean
-) : TableGenerator {
+class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, private val isOnLabel: Boolean) : TableGenerator {
 
     override fun title(): String {
         val titleEnd = "label clinical evidence"
         return if (isOnLabel) "On $titleEnd" else "Off $titleEnd"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
-        val columnCount = 6
+        val eventWidth = 7f
+        val sourceEventWidth = 7f
+        val levelAWidth = 12f
+        val levelBWidth = 12f
+        val levelCWidth = 12f
+        val levelDWidth = 12f
 
-        val eventWidth = (0.7 * width / 6).toFloat()
-        val sourceEventWidth = (0.7 * width / 6).toFloat()
-        val levelAWidth = (1.2 * width / 6).toFloat()
-        val levelBWidth = (1.2 * width / 6).toFloat()
-        val levelCWidth = (1.2 * width / 6).toFloat()
-        val levelDWidth = (1.2 * width / 6).toFloat()
-
-        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
+        val table = Tables.createRelativeWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
 
         listOf("Event", "CKB Event", "Level A", "Level B", "Level C", "Level D")
             .map(Cells::createHeader)
@@ -50,12 +49,13 @@ class MolecularClinicalEvidenceGenerator(
                         table.addCell(Cells.createContent(sourceEvent))
 
                         treatmentEvidencesByLevel.forEach { perLevelEvidences ->
-                            val evidenceLevelTable = Table(1).setWidth(width / columnCount)
+                            val evidenceLevelTable = Tables.createSingleCol()
 
                             val evidenceCellContents = TreatmentEvidenceFunctions.generateEvidenceCellContents(perLevelEvidences)
 
                             evidenceCellContents.forEach { (treatment, cancerTypes, resistance) ->
-                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f).setItalic().setFontSize(5.5f)
+                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f)
+                                    .setFont(Styles.fontItalic()).setFontSize(5.5f)
                                 val treatmentContent = Paragraph(treatment)
 
                                 if (resistance) {
@@ -63,7 +63,7 @@ class MolecularClinicalEvidenceGenerator(
                                     cancerTypeContent.setFontColor(PALETTE_RED)
                                 }
 
-                                val evidenceSubTable = Table(1).setWidth(width / columnCount)
+                                val evidenceSubTable = Tables.createSingleCol()
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
 

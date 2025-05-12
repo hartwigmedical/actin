@@ -22,18 +22,18 @@ class MolecularEvaluationTest {
     fun `Should only return WGS results when rule passes`() {
         combineAndAssert(
             PASS_ORANGE, MolecularEvaluation(TestMolecularFactory.createMinimalTestPanelRecord(), PASS_PANEL),
-            MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), PASS_ORANGE)
+            MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), PASS_ORANGE)
         )
     }
 
     @Test
     fun `Should only return most recent WGS results when rule passes`() {
         val oldTest = MolecularEvaluation(
-            TestMolecularFactory.createMinimalTestOrangeRecord().copy(date = LocalDate.now().minusDays(1)),
+            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.now().minusDays(1)),
             PASS_ORANGE.copy(inclusionMolecularEvents = setOf("old"))
         )
         val recentTest = MolecularEvaluation(
-            TestMolecularFactory.createMinimalTestOrangeRecord().copy(date = LocalDate.now()),
+            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.now()),
             PASS_ORANGE.copy(inclusionMolecularEvents = setOf("recent"))
         )
         combineAndAssert(
@@ -46,7 +46,7 @@ class MolecularEvaluationTest {
         val panelEvent2 = "panel event 2"
         combineAndAssert(
             EvaluationFactory.pass("pass combined", inclusionEvents = setOf(PANEL_EVENT, panelEvent2)),
-            MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), FAIL_ORANGE),
+            MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), FAIL_ORANGE),
             MolecularEvaluation(
                 TestMolecularFactory.createMinimalTestPanelRecord().copy(experimentType = ExperimentType.PANEL),
                 PASS_PANEL
@@ -61,16 +61,16 @@ class MolecularEvaluationTest {
     @Test
     fun `Should prefer pass over warn, warn over fail, and fail over undetermined`() {
         combineAndAssert(
-            PASS_ORANGE, MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), WARN_ORANGE),
-            MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), PASS_ORANGE)
+            PASS_ORANGE, MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), WARN_ORANGE),
+            MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), PASS_ORANGE)
         )
         combineAndAssert(
-            WARN_ORANGE, MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), FAIL_ORANGE),
-            MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), WARN_ORANGE)
+            WARN_ORANGE, MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), FAIL_ORANGE),
+            MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), WARN_ORANGE)
         )
         combineAndAssert(
-            FAIL_ORANGE, MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), UNDETERMINED_ORANGE),
-            MolecularEvaluation(TestMolecularFactory.createMinimalTestOrangeRecord(), FAIL_ORANGE)
+            FAIL_ORANGE, MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), UNDETERMINED_ORANGE),
+            MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), FAIL_ORANGE)
         )
     }
 

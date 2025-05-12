@@ -32,7 +32,7 @@ class MolecularDriversSummarizer private constructor(
     fun keyDeletedGenes(): List<String> {
         return drivers.copyNumbers
             .asSequence()
-            .filter { copyNumber -> copyNumber.canonicalImpact.type.isLoss || copyNumber.otherImpacts.any { it.type.isLoss } }
+            .filter { copyNumber -> copyNumber.canonicalImpact.type.isDeletion || copyNumber.otherImpacts.any { it.type.isDeletion } }
             .filter(::isKeyDriver)
             .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else "" }
             .distinct()

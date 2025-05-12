@@ -2,12 +2,14 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 import java.time.LocalDate
 
+const val SOURCE_EVENT_URL: String = "sourceEventUrl"
+
 object TestTreatmentEvidenceFactory {
 
     fun approved() =
         create(
             treatment = "approved",
-            isOnLabel = true,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
@@ -16,7 +18,7 @@ object TestTreatmentEvidenceFactory {
     fun onLabelExperimental() =
         create(
             treatment = "on-label experimental",
-            isOnLabel = true,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
@@ -25,7 +27,7 @@ object TestTreatmentEvidenceFactory {
     fun offLabelExperimental() =
         create(
             treatment = "off-label experimental",
-            isOnLabel = false,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.OTHER_TYPE,
             evidenceLevel = EvidenceLevel.B,
             evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
             evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
@@ -34,7 +36,7 @@ object TestTreatmentEvidenceFactory {
     fun onLabelPreclinical() =
         create(
             treatment = "on-label pre-clinical",
-            isOnLabel = true,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
             evidenceLevel = EvidenceLevel.C,
             evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
@@ -43,7 +45,7 @@ object TestTreatmentEvidenceFactory {
     fun offLabelPreclinical() =
         create(
             treatment = "off-label pre-clinical",
-            isOnLabel = false,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.OTHER_TYPE,
             evidenceLevel = EvidenceLevel.D,
             evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
@@ -52,7 +54,7 @@ object TestTreatmentEvidenceFactory {
     fun onLabelKnownResistant() =
         create(
             treatment = "on-label known resistant",
-            isOnLabel = true,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
@@ -61,7 +63,7 @@ object TestTreatmentEvidenceFactory {
     fun offLabelKnownResistant() =
         create(
             treatment = "off-label known resistant",
-            isOnLabel = false,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.OTHER_TYPE,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
@@ -70,7 +72,7 @@ object TestTreatmentEvidenceFactory {
     fun onLabelSuspectResistant() =
         create(
             treatment = "on-label suspect resistant",
-            isOnLabel = true,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
             evidenceLevel = EvidenceLevel.C,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
@@ -79,7 +81,7 @@ object TestTreatmentEvidenceFactory {
     fun offLabelSuspectResistant() =
         create(
             treatment = "off-label suspect resistant",
-            isOnLabel = false,
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.OTHER_TYPE,
             evidenceLevel = EvidenceLevel.C,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
             evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
@@ -87,24 +89,34 @@ object TestTreatmentEvidenceFactory {
 
     fun create(
         treatment: String,
-        isOnLabel: Boolean,
+        cancerTypeMatchApplicability: CancerTypeMatchApplicability,
         sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
         sourceEvent: String = "",
-        isCategoryEvent: Boolean = false,
+        evidenceType: EvidenceType = EvidenceType.DELETION,
         matchedCancerType: String = "",
         excludedCancerSubTypes: Set<String> = emptySet(),
         evidenceLevel: EvidenceLevel,
         evidenceLevelDetails: EvidenceLevelDetails,
-        evidenceDirection: EvidenceDirection
+        evidenceDirection: EvidenceDirection,
+        evidenceYear: Int = 2021,
+        sourceUrl: String = SOURCE_EVENT_URL
     ) = TreatmentEvidence(
         treatment = treatment,
-        molecularMatch = MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
-        applicableCancerType = CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
-        isOnLabel = isOnLabel,
+        treatmentTypes = emptySet(),
+        molecularMatch = TestMolecularMatchDetailsFactory.create(
+            sourceDate = sourceDate,
+            sourceEvent = sourceEvent,
+            sourceEvidenceType = evidenceType,
+            sourceUrl = sourceUrl
+        ),
+        cancerTypeMatch = CancerTypeMatchDetails(
+            CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
+            cancerTypeMatchApplicability
+        ),
         evidenceLevel = evidenceLevel,
         evidenceLevelDetails = evidenceLevelDetails,
         evidenceDirection = evidenceDirection,
-        evidenceYear = 2021,
+        evidenceYear = evidenceYear,
         efficacyDescription = "efficacy description"
     )
 }

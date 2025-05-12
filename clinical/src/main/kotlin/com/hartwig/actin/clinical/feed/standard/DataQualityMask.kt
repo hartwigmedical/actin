@@ -1,10 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
+import com.hartwig.actin.configuration.ClinicalConfiguration
+import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 
-val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1")
-val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 private fun ProvidedPatientRecord.scrubModifications() =
     this.copy(treatmentHistory = this.treatmentHistory.map { it.copy(modifications = emptyList()) })
@@ -12,24 +11,51 @@ private fun ProvidedPatientRecord.scrubModifications() =
 private fun ProvidedPatientRecord.scrubMedications() =
     this.copy(medications = null)
 
-private fun ProvidedPatientRecord.addAlwaysTestedGenes() =
-    this.copy(molecularTests = this.molecularTests.map {
-        it.copy(testedGenes = knownGenes(it))
+private fun ProvidedPatientRecord.useOnlyPriorOtherConditions() = this.copy(
+    treatmentHistory = emptyList(),
+    complications = emptyList(),
+    surgeries = emptyList(),
+    toxicities = emptyList(),
+    priorPrimaries = emptyList(),
+    tumorDetails = this.tumorDetails.copy(diagnosisDate = null, lesionSite = null)
+)
+
+private fun ProvidedPatientRecord.removeAllEmptyMolecularTestResults() =
+    this.copy(molecularTests = this.molecularTests?.map {
+        it.copy(results = it.results.filterNot { r -> r.isAllFieldsExceptGeneNull() }.toSet())
     })
 
-fun knownGenes(test: ProvidedMolecularTest): Set<String>? {
-    val testNameLowerCase = test.test.lowercase()
-    return when {
-        testNameLowerCase.contains("archer") -> ARCHER_ALWAYS_TESTED_GENES + (test.testedGenes ?: emptySet())
-        testNameLowerCase.contains("avl") || testNameLowerCase.contains("next generation sequencing") || testNameLowerCase
-            .contains("ngs") -> GENERIC_PANEL_ALWAYS_TESTED_GENES + (test.testedGenes ?: emptySet())
-
-        else -> test.testedGenes
-    }
+fun ProvidedMolecularTestResult.isAllFieldsExceptGeneNull(): Boolean {
+    return this.ihcResult == null &&
+            this.hgvsProteinImpact == null &&
+            this.hgvsCodingImpact == null &&
+            this.transcript == null &&
+            this.fusionGeneUp == null &&
+            this.fusionGeneDown == null &&
+            this.fusionTranscriptUp == null &&
+            this.fusionTranscriptDown == null &&
+            this.fusionExonUp == null &&
+            this.fusionExonDown == null &&
+            this.exon == null &&
+            this.codon == null &&
+            this.exonSkipStart == null &&
+            this.exonSkipEnd == null &&
+            this.amplifiedGene == null &&
+            this.deletedGene == null &&
+            this.noMutationsFound == null &&
+            this.freeText == null &&
+            this.msi == null &&
+            this.tmb == null &&
+            this.vaf == null
 }
 
-class DataQualityMask {
+class DataQualityMask(private val clinicalConfiguration: ClinicalConfiguration) {
     fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
-        return ehrPatientRecord.scrubMedications().scrubModifications().addAlwaysTestedGenes()
+        val masked = ehrPatientRecord.scrubMedications()
+            .scrubModifications()
+            .removeAllEmptyMolecularTestResults()
+        return if (clinicalConfiguration.useOnlyPriorOtherConditions) {
+            masked.useOnlyPriorOtherConditions()
+        } else masked
     }
 } 
