@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -35,8 +36,8 @@ class ClinicalEvidenceMatcher(
         return clinicalEvidenceFactory.create(signatureEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad))
     }
 
-    fun matchForVariant(variant: VariantMatchCriteria): ClinicalEvidence {
-        return clinicalEvidenceFactory.create(variantEvidence.findMatches(variant))
+    fun matchForVariant(variant: VariantMatchCriteria, canonicalImpact: TranscriptVariantImpact?): ClinicalEvidence {
+        return clinicalEvidenceFactory.create(variantEvidence.findMatches(variant), canonicalImpact)
     }
 
     fun matchForCopyNumber(copyNumber: CopyNumber): ClinicalEvidence {

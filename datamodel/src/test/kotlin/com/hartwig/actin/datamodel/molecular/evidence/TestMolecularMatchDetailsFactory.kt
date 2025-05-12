@@ -9,6 +9,6 @@ object TestMolecularMatchDetailsFactory {
                sourceEvidenceType: EvidenceType = EvidenceType.ANY_MUTATION,
                sourceUrl: String = SOURCE_EVENT_URL
     ): MolecularMatchDetails {
-        return MolecularMatchDetails(sourceDate, sourceEvent, sourceEvidenceType, sourceUrl)
+        return MolecularMatchDetails(sourceDate, sourceEvent, sourceEvidenceType, null, sourceUrl)
     }
 }

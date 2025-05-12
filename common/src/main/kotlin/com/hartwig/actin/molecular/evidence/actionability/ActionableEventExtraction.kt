@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.serve.datamodel.molecular.ActionableEvent
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
@@ -13,38 +14,41 @@ import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import java.util.function.Predicate
 
+data class ExtractedEvent(val evidenceType: EvidenceType, val rangeRank: Int?, val event: ActionableEvent)
+
+
 object ActionableEventExtraction {
 
-    fun extractEvent(molecularCriterium: MolecularCriterium): Pair<EvidenceType, ActionableEvent> {
+    fun extractEvent(molecularCriterium: MolecularCriterium, canonicalImpact: TranscriptVariantImpact? = null): ExtractedEvent {
         return when {
             hotspotFilter().test(molecularCriterium) -> {
-                EvidenceType.HOTSPOT_MUTATION to extractHotspot(molecularCriterium)
+                ExtractedEvent(EvidenceType.HOTSPOT_MUTATION, null, extractHotspot(molecularCriterium))
             }
 
             codonFilter().test(molecularCriterium) -> {
-                EvidenceType.CODON_MUTATION to extractCodon(molecularCriterium)
+                ExtractedEvent(EvidenceType.CODON_MUTATION, canonicalImpact?.affectedCodon, extractCodon(molecularCriterium))
             }
 
             exonFilter().test(molecularCriterium) -> {
-                EvidenceType.EXON_MUTATION to extractExon(molecularCriterium)
+                ExtractedEvent(EvidenceType.EXON_MUTATION, canonicalImpact?.affectedExon, extractExon(molecularCriterium))
             }
 
             geneFilter(GeneEvent.entries.toSet()).test(molecularCriterium) -> {
                 val gene = extractGene(molecularCriterium)
-                fromActionableGene(gene) to gene
+                ExtractedEvent(fromActionableGene(gene), null, gene)
             }
 
             fusionFilter().test(molecularCriterium) -> {
-                EvidenceType.FUSION_PAIR to extractFusion(molecularCriterium)
+                ExtractedEvent(EvidenceType.FUSION_PAIR, null, extractFusion(molecularCriterium))
             }
 
             characteristicsFilter(TumorCharacteristicType.entries.toSet()).test(molecularCriterium) -> {
                 val characteristic = extractCharacteristic(molecularCriterium)
-                fromActionableCharacteristic(characteristic) to characteristic
+                ExtractedEvent(fromActionableCharacteristic(characteristic), null, characteristic)
             }
 
             hlaFilter().test(molecularCriterium) -> {
-                EvidenceType.HLA to extractHla(molecularCriterium)
+                ExtractedEvent(EvidenceType.HLA, null, extractHla(molecularCriterium))
             }
 
             else -> throw IllegalStateException("Could not extract event for molecular criterium: $molecularCriterium")

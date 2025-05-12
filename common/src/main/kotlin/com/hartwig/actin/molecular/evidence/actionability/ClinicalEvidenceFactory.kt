@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchDetails
@@ -22,30 +23,31 @@ import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
 class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver) {
 
-    fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
+    fun create(actionabilityMatch: ActionabilityMatch, canonicalImpact: TranscriptVariantImpact? = null): ClinicalEvidence {
         return ClinicalEvidence(
-            treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches),
+            treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches, canonicalImpact),
             eligibleTrials = convertToExternalTrials(determineOnLabelTrials(actionabilityMatch.matchingCriteriaPerTrialMatch))
         )
     }
 
     private fun convertToTreatmentEvidences(
-        evidences: List<EfficacyEvidence>
+        evidences: List<EfficacyEvidence>, canonicalImpact: TranscriptVariantImpact?
     ): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
-            createTreatmentEvidence(cancerTypeResolver.resolve(evidence.indication()), evidence)
+            createTreatmentEvidence(
+                cancerTypeResolver.resolve(evidence.indication()), evidence, canonicalImpact
+            )
         }.toSet()
     }
 
     private fun createTreatmentEvidence(
-        cancerTypeApplicability: CancerTypeMatchApplicability,
-        evidence: EfficacyEvidence,
+        cancerTypeApplicability: CancerTypeMatchApplicability, evidence: EfficacyEvidence, canonicalImpact: TranscriptVariantImpact?
     ): TreatmentEvidence {
         val treatment = evidence.treatment()
         return TreatmentEvidence(
             treatment = treatment.name(),
             treatmentTypes = determineTreatmentTypes(treatment),
-            molecularMatch = createMolecularMatchDetails(evidence.molecularCriterium()),
+            molecularMatch = createMolecularMatchDetails(evidence.molecularCriterium(), canonicalImpact),
             cancerTypeMatch = CancerTypeMatchDetails(
                 cancerType = CancerType(
                     matchedCancerType = evidence.indication().applicableType().name(),
@@ -89,19 +91,16 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
     }
 
     private fun createExternalTrial(
-        trial: ActionableTrial,
-        matchingCriteria: Set<MolecularCriterium>,
-        matchingIndications: Set<Indication>
+        trial: ActionableTrial, matchingCriteria: Set<MolecularCriterium>, matchingIndications: Set<Indication>
     ): ExternalTrial {
         val countries = trial.countries().map {
-            CountryDetails(
-                country = determineCountry(it.name()),
+            CountryDetails(country = determineCountry(it.name()),
                 hospitalsPerCity = it.hospitalsPerCity()
                     .mapValues { entry -> entry.value.map { hospital -> convertHospital(hospital) }.toSet() })
         }.toSet()
 
         val molecularMatches = matchingCriteria.map {
-            createMolecularMatchDetails(it)
+            createMolecularMatchDetails(it, null)
         }.toSet()
 
         val applicableCancerTypes = matchingIndications.map { indication ->
@@ -128,17 +127,20 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
 
     private fun convertHospital(serveHospital: ServeHospital): Hospital {
         return Hospital(
-            name = serveHospital.name(),
-            isChildrensHospital = serveHospital.isChildrensHospital()
+            name = serveHospital.name(), isChildrensHospital = serveHospital.isChildrensHospital()
         )
     }
 
-    private fun createMolecularMatchDetails(molecularCriterium: MolecularCriterium): MolecularMatchDetails {
-        val (evidenceType, event) = ActionableEventExtraction.extractEvent(molecularCriterium)
+    private fun createMolecularMatchDetails(
+        molecularCriterium: MolecularCriterium, canonicalImpact: TranscriptVariantImpact?
+    ): MolecularMatchDetails {
+        val extractedEvent = ActionableEventExtraction.extractEvent(molecularCriterium, canonicalImpact)
+        val event = extractedEvent.event
         return MolecularMatchDetails(
             sourceDate = event.sourceDate(),
             sourceEvent = event.sourceEvent(),
-            evidenceType,
+            extractedEvent.evidenceType,
+            extractedEvent.rangeRank,
             sourceUrl = event.sourceUrls().first()
         )
     }
