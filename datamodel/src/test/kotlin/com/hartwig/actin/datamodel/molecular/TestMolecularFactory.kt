@@ -366,8 +366,8 @@ object TestMolecularFactory {
         proteinEffect = ProteinEffect.UNKNOWN,
         driverType = FusionDriverType.NONE,
         isAssociatedWithDrugResistance = null,
-        geneTranscriptStart = "",
-        geneTranscriptEnd = "",
+        geneTranscriptStart = null,
+        geneTranscriptEnd = null,
         fusedExonUp = 0,
         fusedExonDown = 0,
     )

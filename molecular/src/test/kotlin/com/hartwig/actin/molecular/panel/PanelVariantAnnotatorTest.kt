@@ -186,7 +186,6 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variants with gene alteration data`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
-        println("V1: $VARIANT")
         assertThat(annotated.isHotspot).isTrue()
         assertThat(annotated.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(annotated.isAssociatedWithDrugResistance).isTrue()

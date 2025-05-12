@@ -260,7 +260,6 @@ class PanelVariantAnnotator(
     }
 
     private fun annotateWithGeneAlteration(variant: Variant): Variant {
-        println("V2: $variant")
         val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(variant)
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
 
@@ -288,7 +287,6 @@ class PanelVariantAnnotator(
     }
 
     private fun annotateWithEvidence(variant: Variant): Variant {
-        println("V3: $variant")
         val evidence = evidenceDatabase.evidenceForVariant(variant)
         return variant.copy(evidence = evidence)
     }
