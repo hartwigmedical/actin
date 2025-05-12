@@ -231,7 +231,6 @@
     "diagnosisDate": "2020-01-01T10:10:00",
     "tumorLocation": "long",
     "tumorType": "metastase adenocarcinoom",
-    "tumorGradeDifferentiation": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\r\n\r\n\r\nimmunohistochemie ERBB2 3+\n\n",
     "tumorStage": "IV",
     "tumorStageDate": "2020-01-01T10:10:00",
     "lesions": [
@@ -252,15 +251,7 @@
         "diagnosis": "diagnosis",
         "tissueDate": "2020-01-01T10:10:00",
         "authorisationDate": "2020-01-02T10:10:00",
-        "rawPathologyReport": "RawPathologyReport"
-      },
-      {
-        "tissueId": "T-1000091",
-        "reportRequested": false,
-        "lab": "ext lab",
-        "diagnosis": "diagnosis",
-        "reportDate": "2020-02-01T10:10:00",
-        "rawPathologyReport": "Raw Pathology Report"
+        "rawPathologyReport": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\n\n\nimmunohistochemie ERBB2 3+\n\n"
       }
     ]
   },
