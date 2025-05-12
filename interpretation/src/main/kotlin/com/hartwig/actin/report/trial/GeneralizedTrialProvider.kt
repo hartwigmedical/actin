@@ -11,7 +11,7 @@ import kotlin.Comparator
 class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
 
     private fun cohortsWithSlotsAvailableAsGeneralizedTrial(): List<GeneralizedTrial> {
-        return trialsProvider.eligibleCohortsWithSlotsAvailableAndNotIgnore().map {
+        return trialsProvider.evaluableCohortsAndNotIgnore().map {
             GeneralizedTrial(
                 trialId = it.trialId,
                 nctId = it.nctId,
@@ -21,32 +21,33 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
                 isOpen = it.isOpen,
                 hasSlots = it.hasSlotsAvailable,
                 countries = locationsToCountryDetails(it.locations),
-                therapyNames = emptySortedSet(),
+                therapyNames = emptySet(),
                 actinMolecularEvents = it.molecularEvents.toSortedSet(),
-                sourceMolecularEvents = emptySortedSet(),
-                applicableCancerTypes = emptySortedSet(),
-                url = url(it.nctId)
+                sourceMolecularEvents = emptySet(),
+                applicableCancerTypes = emptySet(),
+                url = optionalUrl(it.nctId)
             )
         }
     }
 
     private fun summarizedNationalTrialsAsGeneralizedTrial(): List<GeneralizedTrial> {
-        val summarizedExternalTrials = trialsProvider.summarizeExternalTrials()
-        return summarizedExternalTrials.nationalTrials.filtered.map {
+        val externalTrials = trialsProvider.externalTrials()
+        return externalTrials.nationalTrials.filtered.map {
+            var trial = it.trial
             GeneralizedTrial(
-                trialId = it.nctId,
-                nctId = it.nctId,
-                source = it.source,
-                acronym = it.acronym,
-                title = it.title,
+                trialId = trial.nctId,
+                nctId = trial.nctId,
+                source = trial.source,
+                acronym = trial.acronym,
+                title = trial.title,
                 isOpen = null,
                 hasSlots = null,
-                countries = it.countries,
-                therapyNames = it.therapyNames,
-                actinMolecularEvents = it.actinMolecularEvents,
-                sourceMolecularEvents = it.sourceMolecularEvents,
-                applicableCancerTypes = it.applicableCancerTypes,
-                url = url(it.nctId)
+                countries = trial.countries,
+                therapyNames = trial.treatments,
+                actinMolecularEvents = emptySet(),
+                sourceMolecularEvents = setOf(it.event),
+                applicableCancerTypes = trial.applicableCancerTypes,
+                url = url(trial.nctId)
             )
         }
     }
@@ -56,7 +57,7 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
     }
 
     companion object {
-        fun locationsToCountryDetails(location: List<String>): SortedSet<CountryDetails> {
+        fun locationsToCountryDetails(location: Set<String>): SortedSet<CountryDetails> {
             return location.map { l -> CountryDetails(Country.NETHERLANDS, mapOf(Pair("", setOf(Hospital(l, false))))) }
                 .toSortedSet(Comparator.comparing { c -> c.country })
         }
@@ -65,8 +66,13 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
             return source?.name ?: "ACTIN"
         }
 
-        fun url(nctId: String?): String? {
-            return if (nctId != null) "https://clinicaltrials.gov/study/$nctId" else null
+        fun optionalUrl(nctId: String?): String? {
+            return if (nctId != null) url(nctId) else null
+        }
+
+
+        fun url(nctId: String): String {
+            return "https://clinicaltrials.gov/study/$nctId"
         }
     }
 }

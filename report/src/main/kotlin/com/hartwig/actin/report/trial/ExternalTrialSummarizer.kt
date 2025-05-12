@@ -2,6 +2,7 @@ package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
+import com.hartwig.actin.report.trial.GeneralizedTrialProvider.Companion.url
 import java.util.SortedSet
 
 data class ExternalTrialSummary(
@@ -11,8 +12,9 @@ data class ExternalTrialSummary(
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,
     val applicableCancerTypes: SortedSet<CancerType>,
-    val url: String,
-)
+) {
+    val url: String = url(nctId)
+}
 
 object ExternalTrialSummarizer {
 
@@ -27,8 +29,7 @@ object ExternalTrialSummarizer {
                 actinMolecularEvents = entry.value.map { ewt -> ewt.event }.toSortedSet(),
                 sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),
                 applicableCancerTypes = entry.value.flatMap { ewt -> ewt.trial.applicableCancerTypes }
-                    .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType }),
-                url = trial.url,
+                    .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType })
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }

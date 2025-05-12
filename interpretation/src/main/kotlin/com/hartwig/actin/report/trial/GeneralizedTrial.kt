@@ -12,10 +12,10 @@ data class GeneralizedTrial(
     val title: String,
     val isOpen: Boolean?,
     val hasSlots: Boolean?,
-    val countries: SortedSet<CountryDetails>,
-    val therapyNames: SortedSet<String>,
-    val actinMolecularEvents: SortedSet<String>,
-    val sourceMolecularEvents: SortedSet<String>,
-    val applicableCancerTypes: SortedSet<CancerType>,
+    val countries: Set<CountryDetails>,
+    val therapyNames: Set<String>,
+    val actinMolecularEvents: Set<String>,
+    val sourceMolecularEvents: Set<String>,
+    val applicableCancerTypes: Set<CancerType>,
     val url: String?
 )

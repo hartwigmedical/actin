@@ -83,8 +83,7 @@ class ExternalTrialSummarizerTest {
             countries = countries,
             actinMolecularEvents = actinMolecularEvents,
             sourceMolecularEvents = externalTrial.molecularMatches.map { it.sourceEvent }.toSortedSet(),
-            applicableCancerTypes = externalTrial.applicableCancerTypes.toSortedSet(Comparator.comparing { it.matchedCancerType }),
-            url = externalTrial.url
+            applicableCancerTypes = externalTrial.applicableCancerTypes.toSortedSet(Comparator.comparing { it.matchedCancerType })
         )
     }
 }
