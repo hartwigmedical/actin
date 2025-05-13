@@ -32,6 +32,16 @@ class IhcTestInterpreterTest {
     }
 
     @Test
+    fun `Should interpret IHC test based on score text and score value`() {
+        val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("PD-L1", "Positive", 50.0, "%")))
+        assertThat(result).containsExactly(
+            IhcTestInterpretation(
+                "IHC", listOf(IhcTestResultInterpretation("PD-L1", "Positive, score 50%", DEFAULT_DATE, sortPrecedence = 1))
+            )
+        )
+    }
+
+    @Test
     fun `Should correctly handle score based IHC test without unit`() {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", scoreValue = 90.0, scoreValueUnit = null)))
         assertThat(result).containsExactly(
