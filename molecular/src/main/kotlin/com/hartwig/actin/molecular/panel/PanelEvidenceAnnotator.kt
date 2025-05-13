@@ -16,6 +16,7 @@ class PanelEvidenceAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
 ) : MolecularAnnotator<PanelRecord, PanelRecord> {
+    
     override fun annotate(input: PanelRecord): PanelRecord {
         return input.copy(
             drivers =
