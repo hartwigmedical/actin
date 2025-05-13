@@ -4,10 +4,6 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.icd.IcdConstants.IDIOPATHIC_EOSINOPHILIC_PNEUMONITIS_CODE
-import com.hartwig.actin.algo.icd.IcdConstants.IDIOPATHIC_INTERSTITIAL_PNEUMONITIS_CODE
-import com.hartwig.actin.algo.icd.IcdConstants.INTERSTITIAL_LUNG_DISEASE_SET
-import com.hartwig.actin.algo.icd.IcdConstants.RADIATION_PNEUMONITIS_CODE
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -38,7 +34,8 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(
                     IcdCode(
-                        IcdConstants.DIGESTIVE_SYSTEM_DISEASE_CHAPTER
+                        IcdConstants.DIGESTIVE_SYSTEM_DISEASE_CHAPTER,
+                        IcdConstants.CLINICAL_MANIFESTATIONS_OF_THE_DIGESTIVE_SYSTEM_CODE
                     )
                 ), "gastrointestinal disease"
             ),
@@ -47,7 +44,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 "immune system disease"
             ),
             EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE_INCLUDING_PNEUMONITIS to hasOtherConditionWithIcdCodesFromSetCreator(
-                (INTERSTITIAL_LUNG_DISEASE_SET.map { IcdCode(it) } + IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK)).toSet(),
+                (IcdConstants.INTERSTITIAL_LUNG_DISEASE_SET.map { IcdCode(it) } + IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK)).toSet(),
                 "interstitial lung disease"
             ),
             EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
@@ -73,9 +70,9 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(
                     IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK),
-                    IcdCode(IDIOPATHIC_INTERSTITIAL_PNEUMONITIS_CODE),
-                    IcdCode(IDIOPATHIC_EOSINOPHILIC_PNEUMONITIS_CODE),
-                    IcdCode(RADIATION_PNEUMONITIS_CODE)
+                    IcdCode(IcdConstants.IDIOPATHIC_INTERSTITIAL_PNEUMONITIS_CODE),
+                    IcdCode(IcdConstants.IDIOPATHIC_EOSINOPHILIC_PNEUMONITIS_CODE),
+                    IcdCode(IcdConstants.RADIATION_PNEUMONITIS_CODE)
                 ),
                 "pneumonitis"
             ),
