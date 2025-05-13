@@ -3,6 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 const val IHC_TEST_TYPE = "IHC"
 
@@ -13,9 +14,8 @@ class IhcTestInterpreter {
     private val interpretationBuilder = IhcTestInterpretationBuilder()
 
     fun interpret(ihcTests: List<IhcTest>): List<IhcTestInterpretation> {
-        val latestIhcTestsByItem = ihcTests.groupBy { it.item }.map { (_, testsForItem) ->
-            val testsForItemWithMeasureDate = testsForItem.filter { it.measureDate != null }
-            testsForItemWithMeasureDate.maxByOrNull { it.measureDate!! } ?: testsForItem.first()
+        val latestIhcTestsByItem = ihcTests.groupBy { it.item }.map { (_, tests) ->
+            tests.maxByOrNull { it.measureDate ?: LocalDate.MIN } ?: tests.first()
         }
         latestIhcTestsByItem.forEach(::interpret)
         return interpretationBuilder.build()
