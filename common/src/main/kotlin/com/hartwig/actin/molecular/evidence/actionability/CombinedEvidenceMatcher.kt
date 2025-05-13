@@ -128,6 +128,11 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                 .filter { disruption ->
                     DisruptionEvidence.isDisruptionMatch(gene, disruption)
                 }
+        } else if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene.event())) {
+            molecularTest.drivers.homozygousDisruptions
+                .filter { homozygousDisruption ->
+                    HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(gene, homozygousDisruption)
+                }
         } else {
             emptyList()
         }
