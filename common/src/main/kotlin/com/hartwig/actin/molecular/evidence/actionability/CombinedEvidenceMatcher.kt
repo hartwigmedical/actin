@@ -123,6 +123,11 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     val criteria = MatchingCriteriaFunctions.createFusionCriteria(fusion)
                     FusionEvidence.isPromiscuousMatch(gene, criteria)
                 }
+        } else if (DisruptionEvidence.isDisruptionEvent(gene.event())) {
+            molecularTest.drivers.disruptions
+                .filter { disruption ->
+                    DisruptionEvidence.isDisruptionMatch(gene, disruption)
+                }
         } else {
             emptyList()
         }
