@@ -304,44 +304,6 @@ object TestClinicalFactory {
     private fun createTestIhcTests(): List<IhcTest> {
         return listOf(
             IhcTest(
-                item = "EGFR",
-                measure = null,
-                scoreText = "c.2240_2254del",
-                scoreValuePrefix = null,
-                scoreValue = null,
-                scoreValueUnit = null,
-                impliesPotentialIndeterminateStatus = false
-            ),
-            IhcTest(
-                item = "Something",
-                measure = null,
-                scoreText = "GEEN mutaties aangetoond",
-                scoreValuePrefix = null,
-                scoreValue = null,
-                scoreValueUnit = null,
-                impliesPotentialIndeterminateStatus = false
-            ),
-            IhcTest(
-                item = "PD-L1",
-                measure = null,
-                measureDate = LocalDate.of(2024, 10, 1),
-                scoreText = null,
-                scoreValuePrefix = null,
-                scoreValue = 90.0,
-                scoreValueUnit = "%",
-                impliesPotentialIndeterminateStatus = false
-            ),
-            IhcTest(
-                item = "PD-L1",
-                measure = null,
-                measureDate = LocalDate.of(2023, 10, 1),
-                scoreText = null,
-                scoreValuePrefix = null,
-                scoreValue = 80.0,
-                scoreValueUnit = "%",
-                impliesPotentialIndeterminateStatus = false
-            ),
-            IhcTest(
                 item = "HER2",
                 measure = null,
                 scoreText = "Positive",
@@ -351,13 +313,70 @@ object TestClinicalFactory {
                 impliesPotentialIndeterminateStatus = false
             ),
             IhcTest(
-                item = "FGFR3::TACC3",
+                item = "HER1",
+                measure = null,
+                scoreText = "Negative",
+                scoreValuePrefix = null,
+                scoreValue = null,
+                scoreValueUnit = null,
+                impliesPotentialIndeterminateStatus = false
+            ),
+            IhcTest(
+                item = "PD-L1",
+                measure = null,
+                measureDate = LocalDate.of(2024, 9, 1),
+                scoreText = null,
+                scoreValuePrefix = null,
+                scoreValue = 90.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            ),
+            IhcTest(
+                item = "PD-L1",
+                measure = null,
+                measureDate = LocalDate.of(2024, 10, 1),
+                scoreText = null,
+                scoreValuePrefix = null,
+                scoreValue = 80.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            ),
+            IhcTest(
+                item = "PD-L2",
+                measure = null,
+                measureDate = LocalDate.of(2023, 10, 1),
+                scoreText = "Positive",
+                scoreValuePrefix = null,
+                scoreValue = 40.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            ),
+            IhcTest(
+                item = "HER3",
+                measure = null,
+                scoreText = null,
+                scoreValuePrefix = ">",
+                scoreValue = 1.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            ),
+            IhcTest(
+                item = "HER4",
                 measure = null,
                 scoreText = "Positive",
                 scoreValuePrefix = null,
                 scoreValue = null,
                 scoreValueUnit = null,
-                impliesPotentialIndeterminateStatus = false
+                impliesPotentialIndeterminateStatus = true
+            ),
+            IhcTest(
+                item = "HER5",
+                measure = null,
+                scoreText = null,
+                scoreValuePrefix = null,
+                scoreValue = 7.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = true
             )
         )
     }

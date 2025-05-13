@@ -3,7 +3,7 @@ package com.hartwig.actin.datamodel.clinical
 import java.time.LocalDate
 
 data class IhcTest(
-    val item: String? = null,
+    val item: String,
     val measure: String? = null,
     val measureDate: LocalDate? = null,
     val scoreText: String? = null,
