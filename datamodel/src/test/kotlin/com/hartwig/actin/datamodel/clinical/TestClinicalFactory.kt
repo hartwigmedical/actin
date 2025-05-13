@@ -334,7 +334,7 @@ object TestClinicalFactory {
             IhcTest(
                 item = "PD-L1",
                 measure = null,
-                measureDate = LocalDate.of(2023, 10, 1),
+                measureDate = LocalDate.of(2024, 10, 1),
                 scoreText = null,
                 scoreValuePrefix = null,
                 scoreValue = 80.0,
