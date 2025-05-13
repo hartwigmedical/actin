@@ -13,9 +13,10 @@ class IhcTestInterpreter {
     private val interpretationBuilder = IhcTestInterpretationBuilder()
 
     fun interpret(ihcTests: List<IhcTest>): List<IhcTestInterpretation> {
-        val latestIhcTestsByItem = ihcTests.groupBy { it.item }.mapValues { (_, testsForItem) ->
-            testsForItem.filter { it.measureDate != null }.maxByOrNull { it.measureDate!! } ?: testsForItem.first()
-        }.values
+        val latestIhcTestsByItem = ihcTests.groupBy { it.item }.map { (_, testsForItem) ->
+            val testsForItemWithMeasureDate = testsForItem.filter { it.measureDate != null }
+            testsForItemWithMeasureDate.maxByOrNull { it.measureDate!! } ?: testsForItem.first()
+        }
         latestIhcTestsByItem.forEach(::interpret)
         return interpretationBuilder.build()
     }
