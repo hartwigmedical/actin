@@ -37,30 +37,6 @@ class FusionEvidence(
         )
     }
 
-    private fun isFusionMatch(actionable: ActionableFusion, fusion: FusionMatchCriteria): Boolean {
-        return fusion.isReportable && FusionMatching.isGeneMatch(actionable, fusion) && FusionMatching.isExonMatch(actionable, fusion)
-    }
-
-    private fun isPromiscuousMatch(actionable: ActionableGene, fusion: FusionMatchCriteria): Boolean {
-        if (!fusion.isReportable) {
-            return false
-        }
-
-        return when (fusion.driverType) {
-            FusionDriverType.PROMISCUOUS_3 -> {
-                actionable.gene() == fusion.geneEnd
-            }
-
-            FusionDriverType.PROMISCUOUS_5 -> {
-                actionable.gene() == fusion.geneStart
-            }
-
-            else -> {
-                actionable.gene() == fusion.geneStart || actionable.gene() == fusion.geneEnd
-            }
-        }
-    }
-
     companion object {
         private val PROMISCUOUS_FUSION_EVENTS = setOf(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
 
@@ -77,6 +53,34 @@ class FusionEvidence(
                 promiscuousEvidences,
                 promiscuousTrialMatcher,
             )
+        }
+
+        fun isPromiscuousFusionEvent(geneEvent: GeneEvent): Boolean {
+            return geneEvent == GeneEvent.FUSION || geneEvent == GeneEvent.ACTIVATION || geneEvent == GeneEvent.ANY_MUTATION
+        }
+
+        fun isFusionMatch(actionable: ActionableFusion, fusion: FusionMatchCriteria): Boolean {
+            return fusion.isReportable && FusionMatching.isGeneMatch(actionable, fusion) && FusionMatching.isExonMatch(actionable, fusion)
+        }
+
+        fun isPromiscuousMatch(actionable: ActionableGene, fusion: FusionMatchCriteria): Boolean {
+            if (!fusion.isReportable) {
+                return false
+            }
+
+            return when (fusion.driverType) {
+                FusionDriverType.PROMISCUOUS_3 -> {
+                    actionable.gene() == fusion.geneEnd
+                }
+
+                FusionDriverType.PROMISCUOUS_5 -> {
+                    actionable.gene() == fusion.geneStart
+                }
+
+                else -> {
+                    actionable.gene() == fusion.geneStart || actionable.gene() == fusion.geneEnd
+                }
+            }
         }
     }
 }

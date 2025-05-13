@@ -103,10 +103,7 @@ class VariantEvidence(
     ): Map<ActionableTrial, Set<MolecularCriterium>> {
         val matchPredicate: Predicate<MolecularCriterium> =
             Predicate {
-                variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH && isMatch(
-                    extractActionableEvent.invoke(it),
-                    variant
-                )
+                isVariantEligible(variant) && isMatch(extractActionableEvent.invoke(it), variant)
             }
 
         return trialMatcher.apply(matchPredicate)
@@ -139,5 +136,8 @@ class VariantEvidence(
                 applicableGeneTrialMatcher = applicableGeneTrialMatcher
             )
         }
+
+        fun isVariantEligible(variant: VariantMatchCriteria): Boolean =
+            variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH
     }
 }

@@ -1,12 +1,10 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatchResult.Failure
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatchResult.Success
-import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
@@ -52,9 +50,6 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
             ).map { it(molecularTest, efficacyEvidence) }
         )
 
-    // Compares the hotspots in the given efficacy evidence's molecular criteria
-    // to the hotspots in the given molecular test. If any hotspot fails to match,
-    // returns a failure result. Otherwise, returns a success result containing the matched hotspots.
     private fun matchHotspots(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         val variantMatches = efficacyEvidence.molecularCriterium().hotspots()
             .map { hotspot -> matchHotspot(molecularTest, hotspot) }
@@ -62,15 +57,11 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         return ActionabilityMatchResult.combine(variantMatches)
     }
 
-    // Compares the hotspots in the given efficacy evidence's molecular criteria
-    // to the hotspots in the given molecular test. If any hotspot fails to match,
-    // returns a failure result. Otherwise, returns a success result containing the matched hotspots.
     private fun matchHotspot(molecularTest: MolecularTest, hotspot: ActionableHotspot): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
             .filter { variant ->
-                // TODO important, should we match on reportable/driverlikelihood or push these to the later filtering?
-                variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH
-                        && HotspotMatching.isMatch(hotspot, MatchingCriteriaFunctions.createVariantCriteria(variant))
+                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+                VariantEvidence.isVariantEligible(criteria) && HotspotMatching.isMatch(hotspot, criteria)
             }
 
         return successWhenNotEmpty(matches)
@@ -86,7 +77,8 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     fun matchCodon(molecularTest: MolecularTest, codon: RangeAnnotation): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
             .filter { variant ->
-                RangeMatching.isMatch(codon, MatchingCriteriaFunctions.createVariantCriteria(variant))
+                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+                VariantEvidence.isVariantEligible(criteria) && RangeMatching.isMatch(codon, criteria)
             }
 
         return successWhenNotEmpty(matches)
@@ -101,7 +93,10 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
 
     fun matchExon(molecularTest: MolecularTest, exon: RangeAnnotation): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
-            .filter { variant -> RangeMatching.isMatch(exon, MatchingCriteriaFunctions.createVariantCriteria(variant)) }
+            .filter { variant ->
+                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+                VariantEvidence.isVariantEligible(criteria) && RangeMatching.isMatch(exon, criteria)
+            }
 
         return successWhenNotEmpty(matches)
     }
@@ -114,11 +109,25 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     }
 
     fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
+        // TODO is it possible that both variants and fusions can match the same actionable gene? if not (and hopefully not)
+        //  then this could be moved into the else of the promiscuous fusion check a few lines below
         val matches = molecularTest.drivers.variants
             .filter { variant ->
-                GeneMatching.isMatch(gene, MatchingCriteriaFunctions.createVariantCriteria(variant))
+                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+                VariantEvidence.isVariantEligible(criteria) && GeneMatching.isMatch(gene, criteria)
             }
-        return successWhenNotEmpty(matches)
+
+        val promiscuousFusionMatches = if (FusionEvidence.isPromiscuousFusionEvent(gene.event())) {
+            molecularTest.drivers.fusions
+                .filter { fusion ->
+                    val criteria = MatchingCriteriaFunctions.createFusionCriteria(fusion)
+                    FusionEvidence.isPromiscuousMatch(gene, criteria)
+                }
+        } else {
+            emptyList()
+        }
+
+        return successWhenNotEmpty(matches + promiscuousFusionMatches)
     }
 
     fun matchFusions(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
@@ -132,18 +141,13 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         val matches = molecularTest.drivers.fusions
             .filter { driverFusion ->
                 val fusionMatchCriteria = MatchingCriteriaFunctions.createFusionCriteria(driverFusion)
-                driverFusion.isReportable && FusionMatching.isGeneMatch(fusion, fusionMatchCriteria)
-                        && FusionMatching.isExonMatch(fusion, fusionMatchCriteria)
+                FusionEvidence.isFusionMatch(fusion, fusionMatchCriteria)
             }
 
         return successWhenNotEmpty(matches)
     }
 
 
-    // given a particular efficacy evidence, checks if all the tumor characteristics in the molecualar
-    // criterium belonging to the evidence match the tumor characteristics in the molecular test
-    // if all the characteristics match, returns a success result containing the matched characteristics
-    // otherwise, returns a failure result
     fun matchCharacteristics(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         val characteristicMatches = efficacyEvidence.molecularCriterium().characteristics()
             .map { characteristic -> matchCharacteristic(molecularTest, characteristic) }
@@ -151,13 +155,6 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         return ActionabilityMatchResult.combine(characteristicMatches)
     }
 
-
-    // given a particular molecular test and an actionable characteristic, checks if the
-    // characteristic matches the tumor characteristics in the molecular test
-    // if the characteristic matches, returns a success result containing the matched characteristics
-    // otherwise, returns a failure result
-    //
-    // TODO better name?? matchEvidenceCharacteristics?
     fun matchCharacteristic(molecularTest: MolecularTest, characteristic: ActionableCharacteristic): ActionabilityMatchResult {
 
         return when (characteristic.type()) {
