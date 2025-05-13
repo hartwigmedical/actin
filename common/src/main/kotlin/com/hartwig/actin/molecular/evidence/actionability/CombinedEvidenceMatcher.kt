@@ -133,6 +133,16 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                 .filter { homozygousDisruption ->
                     HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(gene, homozygousDisruption)
                 }
+        } else if (CopyNumberEvidence.isAmplificationEvent(gene.event())) {
+            molecularTest.drivers.copyNumbers
+                .filter { copyNumber ->
+                    CopyNumberEvidence.isAmplificationMatch(gene, copyNumber)
+                }
+        } else if (CopyNumberEvidence.isDeletionEvent(gene.event())) {
+            molecularTest.drivers.copyNumbers
+                .filter { copyNumber ->
+                    CopyNumberEvidence.isDeletionMatch(gene, copyNumber)
+                }
         } else {
             emptyList()
         }

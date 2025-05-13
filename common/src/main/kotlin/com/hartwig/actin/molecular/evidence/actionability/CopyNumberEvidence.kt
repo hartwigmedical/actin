@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
@@ -17,6 +18,7 @@ class CopyNumberEvidence(
 
     override fun findMatches(event: CopyNumber): ActionabilityMatch {
         return when (event.canonicalImpact.type) {
+            // TODO reuse (or refactor) the helpers below,
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
                 findMatches(event, amplificationEvidences, amplificationTrialMatcher)
             }
@@ -62,6 +64,30 @@ class CopyNumberEvidence(
                 deletionEvidences,
                 deletionTrialMatcher
             )
+        }
+
+        fun isAmplificationEvent(geneEvent: GeneEvent): Boolean {
+            return AMPLIFICATION_EVENTS.contains(geneEvent)
+        }
+
+        fun isDeletionEvent(geneEvent: GeneEvent): Boolean {
+            return DELETION_EVENTS.contains(geneEvent)
+        }
+
+        fun isAmplificationMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
+            return if (copyNumber.canonicalImpact.type != CopyNumberType.FULL_GAIN && copyNumber.canonicalImpact.type != CopyNumberType.PARTIAL_GAIN) {
+                false
+            } else {
+                copyNumber.gene == actionableGene.gene()
+            }
+        }
+
+        fun isDeletionMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
+            return if (copyNumber.canonicalImpact.type != CopyNumberType.DEL) {
+                false
+            } else {
+                copyNumber.gene == actionableGene.gene()
+            }
         }
     }
 }
