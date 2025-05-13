@@ -6,6 +6,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 private val DEFAULT_DATE = LocalDate.of(2025, 2, 10)
+private val MORE_RECENT_DATE = LocalDate.of(2025, 2, 11)
 
 class IhcTestInterpreterTest {
 
@@ -54,6 +55,51 @@ class IhcTestInterpreterTest {
     @Test
     fun `Should correctly handle null date`() {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", "Positive").copy(measureDate = null)))
+        assertThat(result).containsExactly(
+            IhcTestInterpretation(
+                "IHC", listOf(IhcTestResultInterpretation("Positive", "HER2", null))
+            )
+        )
+    }
+
+    @Test
+    fun `Should only interpret item with most recent date`() {
+        val result = interpreter.interpret(
+            ihcTests = listOf(
+                ihcMolecularTest("HER2", "Positive"),
+                ihcMolecularTest("HER2", "Negative").copy(measureDate = MORE_RECENT_DATE)
+            )
+        )
+        assertThat(result).containsExactly(
+            IhcTestInterpretation(
+                "IHC", listOf(IhcTestResultInterpretation("Negative", "HER2", MORE_RECENT_DATE))
+            )
+        )
+    }
+
+    @Test
+    fun `Should select item with date if there is one with and one without date`() {
+        val result = interpreter.interpret(
+            ihcTests = listOf(
+                ihcMolecularTest("HER2", "Positive").copy(measureDate = null),
+                ihcMolecularTest("HER2", "Negative")
+            )
+        )
+        assertThat(result).containsExactly(
+            IhcTestInterpretation(
+                "IHC", listOf(IhcTestResultInterpretation("Negative", "HER2", DEFAULT_DATE))
+            )
+        )
+    }
+
+    @Test
+    fun `Should select first item if only items without date`() {
+        val result = interpreter.interpret(
+            ihcTests = listOf(
+                ihcMolecularTest("HER2", "Positive").copy(measureDate = null),
+                ihcMolecularTest("HER2", "Negative").copy(measureDate = null)
+            )
+        )
         assertThat(result).containsExactly(
             IhcTestInterpretation(
                 "IHC", listOf(IhcTestResultInterpretation("Positive", "HER2", null))
