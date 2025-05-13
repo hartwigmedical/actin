@@ -35,7 +35,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 setOf(
                     IcdCode(
                         IcdConstants.DIGESTIVE_SYSTEM_DISEASE_CHAPTER,
-                        IcdConstants.CLINICAL_MANIFESTATIONS_OF_THE_DIGESTIVE_SYSTEM_CODE
                     )
                 ), "gastrointestinal disease"
             ),
