@@ -36,7 +36,7 @@ object PathologyReportFunctions {
                     },
                     listOf(
                         Text(pathologyReport.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
-                        Text(" ($pathologyReport.lab").addStyle(Styles.tableHighlightStyle())
+                        Text(" (${pathologyReport.lab}").addStyle(Styles.tableHighlightStyle())
                     ),
                     pathologyReport.tissueDate?.let {
                         getTextWithLabel(", Collection date: ", pathologyReport.tissueDate)
