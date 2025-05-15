@@ -28,7 +28,7 @@ class StandardIhcTestExtractor(
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
 
-        val extractedIhcTestsFromIhcTestResults = extractFromMolecularTests(ehrPatientRecord)
+        val extractedIhcTestsFromIhcTestResults = extractFromIhcTests(ehrPatientRecord)
 
         return ExtractionResult(
             curatedMolecularTestExtraction.extracted + extractedIhcTestsFromIhcTestResults.extracted,
@@ -36,7 +36,7 @@ class StandardIhcTestExtractor(
         )
     }
 
-    private fun extractFromMolecularTests(ehrPatientRecord: FeedPatientRecord) =
+    private fun extractFromIhcTests(ehrPatientRecord: FeedPatientRecord) =
         ehrPatientRecord.ihcTests.asSequence().mapNotNull { entry ->
             val curations = listOf(entry.name, "${ehrPatientRecord.patientDetails.patientId} | ${entry.name}").map { curationString ->
                 CurationResponse.createFromConfigs(

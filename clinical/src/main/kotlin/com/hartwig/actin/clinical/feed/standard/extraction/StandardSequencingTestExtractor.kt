@@ -58,12 +58,12 @@ class StandardSequencingTestExtractor(
                         test = it.curatedName,
                         date = test.date,
                         variants = variants(allResults),
-                        fusions = fusions(allResults),
                         amplifications = amplifications(allResults),
-                        skippedExons = skippedExons(allResults),
                         deletions = deletions(allResults),
+                        fusions = fusions(allResults),
+                        skippedExons = skippedExons(allResults),
+                        tumorMutationalBurden = tmb(allResults),
                         isMicrosatelliteUnstable = msi(allResults),
-                        tumorMutationalBurden = tmb(allResults)
                     )
                 }
             ),

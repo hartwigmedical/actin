@@ -68,12 +68,12 @@ class StandardPriorPrimariesExtractorTest {
         )
         val result = extractor.extract(PATIENT_RECORD)
         assertThat(result.extracted).containsExactly(
-                BRAIN_PRIOR_SECOND_PRIMARY.copy(
-                    diagnosedMonth = DIAGNOSIS_DATE.monthValue,
-                    diagnosedYear = DIAGNOSIS_DATE.year,
-                    lastTreatmentYear = LAST_TREATMENT_DATE.year,
-                    lastTreatmentMonth = LAST_TREATMENT_DATE.monthValue
-                )
+            BRAIN_PRIOR_SECOND_PRIMARY.copy(
+                diagnosedMonth = DIAGNOSIS_DATE.monthValue,
+                diagnosedYear = DIAGNOSIS_DATE.year,
+                lastTreatmentYear = LAST_TREATMENT_DATE.year,
+                lastTreatmentMonth = LAST_TREATMENT_DATE.monthValue
+            )
         )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()

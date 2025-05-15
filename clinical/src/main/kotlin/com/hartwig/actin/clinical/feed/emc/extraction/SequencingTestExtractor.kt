@@ -65,12 +65,12 @@ class SequencingTestExtractor(
                             SequencingTest(
                                 test = name,
                                 variants = variants(notIgnoredResults),
-                                fusions = fusions(notIgnoredResults),
                                 amplifications = amplifications(notIgnoredResults),
-                                skippedExons = skippedExons(notIgnoredResults),
                                 deletions = deletions(notIgnoredResults),
-                                isMicrosatelliteUnstable = msi(notIgnoredResults),
-                                tumorMutationalBurden = tmb(notIgnoredResults)
+                                fusions = fusions(notIgnoredResults),
+                                skippedExons = skippedExons(notIgnoredResults),
+                                tumorMutationalBurden = tmb(notIgnoredResults),
+                                isMicrosatelliteUnstable = msi(notIgnoredResults)
                             )
                         ),
                         sequencingResults.extractionEvaluation

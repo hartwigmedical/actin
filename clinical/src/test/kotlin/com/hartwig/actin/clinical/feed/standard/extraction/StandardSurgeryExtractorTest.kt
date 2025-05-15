@@ -45,7 +45,6 @@ class StandardSurgeryExtractorTest {
     fun `Should filter surgery entry when surgery is set to be ignore in curation`() {
         val ignoredName = "Geen ingreep- operatie uitgesteld"
 
-
         every { surgeryNameCuration.find(PROVIDED_SURGERY_NAME) } returns setOf(
             SurgeryNameConfig(input = PROVIDED_SURGERY_NAME, ignore = false, name = CURATED_SURGERY_NAME)
         )
