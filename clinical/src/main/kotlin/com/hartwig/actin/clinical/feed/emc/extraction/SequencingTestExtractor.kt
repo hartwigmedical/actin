@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.amplifications
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.geneDeletions
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.deletions
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.msi
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.skippedExons
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.tmb
@@ -66,10 +66,10 @@ class SequencingTestExtractor(
                             SequencingTest(
                                 test = name,
                                 variants = variants(curatedSequencingResults),
-                                fusions = fusions(curatedSequencingResults),
                                 amplifications = amplifications(curatedSequencingResults),
+                                deletions = deletions(curatedSequencingResults),
+                                fusions = fusions(curatedSequencingResults),
                                 skippedExons = skippedExons(curatedSequencingResults),
-                                deletedGenes = geneDeletions(curatedSequencingResults),
                                 isMicrosatelliteUnstable = msi(curatedSequencingResults),
                                 tumorMutationalBurden = tmb(curatedSequencingResults)
                             )

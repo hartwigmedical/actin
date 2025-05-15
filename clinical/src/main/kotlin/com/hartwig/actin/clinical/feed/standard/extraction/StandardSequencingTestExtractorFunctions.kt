@@ -9,56 +9,56 @@ import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 
 object StandardSequencingTestExtractorFunctions {
 
-    fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
+    fun variants(results: Set<ProvidedMolecularTestResult>) =
+        results.filter { result -> result.hgvsCodingImpact != null || result.hgvsProteinImpact != null }
+            .map { result ->
+                SequencedVariant(
+                    gene = result.gene
+                        ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
+                    hgvsCodingImpact = result.hgvsCodingImpact,
+                    hgvsProteinImpact = result.hgvsProteinImpact,
+                    transcript = result.transcript,
+                    variantAlleleFrequency = result.vaf,
+                    exon = result.exon,
+                    codon = result.codon,
+                )
+            }.toSet()
+
+    fun amplifications(results: Set<ProvidedMolecularTestResult>) =
+        results.mapNotNull { it.amplifiedGene?.let { gene -> SequencedAmplification(gene, it.transcript) } }.toSet()
+
+    fun deletions(allResults: Set<ProvidedMolecularTestResult>) =
         allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene, it.transcript) } }.toSet()
 
-    fun tmb(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.tmb }
-
-    fun msi(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.msi }
+    fun fusions(results: Set<ProvidedMolecularTestResult>) =
+        results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
+            .map { result ->
+                SequencedFusion(
+                    geneUp = result.fusionGeneUp,
+                    geneDown = result.fusionGeneDown,
+                    transcriptUp = result.fusionTranscriptUp,
+                    transcriptDown = result.fusionTranscriptDown,
+                    exonUp = result.fusionExonUp,
+                    exonDown = result.fusionExonDown
+                )
+            }.toSet()
 
     fun skippedExons(
         results: Set<ProvidedMolecularTestResult>
     ) = results.mapNotNull { result ->
         result.exonSkipStart?.let { exonSkipStart ->
             SequencedSkippedExons(
-                result.gene!!,
-                result.exonSkipStart!!,
-                result.exonSkipEnd ?: exonSkipStart,
-                result.transcript
+                gene = result.gene!!,
+                exonStart = result.exonSkipStart!!,
+                exonEnd = result.exonSkipEnd ?: exonSkipStart,
+                transcript = result.transcript
             )
         }
     }.toSet()
 
-    fun amplifications(results: Set<ProvidedMolecularTestResult>) =
-        results.mapNotNull { it.amplifiedGene?.let { gene -> SequencedAmplification(gene, it.transcript) } }.toSet()
+    fun tmb(results: Set<ProvidedMolecularTestResult>) =
+        results.firstNotNullOfOrNull { result -> result.tmb }
 
-    fun fusions(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
-            .map { result ->
-                SequencedFusion(
-                    result.fusionGeneUp,
-                    result.fusionGeneDown,
-                    result.fusionTranscriptUp,
-                    result.fusionTranscriptDown,
-                    result.fusionExonUp,
-                    result.fusionExonDown
-                )
-            }.toSet()
-
-    fun variants(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.hgvsCodingImpact != null || result.hgvsProteinImpact != null }
-            .map { result ->
-                SequencedVariant(
-                    result.vaf,
-                    result.gene
-                        ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
-                    result.hgvsCodingImpact,
-                    result.hgvsProteinImpact,
-                    result.transcript,
-                    result.codon,
-                    result.exon
-                )
-            }.toSet()
+    fun msi(results: Set<ProvidedMolecularTestResult>) =
+        results.firstNotNullOfOrNull { result -> result.msi }
 }

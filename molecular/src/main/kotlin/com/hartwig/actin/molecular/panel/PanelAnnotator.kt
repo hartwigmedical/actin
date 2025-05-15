@@ -26,7 +26,7 @@ class PanelAnnotator(
     override fun annotate(input: SequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
-        val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletedGenes)
+        val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
 
         return PanelRecord(

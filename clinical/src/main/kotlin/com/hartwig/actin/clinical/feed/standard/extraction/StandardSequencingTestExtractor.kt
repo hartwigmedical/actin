@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.amplifications
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.geneDeletions
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.deletions
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.msi
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.skippedExons
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.tmb
@@ -53,12 +53,12 @@ class StandardSequencingTestExtractor(
                                     test = testCuration.curatedName,
                                     date = test.date,
                                     variants = variants(allResults),
-                                    fusions = fusions(allResults),
                                     amplifications = amplifications(allResults),
+                                    deletions = deletions(allResults),
+                                    fusions = fusions(allResults),
                                     skippedExons = skippedExons(allResults),
-                                    deletedGenes = geneDeletions(allResults),
+                                    tumorMutationalBurden = tmb(allResults),
                                     isMicrosatelliteUnstable = msi(allResults),
-                                    tumorMutationalBurden = tmb(allResults)
                                 )
                             ),
                             mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }

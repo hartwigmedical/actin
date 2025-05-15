@@ -156,7 +156,7 @@ class StandardSequencingTestExtractorTest {
         val result = extractionResult(ProvidedMolecularTestResult(deletedGene = GENE))
         assertResultContains(
             result, BASE_SEQUENCING_TEST.copy(
-                deletedGenes = setOf(SequencedDeletedGene(GENE))
+                deletions = setOf(SequencedDeletedGene(GENE))
             )
         )
     }

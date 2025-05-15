@@ -193,10 +193,10 @@
           "hgvsCodingImpact": "c.34G>T"
         }
       ],
-      "fusions": [],
       "amplifications": [],
-      "skippedExons": [],
-      "deletedGenes": []
+      "deletions": [],
+      "fusions": [],
+      "skippedExons": []
     }
   ],
   "labValues": [
