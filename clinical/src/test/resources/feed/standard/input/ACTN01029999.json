@@ -148,8 +148,7 @@
       "date": "2024-07-15",
       "results": [
         {
-          "gene": "KRAS",
-          "hgvsCodingImpact": "c.34G>T"
+          "freeText": "KRAS c.34G>T"
         }
       ]
     }
