@@ -89,7 +89,8 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
-        val evidence = evidenceDatabase.evidenceForVariant(MatchingCriteriaFunctions.createVariantCriteria(variantWithGeneAlteration))
+        val evidence = evidenceDatabase.evidenceForVariant(MatchingCriteriaFunctions.createVariantCriteria(variantWithGeneAlteration),
+            variant.canonicalImpact)
         return variantWithGeneAlteration.copy(evidence = evidence)
     }
 
