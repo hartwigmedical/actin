@@ -4,20 +4,20 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
-class PanelSpecificationsTest {
+class KnownPanelSpecificationsTest {
 
     @Test
     fun `Should evaluate target predicate when gene is in panel specification`() {
         val targets = listOf(MolecularTestTarget.MUTATION)
         val gene = "gene"
-        val specification = PanelSpecification(mapOf(gene to targets))
+        val specification = KnownPanelSpecification(mapOf(gene to targets))
         assertThat(specification.testsGene(gene) { it == targets }).isTrue()
         assertThat(specification.testsGene(gene) { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
     }
 
     @Test
     fun `Should return false if gene is not in specification`() {
-        val specification = PanelSpecification(mapOf("gene" to emptyList()))
+        val specification = KnownPanelSpecification(mapOf("gene" to emptyList()))
         assertThat(specification.testsGene("another gene") { true })
     }
 
@@ -34,7 +34,7 @@ class PanelSpecificationsTest {
                     )
                 )
             )
-        ).genesForPanel(panelName)
+        ).panelSpecification(panelName)
         assertThat(specification.testsGene(geneName) { it == listOf(MolecularTestTarget.MUTATION) })
     }
 
@@ -42,7 +42,7 @@ class PanelSpecificationsTest {
     fun `Should throw illegal state exception when a panel name is not found`() {
         assertThatThrownBy {
             val specifications = PanelSpecifications(emptyMap())
-            specifications.genesForPanel("panel")
+            specifications.panelSpecification("panel")
         }.isInstanceOfAny(IllegalStateException::class.java)
     }
 }

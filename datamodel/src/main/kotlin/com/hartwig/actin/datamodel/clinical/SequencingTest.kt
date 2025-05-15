@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import java.time.LocalDate
 
 data class SequencedVariant(
@@ -58,4 +59,5 @@ data class SequencingTest(
     val skippedExons: Set<SequencedSkippedExons> = emptySet(),
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
+    val knownSpecifications: Boolean
 ) 

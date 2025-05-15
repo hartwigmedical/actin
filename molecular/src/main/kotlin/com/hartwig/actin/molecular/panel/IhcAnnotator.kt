@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelRecord
-import com.hartwig.actin.datamodel.molecular.PanelSpecification
+import com.hartwig.actin.datamodel.molecular.KnownPanelSpecification
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.MolecularAnnotator
@@ -15,7 +15,7 @@ class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
     override fun annotate(input: IhcExtraction): PanelRecord {
         return PanelRecord(
             date = input.date,
-            specification = PanelSpecification((input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith {
+            specification = KnownPanelSpecification((input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith {
                 listOf(
                     MolecularTestTarget.FUSION
                 )

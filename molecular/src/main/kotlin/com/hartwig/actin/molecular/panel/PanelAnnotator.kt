@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencingTest
+import com.hartwig.actin.datamodel.molecular.DerivedPanelSpecification
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
@@ -30,7 +31,7 @@ class PanelAnnotator(
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
 
         return PanelRecord(
-            specification = panelSpecifications.genesForPanel(input.test),
+            specification = if (input.knownSpecifications)panelSpecifications.panelSpecification(input.test) else DerivedPanelSpecification(input),
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
             date = input.date,
