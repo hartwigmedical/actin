@@ -70,8 +70,8 @@ class SequencingTestExtractor(
                                 deletions = deletions(curatedSequencingResults),
                                 fusions = fusions(curatedSequencingResults),
                                 skippedExons = skippedExons(curatedSequencingResults),
+                                tumorMutationalBurden = tmb(curatedSequencingResults),
                                 isMicrosatelliteUnstable = msi(curatedSequencingResults),
-                                tumorMutationalBurden = tmb(curatedSequencingResults)
                             )
                         ),
                         sequencingResults.extractionEvaluation
