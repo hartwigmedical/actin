@@ -74,7 +74,7 @@ class StandardSequencingTestExtractorFunctionsTest {
         val test = setOf(
             ProvidedMolecularTestResult(
                 gene = GENE,
-                amplifiedGene = "Other gene"
+                amplifiedGene = OTHER_GENE
             )
         )
         StandardSequencingTestExtractorFunctions.amplifications(test)
