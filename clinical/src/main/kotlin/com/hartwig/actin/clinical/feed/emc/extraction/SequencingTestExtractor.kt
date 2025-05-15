@@ -9,8 +9,8 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.amplifications
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.deletions
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.msi
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.skippedExons
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.tmb
@@ -58,20 +58,20 @@ class SequencingTestExtractor(
                 )
 
                 val notIgnoredResults = sequencingResults.configs.filter { !it.ignore }.toSet()
-                val curatedSequencingResults = notIgnoredResults.mapNotNull { it.curated }.toSet()
 
-                if (notIgnoredResults.isNotEmpty() && curatedSequencingResults.isNotEmpty()) {
+                if (notIgnoredResults.isNotEmpty()) {
                     ExtractionResult(
                         listOf(
                             SequencingTest(
                                 test = name,
-                                variants = variants(curatedSequencingResults),
-                                amplifications = amplifications(curatedSequencingResults),
-                                deletions = deletions(curatedSequencingResults),
-                                fusions = fusions(curatedSequencingResults),
-                                skippedExons = skippedExons(curatedSequencingResults),
-                                tumorMutationalBurden = tmb(curatedSequencingResults),
-                                isMicrosatelliteUnstable = msi(curatedSequencingResults),
+                                variants = variants(notIgnoredResults),
+                                amplifications = amplifications(notIgnoredResults),
+                                deletions = deletions(notIgnoredResults),
+                                fusions = fusions(notIgnoredResults),
+                                skippedExons = skippedExons(notIgnoredResults),
+                                tumorMutationalBurden = tmb(notIgnoredResults),
+                                isMicrosatelliteUnstable = msi(notIgnoredResults),
+                                knownSpecifications = false
                             )
                         ),
                         sequencingResults.extractionEvaluation

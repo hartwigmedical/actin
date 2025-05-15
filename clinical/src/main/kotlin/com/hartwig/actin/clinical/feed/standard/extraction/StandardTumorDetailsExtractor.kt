@@ -9,26 +9,26 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
     private val tumorStageDeriver: TumorStageDeriver
 ) : StandardDataExtractor<TumorDetails> {
 
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<TumorDetails> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<TumorDetails> {
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
 
-        val curatedTumorResponseFromOtherConditions = ehrPatientRecord.priorOtherConditions.map {
+        val curatedTumorResponseFromOtherConditions = ehrPatientRecord.otherConditions.map {
             CurationResponse.createFromConfigs(
                 primaryTumorConfigCurationDatabase.find(it.name),
-                ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
+                ehrPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
             )
         }.firstNotNullOfOrNull { it.config() }
 
         val curatedTumorResponse = CurationResponse.createFromConfigs(
             primaryTumorConfigCurationDatabase.find(input),
-            ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
+            ehrPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
 
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord)
@@ -54,30 +54,30 @@ class StandardTumorDetailsExtractor(
     ) = curatedTumorResponseFromOtherConditions?.let { CurationResponse(setOf(it), CurationExtractionEvaluation()) }
         ?: curatedTumorResponse
 
-    private fun tumorDetails(ehrPatientRecord: ProvidedPatientRecord): TumorDetails {
-        val hasBrainOrGliomaTumor =
-            ehrPatientRecord.tumorDetails.tumorLocation == "Brain" || ehrPatientRecord.tumorDetails.tumorType == "Glioma"
-        val lesionDetails = ehrPatientRecord.tumorDetails.lesions
-        return TumorDetails(
-            primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
-            primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
-            doids = emptySet(),
-            stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
-            hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
-            hasBrainLesions = if (hasBrainOrGliomaTumor) false else lesionDetails?.hasBrainLesions,
-            hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else lesionDetails?.hasActiveBrainLesions,
-            hasCnsLesions = when {
-                hasBrainOrGliomaTumor -> false
-                lesionDetails?.hasBrainLesions == true -> true
-                else -> null
-            },
-            hasActiveCnsLesions = when {
-                hasBrainOrGliomaTumor -> false
-                lesionDetails?.hasActiveBrainLesions == true -> true
-                else -> null
-            },
-            hasBoneLesions = lesionDetails?.hasBoneLesions,
-            hasLiverLesions = lesionDetails?.hasLiverLesions
-        )
+    private fun tumorDetails(ehrPatientRecord: FeedPatientRecord): TumorDetails {
+        with(ehrPatientRecord.tumorDetails) {
+            val hasBrainOrGliomaTumor = tumorLocation == "Brain" || tumorType == "Glioma"
+            return TumorDetails(
+                primaryTumorLocation = tumorLocation,
+                primaryTumorType = tumorType,
+                doids = emptySet(),
+                stage = stage?.let { TumorStage.valueOf(it) },
+                hasMeasurableDisease = measurableDisease,
+                hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions,
+                hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasActiveBrainLesions,
+                hasCnsLesions = when {
+                    hasBrainOrGliomaTumor -> false
+                    hasBrainLesions == true -> true
+                    else -> null
+                },
+                hasActiveCnsLesions = when {
+                    hasBrainOrGliomaTumor -> false
+                    hasActiveBrainLesions == true -> true
+                    else -> null
+                },
+                hasBoneLesions = hasBoneLesions,
+                hasLiverLesions = hasLiverLesions
+            )
+        }
     }
 }

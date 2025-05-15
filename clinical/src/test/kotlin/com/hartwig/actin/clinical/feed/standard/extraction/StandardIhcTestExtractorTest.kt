@@ -2,16 +2,14 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.IhcTestConfig
-import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
+import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTest
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPathologyReport
+import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedPathology
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -22,11 +20,12 @@ private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val IHC_TEST = IhcTest(item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
 private const val MICROSCOPIE_LINE = "TTF1 negatief"
 
-private val PATHOLOGY_REPORT = ProvidedPathologyReport(
+private val PATHOLOGY_REPORT = FeedPathology(
     lab = "lab",
     diagnosis = "diagnosis",
     reportRequested = true,
-    rawPathologyReport = "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
+    rawPathologyReport = "Microscopie:\n$MICROSCOPIE_LINE\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n",
+    tissueId = "",
 )
 private val IHC_TEST_EGFR =
     IhcTest(
@@ -37,11 +36,10 @@ private val IHC_TEST_EGFR =
         impliesPotentialIndeterminateStatus = false
     )
 
-private val EHR_PATIENT_RECORD = createEhrPatientRecord()
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
-    EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(pathology = listOf(PATHOLOGY_REPORT)))
-private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
+    FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(pathology = listOf(PATHOLOGY_REPORT)))
 
+private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
 
 class StandardIhcTestExtractorTest {
 
@@ -53,7 +51,7 @@ class StandardIhcTestExtractorTest {
     @Test
     fun `Should return no molecular test configs when tumor differentiation is null`() {
         val noDifferentiation =
-            EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = null))
+            FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = null))
         val result = extractor.extract(noDifferentiation)
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
@@ -101,30 +99,17 @@ class StandardIhcTestExtractorTest {
     fun `Should curate molecular tests from other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
         val anotherMolecularTest = IHC_TEST_EGFR.copy(item = "ERBB2")
         every { molecularTestCuration.find(OTHER_CONDITION_INPUT) } returns setOf(
-            IhcTestConfig(
-                input = OTHER_CONDITION_INPUT,
-                curated = IHC_TEST_EGFR
-            ),
-            IhcTestConfig(
-                input = OTHER_CONDITION_INPUT,
-                curated = anotherMolecularTest
-            )
+            IhcTestConfig(input = OTHER_CONDITION_INPUT, curated = IHC_TEST_EGFR),
+            IhcTestConfig(input = OTHER_CONDITION_INPUT, curated = anotherMolecularTest)
         )
-        val result =
-            extractor.extract(
-                EHR_PATIENT_RECORD.copy(
-                    priorOtherConditions = listOf(
-                        ProvidedOtherCondition(
-                            name = OTHER_CONDITION_INPUT,
-                            startDate = UNUSED_DATE
-                        ),
-                        ProvidedOtherCondition(
-                            name = "another prior condition",
-                            startDate = UNUSED_DATE
-                        )
-                    )
+        val result = extractor.extract(
+            FEED_PATIENT_RECORD.copy(
+                otherConditions = listOf(
+                    DatedEntry(name = OTHER_CONDITION_INPUT, startDate = UNUSED_DATE),
+                    DatedEntry(name = "another prior condition", startDate = UNUSED_DATE)
                 )
             )
+        )
         assertThat(result.extracted).containsExactly(IHC_TEST_EGFR, anotherMolecularTest)
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -133,35 +118,29 @@ class StandardIhcTestExtractorTest {
     fun `Should curate molecular tests from tumor grade differentiation lines, supporting multiple configs per input, but ignore any curation warnings`() {
         val anotherMolecularTest = IHC_TEST_EGFR.copy(item = "ERBB2")
         every { molecularTestCuration.find(MICROSCOPIE_LINE) } returns setOf(
-            IhcTestConfig(
-                input = MICROSCOPIE_LINE,
-                curated = IHC_TEST_EGFR
-            ),
-            IhcTestConfig(
-                input = MICROSCOPIE_LINE,
-                curated = anotherMolecularTest
-            )
+            IhcTestConfig(input = MICROSCOPIE_LINE, curated = IHC_TEST_EGFR),
+            IhcTestConfig(input = MICROSCOPIE_LINE, curated = anotherMolecularTest)
         )
-        val result =
-            extractor.extract(
-                EHR_PATIENT_RECORD.copy(
-                    tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(
-                        pathology = listOf(
-                            PATHOLOGY_REPORT.copy(
-                                rawPathologyReport = PATHOLOGY_REPORT.rawPathologyReport.replace(
-                                    IHC_LINE, ""
-                                )
+        val result = extractor.extract(
+            FEED_PATIENT_RECORD.copy(
+                tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
+                    pathology = listOf(
+                        PATHOLOGY_REPORT.copy(
+                            rawPathologyReport = PATHOLOGY_REPORT.rawPathologyReport.replace(
+                                IHC_LINE, ""
                             )
                         )
                     )
+
                 )
             )
+        )
         assertThat(result.extracted).containsExactly(IHC_TEST_EGFR, anotherMolecularTest)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
-    fun `Should extract and curate IHC lines from molecular test ihc result`() {
+    fun `Should extract and curate IHC lines from ihc result`() {
         every { molecularTestCuration.find(IHC_LINE) } returns setOf(
             IhcTestConfig(
                 input = IHC_LINE,
@@ -170,20 +149,10 @@ class StandardIhcTestExtractorTest {
         )
         val uncuratedInput = "uncurated"
         val result = extractor.extract(
-            EHR_PATIENT_RECORD.copy(
-                molecularTests = listOf(
-                    ProvidedMolecularTest(
-                        test = "IHC",
-                        results = setOf(ProvidedMolecularTestResult(ihcResult = IHC_LINE))
-                    ),
-                    ProvidedMolecularTest(
-                        test = "IHC",
-                        results = setOf(ProvidedMolecularTestResult(ihcResult = uncuratedInput))
-                    ),
-                    ProvidedMolecularTest(
-                        test = "NGS",
-                        results = setOf(ProvidedMolecularTestResult(hgvsCodingImpact = "codingImpact"))
-                    ),
+            FEED_PATIENT_RECORD.copy(
+                ihcTests = listOf(
+                    DatedEntry(IHC_LINE, UNUSED_DATE),
+                    DatedEntry(uncuratedInput, UNUSED_DATE)
                 )
             )
         )
@@ -200,22 +169,16 @@ class StandardIhcTestExtractorTest {
 
     @Test
     fun `Should ignore lines if ignored in curation using ihc result alone or combined with patient id`() {
-        val firstIhc = ProvidedMolecularTestResult(ihcResult = "first IHC")
-        val secondIhc = ProvidedMolecularTestResult(ihcResult = "second IHC")
-        val record = EHR_PATIENT_RECORD.copy(
-            molecularTests = listOf(
-                ProvidedMolecularTest(
-                    test = "test",
-                    results = setOf(firstIhc, secondIhc)
-                )
-            )
+        val firstIhc = "first IHC"
+        val secondIhc = "second IHC"
+        val record = FEED_PATIENT_RECORD.copy(
+            ihcTests = listOf(DatedEntry(firstIhc, UNUSED_DATE), DatedEntry(secondIhc, UNUSED_DATE))
         )
 
-        val inputWithPatientAndIhc = "$HASHED_ID_IN_BASE64 | ${firstIhc.ihcResult}"
+        val inputWithPatientAndIhc = "$HASHED_ID_IN_BASE64 | $firstIhc"
         returnIgnoreFromCurationDB(inputWithPatientAndIhc)
 
-        val inputWithIhcOnly = secondIhc.ihcResult!!
-        returnIgnoreFromCurationDB(inputWithIhcOnly)
+        returnIgnoreFromCurationDB(secondIhc)
 
         val result = extractor.extract(record)
         assertThat(result.extracted).isEmpty()
@@ -224,10 +187,7 @@ class StandardIhcTestExtractorTest {
 
     private fun returnIgnoreFromCurationDB(inputWithPatientAndIhc: String) {
         every { molecularTestCuration.find(inputWithPatientAndIhc) } returns setOf(
-            IhcTestConfig(
-                input = inputWithPatientAndIhc,
-                ignore = true
-            )
+            IhcTestConfig(input = inputWithPatientAndIhc, ignore = true)
         )
     }
 }

@@ -59,5 +59,5 @@ data class SequencingTest(
     val skippedExons: Set<SequencedSkippedExons> = emptySet(),
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
-    val knownSpecifications: Boolean
+    val knownSpecifications: Boolean = false
 ) 

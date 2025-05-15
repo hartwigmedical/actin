@@ -15,7 +15,7 @@ data class MolecularRecord(
     val isContaminated: Boolean,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>,
-    val specification: KnownPanelSpecification?,
+    val specification: PanelSpecification?,
     override val hasSufficientPurity: Boolean,
     override val hasSufficientQuality: Boolean,
     override val testTypeDisplay: String? = null,

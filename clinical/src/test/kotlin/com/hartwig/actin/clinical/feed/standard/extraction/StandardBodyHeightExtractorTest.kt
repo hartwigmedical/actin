@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.clinical.feed.standard.EhrTestData
+import com.hartwig.actin.clinical.feed.standard.FeedTestData
 import com.hartwig.actin.datamodel.clinical.BodyHeight
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurement
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementCategory
+import com.hartwig.feed.datamodel.FeedMeasurement
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -15,9 +15,9 @@ private val SUB_CATEGORY = null
 private const val VALUE = 200.0
 private const val UNIT = "centimeters"
 
-private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
+private val EHR_PATIENT_RECORD = FeedTestData.FEED_PATIENT_RECORD.copy(
     measurements = listOf(
-        ProvidedMeasurement(
+        FeedMeasurement(
             date = DATE.toLocalDate(),
             category = CATEGORY,
             subcategory = SUB_CATEGORY,
