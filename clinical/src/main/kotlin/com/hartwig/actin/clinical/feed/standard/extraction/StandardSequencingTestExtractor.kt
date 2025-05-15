@@ -25,19 +25,21 @@ class StandardSequencingTestExtractor(
     StandardDataExtractor<List<SequencingTest>> {
 
     override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
-        return ehrPatientRecord.sequencingTests.mapNotNull { test ->
-            val testCurationConfig = CurationResponse.createFromConfigs(
+        return ehrPatientRecord.sequencingTests.map { test ->
+            val testCurationResponse = CurationResponse.createFromConfigs(
                 testCuration.find(test.name),
                 ehrPatientRecord.patientDetails.patientId,
                 CurationCategory.SEQUENCING_TEST,
                 test.name,
                 "sequencing test",
-                false
+                true
             )
 
-            testCurationConfig.config()?.takeUnless { it.ignore }
-                ?.let { testCuration -> extractTestResults(test, testCuration, ehrPatientRecord.patientDetails.patientId) }
-                ?: ExtractionResult(emptyList(), testCurationConfig.extractionEvaluation)
+            if (testCurationResponse.config()?.ignore == true) {
+                ExtractionResult(emptyList(), testCurationResponse.extractionEvaluation)
+            } else {
+                extractTestResults(test, testCurationResponse, ehrPatientRecord.patientDetails.patientId)
+            }
         }
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
                 ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
@@ -45,15 +47,15 @@ class StandardSequencingTestExtractor(
     }
 
     private fun extractTestResults(
-        test: FeedSequencingTest, sequencingTestCuration: SequencingTestConfig, patientId: String
-    ): ExtractionResult<List<SequencingTest>>? = test.results.takeIf { it.isNotEmpty() }
-        ?.map { result -> curate(result, patientId) }
-        ?.let { resultCurations ->
-            val allResults = resultCurations.flatMap { it.configs.filterNot(SequencingTestResultConfig::ignore) }.toSet()
-            ExtractionResult(
-                listOf(
+        test: FeedSequencingTest, sequencingTestCuration: CurationResponse<SequencingTestConfig>, patientId: String
+    ): ExtractionResult<List<SequencingTest>> {
+        val resultCurations = test.results.map { result -> curate(result, patientId) }
+        val allResults = resultCurations.flatMap { it.configs.filterNot(SequencingTestResultConfig::ignore) }.toSet()
+        return ExtractionResult(
+            listOfNotNull(
+                sequencingTestCuration.config()?.let {
                     SequencingTest(
-                        test = sequencingTestCuration.curatedName,
+                        test = it.curatedName,
                         date = test.date,
                         variants = variants(allResults),
                         fusions = fusions(allResults),
@@ -63,11 +65,12 @@ class StandardSequencingTestExtractor(
                         isMicrosatelliteUnstable = msi(allResults),
                         tumorMutationalBurden = tmb(allResults)
                     )
-                ),
-                resultCurations.map(CurationResponse<SequencingTestResultConfig>::extractionEvaluation)
-                    .reduce(CurationExtractionEvaluation::plus)
-            )
-        }
+                }
+            ),
+            resultCurations.map(CurationResponse<SequencingTestResultConfig>::extractionEvaluation)
+                .fold(sequencingTestCuration.extractionEvaluation, CurationExtractionEvaluation::plus)
+        )
+    }
 
     private fun curate(result: String, patientId: String) = CurationResponse.createFromConfigs(
         testResultCuration.find(result),

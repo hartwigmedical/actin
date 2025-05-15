@@ -34,6 +34,12 @@ private const val FREE_TEXT = "free text"
 private val PATIENT_WITH_TEST_RESULT = FeedTestData.FEED_PATIENT_RECORD.copy(
     sequencingTests = listOf(BASE_MOLECULAR_TEST.copy(results = listOf(FREE_TEXT)))
 )
+private val SEQUENCING_TEST_CURATION_WARNING = CurationWarning(
+    patientId = HASHED_ID_IN_BASE64,
+    category = CurationCategory.SEQUENCING_TEST,
+    feedInput = TEST,
+    message = "Could not find sequencing test config for input 'test'"
+)
 
 class StandardSequencingTestExtractorTest {
 
@@ -55,23 +61,31 @@ class StandardSequencingTestExtractorTest {
         every { testCuration.find(TEST) } returns emptySet()
         val result = extractor.extract(FeedTestData.FEED_PATIENT_RECORD.copy(sequencingTests = listOf(BASE_MOLECULAR_TEST)))
         assertThat(result.extracted).isEmpty()
-        assertThat(result.evaluation.warnings).containsExactly(
-            CurationWarning(
-                patientId = HASHED_ID_IN_BASE64,
-                category = CurationCategory.SEQUENCING_TEST,
-                feedInput = TEST,
-                message = "Could not find sequencing test config for input 'test'"
-            )
-        )
+        assertThat(result.evaluation.warnings).containsExactly(SEQUENCING_TEST_CURATION_WARNING)
     }
 
     @Test
-    fun `Should curate test name and extract sequencing with test name and date`() {
+    fun `Should return curation warnings for test and results when neither is curated`() {
+        every { testCuration.find(TEST) } returns emptySet()
         setUpSequencingTestResultCuration()
-        with(extractedResult().extracted.single()) {
-            assertThat(date).isEqualTo(TEST_DATE)
-            assertThat(test).isEqualTo(CURATED_TEST)
+        with(extractedResult()) {
+            assertThat(extracted).isEmpty()
+            assertThat(evaluation.warnings).containsExactly(
+                SEQUENCING_TEST_CURATION_WARNING,
+                CurationWarning(
+                    patientId = HASHED_ID_IN_BASE64,
+                    category = CurationCategory.SEQUENCING_TEST_RESULT,
+                    feedInput = FREE_TEXT,
+                    message = "Could not find sequencing test result config for input '$FREE_TEXT'"
+                )
+            )
         }
+    }
+
+    @Test
+    fun `Should curate test name and extract sequencing with test name and date, even when no results present`() {
+        setUpSequencingTestResultCuration()
+        assertThat(extractedResult().extracted).containsExactly(SequencingTest(CURATED_TEST, TEST_DATE))
     }
 
     @Test
