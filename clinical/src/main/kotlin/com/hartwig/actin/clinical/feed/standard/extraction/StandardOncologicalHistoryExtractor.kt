@@ -6,24 +6,21 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedTreatmentHistory
-import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
+import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedPatientRecord
+import kotlin.collections.map
 
 private const val TREATMENT_HISTORY = "treatment history"
 
 class StandardOncologicalHistoryExtractor(
     private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>
 ) : StandardDataExtractor<List<TreatmentHistoryEntry>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
-        val oncologicalTreatmentHistory = oncologicalTreatmentHistory(ehrPatientRecord)
-        val oncologicalPreviousConditions = getOncologicalPreviousConditions(ehrPatientRecord)
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
+        val patientId = ehrPatientRecord.patientDetails.patientId
+        val oncologicalPreviousConditions = convertFeedEntriesToOncologicalHistory(ehrPatientRecord.otherConditions, patientId)
+        val oncologicalTreatmentHistory = convertFeedEntriesToOncologicalHistory(ehrPatientRecord.treatmentHistory, patientId)
 
         return ExtractionResult(
             merge(oncologicalTreatmentHistory.extracted, oncologicalPreviousConditions.extracted),
@@ -37,36 +34,33 @@ class StandardOncologicalHistoryExtractor(
     ): List<TreatmentHistoryEntry> {
         val treatmentSignatures = oncologicalPreviousConditions.map { Triple(it.treatments, it.startYear, it.startMonth) }.toSet()
         return oncologicalPreviousConditions + oncologicalTreatmentHistory.filter {
-            Triple(
-                it.treatments,
-                it.startYear,
-                it.startMonth
-            ) !in treatmentSignatures
+            Triple(it.treatments, it.startYear, it.startMonth) !in treatmentSignatures
         }
     }
 
-    private fun getOncologicalPreviousConditions(ehrPatientRecord: ProvidedPatientRecord) =
-        ehrPatientRecord.priorOtherConditions.map { ehrPreviousCondition ->
+    private fun convertFeedEntriesToOncologicalHistory(
+        entries: List<DatedEntry>, patientId: String
+    ): ExtractionResult<List<TreatmentHistoryEntry>> =
+        entries.map { ehrEntry ->
             val treatment = CurationResponse.createFromConfigs(
-                treatmentCuration.find(ehrPreviousCondition.name),
-                ehrPatientRecord.patientDetails.hashedId,
+                treatmentCuration.find(ehrEntry.name),
+                patientId,
                 CurationCategory.ONCOLOGICAL_HISTORY,
-                ehrPreviousCondition.name,
-                TREATMENT_HISTORY,
-                false
+                ehrEntry.name,
+                TREATMENT_HISTORY
             )
             ExtractionResult(
                 treatment.configs.mapNotNull { config ->
-                    config.curated?.let { curatedTreatment ->
+                    config.takeUnless { it.ignore }?.curated?.let { curatedTreatment ->
                         TreatmentHistoryEntry(
-                            startYear = curatedTreatment.startYear ?: ehrPreviousCondition.startDate?.year,
-                            startMonth = curatedTreatment.startMonth ?: ehrPreviousCondition.startDate?.monthValue,
                             treatments = curatedTreatment.treatments,
+                            startYear = curatedTreatment.startYear ?: ehrEntry.startDate.year,
+                            startMonth = curatedTreatment.startMonth ?: ehrEntry.startDate.monthValue,
                             intents = curatedTreatment.intents,
                             treatmentHistoryDetails = TreatmentHistoryDetails(
-                                stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrPreviousCondition.endDate?.year,
+                                stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrEntry.endDate?.year,
                                 stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth
-                                    ?: ehrPreviousCondition.endDate?.monthValue,
+                                    ?: ehrEntry.endDate?.monthValue,
                                 stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
                                 bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
                                 switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,
@@ -81,93 +75,8 @@ class StandardOncologicalHistoryExtractor(
                     }
                 }, treatment.extractionEvaluation
             )
-        }.fold<ExtractionResult<List<TreatmentHistoryEntry>>, ExtractionResult<List<TreatmentHistoryEntry>>>(
-            ExtractionResult(emptyList(), CurationExtractionEvaluation())
-        ) { acc, result ->
-            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
-
-    private fun oncologicalTreatmentHistory(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> =
-        ehrPatientRecord.treatmentHistory.map { ehrTreatmentHistory ->
-
-            val treatment = CurationResponse.createFromConfigs(
-                treatmentCuration.find(ehrTreatmentHistory.treatmentName),
-                ehrPatientRecord.patientDetails.hashedId,
-                CurationCategory.ONCOLOGICAL_HISTORY,
-                ehrTreatmentHistory.treatmentName,
-                TREATMENT_HISTORY,
-            )
-
-            treatment.config()?.let { curatedTreatment ->
-                if (!curatedTreatment.ignore) {
-                    val switchToTreatments = treatmentStages(curatedTreatment.curated?.treatments, ehrTreatmentHistory, ehrPatientRecord)
-                    ExtractionResult(
-                        listOf(
-                            TreatmentHistoryEntry(
-                                startYear = curatedTreatment.curated?.startYear ?: ehrTreatmentHistory.startDate.year,
-                                startMonth = curatedTreatment.curated?.startMonth ?: ehrTreatmentHistory.startDate.monthValue,
-                                intents = curatedTreatment.curated?.intents ?: ehrTreatmentHistory.intention?.let { intent ->
-                                    setOf(parseIntent(intent))
-                                },
-                                treatments = curatedTreatment.curated!!.treatments,
-                                treatmentHistoryDetails = TreatmentHistoryDetails(
-                                    stopYear = curatedTreatment.curated.treatmentHistoryDetails?.stopYear
-                                        ?: ehrTreatmentHistory.endDate?.year,
-                                    stopMonth = curatedTreatment.curated.treatmentHistoryDetails?.stopMonth
-                                        ?: ehrTreatmentHistory.endDate?.monthValue,
-                                    stopReason = curatedTreatment.curated.treatmentHistoryDetails?.stopReason
-                                        ?: ehrTreatmentHistory.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
-                                    bestResponse = curatedTreatment.curated.treatmentHistoryDetails?.bestResponse
-                                        ?: ehrTreatmentHistory.response?.let { response -> TreatmentResponse.valueOf(response) },
-                                    switchToTreatments = switchToTreatments.extracted,
-                                    cycles = ehrTreatmentHistory.administeredCycles,
-                                    bodyLocations = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocations,
-                                    bodyLocationCategories = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocationCategories,
-                                    maintenanceTreatment = curatedTreatment.curated.treatmentHistoryDetails?.maintenanceTreatment,
-                                ),
-                                isTrial = ehrTreatmentHistory.administeredInStudy,
-                                trialAcronym = curatedTreatment.curated.trialAcronym ?: ehrTreatmentHistory.trialAcronym
-                            )
-                        ), switchToTreatments.evaluation + treatment.extractionEvaluation
-                    )
-                } else {
-                    null
-                }
-            } ?: ExtractionResult(emptyList(), treatment.extractionEvaluation)
-        }.fold(
-            ExtractionResult(emptyList(), CurationExtractionEvaluation())
-        ) { acc, result ->
-            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
-        }
-
-    private fun parseIntent(intent: String) = Intent.valueOf(intent.trim().uppercase())
-
-    private fun treatmentStages(
-        treatments: Set<Treatment>?,
-        ehrTreatmentHistory: ProvidedTreatmentHistory,
-        ehrPatientRecord: ProvidedPatientRecord
-    ): ExtractionResult<List<TreatmentStage>> {
-        return ehrTreatmentHistory.modifications?.map { modification ->
-            val modificationTreatment = CurationResponse.createFromConfigs(
-                treatmentCuration.find(modification.name),
-                ehrPatientRecord.patientDetails.hashedId,
-                CurationCategory.ONCOLOGICAL_HISTORY,
-                modification.name,
-                TREATMENT_HISTORY,
-            )
-            ExtractionResult(
-                listOf(
-                    TreatmentStage(
-                        cycles = modification.administeredCycles,
-                        startYear = modification.date.year,
-                        startMonth = modification.date.monthValue,
-                        treatment = modificationTreatment.config()?.curated?.treatments?.first() ?: treatments?.firstOrNull()
-                        ?: throw IllegalStateException("Unable to curate or to fall back on original treatment for modification '${modification.name}'")
-                    )
-                ), modificationTreatment.extractionEvaluation
-            )
-        }?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
-            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
-        } ?: ExtractionResult(emptyList(), CurationExtractionEvaluation())
-    }
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            }
 }

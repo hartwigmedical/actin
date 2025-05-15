@@ -58,20 +58,19 @@ class SequencingTestExtractor(
                 )
 
                 val notIgnoredResults = sequencingResults.configs.filter { !it.ignore }.toSet()
-                val curatedSequencingResults = notIgnoredResults.mapNotNull { it.curated }.toSet()
 
-                if (notIgnoredResults.isNotEmpty() && curatedSequencingResults.isNotEmpty()) {
+                if (notIgnoredResults.isNotEmpty()) {
                     ExtractionResult(
                         listOf(
                             SequencingTest(
                                 test = name,
-                                variants = variants(curatedSequencingResults),
-                                amplifications = amplifications(curatedSequencingResults),
-                                deletions = deletions(curatedSequencingResults),
-                                fusions = fusions(curatedSequencingResults),
-                                skippedExons = skippedExons(curatedSequencingResults),
-                                tumorMutationalBurden = tmb(curatedSequencingResults),
-                                isMicrosatelliteUnstable = msi(curatedSequencingResults),
+                                variants = variants(notIgnoredResults),
+                                amplifications = amplifications(notIgnoredResults),
+                                deletions = deletions(notIgnoredResults),
+                                fusions = fusions(notIgnoredResults),
+                                skippedExons = skippedExons(notIgnoredResults),
+                                tumorMutationalBurden = tmb(notIgnoredResults),
+                                isMicrosatelliteUnstable = msi(notIgnoredResults)
                             )
                         ),
                         sequencingResults.extractionEvaluation

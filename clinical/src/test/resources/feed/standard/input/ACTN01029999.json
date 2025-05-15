@@ -6,8 +6,7 @@
       "endDate": "2020-01-01T10:10:00",
       "verificationStatus": "Confirmed",
       "clinicalStatus": "Active",
-      "severity": "Unknown",
-      "category": "Medication"
+      "severity": "Unknown"
     },
     {
       "name": "Nikkel",
@@ -15,90 +14,77 @@
       "endDate": "2020-01-01T10:10:00",
       "verificationStatus": "Confirmed",
       "clinicalStatus": "Active",
-      "severity": "Unknown",
-      "category": "Other"
+      "severity": "Unknown"
     }
   ],
   "bloodTransfusions": [
     {
-      "evaluationTime": "2020-01-01T10:10:00",
-      "product": "Erytrocytes Filtered"
+      "evaluationDate": "2020-01-01T10:10:00",
+      "name": "Erytrocytes Filtered"
     }
   ],
   "complications": [
     {
       "name": "Overige",
-      "categories": [],
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01"
     },
     {
       "name": "Uncurateable",
-      "categories": [],
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01"
     }
   ],
   "labValues": [
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Neutrof. granulocyten",
       "measureCode": "dc_NeutrGran",
-      "category": "Hematologie",
       "value": "3.7",
       "unit": "10E9/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "N"
+      "comparator": null
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "O2-Saturatie gemeten",
       "measureCode": "bg_O2Sgem",
-      "category": "Bloedgas analyse",
       "value": "88",
       "unit": "%",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "H"
+      "comparator": null
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Trombocyten",
       "measureCode": "Plt",
-      "category": "Hematologie",
       "value": "252",
       "unit": "10E9/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "N"
+      "comparator": null
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Lymfocyten",
       "measureCode": "dc_Lymfo",
-      "category": "Cellen (Automaat)",
       "value": "0.6",
       "unit": "10E9/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "L"
+      "comparator": null
     },
     {
-      "evaluationTime": "2020-01-01T10:10:00",
+      "date": "2020-01-01T10:10:00",
       "measure": "Hemoglobine",
       "measureCode": "Hb",
-      "category": "Hematologie",
       "value": "7.7",
       "unit": "mmol/l",
       "refLowerBound": 3.5,
       "refUpperBound": 3.5,
-      "comparator": null,
-      "refFlag": "N"
+      "comparator": null
     }
   ],
   "medications": [
@@ -108,13 +94,16 @@
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "administrationRoute": "oraal",
-      "dosage": 3.5,
-      "dosageUnit": "piece",
-      "frequency": 3.5,
-      "frequencyUnit": "day",
-      "periodBetweenDosagesValue": 3.5,
-      "periodBetweenDosagesUnit": null,
-      "administrationOnlyIfNeeded": true,
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "piece",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
       "isTrial": true,
       "isSelfCare": true
     },
@@ -124,36 +113,38 @@
       "startDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "administrationRoute": "oraal",
-      "dosage": 3.5,
-      "dosageUnit": "mg",
-      "frequency": 3.5,
-      "frequencyUnit": "day",
-      "periodBetweenDosagesValue": 3.5,
-      "periodBetweenDosagesUnit": null,
-      "administrationOnlyIfNeeded": true,
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
       "isTrial": false,
       "isSelfCare": false
     }
   ],
   "patientDetails": {
-    "hashedId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
+    "patientId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
     "birthYear": 5,
     "gender": "Female",
     "registrationDate": "2020-01-01",
-    "hospitalPatientId": "PT-1001"
+    "hartwigMolecularDataExpected": false,
+    "sourceId": "PT-1001"
   },
-  "molecularTests": [
+  "sequencingTests": [
     {
-      "test": "Archer",
+      "name": "Archer",
       "date": "2024-07-15",
       "results": [
-        {
-          "freeText": "KRAS c.34G>T"
-        }
+        "KRAS G12F"
       ]
     }
   ],
-  "priorOtherConditions": [
+  "otherConditions": [
     {
       "name": "pijn bij maligne neoplasma van longen",
       "startDate": "2020-01-01T10:10:00",
@@ -167,17 +158,17 @@
   ],
   "surgeries": [
     {
-      "surgeryName": "<CRYO Skelet door Radioloog",
+      "name": "<CRYO Skelet door Radioloog",
       "endDate": "2020-01-01T10:10:00",
       "status": "FINISHED"
     },
     {
-      "surgeryName": "diagnostics stomach",
+      "name": "diagnostics stomach",
       "endDate": "2021-01-01T10:10:00",
       "status": "CANCELLED"
     },
     {
-      "surgeryName": "Geen ingreep- operatie uitgesteld",
+      "name": "Geen ingreep- operatie uitgesteld",
       "endDate": "2024-01-01T10:10:00",
       "status": "FINISHED"
     }
@@ -185,18 +176,12 @@
   "toxicities": [
     {
       "name": "Dysphagia",
-      "categories": [
-        "GASTROINTESTINAL DISORDERS"
-      ],
       "evaluatedDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "grade": 5
     },
     {
       "name": "Pain",
-      "categories": [
-        "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
-      ],
       "evaluatedDate": "2020-01-01T10:10:00",
       "endDate": "2020-01-01T10:10:00",
       "grade": 5
@@ -204,43 +189,24 @@
   ],
   "treatmentHistory": [
     {
-      "treatmentName": "capecitabine and oxi",
-      "intention": null,
-      "startDate": "2020-01-01T10:10:00",
-      "endDate": "2020-01-01T10:10:00",
-      "stopReason": null,
-      "stopReasonDate": "2020-01-01T10:10:00",
-      "response": null,
-      "responseDate": "2020-01-01T10:10:00",
-      "intendedCycles": 5,
-      "administeredCycles": 5,
-      "modifications": [
-        {
-          "date": "2020-01-01T10:10:00",
-          "cycle": 6,
-          "name": "capecitabine and oxi"
-        }
-      ],
-      "grade2Toxicities": null,
-      "grade2ToxicitiesDate": "2020-01-01T10:10:00",
-      "administeredInStudy": true
+      "name": "capecitabine and oxi",
+      "startDate": "2020-01-01",
+      "endDate": "2020-01-01"
     }
   ],
   "tumorDetails": {
-    "diagnosisDate": "2020-01-01T10:10:00",
+    "diagnosisDate": "2020-01-01",
     "tumorLocation": "long",
     "tumorType": "metastase adenocarcinoom",
-    "tumorStage": "IV",
+    "stage": "IV",
     "tumorStageDate": "2020-01-01T10:10:00",
-    "lesions": {
-      "hasBoneLesions": false,
-      "hasBrainLesions": true,
-      "hasActiveBrainLesions": true,
-      "hasLiverLesions": false,
-      "questionnaireDate": "2020-01-01"
-    },
+    "hasBoneLesions": false,
+    "hasBrainLesions": true,
+    "hasActiveBrainLesions": true,
+    "hasLiverLesions": false,
+    "lesions": [],
     "measurableDisease": true,
-    "measurableDiseaseDate": "2020-01-01T10:10:00",
+    "measurableDiseaseDate": "2020-01-01",
     "pathology": [
       {
         "tissueId": "T-1000090",

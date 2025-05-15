@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.feed.datamodel.FeedPatientRecord
 import org.apache.logging.log4j.LogManager
 
 class StandardMedicationExtractor(
@@ -21,27 +21,27 @@ class StandardMedicationExtractor(
     private val treatmentDatabase: TreatmentDatabase
 ) : StandardDataExtractor<List<Medication>?> {
 
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
-        return ehrPatientRecord.medications?.map {
-            val isTrialMedication = it.isTrial || it.name.contains("(studie)", ignoreCase = true)
-            val isUnspecifiedTrialMedication = it.name.contains("studiemedicatie", ignoreCase = true) && !isTrialMedication
-            val atcClassification = if (!isTrialMedication && !isUnspecifiedTrialMedication && !it.isSelfCare) {
-                if (it.atcCode == null) {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<Medication>?> {
+        return ehrPatientRecord.medications?.map { feedMedication ->
+            val isTrialMedication = feedMedication.isTrial || feedMedication.name.contains("(studie)", ignoreCase = true)
+            val isUnspecifiedTrialMedication = feedMedication.name.contains("studiemedicatie", ignoreCase = true) && !isTrialMedication
+            val atcClassification = if (!isTrialMedication && !isUnspecifiedTrialMedication && !feedMedication.isSelfCare) {
+                if (feedMedication.atcCode == null) {
                     logger.error(
-                        "Patient '${ehrPatientRecord.patientDetails.hashedId}' had medication '${it.name}' with null atc code, " +
+                        "Patient '${ehrPatientRecord.patientDetails.patientId}' had medication '${feedMedication.name}' with null atc code, " +
                                 "but is not a trial or self care"
                     )
                 }
-                it.atcCode?.let { atcCode -> atcModel.resolveByCode(atcCode, "") }
+                feedMedication.atcCode?.let { atcCode -> atcModel.resolveByCode(atcCode, "") }
             } else null
-            val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: trimmedName(it.name)
-            val atcCode = it.atcCode
+            val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: trimmedName(feedMedication.name)
+            val atcCode = feedMedication.atcCode
             val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
             val drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
 
             val atcWarning = if (isAntiCancerMedication && drug == null && !isUnspecifiedTrialMedication) {
                 CurationWarning(
-                    ehrPatientRecord.patientDetails.hashedId,
+                    ehrPatientRecord.patientDetails.patientId,
                     CurationCategory.MEDICATION_NAME,
                     atcNameOrInput,
                     "Anti cancer medication or supportive trial medication $atcNameOrInput with ATC code $atcCode found which is not " +
@@ -51,21 +51,27 @@ class StandardMedicationExtractor(
 
             val medication = Medication(
                 name = atcNameOrInput,
-                administrationRoute = it.administrationRoute,
-                dosage = Dosage(
-                    dosageMin = it.dosage, dosageMax = it.dosage,
-                    dosageUnit = it.dosageUnit, frequency = it.frequency, frequencyUnit = it.frequencyUnit,
-                    periodBetweenValue = it.periodBetweenDosagesValue, periodBetweenUnit = it.periodBetweenDosagesUnit,
-                    ifNeeded = it.administrationOnlyIfNeeded
-                ),
-                startDate = it.startDate,
-                stopDate = it.endDate,
+                administrationRoute = feedMedication.administrationRoute,
+                dosage = feedMedication.dosage.let { dosage ->
+                    Dosage(
+                        dosageMin = dosage?.dosageMin,
+                        dosageMax = dosage?.dosageMax,
+                        dosageUnit = dosage?.dosageUnit,
+                        frequency = dosage?.frequency,
+                        frequencyUnit = dosage?.frequencyUnit,
+                        periodBetweenValue = dosage?.periodBetweenValue,
+                        periodBetweenUnit = dosage?.periodBetweenUnit,
+                        ifNeeded = dosage?.ifNeeded
+                    )
+                },
+                startDate = feedMedication.startDate,
+                stopDate = feedMedication.endDate,
                 atc = atcClassification,
                 qtProlongatingRisk = qtProlongatingDatabase.annotateWithQTProlongating(atcNameOrInput),
                 cypInteractions = drugInteractionsDatabase.annotateWithCypInteractions(atcNameOrInput),
                 transporterInteractions = drugInteractionsDatabase.annotateWithTransporterInteractions(atcNameOrInput),
                 isTrialMedication = isTrialMedication,
-                isSelfCare = it.isSelfCare,
+                isSelfCare = feedMedication.isSelfCare,
                 drug = drug
             )
             ExtractionResult(listOf(medication), CurationExtractionEvaluation(setOfNotNull(atcWarning)))

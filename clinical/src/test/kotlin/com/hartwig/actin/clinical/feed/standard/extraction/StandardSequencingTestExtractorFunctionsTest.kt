@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
+import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
@@ -25,7 +26,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test
     fun `Should extract variants`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 transcript = TRANSCRIPT,
                 hgvsCodingImpact = CODING,
@@ -51,7 +53,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if coding is known but gene is not`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 hgvsCodingImpact = CODING,
             )
         )
@@ -61,7 +64,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test
     fun `Should extract amplifications`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 amplifiedGene = GENE
             )
@@ -72,7 +76,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if gene does not equal amplifiedGene`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 amplifiedGene = OTHER_GENE
             )
@@ -83,7 +88,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test
     fun `Should extract deletions`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 deletedGene = GENE
             )
@@ -94,7 +100,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if gene does not equal deletedGene`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 deletedGene = OTHER_GENE
             )
@@ -105,7 +112,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test
     fun `Should extract fusions`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 fusionGeneUp = GENE,
                 fusionGeneDown = OTHER_GENE,
@@ -130,7 +138,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test
     fun `Should extract fusions also if gene is null`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 fusionGeneUp = GENE,
                 fusionGeneDown = OTHER_GENE
             )
@@ -146,7 +155,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if gene does not equal any of the up or down genes`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 fusionGeneUp = OTHER_GENE,
                 fusionGeneDown = "And another gene"
@@ -158,7 +168,8 @@ class StandardSequencingTestExtractorFunctionsTest {
     @Test
     fun `Should extract skipped exons`() {
         val test = setOf(
-            ProvidedMolecularTestResult(
+            SequencingTestResultConfig(
+                input = "",
                 gene = GENE,
                 exonSkipStart = EXON,
                 exonSkipEnd = OTHER_EXON,

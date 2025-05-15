@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 interface StandardDataExtractor<T> {
-    fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<T>
+    fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<T>
 }
