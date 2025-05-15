@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.feed.standard.FeedTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
@@ -134,7 +134,7 @@ class StandardSequencingTestExtractorTest {
     @Test
     fun `Should extract sequenced deleted genes`() {
         setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, deletedGene = GENE))
-        assertResultContains(BASE_SEQUENCING_TEST.copy(deletedGenes = setOf(SequencedDeletedGene(GENE))))
+        assertResultContains(BASE_SEQUENCING_TEST.copy(deletions = setOf(SequencedDeletion(GENE))))
     }
 
     @Test

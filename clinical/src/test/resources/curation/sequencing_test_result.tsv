@@ -1,2 +1,2 @@
-input	gene	hgvsProteinImpact	hgvsCodingImpact	position	exon	codon	transcript	fusionGeneUp	fusionGeneDown	amplifiedChromosome	amplifiedGene	deletedGene	exonSkipStart	exonSkipEnd	msi	tmb	noMutationsFound
-KRAS G12F	KRAS	p.G12F	c.34G>T																			
+input	gene	hgvsProteinImpact	hgvsCodingImpact	vaf	position	exon	codon	transcript	fusionGeneUp	fusionGeneDown	fusionExonUp	fusionExonDown	fusionTranscriptUp	fusionTranscriptDown	amplifiedChromosome	amplifiedGene	deletedGene	exonSkipStart	exonSkipEnd	msi	tmb	noMutationsFound
+KRAS G12F	KRAS	p.G12F	c.34G>T																								

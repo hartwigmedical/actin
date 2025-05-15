@@ -194,10 +194,10 @@
           "hgvsProteinImpact": "p.G12F"
         }
       ],
-      "fusions": [],
       "amplifications": [],
-      "skippedExons": [],
-      "deletedGenes": []
+      "deletions": [],
+      "fusions": [],
+      "skippedExons": []
     }
   ],
   "labValues": [
