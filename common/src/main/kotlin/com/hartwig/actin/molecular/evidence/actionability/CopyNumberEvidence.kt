@@ -18,7 +18,6 @@ class CopyNumberEvidence(
 
     override fun findMatches(event: CopyNumber): ActionabilityMatch {
         return when (event.canonicalImpact.type) {
-            // TODO reuse (or refactor) the helpers below,
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
                 findMatches(event, amplificationEvidences, amplificationTrialMatcher)
             }
@@ -75,19 +74,14 @@ class CopyNumberEvidence(
         }
 
         fun isAmplificationMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return if (copyNumber.canonicalImpact.type != CopyNumberType.FULL_GAIN && copyNumber.canonicalImpact.type != CopyNumberType.PARTIAL_GAIN) {
-                false
-            } else {
-                copyNumber.gene == actionableGene.gene()
-            }
+            return (copyNumber.canonicalImpact.type == CopyNumberType.FULL_GAIN
+                    || copyNumber.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN)
+                    && copyNumber.gene == actionableGene.gene()
         }
 
         fun isDeletionMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return if (copyNumber.canonicalImpact.type != CopyNumberType.DEL) {
-                false
-            } else {
-                copyNumber.gene == actionableGene.gene()
-            }
+            return copyNumber.canonicalImpact.type == CopyNumberType.DEL
+                    && copyNumber.gene == actionableGene.gene()
         }
     }
 }

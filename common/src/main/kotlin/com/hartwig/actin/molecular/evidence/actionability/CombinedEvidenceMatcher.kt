@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger
 typealias EvidencesForActionable = Map<Actionable, Set<EfficacyEvidence>>
 
 class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
-    val LOGGER: Logger = LogManager.getLogger(CombinedEvidenceMatcher::class.java)
+    val logger: Logger = LogManager.getLogger(CombinedEvidenceMatcher::class.java)
 
     fun match(molecularTest: MolecularTest): EvidencesForActionable {
         return evidences.asSequence()
@@ -109,9 +109,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     }
 
     fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
-        // TODO is it possible that both variants and fusions can match the same actionable gene? if not (and hopefully not)
-        //  then this could be moved into the else of the promiscuous fusion check a few lines below
-        val matches = molecularTest.drivers.variants
+        val variantMatches = molecularTest.drivers.variants
             .filter { variant ->
                 val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
                 VariantEvidence.isVariantEligible(criteria) && GeneMatching.isMatch(gene, criteria)
@@ -123,22 +121,38 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     val criteria = MatchingCriteriaFunctions.createFusionCriteria(fusion)
                     FusionEvidence.isPromiscuousMatch(gene, criteria)
                 }
-        } else if (DisruptionEvidence.isDisruptionEvent(gene.event())) {
+        } else {
+            emptyList()
+        }
+
+        val disruptionMatches = if (DisruptionEvidence.isDisruptionEvent(gene.event())) {
             molecularTest.drivers.disruptions
                 .filter { disruption ->
                     DisruptionEvidence.isDisruptionMatch(gene, disruption)
                 }
-        } else if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene.event())) {
+        } else {
+            emptyList()
+        }
+
+        val homozygousDisruptionMatches = if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene.event())) {
             molecularTest.drivers.homozygousDisruptions
                 .filter { homozygousDisruption ->
                     HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(gene, homozygousDisruption)
                 }
-        } else if (CopyNumberEvidence.isAmplificationEvent(gene.event())) {
+        } else {
+            emptyList()
+        }
+
+        val copyNumberAmplificationMatches = if (CopyNumberEvidence.isAmplificationEvent(gene.event())) {
             molecularTest.drivers.copyNumbers
                 .filter { copyNumber ->
                     CopyNumberEvidence.isAmplificationMatch(gene, copyNumber)
                 }
-        } else if (CopyNumberEvidence.isDeletionEvent(gene.event())) {
+        } else {
+            emptyList()
+        }
+
+        val copyNumberDeletionmatches = if (CopyNumberEvidence.isDeletionEvent(gene.event())) {
             molecularTest.drivers.copyNumbers
                 .filter { copyNumber ->
                     CopyNumberEvidence.isDeletionMatch(gene, copyNumber)
@@ -147,7 +161,8 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
             emptyList()
         }
 
-        return successWhenNotEmpty(matches + promiscuousFusionMatches)
+        return successWhenNotEmpty(variantMatches + promiscuousFusionMatches + disruptionMatches +
+                homozygousDisruptionMatches + copyNumberAmplificationMatches + copyNumberDeletionmatches)
     }
 
     fun matchFusions(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
@@ -185,7 +200,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     } else {
                         Success(listOf(msi))
                     }
-                } ?: Success()
+                } ?: Failure
             }
 
             TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> {
@@ -195,7 +210,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     } else {
                         Failure
                     }
-                } ?: Success()
+                } ?: Failure
             }
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> {
@@ -205,7 +220,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     } else {
                         Failure
                     }
-                } ?: Success()
+                } ?: Failure
             }
 
             TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> {
@@ -215,7 +230,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     } else {
                         Success(listOf(tml))
                     }
-                } ?: Success()
+                } ?: Failure
             }
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> {
@@ -226,7 +241,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     } else {
                         Failure
                     }
-                } ?: Success()
+                } ?: Failure
             }
 
             TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> {
@@ -236,7 +251,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     } else {
                         Success(listOf(tml))
                     }
-                } ?: Success()
+                } ?: Failure
             }
 
             TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> {
@@ -246,9 +261,8 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                     } else {
                         Failure
                     }
-                } ?: Success()
+                } ?: Failure
             }
-
 
             // note that VirusEvidence has a HPV_POSITIVE_TYPES that contains just TumorCharacteristicType.HPV_POSITIVE (serve data model)
             // can we reuse that here?
@@ -278,11 +292,10 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         } else {
             // TODO don't notice previous support for hla matching, and SERVE has no criteria with
             // populated hla entries ... is this a problem? Should check in serve verifier? warn for now
-            LOGGER.warn("evidence contains HLA but matching supported")
+            logger.warn("evidence contains HLA but matching supported")
             return Failure
         }
     }
-
 
     companion object {
 
