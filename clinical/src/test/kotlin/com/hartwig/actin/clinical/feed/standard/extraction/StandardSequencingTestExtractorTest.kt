@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
@@ -101,6 +101,29 @@ class StandardSequencingTestExtractorTest {
     }
 
     @Test
+    fun `Should extract sequencing with amplifications`() {
+        val result = extractionResult(
+            ProvidedMolecularTestResult(
+                amplifiedGene = AMPLIFIED_GENE
+            )
+        )
+        assertResultContains(
+            result,
+            BASE_SEQUENCING_TEST.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE)))
+        )
+    }
+
+    @Test
+    fun `Should extract sequenced deleted genes`() {
+        val result = extractionResult(ProvidedMolecularTestResult(deletedGene = GENE))
+        assertResultContains(
+            result, BASE_SEQUENCING_TEST.copy(
+                deletions = setOf(SequencedDeletion(GENE))
+            )
+        )
+    }
+
+    @Test
     fun `Should extract sequencing with fusions`() {
         val result = extractionResult(
             ProvidedMolecularTestResult(
@@ -112,19 +135,6 @@ class StandardSequencingTestExtractorTest {
             BASE_SEQUENCING_TEST.copy(
                 fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN))
             )
-        )
-    }
-
-    @Test
-    fun `Should extract sequencing with amplifications`() {
-        val result = extractionResult(
-            ProvidedMolecularTestResult(
-                amplifiedGene = AMPLIFIED_GENE
-            )
-        )
-        assertResultContains(
-            result,
-            BASE_SEQUENCING_TEST.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE)))
         )
     }
 
@@ -147,16 +157,6 @@ class StandardSequencingTestExtractorTest {
             result, BASE_SEQUENCING_TEST.copy(
                 tumorMutationalBurden = 1.0,
                 isMicrosatelliteUnstable = true
-            )
-        )
-    }
-
-    @Test
-    fun `Should extract sequenced deleted genes`() {
-        val result = extractionResult(ProvidedMolecularTestResult(deletedGene = GENE))
-        assertResultContains(
-            result, BASE_SEQUENCING_TEST.copy(
-                deletions = setOf(SequencedDeletedGene(GENE))
             )
         )
     }
