@@ -159,6 +159,12 @@ data class ProvidedMolecularTestResult(
     val hgvsCodingImpact: String? = null,
     @Description("Transcript referenced in other positional attributes (eg. NM_004304.5)")
     val transcript: String? = null,
+    @Description("Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)")
+    val vaf: Double? = null,
+    @Description("Exon involved in this result (eg. 19)")
+    val exon: Int? = null,
+    @Description("Codon involved in this result (eg. 1)")
+    val codon: Int? = null,
     @Description("Upstream gene of a fusion (eg. EML4)")
     val fusionGeneUp: String? = null,
     @Description("Downstream gene of a fusion (eg. ALK)")
@@ -171,10 +177,6 @@ data class ProvidedMolecularTestResult(
     val fusionExonUp: Int? = null,
     @Description("Downstream exon of a  fusion (eg. 20)")
     val fusionExonDown: Int? = null,
-    @Description("Exon involved in this result (eg. 19)")
-    val exon: Int? = null,
-    @Description("Codon involved in this result (eg. 1)")
-    val codon: Int? = null,
     @Description("Exons skipped in a structural variant start (eg. 18)")
     val exonSkipStart: Int? = null,
     @Description("Exons skipped in a structural variant end (eg. 20)")
@@ -183,16 +185,14 @@ data class ProvidedMolecularTestResult(
     val amplifiedGene: String? = null,
     @Description("Gene detected as fully deleted (eg. MET)")
     val deletedGene: String? = null,
-    @Description("Flag should be set to indicate a negative result for a gene (ie. nothing was found)")
-    val noMutationsFound: Boolean? = null,
-    @Description("Free text for a test result which does not fit into any of the other fields. This value will be curated")
-    val freeText: String? = null,
     @Description("Result of microsatellite instability test")
     val msi: Boolean? = null,
     @Description("Tumor mutational burden in m/MB (eg. 8.0)")
     val tmb: Double? = null,
-    @Description("Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)")
-    val vaf: Double? = null
+    @Description("Flag should be set to indicate a negative result for a gene (ie. nothing was found)")
+    val noMutationsFound: Boolean? = null,
+    @Description("Free text for a test result which does not fit into any of the other fields. This value will be curated")
+    val freeText: String? = null,
 )
 
 @JacksonSerializable
