@@ -18,8 +18,7 @@ fun derivedGeneTargetMap(testResults: SequencingTest) =
             testResults.skippedExons.map {
                 it.gene to listOf(
                     MolecularTestTarget.FUSION,
-                    MolecularTestTarget.MUTATION,
-                    MolecularTestTarget.DELETION
+                    MolecularTestTarget.MUTATION
                 )
             } +
             testResults.negativeResults.map { it.gene to listOf(MolecularTestTarget.MUTATION) }

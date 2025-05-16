@@ -119,7 +119,6 @@ class PanelSpecificationsTest {
                     )
                 )
             )
-        assertThat(derivedSpecification.testsGene(GENE, predicateForTargets(MolecularTestTarget.DELETION))).isTrue()
         assertThat(derivedSpecification.testsGene(GENE, predicateForTargets(MolecularTestTarget.MUTATION))).isTrue()
         assertThat(derivedSpecification.testsGene(GENE, predicateForTargets(MolecularTestTarget.FUSION))).isTrue()
         assertThat(derivedSpecification.testsGene(ANOTHER_GENE, predicateForTargets(MolecularTestTarget.MUTATION))).isFalse()
