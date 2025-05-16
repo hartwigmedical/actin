@@ -48,6 +48,8 @@ data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonE
     }
 }
 
+data class SequencedNegativeResult(val gene: String)
+
 data class SequencingTest(
     val test: String,
     val date: LocalDate? = null,
@@ -56,6 +58,8 @@ data class SequencingTest(
     val deletions: Set<SequencedDeletion> = emptySet(),
     val fusions: Set<SequencedFusion> = emptySet(),
     val skippedExons: Set<SequencedSkippedExons> = emptySet(),
+    val negativeResults: Set<SequencedNegativeResult> = emptySet(),
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
+    val knownSpecifications: Boolean = false
 ) 

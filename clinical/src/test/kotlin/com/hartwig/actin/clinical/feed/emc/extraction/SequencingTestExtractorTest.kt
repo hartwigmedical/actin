@@ -19,7 +19,7 @@ private const val GENE = "gene1"
 private const val GENE2 = "gene2"
 private const val CODING = "coding"
 private const val PROTEIN = "protein"
-private val SEQUENCING_TEST = SequencingTest(test = TEST)
+private val SEQUENCING_TEST = SequencingTest(test = TEST, knownSpecifications = false)
 
 
 class SequencingTestExtractorTest {

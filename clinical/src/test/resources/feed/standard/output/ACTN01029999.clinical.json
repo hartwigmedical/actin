@@ -197,7 +197,8 @@
       "amplifications": [],
       "deletions": [],
       "fusions": [],
-      "skippedExons": []
+      "skippedExons": [],
+      "negativeResults": []
     }
   ],
   "labValues": [

@@ -144,6 +144,8 @@ data class ProvidedMolecularTest(
     val datasource: String? = null,
     @Description("List of genes that were tested")
     val testedGenes: Set<String>? = null,
+    @Description("Whether the specifications are known to ACTIN")
+    val knownSpecifications: Boolean = false,
     val results: Set<ProvidedMolecularTestResult>
 )
 

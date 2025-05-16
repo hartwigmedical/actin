@@ -138,6 +138,6 @@ class PanelAnnotatorTest {
     }
 
     private fun createTestSequencingTest(): SequencingTest {
-        return SequencingTest(test = TEST_NAME)
+        return SequencingTest(test = TEST_NAME, knownSpecifications = true)
     }
 }

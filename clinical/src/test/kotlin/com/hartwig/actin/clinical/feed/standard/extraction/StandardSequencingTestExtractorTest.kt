@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedNegativeResult
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
@@ -16,9 +17,9 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.feed.datamodel.FeedSequencingTest
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val TEST = "test"
 private const val CURATED_TEST = "test"
@@ -27,9 +28,9 @@ private const val CODING = "coding"
 private val TEST_DATE = LocalDate.of(2024, 7, 25)
 private const val PROTEIN = "protein"
 private val BASE_MOLECULAR_TEST = FeedSequencingTest(
-    name = TEST, date = TEST_DATE, results = emptyList(), testedGenes = listOf(GENE)
+    name = TEST, date = TEST_DATE, results = emptyList(), testedGenes = listOf(GENE), knownSpecifications = true
 )
-private val BASE_SEQUENCING_TEST = SequencingTest(test = TEST, date = TEST_DATE)
+private val BASE_SEQUENCING_TEST = SequencingTest(test = TEST, date = TEST_DATE, knownSpecifications = true)
 private const val FREE_TEXT = "free text"
 private val PATIENT_WITH_TEST_RESULT = FeedTestData.FEED_PATIENT_RECORD.copy(
     sequencingTests = listOf(BASE_MOLECULAR_TEST.copy(results = listOf(FREE_TEXT)))
@@ -85,7 +86,7 @@ class StandardSequencingTestExtractorTest {
     @Test
     fun `Should curate test name and extract sequencing with test name and date, even when no results present`() {
         setUpSequencingTestResultCuration()
-        assertThat(extractedResult().extracted).containsExactly(SequencingTest(CURATED_TEST, TEST_DATE))
+        assertThat(extractedResult().extracted).containsExactly(SequencingTest(CURATED_TEST, TEST_DATE, knownSpecifications = true))
     }
 
     @Test
@@ -135,6 +136,12 @@ class StandardSequencingTestExtractorTest {
     fun `Should extract sequenced deleted genes`() {
         setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, deletedGene = GENE))
         assertResultContains(BASE_SEQUENCING_TEST.copy(deletions = setOf(SequencedDeletion(GENE))))
+    }
+
+    @Test
+    fun `Should extract sequenced negative results`() {
+        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, gene = GENE, noMutationsFound = true))
+        assertResultContains(BASE_SEQUENCING_TEST.copy(negativeResults = setOf(SequencedNegativeResult(GENE))))
     }
 
     @Test
