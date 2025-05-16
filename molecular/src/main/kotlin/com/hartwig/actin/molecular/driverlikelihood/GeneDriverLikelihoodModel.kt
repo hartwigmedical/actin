@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.driverlikelihood
 
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import kotlin.math.max
@@ -10,18 +9,10 @@ import kotlin.math.max
 class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
 
     fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
-        val hasGainOrLossOfFunction = variants.any {
-            it.proteinEffect in setOf(
-                ProteinEffect.GAIN_OF_FUNCTION,
-                ProteinEffect.GAIN_OF_FUNCTION_PREDICTED,
-                ProteinEffect.LOSS_OF_FUNCTION,
-                ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
-            )
-        }
         val hasHotspot = variants.any { it.isHotspot }
         return if (variants.isEmpty()) {
             return null
-        } else if (hasGainOrLossOfFunction || hasHotspot) {
+        } else if (hasHotspot) {
             return 1.0
         } else {
             handleVariantsOfUnknownSignificance(gene, geneRole, variants)

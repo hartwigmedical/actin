@@ -11,8 +11,10 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
@@ -73,11 +75,14 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
     )
 )
 
+private val FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)
+    .proteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN).build()
+
 class PanelFusionAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { geneAlterationForVariant(any()) } returns null
+        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
     }
 
     private val knownFusionCache = mockk<KnownFusionCache>()
@@ -286,7 +291,7 @@ class PanelFusionAnnotatorTest {
     }
 
     private fun setupEvidenceForFusion(fusionMatchCriteria: FusionMatchCriteria) {
-        every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
+        every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns FUSION
         every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ON_LABEL_MATCH
     }
 
@@ -298,7 +303,7 @@ class PanelFusionAnnotatorTest {
     }
 
     private fun setupEvidenceDatabaseWithNoEvidence() {
-        every { evidenceDatabase.lookupKnownFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns null
+        every { evidenceDatabase.lookupKnownFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns FUSION
         every { evidenceDatabase.evidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns TestClinicalEvidenceFactory.createEmpty()
     }
 }

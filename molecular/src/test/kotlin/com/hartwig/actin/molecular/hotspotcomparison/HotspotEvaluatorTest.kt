@@ -64,11 +64,11 @@ private val ORANGE_RECORD = ImmutableOrangeRecord.builder()
     .from(createMinimalTestOrangeRecord())
     .purple(PURPLE_RECORD).build()
 
-class HotspotComparatorTest {
+class HotspotEvaluatorTest {
 
     @Test
     fun `Should compare hotspots between ORANGE and SERVE`() {
-        val hotspots = HotspotComparator.annotateHotspots(ORANGE_RECORD, SERVE_RECORD)
+        val hotspots = HotspotEvaluator.annotateHotspots(ORANGE_RECORD, SERVE_RECORD)
         assertThat(hotspots.count { it.isHotspotOrange }).isEqualTo(2)
         assertThat(hotspots.count { it.isHotspotServe }).isEqualTo(1)
         assertThat(hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }).isEqualTo(1)

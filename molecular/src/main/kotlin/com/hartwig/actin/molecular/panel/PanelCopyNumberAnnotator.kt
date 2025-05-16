@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import org.apache.logging.log4j.LogManager
@@ -33,8 +32,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
     }
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val alteration =
-            GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
+        val alteration = evidenceDatabase.alterationForCopyNumber(copyNumber)
         val copyNumberWithGeneAlteration = copyNumber.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
