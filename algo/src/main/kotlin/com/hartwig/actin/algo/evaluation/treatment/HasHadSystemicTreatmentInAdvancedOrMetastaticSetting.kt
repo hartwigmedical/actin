@@ -111,7 +111,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
         includeUnknown: Boolean
     ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
         return nonCurativeTreatments
-            .partition { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, referenceDate.minusMonths(6), includeUnknown) }
+            .partition { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, referenceDate.minusMonths(6), includeUnknown) }
     }
 
     private fun createMessage(string: String, treatments: List<TreatmentHistoryEntry>): String {
