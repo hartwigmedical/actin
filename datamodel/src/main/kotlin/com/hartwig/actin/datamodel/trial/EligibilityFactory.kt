@@ -1,25 +1,13 @@
 package com.hartwig.actin.datamodel.trial
 
 import com.hartwig.actin.datamodel.trial.composite.CompositeRules
-import org.apache.logging.log4j.LogManager
 
 object EligibilityFactory {
 
-    private val LOGGER = LogManager.getLogger(EligibilityFactory::class.java)
     private const val COMPOSITE_START = '('
     private const val COMPOSITE_END = ')'
     private const val PARAM_START = '['
     private const val PARAM_END = ']'
-
-    fun isValidInclusionCriterion(criterion: String): Boolean {
-        return try {
-            generateEligibilityFunction(criterion)
-            true
-        } catch (exc: Exception) {
-            LOGGER.warn(exc.message)
-            false
-        }
-    }
 
     fun generateEligibilityFunction(criterion: String): EligibilityFunction {
         val trimmed = criterion.trim { it <= ' ' }
