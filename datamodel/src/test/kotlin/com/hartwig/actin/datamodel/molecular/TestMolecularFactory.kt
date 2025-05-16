@@ -269,6 +269,8 @@ object TestMolecularFactory {
     }
 
     fun createMinimalCopyNumber() = CopyNumber(
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+        otherImpacts = emptySet(),
         isReportable = false,
         event = "",
         driverLikelihood = DriverLikelihood.LOW,
@@ -276,8 +278,6 @@ object TestMolecularFactory {
         gene = "",
         geneRole = GeneRole.UNKNOWN,
         proteinEffect = ProteinEffect.UNKNOWN,
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
-        otherImpacts = emptySet(),
         isAssociatedWithDrugResistance = null
     )
 
@@ -327,7 +327,7 @@ object TestMolecularFactory {
         isHotspot = false,
         isReportable = false,
         event = "",
-        driverLikelihood = DriverLikelihood.LOW,
+        driverLikelihood = null,
         evidence = TestClinicalEvidenceFactory.createEmpty(),
         gene = "",
         geneRole = GeneRole.UNKNOWN,
@@ -367,19 +367,19 @@ object TestMolecularFactory {
     )
 
     fun createMinimalFusion() = Fusion(
-        isReportable = false,
-        event = "",
-        driverLikelihood = DriverLikelihood.LOW,
-        evidence = TestClinicalEvidenceFactory.createEmpty(),
         geneStart = "",
         geneEnd = "",
-        proteinEffect = ProteinEffect.UNKNOWN,
         driverType = FusionDriverType.NONE,
+        proteinEffect = ProteinEffect.UNKNOWN,
         isAssociatedWithDrugResistance = null,
-        geneTranscriptStart = "",
-        geneTranscriptEnd = "",
-        fusedExonUp = 0,
-        fusedExonDown = 0
+        geneTranscriptStart = null,
+        geneTranscriptEnd = null,
+        fusedExonUp = null,
+        fusedExonDown = null,
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
     )
 
     fun createProperFusion() = Fusion(

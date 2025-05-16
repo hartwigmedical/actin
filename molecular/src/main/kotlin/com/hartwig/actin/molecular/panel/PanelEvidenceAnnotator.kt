@@ -18,28 +18,35 @@ class PanelEvidenceAnnotator(
 ) : MolecularAnnotator<PanelRecord, PanelRecord> {
     
     override fun annotate(input: PanelRecord): PanelRecord {
+        return annotateWithClinicalEvidence(annotateWithDriverAttributes(input))
+    }
+
+    fun annotateWithDriverAttributes(input: PanelRecord): PanelRecord {
         return input.copy(
-            drivers =
-                input.drivers.copy(
-                    variants = annotateVariants(input.drivers.variants),
-                    copyNumbers = input.drivers.copyNumbers.map { annotatedCopyNumberWithEvidence(it) },
-                    fusions = input.drivers.fusions.map { annotateFusionWithEvidence(it) },
-                )
+            drivers = input.drivers.copy(
+                variants = annotateVariantsWithDriverAttributes(input.drivers.variants),
+                copyNumbers = input.drivers.copyNumbers.map { annotatedCopyNumberWithDriverAttributes(it) },
+                fusions = input.drivers.fusions.map { annotateFusionWithDriverAttributes(it) },
+            )
         )
     }
 
-    private fun annotateVariants(variants: List<Variant>): List<Variant> {
-        val annotatedVariants = variants.map { annotateWithGeneAlteration(it) }
-        return annotateWithDriverLikelihood(annotatedVariants).map { annotateVariantWithEvidence(it) }
+    fun annotateWithClinicalEvidence(input: PanelRecord): PanelRecord {
+        return input.copy(
+            drivers = input.drivers.copy(
+                variants = input.drivers.variants.map { annotateVariantWithClinicalEvidence(it) },
+                copyNumbers = input.drivers.copyNumbers.map { annotatedCopyNumberWithClinicalEvidence(it) },
+                fusions = input.drivers.fusions.map { annotateFusionWithClinicalEvidence(it) },
+            )
+        )
     }
 
-    private fun annotateVariantWithEvidence(variant: Variant): Variant {
-        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val evidence = evidenceDatabase.evidenceForVariant(criteria)
-        return variant.copy(evidence = evidence)
+    private fun annotateVariantsWithDriverAttributes(variants: List<Variant>): List<Variant> {
+        val annotatedVariants = variants.map { annotateVariantWithGeneAlteration(it) }
+        return annotateVariantsWithDriverLikelihood(annotatedVariants)
     }
 
-    private fun annotateWithGeneAlteration(variant: Variant): Variant {
+    private fun annotateVariantWithGeneAlteration(variant: Variant): Variant {
         val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
@@ -52,7 +59,7 @@ class PanelEvidenceAnnotator(
         )
     }
 
-    private fun annotateWithDriverLikelihood(variants: List<Variant>): List<Variant> {
+    private fun annotateVariantsWithDriverLikelihood(variants: List<Variant>): List<Variant> {
         val variantsByGene = variants.groupBy { it.gene }
         return variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()
@@ -68,7 +75,17 @@ class PanelEvidenceAnnotator(
         }
     }
 
-    private fun annotateFusionWithEvidence(fusion: Fusion): Fusion {
+    private fun annotatedCopyNumberWithDriverAttributes(copyNumber: CopyNumber): CopyNumber {
+        val geneAlteration = GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
+
+        return copyNumber.copy(
+            geneRole = geneAlteration.geneRole,
+            proteinEffect = geneAlteration.proteinEffect,
+            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        )
+    }
+
+    private fun annotateFusionWithDriverAttributes(fusion: Fusion): Fusion {
         val knownFusion = evidenceDatabase.lookupKnownFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
 
         val proteinEffect = when (knownFusion) {
@@ -78,26 +95,26 @@ class PanelEvidenceAnnotator(
 
         val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
 
-        val fusionWithGeneAlteration = fusion.copy(
+        return fusion.copy(
             proteinEffect = proteinEffect,
             isAssociatedWithDrugResistance = isAssociatedWithDrugResistance
         )
-
-        val matchingCriteria = MatchingCriteriaFunctions.createFusionCriteria(fusionWithGeneAlteration)
-        val evidence = evidenceDatabase.evidenceForFusion(matchingCriteria)
-        return fusionWithGeneAlteration.copy(evidence = evidence)
     }
 
-    private fun annotatedCopyNumberWithEvidence(copyNumber: CopyNumber): CopyNumber {
-        val geneAlteration = GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
+    private fun annotateVariantWithClinicalEvidence(variant: Variant): Variant {
+        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
+        val evidence = evidenceDatabase.evidenceForVariant(criteria)
+        return variant.copy(evidence = evidence)
+    }
 
-        val copyNumberWithGeneAlteration = copyNumber.copy(
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
-        )
+    private fun annotatedCopyNumberWithClinicalEvidence(copyNumber: CopyNumber): CopyNumber {
+        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumber)
+        return copyNumber.copy(evidence = evidence)
+    }
 
-        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumberWithGeneAlteration)
-        return copyNumberWithGeneAlteration.copy(evidence = evidence)
+    private fun annotateFusionWithClinicalEvidence(fusion: Fusion): Fusion {
+        val matchingCriteria = MatchingCriteriaFunctions.createFusionCriteria(fusion)
+        val evidence = evidenceDatabase.evidenceForFusion(matchingCriteria)
+        return fusion.copy(evidence = evidence)
     }
 }
