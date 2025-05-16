@@ -17,7 +17,7 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
     override fun evaluate(test: MolecularTest): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
-        val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = mutableSetOf()
+        val fusionsWithNoHighDriverLikelihood: MutableSet<String> = mutableSetOf()
         val unreportableFusionsWithGainOfFunction: MutableSet<String> = mutableSetOf()
         val evidenceSource = test.evidenceSource
 
@@ -34,7 +34,7 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
                     val hasNoEffect =
                         (fusion.proteinEffect == ProteinEffect.NO_EFFECT || fusion.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
                     if (fusion.driverLikelihood != DriverLikelihood.HIGH) {
-                        fusionsWithNoHighDriverLikelihoodOther.add(fusion.event)
+                        fusionsWithNoHighDriverLikelihood.add(fusion.event)
                     } else if (hasNoEffect) {
                         fusionsWithNoEffect.add(fusion.event)
                     } else {
@@ -50,7 +50,7 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
 
         val anyWarns = listOf(
             fusionsWithNoEffect,
-            fusionsWithNoHighDriverLikelihoodOther,
+            fusionsWithNoHighDriverLikelihood,
             unreportableFusionsWithGainOfFunction
         ).any { it.isNotEmpty() }
 
@@ -62,20 +62,20 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
             matchingFusions.isNotEmpty() -> {
                 val eventWarningDescriptions = concat(listOf(
                     fusionsWithNoEffect.map { event -> "$event: Fusion having no protein effect" },
-                    fusionsWithNoHighDriverLikelihoodOther.map { event -> "$event: Fusion having no high driver likelihood" },
+                    fusionsWithNoHighDriverLikelihood.map { event -> "$event: Fusion having no high driver likelihood" },
                     unreportableFusionsWithGainOfFunction.map { event -> "$event: Fusion having gain-of-function evidence but not considered reportable" }
                 ).flatten())
 
                 EvaluationFactory.warn(
                     "Fusion(s) ${concatFusions(matchingFusions)} in $gene together with other fusion events(s): " + eventWarningDescriptions,
-                    inclusionEvents = matchingFusions + fusionsWithNoEffect + fusionsWithNoHighDriverLikelihoodOther + unreportableFusionsWithGainOfFunction
+                    inclusionEvents = matchingFusions + fusionsWithNoEffect + fusionsWithNoHighDriverLikelihood + unreportableFusionsWithGainOfFunction
                 )
             }
 
             else -> {
                 val potentialWarnEvaluation = evaluatePotentialWarns(
                     fusionsWithNoEffect,
-                    fusionsWithNoHighDriverLikelihoodOther,
+                    fusionsWithNoHighDriverLikelihood,
                     unreportableFusionsWithGainOfFunction,
                     evidenceSource
                 )
@@ -87,7 +87,7 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
 
     private fun evaluatePotentialWarns(
         fusionsWithNoEffect: Set<String>,
-        fusionsWithNoHighDriverLikelihoodOther: Set<String>,
+        fusionsWithNoHighDriverLikelihood: Set<String>,
         unreportableFusionsWithGainOfFunction: Set<String>,
         evidenceSource: String
     ): Evaluation? {
@@ -99,8 +99,8 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
                             "in $evidenceSource"
                 ),
                 EventsWithMessages(
-                    fusionsWithNoHighDriverLikelihoodOther,
-                    "Fusion(s) ${concatFusions(fusionsWithNoHighDriverLikelihoodOther)} in $gene but not with high driver likelihood",
+                    fusionsWithNoHighDriverLikelihood,
+                    "Fusion(s) ${concatFusions(fusionsWithNoHighDriverLikelihood)} in $gene but not with high driver likelihood",
                 ),
                 EventsWithMessages(
                     unreportableFusionsWithGainOfFunction,

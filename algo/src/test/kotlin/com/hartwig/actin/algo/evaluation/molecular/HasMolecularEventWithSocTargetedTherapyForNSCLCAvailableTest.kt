@@ -85,6 +85,15 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     }
 
     @Test
+    fun `Should warn for mutation in correct gene when uncertain if activating`() {
+        evaluateFunctions(
+            EvaluationResult.WARN, MolecularTestFactory.withVariant(
+                BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN)
+            )
+        )
+    }
+
+    @Test
     fun `Should fail for activating mutation in wrong gene`() {
         val record = MolecularTestFactory.withVariant(BASE_VARIANT.copy(gene = "Wrong"))
         evaluateFunctions(EvaluationResult.FAIL, record)
@@ -123,8 +132,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         )
         val expectedMessages = setOf(
             "$CORRECT_PROTEIN_IMPACT in $CORRECT_VARIANT_GENE in canonical transcript",
-            "$OTHER_CORRECT_PROTEIN_IMPACT in $OTHER_CORRECT_VARIANT_GENE in canonical transcript",
-            "$CORRECT_VARIANT_GENE activating mutation(s): $CORRECT_PROTEIN_IMPACT"
+            "$OTHER_CORRECT_PROTEIN_IMPACT in $OTHER_CORRECT_VARIANT_GENE in canonical transcript"
         )
         evaluateFunctions(EvaluationResult.PASS, record)
         evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expectedMessages)

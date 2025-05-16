@@ -83,6 +83,11 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
+    fun `Should warn with activating mutation for gene with no protein effect or hotspot`() {
+        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isHotspot = false))
+    }
+
+    @Test
     fun `Should warn with activating mutation for gene with low driver likelihood and unknown protein effect and unknown TML`() {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,

@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import java.time.LocalDate
 
@@ -19,6 +20,10 @@ enum class ActivationWarningType(val description: String? = null) {
                 "but are also associated with drug resistance"
     ),
     NON_ONCOGENE,
+    NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION(
+        "Potentially activating mutation(s) that have high driver likelihood " +
+                "but is not a hotspot and not associated with gain-of-function"
+    ),
     SUBCLONAL(
         "Potentially activating mutation(s) that have high driver likelihood " +
                 "but also have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)}"
@@ -85,6 +90,7 @@ class GeneHasActivatingMutation(
                 val potentialWarnEvaluation = evaluatePotentialWarns(
                     eventsByWarningType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE],
                     eventsByWarningType[ActivationWarningType.NON_ONCOGENE],
+                    eventsByWarningType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION],
                     eventsByWarningType[ActivationWarningType.SUBCLONAL],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER],
@@ -99,10 +105,16 @@ class GeneHasActivatingMutation(
 
     private fun evaluateVariant(variant: Variant, hasHighMutationalLoad: Boolean?): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
+        val isGainOfFunction =
+            variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
                 return when {
                     isAssociatedWithDrugResistance(variant) -> profile(variant.event, ActivationWarningType.ASSOCIATED_WITH_RESISTANCE)
+                    !variant.isHotspot && !isGainOfFunction -> profile(
+                        variant.event,
+                        ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION
+                    )
                     isNoOncogene -> profile(variant.event, ActivationWarningType.NON_ONCOGENE)
                     isSubclonal(variant) -> profile(variant.event, ActivationWarningType.SUBCLONAL)
                     else -> profile(variant.event, activating = true)
@@ -141,6 +153,7 @@ class GeneHasActivatingMutation(
     private fun evaluatePotentialWarns(
         activatingVariantsAssociatedWithResistance: Set<String>?,
         activatingVariantsInNonOncogene: Set<String>?,
+        activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>?,
         activatingSubclonalVariants: Set<String>?,
         nonHighDriverSubclonalVariants: Set<String>?,
         nonHighDriverVariants: Set<String>?,
@@ -158,6 +171,15 @@ class GeneHasActivatingMutation(
                     activatingVariantsInNonOncogene,
                     "$gene activating mutation(s) ${activatingVariantsInNonOncogene?.let { concatVariants(it, gene) }} " +
                             "- however gene known as TSG in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    activatingVariantsNoHotspotAndNoGainOfFunction,
+                    "$gene potentially activating mutation(s) ${
+                        activatingVariantsNoHotspotAndNoGainOfFunction?.let {
+                            concatVariants(it, gene)
+                        }
+                    } with high driver likelihood - " +
+                            "however not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,
