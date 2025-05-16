@@ -14,16 +14,7 @@ class StandardIhcTestExtractor(
     private val molecularTestCuration: CurationDatabase<IhcTestConfig>
 ) : StandardDataExtractor<List<IhcTest>> {
     override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<IhcTest>> {
-        val extractedFromOtherConditions = extractFromOtherConditions(ehrPatientRecord)
-        val extractedIhcTestsFromIhcTestResults = extractFromMolecularTests(ehrPatientRecord)
-        return ExtractionResult(
-            extractedFromOtherConditions.extracted + extractedIhcTestsFromIhcTestResults.extracted,
-            extractedFromOtherConditions.evaluation + extractedIhcTestsFromIhcTestResults.evaluation
-        )
-    }
-
-    private fun extractFromMolecularTests(ehrPatientRecord: FeedPatientRecord) =
-        ehrPatientRecord.ihcTests
+        return ehrPatientRecord.ihcTests
             .asSequence()
             .mapNotNull { test ->
                 val curations = listOf(test.name, "${ehrPatientRecord.patientDetails.patientId} | ${test.name}").map { curationString ->
@@ -36,17 +27,10 @@ class StandardIhcTestExtractor(
                 }
             }
             .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
-            .fold(ExtractionResult(emptyList<IhcTest>(), CurationExtractionEvaluation())) { acc, result ->
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
-
-    private fun extractFromOtherConditions(ehrPatientRecord: FeedPatientRecord) =
-        ehrPatientRecord.otherConditions
-            .map { curate(it.name, ehrPatientRecord.patientDetails.patientId, it.startDate) }
-            .filter { it.configs.isNotEmpty() }
-            .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
-            .fold(ExtractionResult(emptyList<IhcTest>(), CurationExtractionEvaluation()))
-            { acc, result -> ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation) }
+    }
 
     private fun curate(input: String, patientId: String, date: LocalDate?): CurationResponse<IhcTestConfig> {
         val configs = molecularTestCuration.find(input).map { config ->

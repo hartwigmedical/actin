@@ -4,7 +4,6 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.IhcTestConfig
 import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
-import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
@@ -65,25 +64,6 @@ class StandardIhcTestExtractorTest {
                 message = "Could not find molecular test ihc config for input 'HER2 immunohistochemie: negative'"
             )
         )
-    }
-
-    @Test
-    fun `Should curate molecular tests from other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
-        val anotherMolecularTest = IHC_TEST_EGFR.copy(item = "ERBB2")
-        every { molecularTestCuration.find(OTHER_CONDITION_INPUT) } returns setOf(
-            IhcTestConfig(input = OTHER_CONDITION_INPUT, curated = IHC_TEST_EGFR),
-            IhcTestConfig(input = OTHER_CONDITION_INPUT, curated = anotherMolecularTest)
-        )
-        val result = extractor.extract(
-            FEED_PATIENT_RECORD.copy(
-                otherConditions = listOf(
-                    DatedEntry(name = OTHER_CONDITION_INPUT, startDate = UNUSED_DATE),
-                    DatedEntry(name = "another prior condition", startDate = UNUSED_DATE)
-                )
-            )
-        )
-        assertThat(result.extracted).containsExactly(IHC_TEST_EGFR, anotherMolecularTest)
-        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
