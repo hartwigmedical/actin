@@ -65,6 +65,7 @@ class GeneHasActivatingMutation(
 
         val potentiallyActivatingWarnings = listOf(
             ActivationWarningType.ASSOCIATED_WITH_RESISTANCE,
+            ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION,
             ActivationWarningType.SUBCLONAL,
         ).flatMap { warningType -> eventsByWarningType[warningType]?.map { event -> event to warningType } ?: emptyList() }
 
@@ -115,6 +116,7 @@ class GeneHasActivatingMutation(
                         variant.event,
                         ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION
                     )
+
                     isNoOncogene -> profile(variant.event, ActivationWarningType.NON_ONCOGENE)
                     isSubclonal(variant) -> profile(variant.event, ActivationWarningType.SUBCLONAL)
                     else -> profile(variant.event, activating = true)
