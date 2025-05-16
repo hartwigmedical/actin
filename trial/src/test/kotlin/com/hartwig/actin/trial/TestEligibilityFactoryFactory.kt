@@ -14,7 +14,7 @@ class TestEligibilityFactoryFactory(
                 val hasValidInputs = functionInputResolver.hasValidInputs(this)
                 !(hasValidInputs == null || !hasValidInputs)
             }
-        } catch (exc: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
