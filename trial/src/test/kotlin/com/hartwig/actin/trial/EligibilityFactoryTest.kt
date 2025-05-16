@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial
 
+import com.hartwig.actin.datamodel.trial.EligibilityFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
@@ -56,13 +57,12 @@ class EligibilityFactoryTest {
 
     @Test
     fun canGenerateSimpleEligibilityFunction() {
-        val factory = TestEligibilityFactoryFactory.createTestEligibilityFactory()
-        val function = factory.generateEligibilityFunction("HAS_INR_ULN_OF_AT_MOST_X[1]")
+        val function = EligibilityFactory.generateEligibilityFunction("HAS_INR_ULN_OF_AT_MOST_X[1]")
         assertThat(function.rule).isEqualTo(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
         assertThat(function.parameters).hasSize(1)
         assertThat(function.parameters).containsExactly("1")
 
-        val notFunction = factory.generateEligibilityFunction("NOT(HAS_INR_ULN_OF_AT_MOST_X[1])")
+        val notFunction = EligibilityFactory.generateEligibilityFunction("NOT(HAS_INR_ULN_OF_AT_MOST_X[1])")
         assertThat(notFunction.rule).isEqualTo(EligibilityRule.NOT)
         assertThat(notFunction.parameters).hasSize(1)
 
@@ -72,9 +72,8 @@ class EligibilityFactoryTest {
 
     @Test
     fun canGenerateComplexCompositeEligibilityFunction() {
-        val factory = TestEligibilityFactoryFactory.createTestEligibilityFactory()
         val criterion = "OR(IS_PREGNANT, AND(OR(HAS_INR_ULN_OF_AT_MOST_X[1.5], HAS_PT_ULN_OF_AT_MOST_X[2]), HAS_APTT_ULN_OF_AT_MOST_X[3]))"
-        val orRoot = factory.generateEligibilityFunction(criterion)
+        val orRoot = EligibilityFactory.generateEligibilityFunction(criterion)
         assertThat(orRoot.rule).isEqualTo(EligibilityRule.OR)
         assertThat(orRoot.parameters).hasSize(2)
 

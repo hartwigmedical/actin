@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.datamodel.trial.Trial
-import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.datamodel.trial.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
 
 object EligibilityRuleUsageEvaluator {

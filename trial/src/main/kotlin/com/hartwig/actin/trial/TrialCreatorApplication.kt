@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabaseFactory
+import com.hartwig.actin.datamodel.trial.EligibilityFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.icd.IcdModel
@@ -58,14 +59,12 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         val trialIngestion =
             TrialIngestion(
-                EligibilityFactory(
-                    FunctionInputResolver(
-                        doidModel,
-                        icdModel,
-                        MolecularInputChecker(geneFilter),
-                        treatmentDatabase,
-                        MedicationCategories.create(atcTree)
-                    )
+                FunctionInputResolver(
+                    doidModel,
+                    icdModel,
+                    MolecularInputChecker(geneFilter),
+                    treatmentDatabase,
+                    MedicationCategories.create(atcTree)
                 )
             )
 

@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.util
 
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.datamodel.trial.composite.CompositeRules
 
 object EligibilityFunctionDisplay {
 

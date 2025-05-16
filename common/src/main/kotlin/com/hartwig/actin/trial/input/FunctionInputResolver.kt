@@ -21,8 +21,8 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.trial.input.composite.CompositeInput
-import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.datamodel.trial.composite.CompositeInput
+import com.hartwig.actin.datamodel.trial.composite.CompositeRules
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput

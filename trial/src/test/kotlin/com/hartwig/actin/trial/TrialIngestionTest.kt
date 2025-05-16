@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
+import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory
 import com.hartwig.actin.util.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -31,7 +32,7 @@ class TrialIngestionTest {
 
     @Test
     fun `Should map trial config to internal trial model and eligibility criteria`() {
-        val ingestion = TrialIngestion(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+        val ingestion = TrialIngestion(TestFunctionInputResolverFactory.createTestResolver())
         val result = ingestion.ingest(
             listOf(
                 TrialConfig(

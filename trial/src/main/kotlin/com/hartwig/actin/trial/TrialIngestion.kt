@@ -4,9 +4,11 @@ import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityFactory
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialSource
+import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.util.Either
 import com.hartwig.actin.util.left
 import com.hartwig.actin.util.partitionAndJoin
@@ -22,7 +24,7 @@ data class UnmappableCohort(val cohortId: String, val mappingErrors: List<Eligib
 
 data class EligibilityMappingError(val inclusionRule: String, val error: String)
 
-class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
+class TrialIngestion(private val functionInputResolver: FunctionInputResolver) {
 
     fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, List<Trial>> {
         val trialsAndUnmappableTrials = config.map { trialState ->
@@ -74,9 +76,13 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =
         try {
+            val function = EligibilityFactory.generateEligibilityFunction(inclusionCriterion.inclusionRule).apply {
+                val hasValidInputs = functionInputResolver.hasValidInputs(this)
+                check(!(hasValidInputs == null || !hasValidInputs)) { "Function ${this.rule} has invalid inputs: '${this.parameters}' (source criterion: '${inclusionCriterion.inclusionRule}')" }
+            }
             Eligibility(
                 inclusionCriterion.references?.map { CriterionReference(it.id, it.text) }?.toSet() ?: emptySet(),
-                eligibilityFactory.generateEligibilityFunction(inclusionCriterion.inclusionRule)
+                function
             ).right()
         } catch (e: Exception) {
             EligibilityMappingError(inclusionCriterion.inclusionRule, e.message ?: "Unknown").left()

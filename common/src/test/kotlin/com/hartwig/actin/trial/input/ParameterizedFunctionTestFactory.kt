@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
-import com.hartwig.actin.trial.input.composite.CompositeInput
-import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.datamodel.trial.composite.CompositeInput
+import com.hartwig.actin.datamodel.trial.composite.CompositeRules
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
 class ParameterizedFunctionTestFactory(private val doidTermToUse: String, private val icdTitleToUse: String) {

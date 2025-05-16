@@ -1,8 +1,9 @@
 package com.hartwig.actin.trial.input.composite
 
 import com.hartwig.actin.datamodel.trial.EligibilityRule
-import com.hartwig.actin.trial.input.composite.CompositeRules.inputsForCompositeRule
-import com.hartwig.actin.trial.input.composite.CompositeRules.isComposite
+import com.hartwig.actin.datamodel.trial.composite.CompositeRules
+import com.hartwig.actin.datamodel.trial.composite.CompositeRules.inputsForCompositeRule
+import com.hartwig.actin.datamodel.trial.composite.CompositeRules.isComposite
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
