@@ -7,17 +7,15 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -93,7 +91,7 @@ private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
     )
 )
 
-private val FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)
+private val KNOWN_FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)
     .proteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN).build()
 
 class PanelFusionAnnotatorTest {
@@ -309,7 +307,7 @@ class PanelFusionAnnotatorTest {
     }
 
     private fun setupEvidenceForFusion(fusion: Fusion) {
-        every { evidenceDatabase.lookupKnownFusion(fusion) } returns FUSION
+        every { evidenceDatabase.lookupKnownFusion(fusion) } returns KNOWN_FUSION
         every { evidenceDatabase.evidenceForFusion(fusion) } returns ON_LABEL_MATCH
     }
 
@@ -320,8 +318,8 @@ class PanelFusionAnnotatorTest {
         every { knownFusionCache.hasPromiscuousThreeGene(GENE) } returns false
     }
 
-    private fun setupEvidenceDatabaseWithNoEvidence(fusion: Fusion) {
-        every { evidenceDatabase.lookupKnownFusion(fusion) } returns FUSION
+    private fun setupEvidenceDatabaseWithNoEvidenceForFusion(fusion: Fusion) {
+        every { evidenceDatabase.lookupKnownFusion(fusion) } returns KNOWN_FUSION
         every { evidenceDatabase.evidenceForFusion(fusion) } returns TestClinicalEvidenceFactory.createEmpty()
     }
 }

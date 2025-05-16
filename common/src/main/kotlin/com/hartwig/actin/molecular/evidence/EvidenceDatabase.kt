@@ -2,18 +2,15 @@ package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 
 class EvidenceDatabase(

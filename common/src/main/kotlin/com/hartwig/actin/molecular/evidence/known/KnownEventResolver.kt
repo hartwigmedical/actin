@@ -2,15 +2,13 @@ package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.serve.datamodel.molecular.KnownEvents
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
@@ -31,9 +29,9 @@ class KnownEventResolver(
             ?: findExon(primaryKnownEvents.exons(), variant)
             ?: GeneLookup.find(aggregatedKnownGenes, variant.gene)
 
-        val secondaryAlteration = findHotspot(secondaryKnownEvents.hotspots(), variantMatchCriteria)
+        val secondaryAlteration = findHotspot(secondaryKnownEvents.hotspots(), variant)
 
-        val geneAlteration = GeneAlterationFactory.convertAlteration(variantMatchCriteria.gene, primaryAlteration)
+        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, primaryAlteration)
         val isHotspot = HotspotFunctions.isHotspot(primaryAlteration) || HotspotFunctions.isHotspot(secondaryAlteration)
 
         return VariantAlteration(

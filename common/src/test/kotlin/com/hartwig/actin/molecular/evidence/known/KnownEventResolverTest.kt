@@ -7,30 +7,28 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozyg
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
-import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
+import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.MutationType
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableKnownHotspot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val GENE = "gene 1"
-private val HOTSPOT_MATCH = VariantMatchCriteria(
+private val HOTSPOT_MATCH = TestMolecularFactory.createMinimalVariant().copy(
     isReportable = true,
     gene = GENE,
-    codingEffect = CodingEffect.MISSENSE,
+    canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
     type = VariantType.SNV,
     chromosome = "12",
     position = 10,
