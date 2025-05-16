@@ -114,7 +114,7 @@ class TrialIngestionTest {
     }
 
     @Test
-    fun `Should not ingest with error on inclusion rule`() {
+    fun `Should not ingest with error in inclusion rule`() {
         val ingestion = TrialIngestion(TestFunctionInputResolverFactory.createTestResolver())
         val result = ingestion.ingest(
             listOf(
