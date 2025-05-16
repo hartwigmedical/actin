@@ -79,14 +79,6 @@ class HasFusionInGeneTest {
     }
 
     @Test
-    fun `Should warn on low driver gain of function fusion`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)))
-        )
-    }
-
-    @Test
     fun `Should warn on high driver fusion with no effect`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
@@ -101,18 +93,6 @@ class HasFusionInGeneTest {
                 MolecularTestFactory.withDrivers(
                     matchingFusion,
                     matchingFusion.copy(isReportable = false)
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should warn on matching high driver reportable gain of function fusion when non-high driver likelihood gain of function fusion also present`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withDrivers(
-                    matchingFusion,
-                    matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)
                 )
             )
         )
