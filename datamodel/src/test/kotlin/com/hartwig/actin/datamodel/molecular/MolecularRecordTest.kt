@@ -10,7 +10,7 @@ class MolecularRecordTest {
         val targets = listOf(MolecularTestTarget.MUTATION)
         val gene = "gene"
         val record = TestMolecularFactory.createMinimalTestMolecularRecord()
-            .copy(experimentType = ExperimentType.HARTWIG_TARGETED, specification = KnownPanelSpecification(mapOf(gene to targets)))
+            .copy(experimentType = ExperimentType.HARTWIG_TARGETED, specification = PanelSpecification(mapOf(gene to targets)))
         assertThat(record.testsGene(gene) { it == targets }).isTrue()
         assertThat(record.testsGene(gene) { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
     }

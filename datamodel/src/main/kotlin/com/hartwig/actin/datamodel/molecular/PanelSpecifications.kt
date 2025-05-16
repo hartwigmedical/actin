@@ -5,31 +5,29 @@ import java.util.function.Predicate
 
 data class PanelGeneSpecification(val geneName: String, val targets: List<MolecularTestTarget>)
 
-interface PanelSpecification {
-    fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean
-}
-
-data class KnownPanelSpecification(private val geneTargetMap: Map<String, List<MolecularTestTarget>>) : PanelSpecification {
-    override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
+data class PanelSpecification(private val geneTargetMap: Map<String, List<MolecularTestTarget>>) {
+    fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
         geneTargetMap[gene]?.let { molecularTestTargets.test(it) } ?: false
 }
 
-data class DerivedPanelSpecification(private val testResults: SequencingTest) : PanelSpecification {
-    override fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean {
-        return with(testResults) {
-            variants.any { it.gene == gene }
-                    || fusions.any { it.geneUp == gene || it.geneDown == gene }
-                    || amplifications.any { it.gene == gene }
-                    || deletions.any { it.gene == gene }
-                    || skippedExons.any { it.gene == gene }
-        }
-    }
-}
+fun derivedGeneTargetMap(testResults: SequencingTest) =
+    testResults.variants.associate { it.gene to listOf(MolecularTestTarget.MUTATION) } +
+            testResults.fusions.flatMap { listOfNotNull(it.geneUp, it.geneDown) }.associateWith { listOf(MolecularTestTarget.FUSION) } +
+            testResults.amplifications.map { it.gene to listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.AMPLIFICATION) } +
+            testResults.deletions.map { it.gene to listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION) } +
+            testResults.skippedExons.map {
+                it.gene to listOf(
+                    MolecularTestTarget.FUSION,
+                    MolecularTestTarget.MUTATION,
+                    MolecularTestTarget.DELETION
+                )
+            } +
+            testResults.negativeResults.map { it.gene to listOf(MolecularTestTarget.MUTATION) }
 
 class PanelSpecifications(panelGeneSpecifications: Map<String, List<PanelGeneSpecification>>) {
 
     private val panelSpecifications: Map<String, PanelSpecification> = panelGeneSpecifications.mapValues { (_, specs) ->
-        KnownPanelSpecification(
+        PanelSpecification(
             specs.groupBy(PanelGeneSpecification::geneName).mapValues { it.value.flatMap(PanelGeneSpecification::targets) })
     }
 

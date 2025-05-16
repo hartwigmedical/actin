@@ -64,7 +64,7 @@ object TestMolecularFactory {
 
     fun createMinimalTestPanelRecord(): PanelRecord {
         return PanelRecord(
-            specification = KnownPanelSpecification(emptyMap()),
+            specification = PanelSpecification(emptyMap()),
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = "minimal panel",
             date = null,
@@ -98,7 +98,7 @@ object TestMolecularFactory {
 
     fun createProperTestPanelRecord(): PanelRecord {
         return createMinimalTestPanelRecord().copy(
-            specification = KnownPanelSpecification(
+            specification = PanelSpecification(
                 mapOf(
                     "BRAF" to listOf(MolecularTestTarget.MUTATION),
                     "PTEN" to listOf(MolecularTestTarget.MUTATION)
@@ -126,7 +126,7 @@ object TestMolecularFactory {
 
     fun createExhaustiveTestPanelRecord(): PanelRecord {
         return createProperTestPanelRecord().copy(
-            specification = KnownPanelSpecification(setOf(
+            specification = PanelSpecification(setOf(
                 "BRAF",
                 "PTEN",
                 "MYC",
@@ -159,7 +159,7 @@ object TestMolecularFactory {
     }
 
     fun panelSpecifications(genes: Set<String>, targets: List<MolecularTestTarget> = listOf(MolecularTestTarget.MUTATION)) =
-        KnownPanelSpecification(genes.associateWith { targets })
+        PanelSpecification(genes.associateWith { targets })
 
     private fun createProperTestCharacteristics(): MolecularCharacteristics {
         return MolecularCharacteristics(
