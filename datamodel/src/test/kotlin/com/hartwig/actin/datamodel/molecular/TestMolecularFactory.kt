@@ -311,7 +311,7 @@ object TestMolecularFactory {
         gene = "",
         geneRole = GeneRole.UNKNOWN,
         proteinEffect = ProteinEffect.UNKNOWN,
-        isAssociatedWithDrugResistance = false
+        isAssociatedWithDrugResistance = null,
     )
 
     fun createMinimalTranscriptImpact() = TranscriptVariantImpact(
@@ -319,10 +319,10 @@ object TestMolecularFactory {
         hgvsCodingImpact = "",
         hgvsProteinImpact = "",
         affectedCodon = 0,
-        isSpliceRegion = false,
+        affectedExon = null,
+        isSpliceRegion = null,
         effects = emptySet(),
         codingEffect = CodingEffect.NONE,
-        affectedExon = null
     )
 
     fun createProperVariant() = Variant(

@@ -33,7 +33,7 @@ private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
 private val FULLY_SPECIFIED_SEQUENCED_FUSION =
     SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
 
-private val FUSION_MATCH_CRITERIA = TestMolecularFactory.createMinimalFusion().copy(
+private val FUSION = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,
     geneStart = GENE_START,
     geneEnd = GENE_END,
@@ -170,7 +170,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate fusion specified with genes only`() {
         setupKnownFusionCache()
-        setupEvidenceForFusion(FUSION_MATCH_CRITERIA)
+        setupEvidenceForFusion(FUSION)
         val annotated = annotator.annotate(setOf(SEQUENCED_FUSION), emptySet())
 
         assertThat(annotated).containsExactly(
