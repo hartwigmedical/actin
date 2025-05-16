@@ -1,6 +1,8 @@
-package com.hartwig.actin.datamodel.trial
+package com.hartwig.actin
 
-import com.hartwig.actin.datamodel.trial.composite.CompositeRules
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.composite.CompositeRules
 
 object EligibilityFactory {
 

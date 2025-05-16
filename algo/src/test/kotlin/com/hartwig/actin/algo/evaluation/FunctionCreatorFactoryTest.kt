@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.trial.input.ParameterizedFunctionTestFactory
-import com.hartwig.actin.datamodel.trial.composite.CompositeRules
+import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

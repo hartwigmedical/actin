@@ -113,4 +113,61 @@ class TrialIngestionTest {
         )
     }
 
+    @Test
+    fun `Should not ingest with error on inclusion rule`() {
+        val ingestion = TrialIngestion(TestFunctionInputResolverFactory.createTestResolver())
+        val result = ingestion.ingest(
+            listOf(
+                TrialConfig(
+                    trialId = TRIAL_ID,
+                    source = TrialSource.NKI,
+                    sourceId = SOURCE_ID,
+                    nctId = NCT_ID,
+                    open = true,
+                    acronym = ACRONYM,
+                    title = TITLE,
+                    phase = TrialPhase.PHASE_1,
+                    inclusionCriterion = listOf(
+                        InclusionCriterionConfig("AND(IS_PREGNANT)", listOf(InclusionCriterionReferenceConfig(REFERENCE_ID, REFERENCE_TEXT)))
+                    ),
+                    cohorts = listOf(
+                        CohortConfig(
+                            cohortId = COHORT_ID,
+                            open = true,
+                            slotsAvailable = true,
+                            description = DESCRIPTION,
+                            ignore = false,
+                            evaluable = true,
+                            inclusionCriterion = listOf(
+                                InclusionCriterionConfig(
+                                    IS_FEMALE, listOf(
+                                        InclusionCriterionReferenceConfig(
+                                            REFERENCE_ID,
+                                            REFERENCE_TEXT
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    locations = listOf(LOCATION)
+                )
+            )
+        ) as Either.Left
+        assertThat(result.value).isEqualTo(
+            listOf(
+                UnmappableTrial(
+                    trialId = TRIAL_ID,
+                    mappingErrors = listOf(
+                        EligibilityMappingError(
+                            inclusionRule = "AND(IS_PREGNANT)",
+                            error = "Function AND has invalid inputs: '[EligibilityFunction(rule=IS_PREGNANT, parameters=[])]' (source criterion: 'AND(IS_PREGNANT)')"
+                        )
+                    ),
+                    unmappableCohorts = emptyList()
+                )
+            )
+        )
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.datamodel.trial.composite
+package com.hartwig.actin.trial.input.composite
 
 enum class CompositeInput {
     EXACTLY_1,

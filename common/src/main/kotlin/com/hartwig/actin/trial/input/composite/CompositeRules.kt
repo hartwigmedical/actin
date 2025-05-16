@@ -1,4 +1,4 @@
-package com.hartwig.actin.datamodel.trial.composite
+package com.hartwig.actin.trial.input.composite
 
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
