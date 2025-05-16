@@ -26,7 +26,6 @@ class IhcResultGenerator(
     }
 
     override fun contents(): Table {
-
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         if (ihcTests.isEmpty()) {
             table.addCell(Cells.createSpanningValue("None", table).addStyle(Styles.tableKeyStyle()))
@@ -39,7 +38,7 @@ class IhcResultGenerator(
     }
 
     private fun ihcTestInterpretationContents(ihcTestInterpretation: IhcTestInterpretation, table: Table) {
-        ihcTestInterpretation.results.sortedBy { it.sortPrecedence }
+        ihcTestInterpretation.results.sortedWith(compareBy({ it.sortPrecedence }, { it.grouping }))
             .groupBy { it.grouping }
             .forEach {
                 table.addCell(Cells.createKey(it.key))

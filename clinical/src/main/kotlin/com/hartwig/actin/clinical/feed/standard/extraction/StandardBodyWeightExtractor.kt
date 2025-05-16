@@ -5,12 +5,12 @@ import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor.Companion.BOD
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementCategory
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementUnit
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.BodyWeight
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 
 class StandardBodyWeightExtractor : StandardDataExtractor<List<BodyWeight>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<BodyWeight>> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<BodyWeight>> {
         return ExtractionResult(ehrPatientRecord.measurements
             .filter {
                 enumeratedInput<ProvidedMeasurementCategory>(it.category) == ProvidedMeasurementCategory.BODY_WEIGHT

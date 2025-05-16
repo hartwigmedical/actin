@@ -4,11 +4,11 @@ import com.hartwig.actin.datamodel.Displayable
 import java.time.LocalDate
 
 data class SequencedVariant(
-    val variantAlleleFrequency: Double? = null,
     val gene: String,
     val hgvsCodingImpact: String? = null,
     val hgvsProteinImpact: String? = null,
     val transcript: String? = null,
+    val variantAlleleFrequency: Double? = null,
     val exon: Int? = null,
     val codon: Int? = null
 ) {
@@ -22,11 +22,7 @@ data class SequencedVariant(
 
 data class SequencedAmplification(val gene: String, val transcript: String? = null)
 
-data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int, val transcript: String? = null) : Displayable {
-    override fun display(): String {
-        return "$gene skipped exons $exonStart-$exonEnd"
-    }
-}
+data class SequencedDeletion(val gene: String, val transcript: String? = null)
 
 data class SequencedFusion(
     val geneUp: String? = null,
@@ -46,16 +42,20 @@ data class SequencedFusion(
     }
 }
 
-data class SequencedDeletedGene(val gene: String, val transcript: String? = null)
+data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int, val transcript: String? = null) : Displayable {
+    override fun display(): String {
+        return "$gene skipped exons $exonStart-$exonEnd"
+    }
+}
 
 data class SequencingTest(
     val test: String,
     val date: LocalDate? = null,
-    val tumorMutationalBurden: Double? = null,
-    val isMicrosatelliteUnstable: Boolean? = null,
     val variants: Set<SequencedVariant> = emptySet(),
     val amplifications: Set<SequencedAmplification> = emptySet(),
-    val skippedExons: Set<SequencedSkippedExons> = emptySet(),
+    val deletions: Set<SequencedDeletion> = emptySet(),
     val fusions: Set<SequencedFusion> = emptySet(),
-    val deletedGenes: Set<SequencedDeletedGene> = emptySet()
+    val skippedExons: Set<SequencedSkippedExons> = emptySet(),
+    val tumorMutationalBurden: Double? = null,
+    val isMicrosatelliteUnstable: Boolean? = null,
 ) 

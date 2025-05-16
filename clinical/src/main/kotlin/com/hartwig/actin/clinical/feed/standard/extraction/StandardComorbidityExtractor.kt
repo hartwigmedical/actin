@@ -7,24 +7,24 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityCuration
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedAllergy
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedComorbidity
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedToxicity
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import com.hartwig.feed.datamodel.FeedAllergy
+import com.hartwig.feed.datamodel.FeedComorbidity
+import com.hartwig.feed.datamodel.FeedPatientRecord
+import com.hartwig.feed.datamodel.FeedToxicity
 
 class StandardComorbidityExtractor(
     private val comorbidityCuration: CurationDatabase<ComorbidityConfig>
 ) : StandardDataExtractor<List<Comorbidity>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Comorbidity>> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<Comorbidity>> {
         return with(ehrPatientRecord) {
-            val patientId = patientDetails.hashedId
+            val patientId = patientDetails.patientId
             listOf(
-                extractCategory(priorOtherConditions, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history", patientId),
+                extractCategory(otherConditions, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history", patientId),
                 extractCategory(complications, CurationCategory.COMPLICATION, "complication", patientId),
                 extractToxicities(toxicities, patientId),
                 extractIntolerances(allergies, patientId)
@@ -36,7 +36,7 @@ class StandardComorbidityExtractor(
     }
 
     private fun extractCategory(
-        comorbidities: List<ProvidedComorbidity>, category: CurationCategory, configType: String, patientId: String
+        comorbidities: List<FeedComorbidity>, category: CurationCategory, configType: String, patientId: String
     ): List<ExtractionResult<List<Comorbidity>>> = comorbidities.map { comorbidity ->
         val curatedComorbidity = curate(comorbidity.name, patientId, category, configType)
         ExtractionResult(
@@ -47,7 +47,7 @@ class StandardComorbidityExtractor(
         )
     }
 
-    private fun extractToxicities(toxicities: List<ProvidedToxicity>, patientId: String): List<ExtractionResult<List<Toxicity>>> {
+    private fun extractToxicities(toxicities: List<FeedToxicity>, patientId: String): List<ExtractionResult<List<Toxicity>>> {
         return toxicities.map { toxicity ->
             val curatedToxicity = curate(toxicity.name, patientId, CurationCategory.TOXICITY, "toxicity")
 
@@ -65,7 +65,7 @@ class StandardComorbidityExtractor(
         }
     }
 
-    private fun extractIntolerances(intolerances: List<ProvidedAllergy>, patientId: String): List<ExtractionResult<List<Intolerance>>> {
+    private fun extractIntolerances(intolerances: List<FeedAllergy>, patientId: String): List<ExtractionResult<List<Intolerance>>> {
         return intolerances.map { providedIntolerance ->
             val curatedIntolerance = curate(providedIntolerance.name, patientId, CurationCategory.INTOLERANCE, "intolerance", true)
 

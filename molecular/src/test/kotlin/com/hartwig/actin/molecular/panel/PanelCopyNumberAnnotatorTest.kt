@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -83,7 +83,7 @@ class PanelCopyNumberAnnotatorTest {
         setupEvidenceForCopyNumber()
         setupEnsemblDataCacheForCopyNumber()
 
-        val annotatedPanel = annotator.annotate(setOf(SequencedDeletedGene(GENE, CANONICAL_TRANSCRIPT)))
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, CANONICAL_TRANSCRIPT)))
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
             .copy(transcriptId = CANONICAL_TRANSCRIPT)
         val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
@@ -95,7 +95,7 @@ class PanelCopyNumberAnnotatorTest {
         setupEvidenceForCopyNumber()
         setupEnsemblDataCacheForCopyNumber()
 
-        val annotatedPanel = annotator.annotate(setOf(SequencedDeletedGene(GENE, NON_CANONICAL_TRANSCRIPT)))
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, NON_CANONICAL_TRANSCRIPT)))
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 2, maxCopies = 2)
         val otherImpacts = setOf(

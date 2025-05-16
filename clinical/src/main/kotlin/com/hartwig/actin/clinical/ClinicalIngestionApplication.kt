@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.standard.StandardDataIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -81,8 +80,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             drugInteractionsDatabase,
             qtProlongatingDatabase,
             doidModel,
-            treatmentDatabase,
-            EnvironmentConfiguration.create(config.overridesYaml).clinical
+            treatmentDatabase
         )
         val clinicalIngestionAdapter =
             ClinicalIngestionFeedAdapter(

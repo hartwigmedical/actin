@@ -44,7 +44,7 @@ class GeneIsInactivatedTest {
         gene = GENE,
         isReportable = true,
         driverLikelihood = DriverLikelihood.HIGH,
-        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0, isBiallelic = true),
+        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true),
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
         canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
@@ -126,6 +126,22 @@ class GeneIsInactivatedTest {
     }
 
     @Test
+    fun `Should pass with matching TSG variant when unknown if clonal`() {
+        assertResultForVariant(
+            EvaluationResult.PASS,
+            matchingVariant.copy(extendedVariantDetails = null)
+        )
+    }
+
+    @Test
+    fun `Should fail with matching TSG variant but not clonal`() {
+        assertResultForVariant(
+            EvaluationResult.FAIL,
+            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(clonalLikelihood = 0.4))
+        )
+    }
+
+    @Test
     fun `Should warn when TSG variant is not reportable`() {
         assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(isReportable = false))
     }
@@ -150,14 +166,6 @@ class GeneIsInactivatedTest {
         assertResultForVariant(
             EvaluationResult.WARN,
             matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false))
-        )
-    }
-
-    @Test
-    fun `Should warn when TSG variant is subclonal`() {
-        assertResultForVariant(
-            EvaluationResult.WARN,
-            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(clonalLikelihood = 0.4))
         )
     }
 

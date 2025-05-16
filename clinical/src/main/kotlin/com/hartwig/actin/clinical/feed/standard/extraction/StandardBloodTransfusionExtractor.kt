@@ -3,15 +3,15 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedBloodTransfusionProduct
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.BloodTransfusion
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardBloodTransfusionExtractor : StandardDataExtractor<List<BloodTransfusion>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<BloodTransfusion>> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<BloodTransfusion>> {
         return ExtractionResult(ehrPatientRecord.bloodTransfusions.map {
             BloodTransfusion(
-                date = it.evaluationTime.toLocalDate(),
-                product = mapTransfusionProduct(it.product)
+                date = it.evaluationDate,
+                product = mapTransfusionProduct(it.name)
             )
         }, CurationExtractionEvaluation())
     }
