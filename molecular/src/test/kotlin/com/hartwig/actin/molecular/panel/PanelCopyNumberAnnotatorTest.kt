@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -13,23 +13,22 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFacto
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val NON_CANONICAL_TRANSCRIPT = "non_canonical_transcript"
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-private val AMPLIFICATION = TestServeKnownFactory.copyNumberBuilder().build().withGeneRole(ServeGeneRole.ONCO)
-    .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+private val AMPLIFICATION = TestGeneAlterationFactory.createGeneAlteration("gene 1", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, null)
 
 private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
     TestTreatmentEvidenceFactory.create(
@@ -37,7 +36,7 @@ private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
         evidenceLevel = EvidenceLevel.A,
         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        isOnLabel = true
+        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE
     )
 )
 
@@ -45,7 +44,7 @@ class PanelCopyNumberAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { geneAlterationForVariant(any()) } returns null
+        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
     }
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
@@ -84,7 +83,7 @@ class PanelCopyNumberAnnotatorTest {
         setupEvidenceForCopyNumber()
         setupEnsemblDataCacheForCopyNumber()
 
-        val annotatedPanel = annotator.annotate(setOf(SequencedDeletedGene(GENE, CANONICAL_TRANSCRIPT)))
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, CANONICAL_TRANSCRIPT)))
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
             .copy(transcriptId = CANONICAL_TRANSCRIPT)
         val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
@@ -96,7 +95,7 @@ class PanelCopyNumberAnnotatorTest {
         setupEvidenceForCopyNumber()
         setupEnsemblDataCacheForCopyNumber()
 
-        val annotatedPanel = annotator.annotate(setOf(SequencedDeletedGene(GENE, NON_CANONICAL_TRANSCRIPT)))
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, NON_CANONICAL_TRANSCRIPT)))
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 2, maxCopies = 2)
         val otherImpacts = setOf(
@@ -107,7 +106,7 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     private fun setupEvidenceForCopyNumber() {
-        every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns AMPLIFICATION
+        every { evidenceDatabase.alterationForCopyNumber(any()) } returns AMPLIFICATION
         every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
     }
 

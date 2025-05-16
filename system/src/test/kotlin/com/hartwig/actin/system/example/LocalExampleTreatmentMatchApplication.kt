@@ -142,7 +142,7 @@ fun main() {
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
         val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
-        val outputDirectory = ExampleFunctions.resolveExampleTreatmentMatchOutputDirectory()
+        val outputDirectory = System.getProperty("user.dir") + "/system/src/test/resources/example_treatment_match/"
 
         LocalExampleTreatmentMatchApplication().run(examplePatientRecordJson, exampleTrialDatabaseDir, outputDirectory)
     } catch (exception: ParseException) {

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
@@ -32,17 +32,15 @@ internal object MolecularTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
-    fun priorIHCTest(
-        test: String = "",
+    fun ihcTest(
         item: String = "",
         measure: String? = null,
         scoreText: String? = null,
         impliesIndeterminate: Boolean = false,
         scoreValue: Double? = null,
         scoreValuePrefix: String? = null
-    ): PriorIHCTest {
-        return PriorIHCTest(
-            test = test,
+    ): IhcTest {
+        return IhcTest(
             item = item,
             measure = measure,
             scoreText = scoreText,
@@ -52,24 +50,24 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withIHCTests(ihcTests: List<PriorIHCTest>): PatientRecord {
-        return base.copy(priorIHCTests = ihcTests.toList())
+    fun withIhcTests(ihcTests: List<IhcTest>): PatientRecord {
+        return base.copy(ihcTests = ihcTests.toList())
     }
 
-    fun withIHCTests(vararg ihcTests: PriorIHCTest): PatientRecord {
-        return withIHCTests(ihcTests.toList())
+    fun withIhcTests(vararg ihcTests: IhcTest): PatientRecord {
+        return withIhcTests(ihcTests.toList())
     }
 
     fun withMolecularTests(molecularTests: List<MolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + molecularTests))
     }
 
-    fun withCopyNumberAndPriorIHCTests(copyNumber: CopyNumber, priorIHCTests: List<PriorIHCTest>): PatientRecord {
+    fun withCopyNumberAndIhcTests(copyNumber: CopyNumber, ihcTests: List<IhcTest>): PatientRecord {
         val molecular = baseMolecular.copy(
             characteristics = baseMolecular.characteristics.copy(purity = 0.80, ploidy = 3.0),
             drivers = baseMolecular.drivers.copy(copyNumbers = listOf(copyNumber))
         )
-        return base.copy(priorIHCTests = priorIHCTests, molecularHistory = MolecularHistory(listOf(molecular)))
+        return base.copy(ihcTests = ihcTests, molecularHistory = MolecularHistory(listOf(molecular)))
     }
 
     fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
@@ -164,13 +162,13 @@ internal object MolecularTestFactory {
     fun withExperimentTypeAndContainingTumorCellsAndPriorTest(
         type: ExperimentType,
         containsTumorCells: Boolean,
-        priorTest: PriorIHCTest
+        priorTest: IhcTest
     ): PatientRecord {
         return base.copy(
             molecularHistory = MolecularHistory(
                 listOf(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells))
             ),
-            priorIHCTests = listOf(priorTest)
+            ihcTests = listOf(priorTest)
         )
     }
 

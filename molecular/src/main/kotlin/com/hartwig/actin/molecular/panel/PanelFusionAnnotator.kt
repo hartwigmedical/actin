@@ -119,10 +119,8 @@ class PanelFusionAnnotator(
 
     private fun annotateFusion(fusion: Fusion): Fusion {
         val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
-        val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
-            GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
-        }
-        val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
+        val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
+        val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
         val fusionWithGeneAlteration =
             fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
         val evidence = evidenceDatabase.evidenceForFusion(fusionWithGeneAlteration)

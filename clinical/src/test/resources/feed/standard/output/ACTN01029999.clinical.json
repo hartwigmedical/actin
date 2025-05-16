@@ -4,7 +4,8 @@
     "gender": "FEMALE",
     "birthYear": 5,
     "registrationDate": "2020-01-01",
-    "questionnaireDate": null
+    "questionnaireDate": null,
+    "sourceId": "PT-1001"
   },
   "tumor": {
     "primaryTumorLocation": "Lung",
@@ -84,7 +85,7 @@
         "bestResponse": null,
         "stopReason": null,
         "stopReasonDetail": null,
-        "switchToTreatments": [],
+        "switchToTreatments": null,
         "maintenanceTreatment": null,
         "toxicities": null,
         "bodyLocationCategories": null,
@@ -92,7 +93,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "pain",
@@ -170,9 +171,8 @@
       "comorbidityClass": "INTOLERANCE"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "ERBB2",
       "measure": null,
       "measureDate": null,
@@ -183,20 +183,21 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [
+  "sequencingTests": [
     {
       "test": "Archer FP - Lung",
       "date": "2024-07-15",
       "variants": [
         {
           "gene": "KRAS",
-          "hgvsCodingImpact": "c.34G>T"
+          "hgvsCodingImpact": "c.34G>T",
+          "hgvsProteinImpact": "p.G12F"
         }
       ],
-      "fusions": [],
       "amplifications": [],
-      "skippedExons": [],
-      "deletedGenes": []
+      "deletions": [],
+      "fusions": [],
+      "skippedExons": []
     }
   ],
   "labValues": [
@@ -302,5 +303,67 @@
       "product": "Erytrocytes Filtered"
     }
   ],
-  "medications": null
+  "medications": [
+    {
+      "name": "METOCLOPRAMIDE TABLET 10MG",
+      "atcCode": "N02BE01",
+      "startDate": "2020-01-01",
+      "stopDate": "2020-01-01",
+      "administrationRoute": "oraal",
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "piece",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "cypInteractions": [],
+      "transporterInteractions": [],
+      "qtProlongatingRisk": "NONE",
+      "isTrialMedication": true,
+      "isSelfCare": true
+    },
+    {
+      "name": "paracetamol",
+      "atcCode": "N02BE01",
+      "atc": {
+        "anatomicalMainGroup": {"code": "N", "name": "NERVOUS SYSTEM"},
+        "therapeuticSubGroup": {"code": "N02", "name": "ANALGESICS"},
+        "pharmacologicalSubGroup": {"code": "N02B", "name": "OTHER ANALGESICS AND ANTIPYRETICS"},
+        "chemicalSubGroup": {"code": "N02BE", "name": "Anilides"},
+        "chemicalSubstance": {"code": "N02BE01", "name": "paracetamol"}
+      },
+      "startDate": "2020-01-01",
+      "stopDate": "2020-01-01",
+      "administrationRoute": "oraal",
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "cypInteractions": [],
+      "transporterInteractions": [],
+      "qtProlongatingRisk": "NONE",
+      "isTrialMedication": false,
+      "isSelfCare": false
+    }
+  ],
+  "pathologyReports": [
+    {
+      "tissueId": "T-1000090",
+      "lab": "NKI-AvL",
+      "diagnosis": "diagnosis",
+      "tissueDate": "2020-01-01",
+      "authorisationDate": "2020-01-02",
+      "report": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\n\n\nimmunohistochemie ERBB2 3+\n\n"
+    }
+  ]
 }

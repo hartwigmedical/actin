@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 
 class ClinicalEvidenceMatcher(
-    private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
+    private val clinicalEvidenceFactory: ClinicalEvidenceFactory,
     private val variantEvidence: VariantEvidence,
     private val copyNumberEvidence: CopyNumberEvidence,
     private val disruptionEvidence: DisruptionEvidence,
@@ -20,42 +20,42 @@ class ClinicalEvidenceMatcher(
 ) {
 
     fun matchForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(signatureEvidence.findMicrosatelliteMatches(isMicrosatelliteUnstable))
+        return clinicalEvidenceFactory.create(signatureEvidence.findMicrosatelliteMatches(isMicrosatelliteUnstable))
     }
 
     fun matchForHomologousRecombinationStatus(isHomologousRecombinationDeficient: Boolean): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(signatureEvidence.findHomologousRecombinationMatches(isHomologousRecombinationDeficient))
+        return clinicalEvidenceFactory.create(signatureEvidence.findHomologousRecombinationMatches(isHomologousRecombinationDeficient))
     }
 
     fun matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden: Boolean): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(signatureEvidence.findTumorBurdenMatches(hasHighTumorMutationalBurden))
+        return clinicalEvidenceFactory.create(signatureEvidence.findTumorBurdenMatches(hasHighTumorMutationalBurden))
     }
 
     fun matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad: Boolean): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(signatureEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad))
+        return clinicalEvidenceFactory.create(signatureEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad))
     }
 
     fun matchForVariant(variant: Variant): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(variantEvidence.findMatches(variant))
+        return clinicalEvidenceFactory.create(variantEvidence.findMatches(variant))
     }
 
     fun matchForCopyNumber(copyNumber: CopyNumber): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(copyNumber))
+        return clinicalEvidenceFactory.create(copyNumberEvidence.findMatches(copyNumber))
     }
 
     fun matchForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(homozygousDisruption))
+        return clinicalEvidenceFactory.create(homozygousDisruptionEvidence.findMatches(homozygousDisruption))
     }
 
     fun matchForDisruption(disruption: Disruption): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(disruptionEvidence.findMatches(disruption))
+        return clinicalEvidenceFactory.create(disruptionEvidence.findMatches(disruption))
     }
 
     fun matchForFusion(fusion: Fusion): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(fusionEvidence.findMatches(fusion))
+        return clinicalEvidenceFactory.create(fusionEvidence.findMatches(fusion))
     }
 
     fun matchForVirus(virus: Virus): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(virusEvidence.findMatches(virus))
+        return clinicalEvidenceFactory.create(virusEvidence.findMatches(virus))
     }
 }

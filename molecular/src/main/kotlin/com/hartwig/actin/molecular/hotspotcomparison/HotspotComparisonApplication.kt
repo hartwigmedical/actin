@@ -30,7 +30,7 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
 
         val orange = OrangeJson.getInstance().read(config.orangeJson)
         val serveRecord = selectForRefGenomeVersion(serveDatabase, orange.refGenomeVersion())
-        val hotspots = HotspotComparator.annotateHotspots(orange, serveRecord)
+        val hotspots = HotspotEvaluator.annotateHotspots(orange, serveRecord)
 
         LOGGER.info("Hotspot comparison DONE!")
         LOGGER.info(

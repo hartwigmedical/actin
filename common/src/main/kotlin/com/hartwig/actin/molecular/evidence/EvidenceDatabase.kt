@@ -2,13 +2,17 @@ package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 
@@ -33,7 +37,7 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
     }
 
-    fun geneAlterationForVariant(variant: Variant): GeneAlteration? {
+    fun alterationForVariant(variant: Variant): VariantAlteration {
         return knownEventResolver.resolveForVariant(variant)
     }
 
@@ -41,7 +45,7 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForVariant(variant)
     }
 
-    fun geneAlterationForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {
+    fun alterationForCopyNumber(copyNumber: CopyNumber): GeneAlteration {
         return knownEventResolver.resolveForCopyNumber(copyNumber)
     }
 
@@ -49,7 +53,7 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForCopyNumber(copyNumber)
     }
 
-    fun geneAlterationForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
+    fun alterationForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration {
         return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption)
     }
 
@@ -57,7 +61,7 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForHomozygousDisruption(homozygousDisruption)
     }
 
-    fun geneAlterationForDisruption(disruption: Disruption): GeneAlteration? {
+    fun alterationForDisruption(disruption: Disruption): GeneAlteration {
         return knownEventResolver.resolveForDisruption(disruption)
     }
 
@@ -65,7 +69,7 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForDisruption(disruption)
     }
 
-    fun lookupKnownFusion(fusion: Fusion): KnownFusion? {
+    fun lookupKnownFusion(fusion: Fusion): KnownFusion {
         return knownEventResolver.resolveForFusion(fusion)
     }
 

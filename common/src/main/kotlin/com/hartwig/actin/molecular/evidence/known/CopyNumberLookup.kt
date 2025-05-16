@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.KnownCopyNumber
 
-internal object CopyNumberLookup {
+object CopyNumberLookup {
 
     fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber>, copyNumber: CopyNumber): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {

@@ -2,15 +2,15 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurement
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementCategory
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementSubcategory
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
+import com.hartwig.feed.datamodel.FeedMeasurement
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardVitalFunctionsExtractor : StandardDataExtractor<List<VitalFunction>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<VitalFunction>> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<VitalFunction>> {
         return ExtractionResult(ehrPatientRecord.measurements.filter {
             !setOf(
                 ProvidedMeasurementCategory.BMI,
@@ -29,7 +29,7 @@ class StandardVitalFunctionsExtractor : StandardDataExtractor<List<VitalFunction
         }, CurationExtractionEvaluation())
     }
 
-    private fun mapCategory(it: ProvidedMeasurement): VitalFunctionCategory {
+    private fun mapCategory(it: FeedMeasurement): VitalFunctionCategory {
         return when (enumeratedInput<ProvidedMeasurementCategory>(it.category)) {
             ProvidedMeasurementCategory.ARTERIAL_BLOOD_PRESSURE -> VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
             ProvidedMeasurementCategory.`NON-INVASIVE_BLOOD_PRESSURE` -> VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
@@ -40,7 +40,7 @@ class StandardVitalFunctionsExtractor : StandardDataExtractor<List<VitalFunction
         }
     }
 
-    private fun mapSubcategory(it: ProvidedMeasurement): String {
+    private fun mapSubcategory(it: FeedMeasurement): String {
         return when (enumeratedInput<ProvidedMeasurementSubcategory>(it.subcategory ?: "NA")) {
             ProvidedMeasurementSubcategory.MEAN_BLOOD_PRESSURE -> "mean blood pressure"
             ProvidedMeasurementSubcategory.DIASTOLIC_BLOOD_PRESSURE -> "diastolic blood pressure"

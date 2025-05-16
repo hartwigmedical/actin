@@ -7,20 +7,20 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.provided.ProvidedLabUnit
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedLabValue
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
+import com.hartwig.feed.datamodel.FeedLabValue
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardLabValuesExtractor(private val labMeasurementCuration: CurationDatabase<LabMeasurementConfig>) :
     StandardDataExtractor<List<LabValue>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<LabValue>> {
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<LabValue>> {
         return ehrPatientRecord.labValues.map { providedLabValue ->
             val inputText = "${providedLabValue.measureCode} | ${providedLabValue.measure}"
             val curationResponse = CurationResponse.createFromConfigs(
                 labMeasurementCuration.find(inputText),
-                ehrPatientRecord.patientDetails.hashedId,
+                ehrPatientRecord.patientDetails.patientId,
                 CurationCategory.LAB_MEASUREMENT,
                 inputText,
                 "lab measurement",
@@ -36,8 +36,8 @@ class StandardLabValuesExtractor(private val labMeasurementCuration: CurationDat
             }
     }
 
-    private fun labValue(it: ProvidedLabValue, labMeasurement: LabMeasurement) = LabValue(
-        date = it.evaluationTime.toLocalDate(),
+    private fun labValue(it: FeedLabValue, labMeasurement: LabMeasurement) = LabValue(
+        date = it.date,
         measurement = labMeasurement,
         unit = labUnit(it),
         value = it.value,
@@ -46,7 +46,7 @@ class StandardLabValuesExtractor(private val labMeasurementCuration: CurationDat
         refLimitLow = it.refLowerBound
     )
 
-    private fun labUnit(it: ProvidedLabValue): LabUnit {
+    private fun labUnit(it: FeedLabValue): LabUnit {
         val labUnit = ProvidedLabUnit.fromString(it.unit)
         return when (labUnit) {
             ProvidedLabUnit.MILLIONS_PER_LITER -> LabUnit.MILLIONS_PER_LITER
