@@ -273,5 +273,12 @@
       "evaluationDate": "2020-01-01T10:10:00",
       "status": "0"
     }
+  ],
+  "ihcTests": [
+    {
+      "name": "immunohistochemie erbb2 3+",
+      "startDate": "2020-01-01",
+      "endDate": "2020-01-01"
+    }
   ]
 }
