@@ -47,7 +47,7 @@ private val FUSION = TestMolecularFactory.createMinimalFusion().copy(
     event = "$GENE_START::$GENE_END fusion"
 )
 
-private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = TestMolecularFactory.createMinimalFusion().copy(
+private val FULLY_SPECIFIED_FUSION = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,
     geneStart = GENE_START,
     geneEnd = GENE_END,
@@ -61,7 +61,7 @@ private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = TestMolecularFactory.createM
 
 )
 
-private val EXON_SKIP_FUSION_MATCHING_CRITERIA = TestMolecularFactory.createMinimalFusion().copy(
+private val EXON_SKIP_FUSION = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,
     geneStart = GENE,
     geneEnd = GENE,
@@ -74,7 +74,7 @@ private val EXON_SKIP_FUSION_MATCHING_CRITERIA = TestMolecularFactory.createMini
     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
 )
 
-private val EXON_SKIP_FUSION_MATCHING_CRITERIA_CANONICAL_TRANSCRIPT = EXON_SKIP_FUSION_MATCHING_CRITERIA.copy(
+private val EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT = EXON_SKIP_FUSION.copy(
     geneTranscriptStart = CANONICAL_TRANSCRIPT,
     geneTranscriptEnd = CANONICAL_TRANSCRIPT
 )
@@ -209,7 +209,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate fully specified fusion`() {
         setupKnownFusionCache()
-        setupEvidenceForFusion(FULLY_SPECIFIED_FUSION_MATCH_CRITERIA)
+        setupEvidenceForFusion(FULLY_SPECIFIED_FUSION)
         val annotated = annotator.annotate(setOf(FULLY_SPECIFIED_SEQUENCED_FUSION), emptySet())
 
         assertThat(annotated).containsExactly(
@@ -241,7 +241,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate to canonical transcript when no transcript provided for exon skip`() {
         setupKnownFusionCacheForExonDeletion()
-        setupEvidenceDatabaseWithNoEvidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA_CANONICAL_TRANSCRIPT)
+        setupEvidenceDatabaseWithNoEvidenceForFusion(EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT)
 
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
@@ -277,7 +277,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate with provided transcript when available`() {
         setupKnownFusionCacheForExonDeletion()
-        setupEvidenceDatabaseWithNoEvidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA)
+        setupEvidenceDatabaseWithNoEvidenceForFusion(EXON_SKIP_FUSION)
 
         val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, FUSED_EXON_UP, FUSED_EXON_DOWN, TRANSCRIPT))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
