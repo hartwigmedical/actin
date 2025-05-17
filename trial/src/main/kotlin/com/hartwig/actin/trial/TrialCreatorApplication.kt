@@ -58,14 +58,12 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         val trialIngestion =
             TrialIngestion(
-                EligibilityFactory(
-                    FunctionInputResolver(
-                        doidModel,
-                        icdModel,
-                        MolecularInputChecker(geneFilter),
-                        treatmentDatabase,
-                        MedicationCategories.create(atcTree)
-                    )
+                FunctionInputResolver(
+                    doidModel,
+                    icdModel,
+                    MolecularInputChecker(geneFilter),
+                    treatmentDatabase,
+                    MedicationCategories.create(atcTree)
                 )
             )
 

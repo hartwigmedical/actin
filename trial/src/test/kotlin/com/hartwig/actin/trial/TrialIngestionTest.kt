@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
+import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory
 import com.hartwig.actin.util.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -31,7 +32,7 @@ class TrialIngestionTest {
 
     @Test
     fun `Should map trial config to internal trial model and eligibility criteria`() {
-        val ingestion = TrialIngestion(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+        val ingestion = TrialIngestion(TestFunctionInputResolverFactory.createTestResolver())
         val result = ingestion.ingest(
             listOf(
                 TrialConfig(
@@ -107,6 +108,63 @@ class TrialIngestionTest {
                             )
                         )
                     )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should not ingest with error in inclusion rule`() {
+        val ingestion = TrialIngestion(TestFunctionInputResolverFactory.createTestResolver())
+        val result = ingestion.ingest(
+            listOf(
+                TrialConfig(
+                    trialId = TRIAL_ID,
+                    source = TrialSource.NKI,
+                    sourceId = SOURCE_ID,
+                    nctId = NCT_ID,
+                    open = true,
+                    acronym = ACRONYM,
+                    title = TITLE,
+                    phase = TrialPhase.PHASE_1,
+                    inclusionCriterion = listOf(
+                        InclusionCriterionConfig("AND(IS_PREGNANT)", listOf(InclusionCriterionReferenceConfig(REFERENCE_ID, REFERENCE_TEXT)))
+                    ),
+                    cohorts = listOf(
+                        CohortConfig(
+                            cohortId = COHORT_ID,
+                            open = true,
+                            slotsAvailable = true,
+                            description = DESCRIPTION,
+                            ignore = false,
+                            evaluable = true,
+                            inclusionCriterion = listOf(
+                                InclusionCriterionConfig(
+                                    IS_FEMALE, listOf(
+                                        InclusionCriterionReferenceConfig(
+                                            REFERENCE_ID,
+                                            REFERENCE_TEXT
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    locations = listOf(LOCATION)
+                )
+            )
+        ) as Either.Left
+        assertThat(result.value).isEqualTo(
+            listOf(
+                UnmappableTrial(
+                    trialId = TRIAL_ID,
+                    mappingErrors = listOf(
+                        EligibilityMappingError(
+                            inclusionRule = "AND(IS_PREGNANT)",
+                            error = "Function AND has invalid inputs: '[EligibilityFunction(rule=IS_PREGNANT, parameters=[])]' (source criterion: 'AND(IS_PREGNANT)')"
+                        )
+                    ),
+                    unmappableCohorts = emptyList()
                 )
             )
         )
