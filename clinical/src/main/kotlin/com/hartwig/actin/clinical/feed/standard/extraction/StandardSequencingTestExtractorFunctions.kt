@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedNegativeResult
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 
@@ -49,6 +50,13 @@ object StandardSequencingTestExtractorFunctions {
 
     fun msi(results: Set<SequencingTestResultConfig>) = results.firstNotNullOfOrNull { result -> result.msi }
 
+    fun negativeResults(results: Set<SequencingTestResultConfig>) = results.filter { result -> result.noMutationsFound == true }.map {
+        SequencedNegativeResult(
+            it.gene
+                ?: throw IllegalArgumentException("Result with no mutations found but no gene was specified. Please add gene to curation of ${it.input}")
+        )
+    }.toSet()
+
     fun skippedExons(results: Set<SequencingTestResultConfig>) = results.mapNotNull { result ->
         result.exonSkipStart?.let { exonSkipStart ->
             SequencedSkippedExons(
@@ -63,19 +71,21 @@ object StandardSequencingTestExtractorFunctions {
     fun fusions(results: Set<SequencingTestResultConfig>): Set<SequencedFusion> {
         val fusionResults = results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
         if (fusionResults.any {
-            configuredGenesAreNotEqual(it.gene, it.fusionGeneUp) && configuredGenesAreNotEqual(it.gene, it.fusionGeneDown)
-        }) {
+                configuredGenesAreNotEqual(it.gene, it.fusionGeneUp) && configuredGenesAreNotEqual(it.gene, it.fusionGeneDown)
+            }) {
             throw IllegalArgumentException("Gene must be equal to fusionGeneUp or fusionGeneDown if gene is set")
         }
         return fusionResults
-            .map { result -> SequencedFusion(
-                geneUp = result.fusionGeneUp,
-                geneDown = result.fusionGeneDown,
-                transcriptUp = result.fusionTranscriptUp,
-                transcriptDown = result.fusionTranscriptDown,
-                exonUp = result.fusionExonUp,
-                exonDown = result.fusionExonDown
-            ) }
+            .map { result ->
+                SequencedFusion(
+                    geneUp = result.fusionGeneUp,
+                    geneDown = result.fusionGeneDown,
+                    transcriptUp = result.fusionTranscriptUp,
+                    transcriptDown = result.fusionTranscriptDown,
+                    exonUp = result.fusionExonUp,
+                    exonDown = result.fusionExonDown
+                )
+            }
             .toSet()
     }
 

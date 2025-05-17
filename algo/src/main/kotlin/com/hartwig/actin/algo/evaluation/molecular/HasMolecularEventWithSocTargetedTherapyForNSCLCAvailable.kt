@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 private val DEL_INS_LIST = listOf(Triple("EGFR", 19, VariantTypeInput.DELETE), Triple("EGFR", 20, VariantTypeInput.INSERT))
 private val PROTEIN_IMPACT_LIST = listOf(Pair("EGFR", "L858R"), Pair("BRAF", "V600E"))
-private val ACTIVATING_MUTATION_LIST = listOf("EGFR")
+private val ACTIVATING_MUTATION_LIST = listOf("EGFR", "ERBB2")
 private val FUSION_LIST = listOf("ROS1", "ALK", "RET", "NTRK1", "NTRK2", "NTRK3")
 private val EXON_SKIPPING_LIST = listOf("MET" to 14)
 

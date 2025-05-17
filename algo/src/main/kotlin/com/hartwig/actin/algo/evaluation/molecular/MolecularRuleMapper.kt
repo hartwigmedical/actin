@@ -9,18 +9,20 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.DoidModel
 
-private val EGFR_PACC_VARIANTS = setOf(
-    "G719X",
+private val EGFR_PACC_PROTEIN_IMPACTS = setOf(
     "S768I",
     "L747P",
     "L747S",
     "V769L",
-    "E709_T710 delinsD",
+    "E709_T710delinsD",
     "C797S",
     "L792H",
     "G724S",
-    "L718X",
     "T854I",
+)
+private val EGFR_PACC_CODON_VARIANTS = listOf(
+    "L718",
+    "G719",
 )
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -366,7 +368,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasEgfrPaccMutationCreator(): FunctionCreator {
-        return { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANTS, maxMolecularTestAge()) }
+        return {
+            Or(
+                listOf(
+                    GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_PROTEIN_IMPACTS, maxMolecularTestAge()),
+                    GeneHasVariantInCodon("EGFR", EGFR_PACC_CODON_VARIANTS, maxMolecularTestAge())
+                )
+            )
+        }
     }
 
     private fun hasCoDeletionOfChromosomeArmsCreator(): FunctionCreator {
