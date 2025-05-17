@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
@@ -42,14 +42,14 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
 
         return when {
             medicationsFound.isNotEmpty() || matchingTreatments.any {
-                TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
+                TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
                 EvaluationFactory.pass("Has recently received treatment with medication ${Format.concat(namesFound)} " +
                         "- pay attention to washout period"
                 )
             }
 
-            matchingTreatments.any { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {
+            matchingTreatments.any { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {
                 EvaluationFactory.undetermined(
                     "Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date"
                 )

@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-object TreatmentSinceDateFunctions {
+object TreatmentVersusDateFunctions {
 
     fun evaluateTreatmentMatchingPredicateSinceDate(
         record: PatientRecord, minDate: LocalDate, predicateDescription: String, predicate: (Treatment) -> Boolean
@@ -37,6 +37,13 @@ object TreatmentSinceDateFunctions {
             minDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
         )
             ?: DateComparison.isAfterDate(minDate, treatment.startYear, treatment.startMonth)
+            ?: includeUnknown
+    }
+
+    fun treatmentBeforeMaxDate(treatment: TreatmentHistoryEntry, maxDate: LocalDate, includeUnknown: Boolean): Boolean {
+        return DateComparison.isBeforeDate(
+            maxDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
+        )
             ?: includeUnknown
     }
 }
