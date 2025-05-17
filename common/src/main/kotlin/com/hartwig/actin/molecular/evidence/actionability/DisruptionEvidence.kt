@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
@@ -14,10 +15,9 @@ class DisruptionEvidence(
 ) : ActionabilityMatcher<Disruption> {
 
     override fun findMatches(event: Disruption): ActionabilityMatch {
+
         val matchPredicate: Predicate<MolecularCriterium> =
-            Predicate {
-                event.isReportable && ActionableEventExtraction.extractGene(it).gene() == event.gene && event.geneRole != GeneRole.TSG
-            }
+            Predicate { isDisruptionMatch(ActionableEventExtraction.extractGene(it), event) }
         val evidenceMatches = applicableGeneEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
         val matchingCriteriaPerTrialMatch = applicableTrialMatcher.apply(matchPredicate)
 
@@ -32,6 +32,14 @@ class DisruptionEvidence(
             val actionableTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, DISRUPTION_EVENTS)
 
             return DisruptionEvidence(applicableEvidences, actionableTrialMatcher)
+        }
+
+        fun isDisruptionEvent(geneEvent: GeneEvent): Boolean {
+            return DISRUPTION_EVENTS.contains(geneEvent)
+        }
+
+        fun isDisruptionMatch(actionableGene: ActionableGene, disruption: Disruption): Boolean {
+            return disruption.isReportable && disruption.gene == actionableGene.gene() && disruption.geneRole != GeneRole.TSG
         }
     }
 }
