@@ -135,7 +135,6 @@
                     <configuration>
                         <apiVersion>${kotlin.compiler.apiVersion}</apiVersion>
                     </configuration>
-
                 </plugin>
                 <plugin>
                     <groupId>org.jooq</groupId>
