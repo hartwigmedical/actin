@@ -59,7 +59,7 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
         )
 
         val cancerTypeCell = Cells.createContentNoBorder(
-            Paragraph(evidence.applicableCancerType.matchedCancerType)
+            Paragraph(evidence.cancerTypeMatch.cancerType.matchedCancerType)
                 .setFont(Styles.fontBold()).setFontSize(6f)
         )
 

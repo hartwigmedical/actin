@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 fun evidenceTier(driver: Driver): EvidenceTier {
     return when {
         driver.evidence.treatmentEvidence.any {
-            it.isOnLabel && it.evidenceLevel in setOf(
+            it.isOnLabel() && it.evidenceLevel in setOf(
                 EvidenceLevel.A,
                 EvidenceLevel.B
             ) && !it.molecularMatch.sourceEvidenceType.isCategoryEvent()

@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -20,9 +20,9 @@ class VariantEvidence(
     private val exonTrialMatcher: ActionableTrialMatcher,
     private val applicableGeneEvidences: List<EfficacyEvidence>,
     private val applicableGeneTrialMatcher: ActionableTrialMatcher
-) : ActionabilityMatcher<VariantMatchCriteria> {
+) : ActionabilityMatcher<Variant> {
 
-    override fun findMatches(event: VariantMatchCriteria): ActionabilityMatch {
+    override fun findMatches(event: Variant): ActionabilityMatch {
         val hotspotEvidenceMatches = hotspotEvidenceMatches(event)
         val codonEvidenceMatches = codonEvidenceMatches(event)
         val exonEvidenceMatches = exonEvidenceMatches(event)
@@ -49,42 +49,42 @@ class VariantEvidence(
         )
     }
 
-    private fun hotspotEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+    private fun hotspotEvidenceMatches(variant: Variant): List<EfficacyEvidence> {
         return selectMatchingEvidences(hotspotEvidences, variant, HotspotMatching::isMatch, ActionableEventExtraction::extractHotspot)
     }
 
-    private fun hotspotTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+    private fun hotspotTrialMatches(variant: Variant): Map<ActionableTrial, Set<MolecularCriterium>> {
         return selectMatchingTrials(hotspotTrialMatcher, variant, HotspotMatching::isMatch, ActionableEventExtraction::extractHotspot)
     }
 
-    private fun codonEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+    private fun codonEvidenceMatches(variant: Variant): List<EfficacyEvidence> {
         return selectMatchingEvidences(codonEvidences, variant, RangeMatching::isMatch, ActionableEventExtraction::extractCodon)
     }
 
-    private fun codonTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+    private fun codonTrialMatches(variant: Variant): Map<ActionableTrial, Set<MolecularCriterium>> {
         return selectMatchingTrials(codonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventExtraction::extractCodon)
     }
 
-    private fun exonEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+    private fun exonEvidenceMatches(variant: Variant): List<EfficacyEvidence> {
         return selectMatchingEvidences(exonEvidences, variant, RangeMatching::isMatch, ActionableEventExtraction::extractExon)
     }
 
-    private fun exonTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+    private fun exonTrialMatches(variant: Variant): Map<ActionableTrial, Set<MolecularCriterium>> {
         return selectMatchingTrials(exonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventExtraction::extractExon)
     }
 
-    private fun geneEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+    private fun geneEvidenceMatches(variant: Variant): List<EfficacyEvidence> {
         return selectMatchingEvidences(applicableGeneEvidences, variant, GeneMatching::isMatch, ActionableEventExtraction::extractGene)
     }
 
-    private fun geneTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+    private fun geneTrialMatches(variant: Variant): Map<ActionableTrial, Set<MolecularCriterium>> {
         return selectMatchingTrials(applicableGeneTrialMatcher, variant, GeneMatching::isMatch, ActionableEventExtraction::extractGene)
     }
 
     private fun <T> selectMatchingEvidences(
         evidences: List<EfficacyEvidence>,
-        variant: VariantMatchCriteria,
-        isMatch: (T, VariantMatchCriteria) -> Boolean,
+        variant: Variant,
+        isMatch: (T, Variant) -> Boolean,
         extractActionableEvent: (MolecularCriterium) -> T,
     ): List<EfficacyEvidence> {
         return evidences.filter {
@@ -97,8 +97,8 @@ class VariantEvidence(
 
     private fun <T> selectMatchingTrials(
         trialMatcher: ActionableTrialMatcher,
-        variant: VariantMatchCriteria,
-        isMatch: (T, VariantMatchCriteria) -> Boolean,
+        variant: Variant,
+        isMatch: (T, Variant) -> Boolean,
         extractActionableEvent: (MolecularCriterium) -> T,
     ): Map<ActionableTrial, Set<MolecularCriterium>> {
         val matchPredicate: Predicate<MolecularCriterium> =

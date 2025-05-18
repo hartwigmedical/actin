@@ -29,6 +29,7 @@
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.0.0</actin-transvar.version>
         <actin-pave-lite.version>1.0.0</actin-pave-lite.version>
+        <actin-feed.version>0.10.0</actin-feed.version>
         <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
@@ -134,7 +135,6 @@
                     <configuration>
                         <apiVersion>${kotlin.compiler.apiVersion}</apiVersion>
                     </configuration>
-
                 </plugin>
                 <plugin>
                     <groupId>org.jooq</groupId>
@@ -229,6 +229,11 @@
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>actin-pave-lite</artifactId>
                 <version>${actin-pave-lite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>actin-feed-datamodel</artifactId>
+                <version>${actin-feed.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig</groupId>
@@ -331,13 +336,6 @@
                 <artifactId>slf4j-reload4j</artifactId>
                 <version>${slf4j-reload4j.version}</version>
                 <scope>runtime</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.immutables</groupId>
-                <artifactId>value</artifactId>
-                <version>${immutables.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>

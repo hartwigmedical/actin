@@ -6,19 +6,22 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardSurgeryExtractor(
     private val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>
 ) : StandardDataExtractor<List<Surgery>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Surgery>> {
+
+    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<Surgery>> {
         return ehrPatientRecord.surgeries.map { providedSurgery ->
-            providedSurgery.surgeryName?.takeIf { it.isNotBlank() }?.let { surgeryName ->
+            val status = providedSurgery.status?.let(SurgeryStatus::valueOf) ?: SurgeryStatus.UNKNOWN
+
+            providedSurgery.name?.takeIf { it.isNotBlank() }?.let { surgeryName ->
                 val curationResponse = CurationResponse.createFromConfigs(
                     surgeryNameCuration.find(surgeryName),
-                    ehrPatientRecord.patientDetails.hashedId,
+                    ehrPatientRecord.patientDetails.patientId,
                     CurationCategory.SURGERY_NAME,
                     surgeryName,
                     "surgery"
@@ -27,18 +30,14 @@ class StandardSurgeryExtractor(
                     Surgery(
                         name = it.name,
                         endDate = providedSurgery.endDate,
-                        status = SurgeryStatus.valueOf(providedSurgery.status)
+                        status = status
                     )
                 }
                 ExtractionResult(listOfNotNull(surgery), curationResponse.extractionEvaluation)
-            }
-                ?: ExtractionResult(
-                    listOf(Surgery(name = null, endDate = providedSurgery.endDate, status = SurgeryStatus.valueOf(providedSurgery.status))),
-                    CurationExtractionEvaluation()
-                )
-        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation()))
-        { acc, result ->
-            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            } ?: ExtractionResult(listOf(Surgery(null, providedSurgery.endDate, status)), CurationExtractionEvaluation())
         }
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            }
     }
 }

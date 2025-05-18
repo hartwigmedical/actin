@@ -9,6 +9,9 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
@@ -20,24 +23,8 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.ImpactDisplay.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
-import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import org.apache.logging.log4j.LogManager
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
-import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
-
-private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
-    ServeProteinEffect.LOSS_OF_FUNCTION,
-    ServeProteinEffect.LOSS_OF_FUNCTION_PREDICTED,
-    ServeProteinEffect.GAIN_OF_FUNCTION,
-    ServeProteinEffect.GAIN_OF_FUNCTION_PREDICTED
-)
-
-fun isHotspot(geneAlteration: ServeGeneAlteration?): Boolean {
-    return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) &&
-            geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
-}
 
 fun eventString(paveResponse: PaveResponse): String {
     return formatVariantImpact(

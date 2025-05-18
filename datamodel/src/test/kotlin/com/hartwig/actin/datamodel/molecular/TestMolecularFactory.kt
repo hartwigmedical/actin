@@ -312,16 +312,8 @@ object TestMolecularFactory {
         ref = "",
         alt = "",
         type = VariantType.UNDEFINED,
-        canonicalImpact = TranscriptVariantImpact(
-            transcriptId = "",
-            hgvsCodingImpact = "",
-            hgvsProteinImpact = "",
-            affectedCodon = 0,
-            isSpliceRegion = false,
-            effects = setOf(),
-            codingEffect = CodingEffect.NONE,
-            affectedExon = null
-        ),
+        variantAlleleFrequency = null,
+        canonicalImpact = createMinimalTranscriptImpact(),
         otherImpacts = emptySet(),
         extendedVariantDetails = null,
         isHotspot = false,
@@ -333,6 +325,17 @@ object TestMolecularFactory {
         geneRole = GeneRole.UNKNOWN,
         proteinEffect = ProteinEffect.UNKNOWN,
         isAssociatedWithDrugResistance = null,
+    )
+
+    fun createMinimalTranscriptImpact() = TranscriptVariantImpact(
+        transcriptId = "",
+        hgvsCodingImpact = "",
+        hgvsProteinImpact = "",
+        affectedCodon = 0,
+        affectedExon = null,
+        isSpliceRegion = null,
+        effects = emptySet(),
+        codingEffect = CodingEffect.NONE,
     )
 
     fun createProperVariant() = Variant(

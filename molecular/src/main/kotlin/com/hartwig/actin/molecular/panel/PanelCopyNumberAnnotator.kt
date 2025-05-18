@@ -1,13 +1,14 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import org.apache.logging.log4j.LogManager
@@ -24,7 +25,7 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         return copyNumber.map { element ->
             when (element) {
                 is SequencedAmplification -> convertSequencedAmplifiedGene(element)
-                is SequencedDeletedGene -> convertSequencedDeletedGene(element)
+                is SequencedDeletion -> convertSequencedDeletedGene(element)
                 else -> throw IllegalArgumentException("Unsupported type: $element")
             }
         }
@@ -66,11 +67,11 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         )
     }
 
-    private fun convertSequencedDeletedGene(sequencedDeletedGene: SequencedDeletedGene): CopyNumber {
-        val canonicalTranscript = canonicalTranscriptIdForGene(sequencedDeletedGene.gene)
-        val isCanonicalTranscript = canonicalTranscript == sequencedDeletedGene.transcript || sequencedDeletedGene.transcript == null
-        val transcriptId = sequencedDeletedGene.transcript ?: run {
-            logger.warn("No transcript provided for panel deletion in gene ${sequencedDeletedGene.gene}, using canonical transcript")
+    private fun convertSequencedDeletedGene(sequencedDeletion: SequencedDeletion): CopyNumber {
+        val canonicalTranscript = canonicalTranscriptIdForGene(sequencedDeletion.gene)
+        val isCanonicalTranscript = canonicalTranscript == sequencedDeletion.transcript || sequencedDeletion.transcript == null
+        val transcriptId = sequencedDeletion.transcript ?: run {
+            logger.warn("No transcript provided for panel deletion in gene ${sequencedDeletion.gene}, using canonical transcript")
             canonicalTranscript
         }
         val canonicalImpact = TranscriptCopyNumberImpact(
@@ -89,12 +90,12 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         )
 
         return CopyNumber(
-            gene = sequencedDeletedGene.gene,
+            gene = sequencedDeletion.gene,
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null,
             isReportable = true,
-            event = "${sequencedDeletedGene.gene} del",
+            event = "${sequencedDeletion.gene} del",
             driverLikelihood = DriverLikelihood.HIGH,
             evidence = ExtractionUtil.noEvidence(),
             canonicalImpact = canonicalImpact,
