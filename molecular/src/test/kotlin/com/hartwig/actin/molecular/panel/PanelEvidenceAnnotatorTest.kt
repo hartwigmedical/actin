@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
@@ -10,11 +9,14 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
-import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
+import com.hartwig.actin.molecular.driverlikelihood.TEST_ONCO_DNDS_TSV
+import com.hartwig.actin.molecular.driverlikelihood.TEST_TSG_DNDS_TSV
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 import io.mockk.every
@@ -39,73 +41,39 @@ private val AMPLIFICATION = TestGeneAlterationFactory.createGeneAlteration("gene
 
 private const val ALT = "T"
 private const val REF = "G"
-private const val TRANSCRIPT = "transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
-private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 
-private val VARIANT = Variant(
+private val VARIANT = TestMolecularFactory.createMinimalVariant().copy(
     chromosome = CHROMOSOME,
     position = POSITION,
     ref = REF,
     alt = ALT,
-    type = VariantType.SNV,
-    variantAlleleFrequency = null,
-    canonicalImpact = TranscriptVariantImpact(
-        transcriptId = TRANSCRIPT,
-        codingEffect = CodingEffect.MISSENSE,
-        hgvsCodingImpact = HGVS_CODING,
-        hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
-        isSpliceRegion = false,
-        affectedExon = 1,
-        affectedCodon = 1,
-        effects = emptySet()
-    ),
-    otherImpacts = emptySet(),
-    isHotspot = true,
-    isReportable = true,
-    event = "$GENE M1L",
-    driverLikelihood = null,
-    evidence = ClinicalEvidence(emptySet(), emptySet()),
-    gene = GENE,
-    geneRole = GeneRole.ONCO,
-    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-    isAssociatedWithDrugResistance = true
+    type = VariantType.SNV
 )
 
-private val HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
+private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 
-// TODO: review changes in previous PanelVariantAnnotatorTest and make sure we cover all cases from the original test either here
-// or in the updated PanelVariantAnnotatorTest
+private val HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
+private val NON_HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
+
 class PanelEvidenceAnnotatorTest {
 
-    private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { evidenceForVariant(any()) } returns ACTIONABILITY_MATCH_FOR_VARIANT
-        every { alterationForVariant(any()) } returns HOTSPOT
-
-        every { evidenceForFusion(any()) } returns ACTIONABILITY_MATCH_FOR_FUSION
-        every { lookupKnownFusion(any()) } returns KNOWN_FUSION
-
-        every { evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH_FOR_COPY_NUMBER
-        every { alterationForCopyNumber(any()) } returns AMPLIFICATION
-    }
-
-    private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
-        every { evaluate(any(), any(), any()) } returns null
-        every {
-            evaluate(GENE, GeneRole.ONCO, any())
-        } returns 0.9
-    }
-
+    private val evidenceDatabase = mockk<EvidenceDatabase>()
+    private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
     private val panelEvidenceAnnotator = PanelEvidenceAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
 
     @Test
-    fun `Should annotate variant`() {
+    fun `Should annotate variant that is hotspot`() {
+        every { evidenceDatabase.evidenceForVariant(any()) } returns ACTIONABILITY_MATCH_FOR_VARIANT
+        every { evidenceDatabase.alterationForVariant(any()) } returns HOTSPOT
+
         val panelRecord = panelRecordWith(VARIANT)
         val annotatedPanelRecord = panelEvidenceAnnotator.annotate(panelRecord)
 
         assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
         val annotatedVariant = annotatedPanelRecord.drivers.variants.first()
+        assertThat(annotatedVariant.isHotspot).isTrue
         assertThat(annotatedVariant.evidence).isEqualTo(ACTIONABILITY_MATCH_FOR_VARIANT)
         assertThat(annotatedVariant.geneRole).isEqualTo(actinGeneRole.ONCO)
         assertThat(annotatedVariant.proteinEffect).isEqualTo(actinProteinEffect.GAIN_OF_FUNCTION)
@@ -114,7 +82,40 @@ class PanelEvidenceAnnotatorTest {
     }
 
     @Test
+    fun `Should annotate variant that is not a hotspot`() {
+        every { evidenceDatabase.evidenceForVariant(any()) } returns ACTIONABILITY_MATCH_FOR_VARIANT
+        every { evidenceDatabase.alterationForVariant(any()) } returns NON_HOTSPOT
+
+        val panelRecord = panelRecordWith(VARIANT.copy(isHotspot = false))
+        val annotatedPanelRecord = panelEvidenceAnnotator.annotate(panelRecord)
+
+        assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
+        val annotatedVariant = annotatedPanelRecord.drivers.variants.first()
+        assertThat(annotatedVariant.isHotspot).isFalse
+        assertThat(annotatedVariant.evidence).isEqualTo(ACTIONABILITY_MATCH_FOR_VARIANT)
+        assertThat(annotatedVariant.geneRole).isEqualTo(actinGeneRole.ONCO)
+        assertThat(annotatedVariant.proteinEffect).isEqualTo(actinProteinEffect.NO_EFFECT)
+        assertThat(annotatedVariant.isAssociatedWithDrugResistance).isFalse
+        assertThat(annotatedVariant.driverLikelihood).isNull()
+    }
+
+    @Test
+    fun `Should not annotate with evidence when no matches found`() {
+        every { evidenceDatabase.evidenceForVariant(any()) } returns EMPTY_MATCH
+        every { evidenceDatabase.alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+
+        val panelRecord = panelRecordWith(VARIANT.copy(gene = "other gene"))
+        val annotatedPanelRecord = panelEvidenceAnnotator.annotate(panelRecord)
+        assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
+        assertThat(annotatedPanelRecord.drivers.variants.first().evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
+
+    }
+
+    @Test
     fun `Should annotate fusion`() {
+        every { evidenceDatabase.evidenceForFusion(any()) } returns ACTIONABILITY_MATCH_FOR_FUSION
+        every { evidenceDatabase.lookupKnownFusion(any()) } returns KNOWN_FUSION
+
         val panelRecord = panelRecordWith(TestMolecularFactory.createMinimalFusion())
         val annotatedPanelRecord = panelEvidenceAnnotator.annotate(panelRecord)
 
@@ -128,6 +129,9 @@ class PanelEvidenceAnnotatorTest {
 
     @Test
     fun `Should annotate copy number`() {
+        every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH_FOR_COPY_NUMBER
+        every { evidenceDatabase.alterationForCopyNumber(any()) } returns AMPLIFICATION
+
         val panelRecord = panelRecordWith(TestMolecularFactory.createMinimalCopyNumber())
         val annotatedPanelRecord = panelEvidenceAnnotator.annotate(panelRecord)
 

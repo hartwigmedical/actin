@@ -9,9 +9,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
@@ -128,7 +125,6 @@ class PanelVariantAnnotator(
         canonicalImpact = canonicalImpact(paveResponse.impact, transvarAnnotation),
         otherImpacts = otherImpacts(paveResponse, transvarAnnotation),
         isHotspot = false,
-
         isReportable = true,
         event = "${variant.gene} ${eventString(paveResponse)}",
         driverLikelihood = null,
