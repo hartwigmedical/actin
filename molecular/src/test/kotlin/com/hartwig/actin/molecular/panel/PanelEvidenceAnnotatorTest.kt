@@ -8,13 +8,14 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 import io.mockk.every
 import io.mockk.mockk
@@ -22,7 +23,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole as actinGeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect as actinProteinEffect
-import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as serveProteinEffect
 
 private val ACTIONABILITY_MATCH_FOR_VARIANT = mockk<ClinicalEvidence>()
@@ -34,23 +34,14 @@ private val KNOWN_FUSION = mockk<KnownFusion> {
 }
 
 private val ACTIONABILITY_MATCH_FOR_COPY_NUMBER = mockk<ClinicalEvidence>()
-private val GENE_ALTERATION = mockk<GeneAlteration> {
-    every { geneRole() } returns ServeGeneRole.ONCO
-    every { proteinEffect() } returns serveProteinEffect.GAIN_OF_FUNCTION
-    every { associatedWithDrugResistance() } returns true
-}
+
+private val AMPLIFICATION = TestGeneAlterationFactory.createGeneAlteration("gene 1", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true)
 
 private const val ALT = "T"
 private const val REF = "G"
 private const val TRANSCRIPT = "transcript"
-private const val GENE_ID = "gene_id"
-private const val OTHER_TRANSCRIPT = "other_transcript"
-private const val OTHER_GENE = "other_gene"
-private const val OTHER_GENE_ID = "other_gene_id"
-private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
-private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 
 private val VARIANT = Variant(
@@ -82,31 +73,27 @@ private val VARIANT = Variant(
     isAssociatedWithDrugResistance = true
 )
 
+private val HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
+
+// TODO: review changes in previous PanelVariantAnnotatorTest and make sure we cover all cases from the original test either here
+// or in the updated PanelVariantAnnotatorTest
 class PanelEvidenceAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns ACTIONABILITY_MATCH_FOR_VARIANT
-        every { geneAlterationForVariant(any()) } returns GENE_ALTERATION
+        every { alterationForVariant(any()) } returns HOTSPOT
 
         every { evidenceForFusion(any()) } returns ACTIONABILITY_MATCH_FOR_FUSION
         every { lookupKnownFusion(any()) } returns KNOWN_FUSION
 
         every { evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH_FOR_COPY_NUMBER
-        every { geneAlterationForCopyNumber(any()) } returns GENE_ALTERATION
+        every { alterationForCopyNumber(any()) } returns AMPLIFICATION
     }
-
-    // TODO unfortunate, this is intermediate and needed for the driver likelihood model, possible to refactor?
-    val VARIANT_WITH_GENE_ALTERATION = VARIANT.copy(
-        geneRole = GeneRole.ONCO,
-        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-        isAssociatedWithDrugResistance = true,
-        isHotspot = false,  // TODO check how this get set
-    )
 
     private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
         every { evaluate(any(), any(), any()) } returns null
         every {
-            evaluate(GENE, GeneRole.ONCO, listOf(VARIANT_WITH_GENE_ALTERATION))
+            evaluate(GENE, GeneRole.ONCO, any())
         } returns 0.9
     }
 

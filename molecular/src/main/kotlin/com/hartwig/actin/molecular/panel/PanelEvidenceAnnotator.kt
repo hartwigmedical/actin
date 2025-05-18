@@ -4,19 +4,17 @@ import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 
 class PanelEvidenceAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
 ) : MolecularAnnotator<PanelRecord, PanelRecord> {
-    
+
     override fun annotate(input: PanelRecord): PanelRecord {
         return annotateWithClinicalEvidence(annotateWithDriverAttributes(input))
     }
@@ -47,15 +45,13 @@ class PanelEvidenceAnnotator(
     }
 
     private fun annotateVariantWithGeneAlteration(variant: Variant): Variant {
-        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
-        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
+        val alteration = evidenceDatabase.alterationForVariant(variant)
 
         return variant.copy(
-            isHotspot = isHotspot(serveGeneAlteration),
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+            isHotspot = alteration.isHotspot,
+            geneRole = alteration.geneRole,
+            proteinEffect = alteration.proteinEffect,
+            isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
     }
 
@@ -63,7 +59,6 @@ class PanelEvidenceAnnotator(
         val variantsByGene = variants.groupBy { it.gene }
         return variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()
-            println("${it.value}")
             val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
             likelihood to it.value
         }.flatMap {
@@ -76,24 +71,18 @@ class PanelEvidenceAnnotator(
     }
 
     private fun annotatedCopyNumberWithDriverAttributes(copyNumber: CopyNumber): CopyNumber {
-        val geneAlteration = GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
-
+        val alteration = evidenceDatabase.alterationForCopyNumber(copyNumber)
         return copyNumber.copy(
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+            geneRole = alteration.geneRole,
+            proteinEffect = alteration.proteinEffect,
+            isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
     }
 
     private fun annotateFusionWithDriverAttributes(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
-
-        val proteinEffect = when (knownFusion) {
-            null -> ProteinEffect.UNKNOWN
-            else -> GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
-        }
-
-        val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
+        val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
+        val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
+        val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
 
         return fusion.copy(
             proteinEffect = proteinEffect,
@@ -102,8 +91,7 @@ class PanelEvidenceAnnotator(
     }
 
     private fun annotateVariantWithClinicalEvidence(variant: Variant): Variant {
-        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-        val evidence = evidenceDatabase.evidenceForVariant(criteria)
+        val evidence = evidenceDatabase.evidenceForVariant(variant)
         return variant.copy(evidence = evidence)
     }
 
@@ -113,8 +101,7 @@ class PanelEvidenceAnnotator(
     }
 
     private fun annotateFusionWithClinicalEvidence(fusion: Fusion): Fusion {
-        val matchingCriteria = MatchingCriteriaFunctions.createFusionCriteria(fusion)
-        val evidence = evidenceDatabase.evidenceForFusion(matchingCriteria)
+        val evidence = evidenceDatabase.evidenceForFusion(fusion)
         return fusion.copy(evidence = evidence)
     }
 }
