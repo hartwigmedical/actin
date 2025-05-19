@@ -85,7 +85,7 @@
         "bestResponse": null,
         "stopReason": null,
         "stopReasonDetail": null,
-        "switchToTreatments": [],
+        "switchToTreatments": null,
         "maintenanceTreatment": null,
         "toxicities": null,
         "bodyLocationCategories": null,
@@ -175,7 +175,7 @@
     {
       "item": "ERBB2",
       "measure": null,
-      "measureDate": null,
+      "measureDate": "2020-01-01",
       "scoreText": null,
       "scoreValuePrefix": null,
       "scoreValue": 3.0,
@@ -190,13 +190,15 @@
       "variants": [
         {
           "gene": "KRAS",
-          "hgvsCodingImpact": "c.34G>T"
+          "hgvsCodingImpact": "c.34G>T",
+          "hgvsProteinImpact": "p.G12F"
         }
       ],
-      "fusions": [],
       "amplifications": [],
+      "deletions": [],
+      "fusions": [],
       "skippedExons": [],
-      "deletedGenes": []
+      "negativeResults": []
     }
   ],
   "labValues": [
@@ -302,7 +304,74 @@
       "product": "Erytrocytes Filtered"
     }
   ],
-  "medications": null,
+  "medications": [
+    {
+      "name": "METOCLOPRAMIDE TABLET 10MG",
+      "atcCode": "N02BE01",
+      "startDate": "2020-01-01",
+      "stopDate": "2020-01-01",
+      "administrationRoute": "oraal",
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "piece",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "cypInteractions": [],
+      "transporterInteractions": [],
+      "qtProlongatingRisk": "NONE",
+      "isTrialMedication": true,
+      "isSelfCare": true
+    },
+    {
+      "name": "paracetamol",
+      "atcCode": "N02BE01",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "startDate": "2020-01-01",
+      "stopDate": "2020-01-01",
+      "administrationRoute": "oraal",
+      "dosage": {
+        "minDosage": 3.5,
+        "maxDosage": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "cypInteractions": [],
+      "transporterInteractions": [],
+      "qtProlongatingRisk": "NONE",
+      "isTrialMedication": false,
+      "isSelfCare": false
+    }
+  ],
   "pathologyReports": [
     {
       "tissueId": "T-1000090",
@@ -310,14 +379,7 @@
       "diagnosis": "diagnosis",
       "tissueDate": "2020-01-01",
       "authorisationDate": "2020-01-02",
-      "report": "RawPathologyReport"
-    },
-    {
-      "tissueId": "T-1000091",
-      "lab": "ext lab",
-      "diagnosis": "diagnosis",
-      "reportDate": "2020-02-01",
-      "report": "Raw Pathology Report"
+      "report": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\n\n\nimmunohistochemie ERBB2 3+\n\n"
     }
   ]
 }

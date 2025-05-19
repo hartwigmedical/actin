@@ -12,10 +12,11 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMedication
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientDetail
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedPatientRecord
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedTumorDetail
+import com.hartwig.feed.datamodel.FeedDosage
+import com.hartwig.feed.datamodel.FeedMedication
+import com.hartwig.feed.datamodel.FeedPatientDetail
+import com.hartwig.feed.datamodel.FeedPatientRecord
+import com.hartwig.feed.datamodel.FeedTumorDetail
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -33,21 +34,25 @@ class StandardMedicationExtractorTest {
     private val atcClassification = atcClassification()
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val extractor = StandardMedicationExtractor(atcModel, drugInteractionsDatabase, qtProlongatingDatabase, treatmentDatabase)
-    private val providedMedication = ProvidedMedication(
+    private val providedMedication = FeedMedication(
         name = MEDICATION_NAME,
         atcCode = "atc",
         administrationRoute = "route",
-        dosage = 1.0,
-        dosageUnit = "unit",
-        frequency = 2.0,
-        frequencyUnit = "unit",
-        periodBetweenDosagesValue = 3.0,
-        periodBetweenDosagesUnit = "unit",
-        administrationOnlyIfNeeded = false,
+        dosage = FeedDosage(
+            1.0,
+            1.0,
+            dosageUnit = "unit",
+            frequency = 2.0,
+            frequencyUnit = "unit",
+            periodBetweenValue = 3.0,
+            periodBetweenUnit = "unit",
+            ifNeeded = false,
+        ),
         startDate = LocalDate.of(2024, 2, 26),
         endDate = LocalDate.of(2024, 2, 26),
         isTrial = false,
-        isSelfCare = false
+        isSelfCare = false,
+        dosageInstruction = null
     )
     private val medication = Medication(
         name = ATC_NAME,
@@ -67,16 +72,16 @@ class StandardMedicationExtractorTest {
         cypInteractions = emptyList(),
         transporterInteractions = emptyList()
     )
-    private val ehrPatientRecord = ProvidedPatientRecord(
-        patientDetails = ProvidedPatientDetail(
+    private val ehrPatientRecord = FeedPatientRecord(
+        patientDetails = FeedPatientDetail(
             birthYear = 1980,
             gender = "MALE",
             registrationDate = LocalDate.of(2024, 2, 26),
-            hashedId = "hashedId",
+            patientId = "hashedId",
             hartwigMolecularDataExpected = false
         ),
         medications = listOf(providedMedication),
-        tumorDetails = ProvidedTumorDetail(
+        tumorDetails = FeedTumorDetail(
             diagnosisDate = LocalDate.of(2024, 2, 23),
             tumorLocation = "tumorLocation",
             tumorType = "tumorType",
@@ -194,7 +199,7 @@ class StandardMedicationExtractorTest {
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
-    private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {
+    private fun noAtcLookupTest(modifiedMedication: FeedMedication, expected: Medication) {
         every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
         every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
         every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()

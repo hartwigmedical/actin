@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
@@ -16,10 +17,11 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
+import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
+import com.hartwig.actin.molecular.driverlikelihood.TEST_ONCO_DNDS_TSV
+import com.hartwig.actin.molecular.driverlikelihood.TEST_TSG_DNDS_TSV
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
@@ -36,8 +38,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
 private const val REF = "G"
@@ -82,18 +82,21 @@ private val VARIANT = Variant(
     isAssociatedWithDrugResistance = true
 )
 
-private val VARIANT_MATCH_CRITERIA =
-    VariantMatchCriteria(
-        gene = GENE,
-        codingEffect = CodingEffect.MISSENSE,
-        type = VariantType.SNV,
-        chromosome = CHROMOSOME,
-        position = POSITION,
-        ref = REF,
-        alt = ALT,
-        driverLikelihood = DriverLikelihood.HIGH,
-        isReportable = true,
-    )
+private val UNANNOTATED_VARIANT = VARIANT.copy(
+    isHotspot = false,
+    geneRole = GeneRole.UNKNOWN,
+    proteinEffect = ProteinEffect.UNKNOWN,
+    driverLikelihood = null,
+    isAssociatedWithDrugResistance = null,
+)
+
+private val ANNOTATED_VARIANT = VARIANT.copy(
+    isHotspot = true,
+    geneRole = GeneRole.ONCO,
+    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+    driverLikelihood = DriverLikelihood.HIGH,
+    isAssociatedWithDrugResistance = true,
+)
 
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
@@ -136,23 +139,21 @@ private val PAVE_ANNOTATION = PaveResponse(
     transcriptImpact = emptyList()
 )
 
-private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(ServeGeneRole.ONCO)
-    .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
-    .withAssociatedWithDrugResistance(true)
+private val HOTSPOT =
+    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
+
+private val NON_HOTSPOT =
+    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
 
 class PanelVariantAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { geneAlterationForVariant(any()) } returns null
-        every { geneAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
+        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+        every { alterationForVariant(UNANNOTATED_VARIANT.copy(driverLikelihood = null)) } returns HOTSPOT
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
+        every { evidenceForVariant(ANNOTATED_VARIANT) } returns ACTIONABILITY_MATCH
     }
-    private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
-        every { evaluate(any(), any(), any()) } returns null
-        every { evaluate(GENE, GeneRole.ONCO, listOf(VARIANT)) } returns 0.9
-    }
+    private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
     private val transvarAnnotator = mockk<VariantAnnotator> {
         every { resolve(any(), null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
     }
@@ -185,15 +186,36 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variants with gene alteration data`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
-        assertThat(annotated.isHotspot).isTrue()
         assertThat(annotated.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(annotated.isAssociatedWithDrugResistance).isTrue()
     }
 
     @Test
-    fun `Should annotate variants with driver likelihood`() {
+    fun `Should annotate variant that is hotspot`() {
+        val evidenceDatabase = mockk<EvidenceDatabase> {
+            every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+            every { alterationForVariant(UNANNOTATED_VARIANT) } returns HOTSPOT
+            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+            every { evidenceForVariant(VARIANT) } returns ACTIONABILITY_MATCH
+        }
+        val annotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
+        assertThat(annotated.isHotspot).isTrue()
         assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+    }
+
+    @Test
+    fun `Should annotate variant that is no hotspot`() {
+        val evidenceDatabase = mockk<EvidenceDatabase> {
+            every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_HOTSPOT
+            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+            every { evidenceForVariant(VARIANT) } returns ACTIONABILITY_MATCH
+        }
+        val annotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
+        assertThat(annotated.isHotspot).isFalse()
+        assertThat(annotated.driverLikelihood).isNull()
     }
 
     @Test
@@ -357,43 +379,6 @@ class PanelVariantAnnotatorTest {
                 )
             )
         ).isEqualTo("something&another_thing")
-    }
-
-    @Test
-    fun `Should determine hotspot from gene alteration`() {
-        assertThat(
-            isHotspot(
-                TestServeKnownFactory.hotspotBuilder()
-                    .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
-                    .build()
-            )
-        ).isTrue()
-
-        assertThat(
-            isHotspot(
-                TestServeKnownFactory.hotspotBuilder()
-                    .proteinEffect(ServeProteinEffect.NO_EFFECT)
-                    .build()
-            )
-        ).isFalse()
-
-        assertThat(
-            isHotspot(
-                TestServeKnownFactory.codonBuilder()
-                    .proteinEffect(ServeProteinEffect.LOSS_OF_FUNCTION)
-                    .build()
-            )
-        ).isTrue()
-
-        assertThat(
-            isHotspot(
-                TestServeKnownFactory.exonBuilder()
-                    .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
-                    .build()
-            )
-        ).isFalse()
-
-        assertThat(isHotspot(null)).isFalse()
     }
 
     private fun minimalPaveImpact() = PaveImpact(

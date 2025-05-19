@@ -292,6 +292,38 @@ object TestMolecularFactory {
         isAssociatedWithDrugResistance = null
     )
 
+    fun createMinimalVariant() = Variant(
+        chromosome = "",
+        position = 0,
+        ref = "",
+        alt = "",
+        type = VariantType.UNDEFINED,
+        variantAlleleFrequency = null,
+        canonicalImpact = createMinimalTranscriptImpact(),
+        otherImpacts = emptySet(),
+        extendedVariantDetails = null,
+        isHotspot = false,
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+        gene = "",
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null,
+    )
+
+    fun createMinimalTranscriptImpact() = TranscriptVariantImpact(
+        transcriptId = "",
+        hgvsCodingImpact = "",
+        hgvsProteinImpact = "",
+        affectedCodon = 0,
+        affectedExon = null,
+        isSpliceRegion = null,
+        effects = emptySet(),
+        codingEffect = CodingEffect.NONE,
+    )
+
     fun createProperVariant() = Variant(
         chromosome = "7",
         position = 140453136,
@@ -321,6 +353,22 @@ object TestMolecularFactory {
         geneRole = GeneRole.ONCO,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isAssociatedWithDrugResistance = true,
+    )
+
+    fun createMinimalFusion() = Fusion(
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+        geneStart = "",
+        geneEnd = "",
+        proteinEffect = ProteinEffect.UNKNOWN,
+        driverType = FusionDriverType.NONE,
+        isAssociatedWithDrugResistance = null,
+        geneTranscriptStart = null,
+        geneTranscriptEnd = null,
+        fusedExonUp = 0,
+        fusedExonDown = 0,
     )
 
     fun createProperFusion() = Fusion(

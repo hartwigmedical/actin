@@ -7,7 +7,6 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -20,7 +19,7 @@ private const val GENE = "gene1"
 private const val GENE2 = "gene2"
 private const val CODING = "coding"
 private const val PROTEIN = "protein"
-private val SEQUENCING_TEST = SequencingTest(test = TEST)
+private val SEQUENCING_TEST = SequencingTest(test = TEST, knownSpecifications = false)
 
 
 class SequencingTestExtractorTest {
@@ -46,7 +45,8 @@ class SequencingTestExtractorTest {
         every { testResultCuration.find(TEST) } returns setOf(
             SequencingTestResultConfig(
                 input = TEST,
-                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
+                gene = GENE,
+                hgvsCodingImpact = CODING
             )
         )
         val result = extractor.extract(PATIENT_ID, questionnaire)
@@ -64,7 +64,8 @@ class SequencingTestExtractorTest {
         every { testResultCuration.find(TEST) } returns setOf(
             SequencingTestResultConfig(
                 input = TEST,
-                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
+                gene = GENE,
+                hgvsCodingImpact = CODING
             )
         )
         val result = extractor.extract(PATIENT_ID, questionnaire)
@@ -115,12 +116,14 @@ class SequencingTestExtractorTest {
             SequencingTestResultConfig(
                 input = TEST,
                 ignore = false,
-                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
+                gene = GENE,
+                hgvsCodingImpact = CODING
             ),
             SequencingTestResultConfig(
                 input = TEST,
                 ignore = true,
-                curated = ProvidedMolecularTestResult(gene = GENE2, hgvsProteinImpact = PROTEIN)
+                gene = GENE2,
+                hgvsProteinImpact = PROTEIN
             )
         )
         val result = extractor.extract(PATIENT_ID, questionnaire.copy(ihcTestResults = listOf(TEST)))
@@ -134,12 +137,14 @@ class SequencingTestExtractorTest {
             SequencingTestResultConfig(
                 input = TEST,
                 ignore = false,
-                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
+                gene = GENE,
+                hgvsCodingImpact = CODING
             ),
             SequencingTestResultConfig(
                 input = TEST,
                 ignore = false,
-                curated = ProvidedMolecularTestResult(gene = GENE2, hgvsProteinImpact = PROTEIN)
+                gene = GENE2,
+                hgvsProteinImpact = PROTEIN
             )
         )
         val result = extractor.extract(PATIENT_ID, questionnaire.copy(ihcTestResults = listOf(TEST)))

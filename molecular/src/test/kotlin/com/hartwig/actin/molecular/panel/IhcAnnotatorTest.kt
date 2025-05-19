@@ -10,9 +10,9 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private val TEST_DATE = LocalDate.of(2023, 1, 1)
 private const val POSITIVE_FUSION_GENE = "ALK"

@@ -1,64 +1,95 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
+import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedNegativeResult
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 
 object StandardSequencingTestExtractorFunctions {
 
-    fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
-        allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene, it.transcript) } }.toSet()
+    fun variants(results: Set<SequencingTestResultConfig>) =
+        results.filter { result -> result.hgvsCodingImpact != null || result.hgvsProteinImpact != null }
+            .map { result ->
+                SequencedVariant(
+                    gene = result.gene
+                        ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
+                    hgvsCodingImpact = result.hgvsCodingImpact,
+                    hgvsProteinImpact = result.hgvsProteinImpact,
+                    transcript = result.transcript,
+                    variantAlleleFrequency = result.vaf,
+                    exon = result.exon,
+                    codon = result.codon
+                )
+            }.toSet()
 
-    fun tmb(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.tmb }
+    fun amplifications(results: Set<SequencingTestResultConfig>) =
+        results.mapNotNull { result ->
+            result.amplifiedGene?.let { amplifiedGene ->
+                if (configuredGenesAreNotEqual(result.gene, amplifiedGene)) {
+                    throw IllegalArgumentException("Gene must be equal to amplifiedGene if both are set.")
+                }
+                SequencedAmplification(amplifiedGene, result.transcript)
+            }
+        }.toSet()
 
-    fun msi(results: Set<ProvidedMolecularTestResult>) =
-        results.firstNotNullOfOrNull { result -> result.msi }
+    fun deletions(results: Set<SequencingTestResultConfig>) =
+        results.mapNotNull { result ->
+            result.deletedGene?.let { deletedGene ->
+                if (configuredGenesAreNotEqual(result.gene, deletedGene)) {
+                    throw IllegalArgumentException("Gene must be equal to deletedGene if both are set.")
+                }
+                SequencedDeletion(deletedGene, result.transcript)
+            }
+        }.toSet()
 
-    fun skippedExons(
-        results: Set<ProvidedMolecularTestResult>
-    ) = results.mapNotNull { result ->
+
+    fun tmb(results: Set<SequencingTestResultConfig>) = results.firstNotNullOfOrNull { result -> result.tmb }
+
+    fun msi(results: Set<SequencingTestResultConfig>) = results.firstNotNullOfOrNull { result -> result.msi }
+
+    fun negativeResults(results: Set<SequencingTestResultConfig>) = results.filter { result -> result.noMutationsFound == true }.map {
+        SequencedNegativeResult(
+            it.gene
+                ?: throw IllegalArgumentException("Result with no mutations found but no gene was specified. Please add gene to curation of ${it.input}")
+        )
+    }.toSet()
+
+    fun skippedExons(results: Set<SequencingTestResultConfig>) = results.mapNotNull { result ->
         result.exonSkipStart?.let { exonSkipStart ->
             SequencedSkippedExons(
-                result.gene!!,
-                result.exonSkipStart!!,
-                result.exonSkipEnd ?: exonSkipStart,
-                result.transcript
+                gene = result.gene!!,
+                exonStart = exonSkipStart,
+                exonEnd = result.exonSkipEnd ?: exonSkipStart,
+                transcript = result.transcript
             )
         }
     }.toSet()
 
-    fun amplifications(results: Set<ProvidedMolecularTestResult>) =
-        results.mapNotNull { it.amplifiedGene?.let { gene -> SequencedAmplification(gene, it.transcript) } }.toSet()
-
-    fun fusions(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
+    fun fusions(results: Set<SequencingTestResultConfig>): Set<SequencedFusion> {
+        val fusionResults = results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
+        if (fusionResults.any {
+                configuredGenesAreNotEqual(it.gene, it.fusionGeneUp) && configuredGenesAreNotEqual(it.gene, it.fusionGeneDown)
+            }) {
+            throw IllegalArgumentException("Gene must be equal to fusionGeneUp or fusionGeneDown if gene is set")
+        }
+        return fusionResults
             .map { result ->
                 SequencedFusion(
-                    result.fusionGeneUp,
-                    result.fusionGeneDown,
-                    result.fusionTranscriptUp,
-                    result.fusionTranscriptDown,
-                    result.fusionExonUp,
-                    result.fusionExonDown
+                    geneUp = result.fusionGeneUp,
+                    geneDown = result.fusionGeneDown,
+                    transcriptUp = result.fusionTranscriptUp,
+                    transcriptDown = result.fusionTranscriptDown,
+                    exonUp = result.fusionExonUp,
+                    exonDown = result.fusionExonDown
                 )
-            }.toSet()
+            }
+            .toSet()
+    }
 
-    fun variants(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.hgvsCodingImpact != null || result.hgvsProteinImpact != null }
-            .map { result ->
-                SequencedVariant(
-                    result.vaf,
-                    result.gene
-                        ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
-                    result.hgvsCodingImpact,
-                    result.hgvsProteinImpact,
-                    result.transcript,
-                    result.codon,
-                    result.exon
-                )
-            }.toSet()
+    private fun configuredGenesAreNotEqual(gene1: String?, gene2: String?): Boolean {
+        return (gene1 != null && gene2 != null && gene1 != gene2)
+    }
 }

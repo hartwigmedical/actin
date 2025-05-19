@@ -28,7 +28,6 @@ enum class ActivationWarningType(val description: String? = null) {
         "Potentially activating mutation(s) that have high driver likelihood " +
                 "but also have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)}"
     ),
-    NON_HIGH_DRIVER_GAIN_OF_FUNCTION,
     NON_HIGH_DRIVER_SUBCLONAL,
     NON_HIGH_DRIVER,
     OTHER_MISSENSE_OR_HOTSPOT
@@ -94,7 +93,6 @@ class GeneHasActivatingMutation(
                     eventsByWarningType[ActivationWarningType.NON_ONCOGENE],
                     eventsByWarningType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION],
                     eventsByWarningType[ActivationWarningType.SUBCLONAL],
-                    eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER],
                     eventsByWarningType[ActivationWarningType.OTHER_MISSENSE_OR_HOTSPOT],
@@ -124,9 +122,7 @@ class GeneHasActivatingMutation(
                     else -> profile(variant.event, activating = true)
                 }
             } else {
-                if (isGainOfFunction) {
-                    profile(variant.event, ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION)
-                } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                     return if (isSubclonal(variant)) {
                         profile(variant.event, ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL)
                     } else {
@@ -161,7 +157,6 @@ class GeneHasActivatingMutation(
         activatingVariantsInNonOncogene: Set<String>?,
         activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>?,
         activatingSubclonalVariants: Set<String>?,
-        nonHighDriverGainOfFunctionVariants: Set<String>?,
         nonHighDriverSubclonalVariants: Set<String>?,
         nonHighDriverVariants: Set<String>?,
         otherMissenseOrHotspotVariants: Set<String>?,
@@ -192,11 +187,6 @@ class GeneHasActivatingMutation(
                     activatingSubclonalVariants,
                     gene + " potentially activating mutation(s) " + activatingSubclonalVariants?.let { concatVariants(it, gene) } +
                             " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
-                ),
-                EventsWithMessages(
-                    nonHighDriverGainOfFunctionVariants,
-                    "$gene potentially activating mutation(s) " + nonHighDriverGainOfFunctionVariants?.let { concatVariants(it, gene) } +
-                            " without high driver prediction but having gain-of-function protein effect evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     nonHighDriverSubclonalVariants,

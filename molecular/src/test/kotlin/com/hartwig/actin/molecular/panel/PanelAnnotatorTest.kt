@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
@@ -44,7 +45,7 @@ class PanelAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { geneAlterationForVariant(any()) } returns null
+        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
     }
     private val panelVariantAnnotator = mockk<PanelVariantAnnotator> {
         every { annotate(any()) } returns emptyList()
@@ -137,6 +138,6 @@ class PanelAnnotatorTest {
     }
 
     private fun createTestSequencingTest(): SequencingTest {
-        return SequencingTest(test = TEST_NAME)
+        return SequencingTest(test = TEST_NAME, knownSpecifications = true)
     }
 }

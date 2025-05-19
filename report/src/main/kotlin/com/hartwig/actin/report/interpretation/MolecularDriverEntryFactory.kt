@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
@@ -13,6 +14,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
@@ -36,9 +38,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromVariant(variant: Variant): MolecularDriverEntry {
-        val mutationTypeString = if (variant.isHotspot) "Hotspot" else "No known hotspot"
-        val biallelicIndicator = if (variant.extendedVariantDetails?.isBiallelic == true) ", biallelic" else ""
-        val driverType = "Mutation ($mutationTypeString$biallelicIndicator)"
+        val mutationTypeString = formatMutationType(variant)
+        val driverType = "Mutation ($mutationTypeString)"
 
         val variantAndTotalCopies = variant.extendedVariantDetails?.let { details ->
             listOf(min(details.variantCopyNumber, details.totalCopyNumber), details.totalCopyNumber)
@@ -50,6 +51,63 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
         return driverEntryForGeneAlteration(driverType, name, variant)
     }
+
+    private fun formatMutationType(variant: Variant): String {
+        return when {
+            variant.isHotspot && variant.proteinEffect == ProteinEffect.UNKNOWN -> {
+                "Hotspot with unknown protein effect"
+            }
+
+            variant.isHotspot && isNoEffect(variant) -> {
+                "Hotspot with no protein effect"
+            }
+
+            isNoEffect(variant) -> {
+                "No protein effect"
+            }
+
+            variant.geneRole == GeneRole.ONCO && isGainOfFunction(variant) -> {
+                "Gain of function"
+            }
+
+            variant.geneRole == GeneRole.TSG && (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT ||
+                    isLossOfFunction(variant)) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "Loss of function, biallelic"
+            }
+
+            variant.geneRole == GeneRole.TSG &&
+                    (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT || isLossOfFunction(variant)) -> {
+                "Loss of function"
+            }
+
+            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)
+                    && variant.isHotspot && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "Hotspot, biallelic"
+            }
+
+            variant.isHotspot -> {
+                "Hotspot"
+            }
+
+            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG) &&
+                    (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "No known hotspot, biallelic"
+            }
+
+            else -> {
+                "No known hotspot"
+            }
+        }
+    }
+
+    private fun isNoEffect(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.NO_EFFECT, ProteinEffect.NO_EFFECT_PREDICTED)
+
+    private fun isGainOfFunction(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.GAIN_OF_FUNCTION, ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+
+    private fun isLossOfFunction(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.LOSS_OF_FUNCTION, ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
 
     private fun formatCopyNumberString(copyNumber: Double): String {
         val boundedCopyNumber = copyNumber.coerceAtLeast(0.0)
