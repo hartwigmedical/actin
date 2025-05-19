@@ -51,6 +51,6 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
     private fun hasAnyMatchingIntent(entry: TreatmentHistoryEntry) = entry.intents?.intersect(intentsToFind)?.isNotEmpty()
 
     private fun historyAfterDate(record: PatientRecord, includeUnknown: Boolean): List<TreatmentHistoryEntry> {
-        return record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate!!, includeUnknown) }
+        return record.oncologicalHistory.filter { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate!!, includeUnknown) }
     }
 }

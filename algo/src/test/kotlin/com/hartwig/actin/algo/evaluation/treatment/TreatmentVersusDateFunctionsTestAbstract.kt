@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import org.junit.Test
 import java.time.LocalDate
 
-abstract class TreatmentSinceDateFunctionsTestAbstract {
+abstract class TreatmentVersusDateFunctionsTestAbstract {
 
     abstract fun functionForDate(minDate: LocalDate): EvaluationFunction
 

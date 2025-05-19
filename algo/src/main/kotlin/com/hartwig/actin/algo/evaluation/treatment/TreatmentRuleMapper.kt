@@ -82,6 +82,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT_WITHIN_Y_WEEKS to hasHadAdjuvantTreatmentWithCategoryWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_WEEKS to hasHadSystemicTherapyWithIntentsWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_AT_LEAST_Y_WEEKS_AGO to hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to { HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(referenceDate) },
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
@@ -425,16 +426,24 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSystemicTherapyWithIntentsWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (intents, weeksAgo) = functionInputResolver().createManyIntentsOneIntegerInput(function)
-            val minDate = referenceDate.minusWeeks(weeksAgo.toLong())
-            HasHadSystemicTherapyWithAnyIntent(intents, minDate, weeksAgo)
+            val (intents, weeks) = functionInputResolver().createManyIntentsOneIntegerInput(function)
+            val refDate = referenceDate.minusWeeks(weeks.toLong())
+            HasHadSystemicTherapyWithAnyIntent(intents, refDate, weeks, true)
+        }
+    }
+
+    private fun hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (intents, weeks) = functionInputResolver().createManyIntentsOneIntegerInput(function)
+            val refDate = referenceDate.minusWeeks(weeks.toLong())
+            HasHadSystemicTherapyWithAnyIntent(intents, refDate, weeks, false)
         }
     }
 
     private fun hasHadSystemicTherapyWithIntentsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createManyIntentsInput(function)
-            HasHadSystemicTherapyWithAnyIntent(input.intents, null, null)
+            HasHadSystemicTherapyWithAnyIntent(input.intents, null, null, null)
         }
     }
 

@@ -9,7 +9,7 @@ import java.time.LocalDate
 class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private val minDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return TreatmentSinceDateFunctions.evaluateTreatmentMatchingPredicateSinceDate(
+        return TreatmentVersusDateFunctions.evaluateTreatmentMatchingPredicateSinceDate(
             record, minDate, "matching '${treatment.display()}'"
         ) { it.name == treatment.name }
     }
