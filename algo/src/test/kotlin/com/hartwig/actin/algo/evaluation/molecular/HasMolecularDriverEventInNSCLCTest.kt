@@ -59,7 +59,7 @@ private val BASE_EXON_SKIPPING_FUSION = BASE_FUSION.copy(
     fusedExonDown = CORRECT_EXON_SKIPPING_EXON.plus(1)
 )
 
-class hasMolecularDriverEventInNSCLCTest {
+class HasMolecularDriverEventInNSCLCTest {
 
     private val functionIncludingAllGenes = HasMolecularDriverEventInNSCLC(null, emptySet())
     private val functionIncludingSpecificGenes = HasMolecularDriverEventInNSCLC(setOf("EGFR", "BRAF"), emptySet())
