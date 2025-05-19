@@ -16,16 +16,17 @@ private val NON_SYSTEMIC_TREATMENT = TreatmentTestFactory.treatment("non systemi
 
 class HasHadSystemicTherapyWithAnyIntentTest {
 
-    private val referenceDate = LocalDate.of(2024, 1, 25)
-    private val refDate = referenceDate.minusMonths(6)
-    private val recentDate = referenceDate.minusMonths(3)
-    private val olderDate = referenceDate.minusMonths(14)
+    private val evaluationDate = LocalDate.of(2024, 1, 25)
+    private val weeksAgo = 20
+    private val refDate = evaluationDate.minusWeeks(weeksAgo.toLong())
+    private val recentDate = evaluationDate.minusWeeks((weeksAgo-6).toLong())
+    private val olderDate = evaluationDate.minusWeeks((weeksAgo+6).toLong())
     private val functionEvaluatingWithinWeeks =
-        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, 6, true)
+        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, weeksAgo, true)
     private val functionEvaluatingBeforeWeeks =
-        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, 6, false)
+        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, weeksAgo, false)
     private val functionWithoutDate = HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, null, null, null)
-    private val functionWithoutIntentsAndWithinWeeks = HasHadSystemicTherapyWithAnyIntent(null, refDate, 6, true)
+    private val functionWithoutIntentsAndWithinWeeks = HasHadSystemicTherapyWithAnyIntent(null, refDate, weeksAgo, true)
 
     @Test
     fun `Should fail with no treatment history`() {
