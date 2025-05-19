@@ -58,9 +58,12 @@ class HasHadSystemicTherapyWithAnyIntent(
                 EvaluationFactory.fail("No $intentsLowercase systemic therapy in prior tumor history")
             }
 
-            evaluateWithinWeeks == true -> EvaluationFactory.fail("All $intentsLowercase systemic therapy is administered more than $weeks weeks ago")
-
-            else -> EvaluationFactory.fail("All $intentsLowercase systemic therapy is not administered at least $weeks weeks ago")
+            else -> EvaluationFactory.fail(
+                if (evaluateWithinWeeks == true)
+                    "All $intentsLowercase systemic therapy is administered more than $weeks weeks ago"
+                else
+                    "All $intentsLowercase systemic therapy is not administered at least $weeks weeks ago"
+            )
         }
     }
 
