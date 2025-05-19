@@ -26,7 +26,7 @@ class HasMolecularDriverEventInNSCLC(
         if (includeGenesAtLeast == true && genesToInclude != null) {
             val evaluation = Or(createEvaluationFunctions(null, genesToIgnore)).evaluate(record)
             val genesToWarn = ALL_GENES - genesToInclude
-            return if (hasEvaluationEventInGenes(evaluation, genesToWarn) && !hasEvaluationEventInGenes(
+            return if (hasPositiveEvaluationEventInGenes(evaluation, genesToWarn) && !hasPositiveEvaluationEventInGenes(
                     evaluation,
                     genesToInclude.toList()
                 )
@@ -63,7 +63,7 @@ class HasMolecularDriverEventInNSCLC(
             genesToInclude?.contains(gene) ?: !genesToIgnore.contains(gene)
         }.map { it.second }
 
-    private fun hasEvaluationEventInGenes(evaluation: Evaluation, genesList: List<String>): Boolean {
+    private fun hasPositiveEvaluationEventInGenes(evaluation: Evaluation, genesList: List<String>): Boolean {
         return genesList.any { gene ->
             evaluation.inclusionMolecularEvents.any { string -> string.contains(gene) }
         } && (evaluation.result == EvaluationResult.PASS || evaluation.result == EvaluationResult.WARN)
