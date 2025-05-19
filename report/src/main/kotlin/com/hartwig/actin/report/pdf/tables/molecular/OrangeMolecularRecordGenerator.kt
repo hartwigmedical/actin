@@ -9,11 +9,11 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.EventWithExternalTrial
 import com.itextpdf.layout.element.Table
 
 class OrangeMolecularRecordGenerator(
-    private val trials: Set<ExternalTrialSummary>,
+    private val trials: Set<EventWithExternalTrial>,
     private val cohorts: List<InterpretedCohort>,
     private val width: Float,
     private val molecular: MolecularRecord,
@@ -62,7 +62,7 @@ class OrangeMolecularRecordGenerator(
     private fun tumorDetailsGenerators(
         molecular: MolecularRecord,
         evaluated: List<InterpretedCohort>,
-        trials: Set<ExternalTrialSummary>
+        trials: Set<EventWithExternalTrial>
     ): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(

@@ -8,7 +8,6 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.action.PdfAction
