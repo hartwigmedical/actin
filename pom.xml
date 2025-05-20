@@ -55,7 +55,7 @@
         <kotlin.code.style>official</kotlin.code.style>
 
         <junit.version>4.13.2</junit.version>
-        <assertj-core.version>3.24.2</assertj-core.version>
+        <assertj-core.version>3.27.3</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
         <jackson.version>2.16.1</jackson.version>
         <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>
