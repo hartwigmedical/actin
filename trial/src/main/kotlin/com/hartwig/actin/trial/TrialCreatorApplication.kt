@@ -78,7 +78,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             trialIngestion.ingest(objectMapper.readValue(File(config.trialConfigJsonPath), object : TypeReference<List<TrialConfig>>() {}))
 
         val outputDirectory = config.outputDirectory
-        when (result) {
+        when (result) { 
             is Either.Right -> {
                 LOGGER.info("Writing ${result.value.size} trials to [$outputDirectory]")
                 TrialJson.write(result.value, outputDirectory)
