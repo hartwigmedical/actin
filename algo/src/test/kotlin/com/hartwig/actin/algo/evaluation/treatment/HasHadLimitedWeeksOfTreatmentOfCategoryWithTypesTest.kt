@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -15,12 +14,11 @@ private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
 private val MATCHING_TREATMENT_SET = setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET))
 
 class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
-    private val functionWithWeeks = HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6)
-
+    private val function = HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6)
 
     @Test
     fun `Should fail for empty treatments`() {
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
     }
 
     @Test
@@ -28,7 +26,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.RADIOTHERAPY)), stopReason = StopReason.TOXICITY
         )
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -38,7 +36,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
                 setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY)),
                 stopReason = StopReason.TOXICITY
             )
-        evaluateFunctions(EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -51,9 +49,9 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
             stopMonth = 4
         )
 
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.PASS,
-            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 
@@ -61,7 +59,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
     fun `Should return undetermined with trial treatment entry with matching category in history`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
-        evaluateFunctions(EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -72,7 +70,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         )
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("test", true)), isTrial = true)
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
@@ -80,11 +78,10 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
 
     @Test
     fun `Should return undetermined for right category type when weeks are missing and weeks requested`() {
-        val treatmentHistoryEntry =
-            TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.TOXICITY, startYear = null)
-        EvaluationAssert.assertEvaluation(
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = null)
+        assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 
@@ -92,19 +89,11 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
     fun `Should fail for right category type when treatment duration more than max weeks and weeks requested`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             MATCHING_TREATMENT_SET,
-            stopReason = StopReason.TOXICITY,
             startYear = 2022,
             startMonth = 3,
             stopYear = 2022,
             stopMonth = 6
         )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
-        )
-    }
-
-    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
-        EvaluationAssert.assertEvaluation(expected, functionWithWeeks.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 }
