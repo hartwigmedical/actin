@@ -73,12 +73,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES to hasHadLimitedTreatmentsOfCategoryCreator(true),
             EligibilityRule.HAS_NOT_HAD_CATEGORY_X_TREATMENT_OR_AT_MOST_Y_LINES to hasHadLimitedTreatmentsOfCategoryCreator(false),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentsOfCategoryWithTypesCreator(),
-            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(true),
-            EligibilityRule.HAS_NOT_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_OR_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(false),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesCreator(true),
+            EligibilityRule.HAS_NOT_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_OR_AT_MOST_Z_LINES to hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesCreator(false),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITH_STOP_REASON_OTHER_THAN_PD to hasHadTreatmentsOfCategoryWithTypesAndStopReasonNotPDCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS_WITH_STOP_REASON_OTHER_THAN_PD
                     to hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDCreator(),
-            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS to hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfTypesAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT_WITHIN_Y_WEEKS to hasHadAdjuvantTreatmentWithCategoryWithinWeeksCreator(),
@@ -386,7 +386,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadLimitedTreatmentsOfCategoryWithTypesCreator(treatmentIsRequired: Boolean): FunctionCreator {
+    private fun hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesCreator(treatmentIsRequired: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
             HasHadLimitedTreatmentsWithCategoryOfTypes(input.category, input.types, input.integer, treatmentIsRequired)
@@ -407,7 +407,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadLimitedTreatmentsOfCategoryWithTypesCreator(): FunctionCreator {
+    private fun hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
             HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(input.category, input.types, input.integer)
