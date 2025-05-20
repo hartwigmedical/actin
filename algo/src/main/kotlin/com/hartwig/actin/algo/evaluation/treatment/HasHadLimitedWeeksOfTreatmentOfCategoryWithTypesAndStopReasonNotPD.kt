@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
-class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
+class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
     private val category: TreatmentCategory, private val types: Set<TreatmentType>,
     private val maxWeeks: Int?
 ) : EvaluationFunction {
