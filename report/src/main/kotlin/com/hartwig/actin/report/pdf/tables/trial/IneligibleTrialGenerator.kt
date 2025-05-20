@@ -34,17 +34,14 @@ class IneligibleTrialGenerator(
         val ineligibilityColWidth = 3f
         val configColWidth = 3f
 
-        val table =
-            if (includeIneligibilityColumn && includeSites) {
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, ineligibilityColWidth)
-            } else if (includeConfiguration) {
+        val table = when {
+            includeIneligibilityColumn ->
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth + 2f)
+            includeConfiguration ->
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
-            } else if (includeIneligibilityColumn) {
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth)
-            }
-            else {
+            else ->
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
-            }
+        }
 
         table.addHeaderCell(Cells.createHeader("Trial"))
         table.addHeaderCell(Cells.createHeader("Cohort"))
