@@ -10,7 +10,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
-    private val category: TreatmentCategory, private val types: Set<TreatmentType>,
+    private val category: TreatmentCategory,
+    private val types: Set<TreatmentType>,
     private val maxWeeks: Int
 ) : EvaluationFunction {
 
@@ -39,7 +40,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
                 hadTreatment = if (categoryMatches && !treatmentHistoryEntry.hasTypeConfigured()) null else false,
                 hadTrial = mayMatchAsTrial
             )
-        }.toSet()
+        }
 
         return when {
             TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS in treatmentEvaluations -> {
