@@ -48,9 +48,10 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1, cohort2),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false,
+                includeConfiguration = false,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -63,7 +64,15 @@ class TrialGeneratorFunctionsTest {
 
     @Test
     fun `Should not group warnings for trial with single cohort`() {
-        assertThat(TrialGeneratorFunctions.contentForTrialCohortList(listOf(cohort1), true, InterpretedCohort::warnings, false)).isEqualTo(
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeConfiguration = false,
+                includeSites = true
+            )
+        ).isEqualTo(
             listOf(
                 ContentDefinition(listOf("cohort1", "MSI", "", "warning1"), true),
             )
@@ -77,7 +86,15 @@ class TrialGeneratorFunctionsTest {
             cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
         )
 
-        assertThat(TrialGeneratorFunctions.contentForTrialCohortList(cohorts, true, InterpretedCohort::fails, false)).isEqualTo(
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                cohorts,
+                includeFeedback = true,
+                InterpretedCohort::fails,
+                includeConfiguration = false,
+                includeSites = true
+            )
+        ).isEqualTo(
             listOf(
                 ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
@@ -89,23 +106,30 @@ class TrialGeneratorFunctionsTest {
     @Test
     fun `Should de-emphasize content for common messages when all cohorts are unavailable`() {
         assertThat(
-            TrialGeneratorFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), true, InterpretedCohort::warnings, false)
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeConfiguration = false,
+                includeSites = true
+            )
                 .map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(false, true, false))
 
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1, cohort2.copy(isOpen = false)),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false
+                includeConfiguration = false,
+                includeSites = true
             )
                 .map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(true, true, true))
 
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
-                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)), true, InterpretedCohort::warnings, false
+                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)), true, InterpretedCohort::warnings, includeConfiguration = false, includeSites = true
             ).map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(true, true, true))
     }
@@ -116,9 +140,10 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1, cohort3),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false
+                includeConfiguration = false,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -136,9 +161,10 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(noMolecularEvent1, noMolecularEvent2),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false
+                includeConfiguration = false,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -151,7 +177,15 @@ class TrialGeneratorFunctionsTest {
 
     @Test
     fun `Should not group molecular events for trials with single cohort`() {
-        assertThat(TrialGeneratorFunctions.contentForTrialCohortList(listOf(cohort1), true, InterpretedCohort::warnings, false)).isEqualTo(
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeConfiguration = false,
+                includeSites = true
+            )
+        ).isEqualTo(
             listOf(
                 ContentDefinition(listOf("cohort1", "MSI", "", "warning1"), true),
             )
@@ -163,9 +197,10 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1, cohort2),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false
+                includeConfiguration = false,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -181,9 +216,10 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site1"))),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false
+                includeConfiguration = false,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -199,9 +235,10 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"), warnings = emptySet())),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false
+                includeConfiguration = false,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -216,9 +253,10 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1.copy(locations = setOf("site1"), warnings = emptySet())),
-                true,
+                includeFeedback = true,
                 InterpretedCohort::warnings,
-                false
+                includeConfiguration = false,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -237,10 +275,11 @@ class TrialGeneratorFunctionsTest {
                     cohort1.copy(locations = setOf("site3"), isEvaluable = false, ignore = true),
                     cohort2.copy(locations = setOf("site4"), isEvaluable = true, ignore = true),
                     cohort1.copy(locations = setOf("site5"), isEvaluable = false),
-                    ),
-                false,
+                ),
+                includeFeedback = false,
                 InterpretedCohort::warnings,
-                true
+                includeConfiguration = true,
+                includeSites = true
             )
         ).isEqualTo(
             listOf(
@@ -249,6 +288,25 @@ class TrialGeneratorFunctionsTest {
                 ContentDefinition(listOf("cohort1", "MSI", "site3", "Ignored and Non-evaluable"), true),
                 ContentDefinition(listOf("cohort2", "None", "site4", "Ignored"), false),
                 ContentDefinition(listOf("cohort1", "MSI", "site5", "Non-evaluable"), true),
+            )
+        )
+    }
+
+    @Test
+    fun `Should drop sites`() {
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"))),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeConfiguration = false,
+                includeSites = false
+            )
+        ).isEqualTo(
+            listOf(
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
+                ContentDefinition(listOf("cohort1", "MSI", ""), true),
+                ContentDefinition(listOf("cohort2", "None", "warning2"), false),
             )
         )
     }

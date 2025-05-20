@@ -32,9 +32,10 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean,
         includeConfiguration: Boolean,
+        includeSites: Boolean
     ) {
         sortedCohortsGroupedByTrial(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
-            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis, includeConfiguration)
+            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis, includeConfiguration, includeSites)
         }
 
         externalTrials.forEach { trial ->
@@ -70,6 +71,7 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean,
         includeConfiguration: Boolean,
+        includeSites: Boolean
     ) {
         table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis).setKeepTogether(true))
 
@@ -79,6 +81,7 @@ object TrialGeneratorFunctions {
             feedbackFunction = feedbackFunction,
             requestingSource = requestingSource,
             includeConfiguration = includeConfiguration,
+            includeSites = includeSites
         ).forEachIndexed { index, content ->
             addContentListToTable(
                 table,
@@ -147,6 +150,7 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         includeConfiguration: Boolean,
         requestingSource: TrialSource? = null,
+        includeSites: Boolean
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohortsForTrial, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::molecularEvents)
@@ -175,7 +179,7 @@ object TrialGeneratorFunctions {
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
-                    TrialLocations.actinTrialLocation(cohort.source, requestingSource, cohort.locations - commonLocations, true),
+                    if (includeSites) TrialLocations.actinTrialLocation(cohort.source, requestingSource, cohort.locations - commonLocations, true) else null,
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null,
                     if (includeConfiguration) concat(setOfNotNull("Ignored".takeIf { cohort.ignore }, "Non-evaluable".takeIf { !cohort.isEvaluable }), separator =" and ") else null,
                 ),

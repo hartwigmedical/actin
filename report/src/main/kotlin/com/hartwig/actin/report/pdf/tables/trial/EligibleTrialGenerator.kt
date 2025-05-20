@@ -55,7 +55,8 @@ class EligibleTrialGenerator(
             includeFeedback = includeWarningsColumn,
             feedbackFunction = InterpretedCohort::warnings,
             allowDeEmphasis = allowDeEmphasis,
-            includeConfiguration = false
+            includeConfiguration = false,
+            includeSites = true
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))

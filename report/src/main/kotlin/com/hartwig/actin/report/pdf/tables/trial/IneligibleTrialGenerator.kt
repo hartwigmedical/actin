@@ -15,6 +15,7 @@ class IneligibleTrialGenerator(
     private val includeIneligibilityColumn: Boolean,
     private val allowDeEmphasis: Boolean,
     private val includeConfiguration: Boolean,
+    private val includeSites: Boolean
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -34,18 +35,23 @@ class IneligibleTrialGenerator(
         val configColWidth = 3f
 
         val table =
-            if (includeIneligibilityColumn) {
+            if (includeIneligibilityColumn && includeSites) {
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, ineligibilityColWidth)
             } else if (includeConfiguration) {
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
-            } else {
+            } else if (includeIneligibilityColumn) {
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth)
+            }
+            else {
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
             }
 
         table.addHeaderCell(Cells.createHeader("Trial"))
         table.addHeaderCell(Cells.createHeader("Cohort"))
         table.addHeaderCell(Cells.createHeader("Molecular"))
-        table.addHeaderCell(Cells.createHeader("Sites"))
+        if (includeSites) {
+            table.addHeaderCell(Cells.createHeader("Sites"))
+        }
         if (includeIneligibilityColumn) {
             table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
@@ -62,7 +68,8 @@ class IneligibleTrialGenerator(
             includeFeedback = includeIneligibilityColumn,
             feedbackFunction = InterpretedCohort::fails,
             allowDeEmphasis = allowDeEmphasis,
-            includeConfiguration = includeConfiguration
+            includeConfiguration = includeConfiguration,
+            includeSites = includeSites
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -94,7 +101,8 @@ class IneligibleTrialGenerator(
                 footNote = footNote,
                 includeIneligibilityColumn = true,
                 allowDeEmphasis = true,
-                includeConfiguration = false
+                includeConfiguration = false,
+                includeSites = false
             )
         }
 
@@ -113,7 +121,8 @@ class IneligibleTrialGenerator(
                 footNote = null,
                 includeIneligibilityColumn = false,
                 allowDeEmphasis = false,
-                includeConfiguration = true
+                includeConfiguration = true,
+                includeSites = true
             )
         }
     }
