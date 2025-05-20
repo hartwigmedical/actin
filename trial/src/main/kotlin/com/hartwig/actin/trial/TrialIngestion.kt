@@ -1,12 +1,12 @@
 package com.hartwig.actin.trial
 
-import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.EligibilityRuleState
+import com.hartwig.actin.datamodel.trial.EligibilityRuleUsedStatus
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialSource
@@ -17,7 +17,7 @@ import com.hartwig.actin.util.right
 
 data class TrialIngestSuccessResult(
     val trials: List<Trial>,
-    val eligibilityRulesState: Set<EligibilityRuleState>
+    val eligibilityRulesState: List<EligibilityRuleState>
 )
 
 data class UnmappableTrial(
@@ -29,6 +29,8 @@ data class UnmappableTrial(
 data class UnmappableCohort(val cohortId: String, val mappingErrors: List<EligibilityMappingError>)
 
 data class EligibilityMappingError(val inclusionRule: String, val error: String)
+
+data class TrialWrapper(val trial: Trial, val rules: List<EligibilityRule>)
 
 class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
@@ -57,8 +59,8 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                     eligibility = cohortCriteria
                 ).right() else UnmappableCohort(cohortId = cohortState.cohortId, cohortMappingErrors).left()
             }.partitionAndJoin()
-            if (unmappableCohorts.isEmpty() && trialErrors.isEmpty())
-                Trial(
+            if (unmappableCohorts.isEmpty() && trialErrors.isEmpty()) {
+                val trial = Trial(
                     identification = TrialIdentification(
                         trialId = trialState.trialId,
                         open = trialState.open,
@@ -73,21 +75,29 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                     ),
                     generalEligibility = criteria,
                     cohorts = mappedCohorts
+                )
+                TrialWrapper(
+                    trial = trial,
+                    rules = criteria.map { it.function.rule } +
+                            mappedCohorts.flatMap { cohort -> cohort.eligibility.map { it.function.rule } }
                 ).right()
-            else UnmappableTrial(trialId = trialState.trialId, trialErrors, unmappableCohorts).left()
+            } else {
+                UnmappableTrial(trialId = trialState.trialId, trialErrors, unmappableCohorts).left()
+            }
         }
-        val (errors, trials) = trialsAndUnmappableTrials.partitionAndJoin()
+        val (errors, trialWrappers) = trialsAndUnmappableTrials.partitionAndJoin()
         if (errors.isNotEmpty()) {
             return errors.left()
         }
-        val rulesState = with(trials.flatMap { trial -> trial.generalEligibility.map { it.function.rule }}) {
-            val unusedRules = EligibilityRule.entries.filter { !this.contains(it) }.map { EligibilityRuleState.unused(it) }
-            (this.map { EligibilityRuleState.used(it) } + unusedRules).toSet()
-        }
 
+        val (trials, usedRules) = with(trialWrappers) { map { it.trial } to flatMap { it.rules }.distinct() }
+        val eligibilityRulesState = with(EligibilityRule.entries.associateWith { EligibilityRuleUsedStatus.UNUSED }.toMutableMap()) {
+            usedRules.forEach { this[it] = EligibilityRuleUsedStatus.USED }
+            this.map { EligibilityRuleState(it.key, it.value) }
+        }
         return TrialIngestSuccessResult(
             trials = trials,
-            eligibilityRulesState = rulesState
+            eligibilityRulesState = eligibilityRulesState
         ).right()
     }
 

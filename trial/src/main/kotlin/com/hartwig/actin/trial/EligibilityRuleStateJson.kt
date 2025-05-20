@@ -13,7 +13,7 @@ object EligibilityRuleStateJson {
     private val LOGGER: Logger = LogManager.getLogger(EligibilityRuleStateJson::class.java)
     private const val TRIAL_INGESTION_JSON_EXTENSION: String = "rule-state-result.json"
 
-    fun write(eligibilityRulesState: Set<EligibilityRuleState>, directory: String) {
+    fun write(eligibilityRulesState: List<EligibilityRuleState>, directory: String) {
         val path: String = Paths.forceTrailingFileSeparator(directory)
         val jsonFile: String = path + TRIAL_INGESTION_JSON_EXTENSION
         LOGGER.info(" Writing {} rules to {}", eligibilityRulesState.size, jsonFile)
@@ -22,8 +22,7 @@ object EligibilityRuleStateJson {
         writer.close()
     }
 
-    fun toJson(eligibilityRulesState: Set<EligibilityRuleState>): String {
+    fun toJson(eligibilityRulesState: List<EligibilityRuleState>): String {
         return GsonSerializer.create().toJson(eligibilityRulesState)
     }
-
 }
