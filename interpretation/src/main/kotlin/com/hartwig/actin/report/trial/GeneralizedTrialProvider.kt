@@ -5,10 +5,13 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.trial.TrialSource
 import java.util.*
-import java.util.Collections.emptySortedSet
 import kotlin.Comparator
 
 class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
+
+    fun allTrialsForOncoAct(): List<GeneralizedTrial> {
+        return cohortsWithSlotsAvailableAsGeneralizedTrial() + nationalTrialsAsGeneralizedTrial()
+    }
 
     private fun cohortsWithSlotsAvailableAsGeneralizedTrial(): List<GeneralizedTrial> {
         return trialsProvider.evaluableCohortsAndNotIgnore().map {
@@ -21,7 +24,8 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
                 isOpen = it.isOpen,
                 hasSlots = it.hasSlotsAvailable,
                 countries = locationsToCountryDetails(it.locations),
-                therapyNames = emptySet(),
+                treatments = emptySet(),
+                molecularMatches = emptySet(),
                 actinMolecularEvents = it.molecularEvents.toSortedSet(),
                 sourceMolecularEvents = emptySet(),
                 applicableCancerTypes = emptySet(),
@@ -30,10 +34,14 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
         }
     }
 
-    private fun summarizedNationalTrialsAsGeneralizedTrial(): List<GeneralizedTrial> {
+    private fun nationalTrialsAsGeneralizedTrial(): List<GeneralizedTrial> {
         val externalTrials = trialsProvider.externalTrials()
-        return externalTrials.nationalTrials.filtered.map {
-            var trial = it.trial
+        return externalTrialsAsGeneralizedTrial(externalTrials.nationalTrials.filtered)
+    }
+
+    private fun externalTrialsAsGeneralizedTrial(externalTrials: Set<EventWithExternalTrial>): List<GeneralizedTrial> {
+        return externalTrials.map {
+            val trial = it.trial
             GeneralizedTrial(
                 trialId = trial.nctId,
                 nctId = trial.nctId,
@@ -43,17 +51,14 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
                 isOpen = null,
                 hasSlots = null,
                 countries = trial.countries,
-                therapyNames = trial.treatments,
-                actinMolecularEvents = emptySet(),
-                sourceMolecularEvents = setOf(it.event),
+                treatments = trial.treatments,
+                molecularMatches = trial.molecularMatches,
+                actinMolecularEvents = setOf(it.event),
+                sourceMolecularEvents = emptySet(),
                 applicableCancerTypes = trial.applicableCancerTypes,
                 url = url(trial.nctId)
             )
         }
-    }
-
-    fun allTrialsForOncoAct(): List<GeneralizedTrial> {
-        return cohortsWithSlotsAvailableAsGeneralizedTrial() + summarizedNationalTrialsAsGeneralizedTrial()
     }
 
     companion object {
@@ -69,7 +74,6 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
         fun optionalUrl(nctId: String?): String? {
             return if (nctId != null) url(nctId) else null
         }
-
 
         fun url(nctId: String): String {
             return "https://clinicaltrials.gov/study/$nctId"

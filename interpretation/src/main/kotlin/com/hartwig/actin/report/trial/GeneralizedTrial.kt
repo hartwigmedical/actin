@@ -2,7 +2,7 @@ package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import java.util.SortedSet
+import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 
 data class GeneralizedTrial(
     val trialId: String,
@@ -13,7 +13,8 @@ data class GeneralizedTrial(
     val isOpen: Boolean?,
     val hasSlots: Boolean?,
     val countries: Set<CountryDetails>,
-    val therapyNames: Set<String>,
+    val treatments: Set<String>,
+    val molecularMatches: Set<MolecularMatchDetails>,
     val actinMolecularEvents: Set<String>,
     val sourceMolecularEvents: Set<String>,
     val applicableCancerTypes: Set<CancerType>,
