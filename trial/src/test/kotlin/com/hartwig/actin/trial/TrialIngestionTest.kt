@@ -70,7 +70,7 @@ class TrialIngestionTest {
                 )
             )
         ) as Either.Right
-        assertThat(result.value).containsExactly(
+        assertThat(result.value.trials).containsExactly(
             Trial(
                 identification = TrialIdentification(
                     trialId = TRIAL_ID,

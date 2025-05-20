@@ -1,9 +1,12 @@
 package com.hartwig.actin.trial
 
+import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityRuleState
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialSource
@@ -11,6 +14,11 @@ import com.hartwig.actin.util.Either
 import com.hartwig.actin.util.left
 import com.hartwig.actin.util.partitionAndJoin
 import com.hartwig.actin.util.right
+
+data class TrialIngestSuccessResult(
+    val trials: List<Trial>,
+    val eligibilityRulesState: Set<EligibilityRuleState>
+)
 
 data class UnmappableTrial(
     val trialId: String,
@@ -24,7 +32,7 @@ data class EligibilityMappingError(val inclusionRule: String, val error: String)
 
 class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
-    fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, List<Trial>> {
+    fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, TrialIngestSuccessResult> {
         val trialsAndUnmappableTrials = config.map { trialState ->
             val (trialErrors, criteria) = trialState.inclusionCriterion.map {
                 toEligibility(
@@ -69,7 +77,18 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
             else UnmappableTrial(trialId = trialState.trialId, trialErrors, unmappableCohorts).left()
         }
         val (errors, trials) = trialsAndUnmappableTrials.partitionAndJoin()
-        return if (errors.isNotEmpty()) errors.left() else trials.right()
+        if (errors.isNotEmpty()) {
+            return errors.left()
+        }
+        val rulesState = with(trials.flatMap { trial -> trial.generalEligibility.map { it.function.rule }}) {
+            val unusedRules = EligibilityRule.entries.filter { !this.contains(it) }.map { EligibilityRuleState.unused(it) }
+            (this.map { EligibilityRuleState.used(it) } + unusedRules).toSet()
+        }
+
+        return TrialIngestSuccessResult(
+            trials = trials,
+            eligibilityRulesState = rulesState
+        ).right()
     }
 
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =
