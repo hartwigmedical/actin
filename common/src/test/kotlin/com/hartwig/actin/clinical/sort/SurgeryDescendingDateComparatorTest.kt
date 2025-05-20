@@ -17,13 +17,16 @@ class SurgeryDescendingDateComparatorTest {
             Surgery(name = "Surgery 2", endDate = endDate.minusDays(6), status = SurgeryStatus.FINISHED),
             Surgery(name = null, endDate = endDate.minusDays(4), status = SurgeryStatus.FINISHED),
             Surgery(name = "Surgery 1", endDate = endDate.minusDays(2), status = SurgeryStatus.FINISHED),
+            Surgery(name = "Surgery 4", endDate = null, status = SurgeryStatus.FINISHED),
         )
 
         val sortedSurgeries = surgeries.sortedWith(SurgeryDescendingDateComparator())
-        assertThat(sortedSurgeries.size).isEqualTo(3)
+        print(sortedSurgeries)
+        assertThat(sortedSurgeries.size).isEqualTo(4)
         assertThat(sortedSurgeries[0].name).isEqualTo("Surgery 1")
         assertThat(sortedSurgeries[1].name).isEqualTo(null)
         assertThat(sortedSurgeries[2].name).isEqualTo("Surgery 2")
+        assertThat(sortedSurgeries[3].name).isEqualTo("Surgery 4")
 
     }
 }

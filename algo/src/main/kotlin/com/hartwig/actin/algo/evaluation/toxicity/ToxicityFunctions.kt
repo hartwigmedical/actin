@@ -23,8 +23,12 @@ object ToxicityFunctions {
 
     private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {
         val (ehrToxicities, otherToxicities) = toxicities.partition { it.source == ToxicitySource.EHR }
-        val mostRecentEhrToxicitiesByCode = ehrToxicities.groupBy(Toxicity::icdCodes)
-            .map { (_, toxGroup) -> toxGroup.maxBy(Toxicity::evaluatedDate) }
+        val mostRecentEhrToxicitiesByCode = ehrToxicities
+            .groupBy(Toxicity::icdCodes)
+            .map { (_, toxGroup) ->
+                toxGroup.maxByOrNull { it.evaluatedDate ?: LocalDate.MIN }
+            }.filterNotNull()
+
         return otherToxicities + mostRecentEhrToxicitiesByCode
     }
 }

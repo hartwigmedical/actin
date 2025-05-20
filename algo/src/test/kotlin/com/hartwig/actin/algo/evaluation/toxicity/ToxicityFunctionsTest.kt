@@ -5,9 +5,9 @@ import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class ToxicityFunctionsTest {
 
@@ -21,6 +21,33 @@ class ToxicityFunctionsTest {
         val record = ComorbidityTestFactory.withToxicities(listOf(keepTox, keepTox.copy(icdCodes = setOf(IcdCode("ignoreCode")))))
 
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, listOf("ignoreTitle"))).containsOnly(keepTox)
+    }
+
+    @Test
+    fun `Should only select most recent EHR toxicities when multiple of same icd code are present with null evaluated date `() {
+        val newTox = ehrTox.copy(evaluatedDate = LocalDate.of(2024, 12, 6))
+        val record = ComorbidityTestFactory.withToxicities(
+            listOf(
+                newTox,
+                newTox.copy(evaluatedDate = LocalDate.of(2023, 12, 6)),
+                newTox.copy(evaluatedDate = null),
+            )
+        )
+        assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate))
+            .containsOnly(newTox)
+    }
+
+    @Test
+    fun `Should select one EHR toxicities when when all do not have an evaluated date `() {
+        val newTox = ehrTox.copy(null)
+        val record = ComorbidityTestFactory.withToxicities(
+            listOf(
+                newTox,
+                newTox.copy(evaluatedDate = null),
+            )
+        )
+        assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate))
+            .containsOnly(newTox)
     }
 
     @Test
