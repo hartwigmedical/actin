@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityRuleState
+import com.hartwig.actin.datamodel.trial.EligibilityRuleUsedStatus
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
@@ -110,6 +112,12 @@ class TrialIngestionTest {
                 )
             )
         )
+        val usedRules = result.value.trials.flatMap { trial ->
+            trial.generalEligibility.map { EligibilityRuleState.used(it.function.rule) } +
+                    trial.cohorts.flatMap { it.eligibility.map { EligibilityRuleState.used(it.function.rule) } }
+        }.toSet()
+        assertThat(result.value.eligibilityRulesState.size).isEqualTo(EligibilityRule.entries.size)
+        assertThat((result.value.eligibilityRulesState.filter { it.usedStatus == EligibilityRuleUsedStatus.USED }.toSet())).isEqualTo(usedRules)
     }
 
 }

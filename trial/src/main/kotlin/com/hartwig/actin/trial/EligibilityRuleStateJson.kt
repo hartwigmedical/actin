@@ -22,7 +22,7 @@ object EligibilityRuleStateJson {
         writer.close()
     }
 
-    fun toJson(eligibilityRulesState: List<EligibilityRuleState>): String {
+    private fun toJson(eligibilityRulesState: List<EligibilityRuleState>): String {
         return GsonSerializer.create().toJson(eligibilityRulesState)
     }
 }
