@@ -98,9 +98,8 @@ class PatientCurrentDetailsGenerator(
             .filter { (it.grade ?: -1) >= 2 }
             .groupBy(Toxicity::name)
             .map { (_, toxicitiesWithName) ->
-                toxicitiesWithName.maxByOrNull { it.evaluatedDate ?: LocalDate.MIN }
+                toxicitiesWithName.maxBy { it.evaluatedDate ?: LocalDate.MIN }
             }
-            .filterNotNull()
     }
 
     private fun complications(record: PatientRecord): String {

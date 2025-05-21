@@ -26,8 +26,8 @@ object ToxicityFunctions {
         val mostRecentEhrToxicitiesByCode = ehrToxicities
             .groupBy(Toxicity::icdCodes)
             .map { (_, toxGroup) ->
-                toxGroup.maxByOrNull { it.evaluatedDate ?: LocalDate.MIN }
-            }.filterNotNull()
+                toxGroup.maxBy { it.evaluatedDate ?: LocalDate.MIN }
+            }
 
         return otherToxicities + mostRecentEhrToxicitiesByCode
     }
