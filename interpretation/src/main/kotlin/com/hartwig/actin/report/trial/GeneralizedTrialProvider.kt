@@ -14,7 +14,7 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
     }
 
     private fun cohortsWithSlotsAvailableAsGeneralizedTrial(): List<GeneralizedTrial> {
-        return trialsProvider.evaluableCohortsAndNotIgnore().map {
+        return trialsProvider.eligibleCohortsWithSlotsAvailableAndNotIgnore().map {
             GeneralizedTrial(
                 trialId = it.trialId,
                 nctId = it.nctId,
@@ -39,29 +39,30 @@ class GeneralizedTrialProvider(private val trialsProvider: TrialsProvider) {
         return externalTrialsAsGeneralizedTrial(externalTrials.nationalTrials.filtered)
     }
 
-    private fun externalTrialsAsGeneralizedTrial(externalTrials: Set<EventWithExternalTrial>): List<GeneralizedTrial> {
-        return externalTrials.map {
-            val trial = it.trial
-            GeneralizedTrial(
-                trialId = trial.nctId,
-                nctId = trial.nctId,
-                source = trial.source,
-                acronym = trial.acronym,
-                title = trial.title,
-                isOpen = null,
-                hasSlots = null,
-                countries = trial.countries,
-                treatments = trial.treatments,
-                molecularMatches = trial.molecularMatches,
-                actinMolecularEvents = setOf(it.event),
-                sourceMolecularEvents = emptySet(),
-                applicableCancerTypes = trial.applicableCancerTypes,
-                url = url(trial.nctId)
-            )
-        }
-    }
-
     companion object {
+
+        fun externalTrialsAsGeneralizedTrial(externalTrials: Set<EventWithExternalTrial>): List<GeneralizedTrial> {
+            return externalTrials.map {
+                val trial = it.trial
+                GeneralizedTrial(
+                    trialId = trial.nctId,
+                    nctId = trial.nctId,
+                    source = trial.source,
+                    acronym = trial.acronym,
+                    title = trial.title,
+                    isOpen = null,
+                    hasSlots = null,
+                    countries = trial.countries,
+                    treatments = trial.treatments,
+                    molecularMatches = trial.molecularMatches,
+                    actinMolecularEvents = setOf(it.event),
+                    sourceMolecularEvents = emptySet(),
+                    applicableCancerTypes = trial.applicableCancerTypes,
+                    url = url(trial.nctId)
+                )
+            }
+        }
+
         fun locationsToCountryDetails(location: Set<String>): SortedSet<CountryDetails> {
             return location.map { l -> CountryDetails(Country.NETHERLANDS, mapOf(Pair("", setOf(Hospital(l, false))))) }
                 .toSortedSet(Comparator.comparing { c -> c.country })

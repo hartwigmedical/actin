@@ -56,7 +56,7 @@ class TrialsProvider(
         return nonEvaluableCohorts
     }
 
-    private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
+    fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
         return filterCohortsAvailable(cohorts.filter { !it.ignore })
     }
 
