@@ -1,7 +1,8 @@
-package com.hartwig.actin.report.trial
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
+import com.hartwig.actin.report.trial.EventWithExternalTrial
 import java.util.SortedSet
 
 data class ExternalTrialSummary(

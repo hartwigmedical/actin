@@ -13,13 +13,13 @@ import com.hartwig.actin.report.pdf.tables.trial.TrialLocations
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.EventWithExternalTrial
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
     private val molecular: MolecularRecord,
     private val cohorts: List<InterpretedCohort>,
-    private val externalTrials: Set<ExternalTrialSummary>
+    private val externalTrials: Set<EventWithExternalTrial>
 ) : TableGenerator {
 
     override fun title(): String {
@@ -49,7 +49,7 @@ class MolecularDriversGenerator(
             table.addCell(Cells.createContent(entry.display()))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(formatActinTrials(entry.actinTrials)))
-            table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event]?.let { concatEligibleTrials(it) } ?: ""))
+            table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event] ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -78,9 +78,5 @@ class MolecularDriversGenerator(
                 })" else ""
             }"
         }
-    }
-
-    private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrialSummary>): String {
-        return externalTrials.map { it.nctId }.toSet().joinToString(", ")
     }
 }
