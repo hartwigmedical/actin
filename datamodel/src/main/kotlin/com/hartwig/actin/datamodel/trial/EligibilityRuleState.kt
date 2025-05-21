@@ -6,10 +6,10 @@ data class EligibilityRuleState(
 ) {
     companion object {
 
-        fun used(eligibilityRule: EligibilityRule): EligibilityRuleState =
+        fun used(eligibilityRule: EligibilityRule) =
             EligibilityRuleState(eligibilityRule, EligibilityRuleUsedStatus.USED)
 
-        fun unused(eligibilityRule: EligibilityRule): EligibilityRuleState =
+        fun unused(eligibilityRule: EligibilityRule) =
             EligibilityRuleState(eligibilityRule, EligibilityRuleUsedStatus.UNUSED)
     }
 }

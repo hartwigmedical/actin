@@ -30,7 +30,7 @@ data class UnmappableCohort(val cohortId: String, val mappingErrors: List<Eligib
 
 data class EligibilityMappingError(val inclusionRule: String, val error: String)
 
-data class TrialWrapper(val trial: Trial, val rules: List<EligibilityRule>)
+data class TrialAndEligibilityRules(val trial: Trial, val rules: List<EligibilityRule>)
 
 class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
@@ -76,7 +76,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                     generalEligibility = criteria,
                     cohorts = mappedCohorts
                 )
-                TrialWrapper(
+                TrialAndEligibilityRules(
                     trial = trial,
                     rules = criteria.map { it.function.rule } +
                             mappedCohorts.flatMap { cohort -> cohort.eligibility.map { it.function.rule } }
@@ -91,9 +91,8 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
         }
 
         val (trials, usedRules) = with(trialWrappers) { map { it.trial } to flatMap { it.rules }.distinct() }
-        val eligibilityRulesState = with(EligibilityRule.entries.associateWith { EligibilityRuleUsedStatus.UNUSED }.toMutableMap()) {
-            usedRules.forEach { this[it] = EligibilityRuleUsedStatus.USED }
-            this.map { EligibilityRuleState(it.key, it.value) }
+        val eligibilityRulesState = EligibilityRule.entries.map { rule ->
+            EligibilityRuleState(rule, if (rule in usedRules) EligibilityRuleUsedStatus.USED else EligibilityRuleUsedStatus.UNUSED)
         }
         return TrialIngestSuccessResult(
             trials = trials,
