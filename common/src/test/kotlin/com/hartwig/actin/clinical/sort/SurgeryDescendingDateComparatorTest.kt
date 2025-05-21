@@ -21,7 +21,6 @@ class SurgeryDescendingDateComparatorTest {
         )
 
         val sortedSurgeries = surgeries.sortedWith(SurgeryDescendingDateComparator())
-        print(sortedSurgeries)
         assertThat(sortedSurgeries.size).isEqualTo(4)
         assertThat(sortedSurgeries[0].name).isEqualTo("Surgery 1")
         assertThat(sortedSurgeries[1].name).isEqualTo(null)
