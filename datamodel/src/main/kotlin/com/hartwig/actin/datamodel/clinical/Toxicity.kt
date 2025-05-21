@@ -5,16 +5,16 @@ import java.time.LocalDate
 data class Toxicity(
     override val name: String?,
     override val icdCodes: Set<IcdCode>,
-    val evaluatedDate: LocalDate,
+    val evaluatedDate: LocalDate?,
     val source: ToxicitySource,
     val grade: Int?,
     val endDate: LocalDate? = null
-): Comorbidity {
+) : Comorbidity {
     override val comorbidityClass = ComorbidityClass.TOXICITY
     override val year: Int?
-        get() = evaluatedDate.year
+        get() = evaluatedDate?.year
     override val month: Int?
-        get() = evaluatedDate.monthValue
+        get() = evaluatedDate?.monthValue
 
     override fun withDefaultDate(date: LocalDate): Comorbidity = this
 }

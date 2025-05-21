@@ -94,9 +94,12 @@ class PatientCurrentDetailsGenerator(
             .joinToString(Formats.COMMA_SEPARATOR)
 
     private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
-        return toxicities.filter { (it.grade ?: -1) >= 2 }
+        return toxicities
+            .filter { (it.grade ?: -1) >= 2 }
             .groupBy(Toxicity::name)
-            .map { (_, toxicitiesWithName) -> toxicitiesWithName.maxBy(Toxicity::evaluatedDate) }
+            .map { (_, toxicitiesWithName) ->
+                toxicitiesWithName.maxBy { it.evaluatedDate ?: LocalDate.MIN }
+            }
     }
 
     private fun complications(record: PatientRecord): String {
