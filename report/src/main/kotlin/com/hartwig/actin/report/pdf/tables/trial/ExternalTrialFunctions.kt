@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 
 object ExternalTrialFunctions {
 

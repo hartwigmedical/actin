@@ -175,7 +175,7 @@
     {
       "item": "ERBB2",
       "measure": null,
-      "measureDate": null,
+      "measureDate": "2020-01-01",
       "scoreText": null,
       "scoreValuePrefix": null,
       "scoreValue": 3.0,
@@ -331,11 +331,26 @@
       "name": "paracetamol",
       "atcCode": "N02BE01",
       "atc": {
-        "anatomicalMainGroup": {"code": "N", "name": "NERVOUS SYSTEM"},
-        "therapeuticSubGroup": {"code": "N02", "name": "ANALGESICS"},
-        "pharmacologicalSubGroup": {"code": "N02B", "name": "OTHER ANALGESICS AND ANTIPYRETICS"},
-        "chemicalSubGroup": {"code": "N02BE", "name": "Anilides"},
-        "chemicalSubstance": {"code": "N02BE01", "name": "paracetamol"}
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
       },
       "startDate": "2020-01-01",
       "stopDate": "2020-01-01",

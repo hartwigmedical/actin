@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class HasHadSpecificTreatmentSinceDateTest : TreatmentSinceDateFunctionsTestAbstract() {
+class HasHadSpecificTreatmentSinceDateTest : TreatmentVersusDateFunctionsTestAbstract() {
     private val treatmentQuery = DrugTreatment(
         name = "treatment", drugs = setOf(Drug(name = "Chemo drug", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
     )

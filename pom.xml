@@ -29,7 +29,7 @@
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.0.0</actin-transvar.version>
         <actin-pave-lite.version>1.0.0</actin-pave-lite.version>
-        <actin-feed.version>0.10.0</actin-feed.version>
+        <actin-feed.version>0.14.0</actin-feed.version>
         <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
@@ -55,7 +55,7 @@
         <kotlin.code.style>official</kotlin.code.style>
 
         <junit.version>4.13.2</junit.version>
-        <assertj-core.version>3.24.2</assertj-core.version>
+        <assertj-core.version>3.27.3</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
         <jackson.version>2.16.1</jackson.version>
         <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>

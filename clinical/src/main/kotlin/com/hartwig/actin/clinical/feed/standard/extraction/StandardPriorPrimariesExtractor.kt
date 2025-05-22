@@ -35,14 +35,16 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
     private fun fromPriorPrimaries(ehrPatientRecord: FeedPatientRecord): List<ExtractionResult<List<PriorPrimary>>> =
         ehrPatientRecord.priorPrimaries.map { feedPriorPrimary ->
             val curatedPriorPrimary = curate(ehrPatientRecord.patientDetails.patientId, feedPriorPrimary.name)
-            ExtractionResult(listOfNotNull(
-                curatedPriorPrimary.config()?.takeUnless { it.ignore }?.curated?.copy(
-                    diagnosedMonth = feedPriorPrimary.startDate.monthValue,
-                    diagnosedYear = feedPriorPrimary.startDate.year,
-                    lastTreatmentYear = feedPriorPrimary.endDate?.year,
-                    lastTreatmentMonth = feedPriorPrimary.endDate?.monthValue,
-                )
-            ), curatedPriorPrimary.extractionEvaluation)
+            ExtractionResult(
+                listOfNotNull(
+                    curatedPriorPrimary.config()?.takeUnless { it.ignore }?.curated?.copy(
+                        diagnosedMonth = feedPriorPrimary.startDate?.monthValue,
+                        diagnosedYear = feedPriorPrimary.startDate?.year,
+                        lastTreatmentYear = feedPriorPrimary.endDate?.year,
+                        lastTreatmentMonth = feedPriorPrimary.endDate?.monthValue,
+                    )
+                ), curatedPriorPrimary.extractionEvaluation
+            )
         }
 
     private fun curate(patientId: String, input: String) = CurationResponse.createFromConfigs(

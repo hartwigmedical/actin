@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohortFunctions
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 
 const val MAX_TO_DISPLAY = 3
 private const val MANY_LOCATIONS = "$MAX_TO_DISPLAY+ locations"
