@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.clinical.BodyHeight
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardBodyHeightExtractor : StandardDataExtractor<List<BodyHeight>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<BodyHeight>> {
-        return ExtractionResult(ehrPatientRecord.measurements
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<BodyHeight>> {
+        return ExtractionResult(feedPatientRecord.measurements
             .filter {
                 enumeratedInput<ProvidedMeasurementCategory>(it.category) == ProvidedMeasurementCategory.BODY_HEIGHT
             }.map {

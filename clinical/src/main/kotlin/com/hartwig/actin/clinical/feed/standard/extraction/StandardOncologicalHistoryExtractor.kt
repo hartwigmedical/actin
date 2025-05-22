@@ -16,10 +16,10 @@ private const val TREATMENT_HISTORY = "treatment history"
 class StandardOncologicalHistoryExtractor(
     private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>
 ) : StandardDataExtractor<List<TreatmentHistoryEntry>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
-        val patientId = ehrPatientRecord.patientDetails.patientId
-        val oncologicalPreviousConditions = convertFeedEntriesToOncologicalHistory(ehrPatientRecord.otherConditions, patientId)
-        val oncologicalTreatmentHistory = convertFeedEntriesToOncologicalHistory(ehrPatientRecord.treatmentHistory, patientId)
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
+        val patientId = feedPatientRecord.patientDetails.patientId
+        val oncologicalPreviousConditions = convertFeedEntriesToOncologicalHistory(feedPatientRecord.otherConditions, patientId)
+        val oncologicalTreatmentHistory = convertFeedEntriesToOncologicalHistory(feedPatientRecord.treatmentHistory, patientId)
 
         return ExtractionResult(
             merge(oncologicalTreatmentHistory.extracted, oncologicalPreviousConditions.extracted),

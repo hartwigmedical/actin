@@ -123,7 +123,7 @@ class StandardPriorPrimariesExtractorTest {
     }
 
     @Test
-    fun `Should always use diagnosis year and month from feed, even when in curation data `() {
+    fun `Should always use diagnosis year and month from feed, even when in curation data`() {
         every { priorPrimaryConfigCurationDatabase.find(PRIOR_PRIMARY_INPUT) } returns setOf(
             PriorPrimaryConfig(
                 ignore = false,

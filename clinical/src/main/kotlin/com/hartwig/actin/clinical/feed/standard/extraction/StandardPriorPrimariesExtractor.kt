@@ -11,9 +11,9 @@ import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatabase<PriorPrimaryConfig>) :
     StandardDataExtractor<List<PriorPrimary>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<PriorPrimary>> {
-        return ehrPatientRecord.priorPrimaries.map { feedPriorPrimary ->
-            val curatedPriorPrimary = curate(ehrPatientRecord.patientDetails.patientId, feedPriorPrimary.name)
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<PriorPrimary>> {
+        return feedPatientRecord.priorPrimaries.map { feedPriorPrimary ->
+            val curatedPriorPrimary = curate(feedPatientRecord.patientDetails.patientId, feedPriorPrimary.name)
             ExtractionResult(
                 curatedPriorPrimary.configs.filterNot { it.ignore }.mapNotNull {
                     it.curated?.copy(

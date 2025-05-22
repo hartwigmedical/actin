@@ -16,22 +16,22 @@ class StandardTumorDetailsExtractor(
     private val tumorStageDeriver: TumorStageDeriver
 ) : StandardDataExtractor<TumorDetails> {
 
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<TumorDetails> {
-        val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<TumorDetails> {
+        val input = "${feedPatientRecord.tumorDetails.tumorLocation} | ${feedPatientRecord.tumorDetails.tumorType}"
 
-        val curatedTumorResponseFromOtherConditions = ehrPatientRecord.otherConditions.map {
+        val curatedTumorResponseFromOtherConditions = feedPatientRecord.otherConditions.map {
             CurationResponse.createFromConfigs(
                 primaryTumorConfigCurationDatabase.find(it.name),
-                ehrPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
+                feedPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
             )
         }.firstNotNullOfOrNull { it.config() }
 
         val curatedTumorResponse = CurationResponse.createFromConfigs(
             primaryTumorConfigCurationDatabase.find(input),
-            ehrPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
+            feedPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
 
-        val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord)
+        val tumorDetailsFromEhr = tumorDetails(feedPatientRecord)
         val combinedTumorResponse = combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromOtherConditions)
         return combinedTumorResponse.config()?.let {
             val curatedTumorDetails = tumorDetailsFromEhr.copy(

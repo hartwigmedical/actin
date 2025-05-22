@@ -21,14 +21,14 @@ class StandardMedicationExtractor(
     private val treatmentDatabase: TreatmentDatabase
 ) : StandardDataExtractor<List<Medication>?> {
 
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<Medication>?> {
-        return ehrPatientRecord.medications?.map { feedMedication ->
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<Medication>?> {
+        return feedPatientRecord.medications?.map { feedMedication ->
             val isTrialMedication = feedMedication.isTrial || feedMedication.name.contains("(studie)", ignoreCase = true)
             val isUnspecifiedTrialMedication = feedMedication.name.contains("studiemedicatie", ignoreCase = true) && !isTrialMedication
             val atcClassification = if (!isTrialMedication && !isUnspecifiedTrialMedication && !feedMedication.isSelfCare) {
                 if (feedMedication.atcCode == null) {
                     logger.error(
-                        "Patient '${ehrPatientRecord.patientDetails.patientId}' had medication '${feedMedication.name}' with null atc code, " +
+                        "Patient '${feedPatientRecord.patientDetails.patientId}' had medication '${feedMedication.name}' with null atc code, " +
                                 "but is not a trial or self care"
                     )
                 }
@@ -41,7 +41,7 @@ class StandardMedicationExtractor(
 
             val atcWarning = if (isAntiCancerMedication && drug == null && !isUnspecifiedTrialMedication) {
                 CurationWarning(
-                    ehrPatientRecord.patientDetails.patientId,
+                    feedPatientRecord.patientDetails.patientId,
                     CurationCategory.MEDICATION_NAME,
                     atcNameOrInput,
                     "Anti cancer medication or supportive trial medication $atcNameOrInput with ATC code $atcCode found which is not " +
