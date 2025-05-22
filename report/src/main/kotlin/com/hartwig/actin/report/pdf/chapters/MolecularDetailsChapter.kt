@@ -19,8 +19,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.ExternalTrialSummary
-import com.hartwig.actin.treatment.TreatmentEvidenceRanking
+import com.hartwig.actin.report.trial.EventWithExternalTrial
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Div
@@ -30,7 +29,7 @@ class MolecularDetailsChapter(
     private val report: Report,
     override val include: Boolean,
     private val includeRawPathologyReport: Boolean,
-    private val trials: Set<ExternalTrialSummary>
+    private val trials: Set<EventWithExternalTrial>
 ) : ReportChapter {
 
     override fun name(): String {

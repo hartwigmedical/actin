@@ -1,16 +1,15 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.feed.datamodel.DatedEntry
 import com.hartwig.feed.datamodel.FeedPatientRecord
-import kotlin.collections.map
 
 private const val TREATMENT_HISTORY = "treatment history"
 
@@ -54,8 +53,8 @@ class StandardOncologicalHistoryExtractor(
                     config.takeUnless { it.ignore }?.curated?.let { curatedTreatment ->
                         TreatmentHistoryEntry(
                             treatments = curatedTreatment.treatments,
-                            startYear = curatedTreatment.startYear ?: ehrEntry.startDate.year,
-                            startMonth = curatedTreatment.startMonth ?: ehrEntry.startDate.monthValue,
+                            startYear = curatedTreatment.startYear ?: ehrEntry.startDate?.year,
+                            startMonth = curatedTreatment.startMonth ?: ehrEntry.startDate?.monthValue,
                             intents = curatedTreatment.intents,
                             treatmentHistoryDetails = TreatmentHistoryDetails(
                                 stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrEntry.endDate?.year,

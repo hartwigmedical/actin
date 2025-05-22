@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.trial
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestMolecularMatchDetailsFactory
+import com.hartwig.actin.report.trial.EventWithExternalTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

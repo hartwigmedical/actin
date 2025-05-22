@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -20,10 +20,10 @@ class HasRecentlyReceivedTrialMedication(
         }
 
         val hadRecentTrialTreatment =
-            record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
+            record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
 
         val hadTrialTreatmentWithUnknownDate =
-            record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
+            record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
 
         if (!(hadRecentTrialTreatment || hadTrialTreatmentWithUnknownDate) && record.medications == null) {
             return MEDICATION_NOT_PROVIDED

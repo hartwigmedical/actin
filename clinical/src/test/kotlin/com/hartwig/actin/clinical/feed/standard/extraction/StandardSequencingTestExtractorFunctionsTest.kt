@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMolecularTestResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

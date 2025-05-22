@@ -4,10 +4,9 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -119,12 +118,12 @@ class PanelFusionAnnotator(
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
+        val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
         val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
         val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
         val fusionWithGeneAlteration =
             fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusionWithGeneAlteration))
+        val evidence = evidenceDatabase.evidenceForFusion(fusionWithGeneAlteration)
         return fusionWithGeneAlteration.copy(evidence = evidence)
     }
 }

@@ -82,7 +82,6 @@ class StandardMedicationExtractorTest {
         ),
         medications = listOf(providedMedication),
         tumorDetails = FeedTumorDetail(
-            diagnosisDate = LocalDate.of(2024, 2, 23),
             tumorLocation = "tumorLocation",
             tumorType = "tumorType",
             lesions = null,
@@ -176,7 +175,16 @@ class StandardMedicationExtractorTest {
         every { qtProlongatingDatabase.annotateWithQTProlongating(any()) } returns QTProlongatingRisk.NONE
         every { drugInteractionsDatabase.annotateWithCypInteractions(any()) } returns emptyList()
         every { drugInteractionsDatabase.annotateWithTransporterInteractions(any()) } returns emptyList()
-        val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(name = "drug (STUDIE)", atcCode = "L01ZZ"))))
+        val result = extractor.extract(
+            ehrPatientRecord.copy(
+                medications = listOf(
+                    providedMedication.copy(
+                        name = "drug (STUDIE)",
+                        atcCode = "L01ZZ"
+                    )
+                )
+            )
+        )
         assertThat(result.evaluation.warnings).containsOnly(
             CurationWarning(
                 "hashedId",

@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import org.junit.Test
 
-class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPDTest {
+class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
 
     @Test
     fun `Should fail for empty treatments`() {
@@ -167,8 +167,9 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPDTest {
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
         private val MATCHING_TREATMENT_SET = setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET))
-        private val functionWithWeeks = HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6)
+        private val functionWithWeeks =
+            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6)
         private val functionWithoutWeeks =
-            HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, null)
+            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, null)
     }
 }

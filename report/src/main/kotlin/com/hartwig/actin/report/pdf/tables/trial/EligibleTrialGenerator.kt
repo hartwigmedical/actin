@@ -6,7 +6,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
 
@@ -69,7 +69,43 @@ class EligibleTrialGenerator(
 
     companion object {
 
-        fun forOpenCohorts(
+        fun localOpenCohorts(
+            cohorts: List<InterpretedCohort>,
+            externalTrials: ExternalTrials,
+            requestingSource: TrialSource?,
+            countryOfReference: Country?
+        ): TrialTableGenerator {
+            val localExternalTrials = ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered)
+            val localExternalTrialFilteredCount = ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials()).size
+
+            return forOpenCohorts(
+                cohorts = cohorts,
+                externalTrials = localExternalTrials,
+                externalFilteredCount = localExternalTrialFilteredCount,
+                requestingSource = requestingSource,
+                countryOfReference = countryOfReference,
+                forLocalTrials = true
+            )
+        }
+
+        fun nonLocalOpenCohorts(
+            externalTrials: ExternalTrials,
+            requestingSource: TrialSource?
+        ): TrialTableGenerator {
+            val remoteExternalTrials = ExternalTrialSummarizer.summarize(externalTrials.internationalTrials.filtered)
+            val remoteExternalTrialFilteredCount = ExternalTrialSummarizer.summarize(externalTrials.excludedInternationalTrials()).size
+
+            return forOpenCohorts(
+                cohorts = emptyList(),
+                externalTrials = remoteExternalTrials,
+                externalFilteredCount = remoteExternalTrialFilteredCount,
+                requestingSource = requestingSource,
+                countryOfReference = null,
+                forLocalTrials = false
+            )
+        }
+
+        private fun forOpenCohorts(
             cohorts: List<InterpretedCohort>,
             externalTrials: Set<ExternalTrialSummary>,
             externalFilteredCount: Int,
@@ -167,13 +203,15 @@ class EligibleTrialGenerator(
             )
         }
 
-        fun forFilteredTrials(trials: Set<ExternalTrialSummary>, countryOfReference: Country): TrialTableGenerator? {
-            val title = "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${trials.size})"
-
-            return if (trials.isNotEmpty()) {
+        fun forFilteredTrials(externalTrials: ExternalTrials, countryOfReference: Country): TrialTableGenerator? {
+            val summarizedTrials =
+                ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials())
+            val title =
+                "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${summarizedTrials.size})"
+            return if (summarizedTrials.isNotEmpty()) {
                 EligibleTrialGenerator(
                     cohorts = emptyList(),
-                    externalTrials = trials,
+                    externalTrials = summarizedTrials,
                     requestingSource = null,
                     countryOfReference = countryOfReference,
                     title = title,

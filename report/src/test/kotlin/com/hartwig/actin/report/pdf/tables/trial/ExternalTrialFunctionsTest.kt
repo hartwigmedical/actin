@@ -3,7 +3,6 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

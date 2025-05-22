@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect.MISSENSE
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect.NONE
 import com.hartwig.serve.datamodel.molecular.gene.GeneAnnotation
@@ -9,7 +10,12 @@ import org.junit.Test
 
 private const val MATCHING_GENE = "gene 1"
 
-private val MATCHING_CRITERIA = VariantMatchCriteria(gene = MATCHING_GENE, codingEffect = MISSENSE, isReportable = true)
+private val MATCHING_CRITERIA = TestMolecularFactory.createMinimalVariant().copy(
+    gene = MATCHING_GENE,
+    canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = MISSENSE),
+    isReportable = true
+)
+
 private val ANNOTATION = object : GeneAnnotation {
     override fun gene(): String {
         return MATCHING_GENE
@@ -34,6 +40,7 @@ class GeneMatchingTest {
 
     @Test
     fun `Should return false on non-matching coding effect`() {
-        assertThat(GeneMatching.isMatch(ANNOTATION, MATCHING_CRITERIA.copy(codingEffect = NONE))).isFalse()
+        assertThat(GeneMatching.isMatch(ANNOTATION, MATCHING_CRITERIA.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = NONE)))).isFalse()
     }
 }
