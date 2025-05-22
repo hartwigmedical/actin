@@ -30,8 +30,8 @@ class HasHadAnySurgeryAfterSpecificDateTest {
     }
 
     @Test
-    fun `Should fail with surgery without end date`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgery(surgery(null))))
+    fun `Should return undetermined with surgery without end date`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withSurgery(surgery(null))))
     }
 
     @Test
