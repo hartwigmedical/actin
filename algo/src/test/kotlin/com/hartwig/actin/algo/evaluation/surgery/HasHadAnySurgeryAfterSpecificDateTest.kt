@@ -30,6 +30,11 @@ class HasHadAnySurgeryAfterSpecificDateTest {
     }
 
     @Test
+    fun `Should fail with surgery without end date`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgery(surgery(null))))
+    }
+
+    @Test
     fun `Should pass with recent surgery`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withSurgery(surgery(minDate.plusWeeks(2), SurgeryStatus.FINISHED))))
     }

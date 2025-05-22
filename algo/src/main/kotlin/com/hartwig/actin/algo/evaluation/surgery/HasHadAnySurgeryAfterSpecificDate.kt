@@ -20,7 +20,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val summary = record.surgeries.filter { minDate.isBefore(it.endDate) }
+        val summary = record.surgeries.filter { it.endDate != null && minDate.isBefore(it.endDate) }
             .map { surgery ->
                 val isFuture = evaluationDate.isBefore(surgery.endDate)
                 when {
