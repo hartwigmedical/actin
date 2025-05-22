@@ -32,10 +32,11 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean,
         includeConfiguration: Boolean,
-        includeSites: Boolean
+        includeSites: Boolean,
+        lineDistance: Float
     ) {
         sortedCohortsGroupedByTrial(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
-            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis, includeConfiguration, includeSites)
+            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis, includeConfiguration, includeSites, lineDistance)
         }
 
         externalTrials.forEach { trial ->
@@ -71,9 +72,10 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean,
         includeConfiguration: Boolean,
-        includeSites: Boolean
+        includeSites: Boolean,
+        lineDistance: Float
     ) {
-        table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis).setKeepTogether(true))
+        table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis, lineDistance).setKeepTogether(true))
 
         contentForTrialCohortList(
             cohortsForTrial = cohortsForTrial,
@@ -87,12 +89,13 @@ object TrialGeneratorFunctions {
                 table,
                 index == 0,
                 content.textEntries,
-                content.deEmphasizeContent && allowDeEmphasis
+                content.deEmphasizeContent && allowDeEmphasis,
+                lineDistance
             )
         }
     }
 
-    private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, allowDeEmphasis: Boolean): Cell {
+    private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, allowDeEmphasis: Boolean, lineDistance: Float): Cell {
         val anyCohort = cohortsForTrial.first()
         val trialIdIsNotAcronym = anyCohort.trialId.trimIndent() != anyCohort.acronym
         val trialLabelText = listOfNotNull(
@@ -104,17 +107,18 @@ object TrialGeneratorFunctions {
 
         val hasNoOpenCohortsWithSlots =
             (cohortsForTrial.none(InterpretedCohort::hasSlotsAvailable) || cohortsForTrial.none(InterpretedCohort::isOpen))
-        
+
+        val paragraph = Paragraph().setMultipliedLeading(lineDistance)
         return if (hasNoOpenCohortsWithSlots && allowDeEmphasis) {
             val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()) }
             anyCohort.url?.let {
-                Cells.createContent(Paragraph().addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
-            } ?: Cells.createContent(Paragraph().addAll(trialLabel))
+                Cells.createContent(paragraph.addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
+            } ?: Cells.createContent(paragraph.addAll(trialLabel))
         } else {
             anyCohort.url?.let {
-                Cells.createContent(Paragraph().addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) }))
+                Cells.createContent(paragraph.addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) }))
                     .setAction(PdfAction.createURI(it))
-            } ?: Cells.createContent(Paragraph().addAll(trialLabelText))
+            } ?: Cells.createContent(paragraph.addAll(trialLabelText))
         }
     }
 
@@ -122,7 +126,8 @@ object TrialGeneratorFunctions {
         table: Table,
         rowContainsTrialIdentificationCell: Boolean,
         cellContentsForRow: List<String>,
-        deEmphasizeContent: Boolean
+        deEmphasizeContent: Boolean,
+        lineDistance: Float
     ) {
         if (!rowContainsTrialIdentificationCell) {
             table.addCell(Cells.createEmpty())
@@ -131,9 +136,9 @@ object TrialGeneratorFunctions {
         cellContentsForRow.map {
             val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
-                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(1.6f)
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(lineDistance)
             } else {
-                Paragraph(it)
+                Paragraph(it).setMultipliedLeading(lineDistance)
             }
 
             val cell = if (deEmphasizeContent) Cells.createContentDeEmphasize(paragraph) else Cells.createContent(paragraph)

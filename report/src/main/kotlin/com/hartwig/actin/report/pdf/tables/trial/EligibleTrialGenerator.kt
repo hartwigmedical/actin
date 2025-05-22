@@ -18,7 +18,8 @@ class EligibleTrialGenerator(
     private val title: String,
     private val footNote: String?,
     private val allowDeEmphasis: Boolean,
-    private val includeWarningsColumn: Boolean
+    private val includeWarningsColumn: Boolean,
+    private val lineDistance: Float = 1.3f
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -56,7 +57,8 @@ class EligibleTrialGenerator(
             feedbackFunction = InterpretedCohort::warnings,
             allowDeEmphasis = allowDeEmphasis,
             includeConfiguration = false,
-            includeSites = true
+            includeSites = true,
+            lineDistance = lineDistance
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -164,7 +166,8 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = null,
                 allowDeEmphasis = false,
-                includeWarningsColumn = true
+                includeWarningsColumn = true,
+                lineDistance = 0.9f
             )
         }
 

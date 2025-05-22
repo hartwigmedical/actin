@@ -66,7 +66,8 @@ class IneligibleTrialGenerator(
             feedbackFunction = InterpretedCohort::fails,
             allowDeEmphasis = allowDeEmphasis,
             includeConfiguration = includeConfiguration,
-            includeSites = includeSites
+            includeSites = includeSites,
+            lineDistance = 0.9f
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
