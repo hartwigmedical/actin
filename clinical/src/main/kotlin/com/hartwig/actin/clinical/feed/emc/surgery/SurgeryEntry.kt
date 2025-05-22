@@ -2,11 +2,11 @@ package com.hartwig.actin.clinical.feed.emc.surgery
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.hartwig.actin.datamodel.clinical.provided.JacksonSerializable
 import com.hartwig.actin.clinical.feed.emc.FeedEntry
 import com.hartwig.actin.clinical.feed.emc.FeedSubjectDeserializer
 import com.hartwig.actin.clinical.feed.emc.FeedValidation
 import com.hartwig.actin.clinical.feed.emc.FeedValidator
+import com.hartwig.actin.clinical.feed.emc.JacksonSerializable
 import java.time.LocalDate
 
 private const val BIOPSY_PROCEDURE_DISPLAY = "Procedurele sedatie analgesie ANE op OK"

@@ -2,14 +2,13 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.feed.standard.FeedTestData
 import com.hartwig.actin.datamodel.clinical.BodyHeight
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedMeasurementCategory
 import com.hartwig.feed.datamodel.FeedMeasurement
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime
 
-private val CATEGORY = ProvidedMeasurementCategory.BODY_HEIGHT.name
+private val CATEGORY = MeasurementCategory.BODY_HEIGHT.name
 private val DATE = LocalDateTime.of(2024, 4, 24, 0, 0, 0)
 private val SUB_CATEGORY = null
 private const val VALUE = 200.0
