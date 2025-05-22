@@ -304,7 +304,7 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
+                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "warning1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", ""), true),
                 ContentDefinition(listOf("cohort2", "None", "warning2"), false),
             )

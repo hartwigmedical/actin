@@ -171,7 +171,7 @@ object TrialGeneratorFunctions {
                     listOfNotNull(
                         "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
-                        TrialLocations.actinTrialLocation(cohortsForTrial.first().source, requestingSource, commonLocations, true),
+                        if (includeSites) TrialLocations.actinTrialLocation(cohortsForTrial.first().source, requestingSource, commonLocations, true) else null,
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
