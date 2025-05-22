@@ -23,8 +23,12 @@ class GeneHasSufficientCopyNumberTest {
         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40)
     )
     private val passingSufficientCopiesOnNonCanonicalTranscript = passingSufficientCopiesOnCanonicalTranscript.copy(
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, 3, 3),
         otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40))
+    )
+    private val unknownCopiesOnAllTranscripts = passingSufficientCopiesOnCanonicalTranscript.copy(
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, null, null),
+        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, null, null))
     )
     private val functionWithMinCopies = GeneHasSufficientCopyNumber("gene A", 5)
 
@@ -111,6 +115,37 @@ class GeneHasSufficientCopyNumberTest {
     }
 
     @Test
+    fun `Should pass if gene copy nr is null but requested copy nr below assumed min copy nr for amps`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withCopyNumber(unknownCopiesOnAllTranscripts)
+        )
+    }
+
+
+    @Test
+    fun `Should fail if gene copy nr is null but type is del`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withCopyNumber(
+                unknownCopiesOnAllTranscripts.copy(
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.DEL,
+                    ), otherImpacts = emptySet()
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should be undetermined if gene copy nr is null and requested copy nr above assumed min copy nr for amps`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            GeneHasSufficientCopyNumber("gene A", 8).evaluate(MolecularTestFactory.withCopyNumber(unknownCopiesOnAllTranscripts))
+        )
+    }
+
+    @Test
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = functionWithMinCopies.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
@@ -118,7 +153,8 @@ class GeneHasSufficientCopyNumberTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages).containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
+        Assertions.assertThat(result.undeterminedMessages)
+            .containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
     }
 
     private fun assertEvaluation(result: EvaluationResult, record: PatientRecord) {

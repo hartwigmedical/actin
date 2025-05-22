@@ -11,26 +11,30 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val PLOIDY = 3.0
 
 class GeneIsAmplifiedTest {
+    private val impactWithCopies = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40)
     private val passingAmpOnCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene A",
         geneRole = GeneRole.ONCO,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isReportable = true,
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40)
+        canonicalImpact = impactWithCopies
     )
+    private val ampOnCanonicalTranscriptWithoutCopies =
+        passingAmpOnCanonicalTranscript.copy(canonicalImpact = impactWithCopies.copy(minCopies = null, maxCopies = null))
     private val passingAmpOnNonCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene A",
         geneRole = GeneRole.ONCO,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isReportable = true,
         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
-        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40))
+        otherImpacts = setOf(impactWithCopies)
     )
     private val functionWithMinCopies = GeneIsAmplified("gene A", 5)
     private val functionWithNoMinCopies = GeneIsAmplified("gene A", null)
@@ -108,6 +112,47 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should pass with reportable full gain of function`() {
+        assertEvaluation(EvaluationResult.PASS, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmpOnCanonicalTranscript))
+    }
+
+    @Test
+    fun `Should pass with reportable full gain of function if copies are null and copies not requested`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            functionWithNoMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, ampOnCanonicalTranscriptWithoutCopies))
+        )
+    }
+
+    @Test
+    fun `Should be undetermined with reportable full gain of function if copies are null and copies requested`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, ampOnCanonicalTranscriptWithoutCopies))
+        )
+    }
+
+    @Test
+    fun `Should fail with reportable del if copies are null and copies not requested`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            functionWithNoMinCopies.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(
+                    PLOIDY,
+                    ampOnCanonicalTranscriptWithoutCopies.copy(
+                        canonicalImpact = TranscriptCopyNumberImpact(
+                            type = CopyNumberType.DEL,
+                            minCopies = null,
+                            maxCopies = null,
+                            transcriptId = ""
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass with reportable full gain of function without copy nr`() {
         assertEvaluation(EvaluationResult.PASS, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmpOnCanonicalTranscript))
     }
 

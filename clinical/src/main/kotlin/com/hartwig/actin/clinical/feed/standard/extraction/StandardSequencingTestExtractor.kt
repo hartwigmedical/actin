@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.amplifications
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.deletions
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.hrd
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.msi
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.negativeResults
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.skippedExons
@@ -65,6 +66,7 @@ class StandardSequencingTestExtractor(
                         skippedExons = skippedExons(allResults),
                         tumorMutationalBurden = tmb(allResults),
                         isMicrosatelliteUnstable = msi(allResults),
+                        isHomologousRepairDeficient = hrd(allResults),
                         negativeResults = negativeResults(allResults),
                         knownSpecifications = test.knownSpecifications
                     )

@@ -184,4 +184,48 @@ class StandardSequencingTestExtractorFunctionsTest {
             )
         )
     }
+
+    @Test
+    fun `Should extract tmb`() {
+        val test = setOf(
+            SequencingTestResultConfig(
+                input = "",
+                tmb = 5.0
+            )
+        )
+        assertThat(StandardSequencingTestExtractorFunctions.tmb(test)).isEqualTo(5.0)
+    }
+
+    @Test
+    fun `Should extract msi if true`() {
+        val test = setOf(
+            SequencingTestResultConfig(
+                input = "",
+                msi = true
+            )
+        )
+        assertThat(StandardSequencingTestExtractorFunctions.msi(test)).isEqualTo(true)
+    }
+
+    @Test
+    fun `Should extract msi if null`() {
+        val test = setOf(
+            SequencingTestResultConfig(
+                input = "",
+                msi = null
+            )
+        )
+        assertThat(StandardSequencingTestExtractorFunctions.msi(test)).isNull()
+    }
+
+    @Test
+    fun `Should extract hrd`() {
+        val test = setOf(
+            SequencingTestResultConfig(
+                input = "",
+                hrd = false
+            )
+        )
+        assertThat(StandardSequencingTestExtractorFunctions.hrd(test)).isEqualTo(false)
+    }
 }

@@ -45,19 +45,21 @@ class MolecularDriversSummarizerTest {
     }
 
     @Test
-    fun `Should return key amplified genes and indicate partial amplifications`() {
-        val partialAmpGene = "partial amp"
-        val fullAmpGene = "full amp"
+    fun `Should return key amplified genes and indicate partial amplifications and copy nrs if available`() {
+        val fullAmpGene = "full"
+        val otherAmpGene = "other full"
+        val partialAmpGene = "partial"
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, fullAmpGene, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.DEL, "deletion", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false)
-        )
+            copyNumber(CopyNumberType.FULL_GAIN, otherAmpGene, DriverLikelihood.HIGH, true, 20),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true, 10),
+            copyNumber(CopyNumberType.DEL,"deletion", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false),
+            )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().toSet()
-        assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene (partial)", fullAmpGene)
+        assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene 10 copies (partial)", fullAmpGene, "$otherAmpGene 20 copies")
     }
 
     @Test
@@ -138,9 +140,9 @@ class MolecularDriversSummarizerTest {
         )
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, "expected amplification", null, false),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "no evidence", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "expected amplification", null, false),
             copyNumber(CopyNumberType.DEL, "expected deletion", DriverLikelihood.HIGH, false),
-            copyNumber(CopyNumberType.FULL_GAIN, "no evidence", DriverLikelihood.LOW, true)
         )
         val homozygousDisruptions = listOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
@@ -194,9 +196,16 @@ class MolecularDriversSummarizerTest {
         )
     }
 
-    private fun copyNumber(type: CopyNumberType, name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean): CopyNumber {
+    private fun copyNumber(
+        type: CopyNumberType,
+        name: String,
+        driverLikelihood: DriverLikelihood?,
+        isReportable: Boolean,
+        minCopies: Int? = null,
+        maxCopies: Int? = null,
+    ): CopyNumber {
         return TestCopyNumberFactory.createMinimal().copy(
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type),
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type, minCopies, maxCopies),
             gene = name,
             event = name,
             driverLikelihood = driverLikelihood,
