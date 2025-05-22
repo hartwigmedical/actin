@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import java.time.LocalDate
 
 private const val PLOIDY_FACTOR = 3.0
+private const val ASSUMED_MIN_COPY_NR_AMP = 6
 
 private enum class AmplificationEvaluation {
     AMP_WITH_UNKNOWN_COPY_NUMBER,
@@ -23,12 +24,14 @@ private enum class AmplificationEvaluation {
 
     companion object {
         fun fromCopyNumber(copyNumber: CopyNumber, relativeMinCopies: Double?, relativeMaxCopies: Double?): AmplificationEvaluation {
-            val isAmplified = copyNumber.canonicalImpact.type in setOf(
+            val copyNumberIsAmp = copyNumber.canonicalImpact.type in setOf(
                 CopyNumberType.FULL_GAIN,
                 CopyNumberType.PARTIAL_GAIN
             ) || copyNumber.otherImpacts.any { it.type in setOf(CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN) }
+            val copyNumberHasUnknownCopies =
+                copyNumber.canonicalImpact.minCopies == null && copyNumber.otherImpacts.none { it.minCopies != null }
 
-            return if (isAmplified && copyNumber.canonicalImpact.minCopies == null && copyNumber.otherImpacts.none { it.minCopies != null }) {
+            return if (copyNumberIsAmp && copyNumberHasUnknownCopies) {
                 AMP_WITH_UNKNOWN_COPY_NUMBER
             } else if (relativeMaxCopies != null && relativeMaxCopies >= PLOIDY_FACTOR) {
                 when {
@@ -86,31 +89,40 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
             })
         }.map { it.event }.toSet()
 
+        val reportableFullAmps = evaluatedCopyNumbers[AmplificationEvaluation.REPORTABLE_FULL_AMP]
+        val unreportableFullAmps = evaluatedCopyNumbers[AmplificationEvaluation.UNREPORTABLE_AMP]
+        val amplifiedWithUnknownCN = evaluatedCopyNumbers[AmplificationEvaluation.AMP_WITH_UNKNOWN_COPY_NUMBER]
         val minCopyMessage = requestedMinCopyNumber?.let { " with >=$requestedMinCopyNumber copies" } ?: ""
 
-        val ampWithUnknownCn = evaluatedCopyNumbers[AmplificationEvaluation.AMP_WITH_UNKNOWN_COPY_NUMBER]
-
-        return evaluatedCopyNumbers[AmplificationEvaluation.REPORTABLE_FULL_AMP]?.let { reportableFullAmps ->
-            EvaluationFactory.pass("$gene is amplified$minCopyMessage", inclusionEvents = reportableFullAmps)
-        }
-            ?: requestedMinCopyNumber?.let { evaluatedCopyNumbers[AmplificationEvaluation.UNREPORTABLE_AMP] }
-                ?.let { ampsThatAreUnreportable ->
-                    EvaluationFactory.pass(
-                        "$gene has a copy number >$requestedMinCopyNumber copies but is considered not reportable",
-                        inclusionEvents = ampsThatAreUnreportable
-                    )
-                }
-            ?: ampWithUnknownCn?.let { ampsWithUnknownCN ->
-                if (requestedMinCopyNumber == null) {
-                    EvaluationFactory.pass("$gene is amplified", inclusionEvents = ampsWithUnknownCN)
-                } else {
-                    EvaluationFactory.warn("$gene is amplified but undetermined if$minCopyMessage", inclusionEvents = ampsWithUnknownCN)
-                }
+        return when {
+            reportableFullAmps != null -> {
+                EvaluationFactory.pass("$gene is amplified$minCopyMessage", inclusionEvents = reportableFullAmps)
             }
-            ?: evaluatePotentialWarns(evaluatedCopyNumbers, eventsOnNonCanonical, test.evidenceSource)
-            ?: EvaluationFactory.fail(
-                if (requestedMinCopyNumber == null) "No amplification of $gene$minCopyMessage" else "Insufficient copies of $gene"
-            )
+
+            unreportableFullAmps != null && requestedMinCopyNumber != null -> {
+                EvaluationFactory.pass(
+                    "$gene has a copy number >$requestedMinCopyNumber copies but is considered not reportable",
+                    inclusionEvents = unreportableFullAmps
+                )
+            }
+
+            amplifiedWithUnknownCN != null -> {
+                if (requestedMinCopyNumber == null)
+                    EvaluationFactory.pass("$gene is amplified", inclusionEvents = amplifiedWithUnknownCN)
+                else if (requestedMinCopyNumber <= ASSUMED_MIN_COPY_NR_AMP)
+                    EvaluationFactory.pass("$gene is amplified hence assumed gene has a copy number >$requestedMinCopyNumber", inclusionEvents = amplifiedWithUnknownCN)
+                else
+                    EvaluationFactory.warn(
+                        "$gene is amplified but undetermined if$minCopyMessage",
+                        inclusionEvents = amplifiedWithUnknownCN
+                    )
+            }
+
+            else -> evaluatePotentialWarns(evaluatedCopyNumbers, eventsOnNonCanonical, test.evidenceSource)
+                ?: EvaluationFactory.fail(
+                    if (requestedMinCopyNumber == null) "No amplification of $gene$minCopyMessage" else "Insufficient copies of $gene"
+                )
+        }
     }
 
     private fun evaluatePotentialWarns(

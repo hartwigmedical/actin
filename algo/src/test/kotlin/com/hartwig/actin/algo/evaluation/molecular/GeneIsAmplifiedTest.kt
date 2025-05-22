@@ -124,9 +124,14 @@ class GeneIsAmplifiedTest {
     }
 
     @Test
-    fun `Should be undetermined with reportable full gain of function if copies are null and copies requested`() {
+    fun `Should be warn with reportable full gain of function if copies are null and copies requested`() {
+        assertMolecularEvaluation(EvaluationResult.WARN, GeneIsAmplified("gene A", 10).evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, ampOnCanonicalTranscriptWithoutCopies)))
+    }
+
+    @Test
+    fun `Should be pass with reportable full gain of function if copies are null but requested copy nr below assumed copy nr`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN,
+            EvaluationResult.PASS,
             functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, ampOnCanonicalTranscriptWithoutCopies))
         )
     }

@@ -22,12 +22,14 @@ private enum class CopyNumberEvaluation {
 
     companion object {
         fun fromCopyNumber(copyNumber: CopyNumber, requestedMinCopyNumber: Int): CopyNumberEvaluation {
-            val isAmplified = copyNumber.canonicalImpact.type in setOf(
+            val copyNumberIsAmp = copyNumber.canonicalImpact.type in setOf(
                 CopyNumberType.FULL_GAIN,
                 CopyNumberType.PARTIAL_GAIN
             ) || copyNumber.otherImpacts.any { it.type in setOf(CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN) }
+            val copyNumberHasUnknownCopies =
+                copyNumber.canonicalImpact.minCopies == null && copyNumber.otherImpacts.none { it.minCopies != null }
 
-            return if (isAmplified && copyNumber.canonicalImpact.minCopies == null && copyNumber.otherImpacts.none { it.minCopies != null }) {
+            return if (copyNumberIsAmp && copyNumberHasUnknownCopies) {
                 AMP_WITH_UNKNOWN_COPY_NUMBER
             } else if ((copyNumber.canonicalImpact.minCopies?.let { it >= requestedMinCopyNumber }) == true) {
                 when {
@@ -70,13 +72,13 @@ class GeneHasSufficientCopyNumber(override val gene: String, private val request
         val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = targetCopyNumbers
             .groupingBy { CopyNumberEvaluation.fromCopyNumber(it, requestedMinCopyNumber) }
             .fold(emptySet()) { acc, copyNumber -> acc + copyNumber.event }
+
         val eventsOnNonCanonical =
             targetCopyNumbers.filter { copyNumber -> copyNumber.otherImpacts.any { it.minCopies != null && it.minCopies!! >= requestedMinCopyNumber } }
                 .map { it.event }.toSet()
-
         val reportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_SUFFICIENT_COPY_NUMBER]
         val unreportableSufficientCN = evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_SUFFICIENT_COPY_NUMBER]
-        val ampWithUnknownCN = evaluatedCopyNumbers[CopyNumberEvaluation.AMP_WITH_UNKNOWN_COPY_NUMBER]
+        val amplifiedWithUnknownCN = evaluatedCopyNumbers[CopyNumberEvaluation.AMP_WITH_UNKNOWN_COPY_NUMBER]
 
         return when {
             reportableSufficientCN != null -> {
@@ -93,18 +95,16 @@ class GeneHasSufficientCopyNumber(override val gene: String, private val request
                 )
             }
 
-            ampWithUnknownCN != null && requestedMinCopyNumber <= ASSUMED_MIN_COPY_NR_AMP -> {
-                EvaluationFactory.pass(
-                    "$gene is amplified hence assumed gene has a copy number >$requestedMinCopyNumber",
-                    inclusionEvents = ampWithUnknownCN
-                )
-            }
-
-            ampWithUnknownCN != null -> {
-                EvaluationFactory.warn(
-                    "$gene is amplified but undetermined if gene has a copy number >$requestedMinCopyNumber",
-                    inclusionEvents = ampWithUnknownCN
-                )
+            amplifiedWithUnknownCN != null -> {
+                if (requestedMinCopyNumber <= ASSUMED_MIN_COPY_NR_AMP)
+                    EvaluationFactory.pass(
+                        "$gene is amplified hence assumed gene has a copy number >$requestedMinCopyNumber",
+                        inclusionEvents = amplifiedWithUnknownCN
+                    ) else
+                    EvaluationFactory.warn(
+                        "$gene is amplified but undetermined if gene has a copy number >$requestedMinCopyNumber",
+                        inclusionEvents = amplifiedWithUnknownCN
+                    )
             }
 
             else -> evaluatePotentialWarns(evaluatedCopyNumbers, eventsOnNonCanonical, test.evidenceSource)
