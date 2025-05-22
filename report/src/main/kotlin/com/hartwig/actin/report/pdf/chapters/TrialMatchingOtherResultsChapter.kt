@@ -27,7 +27,7 @@ class TrialMatchingOtherResultsChapter(
     }
 
     override fun pageSize(): PageSize {
-        return PageSize.A4
+        return PageSize.A4.rotate()
     }
 
     override fun render(document: Document) {
