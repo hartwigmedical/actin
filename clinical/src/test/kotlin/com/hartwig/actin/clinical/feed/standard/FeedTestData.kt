@@ -40,7 +40,6 @@ object FeedTestData {
     )
 
     private fun createFeedTumorDetail() = FeedTumorDetail(
-        diagnosisDate = DATE_Y2023_M02_D23,
         tumorLocation = "tumorLocation",
         tumorType = "tumorType",
         lesions = emptyList(),
