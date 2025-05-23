@@ -10,8 +10,8 @@ import com.hartwig.feed.datamodel.FeedPatientRecord
 
 
 class StandardBodyWeightExtractor : StandardDataExtractor<List<BodyWeight>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<BodyWeight>> {
-        return ExtractionResult(ehrPatientRecord.measurements
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<BodyWeight>> {
+        return ExtractionResult(feedPatientRecord.measurements
             .filter {
                 enumeratedInput<ProvidedMeasurementCategory>(it.category) == ProvidedMeasurementCategory.BODY_WEIGHT
             }.map {

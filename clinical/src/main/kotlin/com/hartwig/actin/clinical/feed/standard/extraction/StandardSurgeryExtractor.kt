@@ -14,14 +14,14 @@ class StandardSurgeryExtractor(
     private val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>
 ) : StandardDataExtractor<List<Surgery>> {
 
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<Surgery>> {
-        return ehrPatientRecord.surgeries.map { providedSurgery ->
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<Surgery>> {
+        return feedPatientRecord.surgeries.map { providedSurgery ->
             val status = providedSurgery.status?.let(SurgeryStatus::valueOf) ?: SurgeryStatus.UNKNOWN
 
             providedSurgery.name?.takeIf { it.isNotBlank() }?.let { surgeryName ->
                 val curationResponse = CurationResponse.createFromConfigs(
                     surgeryNameCuration.find(surgeryName),
-                    ehrPatientRecord.patientDetails.patientId,
+                    feedPatientRecord.patientDetails.patientId,
                     CurationCategory.SURGERY_NAME,
                     surgeryName,
                     "surgery"

@@ -25,11 +25,11 @@ class StandardSequencingTestExtractor(
 ) :
     StandardDataExtractor<List<SequencingTest>> {
 
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
-        return ehrPatientRecord.sequencingTests.map { test ->
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
+        return feedPatientRecord.sequencingTests.map { test ->
             val testCurationResponse = CurationResponse.createFromConfigs(
                 testCuration.find(test.name),
-                ehrPatientRecord.patientDetails.patientId,
+                feedPatientRecord.patientDetails.patientId,
                 CurationCategory.SEQUENCING_TEST,
                 test.name,
                 "sequencing test",
@@ -39,7 +39,7 @@ class StandardSequencingTestExtractor(
             if (testCurationResponse.config()?.ignore == true) {
                 ExtractionResult(emptyList(), testCurationResponse.extractionEvaluation)
             } else {
-                extractTestResults(test, testCurationResponse, ehrPatientRecord.patientDetails.patientId)
+                extractTestResults(test, testCurationResponse, feedPatientRecord.patientDetails.patientId)
             }
         }
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->

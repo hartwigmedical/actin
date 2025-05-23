@@ -10,8 +10,8 @@ import com.hartwig.feed.datamodel.FeedMeasurement
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardVitalFunctionsExtractor : StandardDataExtractor<List<VitalFunction>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<VitalFunction>> {
-        return ExtractionResult(ehrPatientRecord.measurements.filter {
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<VitalFunction>> {
+        return ExtractionResult(feedPatientRecord.measurements.filter {
             !setOf(
                 ProvidedMeasurementCategory.BMI,
                 ProvidedMeasurementCategory.BODY_HEIGHT,

@@ -15,12 +15,12 @@ import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardLabValuesExtractor(private val labMeasurementCuration: CurationDatabase<LabMeasurementConfig>) :
     StandardDataExtractor<List<LabValue>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<LabValue>> {
-        return ehrPatientRecord.labValues.map { providedLabValue ->
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<LabValue>> {
+        return feedPatientRecord.labValues.map { providedLabValue ->
             val inputText = "${providedLabValue.measureCode} | ${providedLabValue.measure}"
             val curationResponse = CurationResponse.createFromConfigs(
                 labMeasurementCuration.find(inputText),
-                ehrPatientRecord.patientDetails.patientId,
+                feedPatientRecord.patientDetails.patientId,
                 CurationCategory.LAB_MEASUREMENT,
                 inputText,
                 "lab measurement",
