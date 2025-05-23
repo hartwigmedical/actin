@@ -22,6 +22,8 @@ data class ContentDefinition(val textEntries: List<String>, val deEmphasizeConte
 
 object TrialGeneratorFunctions {
 
+    private const val SMALL_LINE_DISTANCE = 0.9f
+
     fun addTrialsToTable(
         table: Table,
         cohorts: List<InterpretedCohort>,
@@ -31,17 +33,21 @@ object TrialGeneratorFunctions {
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean,
+        allowSmallerSize: Boolean,
         includeConfiguration: Boolean,
         includeSites: Boolean,
-        lineDistance: Float
     ) {
         sortedCohortsGroupedByTrial(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
-            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis, includeConfiguration, includeSites, lineDistance)
+            insertAllCohortsForTrial(table, cohortList, requestingSource, includeFeedback, feedbackFunction, allowDeEmphasis, allowSmallerSize, includeConfiguration, includeSites)
         }
 
         externalTrials.forEach { trial ->
             val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
-            val contentFunction = if (allowDeEmphasis) Cells::createContentSmallItalic else Cells::createContent
+            val contentFunction = when {
+                allowDeEmphasis -> Cells::createContentSmallItalic
+                allowSmallerSize -> Cells::createContentSmall
+                else -> Cells::createContent
+            }
             table.addCell(contentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
             table.addCell(contentFunction(trial.sourceMolecularEvents.joinToString(", ")))
             table.addCell(contentFunction(trial.actinMolecularEvents.joinToString(", ")))
@@ -71,11 +77,11 @@ object TrialGeneratorFunctions {
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         allowDeEmphasis: Boolean,
+        allowSmallerSize: Boolean,
         includeConfiguration: Boolean,
-        includeSites: Boolean,
-        lineDistance: Float
+        includeSites: Boolean
     ) {
-        table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis, lineDistance).setKeepTogether(true))
+        table.addCell(generateTrialTitleCell(cohortsForTrial, allowDeEmphasis, allowSmallerSize).setKeepTogether(true))
 
         contentForTrialCohortList(
             cohortsForTrial = cohortsForTrial,
@@ -90,12 +96,12 @@ object TrialGeneratorFunctions {
                 index == 0,
                 content.textEntries,
                 content.deEmphasizeContent && allowDeEmphasis,
-                lineDistance
+                allowSmallerSize
             )
         }
     }
 
-    private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, allowDeEmphasis: Boolean, lineDistance: Float): Cell {
+    private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, allowDeEmphasis: Boolean, allowSmallerSize: Boolean): Cell {
         val anyCohort = cohortsForTrial.first()
         val trialIdIsNotAcronym = anyCohort.trialId.trimIndent() != anyCohort.acronym
         val trialLabelText = listOfNotNull(
@@ -108,17 +114,18 @@ object TrialGeneratorFunctions {
         val hasNoOpenCohortsWithSlots =
             (cohortsForTrial.none(InterpretedCohort::hasSlotsAvailable) || cohortsForTrial.none(InterpretedCohort::isOpen))
 
-        val paragraph = Paragraph().setMultipliedLeading(lineDistance)
+        val paragraph = if (allowSmallerSize) Paragraph().setMultipliedLeading(SMALL_LINE_DISTANCE) else Paragraph()
+        val fontSize = if (allowSmallerSize) Styles.smallerFontSizeStyle() else Styles.tableContentStyle()
         return if (hasNoOpenCohortsWithSlots && allowDeEmphasis) {
-            val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()) }
+            val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()).addStyle(fontSize) }
             anyCohort.url?.let {
                 Cells.createContent(paragraph.addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
             } ?: Cells.createContent(paragraph.addAll(trialLabel))
         } else {
             anyCohort.url?.let {
-                Cells.createContent(paragraph.addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()) }))
+                Cells.createContent(paragraph.addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()).addStyle(fontSize) }))
                     .setAction(PdfAction.createURI(it))
-            } ?: Cells.createContent(paragraph.addAll(trialLabelText))
+            } ?: Cells.createContent(paragraph.addAll(trialLabelText)).addStyle(fontSize)
         }
     }
 
@@ -127,21 +134,27 @@ object TrialGeneratorFunctions {
         rowContainsTrialIdentificationCell: Boolean,
         cellContentsForRow: List<String>,
         deEmphasizeContent: Boolean,
-        lineDistance: Float
+        allowSmallerSize: Boolean
     ) {
         if (!rowContainsTrialIdentificationCell) {
             table.addCell(Cells.createEmpty())
         }
 
         cellContentsForRow.map {
+            val fontSize = if (allowSmallerSize) Styles.smallerFontSizeStyle() else Styles.tableContentStyle()
             val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
-                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(lineDistance)
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE))
             } else {
-                Paragraph(it).setMultipliedLeading(lineDistance)
+                Paragraph(it).addStyle(fontSize)
             }
 
-            val cell = if (deEmphasizeContent) Cells.createContentDeEmphasize(paragraph) else Cells.createContent(paragraph)
+            val cell = when {
+                deEmphasizeContent && allowSmallerSize -> Cells.createContentDeEmphasize(paragraph.setMultipliedLeading(SMALL_LINE_DISTANCE))
+                deEmphasizeContent -> Cells.createContentDeEmphasize(paragraph)
+                allowSmallerSize -> Cells.createContent(paragraph.setMultipliedLeading(SMALL_LINE_DISTANCE))
+                else -> Cells.createContent(paragraph)
+            }
             if (!rowContainsTrialIdentificationCell) {
                 cell.setBorder(Border.NO_BORDER)
             }

@@ -119,6 +119,10 @@ object Styles {
         return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_MID_GREY)
     }
 
+    fun smallerFontSizeStyle(): Style {
+        return Style().setFontSize(6f)
+    }
+
     private fun fontRegular(): PdfFont {
         // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
         return fontRegular

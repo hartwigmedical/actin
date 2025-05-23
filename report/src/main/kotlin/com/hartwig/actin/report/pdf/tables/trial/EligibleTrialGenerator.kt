@@ -18,8 +18,8 @@ class EligibleTrialGenerator(
     private val title: String,
     private val footNote: String?,
     private val allowDeEmphasis: Boolean,
-    private val includeWarningsColumn: Boolean,
-    private val lineDistance: Float = 1.3f
+    private val allowSmallerSize: Boolean,
+    private val includeWarningsColumn: Boolean
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -56,9 +56,9 @@ class EligibleTrialGenerator(
             includeFeedback = includeWarningsColumn,
             feedbackFunction = InterpretedCohort::warnings,
             allowDeEmphasis = allowDeEmphasis,
+            allowSmallerSize = allowSmallerSize,
             includeConfiguration = false,
-            includeSites = true,
-            lineDistance = lineDistance
+            includeSites = true
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
@@ -118,6 +118,7 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = footNote,
                 allowDeEmphasis = forLocalTrials,
+                allowSmallerSize = false,
                 includeWarningsColumn = forLocalTrials
             )
         }
@@ -149,6 +150,7 @@ class EligibleTrialGenerator(
                     title = title,
                     footNote = footNote,
                     allowDeEmphasis = true,
+                    allowSmallerSize = false,
                     includeWarningsColumn = true
                 )
             } else null
@@ -166,8 +168,8 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = null,
                 allowDeEmphasis = false,
-                includeWarningsColumn = true,
-                lineDistance = 0.9f
+                allowSmallerSize = true,
+                includeWarningsColumn = true
             )
         }
 
@@ -183,6 +185,7 @@ class EligibleTrialGenerator(
                     title = title,
                     footNote = null,
                     allowDeEmphasis = false,
+                    allowSmallerSize = true,
                     includeWarningsColumn = false
                 )
             } else null
