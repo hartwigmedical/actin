@@ -12,9 +12,9 @@ typealias PanelRecordWithEvidence = PanelRecord
 
 class PanelEvidenceAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
-) : MolecularAnnotator<PanelRecord, PanelRecordWithEvidence> {
+) : MolecularAnnotator<PanelRecordWithDriverAttributes, PanelRecordWithEvidence> {
 
-    override fun annotate(input: PanelRecord): PanelRecordWithEvidence {
+    override fun annotate(input: PanelRecordWithDriverAttributes): PanelRecordWithEvidence {
         return input.copy(
             drivers = input.drivers.copy(
                 variants = input.drivers.variants.map { annotateVariantWithClinicalEvidence(it) },
