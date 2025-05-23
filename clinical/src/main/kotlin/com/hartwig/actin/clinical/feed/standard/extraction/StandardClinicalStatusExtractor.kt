@@ -6,11 +6,11 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardClinicalStatusExtractor() : StandardDataExtractor<ClinicalStatus> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<ClinicalStatus> {
-        val mostRecentWho = ehrPatientRecord.whoEvaluations.maxByOrNull { who -> who.evaluationDate }
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<ClinicalStatus> {
+        val mostRecentWho = feedPatientRecord.whoEvaluations.maxByOrNull { who -> who.evaluationDate }
         val clinicalStatus = ClinicalStatus(
             who = mostRecentWho?.status,
-            hasComplications = ehrPatientRecord.complications.isNotEmpty()
+            hasComplications = feedPatientRecord.complications.isNotEmpty()
         )
         return ExtractionResult(clinicalStatus, CurationExtractionEvaluation())
     }

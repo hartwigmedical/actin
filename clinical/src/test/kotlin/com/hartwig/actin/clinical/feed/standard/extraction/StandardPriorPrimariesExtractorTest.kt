@@ -4,8 +4,6 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.FeedTestData
-import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
-import com.hartwig.actin.clinical.feed.standard.TREATMENT_HISTORY_INPUT
 import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
@@ -40,16 +38,6 @@ private val PATIENT_RECORD = FeedTestData.FEED_PATIENT_RECORD.copy(
     priorPrimaries = listOf(DatedEntry(name = PRIOR_PRIMARY_INPUT, startDate = DIAGNOSIS_DATE, endDate = LAST_TREATMENT_DATE))
 )
 
-private val FEED_OTHER_CONDITION = DatedEntry(name = OTHER_CONDITION_INPUT, startDate = LocalDate.of(2023, 1, 1))
-
-private val SECOND_PRIMARY_CONFIG = PriorPrimaryConfig(
-    ignore = false,
-    input = TREATMENT_HISTORY_INPUT,
-    curated = BRAIN_PRIOR_SECOND_PRIMARY
-)
-
-private val LUNG_PRIOR_SECOND_PRIMARY = BRAIN_PRIOR_SECOND_PRIMARY.copy(tumorLocation = "lung")
-
 class StandardPriorPrimariesExtractorTest {
 
     private val priorPrimaryConfigCurationDatabase = mockk<CurationDatabase<PriorPrimaryConfig>> {
@@ -76,6 +64,33 @@ class StandardPriorPrimariesExtractorTest {
             )
         )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should curate and extract multiple prior primaries for one input when defined`() {
+        val input = "brain | type | prior primaries in kidney and liver"
+        val kidneyPrior = PriorPrimary("kidney", "", "Carcinoma", "", treatmentHistory = "", status = TumorStatus.INACTIVE)
+        val liverPrior = kidneyPrior.copy(tumorLocation = "liver")
+
+        every { priorPrimaryConfigCurationDatabase.find(input) } returns setOf(
+            PriorPrimaryConfig(ignore = false, input = input, curated = kidneyPrior),
+            PriorPrimaryConfig(ignore = false, input = input, curated = liverPrior)
+        )
+        val patientWithMultiplePrimaries = FeedTestData.FEED_PATIENT_RECORD.copy(
+            priorPrimaries = listOf(DatedEntry(name = input, startDate = DIAGNOSIS_DATE, endDate = LAST_TREATMENT_DATE))
+        )
+
+        val result = extractor.extract(patientWithMultiplePrimaries)
+        val expectedKidneyPrior = kidneyPrior.copy(
+            diagnosedMonth = DIAGNOSIS_DATE.monthValue,
+            diagnosedYear = DIAGNOSIS_DATE.year,
+            lastTreatmentYear = LAST_TREATMENT_DATE.year,
+            lastTreatmentMonth = LAST_TREATMENT_DATE.monthValue
+        )
+        val expectedLiverPrior = expectedKidneyPrior.copy(tumorLocation = "liver")
+        assertThat(result.extracted).containsExactly(expectedKidneyPrior, expectedLiverPrior)
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(input)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -108,53 +123,7 @@ class StandardPriorPrimariesExtractorTest {
     }
 
     @Test
-    fun `Should curate and extract prior primaries from other conditions, supporting multiple configs per input, ignoring warnings`() {
-        every { priorPrimaryConfigCurationDatabase.find(OTHER_CONDITION_INPUT) } returns setOf(
-            SECOND_PRIMARY_CONFIG.copy(input = OTHER_CONDITION_INPUT),
-            SECOND_PRIMARY_CONFIG.copy(
-                input = OTHER_CONDITION_INPUT,
-                curated = LUNG_PRIOR_SECOND_PRIMARY
-            )
-        )
-        val result = extractor.extract(
-            PATIENT_RECORD.copy(
-                priorPrimaries = emptyList(),
-                otherConditions = listOf(
-                    FEED_OTHER_CONDITION,
-                    FEED_OTHER_CONDITION.copy(name = "another prior condition")
-                )
-            )
-        )
-        assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY, LUNG_PRIOR_SECOND_PRIMARY)
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(OTHER_CONDITION_INPUT)))
-        assertThat(result.evaluation.warnings).isEmpty()
-    }
-
-    @Test
-    fun `Should curate and extract prior primaries from treatment history but ignore curation warnings, supporting multiple configs per input, ignoring warnings`() {
-        every { priorPrimaryConfigCurationDatabase.find(TREATMENT_HISTORY_INPUT) } returns setOf(
-            SECOND_PRIMARY_CONFIG.copy(input = TREATMENT_HISTORY_INPUT),
-            SECOND_PRIMARY_CONFIG.copy(
-                input = TREATMENT_HISTORY_INPUT,
-                curated = LUNG_PRIOR_SECOND_PRIMARY
-            )
-        )
-        val result = extractor.extract(
-            PATIENT_RECORD.copy(
-                priorPrimaries = emptyList(),
-                treatmentHistory = listOf(
-                    FeedTestData.FEED_TREATMENT_HISTORY.copy(name = TREATMENT_HISTORY_INPUT),
-                    FeedTestData.FEED_TREATMENT_HISTORY.copy(name = "another treatment")
-                )
-            )
-        )
-        assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY, LUNG_PRIOR_SECOND_PRIMARY)
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(TREATMENT_HISTORY_INPUT)))
-        assertThat(result.evaluation.warnings).isEmpty()
-    }
-
-    @Test
-    fun `Should always use diagnosis year and month from feed, even when in curation data `() {
+    fun `Should always use diagnosis year and month from feed, even when in curation data`() {
         every { priorPrimaryConfigCurationDatabase.find(PRIOR_PRIMARY_INPUT) } returns setOf(
             PriorPrimaryConfig(
                 ignore = false,
