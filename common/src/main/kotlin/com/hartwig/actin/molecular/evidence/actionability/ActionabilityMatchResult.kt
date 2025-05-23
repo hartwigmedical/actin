@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 sealed class ActionabilityMatchResult {
 
     object Failure : ActionabilityMatchResult()
-    data class Success(val actionable: List<Actionable> = emptyList()) : ActionabilityMatchResult()
+    data class Success(val actionables: List<Actionable> = emptyList()) : ActionabilityMatchResult()
 
     companion object {
         fun combine(results: Sequence<ActionabilityMatchResult>): ActionabilityMatchResult {
@@ -13,7 +13,7 @@ sealed class ActionabilityMatchResult {
                 for (result in results) {
                     when (result) {
                         is Failure -> return Failure
-                        is Success -> addAll(result.actionable)
+                        is Success -> addAll(result.actionables)
                     }
                 }
             }.let(::Success)

@@ -80,16 +80,6 @@ private val molecularTestFusion = TestFusionFactory.createMinimal()
 class CombinedEvidenceMatcherTest {
 
     @Test
-    fun `Should aggregate all events when combining successful MatchResults`() {
-        val actionabilityMatchResult1 = ActionabilityMatchResult.Success(listOf(brafMolecularTestVariant))
-        val actionabilityMatchResult2 = ActionabilityMatchResult.Success(listOf(krasMolecularTestVariant))
-
-        val result = ActionabilityMatchResult.combine(listOf(actionabilityMatchResult1, actionabilityMatchResult2))
-
-        assertThat(result).isEqualTo(ActionabilityMatchResult.Success(listOf(brafMolecularTestVariant, krasMolecularTestVariant)))
-    }
-
-    @Test
     fun `Should match combined evidence having multiple hotspots when also present in panel`() {
         val evidence = TestServeEvidenceFactory.create(
             molecularCriterium = ImmutableMolecularCriterium.builder()
@@ -128,6 +118,34 @@ class CombinedEvidenceMatcherTest {
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).isEmpty()
+    }
+
+    @Test
+    fun `Should include all evidences for same actionable`() {
+        val criterium = ImmutableMolecularCriterium.builder()
+            .addAllHotspots(listOf(brafActionableHotspot))
+            .build()
+
+        val evidence1 = TestServeEvidenceFactory.create(
+            treatment = "Treatment 1",
+            molecularCriterium = criterium,
+        )
+
+        val evidence2 = TestServeEvidenceFactory.create(
+            treatment = "Treatment 2",
+            molecularCriterium = criterium,
+        )
+
+        val matcher = matcherFactory(listOf(evidence1, evidence2))
+
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(
+                drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
+            )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches.get(brafMolecularTestVariant as Actionable)).isEqualTo(setOf(evidence1, evidence2))
     }
 
     @Test

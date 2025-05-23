@@ -26,15 +26,14 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
 
     fun match(molecularTest: MolecularTest): EvidencesForActionable {
         return evidences.asSequence()
-            .mapNotNull { evidence ->
+            .flatMap { evidence ->
                 when (val result = matchEvidence(molecularTest, evidence)) {
-                    is Success -> result.actionable.associateWith { setOf(evidence) }
-                    is Failure -> null
+                    is Success -> result.actionables.map { actionable -> actionable to evidence }
+                    is Failure -> emptyList()
                 }
             }
-            .flatMap { it.entries }
-            .groupBy({ it.key }, { it.value })
-            .mapValues { it.value.flatten().toSet() }
+            .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+            .mapValues { it.value.toSet() }
     }
 
     private fun matchEvidence(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult =
