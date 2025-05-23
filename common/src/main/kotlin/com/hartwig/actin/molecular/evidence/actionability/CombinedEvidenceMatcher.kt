@@ -46,7 +46,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                 ::matchFusions,
                 ::matchCharacteristics,
                 ::matchHlas
-            ).map { it(molecularTest, efficacyEvidence) }
+            ).map { matchFunc -> matchFunc(molecularTest, efficacyEvidence) }
         )
 
     private fun matchHotspots(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
