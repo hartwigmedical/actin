@@ -5,7 +5,8 @@
     "birthYear": 1953,
     "registrationDate": "2020-07-13",
     "questionnaireDate": "2021-08-16",
-    "hasHartwigSequencing": true
+    "hasHartwigSequencing": true,
+    "sourceId": null
   },
   "tumor": {
     "primaryTumorLocation": "Ovary",
@@ -35,8 +36,7 @@
     "hasSuspectedLymphNodeLesions": null,
     "otherLesions": null,
     "otherSuspectedLesions": null,
-    "biopsyLocation": "Lymph node",
-    "rawPathologyReport": null
+    "biopsyLocation": "Lymph node"
   },
   "clinicalStatus": {
     "who": 0,
@@ -121,7 +121,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [
+  "priorPrimaries": [
     {
       "tumorLocation": "Prostate",
       "tumorSubLocation": "",
@@ -231,9 +231,8 @@
       "comorbidityClass": "ECG"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "ERBB2",
       "measure": null,
       "measureDate": null,
@@ -244,7 +243,6 @@
       "impliesPotentialIndeterminateStatus": false
     },
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "measureDate": null,
@@ -255,7 +253,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [],
+  "sequencingTests": [],
   "labValues": [
     {
       "date": "2019-06-27",
@@ -325,7 +323,9 @@
       "stopDate": "2019-06-07",
       "drug": {
         "name": "PEMBROLIZUMAB",
-        "drugTypes": ["TOPO1_INHIBITOR"],
+        "drugTypes": [
+          "TOPO1_INHIBITOR"
+        ],
         "category": "IMMUNOTHERAPY",
         "displayOverride": null
       },
@@ -336,5 +336,6 @@
       "isSelfCare": false,
       "isTrialMedication": true
     }
-  ]
+  ],
+  "pathologyReports": []
 }

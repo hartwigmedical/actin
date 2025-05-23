@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityCuration
-import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
+import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
@@ -14,9 +14,8 @@ import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedAllergy
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedComplication
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedOtherCondition
+import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedAllergy
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -30,9 +29,9 @@ class StandardComorbidityExtractorTest {
 
     private val startDate = LocalDate.of(2024, 4, 22)
 
-    private val ehrPatientRecordWithOtherCondition = createEhrPatientRecord().copy(
-        priorOtherConditions = listOf(
-            ProvidedOtherCondition(
+    private val ehrPatientRecordWithOtherCondition = FEED_PATIENT_RECORD.copy(
+        otherConditions = listOf(
+            DatedEntry(
                 name = OTHER_CONDITION_NAME,
                 startDate = startDate,
                 endDate = startDate.plusDays(1)
@@ -97,7 +96,7 @@ class StandardComorbidityExtractorTest {
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                ehrPatientRecordWithOtherCondition.patientDetails.hashedId,
+                ehrPatientRecordWithOtherCondition.patientDetails.patientId,
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 OTHER_CONDITION_NAME,
                 "Could not find non-oncological history config for input 'other_condition'"
@@ -107,19 +106,19 @@ class StandardComorbidityExtractorTest {
 
     @Test
     fun `Should extract complication with end date`() {
-        assertExtractedComplication(ProvidedComplication(COMPLICATION_NAME, startDate, LocalDate.now()))
+        assertExtractedComplication(DatedEntry(COMPLICATION_NAME, startDate, LocalDate.now()))
     }
 
     @Test
     fun `Should extract complication without end date`() {
-        assertExtractedComplication(ProvidedComplication(COMPLICATION_NAME, startDate, null))
+        assertExtractedComplication(DatedEntry(COMPLICATION_NAME, startDate, null))
     }
 
-    private fun assertExtractedComplication(providedComplication: ProvidedComplication) {
+    private fun assertExtractedComplication(feedComplication: DatedEntry) {
         every { comorbidityCuration.find(COMPLICATION_NAME) }.returns(
             setOf(ComorbidityConfig("input", false, curated = curatedComplication))
         )
-        val ehrPatientRecord = createEhrPatientRecord().copy(complications = listOf(providedComplication))
+        val ehrPatientRecord = FEED_PATIENT_RECORD.copy(complications = listOf(feedComplication))
         val result = extractor.extract(ehrPatientRecord)
         assertThat(result.extracted).hasSize(1)
         val extracted = result.extracted[0]
@@ -135,7 +134,7 @@ class StandardComorbidityExtractorTest {
         val anotherCurated = Intolerance(name = "another curated", icdCodes = setOf(IcdCode("icd", null)))
 
         val intoleranceCuration = mockk<CurationDatabase<ComorbidityConfig>> {
-            every { find(name) } returns setOf<ComorbidityConfig>(
+            every { find(name) } returns setOf(
                 ComorbidityConfig(input = name, ignore = false, curated = curated),
                 ComorbidityConfig(input = name, ignore = false, curated = anotherCurated)
             )
@@ -143,8 +142,8 @@ class StandardComorbidityExtractorTest {
         val extractor = StandardComorbidityExtractor(intoleranceCuration)
 
         val results = extractor.extract(
-            createEhrPatientRecord().copy(
-                priorOtherConditions = listOf(ProvidedOtherCondition(name = name, startDate = startDate))
+            FEED_PATIENT_RECORD.copy(
+                otherConditions = listOf(DatedEntry(name = name, startDate = startDate))
             )
         )
         assertThat(results.extracted).isEqualTo(
@@ -169,7 +168,7 @@ class StandardComorbidityExtractorTest {
         }
         val extractor = StandardComorbidityExtractor(toxicityCuration)
         val results = extractor.extract(
-            createEhrPatientRecord().copy(priorOtherConditions = listOf(ProvidedOtherCondition(name = input, startDate = startDate)))
+            FEED_PATIENT_RECORD.copy(otherConditions = listOf(DatedEntry(name = input, startDate = startDate)))
         )
         assertThat(results.extracted).containsExactly(
             Toxicity(
@@ -202,11 +201,10 @@ class StandardComorbidityExtractorTest {
         val clinicalStatus = "clinicalStatus"
         val verificationStatus = "verificationStatus"
         val severity = "severity"
-        val patientRecord = createEhrPatientRecord().copy(
+        val patientRecord = FEED_PATIENT_RECORD.copy(
             allergies = listOf(
-                ProvidedAllergy(
+                FeedAllergy(
                     name = name,
-                    category = "category",
                     clinicalStatus = clinicalStatus,
                     verificationStatus = verificationStatus,
                     severity = severity,

@@ -4,8 +4,8 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
-import com.hartwig.actin.clinical.feed.standard.EhrTestData
-import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
+import com.hartwig.actin.clinical.feed.standard.FeedTestData
+import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
@@ -16,23 +16,8 @@ import org.junit.Test
 
 private const val PROVIDED_SURGERY_NAME = "surgery one"
 private const val CURATED_SURGERY_NAME = "surgery 1"
-private const val PROVIDED_SURGERY_NAME_TO_BE_IGNORED = "Geen ingreep- operatie uitgesteld"
-private val PROVIDED_EHR_PATIENT_RECORD = createEhrPatientRecord()
 
-private val PROVIDED_SURGERY_WITH_NAME = EhrTestData.createEhrSurgery(PROVIDED_SURGERY_NAME)
-private val PROVIDED_SURGERY_TO_BE_IGNORED = EhrTestData.createEhrSurgery(PROVIDED_SURGERY_NAME_TO_BE_IGNORED)
-private val PROVIDED_SURGERY_WITHOUT_NAME = EhrTestData.createEhrSurgery(null)
-
-private val CURATED_SURGERY_CONFIG = SurgeryNameConfig(
-    input = PROVIDED_SURGERY_NAME,
-    ignore = false,
-    name = CURATED_SURGERY_NAME
-)
-private val CURATED_SURGERY_CONFIG_IGNORE = SurgeryNameConfig(
-    input = PROVIDED_SURGERY_NAME_TO_BE_IGNORED,
-    ignore = true,
-    name = "<ignore>"
-)
+private val PROVIDED_SURGERY_WITH_NAME = FeedTestData.createFeedSurgery(PROVIDED_SURGERY_NAME)
 
 class StandardSurgeryExtractorTest {
 
@@ -41,12 +26,9 @@ class StandardSurgeryExtractorTest {
 
     @Test
     fun `Should filter surgery entry and warn when no curation for surgery name`() {
-
         every { surgeryNameCuration.find(PROVIDED_SURGERY_NAME) } returns emptySet()
         val result = extractor.extract(
-            PROVIDED_EHR_PATIENT_RECORD.copy(
-                surgeries = listOf(PROVIDED_SURGERY_WITH_NAME)
-            )
+            FEED_PATIENT_RECORD.copy(surgeries = listOf(PROVIDED_SURGERY_WITH_NAME))
         )
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).containsExactly(
@@ -61,12 +43,18 @@ class StandardSurgeryExtractorTest {
 
     @Test
     fun `Should filter surgery entry when surgery is set to be ignore in curation`() {
-        every { surgeryNameCuration.find(PROVIDED_SURGERY_NAME) } returns setOf(CURATED_SURGERY_CONFIG)
-        every { surgeryNameCuration.find(PROVIDED_SURGERY_NAME_TO_BE_IGNORED) } returns setOf(CURATED_SURGERY_CONFIG_IGNORE)
+        val ignoredName = "Geen ingreep- operatie uitgesteld"
+
+        every { surgeryNameCuration.find(PROVIDED_SURGERY_NAME) } returns setOf(
+            SurgeryNameConfig(input = PROVIDED_SURGERY_NAME, ignore = false, name = CURATED_SURGERY_NAME)
+        )
+        every { surgeryNameCuration.find(ignoredName) } returns setOf(
+            SurgeryNameConfig(input = ignoredName, ignore = true, name = "<ignore>")
+        )
 
         val result = extractor.extract(
-            PROVIDED_EHR_PATIENT_RECORD.copy(
-                surgeries = listOf(PROVIDED_SURGERY_WITH_NAME, PROVIDED_SURGERY_TO_BE_IGNORED)
+            FEED_PATIENT_RECORD.copy(
+                surgeries = listOf(PROVIDED_SURGERY_WITH_NAME, FeedTestData.createFeedSurgery(ignoredName))
             )
         )
         assertThat(result.extracted).isNotEmpty()
@@ -83,20 +71,11 @@ class StandardSurgeryExtractorTest {
 
     @Test
     fun `Should return surgery entry when surgery name is null without curation`() {
+        val surgery = FeedTestData.createFeedSurgery(null)
+        val result = extractor.extract(FEED_PATIENT_RECORD.copy(surgeries = listOf(surgery)))
 
-        val result = extractor.extract(
-            PROVIDED_EHR_PATIENT_RECORD.copy(
-                surgeries = listOf(PROVIDED_SURGERY_WITHOUT_NAME)
-            )
-        )
-        assertThat(result.extracted).isNotEmpty()
-        assertThat(result.extracted.size).isEqualTo(1)
         assertThat(result.extracted).containsExactly(
-            Surgery(
-                name = PROVIDED_SURGERY_WITHOUT_NAME.surgeryName,
-                endDate = PROVIDED_SURGERY_WITHOUT_NAME.endDate,
-                status = SurgeryStatus.FINISHED
-            )
+            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED)
         )
         assertThat(result.evaluation.warnings).isEmpty()
     }

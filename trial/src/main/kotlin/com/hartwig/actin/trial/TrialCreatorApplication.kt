@@ -80,10 +80,12 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val outputDirectory = config.outputDirectory
         when (result) {
             is Either.Right -> {
-                LOGGER.info("Writing ${result.value.size} trials to [$outputDirectory]")
-                TrialJson.write(result.value, outputDirectory)
+                LOGGER.info("Writing ${result.value.trials.size} trials to [$outputDirectory]")
+                TrialJson.write(result.value.trials, outputDirectory)
+                LOGGER.info("Writing all rules state to [$outputDirectory]")
+                EligibilityRuleStateJson.write(result.value.eligibilityRulesState, outputDirectory)
                 LOGGER.info("Writing list of proteins referenced in inclusion criteria to [$outputDirectory]")
-                Files.write(Path.of(outputDirectory, "ihc_proteins.list"), EligibilityRuleUsageEvaluator.extractIhcProteins(result.value))
+                Files.write(Path.of(outputDirectory, "ihc_proteins.list"), EligibilityRuleUsageEvaluator.extractIhcProteins(result.value.trials))
             }
 
             is Either.Left -> {

@@ -12,6 +12,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ALK_INHIBITOR_GEN_3(TreatmentCategory.TARGETED_THERAPY, "ALK inhibitor (3rd gen)"),
     ALK_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ALK TKI"),
     ALKYLATING_AGENT(TreatmentCategory.CHEMOTHERAPY),
+    ANGIOGENESIS_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     ANTHRACYCLINE(TreatmentCategory.CHEMOTHERAPY),
     ANTI_ANDROGEN(TreatmentCategory.HORMONE_THERAPY, "anti-androgen"),
     ANTI_B7H3(TreatmentCategory.IMMUNOTHERAPY, "anti-B7H3"),

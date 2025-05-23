@@ -5,20 +5,21 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
-import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
+import com.hartwig.actin.report.interpretation.TrialAcronymAndLocations
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.TrialLocations
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.ExternalTrialSummary
+import com.hartwig.actin.report.trial.EventWithExternalTrial
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
     private val molecular: MolecularRecord,
     private val cohorts: List<InterpretedCohort>,
-    private val externalTrials: Set<ExternalTrialSummary>
+    private val externalTrials: Set<EventWithExternalTrial>
 ) : TableGenerator {
 
     override fun title(): String {
@@ -30,7 +31,7 @@ class MolecularDriversGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createRelativeWidthCols(2f, 2f, 1f, 1f, 1f, 1f, 1f)
+        val table = Tables.createRelativeWidthCols(21f, 20f, 10f, 10f, 10f, 11f, 10f)
 
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
@@ -43,15 +44,12 @@ class MolecularDriversGenerator(
         val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrials)
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
-        factory.create().forEach { entry: MolecularDriverEntry ->
+        factory.create().forEach { entry ->
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.display()))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
-            table.addCell(
-                Cells.createContent(entry.actinTrials.joinToString(", ")
-                { "${it.trialAcronym} ${if (it.locations.isNotEmpty()) "(${it.locations.joinToString()})" else ""}" })
-            )
-            table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event]?.let { concatEligibleTrials(it) } ?: ""))
+            table.addCell(Cells.createContent(formatActinTrials(entry.actinTrials)))
+            table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event] ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -66,7 +64,19 @@ class MolecularDriversGenerator(
         return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
     }
 
-    private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrialSummary>): String {
-        return externalTrials.map { it.nctId }.toSet().joinToString(", ")
+    private fun formatActinTrials(actinTrials: Set<TrialAcronymAndLocations>): String {
+        return actinTrials.joinToString(", ")
+        {
+            "${it.trialAcronym} ${
+                if (it.locations.isNotEmpty()) "(${
+                    TrialLocations.actinTrialLocation(
+                        null,
+                        null,
+                        it.locations,
+                        false
+                    )
+                })" else ""
+            }"
+        }
     }
 }

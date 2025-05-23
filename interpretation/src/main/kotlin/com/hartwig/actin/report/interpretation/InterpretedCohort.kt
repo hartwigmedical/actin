@@ -17,6 +17,7 @@ data class InterpretedCohort(
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,
     val ignore: Boolean,
+    val isEvaluable: Boolean,
     val molecularEvents: Set<String>,
     val isPotentiallyEligible: Boolean,
     val isMissingMolecularResultForEvaluation: Boolean,

@@ -12,11 +12,11 @@ class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : 
         var hasMatch = false
         var hasPotentialMatch = false
         var hasUsableData = false
-        for (priorSecondPrimary in record.priorSecondPrimaries) {
-            val (effectiveMinDate, secondPrimaryYear, secondPrimaryMonth) = if (priorSecondPrimary.lastTreatmentYear != null) {
-                Triple(minDate, priorSecondPrimary.lastTreatmentYear, priorSecondPrimary.lastTreatmentMonth)
+        for (priorPrimary in record.priorPrimaries) {
+            val (effectiveMinDate, secondPrimaryYear, secondPrimaryMonth) = if (priorPrimary.lastTreatmentYear != null) {
+                Triple(minDate, priorPrimary.lastTreatmentYear, priorPrimary.lastTreatmentMonth)
             } else {
-                Triple(minDate.minusYears(1), priorSecondPrimary.diagnosedYear, priorSecondPrimary.diagnosedMonth)
+                Triple(minDate.minusYears(1), priorPrimary.diagnosedYear, priorPrimary.diagnosedMonth)
             }
             if (secondPrimaryYear != null) {
                 hasUsableData = true
@@ -32,7 +32,7 @@ class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : 
         } else if (hasPotentialMatch) {
             EvaluationFactory.undetermined("Has history of previous malignancy but undetermined whether it is considered recent")
         } else {
-            if (record.priorSecondPrimaries.isEmpty() || hasUsableData) {
+            if (record.priorPrimaries.isEmpty() || hasUsableData) {
                 EvaluationFactory.fail("No recent other malignancy")
             } else {
                 EvaluationFactory.undetermined("Undetermined if previous malignancy was recent (date unknown)")

@@ -2,17 +2,15 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -33,57 +31,64 @@ private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
 private val FULLY_SPECIFIED_SEQUENCED_FUSION =
     SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
 
-private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
+private val FUSION = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,
     geneStart = GENE_START,
     geneEnd = GENE_END,
     fusedExonUp = null,
     fusedExonDown = null,
-    driverType = FusionDriverType.KNOWN_PAIR
+    driverType = FusionDriverType.KNOWN_PAIR,
+    driverLikelihood = DriverLikelihood.HIGH,
+    event = "$GENE_START::$GENE_END fusion"
 )
 
-private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = FusionMatchCriteria(
+private val FULLY_SPECIFIED_FUSION = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,
     geneStart = GENE_START,
     geneEnd = GENE_END,
     fusedExonUp = FUSED_EXON_UP,
     fusedExonDown = FUSED_EXON_DOWN,
-    driverType = FusionDriverType.KNOWN_PAIR
+    driverType = FusionDriverType.KNOWN_PAIR,
+    geneTranscriptStart = TRANSCRIPT_START,
+    geneTranscriptEnd = TRANSCRIPT_END,
+    driverLikelihood = DriverLikelihood.HIGH,
+    event = "$GENE_START::$GENE_END fusion"
+
 )
 
-private val EXON_SKIP_FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
+private val EXON_SKIP_FUSION = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,
     geneStart = GENE,
     geneEnd = GENE,
     fusedExonUp = FUSED_EXON_UP,
     fusedExonDown = FUSED_EXON_DOWN,
+    geneTranscriptStart = TRANSCRIPT,
+    geneTranscriptEnd = TRANSCRIPT,
+    driverLikelihood = DriverLikelihood.HIGH,
+    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
 )
 
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-
-private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
-    TestTreatmentEvidenceFactory.create(
-        treatment = "treatment",
-        evidenceLevel = EvidenceLevel.A,
-        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        isOnLabel = true
-    )
+private val EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT = EXON_SKIP_FUSION.copy(
+    geneTranscriptStart = CANONICAL_TRANSCRIPT,
+    geneTranscriptEnd = CANONICAL_TRANSCRIPT
 )
+
+private val KNOWN_FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)
+    .proteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN).build()
 
 class PanelFusionAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { geneAlterationForVariant(any()) } returns null
+        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
     }
 
     private val knownFusionCache = mockk<KnownFusionCache>()
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
 
-    private val annotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensembleDataCache)
+    private val annotator = PanelFusionAnnotator(knownFusionCache, ensembleDataCache)
 
     @Test
     fun `Should determine fusion driver likelihood`() {
@@ -154,7 +159,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate fusion specified with genes only`() {
         setupKnownFusionCache()
-        setupEvidenceForFusion(FUSION_MATCH_CRITERIA)
+        setupEvidenceForFusion(FUSION)
         val annotated = annotator.annotate(setOf(SEQUENCED_FUSION), emptySet())
 
         assertThat(annotated).containsExactly(
@@ -171,15 +176,7 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START::$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEvidence(
-                    TestTreatmentEvidenceFactory.create(
-                        treatment = "treatment",
-                        isOnLabel = true,
-                        evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                    )
-                )
+                evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
     }
@@ -187,7 +184,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate fully specified fusion`() {
         setupKnownFusionCache()
-        setupEvidenceForFusion(FULLY_SPECIFIED_FUSION_MATCH_CRITERIA)
+        setupEvidenceForFusion(FULLY_SPECIFIED_FUSION)
         val annotated = annotator.annotate(setOf(FULLY_SPECIFIED_SEQUENCED_FUSION), emptySet())
 
         assertThat(annotated).containsExactly(
@@ -204,14 +201,7 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START::$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEvidence(
-                    TestTreatmentEvidenceFactory.create(
-                        treatment = "treatment",
-                        evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                        isOnLabel = true)
-                )
+                evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
     }
@@ -219,7 +209,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate to canonical transcript when no transcript provided for exon skip`() {
         setupKnownFusionCacheForExonDeletion()
-        setupEvidenceDatabaseWithNoEvidence()
+        setupEvidenceDatabaseWithNoEvidenceForFusion(EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT)
 
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
@@ -255,7 +245,7 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should annotate with provided transcript when available`() {
         setupKnownFusionCacheForExonDeletion()
-        setupEvidenceDatabaseWithNoEvidence()
+        setupEvidenceDatabaseWithNoEvidenceForFusion(EXON_SKIP_FUSION)
 
         val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, FUSED_EXON_UP, FUSED_EXON_DOWN, TRANSCRIPT))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
@@ -284,9 +274,9 @@ class PanelFusionAnnotatorTest {
         every { knownFusionCache.hasKnownFusion(GENE_START, GENE_END) } returns true
     }
 
-    private fun setupEvidenceForFusion(fusionMatchCriteria: FusionMatchCriteria) {
-        every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
-        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ON_LABEL_MATCH
+    private fun setupEvidenceForFusion(fusion: Fusion) {
+        every { evidenceDatabase.lookupKnownFusion(fusion) } returns KNOWN_FUSION
+        every { evidenceDatabase.evidenceForFusion(fusion) } returns ON_LABEL_MATCH
     }
 
     private fun setupKnownFusionCacheForExonDeletion() {
@@ -296,8 +286,8 @@ class PanelFusionAnnotatorTest {
         every { knownFusionCache.hasPromiscuousThreeGene(GENE) } returns false
     }
 
-    private fun setupEvidenceDatabaseWithNoEvidence() {
-        every { evidenceDatabase.lookupKnownFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns null
-        every { evidenceDatabase.evidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns TestClinicalEvidenceFactory.createEmpty()
+    private fun setupEvidenceDatabaseWithNoEvidenceForFusion(fusion: Fusion) {
+        every { evidenceDatabase.lookupKnownFusion(fusion) } returns KNOWN_FUSION
+        every { evidenceDatabase.evidenceForFusion(fusion) } returns TestClinicalEvidenceFactory.createEmpty()
     }
 }

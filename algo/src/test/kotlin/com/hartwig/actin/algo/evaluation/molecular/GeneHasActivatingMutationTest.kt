@@ -88,11 +88,6 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should warn with activating mutation for gene with low driver likelihood`() {
-        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(driverLikelihood = DriverLikelihood.LOW))
-    }
-
-    @Test
     fun `Should warn with activating mutation for gene with low driver likelihood and unknown protein effect and unknown TML`() {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,
@@ -193,25 +188,6 @@ class GeneHasActivatingMutationTest {
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = MolecularHistory.empty())
             )
         )
-    }
-
-    @Test
-    fun `Should evaluate to warn when activating mutation with potentially activating mutation`() {
-        val evaluation = functionNotIgnoringCodons.evaluate(
-            MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
-                false,
-                ACTIVATING_VARIANT.copy(event = "event"),
-                ACTIVATING_VARIANT.copy(
-                    event = "event2",
-                    isHotspot = false,
-                    geneRole = GeneRole.UNKNOWN,
-                    proteinEffect = ProteinEffect.UNKNOWN
-                ),
-            )
-        )
-
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.inclusionMolecularEvents).containsExactly("event", "event2")
     }
 
     @Test

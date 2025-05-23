@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -45,7 +45,7 @@ class FusionEvidenceTest {
         )
     )
 
-    private val matchingFusion = FusionMatchCriteria(
+    private val matchingFusion = TestMolecularFactory.createMinimalFusion().copy(
         isReportable = true,
         geneStart = "gene 1",
         geneEnd = "gene 2",

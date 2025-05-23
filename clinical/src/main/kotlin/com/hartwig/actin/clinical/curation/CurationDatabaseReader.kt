@@ -16,7 +16,7 @@ class CurationDatabaseReader {
 
         const val PRIMARY_TUMOR_TSV = "primary_tumor.tsv"
         const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
-        const val SECOND_PRIMARY_TSV = "second_primary.tsv"
+        const val PRIOR_PRIMARY_TSV = "prior_primary.tsv"
         const val LESION_LOCATION_TSV = "lesion_location.tsv"
         const val NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv"
         const val ECG_TSV = "ecg.tsv"

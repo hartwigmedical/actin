@@ -20,12 +20,12 @@ object Tables {
     fun createSingleCol(): Table {
         return createMultiCol(1)
     }
-    
+
     fun createSingleColWithWidth(width: Float): Table {
         return createSingleCol().setWidth(width)
     }
 
-    fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean): Table {
+    fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean, skipWrappingFooter: Boolean = false): Table {
         if (contentTable.numberOfRows == 0) {
             contentTable.addCell(Cells.createSpanningNoneEntry(contentTable))
         }
@@ -34,14 +34,19 @@ object Tables {
             contentTable.setKeepTogether(true)
             return contentTable
         } else {
-            contentTable.addFooterCell(
-                Cells.createSpanningSubNote("The table continues on the next page", contentTable)
-                    .setPaddingTop(5f)
-                    .setPaddingBottom(5f)
-            ).setSkipLastFooter(true)
+            if (skipWrappingFooter) {
+                contentTable.addFooterCell(
+                    Cells.createSpanningSubNote("The table continues on the next page", contentTable)
+                        .setPaddingTop(5f)
+                        .setPaddingBottom(5f)
+                )
+            }
+            contentTable.setSkipLastFooter(true)
 
             val wrappingTable = createSingleColWithWidth(contentTable.width.value).setMarginBottom(10f)
-            wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
+            if (skipWrappingFooter) {
+                wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
+            }
             wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(contentTable).setPadding(0f))
 
             return wrappingTable

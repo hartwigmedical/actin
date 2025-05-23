@@ -87,7 +87,7 @@ data class CurationResponse<T>(
             val evaluation = when (curationCategory) {
                 CurationCategory.PRIMARY_TUMOR -> CurationExtractionEvaluation(primaryTumorEvaluatedInputs = evaluatedInputs)
                 CurationCategory.ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = evaluatedInputs)
-                CurationCategory.SECOND_PRIMARY -> CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = evaluatedInputs)
+                CurationCategory.PRIOR_PRIMARY -> CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = evaluatedInputs)
                 CurationCategory.LESION_LOCATION -> CurationExtractionEvaluation(lesionLocationEvaluatedInputs = evaluatedInputs)
                 CurationCategory.NON_ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.ECG -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)

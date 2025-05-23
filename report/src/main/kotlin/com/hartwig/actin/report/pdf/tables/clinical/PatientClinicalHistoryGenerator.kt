@@ -1,12 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.sort.OtherConditionDescendingDateComparator
-import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
+import com.hartwig.actin.clinical.sort.PriorPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -52,7 +52,7 @@ class PatientClinicalHistoryGenerator(
             if (report.config.includeOtherOncologicalHistoryInSummary || showDetails) {
                 "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
             } else null,
-            "Previous primary tumor" to secondPrimaryHistoryTable(record),
+            "Previous primary tumor" to priorPrimaryHistoryTable(record),
             if (report.config.includeRelevantNonOncologicalHistoryInSummary || showDetails) {
                 "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
             } else null
@@ -107,11 +107,11 @@ class PatientClinicalHistoryGenerator(
         return treatmentHistoryEntry.allTreatments().any { it.isSystemic }
     }
 
-    private fun secondPrimaryHistoryTable(record: PatientRecord): Table {
+    private fun priorPrimaryHistoryTable(record: PatientRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
-        record.priorSecondPrimaries.distinct().sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
-            .forEach { table.addCell(createSingleTableEntry(toSecondPrimaryString(it))) }
+        record.priorPrimaries.distinct().sortedWith(PriorPrimaryDiagnosedDateComparator())
+            .forEach { table.addCell(createSingleTableEntry(toPriorPrimaryString(it))) }
 
         return table
     }
@@ -196,27 +196,27 @@ class PatientClinicalHistoryGenerator(
         }
     }
 
-    private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
-        val tumorSubLocation = priorSecondPrimary.tumorSubLocation
-        val tumorLocation = priorSecondPrimary.tumorLocation + if (tumorSubLocation.isNotEmpty()) " ($tumorSubLocation)" else ""
+    private fun toPriorPrimaryString(priorPrimary: PriorPrimary): String {
+        val tumorSubLocation = priorPrimary.tumorSubLocation
+        val tumorLocation = priorPrimary.tumorLocation + if (tumorSubLocation.isNotEmpty()) " ($tumorSubLocation)" else ""
         val tumorDetails = when {
-            priorSecondPrimary.tumorSubType.isNotEmpty() -> {
-                tumorLocation + " " + priorSecondPrimary.tumorSubType.lowercase()
+            priorPrimary.tumorSubType.isNotEmpty() -> {
+                tumorLocation + " " + priorPrimary.tumorSubType.lowercase()
             }
 
-            priorSecondPrimary.tumorType.isNotEmpty() -> {
-                tumorLocation + " " + priorSecondPrimary.tumorType.lowercase()
+            priorPrimary.tumorType.isNotEmpty() -> {
+                tumorLocation + " " + priorPrimary.tumorType.lowercase()
             }
 
             else -> tumorLocation
         }
-        val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear, priorSecondPrimary.diagnosedMonth)
+        val dateAdditionDiagnosis: String = toDateString(priorPrimary.diagnosedYear, priorPrimary.diagnosedMonth)
             ?.let { "diagnosed $it, " } ?: ""
 
-        val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear, priorSecondPrimary.lastTreatmentMonth)
+        val dateAdditionLastTreatment = toDateString(priorPrimary.lastTreatmentYear, priorPrimary.lastTreatmentMonth)
             ?.let { "last treatment $it, " } ?: ""
 
-        val status = when (priorSecondPrimary.status) {
+        val status = when (priorPrimary.status) {
             TumorStatus.ACTIVE -> "considered active"
             TumorStatus.INACTIVE -> "considered non-active"
             TumorStatus.EXPECTATIVE -> "considered expectative"

@@ -22,7 +22,7 @@ enum class CurationCategory(val categoryName: String) {
     ONCOLOGICAL_HISTORY("Oncological History"),
     PERIOD_BETWEEN_UNIT_INTERPRETATION("Period Between Unit Interpretation"),
     QUESTIONNAIRE_MAPPING("Questionnaire mapping"),
-    SECOND_PRIMARY("Second Primary"),
+    PRIOR_PRIMARY("Prior Primary"),
     TOXICITY("Toxicity"),
     TOXICITY_TRANSLATION("Toxicity Translation"),
     SURGERY_NAME("Surgery Name")

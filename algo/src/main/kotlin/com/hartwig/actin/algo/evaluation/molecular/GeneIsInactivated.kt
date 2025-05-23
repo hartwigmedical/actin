@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
@@ -56,12 +55,12 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val reportableNonDriverBiallelicVariantsOther: MutableSet<String> = mutableSetOf()
         val reportableNonDriverNonBiallelicVariantsOther: MutableSet<String> = mutableSetOf()
         val inactivationHighDriverNonBiallelicVariants: MutableSet<String> = mutableSetOf()
-        val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         for (variant in drivers.variants) {
-            if (variant.gene == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
+            val variantIsClonal = variant.extendedVariantDetails?.clonalLikelihood?.let { it >= CLONAL_CUTOFF } ?: true
+            if (variant.gene == gene && variantIsClonal && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
                 if (!variant.isReportable) {
                     inactivationEventsThatAreUnreportable.add(variant.event)
                 } else {
@@ -85,8 +84,6 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                             inactivationHighDriverNonBiallelicVariants.add(variant.event)
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event)
-                        } else if (extendedVariant?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
-                            inactivationSubclonalVariants.add(variant.event)
                         } else {
                             inactivationEventsThatQualify.add(variant.event)
                         }
@@ -124,7 +121,6 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
             inactivationEventsNoTSG,
             inactivationEventsGainOfFunction,
             inactivationHighDriverNonBiallelicVariants,
-            inactivationSubclonalVariants,
             inactivationEventsOnNonCanonicalTranscript,
             reportableNonDriverBiallelicVariantsOther,
             reportableNonDriverNonBiallelicVariantsOther,
@@ -140,7 +136,6 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         inactivationEventsNoTSG: Set<String>,
         inactivationEventsGainOfFunction: Set<String>,
         inactivationHighDriverNonBiallelicVariants: Set<String>,
-        inactivationSubclonalVariants: Set<String>,
         inactivationEventsOnNonCanonicalTranscript: Set<String>,
         reportableNonDriverBiallelicVariantsOther: Set<String>,
         reportableNonDriverNonBiallelicVariantsOther: Set<String>,
@@ -169,13 +164,8 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                     )
                 } else null,
                 EventsWithMessages(
-                    inactivationSubclonalVariants,
-                    "Inactivation event(s) ${concat(inactivationSubclonalVariants)} for $gene but subclonal likelihood > "
-                            + percentage(1 - CLONAL_CUTOFF)
-                ),
-                EventsWithMessages(
                     inactivationEventsOnNonCanonicalTranscript,
-                    "Inactivation event(s) ${concat(inactivationSubclonalVariants)} for $gene but only on non-canonical transcript"
+                    "Inactivation event(s) ${concat(inactivationEventsOnNonCanonicalTranscript)} for $gene but only on non-canonical transcript"
                 ),
                 EventsWithMessages(
                     reportableNonDriverBiallelicVariantsOther,

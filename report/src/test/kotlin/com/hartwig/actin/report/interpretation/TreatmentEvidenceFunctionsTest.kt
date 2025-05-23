@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
@@ -8,16 +9,19 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val TREATMENT = "treatment"
 
 class TreatmentEvidenceFunctionsTest {
 
     private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level")
-    private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "offLabel category level", isOnLabel = false)
+    private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(
+        treatment = "offLabel category level",
+        cancerTypeMatch = onLabelCategoryLevelA.cancerTypeMatch.copy(applicability = CancerTypeMatchApplicability.OTHER_TYPE)
+    )
     private val offLabelCategoryLevelB = offLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
     private val onLabelCategoryLevelB = onLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
     private val onLabelNonCategoryLevelA = onLabelCategoryLevelA.copy(
@@ -41,7 +45,7 @@ class TreatmentEvidenceFunctionsTest {
             offLabelCategoryLevelA.copy(TREATMENT),
             offLabelCategoryLevelB.copy(TREATMENT)
         )
-        val onLabel = evidence.filter { it.isOnLabel }
+        val onLabel = evidence.filter { it.isOnLabel() }
         val onLabelHighestEvidencePerTreatment = TreatmentEvidenceFunctions.getHighestEvidenceLevelPerTreatment(onLabel)
         val result = TreatmentEvidenceFunctions.filterOffLabelEvidence(evidence, onLabelHighestEvidencePerTreatment)
         assertThat(result).containsExactlyElementsOf(emptySet())
@@ -119,8 +123,8 @@ class TreatmentEvidenceFunctionsTest {
         val evidence = listOf(treatment1, otherTreatment1, treatment2)
         val result = TreatmentEvidenceFunctions.groupByTreatmentAndCancerType(evidence)
         val expected = mapOf(
-            Pair(treatment1.treatment, treatment1.applicableCancerType.matchedCancerType) to listOf(treatment1, otherTreatment1),
-            Pair(treatment2.treatment, treatment2.applicableCancerType.matchedCancerType) to listOf(treatment2)
+            Pair(treatment1.treatment, treatment1.cancerTypeMatch.cancerType.matchedCancerType) to listOf(treatment1, otherTreatment1),
+            Pair(treatment2.treatment, treatment2.cancerTypeMatch.cancerType.matchedCancerType) to listOf(treatment2)
         )
         assertThat(result).containsExactlyEntriesOf(expected)
     }
@@ -130,11 +134,14 @@ class TreatmentEvidenceFunctionsTest {
         val levelACategory = onLabelCategoryLevelA.copy(
             treatment = "treatment",
             molecularMatch = onLabelCategoryLevelA.molecularMatch.copy(sourceEvent = "category event"),
-            applicableCancerType = CancerType("cancer 1", emptySet())
+            cancerTypeMatch = onLabelCategoryLevelA.cancerTypeMatch.copy(cancerType = CancerType("cancer 1", emptySet()))
         )
         val levelBCategory = levelACategory.copy(evidenceLevel = EvidenceLevel.B)
         val levelBNonCategory = levelACategory.copy(
-            molecularMatch = levelACategory.molecularMatch.copy(sourceEvent = "nonCat event", sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION),
+            molecularMatch = levelACategory.molecularMatch.copy(
+                sourceEvent = "nonCat event",
+                sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
+            ),
             evidenceLevel = EvidenceLevel.B
         )
         val levelCNonCategory = levelBNonCategory.copy(evidenceLevel = EvidenceLevel.C)
@@ -151,7 +158,10 @@ class TreatmentEvidenceFunctionsTest {
         val treatmentEvidence = createTreatmentEvidence(evidenceYear = year, matchedCancerType = "Cancer type 1")
         val evidence = listOf(
             treatmentEvidence,
-            treatmentEvidence.copy(evidenceYear = year.minus(1), applicableCancerType = CancerType("Cancer type 2", emptySet())),
+            treatmentEvidence.copy(
+                evidenceYear = year.minus(1),
+                cancerTypeMatch = treatmentEvidence.cancerTypeMatch.copy(cancerType = CancerType("Cancer type 2", emptySet()))
+            ),
             treatmentEvidence.copy(treatment = "other treatment", evidenceDirection = TestEvidenceDirectionFactory.certainResistant())
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
@@ -189,7 +199,7 @@ class TreatmentEvidenceFunctionsTest {
 
     private fun createTreatmentEvidence(
         treatment: String = TREATMENT,
-        isOnLabel: Boolean = true,
+        cancerTypeMatchApplicability: CancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
         direction: EvidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
         entryDate: LocalDate = LocalDate.EPOCH,
@@ -199,8 +209,9 @@ class TreatmentEvidenceFunctionsTest {
         evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
         matchedCancerType: String = "",
     ): TreatmentEvidence {
-        return TestTreatmentEvidenceFactory.create(treatment = treatment,
-            isOnLabel = isOnLabel,
+        return TestTreatmentEvidenceFactory.create(
+            treatment = treatment,
+            cancerTypeMatchApplicability = cancerTypeMatchApplicability,
             evidenceLevel = evidenceLevel,
             evidenceDirection = direction,
             sourceDate = entryDate,
@@ -208,6 +219,7 @@ class TreatmentEvidenceFunctionsTest {
             evidenceType = evidenceType,
             sourceEvent = sourceEvent,
             evidenceLevelDetails = evidenceLevelDetails,
-            matchedCancerType = matchedCancerType)
+            matchedCancerType = matchedCancerType
+        )
     }
 }

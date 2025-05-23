@@ -1,21 +1,21 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
+import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 class OncologicalHistoryExtractor(
     private val treatmentHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
-    private val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>
+    private val priorPrimaryCuration: CurationDatabase<PriorPrimaryConfig>
 ) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<TreatmentHistoryEntry>> {
@@ -40,7 +40,7 @@ class OncologicalHistoryExtractor(
             }
             .map {
                 if (it.configs.isEmpty() &&
-                    secondPrimaryCuration.find(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
+                    priorPrimaryCuration.find(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
                         .isNotEmpty()
                 ) {
                     it.copy(extractionEvaluation = it.extractionEvaluation.copy(warnings = emptySet()))
@@ -58,7 +58,7 @@ class OncologicalHistoryExtractor(
         fun create(curationDatabaseContext: CurationDatabaseContext) =
             OncologicalHistoryExtractor(
                 treatmentHistoryCuration = curationDatabaseContext.treatmentHistoryEntryCuration,
-                secondPrimaryCuration = curationDatabaseContext.secondPrimaryCuration
+                priorPrimaryCuration = curationDatabaseContext.priorPrimaryCuration
             )
     }
 }

@@ -9,13 +9,13 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PatientDetails
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.TumorDetails
@@ -34,9 +34,9 @@ internal class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.TUMOR).execute()
         context.truncate(Tables.CLINICALSTATUS).execute()
         context.truncate(Tables.TREATMENTHISTORYENTRY).execute()
-        context.truncate(Tables.PRIORSECONDPRIMARY).execute()
+        context.truncate(Tables.PRIORPRIMARY).execute()
         context.truncate(Tables.OTHERCONDITION).execute()
-        context.truncate(Tables.PRIORIHCTEST).execute()
+        context.truncate(Tables.IHCTEST).execute()
         context.truncate(Tables.COMPLICATION).execute()
         context.truncate(Tables.LABVALUE).execute()
         context.truncate(Tables.TOXICITY).execute()
@@ -55,9 +55,9 @@ internal class ClinicalDAO(private val context: DSLContext) {
         writeTumorDetails(patientId, record.tumor)
         writeClinicalStatus(patientId, record.clinicalStatus, record.ecgs)
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
-        writePriorSecondPrimaries(patientId, record.priorSecondPrimaries)
+        writePriorPrimaries(patientId, record.priorPrimaries)
         writeOtherConditions(patientId, record.otherConditions)
-        writePriorMolecularTests(patientId, record.priorIHCTests)
+        writeMolecularTests(patientId, record.ihcTests)
         writeComplications(patientId, record.complications)
         writeLabValues(patientId, record.labValues)
         writeToxicities(patientId, record.toxicities)
@@ -157,9 +157,11 @@ internal class ClinicalDAO(private val context: DSLContext) {
             ecgMeasures.size == 1 || ecgMeasures.all { with(it.first) { year != null && month != null } } -> {
                 ecgMeasures.maxBy { with(it.first) { "$year-$month" } }.second
             }
+
             ecgMeasures.map { it.second.unit }.toSet().size == 1 -> {
                 EcgMeasure(ecgMeasures.map { it.second.value }.average().roundToInt(), ecgMeasures.first().second.unit)
             }
+
             else -> {
                 ecgMeasures.maxBy { with(it.first) { "$year-$month" } }.second
             }
@@ -264,36 +266,36 @@ internal class ClinicalDAO(private val context: DSLContext) {
         context.batchInsert(records).execute()
     }
 
-    private fun writePriorSecondPrimaries(patientId: String, priorSecondPrimaries: List<PriorSecondPrimary>) {
-        for (priorSecondPrimary in priorSecondPrimaries) {
+    private fun writePriorPrimaries(patientId: String, priorPrimaries: List<PriorPrimary>) {
+        for (priorPrimary in priorPrimaries) {
             context.insertInto(
-                Tables.PRIORSECONDPRIMARY,
-                Tables.PRIORSECONDPRIMARY.PATIENTID,
-                Tables.PRIORSECONDPRIMARY.TUMORLOCATION,
-                Tables.PRIORSECONDPRIMARY.TUMORSUBLOCATION,
-                Tables.PRIORSECONDPRIMARY.TUMORTYPE,
-                Tables.PRIORSECONDPRIMARY.TUMORSUBTYPE,
-                Tables.PRIORSECONDPRIMARY.DOIDS,
-                Tables.PRIORSECONDPRIMARY.DIAGNOSEDYEAR,
-                Tables.PRIORSECONDPRIMARY.DIAGNOSEDMONTH,
-                Tables.PRIORSECONDPRIMARY.TREATMENTHISTORY,
-                Tables.PRIORSECONDPRIMARY.LASTTREATMENTYEAR,
-                Tables.PRIORSECONDPRIMARY.LASTTREATMENTMONTH,
-                Tables.PRIORSECONDPRIMARY.STATUS
+                Tables.PRIORPRIMARY,
+                Tables.PRIORPRIMARY.PATIENTID,
+                Tables.PRIORPRIMARY.TUMORLOCATION,
+                Tables.PRIORPRIMARY.TUMORSUBLOCATION,
+                Tables.PRIORPRIMARY.TUMORTYPE,
+                Tables.PRIORPRIMARY.TUMORSUBTYPE,
+                Tables.PRIORPRIMARY.DOIDS,
+                Tables.PRIORPRIMARY.DIAGNOSEDYEAR,
+                Tables.PRIORPRIMARY.DIAGNOSEDMONTH,
+                Tables.PRIORPRIMARY.TREATMENTHISTORY,
+                Tables.PRIORPRIMARY.LASTTREATMENTYEAR,
+                Tables.PRIORPRIMARY.LASTTREATMENTMONTH,
+                Tables.PRIORPRIMARY.STATUS
             )
                 .values(
                     patientId,
-                    priorSecondPrimary.tumorLocation,
-                    priorSecondPrimary.tumorSubLocation,
-                    priorSecondPrimary.tumorType,
-                    priorSecondPrimary.tumorSubType,
-                    DataUtil.concat(priorSecondPrimary.doids),
-                    priorSecondPrimary.diagnosedYear,
-                    priorSecondPrimary.diagnosedMonth,
-                    priorSecondPrimary.treatmentHistory,
-                    priorSecondPrimary.lastTreatmentYear,
-                    priorSecondPrimary.lastTreatmentMonth,
-                    priorSecondPrimary.status.toString()
+                    priorPrimary.tumorLocation,
+                    priorPrimary.tumorSubLocation,
+                    priorPrimary.tumorType,
+                    priorPrimary.tumorSubType,
+                    DataUtil.concat(priorPrimary.doids),
+                    priorPrimary.diagnosedYear,
+                    priorPrimary.diagnosedMonth,
+                    priorPrimary.treatmentHistory,
+                    priorPrimary.lastTreatmentYear,
+                    priorPrimary.lastTreatmentMonth,
+                    priorPrimary.status.toString()
                 )
                 .execute()
         }
@@ -320,32 +322,30 @@ internal class ClinicalDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writePriorMolecularTests(patientId: String, priorIHCTests: List<PriorIHCTest>) {
-        for (priorIHCTest in priorIHCTests) {
+    private fun writeMolecularTests(patientId: String, ihcTests: List<IhcTest>) {
+        for (ihcTest in ihcTests) {
             context.insertInto(
-                Tables.PRIORIHCTEST,
-                Tables.PRIORIHCTEST.PATIENTID,
-                Tables.PRIORIHCTEST.TEST,
-                Tables.PRIORIHCTEST.ITEM,
-                Tables.PRIORIHCTEST.MEASURE,
-                Tables.PRIORIHCTEST.MEASUREDATE,
-                Tables.PRIORIHCTEST.SCORETEXT,
-                Tables.PRIORIHCTEST.SCOREVALUEPREFIX,
-                Tables.PRIORIHCTEST.SCOREVALUE,
-                Tables.PRIORIHCTEST.SCOREVALUEUNIT,
-                Tables.PRIORIHCTEST.IMPLIESPOTENTIALINDETERMINATESTATUS
+                Tables.IHCTEST,
+                Tables.IHCTEST.PATIENTID,
+                Tables.IHCTEST.ITEM,
+                Tables.IHCTEST.MEASURE,
+                Tables.IHCTEST.MEASUREDATE,
+                Tables.IHCTEST.SCORETEXT,
+                Tables.IHCTEST.SCOREVALUEPREFIX,
+                Tables.IHCTEST.SCOREVALUE,
+                Tables.IHCTEST.SCOREVALUEUNIT,
+                Tables.IHCTEST.IMPLIESPOTENTIALINDETERMINATESTATUS
             )
                 .values(
                     patientId,
-                    priorIHCTest.test,
-                    priorIHCTest.item,
-                    priorIHCTest.measure,
-                    priorIHCTest.measureDate,
-                    priorIHCTest.scoreText,
-                    priorIHCTest.scoreValuePrefix,
-                    priorIHCTest.scoreValue,
-                    priorIHCTest.scoreValueUnit,
-                    priorIHCTest.impliesPotentialIndeterminateStatus
+                    ihcTest.item,
+                    ihcTest.measure,
+                    ihcTest.measureDate,
+                    ihcTest.scoreText,
+                    ihcTest.scoreValuePrefix,
+                    ihcTest.scoreValue,
+                    ihcTest.scoreValueUnit,
+                    ihcTest.impliesPotentialIndeterminateStatus
                 )
                 .execute()
         }

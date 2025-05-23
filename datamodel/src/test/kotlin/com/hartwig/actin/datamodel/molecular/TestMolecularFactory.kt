@@ -268,6 +268,19 @@ object TestMolecularFactory {
         )
     }
 
+    fun createMinimalCopyNumber() = CopyNumber(
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+        otherImpacts = emptySet(),
+        isReportable = false,
+        event = "",
+        driverLikelihood = DriverLikelihood.LOW,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+        gene = "",
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null
+    )
+
     fun createProperCopyNumber() = CopyNumber(
         isReportable = true,
         event = "PTEN del",
@@ -291,6 +304,38 @@ object TestMolecularFactory {
         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
         otherImpacts = emptySet(),
         isAssociatedWithDrugResistance = null
+    )
+
+    fun createMinimalVariant() = Variant(
+        chromosome = "",
+        position = 0,
+        ref = "",
+        alt = "",
+        type = VariantType.UNDEFINED,
+        variantAlleleFrequency = null,
+        canonicalImpact = createMinimalTranscriptImpact(),
+        otherImpacts = emptySet(),
+        extendedVariantDetails = null,
+        isHotspot = false,
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+        gene = "",
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null,
+    )
+
+    fun createMinimalTranscriptImpact() = TranscriptVariantImpact(
+        transcriptId = "",
+        hgvsCodingImpact = "",
+        hgvsProteinImpact = "",
+        affectedCodon = 0,
+        affectedExon = null,
+        isSpliceRegion = null,
+        effects = emptySet(),
+        codingEffect = CodingEffect.NONE,
     )
 
     fun createProperVariant() = Variant(
@@ -322,6 +367,22 @@ object TestMolecularFactory {
         geneRole = GeneRole.ONCO,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isAssociatedWithDrugResistance = true,
+    )
+
+    fun createMinimalFusion() = Fusion(
+        geneStart = "",
+        geneEnd = "",
+        driverType = FusionDriverType.NONE,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null,
+        geneTranscriptStart = null,
+        geneTranscriptEnd = null,
+        fusedExonUp = null,
+        fusedExonDown = null,
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
     )
 
     fun createProperFusion() = Fusion(

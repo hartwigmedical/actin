@@ -42,7 +42,7 @@ class HasSpecificHLATypeTest {
 
     @Test
     fun `Should evaluate to undetermined if no WGS results present`() {
-        evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIHCTests())
+        evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIhcTests())
     }
 
     @Test

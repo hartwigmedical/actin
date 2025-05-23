@@ -3,7 +3,6 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.report.trial.ExternalTrialSummary
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -79,12 +78,12 @@ class ExternalTrialFunctionsTest {
             externalTrialBelgium,
             Country.BELGIUM
         )
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("3+ locations - see link")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("3+ locations (see link)")
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
         assertThat(hospitalsAndCitiesExternalTrialBelgium.first).isEqualTo("Brussels hospital")
-        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("3+ locations - see link")
+        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("3+ locations (see link)")
     }
 
     @Test(expected = IllegalStateException::class)
@@ -97,7 +96,7 @@ class ExternalTrialFunctionsTest {
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
             .isEqualTo("NL (Amsterdam, Leiden), Germany (Berlin)")
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialBelgium))
-            .isEqualTo("Belgium (3+ locations - see link)")
+            .isEqualTo("Belgium (3+ locations (see link))")
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlands))
             .isEqualTo("NL (Nijmegen, Leiden, Amsterdam)")
     }

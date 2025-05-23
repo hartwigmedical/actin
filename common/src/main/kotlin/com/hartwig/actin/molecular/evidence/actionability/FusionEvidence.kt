@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
@@ -16,9 +16,9 @@ class FusionEvidence(
     private val fusionTrialMatcher: ActionableTrialMatcher,
     private val promiscuousEvidences: List<EfficacyEvidence>,
     private val promiscuousTrialMatcher: ActionableTrialMatcher
-) : ActionabilityMatcher<FusionMatchCriteria> {
+) : ActionabilityMatcher<Fusion> {
 
-    override fun findMatches(event: FusionMatchCriteria): ActionabilityMatch {
+    override fun findMatches(event: Fusion): ActionabilityMatch {
         val fusionMatchPredicate: Predicate<MolecularCriterium> =
             Predicate { isFusionMatch(ActionableEventExtraction.extractFusion(it), event) }
 
@@ -59,11 +59,11 @@ class FusionEvidence(
             return geneEvent == GeneEvent.FUSION || geneEvent == GeneEvent.ACTIVATION || geneEvent == GeneEvent.ANY_MUTATION
         }
 
-        fun isFusionMatch(actionable: ActionableFusion, fusion: FusionMatchCriteria): Boolean {
+        fun isFusionMatch(actionable: ActionableFusion, fusion: Fusion): Boolean {
             return fusion.isReportable && FusionMatching.isGeneMatch(actionable, fusion) && FusionMatching.isExonMatch(actionable, fusion)
         }
 
-        fun isPromiscuousMatch(actionable: ActionableGene, fusion: FusionMatchCriteria): Boolean {
+        fun isPromiscuousMatch(actionable: ActionableGene, fusion: Fusion): Boolean {
             if (!fusion.isReportable) {
                 return false
             }

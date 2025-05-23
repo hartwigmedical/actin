@@ -53,7 +53,10 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             .flatMap { entry ->
                 val driverTextFields = listOf(
                     "${entry.event}\n(Tier ${entry.evidenceTier})",
-                    listOfNotNull(entry.driverType, entry.proteinEffect?.display()).joinToString("\n"),
+                    listOfNotNull(
+                        entry.driverType,
+                        if (entry.driverType.contains(entry.proteinEffect?.display() ?: "", true)) null else entry.proteinEffect?.display()
+                    ).joinToString("\n"),
                     entry.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE
                 )
                 val testTextFields = eventVAFMapByTest.values.map { eventVAFMap ->

@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas
 import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Text
 import java.time.LocalDate
 import java.util.Locale
 
@@ -17,8 +18,11 @@ private const val VALUE_TEXT_Y_OFFSET = 18f
 private const val MAX_WIDTH = 120f
 private const val RECTANGLE_WIDTH = 170f
 private const val RECTANGLE_HEIGHT = 84f
+private const val INITIAL_FONT_SIZE = 10f
+private const val MIN_FONT_SIZE = 6f
+private const val FONT_HEIGHT = 15f
 
-class SidePanel(private val patientId: String, private val reportDate: LocalDate) {
+class SidePanel(private val patientId: String, private val sourcePatientId: String?, private val reportDate: LocalDate) {
 
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
@@ -28,25 +32,33 @@ class SidePanel(private val patientId: String, private val reportDate: LocalDate
         canvas.fill()
         var sideTextIndex = 0
         val cv = Canvas(canvas, page.pageSize)
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", patientId))
+        val (value, extra) = sourcePatientId.takeUnless { it.isNullOrBlank() }?.let { it to patientId } ?: patientId to null
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", value, extra))
         cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", date(reportDate)))
         canvas.release()
     }
 
-    private fun createDiv(pageSize: Rectangle, index: Int, label: String, value: String): Div {
+    private fun createDiv(pageSize: Rectangle, index: Int, label: String, value: String, extra: String? = null): Div {
         val div = Div()
         div.isKeepTogether = true
-        var yPos = pageSize.height + 15 - index * ROW_SPACING
-        val xPos = pageSize.width - RECTANGLE_WIDTH + 15
+        var yPos = pageSize.height + FONT_HEIGHT - index * ROW_SPACING
+        val xPos = pageSize.width - RECTANGLE_WIDTH + FONT_HEIGHT
         div.add(
             Paragraph(label.uppercase(Locale.getDefault())).addStyle(Styles.sidePanelLabelStyle())
                 .setFixedPosition(xPos, yPos, MAX_WIDTH)
         )
-        val valueFontSize = maxPointSizeForWidth(Styles.fontBold(), 10f, 6f, value, MAX_WIDTH)
+        val valueFontSize = maxPointSizeForWidth(Styles.fontBold(), INITIAL_FONT_SIZE, MIN_FONT_SIZE, value, MAX_WIDTH)
         yPos -= VALUE_TEXT_Y_OFFSET
         div.add(
-            Paragraph(value).addStyle(Styles.sidePanelValueStyle().setFontSize(valueFontSize))
-                .setHeight(15f)
+            Paragraph()
+                .add(Text(value).setFontSize(valueFontSize))
+                .apply {
+                    if (!extra.isNullOrBlank()) {
+                        add(Text(" ($extra)").setFontSize(valueFontSize * 0.75f))
+                    }
+                }
+                .addStyle(Styles.sidePanelValueStyle())
+                .setHeight(FONT_HEIGHT)
                 .setFixedPosition(xPos, yPos, MAX_WIDTH)
                 .setFixedLeading(valueFontSize)
         )

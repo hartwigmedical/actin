@@ -22,17 +22,11 @@ annotation class Description(val value: String)
 data class ProvidedPatientRecord(
     val allergies: List<ProvidedAllergy> = emptyList(),
     val bloodTransfusions: List<ProvidedBloodTransfusion> = emptyList(),
-    val complications: List<ProvidedComplication> = emptyList(),
     val labValues: List<ProvidedLabValue> = emptyList(),
     val medications: List<ProvidedMedication>? = emptyList(),
-    val molecularTests: List<ProvidedMolecularTest> = emptyList(),
     val patientDetails: ProvidedPatientDetail,
     val priorOtherConditions: List<ProvidedOtherCondition> = emptyList(),
-    val surgeries: List<ProvidedSurgery> = emptyList(),
-    val toxicities: List<ProvidedToxicity> = emptyList(),
-    val treatmentHistory: List<ProvidedTreatmentHistory> = emptyList(),
     val tumorDetails: ProvidedTumorDetail,
-    val priorPrimaries: List<ProvidedPriorPrimary> = emptyList(),
     val measurements: List<ProvidedMeasurement> = emptyList(),
     val whoEvaluations: List<ProvidedWhoEvaluation> = emptyList()
 )
@@ -45,16 +39,16 @@ data class ProvidedPatientDetail(
     val gender: String,
     @Description("Registration data of this patient with ACTIN")
     val registrationDate: LocalDate,
-    @Description("Base64 encoded SHA-256 hash of source hospital's identifier.")
+    @Description("Base64 encoded SHA-256 hash of source hospital's identifier")
     val hashedId: String,
     @Description("Flag to indicate there is pending Hartwig analysis data for this patient")
-    val hartwigMolecularDataExpected: Boolean
+    val hartwigMolecularDataExpected: Boolean,
+    @Description("Hospital specific Patient Id")
+    val hospitalPatientId: String? = null
 )
 
 @JacksonSerializable
 data class ProvidedTumorDetail(
-    @Description("Date of diagnosis")
-    val diagnosisDate: LocalDate?,
     @Description("Tumor localization details (eg. Lung)")
     val tumorLocation: String,
     @Description("Tumor type details (eg. Adenocarcinoma)")
@@ -68,123 +62,29 @@ data class ProvidedTumorDetail(
     @Description("Has measurable disease")
     val measurableDisease: Boolean? = null,
     val measurableDiseaseDate: LocalDate? = null,
-    val lesions: List<ProvidedLesion>? = null,
-    @Description("Deprecated: currently use to store radiology report. Should move to lesions")
-    val lesionSite: String? = null,
-    @Description("Raw pathology report of molecular test results.")
-    val rawPathologyReport: String? = null
+    val lesions: ProvidedLesionDetail? = null,
+    @Description("Raw pathology reports")
+    val pathology: List<ProvidedPathologyReport>? = null,
 )
 
 @JacksonSerializable
-data class ProvidedTreatmentHistory(
-    @Description("Name of the treatment given (eg. Gemcitabine+Cisplatin)")
-    val treatmentName: String,
-    @Description("Intention of the treatment given (eg. Palliative)")
-    val intention: String? = null,
-    @Description("Date of the start of treatment")
-    val startDate: LocalDate,
-    @Description("Date of the end of treatment")
-    val endDate: LocalDate? = null,
-    @Description("Reason of stopping treatment (eg. Progressive disease)")
-    val stopReason: String? = null,
-    val stopReasonDate: LocalDate? = null,
-    @Description("Response to treatment (eg. Partial Response)")
-    val response: String? = null,
-    val responseDate: LocalDate? = null,
-    @Description("Intended number of cycles (eg. 6)")
-    val intendedCycles: Int? = null,
-    @Description("Administered number of cycles (eg. 6)")
-    val administeredCycles: Int? = null,
-    val modifications: List<ProvidedTreatmentModification>? = null,
-    @Description("Treatment administered in clinical study")
-    val administeredInStudy: Boolean,
-    @Description("Trial acronym or other short identifier if administered in study")
-    val trialAcronym: String? = null
-)
-
-@JacksonSerializable
-data class ProvidedTreatmentModification(
-    @Description("Name of the modified treatment given (eg. Gemcitabine+Cisplatin)")
-    val name: String,
-    @Description("Date of the start of modification of treatment")
-    val date: LocalDate,
-    @Description("Modified number of cycles (eg. 6)")
-    val administeredCycles: Int,
-)
-
-@JacksonSerializable
-data class ProvidedMolecularTest(
-    @Description("Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)")
-    val test: String,
-    @Description("Date the test was administered")
-    val date: LocalDate? = null,
-    @Description("Name of the source system from which the data came (eg. PALGA, DNA-DB)")
-    val datasource: String? = null,
-    @Description("List of genes that were tested.")
-    val testedGenes: Set<String>? = null,
-    val results: Set<ProvidedMolecularTestResult>
-)
-
-@JacksonSerializable
-data class ProvidedMolecularTestResult(
-    @Description("Gene involved in this result. (eg. KRAS)")
-    val gene: String? = null,
-    @Description("Full result string of IHC test ie. (eg. PD-L1 weak positive 20%)")
-    val ihcResult: String? = null,
-    @Description("HGVS notation describing protein impact ie. (eg. p.G12V)")
-    val hgvsProteinImpact: String? = null,
-    @Description("HGVS notation describing coding impact ie. (eg. c.4375C>T)")
-    val hgvsCodingImpact: String? = null,
-    @Description("Transcript referenced in other positional attributes (eg. NM_004304.5)")
-    val transcript: String? = null,
-    @Description("Upstream gene of a fusion (eg. EML4)")
-    val fusionGeneUp: String? = null,
-    @Description("Downstream gene of a fusion (eg. ALK)")
-    val fusionGeneDown: String? = null,
-    @Description("Upstream transcript of a fusion (eg. NM_019063.5)")
-    val fusionTranscriptUp: String? = null,
-    @Description("Downstream transcript of a fusion (eg. NM_004304.5)")
-    val fusionTranscriptDown: String? = null,
-    @Description("Upstream exon of a fusion (eg. 13)")
-    val fusionExonUp: Int? = null,
-    @Description("Downstream exon of a  fusion (eg. 20)")
-    val fusionExonDown: Int? = null,
-    @Description("Exon involved in this result (eg. 19)")
-    val exon: Int? = null,
-    @Description("Codon involved in this result (eg. 1)")
-    val codon: Int? = null,
-    @Description("Exons skipped in a structural variant start (eg. 18)")
-    val exonSkipStart: Int? = null,
-    @Description("Exons skipped in a structural variant end (eg. 20)")
-    val exonSkipEnd: Int? = null,
-    @Description("Gene detected as amplified (eg. MET)")
-    val amplifiedGene: String? = null,
-    @Description("Gene detected as fully deleted (eg. MET)")
-    val deletedGene: String? = null,
-    @Description("Flag should be set to indicate a negative result for a gene (ie. nothing was found)")
-    val noMutationsFound: Boolean? = null,
-    @Description("Free text for a test result which does not fit into any of the other fields. This value will be curated.")
-    val freeText: String? = null,
-    @Description("Result of microsatellite instability test.")
-    val msi: Boolean? = null,
-    @Description("Tumor mutational burden in m/MB (eg. 8.0)")
-    val tmb: Double? = null,
-    @Description("Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)")
-    val vaf: Double? = null
-)
-
-@JacksonSerializable
-data class ProvidedPriorPrimary(
-    @Description("Diagnosis date")
-    val diagnosisDate: LocalDate?,
-    @Description("Tumor localization details (eg. Colon)")
-    val tumorLocation: String,
-    @Description("Tumor type details (eg. Carcinoma)")
-    val tumorType: String,
-    @Description("Observed status of tumor (eg. Active/Inactive - null if unknown)")
-    val status: String? = null,
-    @Description("Date of last treatment")
-    val lastTreatmentDate: LocalDate? = null
+data class ProvidedPathologyReport(
+    @Description("Tissue Id")
+    val tissueId: String? = null,
+    @Description("Indication on whether the report was requested")
+    val reportRequested: Boolean,
+    @Description("Lab that performed the report")
+    val lab: String,
+    @Description("Diagnosis written in the pathology reports")
+    val diagnosis: String,
+    @Description("Date of tissue collection - present only when the source is internal")
+    val tissueDate: LocalDate? = null,
+    @Description("Latest date of report authorization - present only when the source is internal")
+    val authorisationDate: LocalDate? = null,
+    @Description("Date of the report (not clear what this data represents) - used when tissueDate and authorisationDate and not known")
+    val reportDate: LocalDate? = null,
+    @Description("Raw pathology report of molecular test results")
+    val rawPathologyReport: String
 )
 
 interface ProvidedComorbidity {
@@ -202,31 +102,6 @@ data class ProvidedOtherCondition(
     @Description("End date of condition if applicable")
     val endDate: LocalDate? = null
 ) : ProvidedComorbidity
-
-@JacksonSerializable
-data class ProvidedComplication(
-    @Description("Name of complication (eg. Ascites)")
-    override val name: String,
-    @Description("Start date of complication")
-    override val startDate: LocalDate,
-    @Description("End date of complication")
-    val endDate: LocalDate?
-) : ProvidedComorbidity
-
-@JacksonSerializable
-data class ProvidedToxicity(
-    @Description("Name of toxicity (eg. Neuropathy)")
-    override val name: String,
-    @Description("Date of evaluation")
-    val evaluatedDate: LocalDate,
-    @Description("Grade (eg. 2)")
-    val grade: Int,
-    @Description("End date")
-    val endDate: LocalDate?
-) : ProvidedComorbidity {
-    override val startDate: LocalDate
-        get() = evaluatedDate
-}
 
 @JacksonSerializable
 data class ProvidedMedication(
@@ -324,28 +199,22 @@ data class ProvidedAllergy(
 data class ProvidedWhoEvaluation(
     @Description("WHO performance status (eg. 1)")
     val status: Int,
-    @Description("Date of WHO evaluation.")
+    @Description("Date of WHO evaluation")
     val evaluationDate: LocalDate
 )
 
 @JacksonSerializable
-data class ProvidedSurgery(
-    @Description("Name of surgery (eg. Diagnostics stomach)")
-    val surgeryName: String?,
-    @Description("Date of completion, if applicable.")
-    val endDate: LocalDate,
-    @Description("Status of surgery (eg. complete)")
-    val status: String
-)
-
-@JacksonSerializable
-data class ProvidedLesion(
-    @Description("Location of lesion (eg. brain)")
-    val location: String,
-    @Description("Diagnosis date of the lesion")
-    val diagnosisDate: LocalDate,
-    @Description("Whether this lesion considered active, only applicable to brain or CNS lesions.")
-    val active: Boolean? = null
+data class ProvidedLesionDetail(
+    @Description("Patient has lesion in brain")
+    val hasBrainLesions: Boolean? = null,
+    @Description("Patient has active lesion in brain")
+    val hasActiveBrainLesions: Boolean? = null,
+    @Description("Patient has lesion in bone")
+    val hasBoneLesions: Boolean? = null,
+    @Description("Patient has lesion in liver")
+    val hasLiverLesions: Boolean? = null,
+    @Description("Date of questionnaire")
+    val questionnaireDate: LocalDate
 )
 
 enum class ProvidedGender {

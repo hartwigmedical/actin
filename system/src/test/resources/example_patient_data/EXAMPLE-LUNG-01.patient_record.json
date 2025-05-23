@@ -89,7 +89,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "Rheumatoid arthritis",
@@ -254,9 +254,8 @@
       "isTrialMedication": false
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,
@@ -374,17 +373,20 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "OSIMERTINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
                       "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -398,17 +400,20 @@
                   },
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
                       "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "A",
                     "evidenceLevelDetails": "GUIDELINE",
                     "evidenceDirection": {
@@ -539,17 +544,20 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "AFATINIB",
+                    "treatmentTypes": ["EGFR-INHIBITOR"],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
                       "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
                     },
-                    "applicableCancerType": {
-                      "matchedCancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerSubTypes": []
+                    "cancerTypeMatch": {
+                      "cancerType": {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      },
+                      "applicability": "SPECIFIC_TYPE"
                     },
-                    "isOnLabel": true,
                     "evidenceLevel": "D",
                     "evidenceLevelDetails": "CASE_REPORTS_SERIES",
                     "evidenceDirection": {

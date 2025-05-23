@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
@@ -86,9 +86,9 @@ class VariantEvidenceTest {
         )
     )
 
-    private val matchingVariant = VariantMatchCriteria(
+    private val matchingVariant = TestMolecularFactory.createMinimalVariant().copy(
         gene = "gene 1",
-        codingEffect = CodingEffect.MISSENSE,
+        canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
         type = VariantType.SNV,
         chromosome = "1",
         position = 5,
@@ -129,7 +129,9 @@ class VariantEvidenceTest {
 
     @Test
     fun `Should skip codon and exon evidence on non-matching type`() {
-        val nonMatchingType = matchingVariant.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        val nonMatchingType = matchingVariant.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        )
 
         val matches = variantEvidence.findMatches(nonMatchingType)
         assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
