@@ -8,12 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -77,18 +72,6 @@ private val EXON_SKIP_FUSION = TestMolecularFactory.createMinimalFusion().copy(
 private val EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT = EXON_SKIP_FUSION.copy(
     geneTranscriptStart = CANONICAL_TRANSCRIPT,
     geneTranscriptEnd = CANONICAL_TRANSCRIPT
-)
-
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-
-private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
-    TestTreatmentEvidenceFactory.create(
-        treatment = "treatment",
-        evidenceLevel = EvidenceLevel.A,
-        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE
-    )
 )
 
 private val KNOWN_FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)

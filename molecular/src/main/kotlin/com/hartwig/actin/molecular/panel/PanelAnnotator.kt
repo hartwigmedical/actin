@@ -11,14 +11,13 @@ import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurd
 import com.hartwig.actin.datamodel.molecular.derivedGeneTargetMap
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
+import com.hartwig.actin.molecular.util.ExtractionUtil
 
 private const val TMB_HIGH_CUTOFF = 10.0
 private const val PLOIDY = 2.0
 
 class PanelAnnotator(
-    private val evidenceDatabase: EvidenceDatabase,
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
@@ -59,7 +58,7 @@ class PanelAnnotator(
                     MicrosatelliteStability(
                         microsatelliteIndelsPerMb = null,
                         isUnstable = it,
-                        evidenceDatabase.evidenceForMicrosatelliteStatus(it)
+                        evidence = ExtractionUtil.noEvidence()
                     )
                 },
                 homologousRecombination = null,
@@ -68,7 +67,7 @@ class PanelAnnotator(
                     TumorMutationalBurden(
                         score = it,
                         isHigh = isHigh,
-                        evidenceDatabase.evidenceForTumorMutationalBurdenStatus(isHigh)
+                        evidence = ExtractionUtil.noEvidence()
                     )
                 },
                 tumorMutationalLoad = null

@@ -200,7 +200,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 }
             },
             annotator = PanelAnnotator(
-                evidenceDatabase,
                 panelVariantAnnotator,
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,

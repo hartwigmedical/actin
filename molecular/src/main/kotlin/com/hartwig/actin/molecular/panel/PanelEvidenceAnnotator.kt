@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.PanelRecord
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
@@ -16,7 +17,9 @@ class PanelEvidenceAnnotator(
 ) : MolecularAnnotator<PanelRecord, PanelRecord> {
 
     override fun annotate(input: PanelRecord): PanelRecord {
-        return annotateWithClinicalEvidence(annotateWithDriverAttributes(input))
+        return input
+            .let(::annotateWithDriverAttributes)
+            .let(::annotateWithClinicalEvidence)
     }
 
     fun annotateWithDriverAttributes(input: PanelRecord): PanelRecord {
@@ -35,7 +38,8 @@ class PanelEvidenceAnnotator(
                 variants = input.drivers.variants.map { annotateVariantWithClinicalEvidence(it) },
                 copyNumbers = input.drivers.copyNumbers.map { annotatedCopyNumberWithClinicalEvidence(it) },
                 fusions = input.drivers.fusions.map { annotateFusionWithClinicalEvidence(it) },
-            )
+            ),
+            characteristics = annotateCharacteristicsWithClinicalEvidence(input.characteristics)
         )
     }
 
@@ -87,6 +91,21 @@ class PanelEvidenceAnnotator(
         return fusion.copy(
             proteinEffect = proteinEffect,
             isAssociatedWithDrugResistance = isAssociatedWithDrugResistance
+        )
+    }
+
+    private fun annotateCharacteristicsWithClinicalEvidence(characteristics: MolecularCharacteristics): MolecularCharacteristics {
+        val microsatelliteStability = characteristics.microsatelliteStability?.let {
+            it.copy(evidence = evidenceDatabase.evidenceForMicrosatelliteStatus(it.isUnstable))
+        }
+
+        val tumorMutationalBurden = characteristics.tumorMutationalBurden?.let {
+            it.copy(evidence = evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it.isHigh))
+        }
+
+        return characteristics.copy(
+            microsatelliteStability = microsatelliteStability,
+            tumorMutationalBurden = tumorMutationalBurden
         )
     }
 

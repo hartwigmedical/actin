@@ -2,6 +2,8 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
@@ -51,8 +53,6 @@ private val VARIANT = TestMolecularFactory.createMinimalVariant().copy(
     alt = ALT,
     type = VariantType.SNV
 )
-
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 
 private val HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
 private val NON_HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
@@ -142,6 +142,74 @@ class PanelEvidenceAnnotatorTest {
         assertThat(annotatedCopyNumber.geneRole).isEqualTo(actinGeneRole.ONCO)
         assertThat(annotatedCopyNumber.proteinEffect).isEqualTo(actinProteinEffect.GAIN_OF_FUNCTION)
         assertThat(annotatedCopyNumber.isAssociatedWithDrugResistance).isTrue
+    }
+
+    @Test
+    fun `Should annotate microsatellite status with evidence`() {
+        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
+        every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
+
+        val panelWithMSI = panelEvidenceAnnotator.annotate(panelRecordWithMsi(isUnstable = true))
+        assertThat(panelWithMSI.characteristics.microsatelliteStability!!.evidence).isEqualTo(ON_LABEL_MATCH)
+
+        val panelWithMSS = panelEvidenceAnnotator.annotate(panelRecordWithMsi(isUnstable = false))
+        assertThat(panelWithMSS.characteristics.microsatelliteStability!!.evidence).isEqualTo(EMPTY_MATCH)
+
+        val panelWithoutMicrosatelliteStatus = panelEvidenceAnnotator.annotate(panelRecordWithMsi(isUnstable = null))
+        assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteStability).isNull()
+    }
+
+    @Test
+    fun `Should annotate tumor mutational burden with evidence`() {
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
+
+        val panelRecord = panelRecordWithTmb(isHigh = true)
+
+        val panelWithHighTmb = panelEvidenceAnnotator.annotate(panelRecordWithTmb(isHigh = true))
+        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(ON_LABEL_MATCH)
+
+        val panelWithLowTmb = panelEvidenceAnnotator.annotate(panelRecordWithTmb(isHigh = false))
+        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(EMPTY_MATCH)
+
+        val panelWithoutTmb = panelEvidenceAnnotator.annotate(panelRecordWithTmb(isHigh = null))
+        assertThat(panelWithoutTmb.characteristics.tumorMutationalBurden).isNull()
+    }
+
+    private fun panelRecordWithMsi(isUnstable: Boolean?): PanelRecord {
+        val characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
+
+        val microsatelliteStability = isUnstable?.let { isUnstable ->
+            MicrosatelliteStability(
+                microsatelliteIndelsPerMb = if (isUnstable) 100.0 else 0.0,
+                isUnstable = isUnstable,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        }
+
+        return TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            characteristics = characteristics.copy(
+                microsatelliteStability = microsatelliteStability
+            )
+        )
+    }
+
+    private fun panelRecordWithTmb(isHigh: Boolean?): PanelRecord {
+        val characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
+
+        val tumorMutationalBurden = isHigh?.let { isHigh ->
+            TumorMutationalBurden(
+                score = if (isHigh) 100.0 else 0.0,
+                isHigh = isHigh,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        }
+
+        return TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            characteristics = characteristics.copy(
+                tumorMutationalBurden = tumorMutationalBurden
+            )
+        )
     }
 
     private fun panelRecordWith(variant: Variant): PanelRecord {
