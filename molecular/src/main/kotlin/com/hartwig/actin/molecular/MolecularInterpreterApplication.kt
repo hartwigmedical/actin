@@ -14,7 +14,6 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -167,7 +166,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical.sequencingTests,
-            evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
@@ -186,7 +184,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretSequencingMolecularTests(
         sequencingTests: List<SequencingTest>,
-        evidenceDatabase: EvidenceDatabase,
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
