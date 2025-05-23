@@ -13,10 +13,6 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import org.apache.logging.log4j.LogManager
 
-private const val MIN_COPY_NUMBER = 6
-private const val MAX_COPY_NUMBER = 6
-private const val PLOIDY = 2
-
 class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, private val ensembleDataCache: EnsemblDataCache) {
 
     private val logger = LogManager.getLogger(PanelAnnotator::class.java)
@@ -52,15 +48,15 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
             type = if (isCanonicalTranscript) CopyNumberType.FULL_GAIN else CopyNumberType.NONE,
-            minCopies = if (isCanonicalTranscript) MIN_COPY_NUMBER else PLOIDY,
-            maxCopies = if (isCanonicalTranscript) MAX_COPY_NUMBER else PLOIDY
+            minCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null,
+            maxCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
                 type = CopyNumberType.FULL_GAIN,
-                minCopies = MIN_COPY_NUMBER,
-                maxCopies = MAX_COPY_NUMBER
+                minCopies = sequencedAmplifiedGene.copies,
+                maxCopies = sequencedAmplifiedGene.copies
             )
         )
 
@@ -88,8 +84,8 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
             type = if (isCanonicalTranscript) CopyNumberType.DEL else CopyNumberType.NONE,
-            minCopies = if (isCanonicalTranscript) 0 else PLOIDY,
-            maxCopies = if (isCanonicalTranscript) 0 else PLOIDY
+            minCopies = if (isCanonicalTranscript) 0 else null,
+            maxCopies = if (isCanonicalTranscript) 0 else null
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(

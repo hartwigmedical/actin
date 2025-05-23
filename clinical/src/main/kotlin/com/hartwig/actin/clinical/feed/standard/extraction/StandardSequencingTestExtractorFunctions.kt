@@ -50,6 +50,8 @@ object StandardSequencingTestExtractorFunctions {
 
     fun msi(results: Set<SequencingTestResultConfig>) = results.firstNotNullOfOrNull { result -> result.msi }
 
+    fun hrd(results: Set<SequencingTestResultConfig>) = results.firstNotNullOfOrNull { result -> result.hrd }
+
     fun negativeResults(results: Set<SequencingTestResultConfig>) = results.filter { result -> result.noMutationsFound == true }.map {
         SequencedNegativeResult(
             it.gene

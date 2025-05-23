@@ -22,8 +22,9 @@ class MolecularDriversSummarizer private constructor(
             .filter { copyNumber -> copyNumber.canonicalImpact.type.isGain || copyNumber.otherImpacts.any { it.type.isGain } }
             .filter(::isKeyDriver)
             .map {
-                it.gene + if (it.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" +
-                        if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else ""
+                it.gene + (if (it.canonicalImpact.type != CopyNumberType.NONE && it.canonicalImpact.minCopies != null) " ${it.canonicalImpact.minCopies} copies" else "") +
+                        (if (it.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "") +
+                        (if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else "")
             }
             .distinct()
             .toList()

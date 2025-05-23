@@ -17,10 +17,12 @@ data class SequencingTestResultConfig(
     val fusionTranscriptUp: String? = null,
     val fusionTranscriptDown: String? = null,
     val amplifiedGene: String? = null,
+    val amplifiedGeneCopyNr: Int? = null,
     val deletedGene: String? = null,
     val exonSkipStart: Int? = null,
     val exonSkipEnd: Int? = null,
     val msi: Boolean? = null,
     val tmb: Double? = null,
+    val hrd: Boolean? = null,
     val noMutationsFound: Boolean? = null,
 ) : CurationConfig
