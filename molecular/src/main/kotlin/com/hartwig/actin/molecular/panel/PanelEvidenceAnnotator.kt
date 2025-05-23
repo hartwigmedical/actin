@@ -8,11 +8,13 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 
+typealias PanelRecordWithEvidence = PanelRecord
+
 class PanelEvidenceAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
-) : MolecularAnnotator<PanelRecord, PanelRecord> {
+) : MolecularAnnotator<PanelRecord, PanelRecordWithEvidence> {
 
-    override fun annotate(input: PanelRecord): PanelRecord {
+    override fun annotate(input: PanelRecord): PanelRecordWithEvidence {
         return input.copy(
             drivers = input.drivers.copy(
                 variants = input.drivers.variants.map { annotateVariantWithClinicalEvidence(it) },

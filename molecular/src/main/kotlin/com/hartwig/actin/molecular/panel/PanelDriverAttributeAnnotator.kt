@@ -10,12 +10,14 @@ import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 
+typealias PanelRecordWithDriverAttributes = PanelRecord
+
 class PanelDriverAttributeAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
-) : MolecularAnnotator<PanelRecord, PanelRecord> {
+) : MolecularAnnotator<PanelRecord, PanelRecordWithDriverAttributes> {
 
-    override fun annotate(input: PanelRecord): PanelRecord {
+    override fun annotate(input: PanelRecord): PanelRecordWithDriverAttributes {
         return input.copy(
             drivers = input.drivers.copy(
                 variants = annotateVariantsWithDriverAttributes(input.drivers.variants),
