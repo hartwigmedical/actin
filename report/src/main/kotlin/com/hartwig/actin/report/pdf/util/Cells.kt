@@ -10,7 +10,8 @@ import com.itextpdf.layout.element.IBlockElement
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-private const val SMALL_FONT = 7f
+private const val MEDIUM_FONT = 7f
+private const val SMALL_FONT = 6f
 
 object Cells {
 
@@ -79,8 +80,8 @@ object Cells {
         return createContent(Paragraph(text))
     }
 
-    fun createContentSmallItalic(text: String): Cell {
-        return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
+    fun createContentMediumItalic(text: String): Cell {
+        return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(MEDIUM_FONT)
     }
 
     fun createContentSmall(text: String): Cell {

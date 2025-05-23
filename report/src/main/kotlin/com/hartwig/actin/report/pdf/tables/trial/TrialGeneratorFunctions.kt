@@ -44,7 +44,7 @@ object TrialGeneratorFunctions {
         externalTrials.forEach { trial ->
             val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
             val contentFunction = when {
-                allowDeEmphasis -> Cells::createContentSmallItalic
+                allowDeEmphasis -> Cells::createContentMediumItalic
                 allowSmallerSize -> Cells::createContentSmall
                 else -> Cells::createContent
             }
@@ -125,7 +125,7 @@ object TrialGeneratorFunctions {
             anyCohort.url?.let {
                 Cells.createContent(paragraph.addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()).addStyle(fontSize) }))
                     .setAction(PdfAction.createURI(it))
-            } ?: Cells.createContent(paragraph.addAll(trialLabelText)).addStyle(fontSize)
+            } ?: Cells.createContent(paragraph.addAll(trialLabelText).addStyle(fontSize))
         }
     }
 
@@ -144,7 +144,7 @@ object TrialGeneratorFunctions {
             val fontSize = if (allowSmallerSize) Styles.smallerFontSizeStyle() else Styles.tableContentStyle()
             val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
-                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE))
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).addStyle(fontSize)
             } else {
                 Paragraph(it).addStyle(fontSize)
             }
