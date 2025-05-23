@@ -325,11 +325,6 @@
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.github.victools</groupId>
-                <artifactId>jsonschema-generator</artifactId>
-                <version>${jsonschema-generator.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>

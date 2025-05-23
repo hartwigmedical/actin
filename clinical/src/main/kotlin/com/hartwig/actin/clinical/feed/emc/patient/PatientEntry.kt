@@ -2,9 +2,9 @@ package com.hartwig.actin.clinical.feed.emc.patient
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.hartwig.actin.datamodel.clinical.provided.JacksonSerializable
 import com.hartwig.actin.clinical.feed.emc.FeedEntry
 import com.hartwig.actin.clinical.feed.emc.FeedSubjectDeserializer
+import com.hartwig.actin.clinical.feed.emc.JacksonSerializable
 import com.hartwig.actin.datamodel.clinical.Gender
 import java.time.LocalDate
 
