@@ -66,14 +66,14 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         return successWhenNotEmpty(matches)
     }
 
-    fun matchCodons(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
+    private fun matchCodons(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         val codonMatches = efficacyEvidence.molecularCriterium().codons()
             .map { codon -> matchCodon(molecularTest, codon) }
 
         return ActionabilityMatchResult.combine(codonMatches)
     }
 
-    fun matchCodon(molecularTest: MolecularTest, codon: RangeAnnotation): ActionabilityMatchResult {
+    private fun matchCodon(molecularTest: MolecularTest, codon: RangeAnnotation): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
             .filter { variant ->
                 val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
@@ -83,14 +83,14 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         return successWhenNotEmpty(matches)
     }
 
-    fun matchExons(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
+    private fun matchExons(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         val exonMatches = efficacyEvidence.molecularCriterium().exons()
             .map { exon -> matchExon(molecularTest, exon) }
 
         return ActionabilityMatchResult.combine(exonMatches)
     }
 
-    fun matchExon(molecularTest: MolecularTest, exon: RangeAnnotation): ActionabilityMatchResult {
+    private fun matchExon(molecularTest: MolecularTest, exon: RangeAnnotation): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
             .filter { variant ->
                 val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
@@ -100,14 +100,14 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         return successWhenNotEmpty(matches)
     }
 
-    fun matchGenes(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
+    private fun matchGenes(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         val geneMatches = efficacyEvidence.molecularCriterium().genes()
             .map { gene -> matchGene(molecularTest, gene) }
 
         return ActionabilityMatchResult.combine(geneMatches)
     }
 
-    fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
+    private fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
         val variantMatches = molecularTest.drivers.variants
             .filter { variant ->
                 val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
@@ -164,14 +164,14 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                 homozygousDisruptionMatches + copyNumberAmplificationMatches + copyNumberDeletionmatches)
     }
 
-    fun matchFusions(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
+    private fun matchFusions(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         val fusionMatches = efficacyEvidence.molecularCriterium().fusions()
             .map { fusion -> matchFusion(molecularTest, fusion) }
 
         return ActionabilityMatchResult.combine(fusionMatches)
     }
 
-    fun matchFusion(molecularTest: MolecularTest, fusion: ActionableFusion): ActionabilityMatchResult {
+    private fun matchFusion(molecularTest: MolecularTest, fusion: ActionableFusion): ActionabilityMatchResult {
         val matches = molecularTest.drivers.fusions
             .filter { driverFusion ->
                 val fusionMatchCriteria = MatchingCriteriaFunctions.createFusionCriteria(driverFusion)
@@ -182,14 +182,14 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     }
 
 
-    fun matchCharacteristics(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
+    private fun matchCharacteristics(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         val characteristicMatches = efficacyEvidence.molecularCriterium().characteristics()
             .map { characteristic -> matchCharacteristic(molecularTest, characteristic) }
 
         return ActionabilityMatchResult.combine(characteristicMatches)
     }
 
-    fun matchCharacteristic(molecularTest: MolecularTest, characteristic: ActionableCharacteristic): ActionabilityMatchResult {
+    private fun matchCharacteristic(molecularTest: MolecularTest, characteristic: ActionableCharacteristic): ActionabilityMatchResult {
 
         return when (characteristic.type()) {
             TumorCharacteristicType.MICROSATELLITE_STABLE -> {
@@ -285,7 +285,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         }
     }
 
-    fun matchHlas(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
+    private fun matchHlas(molecularTest: MolecularTest, efficacyEvidence: EfficacyEvidence): ActionabilityMatchResult {
         if (efficacyEvidence.molecularCriterium().hla().isEmpty()) {
             return Success()
         } else {
@@ -297,7 +297,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     }
 
     companion object {
-
+        
         fun successWhenNotEmpty(matches: List<Actionable>): ActionabilityMatchResult {
             return if (matches.isEmpty()) {
                 Failure
