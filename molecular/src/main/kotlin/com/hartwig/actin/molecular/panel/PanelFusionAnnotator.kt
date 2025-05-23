@@ -14,7 +14,6 @@ import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
 
 class PanelFusionAnnotator(
-    private val evidenceDatabase: EvidenceDatabase,
     private val knownFusionCache: KnownFusionCache,
     private val ensembleDataCache: EnsemblDataCache
 ) {
@@ -23,7 +22,6 @@ class PanelFusionAnnotator(
 
     fun annotate(fusions: Set<SequencedFusion>, skippedExons: Set<SequencedSkippedExons>): List<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
-            .map { annotateFusion(it) }
     }
 
     fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood {
@@ -115,15 +113,5 @@ class PanelFusionAnnotator(
         val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
         return transcript
-    }
-
-    private fun annotateFusion(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
-        val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
-        val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
-        val fusionWithGeneAlteration =
-            fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(fusionWithGeneAlteration)
-        return fusionWithGeneAlteration.copy(evidence = evidence)
     }
 }

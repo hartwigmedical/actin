@@ -11,21 +11,29 @@ import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurd
 import com.hartwig.actin.datamodel.molecular.derivedGeneTargetMap
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
+import com.hartwig.actin.molecular.util.ExtractionUtil
 
 private const val TMB_HIGH_CUTOFF = 10.0
 private const val PLOIDY = 2.0
 
 class PanelAnnotator(
-    private val evidenceDatabase: EvidenceDatabase,
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+    private val panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
+    private val panelEvidenceAnnotator: PanelEvidenceAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<SequencingTest, PanelRecord> {
 
     override fun annotate(input: SequencingTest): PanelRecord {
+        return input
+            .let(::interpret)
+            .let(panelDriverAttributeAnnotator::annotate)
+            .let(panelEvidenceAnnotator::annotate)
+    }
+
+    private fun interpret(input: SequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)
@@ -54,7 +62,7 @@ class PanelAnnotator(
                     MicrosatelliteStability(
                         microsatelliteIndelsPerMb = null,
                         isUnstable = it,
-                        evidenceDatabase.evidenceForMicrosatelliteStatus(it)
+                        evidence = ExtractionUtil.noEvidence()
                     )
                 },
                 homologousRecombination = null,
@@ -63,7 +71,7 @@ class PanelAnnotator(
                     TumorMutationalBurden(
                         score = it,
                         isHigh = isHigh,
-                        evidenceDatabase.evidenceForTumorMutationalBurdenStatus(isHigh)
+                        evidence = ExtractionUtil.noEvidence()
                     )
                 },
                 tumorMutationalLoad = null

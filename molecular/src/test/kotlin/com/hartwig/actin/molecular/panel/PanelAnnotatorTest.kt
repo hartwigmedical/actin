@@ -8,45 +8,24 @@ import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OTHER_GENE = "other_gene"
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 
-private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
-    TestTreatmentEvidenceFactory.create(
-        treatment = "treatment",
-        evidenceLevel = EvidenceLevel.A,
-        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE
-    )
-)
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 
 private const val TEST_NAME = "test"
 
 class PanelAnnotatorTest {
 
-    private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-    }
     private val panelVariantAnnotator = mockk<PanelVariantAnnotator> {
         every { annotate(any()) } returns emptyList()
     }
@@ -56,13 +35,20 @@ class PanelAnnotatorTest {
     private val panelCopyNumberAnnotator = mockk<PanelCopyNumberAnnotator> {
         every { annotate(any<Set<SequencedAmplification>>()) } returns emptyList()
     }
+    private val panelDriverAttributeAnnotator = mockk<PanelDriverAttributeAnnotator>() {
+        every { annotate(any()) } answers { firstArg() }
+    }
+    private val panelEvidenceAnnotator = mockk<PanelEvidenceAnnotator> {
+        every { annotate(any()) } answers { firstArg() }
+    }
 
     private val annotator =
         PanelAnnotator(
-            evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelDriverAttributeAnnotator,
+            panelEvidenceAnnotator,
             PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )
 
@@ -85,11 +71,24 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate fusion`() {
-        val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(expected)
+        val interpretedFusion = TestMolecularFactory.createMinimalFusion().copy(
+            geneStart = GENE,
+            geneEnd = OTHER_GENE,
+        )
+
+        val annotatedFusion = interpretedFusion.copy(
+            evidence = ON_LABEL_MATCH
+        )
+
+        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(interpretedFusion)
+        every { panelEvidenceAnnotator.annotate(any()) } returns TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                fusions = listOf(annotatedFusion)
+            )
+        )
 
         val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
-        assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
+        assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(annotatedFusion))
     }
 
     @Test
@@ -105,36 +104,6 @@ class PanelAnnotatorTest {
     fun `Should infer ploidy`() {
         val annotated = annotator.annotate(createTestSequencingTest())
         assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
-    }
-
-    @Test
-    fun `Should annotate microsatellite status with evidence`() {
-        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
-        every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
-
-        val panelWithMSI = annotator.annotate(createTestSequencingTest().copy(isMicrosatelliteUnstable = true))
-        assertThat(panelWithMSI.characteristics.microsatelliteStability!!.evidence).isEqualTo(ON_LABEL_MATCH)
-
-        val panelWithMSS = annotator.annotate(createTestSequencingTest().copy(isMicrosatelliteUnstable = false))
-        assertThat(panelWithMSS.characteristics.microsatelliteStability!!.evidence).isEqualTo(EMPTY_MATCH)
-
-        val panelWithoutMicrosatelliteStatus = annotator.annotate(createTestSequencingTest().copy(isMicrosatelliteUnstable = null))
-        assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteStability).isNull()
-    }
-
-    @Test
-    fun `Should annotate tumor mutational burden with evidence`() {
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
-
-        val panelWithHighTmb = annotator.annotate(createTestSequencingTest().copy(tumorMutationalBurden = 200.0))
-        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(ON_LABEL_MATCH)
-
-        val panelWithLowTmb = annotator.annotate(createTestSequencingTest().copy(tumorMutationalBurden = 2.0))
-        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(EMPTY_MATCH)
-
-        val panelWithoutTmb = annotator.annotate(createTestSequencingTest().copy(tumorMutationalBurden = null))
-        assertThat(panelWithoutTmb.characteristics.tumorMutationalBurden).isNull()
     }
 
     private fun createTestSequencingTest(): SequencingTest {

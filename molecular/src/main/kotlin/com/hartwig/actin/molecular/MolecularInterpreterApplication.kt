@@ -14,7 +14,6 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -24,6 +23,8 @@ import com.hartwig.actin.molecular.panel.IhcAnnotator
 import com.hartwig.actin.molecular.panel.IhcExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
+import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
+import com.hartwig.actin.molecular.panel.PanelEvidenceAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
 import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
@@ -159,16 +160,19 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
         val paveLite = PaveLite(ensemblDataCache, false)
 
-        val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
-        val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
-        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(evidenceDatabase, ensemblDataCache)
+        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
+        val panelFusionAnnotator = PanelFusionAnnotator(knownFusionCache, ensemblDataCache)
+        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
+        val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
+        val panelEvidenceAnnotator = PanelEvidenceAnnotator(evidenceDatabase)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical.sequencingTests,
-            evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelDriverAttributeAnnotator,
+            panelEvidenceAnnotator,
             panelSpecifications
         )
 
@@ -183,10 +187,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretSequencingMolecularTests(
         sequencingTests: List<SequencingTest>,
-        evidenceDatabase: EvidenceDatabase,
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+        panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
+        panelEvidenceAnnotator: PanelEvidenceAnnotator,
         panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         return MolecularInterpreter(
@@ -196,10 +201,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 }
             },
             annotator = PanelAnnotator(
-                evidenceDatabase,
                 panelVariantAnnotator,
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
+                panelDriverAttributeAnnotator,
+                panelEvidenceAnnotator,
                 panelSpecifications
             ),
         ).run(sequencingTests)

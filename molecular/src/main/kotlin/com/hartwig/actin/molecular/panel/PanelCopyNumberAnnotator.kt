@@ -17,7 +17,7 @@ private const val MIN_COPY_NUMBER = 6
 private const val MAX_COPY_NUMBER = 6
 private const val PLOIDY = 2
 
-class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, private val ensembleDataCache: EnsemblDataCache) {
+class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) {
 
     private val logger = LogManager.getLogger(PanelAnnotator::class.java)
 
@@ -28,18 +28,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
                 is SequencedDeletion -> convertSequencedDeletedGene(element)
                 else -> throw IllegalArgumentException("Unsupported type: $element")
             }
-        }.map(::annotatedInferredCopyNumber)
-    }
-
-    private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val alteration = evidenceDatabase.alterationForCopyNumber(copyNumber)
-        val copyNumberWithGeneAlteration = copyNumber.copy(
-            geneRole = alteration.geneRole,
-            proteinEffect = alteration.proteinEffect,
-            isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
-        )
-        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumberWithGeneAlteration)
-        return copyNumberWithGeneAlteration.copy(evidence = evidence)
+        }
     }
 
     private fun convertSequencedAmplifiedGene(sequencedAmplifiedGene: SequencedAmplification): CopyNumber {

@@ -2,26 +2,9 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
-import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.driverlikelihood.TEST_ONCO_DNDS_TSV
-import com.hartwig.actin.molecular.driverlikelihood.TEST_TSG_DNDS_TSV
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
@@ -39,75 +22,15 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val ALT = "T"
-private const val REF = "G"
 private const val TRANSCRIPT = "transcript"
 private const val GENE_ID = "gene_id"
 private const val OTHER_TRANSCRIPT = "other_transcript"
 private const val OTHER_GENE = "other_gene"
 private const val OTHER_GENE_ID = "other_gene_id"
 private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
-private const val CHROMOSOME = "1"
-private const val POSITION = 1
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
-
-private val VARIANT = Variant(
-    chromosome = CHROMOSOME,
-    position = POSITION,
-    ref = REF,
-    alt = ALT,
-    type = VariantType.SNV,
-    variantAlleleFrequency = null,
-    canonicalImpact = TranscriptVariantImpact(
-        transcriptId = TRANSCRIPT,
-        codingEffect = CodingEffect.MISSENSE,
-        hgvsCodingImpact = HGVS_CODING,
-        hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
-        isSpliceRegion = false,
-        affectedExon = 1,
-        affectedCodon = 1,
-        effects = emptySet()
-    ),
-    otherImpacts = emptySet(),
-    isHotspot = true,
-    isReportable = true,
-    event = "$GENE M1L",
-    driverLikelihood = null,
-    evidence = ClinicalEvidence(emptySet(), emptySet()),
-    gene = GENE,
-    geneRole = GeneRole.ONCO,
-    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-    isAssociatedWithDrugResistance = true
-)
-
-private val UNANNOTATED_VARIANT = VARIANT.copy(
-    isHotspot = false,
-    geneRole = GeneRole.UNKNOWN,
-    proteinEffect = ProteinEffect.UNKNOWN,
-    driverLikelihood = null,
-    isAssociatedWithDrugResistance = null,
-)
-
-private val ANNOTATED_VARIANT = VARIANT.copy(
-    isHotspot = true,
-    geneRole = GeneRole.ONCO,
-    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-    driverLikelihood = DriverLikelihood.HIGH,
-    isAssociatedWithDrugResistance = true,
-)
-
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
-    TestTreatmentEvidenceFactory.create(
-        treatment = "treatment",
-        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-        evidenceLevel = EvidenceLevel.A,
-        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-    )
-)
 
 private val TRANSCRIPT_ANNOTATION =
     ImmutableVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
@@ -139,21 +62,7 @@ private val PAVE_ANNOTATION = PaveResponse(
     transcriptImpact = emptyList()
 )
 
-private val HOTSPOT =
-    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
-
-private val NON_HOTSPOT =
-    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
-
 class PanelVariantAnnotatorTest {
-
-    private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-        every { alterationForVariant(UNANNOTATED_VARIANT.copy(driverLikelihood = null)) } returns HOTSPOT
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { evidenceForVariant(ANNOTATED_VARIANT) } returns ACTIONABILITY_MATCH
-    }
-    private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
     private val transvarAnnotator = mockk<VariantAnnotator> {
         every { resolve(any(), null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
     }
@@ -164,7 +73,7 @@ class PanelVariantAnnotatorTest {
         every { run(any<List<PaveQuery>>()) } returns emptyList()
         every { run(listOf(PAVE_QUERY)) } returns listOf(PAVE_ANNOTATION)
     }
-    private val annotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
+    private val annotator = PanelVariantAnnotator(transvarAnnotator, paver, paveLite)
 
     @Test
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
@@ -181,67 +90,6 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.ref).isEqualTo(REF)
         assertThat(annotated.alt).isEqualTo(ALT)
         assertThat(annotated.type).isEqualTo(VariantType.SNV)
-    }
-
-    @Test
-    fun `Should annotate variants with gene alteration data`() {
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
-        assertThat(annotated.geneRole).isEqualTo(GeneRole.ONCO)
-        assertThat(annotated.isAssociatedWithDrugResistance).isTrue()
-    }
-
-    @Test
-    fun `Should annotate variant that is hotspot`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-            every { alterationForVariant(UNANNOTATED_VARIANT) } returns HOTSPOT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
-            every { evidenceForVariant(VARIANT) } returns ACTIONABILITY_MATCH
-        }
-        val annotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
-        assertThat(annotated.isHotspot).isTrue()
-        assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-    }
-
-    @Test
-    fun `Should annotate variant that is no hotspot`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_HOTSPOT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
-            every { evidenceForVariant(VARIANT) } returns ACTIONABILITY_MATCH
-        }
-        val annotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
-        assertThat(annotated.isHotspot).isFalse()
-        assertThat(annotated.driverLikelihood).isNull()
-    }
-
-    @Test
-    fun `Should not annotate with evidence when no matches found`() {
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT.copy(gene = "other gene"))).first()
-        assertThat(annotated.evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
-    }
-
-    @Test
-    fun `Should annotate variants with evidence when matches found`() {
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
-
-        assertThat(annotated.evidence).isEqualTo(
-            ClinicalEvidence(
-                treatmentEvidence = setOf(
-                    TestTreatmentEvidenceFactory.create(
-                        treatment = "treatment",
-                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-                        evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                    )
-                ),
-                eligibleTrials = emptySet()
-            )
-        )
     }
 
     @Test
