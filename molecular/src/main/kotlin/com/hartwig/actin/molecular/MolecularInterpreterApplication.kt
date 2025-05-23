@@ -23,6 +23,7 @@ import com.hartwig.actin.molecular.panel.IhcAnnotator
 import com.hartwig.actin.molecular.panel.IhcExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
+import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
 import com.hartwig.actin.molecular.panel.PanelEvidenceAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
 import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
@@ -162,13 +163,15 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
         val panelFusionAnnotator = PanelFusionAnnotator(knownFusionCache, ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
-        val panelEvidenceAnnotator = PanelEvidenceAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
+        val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
+        val panelEvidenceAnnotator = PanelEvidenceAnnotator(evidenceDatabase)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical.sequencingTests,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelDriverAttributeAnnotator,
             panelEvidenceAnnotator,
             panelSpecifications
         )
@@ -187,6 +190,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+        panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
         panelEvidenceAnnotator: PanelEvidenceAnnotator,
         panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
@@ -200,6 +204,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelVariantAnnotator,
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
+                panelDriverAttributeAnnotator,
                 panelEvidenceAnnotator,
                 panelSpecifications
             ),

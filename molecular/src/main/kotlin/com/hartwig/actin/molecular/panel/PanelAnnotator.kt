@@ -21,15 +21,19 @@ class PanelAnnotator(
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+    private val panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
     private val panelEvidenceAnnotator: PanelEvidenceAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<SequencingTest, PanelRecord> {
 
     override fun annotate(input: SequencingTest): PanelRecord {
-        return panelEvidenceAnnotator.annotate(interpret(input))
+        return input
+            .let(::interpret)
+            .let(panelDriverAttributeAnnotator::annotate)
+            .let(panelEvidenceAnnotator::annotate)
     }
 
-    fun interpret(input: SequencingTest): PanelRecord {
+    private fun interpret(input: SequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)

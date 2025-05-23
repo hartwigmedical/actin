@@ -10,9 +10,7 @@ import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -28,10 +26,6 @@ private const val TEST_NAME = "test"
 
 class PanelAnnotatorTest {
 
-    private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
-        every { alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
-    }
     private val panelVariantAnnotator = mockk<PanelVariantAnnotator> {
         every { annotate(any()) } returns emptyList()
     }
@@ -41,7 +35,9 @@ class PanelAnnotatorTest {
     private val panelCopyNumberAnnotator = mockk<PanelCopyNumberAnnotator> {
         every { annotate(any<Set<SequencedAmplification>>()) } returns emptyList()
     }
-
+    private val panelDriverAttributeAnnotator = mockk<PanelDriverAttributeAnnotator>() {
+        every { annotate(any()) } answers { firstArg() }
+    }
     private val panelEvidenceAnnotator = mockk<PanelEvidenceAnnotator> {
         every { annotate(any()) } answers { firstArg() }
     }
@@ -51,6 +47,7 @@ class PanelAnnotatorTest {
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelDriverAttributeAnnotator,
             panelEvidenceAnnotator,
             PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )

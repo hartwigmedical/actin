@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
@@ -18,3 +20,16 @@ val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
 )
 
 val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
+
+const val ALT = "T"
+const val REF = "G"
+const val CHROMOSOME = "1"
+const val POSITION = 1
+
+val VARIANT = TestMolecularFactory.createMinimalVariant().copy(
+    chromosome = CHROMOSOME,
+    position = POSITION,
+    ref = REF,
+    alt = ALT,
+    type = VariantType.SNV
+)
