@@ -22,16 +22,12 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val ALT = "T"
-private const val REF = "G"
 private const val TRANSCRIPT = "transcript"
 private const val GENE_ID = "gene_id"
 private const val OTHER_TRANSCRIPT = "other_transcript"
 private const val OTHER_GENE = "other_gene"
 private const val OTHER_GENE_ID = "other_gene_id"
 private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
-private const val CHROMOSOME = "1"
-private const val POSITION = 1
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
