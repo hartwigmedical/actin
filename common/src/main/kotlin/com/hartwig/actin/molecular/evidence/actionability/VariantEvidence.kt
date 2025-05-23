@@ -137,7 +137,7 @@ class VariantEvidence(
             )
         }
 
-        fun isVariantEligible(variant: VariantMatchCriteria): Boolean =
+        fun isVariantEligible(variant: Variant): Boolean =
             variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH
     }
 }

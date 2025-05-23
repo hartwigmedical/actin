@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatchResu
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatchResult.Success
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
@@ -59,8 +58,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     private fun matchHotspot(molecularTest: MolecularTest, hotspot: ActionableHotspot): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
             .filter { variant ->
-                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-                VariantEvidence.isVariantEligible(criteria) && HotspotMatching.isMatch(hotspot, criteria)
+                VariantEvidence.isVariantEligible(variant) && HotspotMatching.isMatch(hotspot, variant)
             }
 
         return successWhenNotEmpty(matches)
@@ -76,8 +74,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     private fun matchCodon(molecularTest: MolecularTest, codon: RangeAnnotation): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
             .filter { variant ->
-                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-                VariantEvidence.isVariantEligible(criteria) && RangeMatching.isMatch(codon, criteria)
+                VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(codon, variant)
             }
 
         return successWhenNotEmpty(matches)
@@ -93,8 +90,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     private fun matchExon(molecularTest: MolecularTest, exon: RangeAnnotation): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants
             .filter { variant ->
-                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-                VariantEvidence.isVariantEligible(criteria) && RangeMatching.isMatch(exon, criteria)
+                VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(exon, variant)
             }
 
         return successWhenNotEmpty(matches)
@@ -110,15 +106,13 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     private fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
         val variantMatches = molecularTest.drivers.variants
             .filter { variant ->
-                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-                VariantEvidence.isVariantEligible(criteria) && GeneMatching.isMatch(gene, criteria)
+                VariantEvidence.isVariantEligible(variant) && GeneMatching.isMatch(gene, variant)
             }
 
         val promiscuousFusionMatches = if (FusionEvidence.isPromiscuousFusionEvent(gene.event())) {
             molecularTest.drivers.fusions
                 .filter { fusion ->
-                    val criteria = MatchingCriteriaFunctions.createFusionCriteria(fusion)
-                    FusionEvidence.isPromiscuousMatch(gene, criteria)
+                    FusionEvidence.isPromiscuousMatch(gene, fusion)
                 }
         } else {
             emptyList()
@@ -174,8 +168,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     private fun matchFusion(molecularTest: MolecularTest, fusion: ActionableFusion): ActionabilityMatchResult {
         val matches = molecularTest.drivers.fusions
             .filter { driverFusion ->
-                val fusionMatchCriteria = MatchingCriteriaFunctions.createFusionCriteria(driverFusion)
-                FusionEvidence.isFusionMatch(fusion, fusionMatchCriteria)
+                FusionEvidence.isFusionMatch(fusion, driverFusion)
             }
 
         return successWhenNotEmpty(matches)
@@ -297,7 +290,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     }
 
     companion object {
-        
+
         fun successWhenNotEmpty(matches: List<Actionable>): ActionabilityMatchResult {
             return if (matches.isEmpty()) {
                 Failure
