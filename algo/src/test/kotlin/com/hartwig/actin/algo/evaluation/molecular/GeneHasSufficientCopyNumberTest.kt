@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
@@ -49,38 +48,45 @@ class GeneHasSufficientCopyNumberTest {
 
     @Test
     fun `Should be undetermined when molecular record is empty`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, TestPatientFactory.createEmptyMolecularTestPatientRecord())
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+        )
     }
 
     @Test
     fun `Should fail with minimal WGS record`() {
-        assertEvaluation(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 
     @Test
     fun `Should fail when requested min copy number is not met`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(canonicalImpact = impactAmpWithInsufficientCopyNr))
+            function.evaluate(MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(canonicalImpact = impactAmpWithInsufficientCopyNr)))
         )
     }
 
     @Test
     fun `Should pass if requested min copy number is met on canonical transcript`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.PASS,
-            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript)
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript)
+            )
         )
     }
 
     @Test
     fun `Should pass if requested min copy number is met on canonical transcript also if not an amp`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.PASS,
-            MolecularTestFactory.withCopyNumber(
-                ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
-                    canonicalImpact = impactAmpWithSufficientCopyNr.copy(
-                        type = CopyNumberType.NONE
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(
+                    ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+                        canonicalImpact = impactAmpWithSufficientCopyNr.copy(
+                            type = CopyNumberType.NONE
+                        )
                     )
                 )
             )
@@ -89,38 +95,46 @@ class GeneHasSufficientCopyNumberTest {
 
     @Test
     fun `Should warn with non-oncogene`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(geneRole = GeneRole.TSG))
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(geneRole = GeneRole.TSG))
+            )
         )
     }
 
     @Test
     fun `Should warn with loss of function effect`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+            )
         )
     }
 
     @Test
     fun `Should warn with loss of function predicted effect`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+            )
         )
     }
 
     @Test
     fun `Should warn when requested min copy number is not satisfied but max copy number is`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(
-                ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
-                    canonicalImpact = impactAmpWithSufficientCopyNr.copy(
-                        type = CopyNumberType.FULL_GAIN,
-                        minCopies = NON_PASSING_COPIES,
-                        maxCopies = PASSING_COPIES
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(
+                    ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+                        canonicalImpact = impactAmpWithSufficientCopyNr.copy(
+                            type = CopyNumberType.FULL_GAIN,
+                            minCopies = NON_PASSING_COPIES,
+                            maxCopies = PASSING_COPIES
+                        )
                     )
                 )
             )
@@ -129,17 +143,21 @@ class GeneHasSufficientCopyNumberTest {
 
     @Test
     fun `Should warn with full gain on non-canonical transcript and no gain on canonical transcript`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnNonCanonicalTranscript)
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnNonCanonicalTranscript)
+            )
         )
     }
 
     @Test
     fun `Should pass if amp with unknown min copy nr is null but requested copy nr below assumed min copy nr for amps`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.PASS,
-            MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript)
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript)
+            )
         )
     }
 
@@ -156,12 +174,14 @@ class GeneHasSufficientCopyNumberTest {
 
     @Test
     fun `Should fail if gene copy nr is unknown and type is not an amp`() {
-        assertEvaluation(
+        assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            MolecularTestFactory.withCopyNumber(
-                ampWithUnknownCopiesOnCanonicalTranscript.copy(
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                        CopyNumberType.NONE,
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(
+                    ampWithUnknownCopiesOnCanonicalTranscript.copy(
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                            CopyNumberType.NONE,
+                        )
                     )
                 )
             )
@@ -178,9 +198,5 @@ class GeneHasSufficientCopyNumberTest {
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
         Assertions.assertThat(result.undeterminedMessages)
             .containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
-    }
-
-    private fun assertEvaluation(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, function.evaluate(record))
     }
 }
