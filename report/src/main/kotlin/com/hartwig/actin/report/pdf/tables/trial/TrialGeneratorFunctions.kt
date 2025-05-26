@@ -115,17 +115,18 @@ object TrialGeneratorFunctions {
             (cohortsForTrial.none(InterpretedCohort::hasSlotsAvailable) || cohortsForTrial.none(InterpretedCohort::isOpen))
 
         val paragraph = if (allowSmallerSize) Paragraph().setMultipliedLeading(SMALL_LINE_DISTANCE) else Paragraph()
-        val fontSize = if (allowSmallerSize) Styles.smallerFontSizeStyle() else Styles.tableContentStyle()
+        val fontSize = if (allowSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
         return if (hasNoOpenCohortsWithSlots && allowDeEmphasis) {
-            val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()).addStyle(fontSize) }
+            val trialLabel = trialLabelText.map { it.addStyle(Styles.deEmphasizedStyle()).setFontSize(fontSize) }
             anyCohort.url?.let {
                 Cells.createContent(paragraph.addAll(trialLabel).setAction(PdfAction.createURI(it)).setUnderline())
             } ?: Cells.createContent(paragraph.addAll(trialLabel))
         } else {
+            val trialLabels = trialLabelText.map { it.setFontSize(fontSize) }
             anyCohort.url?.let {
-                Cells.createContent(paragraph.addAll(trialLabelText.map { label -> label.addStyle(Styles.urlStyle()).addStyle(fontSize) }))
+                Cells.createContent(paragraph.addAll(trialLabels.map { label -> label.addStyle(Styles.urlStyle()) }))
                     .setAction(PdfAction.createURI(it))
-            } ?: Cells.createContent(paragraph.addAll(trialLabelText).addStyle(fontSize))
+            } ?: Cells.createContent(paragraph.addAll(trialLabels))
         }
     }
 
@@ -141,12 +142,12 @@ object TrialGeneratorFunctions {
         }
 
         cellContentsForRow.map {
-            val fontSize = if (allowSmallerSize) Styles.smallerFontSizeStyle() else Styles.tableContentStyle()
+            val fontSize = if (allowSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
             val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
-                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).addStyle(fontSize)
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setFontSize(fontSize)
             } else {
-                Paragraph(it).addStyle(fontSize)
+                Paragraph(it).setFontSize(fontSize)
             }
 
             val cell = when {

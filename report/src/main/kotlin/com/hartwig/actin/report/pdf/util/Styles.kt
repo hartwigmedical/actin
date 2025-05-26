@@ -26,6 +26,9 @@ object Styles {
     val PALETTE_WARN = PALETTE_EVALUATION_WARN
     val BORDER = SolidBorder(PALETTE_MID_GREY, 0.25f)
 
+    const val REGULAR_FONT_SIZE = 8f
+    const val SMALL_FONT_SIZE = 6f
+
     private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
     private const val FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf"
     private const val FONT_ITALIC_PATH = "fonts/nimbus-sans/NimbusSansL-Italic.ttf"
@@ -56,7 +59,7 @@ object Styles {
     }
 
     fun tableSubTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLUE)
+        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLUE)
     }
 
     fun tableSubStyle(): Style {
@@ -64,31 +67,31 @@ object Styles {
     }
 
     fun tableHeaderStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_MID_GREY)
+        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
     }
 
     fun tableContentStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
     }
 
     fun tableNoticeStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_WARN)
+        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_WARN)
     }
 
     fun tableKeyStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
     }
 
     fun tableUnknownStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
     }
 
     fun tableHighlightStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
     }
 
     fun reportHeaderLabelStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
     }
 
     fun reportHeaderValueStyle(): Style {
@@ -96,11 +99,11 @@ object Styles {
     }
 
     fun pageNumberStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLUE)
+        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLUE)
     }
 
     fun sidePanelLabelStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_WHITE)
+        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_WHITE)
     }
 
     fun sidePanelValueStyle(): Style {
@@ -108,19 +111,15 @@ object Styles {
     }
 
     fun disclaimerStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(6f).setFontColor(PALETTE_MID_GREY)
+        return Style().setFont(fontRegular()).setFontSize(SMALL_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
     }
 
     fun urlStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLUE).setUnderline()
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLUE).setUnderline()
     }
 
     fun deEmphasizedStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_MID_GREY)
-    }
-
-    fun smallerFontSizeStyle(): Style {
-        return Style().setFontSize(6f)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
     }
 
     private fun fontRegular(): PdfFont {

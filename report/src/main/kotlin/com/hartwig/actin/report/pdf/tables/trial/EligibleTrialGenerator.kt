@@ -34,7 +34,7 @@ class EligibleTrialGenerator(
 
         val table =
             if (includeWarningsColumn) {
-                Tables.createRelativeWidthCols(1f, 2f, 1f, 1f, 3f)
+                Tables.createRelativeWidthCols(10f, 20f, 7f, 10f, 33f)
             } else {
                 Tables.createRelativeWidthCols(1f, 1f, 1f, 2f)
             }

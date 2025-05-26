@@ -27,16 +27,16 @@ class IneligibleTrialGenerator(
     }
 
     override fun contents(): Table {
-        val trialColWidth = 1f
-        val cohortColWidth = 2f
-        val molecularColWidth = 1f
-        val locationColWidth = 1f
-        val ineligibilityColWidth = 3f
-        val configColWidth = 3f
+        val trialColWidth = 10f
+        val cohortColWidth = 20f
+        val molecularColWidth = 6f
+        val locationColWidth = 10f
+        val ineligibilityColWidth = 34f
+        val configColWidth = 30f
 
         val table = when {
             includeIneligibilityColumn ->
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth + 2f)
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth + 20f)
             includeConfiguration ->
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
             else ->
