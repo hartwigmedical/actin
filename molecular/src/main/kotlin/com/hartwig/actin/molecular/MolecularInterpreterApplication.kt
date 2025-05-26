@@ -14,8 +14,13 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
+import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.EvidenceRegressionReporter
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
+import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
+import com.hartwig.actin.molecular.evidence.actionability.CombinedEvidenceMatcherFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
@@ -103,8 +108,9 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         return if (config.orangeJson != null) {
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
+            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(orange.refGenomeVersion())
 
-            val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
+            val serveRecord = selectForRefGenomeVersion(serveDatabase, orangeRefGenomeVersion)
             val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
 
             LOGGER.info("Interpreting ORANGE record")
@@ -112,7 +118,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             val orangeRecordMolecularRecordMolecularInterpreter =
                 MolecularInterpreter(OrangeExtractor(geneFilter, panelSpecifications), MolecularRecordAnnotator(evidenceDatabase))
 
-            orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
+            val orangeMolecularTests = orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
+            val testsWithUpdatedEvidence = updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
+                orangeMolecularTests, serveDatabase, tumorDoids, orangeRefGenomeVersion
+            )
+
+            orangeMolecularTests.zip(testsWithUpdatedEvidence).map { (oldTest, newTest) -> EvidenceRegressionReporter.report(oldTest, newTest) }
+            testsWithUpdatedEvidence
         } else {
             emptyList()
         }
@@ -181,8 +193,36 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelFusionAnnotator
         )
 
+        val allTests = sequencingMolecularTests + ihcMolecularTests
+        val molecularTestsWithUpdatedEvidence = updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
+            allTests, serveDatabase, tumorDoids, CLINICAL_TESTS_REF_GENOME_VERSION
+        )
+
+        sequencingMolecularTests.zip(molecularTestsWithUpdatedEvidence).forEach { (oldTest, newTest) ->
+            EvidenceRegressionReporter.report(oldTest, newTest)
+        }
+        
         LOGGER.info("Completed interpretation of {} clinical molecular test(s)", sequencingMolecularTests.size)
-        return sequencingMolecularTests + ihcMolecularTests
+        return molecularTestsWithUpdatedEvidence
+    }
+
+    private fun updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
+        molecularTests: List<MolecularTest>,
+        serveDatabase: ServeDatabase,
+        tumorDoids: Set<String>,
+        refGenomeVersion: RefGenomeVersion
+    ): List<MolecularTest> {
+        val serveRecord = selectForRefGenomeVersion(serveDatabase, refGenomeVersion)
+        val cancerTypeResolver = CancerTypeApplicabilityResolver(tumorDoids)
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val combinedEvidenceMatcher = CombinedEvidenceMatcherFactory.create(serveRecord)
+
+        val evidenceAnnotator = EvidenceAnnotator(
+            clinicalEvidenceFactory = clinicalEvidenceFactory,
+            combinedEvidenceMatcher = combinedEvidenceMatcher,
+        )
+
+        return molecularTests.map { molecularTest -> evidenceAnnotator.annotate(molecularTest) }
     }
 
     private fun interpretSequencingMolecularTests(
