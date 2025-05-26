@@ -11,10 +11,14 @@ object EvidenceRegressionReporter {
     private val LOGGER = LogManager.getLogger(EvidenceRegressionReporter::class.java)
 
     fun report(oldTest: MolecularTest, newTest: MolecularTest) {
-        LOGGER.info("Comparing old and new molecular tests for evidence changes: ${oldTest.testTypeDisplay} vs ${newTest.testTypeDisplay}")
+        LOGGER.info("Comparing old and new molecular tests for evidence changes: ${testDescriptor(oldTest)} vs ${testDescriptor(newTest)}")
 
         compareDrivers(oldTest.drivers, newTest.drivers)
 //        compareCharacteristics(oldTest.characteristics, newTest.characteristics)
+    }
+
+    private fun testDescriptor(test: MolecularTest): String {
+        return "${test.experimentType} - ${test.date ?: "(Unknown date)"} - ${test.testTypeDisplay ?: "(No test type display)"}"
     }
 
     private fun compareDrivers(oldDrivers: Drivers, newDrivers: Drivers) {
@@ -40,6 +44,7 @@ object EvidenceRegressionReporter {
         val diffs = allBases.map { base ->
             EvidenceDiff(
                 baseVariant = base,
+
                 inOld = onlyOldByBase[base]?.map { it.evidence } ?: emptyList(),
                 inNew = onlyNewByBase[base]?.map { it.evidence } ?: emptyList()
             )
@@ -50,16 +55,32 @@ object EvidenceRegressionReporter {
         val changedBases = diffs.filter { it.inOld.isNotEmpty() && it.inNew.isNotEmpty() }
 
         // Log the differences
+        LOGGER.info("Number of variants in old test: ${oldVariants.size}")
+        LOGGER.info("Number of variants in new test: ${newVariants.size}")
+        LOGGER.info("Number of matching variants in both tests: ${same.size}")
+
         if (onlyInOldBases.isNotEmpty()) {
-            LOGGER.info("Variants only in old test: ${onlyInOldBases.map { it.baseVariant }}")
+            LOGGER.info("Number of variants only in old test: ${onlyInOldBases.size}")
+            onlyInOldBases.forEach { diff ->
+                LOGGER.info("  Base Variant: ${diff.baseVariant}")
+                LOGGER.info("    Old Evidence: ${diff.inOld}")
+                LOGGER.info("    New Evidence: ${diff.inNew}")
+            }
         }
         if (onlyInNewBases.isNotEmpty()) {
-            LOGGER.info("Variants only in new test: ${onlyInNewBases.map { it.baseVariant }}")
+            LOGGER.info("Number of variants only in new test: ${onlyInNewBases.size}")
+            onlyInNewBases.forEach { diff ->
+                LOGGER.info("  Base Variant: ${diff.baseVariant}")
+                LOGGER.info("    Old Evidence: ${diff.inOld}")
+                LOGGER.info("    New Evidence: ${diff.inNew}")
+            }
         }
         if (changedBases.isNotEmpty()) {
-            LOGGER.info("Variants with changed evidence:")
+            LOGGER.info("Number of variants with changed evidence: ${changedBases.size}")
             changedBases.forEach { diff ->
-                LOGGER.info("Variant: ${diff.baseVariant}, Old Evidence: ${diff.inOld}, New Evidence: ${diff.inNew}")
+                LOGGER.info("  Base Variant: ${diff.baseVariant}")
+                LOGGER.info("    Old Evidence: ${diff.inOld}")
+                LOGGER.info("    New Evidence: ${diff.inNew}")
             }
         }
     }
