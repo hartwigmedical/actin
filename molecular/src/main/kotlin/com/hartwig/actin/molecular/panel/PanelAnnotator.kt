@@ -15,7 +15,6 @@ import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 
 private const val TMB_HIGH_CUTOFF = 10.0
-private const val PLOIDY = 2.0
 
 class PanelAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
@@ -48,7 +47,7 @@ class PanelAnnotator(
             ),
             characteristics = MolecularCharacteristics(
                 purity = null,
-                ploidy = PLOIDY,
+                ploidy = null,
                 predictedTumorOrigin = null,
                 microsatelliteStability = input.isMicrosatelliteUnstable?.let {
                     MicrosatelliteStability(

@@ -102,12 +102,6 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should infer ploidy`() {
-        val annotated = annotator.annotate(createTestSequencingTest())
-        assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
-    }
-
-    @Test
     fun `Should annotate microsatellite status with evidence`() {
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH

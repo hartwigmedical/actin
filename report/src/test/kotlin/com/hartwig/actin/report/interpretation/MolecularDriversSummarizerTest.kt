@@ -52,14 +52,14 @@ class MolecularDriversSummarizerTest {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, fullAmpGene, DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.FULL_GAIN, otherAmpGene, DriverLikelihood.HIGH, true, 20),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true, 10),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true, 10, 20),
             copyNumber(CopyNumberType.DEL,"deletion", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false),
             )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().toSet()
-        assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene 10 copies (partial)", fullAmpGene, "$otherAmpGene 20 copies")
+        assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene 20 copies (partial)", fullAmpGene, "$otherAmpGene 20 copies")
     }
 
     @Test

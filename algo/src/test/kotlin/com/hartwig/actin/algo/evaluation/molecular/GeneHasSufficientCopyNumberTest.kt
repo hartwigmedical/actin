@@ -14,26 +14,41 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
+private const val REQUIRED_COPIES = 5
+private const val PASSING_COPIES = REQUIRED_COPIES + 2
+private const val NON_PASSING_COPIES = REQUIRED_COPIES - 2
+
 class GeneHasSufficientCopyNumberTest {
-    private val passingSufficientCopiesOnCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
+    private val impactAmpWithSufficientCopyNr =
+        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, PASSING_COPIES, PASSING_COPIES)
+    private val impactAmpWithInsufficientCopyNr = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+        CopyNumberType.FULL_GAIN,
+        NON_PASSING_COPIES,
+        NON_PASSING_COPIES
+    )
+    private val impactNoneWithLowCopyNr =
+        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, NON_PASSING_COPIES, NON_PASSING_COPIES)
+    private val impactAmpWithUnknownCopyNr =
+        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, null, null)
+
+    private val ampWithPassingSufficientCopiesOnCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene A",
         geneRole = GeneRole.ONCO,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-        isReportable = true,
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40)
+        canonicalImpact = impactAmpWithSufficientCopyNr
     )
-    private val passingSufficientCopiesOnNonCanonicalTranscript = passingSufficientCopiesOnCanonicalTranscript.copy(
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, 3, 3),
-        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40))
+    private val ampWithPassingSufficientCopiesOnNonCanonicalTranscript = ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+        canonicalImpact = impactNoneWithLowCopyNr,
+        otherImpacts = setOf(impactAmpWithSufficientCopyNr)
     )
-    private val unknownCopiesOnAllTranscripts = passingSufficientCopiesOnCanonicalTranscript.copy(
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, null, null),
-        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, null, null))
+    private val ampWithUnknownCopiesOnCanonicalTranscript = ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+        canonicalImpact = impactAmpWithUnknownCopyNr,
+        otherImpacts = emptySet()
     )
-    private val functionWithMinCopies = GeneHasSufficientCopyNumber("gene A", 5)
+    private val function = GeneHasSufficientCopyNumber("gene A", REQUIRED_COPIES)
 
     @Test
-    fun `Should return undetermined when molecular record is empty`() {
+    fun `Should be undetermined when molecular record is empty`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, TestPatientFactory.createEmptyMolecularTestPatientRecord())
     }
 
@@ -43,15 +58,29 @@ class GeneHasSufficientCopyNumberTest {
     }
 
     @Test
-    fun `Should fail when requested min copy number is not satisfied`() {
+    fun `Should fail when requested min copy number is not met`() {
         assertEvaluation(
             EvaluationResult.FAIL,
+            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(canonicalImpact = impactAmpWithInsufficientCopyNr))
+        )
+    }
+
+    @Test
+    fun `Should pass if requested min copy number is met on canonical transcript`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript)
+        )
+    }
+
+    @Test
+    fun `Should pass if requested min copy number is met on canonical transcript also if not an amp`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
             MolecularTestFactory.withCopyNumber(
-                passingSufficientCopiesOnCanonicalTranscript.copy(
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                        CopyNumberType.FULL_GAIN,
-                        3,
-                        40
+                ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+                    canonicalImpact = impactAmpWithSufficientCopyNr.copy(
+                        type = CopyNumberType.NONE
                     )
                 )
             )
@@ -62,7 +91,7 @@ class GeneHasSufficientCopyNumberTest {
     fun `Should warn with non-oncogene`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(passingSufficientCopiesOnCanonicalTranscript.copy(geneRole = GeneRole.TSG))
+            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(geneRole = GeneRole.TSG))
         )
     }
 
@@ -70,7 +99,7 @@ class GeneHasSufficientCopyNumberTest {
     fun `Should warn with loss of function effect`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(passingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
         )
     }
 
@@ -78,36 +107,20 @@ class GeneHasSufficientCopyNumberTest {
     fun `Should warn with loss of function predicted effect`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(passingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
         )
     }
 
     @Test
-    fun `Should warn with full gain on non-canonical transcript and no gain on canonical transcript`() {
+    fun `Should warn when requested min copy number is not satisfied but max copy number is`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(passingSufficientCopiesOnNonCanonicalTranscript)
-        )
-    }
-
-    @Test
-    fun `Should pass with unreportable copy number if requested min copy number is met`() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            MolecularTestFactory.withCopyNumber(passingSufficientCopiesOnCanonicalTranscript.copy(isReportable = false))
-        )
-    }
-
-    @Test
-    fun `Should pass if requested min copy number is met`() {
-        assertEvaluation(
-            EvaluationResult.PASS,
             MolecularTestFactory.withCopyNumber(
-                passingSufficientCopiesOnCanonicalTranscript.copy(
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                        CopyNumberType.FULL_GAIN,
-                        5,
-                        5
+                ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+                    canonicalImpact = impactAmpWithSufficientCopyNr.copy(
+                        type = CopyNumberType.FULL_GAIN,
+                        minCopies = NON_PASSING_COPIES,
+                        maxCopies = PASSING_COPIES
                     )
                 )
             )
@@ -115,39 +128,49 @@ class GeneHasSufficientCopyNumberTest {
     }
 
     @Test
-    fun `Should pass if gene copy nr is null but requested copy nr below assumed min copy nr for amps`() {
+    fun `Should warn with full gain on non-canonical transcript and no gain on canonical transcript`() {
         assertEvaluation(
-            EvaluationResult.PASS,
-            MolecularTestFactory.withCopyNumber(unknownCopiesOnAllTranscripts)
+            EvaluationResult.WARN,
+            MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnNonCanonicalTranscript)
         )
     }
 
+    @Test
+    fun `Should pass if amp with unknown min copy nr is null but requested copy nr below assumed min copy nr for amps`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript)
+        )
+    }
 
     @Test
-    fun `Should fail if gene copy nr is null but type is del`() {
+    fun `Should warn if amp with unknown min copy nr and requested copy nr above assumed min copy nr for amps`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            GeneHasSufficientCopyNumber(
+                "gene A",
+                8
+            ).evaluate(MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript))
+        )
+    }
+
+    @Test
+    fun `Should fail if gene copy nr is unknown and type is not an amp`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             MolecularTestFactory.withCopyNumber(
-                unknownCopiesOnAllTranscripts.copy(
+                ampWithUnknownCopiesOnCanonicalTranscript.copy(
                     canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                        CopyNumberType.DEL,
-                    ), otherImpacts = emptySet()
+                        CopyNumberType.NONE,
+                    )
                 )
             )
         )
     }
 
     @Test
-    fun `Should be undetermined if gene copy nr is null and requested copy nr above assumed min copy nr for amps`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            GeneHasSufficientCopyNumber("gene A", 8).evaluate(MolecularTestFactory.withCopyNumber(unknownCopiesOnAllTranscripts))
-        )
-    }
-
-    @Test
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
-        val result = functionWithMinCopies.evaluate(
+        val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )
@@ -158,6 +181,6 @@ class GeneHasSufficientCopyNumberTest {
     }
 
     private fun assertEvaluation(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, functionWithMinCopies.evaluate(record))
+        assertMolecularEvaluation(result, function.evaluate(record))
     }
 }
