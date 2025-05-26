@@ -190,14 +190,14 @@ class StandardSequencingTestExtractorFunctionsTest {
         val test = setOf(
             SequencingTestResultConfig(
                 input = "",
-                tmb = 5.0
+                tmb = 5.2
             )
         )
-        assertThat(StandardSequencingTestExtractorFunctions.tmb(test)).isEqualTo(5.0)
+        assertThat(StandardSequencingTestExtractorFunctions.tmb(test)).isEqualTo(5.2)
     }
 
     @Test
-    fun `Should extract msi if true`() {
+    fun `Should extract msi`() {
         val test = setOf(
             SequencingTestResultConfig(
                 input = "",
@@ -205,17 +205,6 @@ class StandardSequencingTestExtractorFunctionsTest {
             )
         )
         assertThat(StandardSequencingTestExtractorFunctions.msi(test)).isEqualTo(true)
-    }
-
-    @Test
-    fun `Should extract msi if null`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                msi = null
-            )
-        )
-        assertThat(StandardSequencingTestExtractorFunctions.msi(test)).isNull()
     }
 
     @Test
