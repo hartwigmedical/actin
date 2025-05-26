@@ -145,7 +145,7 @@ object TrialGeneratorFunctions {
             val fontSize = if (allowSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
             val paragraph = if (it.startsWith(Formats.ITALIC_TEXT_MARKER) && it.endsWith(Formats.ITALIC_TEXT_MARKER)) {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
-                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setFontSize(fontSize)
+                    .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(1.6f).setFontSize(fontSize)
             } else {
                 Paragraph(it).setFontSize(fontSize)
             }
