@@ -199,7 +199,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             allTests, serveDatabase, doidEntry, tumorDoids, CLINICAL_TESTS_REF_GENOME_VERSION
         )
 
-        sequencingMolecularTests.zip(molecularTestsWithUpdatedEvidence).forEach { (oldTest, newTest) ->
+        allTests.zip(molecularTestsWithUpdatedEvidence).forEach { (oldTest, newTest) ->
             EvidenceRegressionReporter.report(oldTest, newTest)
         }
 

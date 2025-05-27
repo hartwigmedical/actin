@@ -7,6 +7,7 @@ import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
@@ -139,5 +140,8 @@ class VariantEvidence(
 
         fun isVariantEligible(variant: Variant): Boolean =
             variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH
+
+        fun isGeneEventEligible(gene: ActionableGene): Boolean =
+            VARIANT_GENE_EVENTS.contains(gene.event())
     }
 }

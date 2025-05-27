@@ -77,6 +77,7 @@ private val actionableFusion: ActionableFusion = ImmutableActionableFusion.build
 private val molecularTestFusion = TestFusionFactory.createMinimal()
     .copy(geneStart = "EGFR", geneEnd = "RAD51", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
 
+// TODO: tests for applicability filtering, e.g. variant on non-applicable gene TP53 should be filtered out
 class CombinedEvidenceMatcherTest {
 
     @Test

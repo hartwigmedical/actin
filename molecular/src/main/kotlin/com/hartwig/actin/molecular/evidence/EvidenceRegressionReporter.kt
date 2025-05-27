@@ -63,24 +63,24 @@ object EvidenceRegressionReporter {
             LOGGER.info("Number of variants only in old test: ${onlyInOldBases.size}")
             onlyInOldBases.forEach { diff ->
                 LOGGER.info("  Base Variant: ${diff.baseVariant}")
-                LOGGER.info("    Old Evidence: ${diff.inOld}")
-                LOGGER.info("    New Evidence: ${diff.inNew}")
+                LOGGER.info("    Old Evidence (num=${diff.inOld.size}): ${diff.inOld}")
+                LOGGER.info("    New Evidence (num=${diff.inNew.size}): ${diff.inNew}")
             }
         }
         if (onlyInNewBases.isNotEmpty()) {
             LOGGER.info("Number of variants only in new test: ${onlyInNewBases.size}")
             onlyInNewBases.forEach { diff ->
                 LOGGER.info("  Base Variant: ${diff.baseVariant}")
-                LOGGER.info("    Old Evidence: ${diff.inOld}")
-                LOGGER.info("    New Evidence: ${diff.inNew}")
+                LOGGER.info("    Old Evidence (num=${diff.inOld.size}): ${diff.inOld}")
+                LOGGER.info("    New Evidence (num=${diff.inNew.size}): ${diff.inNew}")
             }
         }
         if (changedBases.isNotEmpty()) {
             LOGGER.info("Number of variants with changed evidence: ${changedBases.size}")
             changedBases.forEach { diff ->
                 LOGGER.info("  Base Variant: ${diff.baseVariant}")
-                LOGGER.info("    Old Evidence: ${diff.inOld}")
-                LOGGER.info("    New Evidence: ${diff.inNew}")
+                LOGGER.info("    Old Evidence (num=${diff.inOld.size}): ${diff.inOld}")
+                LOGGER.info("    New Evidence (num=${diff.inNew.size}): ${diff.inNew}")
             }
         }
     }

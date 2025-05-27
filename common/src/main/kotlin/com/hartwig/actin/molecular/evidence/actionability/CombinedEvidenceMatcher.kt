@@ -106,7 +106,8 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     private fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
         val variantMatches = molecularTest.drivers.variants
             .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && GeneMatching.isMatch(gene, variant)
+                // TODO add test for ineligible gene event
+                VariantEvidence.isVariantEligible(variant) && VariantEvidence.isGeneEventEligible(gene) && GeneMatching.isMatch(gene, variant)
             }
 
         val promiscuousFusionMatches = if (FusionEvidence.isPromiscuousFusionEvent(gene.event())) {
