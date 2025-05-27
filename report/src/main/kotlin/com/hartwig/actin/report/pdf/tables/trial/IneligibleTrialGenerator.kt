@@ -14,8 +14,7 @@ class IneligibleTrialGenerator(
     private val title: String,
     private val footNote: String?,
     private val allowDeEmphasis: Boolean,
-    private val includeIneligibilityColumn: Boolean,
-    private val includeSitesAndCohortConfig: Boolean
+    private val useIneligibilityInsteadOfSiteAndConfig: Boolean
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -34,40 +33,38 @@ class IneligibleTrialGenerator(
         val ineligibilityColWidth = 54f
         val configColWidth = 30f
 
-        val table = when {
-            includeIneligibilityColumn && !includeSitesAndCohortConfig ->
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth)
-            includeSitesAndCohortConfig && !includeIneligibilityColumn ->
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
-            else ->
-                throw IllegalStateException("includeIneligibilityColumn and includeSitesAndCohortConfig cannot both be true")
-        }
+        val table = if (useIneligibilityInsteadOfSiteAndConfig) Tables.createRelativeWidthCols(
+            trialColWidth,
+            cohortColWidth,
+            molecularColWidth,
+            ineligibilityColWidth
+        ) else Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
 
         table.addHeaderCell(Cells.createHeader("Trial"))
         table.addHeaderCell(Cells.createHeader("Cohort"))
         table.addHeaderCell(Cells.createHeader("Molecular"))
-        if (includeSitesAndCohortConfig) {
+        if (!useIneligibilityInsteadOfSiteAndConfig) {
             table.addHeaderCell(Cells.createHeader("Sites"))
         }
-        if (includeIneligibilityColumn) {
+        if (useIneligibilityInsteadOfSiteAndConfig) {
             table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
-        if (includeSitesAndCohortConfig) {
+        if (!useIneligibilityInsteadOfSiteAndConfig) {
             table.addHeaderCell(Cells.createHeader("Configuration"))
         }
-        
+
         addTrialsToTable(
             table = table,
             cohorts = cohorts,
             externalTrials = emptySet(),
             requestingSource = requestingSource,
             countryOfReference = null,
-            includeFeedback = includeIneligibilityColumn,
+            includeFeedback = useIneligibilityInsteadOfSiteAndConfig,
             feedbackFunction = InterpretedCohort::fails,
             allowDeEmphasis = allowDeEmphasis,
             useSmallerSize = true,
-            includeCohortConfig = includeSitesAndCohortConfig,
-            includeSites = includeSitesAndCohortConfig
+            includeCohortConfig = !useIneligibilityInsteadOfSiteAndConfig,
+            includeSites = !useIneligibilityInsteadOfSiteAndConfig
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table).setFontSize(Styles.SMALL_FONT_SIZE))
@@ -80,7 +77,7 @@ class IneligibleTrialGenerator(
     }
 
     companion object {
-        
+
         fun forEvaluableCohorts(
             cohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?,
@@ -91,15 +88,14 @@ class IneligibleTrialGenerator(
             val footNote = if (!openOnly) {
                 "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
             } else null
-            
+
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
                 requestingSource = requestingSource,
                 title = title,
                 footNote = footNote,
                 allowDeEmphasis = true,
-                includeIneligibilityColumn = true,
-                includeSitesAndCohortConfig = false
+                useIneligibilityInsteadOfSiteAndConfig = true
             )
         }
 
@@ -117,8 +113,7 @@ class IneligibleTrialGenerator(
                 title = title,
                 footNote = null,
                 allowDeEmphasis = false,
-                includeIneligibilityColumn = false,
-                includeSitesAndCohortConfig = true
+                useIneligibilityInsteadOfSiteAndConfig = false
             )
         }
     }
