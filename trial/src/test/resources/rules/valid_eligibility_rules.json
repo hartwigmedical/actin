@@ -240,6 +240,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_LUNG_AND_OR_LUNG_LYMPH_NODE_METASTASES_ONLY",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_VISCERAL_METASTASES",
     "usedStatus": "UNUSED"
   },

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
@@ -12,9 +13,8 @@ class IneligibleTrialGenerator(
     private val requestingSource: TrialSource?,
     private val title: String,
     private val footNote: String?,
-    private val includeIneligibilityColumn: Boolean,
     private val allowDeEmphasis: Boolean,
-    private val includeConfiguration: Boolean,
+    private val useIneligibilityInsteadOfSiteAndConfig: Boolean
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -26,46 +26,48 @@ class IneligibleTrialGenerator(
     }
 
     override fun contents(): Table {
-        val trialColWidth = 1f
-        val cohortColWidth = 2f
-        val molecularColWidth = 1f
-        val locationColWidth = 1f
-        val ineligibilityColWidth = 3f
-        val configColWidth = 3f
+        val trialColWidth = 10f
+        val cohortColWidth = 20f
+        val molecularColWidth = 6f
+        val locationColWidth = 10f
+        val ineligibilityColWidth = 54f
+        val configColWidth = 30f
 
-        val table =
-            if (includeIneligibilityColumn) {
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, ineligibilityColWidth)
-            } else if (includeConfiguration) {
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
-            } else {
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
-            }
+        val table = if (useIneligibilityInsteadOfSiteAndConfig) Tables.createRelativeWidthCols(
+            trialColWidth,
+            cohortColWidth,
+            molecularColWidth,
+            ineligibilityColWidth
+        ) else Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
 
         table.addHeaderCell(Cells.createHeader("Trial"))
         table.addHeaderCell(Cells.createHeader("Cohort"))
         table.addHeaderCell(Cells.createHeader("Molecular"))
-        table.addHeaderCell(Cells.createHeader("Sites"))
-        if (includeIneligibilityColumn) {
+        if (!useIneligibilityInsteadOfSiteAndConfig) {
+            table.addHeaderCell(Cells.createHeader("Sites"))
+        }
+        if (useIneligibilityInsteadOfSiteAndConfig) {
             table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
-        if (includeConfiguration) {
+        if (!useIneligibilityInsteadOfSiteAndConfig) {
             table.addHeaderCell(Cells.createHeader("Configuration"))
         }
-        
+
         addTrialsToTable(
             table = table,
             cohorts = cohorts,
             externalTrials = emptySet(),
             requestingSource = requestingSource,
             countryOfReference = null,
-            includeFeedback = includeIneligibilityColumn,
+            includeFeedback = useIneligibilityInsteadOfSiteAndConfig,
             feedbackFunction = InterpretedCohort::fails,
             allowDeEmphasis = allowDeEmphasis,
-            includeConfiguration = includeConfiguration
+            useSmallerSize = true,
+            includeCohortConfig = !useIneligibilityInsteadOfSiteAndConfig,
+            includeSites = !useIneligibilityInsteadOfSiteAndConfig
         )
         if (footNote != null) {
-            table.addCell(Cells.createSpanningSubNote(footNote, table))
+            table.addCell(Cells.createSpanningSubNote(footNote, table).setFontSize(Styles.SMALL_FONT_SIZE))
         }
         return table
     }
@@ -75,7 +77,7 @@ class IneligibleTrialGenerator(
     }
 
     companion object {
-        
+
         fun forEvaluableCohorts(
             cohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?,
@@ -86,15 +88,14 @@ class IneligibleTrialGenerator(
             val footNote = if (!openOnly) {
                 "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
             } else null
-            
+
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
                 requestingSource = requestingSource,
                 title = title,
                 footNote = footNote,
-                includeIneligibilityColumn = true,
                 allowDeEmphasis = true,
-                includeConfiguration = false
+                useIneligibilityInsteadOfSiteAndConfig = true
             )
         }
 
@@ -111,9 +112,8 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = null,
-                includeIneligibilityColumn = false,
                 allowDeEmphasis = false,
-                includeConfiguration = true
+                useIneligibilityInsteadOfSiteAndConfig = false
             )
         }
     }
