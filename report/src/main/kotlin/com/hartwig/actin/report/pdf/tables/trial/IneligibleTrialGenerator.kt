@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
@@ -14,7 +15,7 @@ class IneligibleTrialGenerator(
     private val footNote: String?,
     private val includeIneligibilityColumn: Boolean,
     private val allowDeEmphasis: Boolean,
-    private val includeConfiguration: Boolean,
+    private val includeCohortConfig: Boolean,
     private val includeSites: Boolean
 ) : TrialTableGenerator {
 
@@ -31,13 +32,13 @@ class IneligibleTrialGenerator(
         val cohortColWidth = 20f
         val molecularColWidth = 6f
         val locationColWidth = 10f
-        val ineligibilityColWidth = 34f
+        val ineligibilityColWidth = 54f
         val configColWidth = 30f
 
         val table = when {
             includeIneligibilityColumn ->
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth + 20f)
-            includeConfiguration ->
+                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth)
+            includeCohortConfig ->
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
             else ->
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
@@ -52,7 +53,7 @@ class IneligibleTrialGenerator(
         if (includeIneligibilityColumn) {
             table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
-        if (includeConfiguration) {
+        if (includeCohortConfig) {
             table.addHeaderCell(Cells.createHeader("Configuration"))
         }
         
@@ -65,12 +66,12 @@ class IneligibleTrialGenerator(
             includeFeedback = includeIneligibilityColumn,
             feedbackFunction = InterpretedCohort::fails,
             allowDeEmphasis = allowDeEmphasis,
-            allowSmallerSize = true,
-            includeConfiguration = includeConfiguration,
+            useSmallerSize = true,
+            includeCohortConfig = includeCohortConfig,
             includeSites = includeSites
         )
         if (footNote != null) {
-            table.addCell(Cells.createSpanningSubNote(footNote, table))
+            table.addCell(Cells.createSpanningSubNote(footNote, table).setFontSize(Styles.SMALL_FONT_SIZE))
         }
         return table
     }
@@ -99,7 +100,7 @@ class IneligibleTrialGenerator(
                 footNote = footNote,
                 includeIneligibilityColumn = true,
                 allowDeEmphasis = true,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = false
             )
         }
@@ -119,7 +120,7 @@ class IneligibleTrialGenerator(
                 footNote = null,
                 includeIneligibilityColumn = false,
                 allowDeEmphasis = false,
-                includeConfiguration = true,
+                includeCohortConfig = true,
                 includeSites = true
             )
         }

@@ -50,7 +50,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -69,7 +69,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -91,7 +91,7 @@ class TrialGeneratorFunctionsTest {
                 cohorts,
                 includeFeedback = true,
                 InterpretedCohort::fails,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -110,7 +110,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
                 .map(ContentDefinition::deEmphasizeContent)
@@ -121,7 +121,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2.copy(isOpen = false)),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
                 .map(ContentDefinition::deEmphasizeContent)
@@ -129,7 +129,7 @@ class TrialGeneratorFunctionsTest {
 
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
-                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)), true, InterpretedCohort::warnings, includeConfiguration = false, includeSites = true
+                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)), true, InterpretedCohort::warnings, includeCohortConfig = false, includeSites = true
             ).map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(true, true, true))
     }
@@ -142,7 +142,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort3),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -163,7 +163,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(noMolecularEvent1, noMolecularEvent2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -182,7 +182,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -199,7 +199,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -218,7 +218,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site1"))),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -237,7 +237,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"), warnings = emptySet())),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -255,7 +255,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1"), warnings = emptySet())),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = true
             )
         ).isEqualTo(
@@ -278,7 +278,7 @@ class TrialGeneratorFunctionsTest {
                 ),
                 includeFeedback = false,
                 InterpretedCohort::warnings,
-                includeConfiguration = true,
+                includeCohortConfig = true,
                 includeSites = true
             )
         ).isEqualTo(
@@ -299,7 +299,7 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"))),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeConfiguration = false,
+                includeCohortConfig = false,
                 includeSites = false
             )
         ).isEqualTo(

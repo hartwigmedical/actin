@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrialSummary
 import com.hartwig.actin.report.trial.TrialsProvider
@@ -18,7 +19,7 @@ class EligibleTrialGenerator(
     private val title: String,
     private val footNote: String?,
     private val allowDeEmphasis: Boolean,
-    private val allowSmallerSize: Boolean,
+    private val useSmallerSize: Boolean,
     private val includeWarningsColumn: Boolean
 ) : TrialTableGenerator {
 
@@ -56,12 +57,15 @@ class EligibleTrialGenerator(
             includeFeedback = includeWarningsColumn,
             feedbackFunction = InterpretedCohort::warnings,
             allowDeEmphasis = allowDeEmphasis,
-            allowSmallerSize = allowSmallerSize,
-            includeConfiguration = false,
+            useSmallerSize = useSmallerSize,
+            includeCohortConfig = false,
             includeSites = true
         )
         if (footNote != null) {
-            table.addCell(Cells.createSpanningSubNote(footNote, table))
+            val note = Cells.createSpanningSubNote(footNote, table).apply {
+                if (useSmallerSize) setFontSize(Styles.SMALL_FONT_SIZE)
+            }
+            table.addCell(note)
         }
         return table
     }
@@ -118,7 +122,7 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = footNote,
                 allowDeEmphasis = forLocalTrials,
-                allowSmallerSize = false,
+                useSmallerSize = false,
                 includeWarningsColumn = forLocalTrials
             )
         }
@@ -150,7 +154,7 @@ class EligibleTrialGenerator(
                     title = title,
                     footNote = footNote,
                     allowDeEmphasis = true,
-                    allowSmallerSize = false,
+                    useSmallerSize = false,
                     includeWarningsColumn = true
                 )
             } else null
@@ -168,7 +172,7 @@ class EligibleTrialGenerator(
                 title = title,
                 footNote = null,
                 allowDeEmphasis = false,
-                allowSmallerSize = true,
+                useSmallerSize = true,
                 includeWarningsColumn = true
             )
         }
@@ -185,7 +189,7 @@ class EligibleTrialGenerator(
                     title = title,
                     footNote = null,
                     allowDeEmphasis = false,
-                    allowSmallerSize = true,
+                    useSmallerSize = true,
                     includeWarningsColumn = false
                 )
             } else null
