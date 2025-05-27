@@ -12,16 +12,18 @@ import java.time.LocalDate
 
 private const val PLOIDY_AMPLIFICATION_FACTOR = 3.0
 private const val ASSUMED_PLOIDY = 2.0
-private const val ASSUMED_MIN_COPY_NR_AMP = 6
+private const val ASSUMED_AMP_MIN_COPY_NR = 6
 
 private enum class AmplificationEvaluation {
     ELIGIBLE_FULL_AMP,
-    FULL_AMP_ON_NON_ONCOGENE,
+    FULL_AMP_ON_TSG,
     FULL_AMP_WITH_LOSS_OF_FUNCTION,
     PARTIAL_AMP,
     NON_CANONICAL_AMP,
-    NON_AMP_BUT_SUFFICIENT_COPY_NUMBER,
-    AMP_WITH_UNKNOWN_COPY_NUMBER,
+    NON_AMP_BUT_COPY_NR_MEETS_AMPLIFICATION_CUTOFF,
+    NON_AMP_BUT_COPY_NR_MEETS_REQUESTED_COPY_NUMBER,
+    FULL_AMP_WITH_UNKNOWN_COPY_NUMBER,
+    PARTIAL_AMP_WITH_UNKNOWN_COPY_NUMBER,
     INELIGIBLE_COPY_NUMBER;
 
     companion object {
@@ -34,18 +36,19 @@ private enum class AmplificationEvaluation {
                 requestedMinCopyNumber == null || copyNumber.canonicalImpact.minCopies?.let { it >= requestedMinCopyNumber } == true
             val thresholdNotRequestedOrMaxCopiesKnownAndMeetingThreshold =
                 requestedMinCopyNumber == null || copyNumber.canonicalImpact.maxCopies?.let { it >= requestedMinCopyNumber } == true
-            val thresholdNotRequestedAndMinCopiesKnownAndMeetingGeneralAmpThreshold =
-                requestedMinCopyNumber == null && copyNumber.canonicalImpact.minCopies?.let { copies -> copies > PLOIDY_AMPLIFICATION_FACTOR * ploidy } == true
             val thresholdNotRequestedOrNonCanonicalMinCopiesKnownAndMeetingThreshold =
-                requestedMinCopyNumber == null || copyNumber.otherImpacts.any { it.minCopies?.let { it >= requestedMinCopyNumber } == true }
+                requestedMinCopyNumber == null || copyNumber.otherImpacts.any { it -> it.minCopies?.let { it >= requestedMinCopyNumber } == true }
+            val thresholdNotRequestedAndMinCopiesKnownAndMeetingGeneralAmpThreshold =
+                requestedMinCopyNumber == null && copyNumber.canonicalImpact.minCopies?.let { it > (PLOIDY_AMPLIFICATION_FACTOR * ploidy) } == true
             val thresholdRequestedAndMinCopiesKnownAndMeetingThreshold =
                 requestedMinCopyNumber != null && copyNumber.canonicalImpact.minCopies?.let { it >= requestedMinCopyNumber } == true
+            val hasUnknownCopyNumber = copyNumber.canonicalImpact.minCopies == null && copyNumber.otherImpacts.all { it.minCopies == null }
 
             return when {
                 copyNumber.canonicalImpact.type == CopyNumberType.FULL_GAIN &&
                         thresholdNotRequestedOrMinCopiesKnownAndMeetingThreshold -> {
                     when {
-                        copyNumber.geneRole == GeneRole.TSG -> FULL_AMP_ON_NON_ONCOGENE
+                        copyNumber.geneRole == GeneRole.TSG -> FULL_AMP_ON_TSG
 
                         copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION ||
                                 copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> FULL_AMP_WITH_LOSS_OF_FUNCTION
@@ -54,17 +57,21 @@ private enum class AmplificationEvaluation {
                     }
                 }
 
-                (copyNumber.canonicalImpact.type.isGain || copyNumber.otherImpacts.any { it.type.isGain }) &&
-                        copyNumber.canonicalImpact.minCopies == null && copyNumber.otherImpacts.all { it.minCopies == null } -> AMP_WITH_UNKNOWN_COPY_NUMBER
-
                 copyNumber.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN &&
                         thresholdNotRequestedOrMaxCopiesKnownAndMeetingThreshold -> PARTIAL_AMP
 
                 !copyNumber.canonicalImpact.type.isGain && copyNumber.otherImpacts.any { it.type.isGain } &&
                         thresholdNotRequestedOrNonCanonicalMinCopiesKnownAndMeetingThreshold -> NON_CANONICAL_AMP
 
-                thresholdNotRequestedAndMinCopiesKnownAndMeetingGeneralAmpThreshold ||
-                        thresholdRequestedAndMinCopiesKnownAndMeetingThreshold -> NON_AMP_BUT_SUFFICIENT_COPY_NUMBER
+                thresholdNotRequestedAndMinCopiesKnownAndMeetingGeneralAmpThreshold -> NON_AMP_BUT_COPY_NR_MEETS_AMPLIFICATION_CUTOFF
+
+                thresholdRequestedAndMinCopiesKnownAndMeetingThreshold -> NON_AMP_BUT_COPY_NR_MEETS_REQUESTED_COPY_NUMBER
+
+                (copyNumber.canonicalImpact.type == CopyNumberType.FULL_GAIN || copyNumber.otherImpacts.any { it.type == CopyNumberType.FULL_GAIN }) &&
+                        hasUnknownCopyNumber -> FULL_AMP_WITH_UNKNOWN_COPY_NUMBER
+
+                (copyNumber.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN || copyNumber.otherImpacts.any { it.type == CopyNumberType.PARTIAL_GAIN }) &&
+                        hasUnknownCopyNumber -> PARTIAL_AMP_WITH_UNKNOWN_COPY_NUMBER
 
                 else -> INELIGIBLE_COPY_NUMBER
             }
@@ -90,63 +97,72 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
                 }, valueTransform = CopyNumber::event)
                 .mapValues { (_, copyNumberEvents) -> copyNumberEvents.toSet() }
 
-        val eligibleFullAmps = evaluatedCopyNumbers[AmplificationEvaluation.ELIGIBLE_FULL_AMP]
-        val ampsWithUnknownCopyNumber = evaluatedCopyNumbers[AmplificationEvaluation.AMP_WITH_UNKNOWN_COPY_NUMBER]
+        val eligibleAmplification = evaluatedCopyNumbers[AmplificationEvaluation.ELIGIBLE_FULL_AMP]
+        val fullAmplificationWithUnknownCopyNumber = evaluatedCopyNumbers[AmplificationEvaluation.FULL_AMP_WITH_UNKNOWN_COPY_NUMBER]
+        val requestedCopiesMessage = requestedMinCopyNumber?.let { " with >= $requestedMinCopyNumber copies" } ?: ""
 
-        val minCopyMessage = requestedMinCopyNumber?.let { " with >=$requestedMinCopyNumber copies" } ?: ""
         return when {
-            eligibleFullAmps != null -> {
-                EvaluationFactory.pass("$gene is amplified$minCopyMessage", inclusionEvents = eligibleFullAmps)
+            eligibleAmplification != null -> {
+                EvaluationFactory.pass("$gene is amplified$requestedCopiesMessage", inclusionEvents = eligibleAmplification)
             }
 
-            ampsWithUnknownCopyNumber != null -> {
+            fullAmplificationWithUnknownCopyNumber != null -> {
                 when {
                     requestedMinCopyNumber == null ->
-                        EvaluationFactory.pass("$gene is amplified", inclusionEvents = ampsWithUnknownCopyNumber)
+                        EvaluationFactory.pass("$gene is amplified", inclusionEvents = fullAmplificationWithUnknownCopyNumber)
 
-                    requestedMinCopyNumber <= ASSUMED_MIN_COPY_NR_AMP ->
+                    requestedMinCopyNumber <= ASSUMED_AMP_MIN_COPY_NR ->
                         EvaluationFactory.pass(
-                            "$gene is amplified hence assumed gene has a copy number >$requestedMinCopyNumber",
-                            inclusionEvents = ampsWithUnknownCopyNumber
+                            "$gene is amplified hence assumed gene is amplified$requestedCopiesMessage",
+                            inclusionEvents = fullAmplificationWithUnknownCopyNumber
                         )
 
                     else ->
                         EvaluationFactory.warn(
-                            "$gene is amplified but undetermined if$minCopyMessage",
-                            inclusionEvents = ampsWithUnknownCopyNumber
+                            "$gene is amplified but undetermined if$requestedCopiesMessage",
+                            inclusionEvents = fullAmplificationWithUnknownCopyNumber
                         )
                 }
             }
 
-            else -> evaluatePotentialWarns(evaluatedCopyNumbers, test.evidenceSource)
-                ?: EvaluationFactory.fail("No amplification of $gene$minCopyMessage")
+            else -> evaluatePotentialOtherWarns(evaluatedCopyNumbers, test.evidenceSource, requestedCopiesMessage)
+                ?: EvaluationFactory.fail("No amplification of $gene$requestedCopiesMessage")
         }
     }
 
-    private fun evaluatePotentialWarns(
+    private fun evaluatePotentialOtherWarns(
         evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>>,
-        evidenceSource: String
+        evidenceSource: String,
+        requestedCopiesMessage: String
     ): Evaluation? {
         val eventGroupsWithMessages = listOf(
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.FULL_AMP_WITH_LOSS_OF_FUNCTION],
-                "$gene is amplified but gene associated with loss-of-function protein impact in $evidenceSource",
+                "$gene is amplified$requestedCopiesMessage but gene associated with loss-of-function protein impact in $evidenceSource",
             ),
             EventsWithMessages(
-                evaluatedCopyNumbers[AmplificationEvaluation.FULL_AMP_ON_NON_ONCOGENE],
-                "$gene is amplified but gene known as TSG in $evidenceSource"
+                evaluatedCopyNumbers[AmplificationEvaluation.FULL_AMP_ON_TSG],
+                "$gene is amplified$requestedCopiesMessage but gene known as TSG in $evidenceSource"
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.PARTIAL_AMP],
-                "$gene is amplified but partial"
+                "$gene is amplified$requestedCopiesMessage but only partially"
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.NON_CANONICAL_AMP],
-                "$gene is amplified but on non-canonical transcript"
+                "$gene is amplified$requestedCopiesMessage but on non-canonical transcript"
             ),
             EventsWithMessages(
-                evaluatedCopyNumbers[AmplificationEvaluation.NON_AMP_BUT_SUFFICIENT_COPY_NUMBER],
-                if (requestedMinCopyNumber == null) "$gene is not annotated as amp but meets amplification cutoff" else "$gene is not annotated as amp but meets required copy nr of $requestedMinCopyNumber copies"
+                evaluatedCopyNumbers[AmplificationEvaluation.NON_AMP_BUT_COPY_NR_MEETS_AMPLIFICATION_CUTOFF],
+                "$gene is not annotated as amp but meets amplification threshold of $PLOIDY_AMPLIFICATION_FACTOR * (assumed) ploidy"
+            ),
+            EventsWithMessages(
+                evaluatedCopyNumbers[AmplificationEvaluation.NON_AMP_BUT_COPY_NR_MEETS_REQUESTED_COPY_NUMBER],
+                "$gene is not annotated as amp but meets requested copy nr of >= $requestedMinCopyNumber copies"
+            ),
+            EventsWithMessages(
+                evaluatedCopyNumbers[AmplificationEvaluation.PARTIAL_AMP_WITH_UNKNOWN_COPY_NUMBER],
+                "$gene is amplified but partially and undetermined if copy nr meets threshold of >= $requestedMinCopyNumber copies"
             ),
         )
 

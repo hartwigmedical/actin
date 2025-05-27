@@ -13,38 +13,44 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-private const val REQUIRED_COPIES = 5
-private const val PASSING_COPIES = REQUIRED_COPIES + 2
-private const val NON_PASSING_COPIES = REQUIRED_COPIES - 2
+private const val REQUIRED_COPY_NR = 5
+private const val PASSING_COPY_NR = REQUIRED_COPY_NR + 2
+private const val NON_PASSING_COPY_NR = REQUIRED_COPY_NR - 2
+private const val GENE = "gene A"
 
 class GeneHasSufficientCopyNumberTest {
-    private val impactAmpWithSufficientCopyNr =
-        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, PASSING_COPIES, PASSING_COPIES)
+    private val eligibleImpact =
+        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, PASSING_COPY_NR, PASSING_COPY_NR)
     private val impactAmpWithInsufficientCopyNr = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
         CopyNumberType.FULL_GAIN,
-        NON_PASSING_COPIES,
-        NON_PASSING_COPIES
+        NON_PASSING_COPY_NR,
+        NON_PASSING_COPY_NR
     )
-    private val impactNoneWithLowCopyNr =
-        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, NON_PASSING_COPIES, NON_PASSING_COPIES)
     private val impactAmpWithUnknownCopyNr =
         TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, null, null)
+    private val impactNoneWithLowCopyNr =
+        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+            CopyNumberType.NONE,
+            NON_PASSING_COPY_NR,
+            NON_PASSING_COPY_NR
+        )
 
-    private val ampWithPassingSufficientCopiesOnCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
-        gene = "gene A",
+    private val eligibleAmp = TestCopyNumberFactory.createMinimal().copy(
+        gene = GENE,
         geneRole = GeneRole.ONCO,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-        canonicalImpact = impactAmpWithSufficientCopyNr
+        canonicalImpact = eligibleImpact,
+        otherImpacts = emptySet()
     )
-    private val ampWithPassingSufficientCopiesOnNonCanonicalTranscript = ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+    private val ampWithSufficientCopiesOnNonCanonicalTranscript = eligibleAmp.copy(
         canonicalImpact = impactNoneWithLowCopyNr,
-        otherImpacts = setOf(impactAmpWithSufficientCopyNr)
+        otherImpacts = setOf(eligibleImpact)
     )
-    private val ampWithUnknownCopiesOnCanonicalTranscript = ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
+    private val ampWithUnknownCopiesOnCanonicalTranscript = eligibleAmp.copy(
         canonicalImpact = impactAmpWithUnknownCopyNr,
         otherImpacts = emptySet()
     )
-    private val function = GeneHasSufficientCopyNumber("gene A", REQUIRED_COPIES)
+    private val function = GeneHasSufficientCopyNumber(GENE, REQUIRED_COPY_NR)
 
     @Test
     fun `Should be undetermined when molecular record is empty`() {
@@ -63,7 +69,7 @@ class GeneHasSufficientCopyNumberTest {
     fun `Should fail when requested min copy number is not met`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(canonicalImpact = impactAmpWithInsufficientCopyNr)))
+            function.evaluate(MolecularTestFactory.withCopyNumber(eligibleAmp.copy(canonicalImpact = impactAmpWithInsufficientCopyNr)))
         )
     }
 
@@ -72,7 +78,7 @@ class GeneHasSufficientCopyNumberTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript)
+                MolecularTestFactory.withCopyNumber(eligibleAmp)
             )
         )
     }
@@ -83,8 +89,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(
-                    ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
-                        canonicalImpact = impactAmpWithSufficientCopyNr.copy(
+                    eligibleAmp.copy(
+                        canonicalImpact = eligibleImpact.copy(
                             type = CopyNumberType.NONE
                         )
                     )
@@ -94,11 +100,11 @@ class GeneHasSufficientCopyNumberTest {
     }
 
     @Test
-    fun `Should warn with non-oncogene`() {
+    fun `Should warn if gene role is TSG`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(geneRole = GeneRole.TSG))
+                MolecularTestFactory.withCopyNumber(eligibleAmp.copy(geneRole = GeneRole.TSG))
             )
         )
     }
@@ -108,7 +114,7 @@ class GeneHasSufficientCopyNumberTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+                MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
             )
         )
     }
@@ -118,7 +124,7 @@ class GeneHasSufficientCopyNumberTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+                MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
             )
         )
     }
@@ -129,11 +135,9 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(
-                    ampWithPassingSufficientCopiesOnCanonicalTranscript.copy(
-                        canonicalImpact = impactAmpWithSufficientCopyNr.copy(
-                            type = CopyNumberType.FULL_GAIN,
-                            minCopies = NON_PASSING_COPIES,
-                            maxCopies = PASSING_COPIES
+                    eligibleAmp.copy(
+                        canonicalImpact = eligibleImpact.copy(
+                            minCopies = NON_PASSING_COPY_NR,
                         )
                     )
                 )
@@ -146,13 +150,13 @@ class GeneHasSufficientCopyNumberTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withCopyNumber(ampWithPassingSufficientCopiesOnNonCanonicalTranscript)
+                MolecularTestFactory.withCopyNumber(ampWithSufficientCopiesOnNonCanonicalTranscript)
             )
         )
     }
 
     @Test
-    fun `Should pass if amp with unknown min copy nr is null but requested copy nr below assumed min copy nr for amps`() {
+    fun `Should pass if amp with unknown min copy nr but requested copy nr below assumed min copy nr for amps`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -166,8 +170,8 @@ class GeneHasSufficientCopyNumberTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             GeneHasSufficientCopyNumber(
-                "gene A",
-                8
+                GENE,
+                10
             ).evaluate(MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript))
         )
     }
@@ -179,9 +183,21 @@ class GeneHasSufficientCopyNumberTest {
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(
                     ampWithUnknownCopiesOnCanonicalTranscript.copy(
-                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                            CopyNumberType.NONE,
-                        )
+                        canonicalImpact = impactAmpWithUnknownCopyNr.copy(type = CopyNumberType.NONE)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn with partial amp if copies are null if no requested copy nr or requested copy nr below assumed copy nr`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(
+                    ampWithUnknownCopiesOnCanonicalTranscript.copy(
+                        canonicalImpact = impactAmpWithUnknownCopyNr.copy(type = CopyNumberType.PARTIAL_GAIN)
                     )
                 )
             )
