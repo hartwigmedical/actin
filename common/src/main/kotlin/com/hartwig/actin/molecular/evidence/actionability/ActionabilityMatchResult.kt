@@ -4,12 +4,12 @@ import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 
 sealed class ActionabilityMatchResult {
 
-    object Failure : ActionabilityMatchResult()
+    data object Failure : ActionabilityMatchResult()
     data class Success(val actionables: List<Actionable> = emptyList()) : ActionabilityMatchResult()
 
     companion object {
         fun combine(results: Sequence<ActionabilityMatchResult>): ActionabilityMatchResult {
-            return buildList<Actionable> {
+            return buildList {
                 for (result in results) {
                     when (result) {
                         is Failure -> return Failure
