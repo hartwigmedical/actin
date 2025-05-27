@@ -52,6 +52,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_BONE_METASTASES_ONLY to hasOnlyBoneMetastasesCreator(),
             EligibilityRule.HAS_LUNG_METASTASES to hasLungMetastasesCreator(),
             EligibilityRule.HAS_LYMPH_NODE_METASTASES to hasLymphNodeMetastasesCreator(),
+            EligibilityRule.HAS_LUNG_AND_OR_LUNG_LYMPH_NODE_METASTASES_ONLY to hasOnlyLungAndLungLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
@@ -292,6 +293,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasLymphNodeMetastasesCreator(): FunctionCreator {
         return { HasLymphNodeMetastases() }
+    }
+
+    private fun hasOnlyLungAndLungLymphNodeMetastasesCreator(): FunctionCreator {
+        return { HasOnlyLungAndOrLungLymphNodeMetastases()}
     }
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {
