@@ -30,7 +30,8 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X to hasToxicityWithGradeCreator(),
             EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_WITH_ANY_ICD_TITLE_Y to hasToxicityWithGradeAndNameCreator(),
             EligibilityRule.HAS_TOXICITY_ASTCT_OF_AT_LEAST_GRADE_X_WITH_ANY_ICD_TITLE_Y to hasToxicityWithGradeAndNameCreator(),
-            EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_IGNORING_ICD_TITLES_Y to hasToxicityWithGradeIgnoringNamesCreator()
+            EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_IGNORING_ICD_TITLES_Y to hasToxicityWithGradeIgnoringNamesCreator(),
+            EligibilityRule.HAD_TOXICITY_X_OF_AT_LEAST_GRADE_Y_DURING_PREVIOUS_TREATMENT to hadToxicityWithGradeDuringPreviousTreatmentCreator()
         )
     }
 
@@ -82,6 +83,12 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             val (minGrade, toxicitiesToIgnore) = functionInputResolver().createOneIntegerManyIcdTitlesInput(function)
             createHasToxicityWithGrade(minGrade, null, toxicitiesToIgnore)
         }
+    }
+
+    private fun hadToxicityWithGradeDuringPreviousTreatmentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (grade, name) = functionInputResolver().createOneStringOneIntegerInput(function)
+            HadToxicityWithGradeDuringPreviousTreatment(name, grade) }
     }
 
     private fun createHasToxicityWithGrade(
