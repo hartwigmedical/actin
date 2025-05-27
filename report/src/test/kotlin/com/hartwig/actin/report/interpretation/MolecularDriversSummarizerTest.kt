@@ -46,20 +46,25 @@ class MolecularDriversSummarizerTest {
 
     @Test
     fun `Should return key amplified genes and indicate partial amplifications and copy nrs if available`() {
-        val fullAmpGene = "full"
-        val otherAmpGene = "other full"
-        val partialAmpGene = "partial"
         val copyNumbers = listOf(
-            copyNumber(CopyNumberType.FULL_GAIN, fullAmpGene, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_GAIN, otherAmpGene, DriverLikelihood.HIGH, true, 20),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true, 10, 20),
-            copyNumber(CopyNumberType.DEL,"deletion", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "gene 1", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "gene 2", DriverLikelihood.HIGH, true, 20),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 3", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 4", DriverLikelihood.HIGH, true, 10, 20),
+            copyNumber(CopyNumberType.NONE, "gene 5", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
+            copyNumber(CopyNumberType.DEL, "deletion", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false),
-            )
+        )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().toSet()
-        assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene 20 copies (partial)", fullAmpGene, "$otherAmpGene 20 copies")
+        assertThat(amplifiedGenes).containsExactlyInAnyOrder(
+            "gene 1",
+            "gene 2 20 copies",
+            "gene 3 (partial)",
+            "gene 4 20 copies (partial)",
+            "gene 5 (alt transcript)"
+        )
     }
 
     @Test
@@ -197,15 +202,27 @@ class MolecularDriversSummarizerTest {
     }
 
     private fun copyNumber(
-        type: CopyNumberType,
+        canonicalType: CopyNumberType,
         name: String,
         driverLikelihood: DriverLikelihood?,
         isReportable: Boolean,
         minCopies: Int? = null,
         maxCopies: Int? = null,
+        otherType: CopyNumberType? = null
     ): CopyNumber {
         return TestCopyNumberFactory.createMinimal().copy(
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type, minCopies, maxCopies),
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                canonicalType,
+                minCopies,
+                maxCopies
+            ),
+            otherImpacts = setOf(
+                TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    otherType ?: canonicalType,
+                    minCopies,
+                    maxCopies
+                )
+            ),
             gene = name,
             event = name,
             driverLikelihood = driverLikelihood,
