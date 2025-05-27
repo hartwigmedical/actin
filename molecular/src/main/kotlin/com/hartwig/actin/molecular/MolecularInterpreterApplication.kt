@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
@@ -120,7 +121,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
             val orangeMolecularTests = orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
             val testsWithUpdatedEvidence = updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
-                orangeMolecularTests, serveDatabase, tumorDoids, orangeRefGenomeVersion
+                orangeMolecularTests, serveDatabase, doidEntry, tumorDoids, orangeRefGenomeVersion
             )
 
             orangeMolecularTests.zip(testsWithUpdatedEvidence).map { (oldTest, newTest) -> EvidenceRegressionReporter.report(oldTest, newTest) }
@@ -195,13 +196,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
         val allTests = sequencingMolecularTests + ihcMolecularTests
         val molecularTestsWithUpdatedEvidence = updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
-            allTests, serveDatabase, tumorDoids, CLINICAL_TESTS_REF_GENOME_VERSION
+            allTests, serveDatabase, doidEntry, tumorDoids, CLINICAL_TESTS_REF_GENOME_VERSION
         )
 
         sequencingMolecularTests.zip(molecularTestsWithUpdatedEvidence).forEach { (oldTest, newTest) ->
             EvidenceRegressionReporter.report(oldTest, newTest)
         }
-        
+
         LOGGER.info("Completed interpretation of {} clinical molecular test(s)", sequencingMolecularTests.size)
         return molecularTestsWithUpdatedEvidence
     }
@@ -209,11 +210,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
         molecularTests: List<MolecularTest>,
         serveDatabase: ServeDatabase,
+        doidEntry: DoidEntry,
         tumorDoids: Set<String>,
         refGenomeVersion: RefGenomeVersion
     ): List<MolecularTest> {
+        // TODO factory for evidence annotator
         val serveRecord = selectForRefGenomeVersion(serveDatabase, refGenomeVersion)
-        val cancerTypeResolver = CancerTypeApplicabilityResolver(tumorDoids)
+        val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+        val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
         val combinedEvidenceMatcher = CombinedEvidenceMatcherFactory.create(serveRecord)
 
