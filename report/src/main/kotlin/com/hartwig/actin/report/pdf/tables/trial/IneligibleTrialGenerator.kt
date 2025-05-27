@@ -13,10 +13,9 @@ class IneligibleTrialGenerator(
     private val requestingSource: TrialSource?,
     private val title: String,
     private val footNote: String?,
-    private val includeIneligibilityColumn: Boolean,
     private val allowDeEmphasis: Boolean,
-    private val includeCohortConfig: Boolean,
-    private val includeSites: Boolean
+    private val includeIneligibilityColumn: Boolean,
+    private val includeSitesAndCohortConfig: Boolean
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -36,24 +35,24 @@ class IneligibleTrialGenerator(
         val configColWidth = 30f
 
         val table = when {
-            includeIneligibilityColumn ->
+            includeIneligibilityColumn && !includeSitesAndCohortConfig ->
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, ineligibilityColWidth)
-            includeCohortConfig ->
+            includeSitesAndCohortConfig && !includeIneligibilityColumn ->
                 Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
             else ->
-                Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
+                throw IllegalStateException("includeIneligibilityColumn and includeSitesAndCohortConfig cannot both be true")
         }
 
         table.addHeaderCell(Cells.createHeader("Trial"))
         table.addHeaderCell(Cells.createHeader("Cohort"))
         table.addHeaderCell(Cells.createHeader("Molecular"))
-        if (includeSites) {
+        if (includeSitesAndCohortConfig) {
             table.addHeaderCell(Cells.createHeader("Sites"))
         }
         if (includeIneligibilityColumn) {
             table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
         }
-        if (includeCohortConfig) {
+        if (includeSitesAndCohortConfig) {
             table.addHeaderCell(Cells.createHeader("Configuration"))
         }
         
@@ -67,8 +66,8 @@ class IneligibleTrialGenerator(
             feedbackFunction = InterpretedCohort::fails,
             allowDeEmphasis = allowDeEmphasis,
             useSmallerSize = true,
-            includeCohortConfig = includeCohortConfig,
-            includeSites = includeSites
+            includeCohortConfig = includeSitesAndCohortConfig,
+            includeSites = includeSitesAndCohortConfig
         )
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table).setFontSize(Styles.SMALL_FONT_SIZE))
@@ -98,10 +97,9 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = footNote,
-                includeIneligibilityColumn = true,
                 allowDeEmphasis = true,
-                includeCohortConfig = false,
-                includeSites = false
+                includeIneligibilityColumn = true,
+                includeSitesAndCohortConfig = false
             )
         }
 
@@ -118,10 +116,9 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = null,
-                includeIneligibilityColumn = false,
                 allowDeEmphasis = false,
-                includeCohortConfig = true,
-                includeSites = true
+                includeIneligibilityColumn = false,
+                includeSitesAndCohortConfig = true
             )
         }
     }
