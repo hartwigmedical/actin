@@ -272,8 +272,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun anyGeneFromSetIsOverExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
-            AnyGeneFromSetIsOverexpressed(maxMolecularTestAge(), geneSet)
+            val genes = functionInputResolver().createManyGenesInput(function).geneNames
+            val genesToAmplification = genes.associateWith { GeneIsAmplified(it, null, maxMolecularTestAge()) }
+            AnyGeneFromSetIsOverexpressed(maxMolecularTestAge(), genesToAmplification)
         }
     }
 
