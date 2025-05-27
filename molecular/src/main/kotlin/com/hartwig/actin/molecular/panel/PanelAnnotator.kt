@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
@@ -64,7 +65,16 @@ class PanelAnnotator(
                         evidence = ExtractionUtil.noEvidence()
                     )
                 },
-                homologousRecombination = null,
+                homologousRecombination = input.isHomologousRecombinationDeficient?.let {
+                    HomologousRecombination(
+                        score = null,
+                        isDeficient = it,
+                        type = null,
+                        brca1Value = null,
+                        brca2Value = null,
+                        evidence = ExtractionUtil.noEvidence()
+                    )
+                },
                 tumorMutationalBurden = input.tumorMutationalBurden?.let {
                     val isHigh = it > TMB_HIGH_CUTOFF
                     TumorMutationalBurden(

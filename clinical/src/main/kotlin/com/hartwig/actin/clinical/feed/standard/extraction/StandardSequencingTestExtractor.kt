@@ -66,7 +66,7 @@ class StandardSequencingTestExtractor(
                         skippedExons = skippedExons(allResults),
                         tumorMutationalBurden = tmb(allResults),
                         isMicrosatelliteUnstable = msi(allResults),
-                        isHomologousRepairDeficient = hrd(allResults),
+                        isHomologousRecombinationDeficient = hrd(allResults),
                         negativeResults = negativeResults(allResults),
                         knownSpecifications = test.knownSpecifications
                     )

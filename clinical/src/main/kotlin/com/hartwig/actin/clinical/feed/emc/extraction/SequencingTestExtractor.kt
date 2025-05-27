@@ -73,7 +73,7 @@ class SequencingTestExtractor(
                                 skippedExons = skippedExons(notIgnoredResults),
                                 tumorMutationalBurden = tmb(notIgnoredResults),
                                 isMicrosatelliteUnstable = msi(notIgnoredResults),
-                                isHomologousRepairDeficient = hrd(notIgnoredResults),
+                                isHomologousRecombinationDeficient = hrd(notIgnoredResults),
                                 negativeResults = negativeResults(notIgnoredResults),
                                 knownSpecifications = false
                             )

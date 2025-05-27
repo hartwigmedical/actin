@@ -61,6 +61,6 @@ data class SequencingTest(
     val negativeResults: Set<SequencedNegativeResult> = emptySet(),
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
-    val isHomologousRepairDeficient: Boolean? = null,
+    val isHomologousRecombinationDeficient: Boolean? = null,
     val knownSpecifications: Boolean = false
 ) 
