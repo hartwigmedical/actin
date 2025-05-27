@@ -29,7 +29,7 @@ class AnyGeneFromSetIsOverexpressed(
         }.map { it.key }
 
         if (amplifiedGenes.isNotEmpty()) return EvaluationFactory.warn(
-            "${concat(amplifiedGenes)} is amplified therefore possible overexpression of gene(s)",
+            "${concat(amplifiedGenes)} is amplified therefore possible overexpression in RNA",
             isMissingMolecularResultForEvaluation = true
         )
 
