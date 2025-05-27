@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -85,10 +85,7 @@ class HasMolecularDriverEventInNSCLCTest {
     @Test
     fun `Should fail if activating mutation is in gene but this gene is not in include list`() {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            HasMolecularDriverEventInNSCLC(setOf("ALK"), emptySet()).evaluate(record)
-        )
+        assertEvaluation(EvaluationResult.FAIL, HasMolecularDriverEventInNSCLC(setOf("ALK"), emptySet()).evaluate(record))
     }
 
     @Test
@@ -119,10 +116,7 @@ class HasMolecularDriverEventInNSCLCTest {
     @Test
     fun `Should fail for correct variant with correct protein impact but gene not in include list`() {
         val record = MolecularTestFactory.withVariant(BASE_SPECIFIC_VARIANT.copy(canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)))
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            HasMolecularDriverEventInNSCLC(setOf("ALK"), emptySet()).evaluate(record)
-        )
+        assertEvaluation(EvaluationResult.FAIL, HasMolecularDriverEventInNSCLC(setOf("ALK"), emptySet()).evaluate(record))
     }
 
     @Test
@@ -208,25 +202,25 @@ class HasMolecularDriverEventInNSCLCTest {
     @Test
     fun `Should pass for correct exon skipping variant`() {
         val record = MolecularTestFactory.withFusion(BASE_EXON_SKIPPING_FUSION)
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionIncludingAllGenes.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, functionIncludingAllGenes.evaluate(record))
     }
 
     @Test
     fun `Should fail for incorrect exon skipping variant`() {
         val record = MolecularTestFactory.withFusion(BASE_EXON_SKIPPING_FUSION.copy(fusedExonUp = 1, fusedExonDown = 3))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionIncludingAllGenes.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, functionIncludingAllGenes.evaluate(record))
     }
 
     @Test
     fun `Should pass for correct fusion`() {
         val record = MolecularTestFactory.withFusion(BASE_FUSION)
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionIncludingAllGenes.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, functionIncludingAllGenes.evaluate(record))
     }
 
     @Test
     fun `Should warn for correct fusion gene but low driver likelihood`() {
         val record = MolecularTestFactory.withFusion(BASE_FUSION.copy(driverLikelihood = DriverLikelihood.LOW))
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, functionIncludingAllGenes.evaluate(record))
+        assertEvaluation(EvaluationResult.WARN, functionIncludingAllGenes.evaluate(record))
     }
 
     @Test
@@ -238,7 +232,7 @@ class HasMolecularDriverEventInNSCLCTest {
                 driverLikelihood = DriverLikelihood.HIGH
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionIncludingAllGenes.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, functionIncludingAllGenes.evaluate(record))
     }
 
     @Test
@@ -246,7 +240,7 @@ class HasMolecularDriverEventInNSCLCTest {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
         val function = HasMolecularDriverEventInNSCLC(setOf("ALK"), emptySet(), includeGenesAtLeast = true)
 
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
         evaluateMessages(
             function.evaluate(record).warnMessages,
             setOf("Undetermined if patient's molecular driver event is applicable as 'molecular driver event' in NSCLC")
@@ -258,7 +252,7 @@ class HasMolecularDriverEventInNSCLCTest {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
         val function = HasMolecularDriverEventInNSCLC(setOf(CORRECT_ACTIVATING_MUTATION_GENE), emptySet(), includeGenesAtLeast = true)
 
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
         evaluateMessages(
             function.evaluate(record).passMessages, setOf("$CORRECT_ACTIVATING_MUTATION_GENE activating mutation(s): L858R")
         )
@@ -278,7 +272,7 @@ class HasMolecularDriverEventInNSCLCTest {
         )
         val function = HasMolecularDriverEventInNSCLC(setOf(CORRECT_ACTIVATING_MUTATION_GENE), emptySet(), includeGenesAtLeast = true)
 
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptVariantImpact {
@@ -286,18 +280,18 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     private fun evaluateIncludeFunctions(expected: EvaluationResult, record: PatientRecord) {
-        EvaluationAssert.assertEvaluation(expected, functionIncludingAllGenes.evaluate(record))
-        EvaluationAssert.assertEvaluation(expected, functionIncludingSpecificGenes.evaluate(record))
+        assertEvaluation(expected, functionIncludingAllGenes.evaluate(record))
+        assertEvaluation(expected, functionIncludingSpecificGenes.evaluate(record))
     }
 
     private fun evaluateExcludeFunction(expected: EvaluationResult, record: PatientRecord) {
-        EvaluationAssert.assertEvaluation(expected, functionExcludingSpecificGenes.evaluate(record))
+        assertEvaluation(expected, functionExcludingSpecificGenes.evaluate(record))
     }
 
     private fun evaluateAllFunctions(expected: EvaluationResult, record: PatientRecord) {
-        EvaluationAssert.assertEvaluation(expected, functionIncludingAllGenes.evaluate(record))
-        EvaluationAssert.assertEvaluation(expected, functionIncludingSpecificGenes.evaluate(record))
-        EvaluationAssert.assertEvaluation(expected, functionExcludingSpecificGenes.evaluate(record))
+        assertEvaluation(expected, functionIncludingAllGenes.evaluate(record))
+        assertEvaluation(expected, functionIncludingSpecificGenes.evaluate(record))
+        assertEvaluation(expected, functionExcludingSpecificGenes.evaluate(record))
     }
 
     private fun evaluateMessages(fromEvaluation: Set<String>, expected: Set<String>) {
