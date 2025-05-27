@@ -13,7 +13,11 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import org.apache.logging.log4j.LogManager
 
-class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, private val ensembleDataCache: EnsemblDataCache) {
+private const val MIN_COPY_NUMBER = 6
+private const val MAX_COPY_NUMBER = 6
+private const val PLOIDY = 2
+
+class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) {
 
     private val logger = LogManager.getLogger(PanelAnnotator::class.java)
 
@@ -24,18 +28,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
                 is SequencedDeletion -> convertSequencedDeletedGene(element)
                 else -> throw IllegalArgumentException("Unsupported type: $element")
             }
-        }.map(::annotatedInferredCopyNumber)
-    }
-
-    private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val alteration = evidenceDatabase.alterationForCopyNumber(copyNumber)
-        val copyNumberWithGeneAlteration = copyNumber.copy(
-            geneRole = alteration.geneRole,
-            proteinEffect = alteration.proteinEffect,
-            isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
-        )
-        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumberWithGeneAlteration)
-        return copyNumberWithGeneAlteration.copy(evidence = evidence)
+        }
     }
 
     private fun convertSequencedAmplifiedGene(sequencedAmplifiedGene: SequencedAmplification): CopyNumber {
@@ -48,15 +41,15 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
             type = if (isCanonicalTranscript) CopyNumberType.FULL_GAIN else CopyNumberType.NONE,
-            minCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null,
-            maxCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null
+            minCopies = if (isCanonicalTranscript) MIN_COPY_NUMBER else PLOIDY,
+            maxCopies = if (isCanonicalTranscript) MAX_COPY_NUMBER else PLOIDY
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
                 type = CopyNumberType.FULL_GAIN,
-                minCopies = sequencedAmplifiedGene.copies,
-                maxCopies = sequencedAmplifiedGene.copies
+                minCopies = MIN_COPY_NUMBER,
+                maxCopies = MAX_COPY_NUMBER
             )
         )
 
@@ -84,8 +77,8 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
             type = if (isCanonicalTranscript) CopyNumberType.DEL else CopyNumberType.NONE,
-            minCopies = if (isCanonicalTranscript) 0 else null,
-            maxCopies = if (isCanonicalTranscript) 0 else null
+            minCopies = if (isCanonicalTranscript) 0 else PLOIDY,
+            maxCopies = if (isCanonicalTranscript) 0 else PLOIDY
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(

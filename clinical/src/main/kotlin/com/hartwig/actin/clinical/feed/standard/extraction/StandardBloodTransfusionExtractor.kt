@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardBloodTransfusionExtractor : StandardDataExtractor<List<BloodTransfusion>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<BloodTransfusion>> {
-        return ExtractionResult(ehrPatientRecord.bloodTransfusions.map {
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<BloodTransfusion>> {
+        return ExtractionResult(feedPatientRecord.bloodTransfusions.map {
             BloodTransfusion(
                 date = it.evaluationDate,
                 product = mapTransfusionProduct(it.name)
