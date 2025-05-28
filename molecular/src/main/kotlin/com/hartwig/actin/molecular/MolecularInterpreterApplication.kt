@@ -10,18 +10,14 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
+import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.EvidenceRegressionReporter
 import com.hartwig.actin.molecular.evidence.ServeLoader
-import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
-import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.actionability.CombinedEvidenceMatcherFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
@@ -214,16 +210,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         tumorDoids: Set<String>,
         refGenomeVersion: RefGenomeVersion
     ): List<MolecularTest> {
-        // TODO factory for evidence annotator
-        val serveRecord = selectForRefGenomeVersion(serveDatabase, refGenomeVersion)
-        val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
-        val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
-        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
-        val combinedEvidenceMatcher = CombinedEvidenceMatcherFactory.create(serveRecord)
-
-        val evidenceAnnotator = EvidenceAnnotator(
-            clinicalEvidenceFactory = clinicalEvidenceFactory,
-            combinedEvidenceMatcher = combinedEvidenceMatcher,
+        val evidenceAnnotator = EvidenceAnnotatorFactory.create(
+            selectForRefGenomeVersion(serveDatabase, refGenomeVersion),
+            doidEntry,
+            tumorDoids
         )
 
         return molecularTests.map { molecularTest -> evidenceAnnotator.annotate(molecularTest) }

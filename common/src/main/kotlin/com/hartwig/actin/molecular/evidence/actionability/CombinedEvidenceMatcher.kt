@@ -106,7 +106,6 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
     private fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
         val variantMatches = molecularTest.drivers.variants
             .filter { variant ->
-                // TODO add test for ineligible gene event
                 VariantEvidence.isVariantEligible(variant) && VariantEvidence.isGeneEventEligible(gene) && GeneMatching.isMatch(gene, variant)
             }
 
@@ -187,13 +186,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
 
         return when (characteristic.type()) {
             TumorCharacteristicType.MICROSATELLITE_STABLE -> {
-                molecularTest.characteristics.microsatelliteStability?.let { msi ->
-                    if (msi.isUnstable) {
-                        Failure
-                    } else {
-                        Success(listOf(msi))
-                    }
-                } ?: Failure
+                Failure
             }
 
             TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> {
@@ -217,19 +210,13 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
             }
 
             TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        Failure
-                    } else {
-                        Success(listOf(tml))
-                    }
-                } ?: Failure
+                Failure
             }
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        Success(listOf(tml))
+                molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
+                    if (tmb.isHigh) {
+                        Success(listOf(tmb))
 
                     } else {
                         Failure
@@ -238,13 +225,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
             }
 
             TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        Failure
-                    } else {
-                        Success(listOf(tml))
-                    }
-                } ?: Failure
+                Failure
             }
 
             TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> {

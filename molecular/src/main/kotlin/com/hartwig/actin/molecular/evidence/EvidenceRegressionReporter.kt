@@ -167,6 +167,9 @@ object EvidenceRegressionReporter {
             if (old != null && new != null && getEvidence(old) != getEvidence(new)) {
                 LOGGER.info("[$label] Evidence changed")
                 compareEvidence(label, getEvidence(old), getEvidence(new))
+            } else {
+                LOGGER.info("[$label] No change in base characteristic or evidence " +
+                        "(treatments=${getEvidence(old).treatmentEvidence.size}, trials=${getEvidence(old).eligibleTrials.size})")
             }
         } else {
             LOGGER.info("[$label] Base characteristic changed")
