@@ -38,9 +38,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
                 DriverTableFunctions.allDrivers(test).associate { it.event to (it as? Variant)?.variantAlleleFrequency }
             }
 
-        val columnCount = 3 + eventVAFMapByTest.size
-        val table = Tables.createMultiCol(columnCount)
-
+        val table = Tables.createRelativeWidthCols(1.3f, 1.3f, 0.8f, 0.8f)
         val headers = listOf("Event", "Description", "Driver likelihood") + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 

@@ -66,8 +66,10 @@ class DriverEventFactoryTest {
     @Test
     fun `Should generate events for fusions`() {
         assertThat(
-            DriverEventFactory.fusionEvent(TestLinxFactory.fusionBuilder().geneStart("EML4").geneEnd("ALK").build())
-        ).isEqualTo("EML4::ALK fusion")
+            DriverEventFactory.fusionEvent(
+                TestLinxFactory.fusionBuilder().geneStart("EML4").geneEnd("ALK").fusedExonUp(6).fusedExonDown(20).build()
+            )
+        ).isEqualTo("EML4 exon 6 :: ALK exon 20 fusion")
     }
 
     @Test

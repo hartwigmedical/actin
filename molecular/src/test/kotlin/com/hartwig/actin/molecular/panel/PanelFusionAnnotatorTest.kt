@@ -173,7 +173,7 @@ class PanelFusionAnnotatorTest {
                 geneTranscriptEnd = null,
                 fusedExonUp = null,
                 fusedExonDown = null,
-                event = "$GENE_START::$GENE_END fusion",
+                event = "$GENE_START :: $GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createEmpty()
@@ -198,7 +198,7 @@ class PanelFusionAnnotatorTest {
                 geneTranscriptEnd = TRANSCRIPT_END,
                 fusedExonUp = FUSED_EXON_UP,
                 fusedExonDown = FUSED_EXON_DOWN,
-                event = "$GENE_START::$GENE_END fusion",
+                event = "$GENE_START exon $FUSED_EXON_UP :: $GENE_END exon $FUSED_EXON_DOWN fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createEmpty()
@@ -268,6 +268,24 @@ class PanelFusionAnnotatorTest {
                 )
             )
         )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception if exonUp is curated but geneUp is null`() {
+        val fusion = SequencedFusion(geneUp = null, exonUp = 5)
+        annotator.annotate(setOf(fusion), emptySet())
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception if exonDown is curated but geneDown is null`() {
+        val fusion = SequencedFusion(geneDown = null, exonDown = 5)
+        annotator.annotate(setOf(fusion), emptySet())
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception if both genes are null`() {
+        val fusion = SequencedFusion(geneUp = null, geneDown = null)
+        annotator.annotate(setOf(fusion), emptySet())
     }
 
     private fun setupKnownFusionCache() {

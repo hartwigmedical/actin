@@ -387,7 +387,7 @@ object TestMolecularFactory {
 
     fun createProperFusion() = Fusion(
         isReportable = true,
-        event = "EML4::ALK fusion",
+        event = "EML4 exon 6 :: ALK exon 20 fusion",
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = TestClinicalEvidenceFactory.createExhaustive(),
         geneStart = "EML4",
@@ -501,7 +501,7 @@ object TestMolecularFactory {
                 clusterGroup = 0
             ), fusions = proper.fusions + Fusion(
                 isReportable = false,
-                event = "EML4::ALK fusion",
+                event = "EML4 exon 6 :: ALK exon 20 fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 geneStart = "EML4",

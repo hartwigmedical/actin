@@ -88,7 +88,10 @@ class FormatTest {
 
     @Test
     fun `Should format lab values with first letter capitalized measure display, formatted value and display unit`() {
-        assertEquals("Indirect bilirubin 4.0 umol/L", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.005, LabUnit.MICROMOLES_PER_LITER))
+        assertEquals(
+            "Indirect bilirubin 4.0 umol/L",
+            Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.005, LabUnit.MICROMOLES_PER_LITER)
+        )
     }
 
     @Test
@@ -101,6 +104,10 @@ class FormatTest {
     @Test
     fun `Should join strings with and without fusion suffix`() {
         assertEquals("X::Y and Z::A", Format.concatFusions(setOf("X::Y fusion", "Z::A fusion")))
+        assertEquals(
+            "X exon 1 :: Y exon 2 and Z exon 1 :: A exon 2",
+            Format.concatFusions(setOf("X exon 1 :: Y exon 2 fusion", "Z exon 1 :: A exon 2 fusion"))
+        )
         assertEquals("A::B, C::D and E::F", Format.concatFusions(setOf("A::B fusion", "C::D fusion", "E::F fusion")))
         assertEquals("X::Y", Format.concatFusions(setOf("X::Y fusion")))
     }

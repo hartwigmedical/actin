@@ -33,14 +33,13 @@ data class SequencedFusion(
     val exonDown: Int? = null
 ) : Displayable {
     override fun display(): String {
-        return when {
-            geneUp != null && geneDown == null && exonUp != null -> "$geneUp exon $exonUp fusion"
-            geneUp != null && geneDown == null -> "$geneUp fusion"
-            geneUp == null && geneDown != null && exonDown != null -> "$geneDown exon $exonDown fusion"
-            geneUp == null && geneDown != null -> "$geneDown fusion"
-            geneUp != null && geneDown != null && exonUp != null && exonDown != null -> "$geneUp exon $exonUp::$geneDown exon $exonDown fusion"
-            geneUp != null && geneDown != null -> "$geneUp::$exonDown fusion"
-            else -> throw IllegalStateException("Both genes in fusion are null")
+        return buildString {
+            if (geneUp != null) append("$geneUp")
+            if (exonUp != null) append(" exon $exonUp")
+            if (geneUp != null && geneDown != null) append(" :: ")
+            if (geneDown != null) append("$geneDown")
+            if (exonDown != null) append(" exon $exonDown")
+            append(" fusion")
         }
     }
 }
