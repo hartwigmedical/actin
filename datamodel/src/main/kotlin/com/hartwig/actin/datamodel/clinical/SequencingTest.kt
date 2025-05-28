@@ -36,12 +36,10 @@ data class SequencedFusion(
         val formatUp = formatGeneAndExon(geneUp, exonUp)
         val formatDown = formatGeneAndExon(geneDown, exonDown)
 
-        return when {
-            formatUp != null && formatDown != null -> "$formatUp :: $formatDown fusion"
-            formatUp != null -> "$formatUp fusion"
-            formatDown != null -> "$formatDown fusion"
-            else -> throw IllegalStateException("Fusion cannot be formatted")
+        if (formatUp == null && formatDown == null) {
+            throw IllegalStateException("Fusion cannot be formatted")
         }
+        return listOfNotNull(formatUp, formatDown).joinToString(" :: ") + " fusion"
     }
 }
 
