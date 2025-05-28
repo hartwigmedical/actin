@@ -14,8 +14,8 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
@@ -24,7 +24,6 @@ import com.hartwig.actin.molecular.panel.IhcExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
 import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
-import com.hartwig.actin.molecular.panel.PanelEvidenceAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
 import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
@@ -40,13 +39,13 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
@@ -80,7 +79,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelSpecifications =
             config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
 
-        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
+        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, panelSpecifications)
         val clinicalMolecularTests =
             interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
 
@@ -96,8 +95,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun interpretOrangeRecord(
         config: MolecularInterpreterConfig,
         serveDatabase: ServeDatabase,
-        doidEntry: DoidEntry,
-        tumorDoids: Set<String>,
         panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         return if (config.orangeJson != null) {
@@ -105,12 +102,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             val orange = OrangeJson.getInstance().read(config.orangeJson)
 
             val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
-            val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
             val orangeRecordMolecularRecordMolecularInterpreter =
-                MolecularInterpreter(OrangeExtractor(geneFilter, panelSpecifications), MolecularRecordAnnotator(evidenceDatabase))
+                MolecularInterpreter(
+                    OrangeExtractor(geneFilter, panelSpecifications),
+                    MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()))
+                )
 
             orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
         } else {
@@ -131,7 +130,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                     + "assuming ref genome version '$CLINICAL_TESTS_REF_GENOME_VERSION'"
         )
         val serveRecord = selectForRefGenomeVersion(serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
-        val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
 
         val ensemblRefGenomeVersion = toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)
         LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
@@ -163,8 +161,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
         val panelFusionAnnotator = PanelFusionAnnotator(knownFusionCache, ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
-        val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
-        val panelEvidenceAnnotator = PanelEvidenceAnnotator(evidenceDatabase)
+        val panelDriverAttributeAnnotator =
+            PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), geneDriverLikelihoodModel)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical.sequencingTests,
@@ -172,7 +170,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
             panelDriverAttributeAnnotator,
-            panelEvidenceAnnotator,
             panelSpecifications
         )
 
@@ -191,7 +188,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
         panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
-        panelEvidenceAnnotator: PanelEvidenceAnnotator,
         panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         return MolecularInterpreter(
@@ -205,7 +201,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
                 panelDriverAttributeAnnotator,
-                panelEvidenceAnnotator,
                 panelSpecifications
             ),
         ).run(sequencingTests)

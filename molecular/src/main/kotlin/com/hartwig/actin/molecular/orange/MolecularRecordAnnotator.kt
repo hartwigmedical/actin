@@ -1,11 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
-import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
-import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
-import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -14,61 +9,20 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.actin.molecular.util.ExtractionUtil
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
+class MolecularRecordAnnotator(private val knownEventResolver: KnownEventResolver) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
 
     private val logger: Logger = LogManager.getLogger(MolecularRecordAnnotator::class.java)
 
     override fun annotate(input: MolecularRecord): MolecularRecord {
         return input.copy(
-            characteristics = annotateCharacteristics(input.characteristics),
             drivers = annotateDrivers(input.drivers)
         )
-    }
-
-    private fun annotateCharacteristics(characteristics: MolecularCharacteristics): MolecularCharacteristics {
-        return with(characteristics) {
-            copy(
-                microsatelliteStability = annotateMicrosatelliteStability(microsatelliteStability),
-                homologousRecombination = annotateHomologousRecombination(homologousRecombination),
-                tumorMutationalBurden = annotateTumorMutationalBurden(tumorMutationalBurden),
-                tumorMutationalLoad = annotateTumorMutationalLoad(tumorMutationalLoad)
-            )
-        }
-    }
-
-    private fun annotateMicrosatelliteStability(microsatelliteStability: MicrosatelliteStability?): MicrosatelliteStability? {
-        return microsatelliteStability?.let {
-            it.copy(evidence = evidenceDatabase.evidenceForMicrosatelliteStatus(it.isUnstable))
-        }
-    }
-
-    private fun annotateHomologousRecombination(homologousRecombination: HomologousRecombination?): HomologousRecombination? {
-        return homologousRecombination?.let {
-            val evidence =
-                it.isDeficient?.let { isDeficient -> evidenceDatabase.evidenceForHomologousRecombinationStatus(isDeficient) }
-                    ?: ExtractionUtil.noEvidence()
-            it.copy(evidence = evidence)
-        }
-    }
-
-    private fun annotateTumorMutationalBurden(tumorMutationalBurden: TumorMutationalBurden?): TumorMutationalBurden? {
-        return tumorMutationalBurden?.let {
-            it.copy(evidence = evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it.isHigh))
-        }
-    }
-
-    private fun annotateTumorMutationalLoad(tumorMutationalLoad: TumorMutationalLoad?): TumorMutationalLoad? {
-        return tumorMutationalLoad?.let {
-            it.copy(evidence = evidenceDatabase.evidenceForTumorMutationalLoadStatus(it.isHigh))
-        }
     }
 
     private fun annotateDrivers(drivers: Drivers): Drivers {
@@ -78,26 +32,23 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
             homozygousDisruptions = drivers.homozygousDisruptions.map { annotateHomozygousDisruption(it) },
             disruptions = drivers.disruptions.map { annotateDisruption(it) },
             fusions = drivers.fusions.map { annotateFusion(it) },
-            viruses = drivers.viruses.map { annotateVirus(it) }
         )
     }
 
     fun annotateVariant(variant: Variant): Variant {
-        val alteration = evidenceDatabase.alterationForVariant(variant)
+        val alteration = knownEventResolver.resolveForVariant(variant)
 
         if (!variant.isHotspot && alteration.isHotspot) {
             logger.info("Overwriting isHotspot to true and setting driverLikelihood to HIGH for ${variant.event}")
         }
 
-        val variantWithGeneAlteration = variant.copy(
+        return variant.copy(
             isHotspot = alteration.isHotspot,
             driverLikelihood = if (alteration.isHotspot) DriverLikelihood.HIGH else variant.driverLikelihood,
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
-        val evidence = evidenceDatabase.evidenceForVariant(variantWithGeneAlteration)
-        return variantWithGeneAlteration.copy(evidence = evidence)
     }
 
     fun reannotateDriverLikelihood(variants: List<Variant>): List<Variant> {
@@ -109,50 +60,36 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val alteration = evidenceDatabase.alterationForCopyNumber(copyNumber)
-        val copyNumberWithGeneAlteration = copyNumber.copy(
+        val alteration = knownEventResolver.resolveForCopyNumber(copyNumber)
+        return copyNumber.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
-        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumberWithGeneAlteration)
-        return copyNumberWithGeneAlteration.copy(evidence = evidence)
     }
 
     private fun annotateHomozygousDisruption(homozygousDisruption: HomozygousDisruption): HomozygousDisruption {
-        val alteration = evidenceDatabase.alterationForHomozygousDisruption(homozygousDisruption)
-        val homozygousDisruptionWithGeneAlteration = homozygousDisruption.copy(
+        val alteration = knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption)
+        return homozygousDisruption.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
-        val evidence = evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruptionWithGeneAlteration)
-        return homozygousDisruptionWithGeneAlteration.copy(evidence = evidence)
     }
 
     private fun annotateDisruption(disruption: Disruption): Disruption {
-        val alteration = evidenceDatabase.alterationForDisruption(disruption)
-        val disruptionWithGeneAlteration = disruption.copy(
+        val alteration = knownEventResolver.resolveForDisruption(disruption)
+        return disruption.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
         )
-        val evidence = evidenceDatabase.evidenceForDisruption(disruptionWithGeneAlteration)
-        return disruptionWithGeneAlteration.copy(evidence = evidence)
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
+        val knownFusion = knownEventResolver.resolveForFusion(fusion)
         val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
         val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
-        val fusionWithGeneAlteration =
-            fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(fusionWithGeneAlteration)
-        return fusionWithGeneAlteration.copy(evidence = evidence)
-    }
-
-    private fun annotateVirus(virus: Virus): Virus {
-        val evidence = evidenceDatabase.evidenceForVirus(virus)
-        return virus.copy(evidence = evidence)
+        return fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
     }
 }

@@ -38,9 +38,6 @@ class PanelAnnotatorTest {
     private val panelDriverAttributeAnnotator = mockk<PanelDriverAttributeAnnotator>() {
         every { annotate(any()) } answers { firstArg() }
     }
-    private val panelEvidenceAnnotator = mockk<PanelEvidenceAnnotator> {
-        every { annotate(any()) } answers { firstArg() }
-    }
 
     private val annotator =
         PanelAnnotator(
@@ -48,7 +45,6 @@ class PanelAnnotatorTest {
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
             panelDriverAttributeAnnotator,
-            panelEvidenceAnnotator,
             PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )
 
@@ -81,11 +77,6 @@ class PanelAnnotatorTest {
         )
 
         every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(interpretedFusion)
-        every { panelEvidenceAnnotator.annotate(any()) } returns TestMolecularFactory.createMinimalTestPanelRecord().copy(
-            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
-                fusions = listOf(annotatedFusion)
-            )
-        )
 
         val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(annotatedFusion))

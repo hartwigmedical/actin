@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import org.apache.logging.log4j.LogManager
