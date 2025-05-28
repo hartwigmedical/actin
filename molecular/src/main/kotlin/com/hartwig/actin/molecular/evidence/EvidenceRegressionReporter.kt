@@ -21,37 +21,37 @@ object EvidenceRegressionReporter {
     fun report(oldTest: MolecularTest, newTest: MolecularTest) {
         LOGGER.info("Comparing old and new molecular tests for evidence changes: ${testDescriptor(oldTest)} vs ${testDescriptor(newTest)}")
 
-        compareActionables(
+        compareDrivers(
             "Variants",
             oldTest.drivers.variants,
             newTest.drivers.variants,
             ::clearEvidence
         )
-        compareActionables(
+        compareDrivers(
             "CopyNumbers",
             oldTest.drivers.copyNumbers,
             newTest.drivers.copyNumbers,
             ::clearEvidence
         )
-        compareActionables(
+        compareDrivers(
             "HomozygousDisruptions",
             oldTest.drivers.homozygousDisruptions,
             newTest.drivers.homozygousDisruptions,
             ::clearEvidence
         )
-        compareActionables(
+        compareDrivers(
             "Disruptions",
             oldTest.drivers.disruptions,
             newTest.drivers.disruptions,
             ::clearEvidence
         )
-        compareActionables(
+        compareDrivers(
             "Fusions",
             oldTest.drivers.fusions,
             newTest.drivers.fusions,
             ::clearEvidence
         )
-        compareActionables(
+        compareDrivers(
             "Viruses",
             oldTest.drivers.viruses,
             newTest.drivers.viruses,
@@ -89,11 +89,11 @@ object EvidenceRegressionReporter {
 
     private data class EvidenceDiff<T>(
         val base: T,
-        val inOld: List<ClinicalEvidence>,
-        val inNew: List<ClinicalEvidence>
+        val inOld: ClinicalEvidence?,
+        val inNew: ClinicalEvidence?
     )
 
-    private fun <T> compareActionables(
+    private fun <T> compareDrivers(
         label: String,
         oldList: List<T>,
         newList: List<T>,
@@ -112,38 +112,41 @@ object EvidenceRegressionReporter {
         val diffs = allBases.map { base ->
             EvidenceDiff(
                 base = base,
-                inOld = onlyOldByBase[base]?.map { getEvidence(it) } ?: emptyList(),
-                inNew = onlyNewByBase[base]?.map { getEvidence(it) } ?: emptyList()
+                inOld = onlyOldByBase[base]?.map { getEvidence(it) }?.firstOrNull(),
+                inNew = onlyNewByBase[base]?.map { getEvidence(it) }?.firstOrNull()
             )
         }
 
-        val onlyInOldBases = diffs.filter { it.inNew.isEmpty() && it.inOld.isNotEmpty() }
-        val onlyInNewBases = diffs.filter { it.inOld.isEmpty() && it.inNew.isNotEmpty() }
-        val changedBases = diffs.filter { it.inOld.isNotEmpty() && it.inNew.isNotEmpty() }
+        val onlyInOldBases = diffs.filter { it.inNew == null && it.inOld != null }
+        val onlyInNewBases = diffs.filter { it.inOld == null && it.inNew != null }
+        val changedBases = diffs.filter { it.inOld != null && it.inNew != null }
 
         LOGGER.info("[$label] Number in old: ${oldSet.size}, new: ${newSet.size}, matching: ${same.size}")
         if (onlyInOldBases.isNotEmpty()) {
             LOGGER.info("[$label] Only in old: ${onlyInOldBases.size}")
             onlyInOldBases.forEach { diff ->
                 LOGGER.info("  Base: ${diff.base}")
-                LOGGER.info("    Old Evidence (n=${diff.inOld.size}): ${diff.inOld}")
-                LOGGER.info("    New Evidence (n=${diff.inNew.size}): ${diff.inNew}")
+                LOGGER.info("    Old Evidence: ${diff.inOld}")
+                LOGGER.info("    New Evidence: ${diff.inNew}")
             }
         }
         if (onlyInNewBases.isNotEmpty()) {
             LOGGER.info("[$label] Only in new: ${onlyInNewBases.size}")
             onlyInNewBases.forEach { diff ->
                 LOGGER.info("  Base: ${diff.base}")
-                LOGGER.info("    Old Evidence (n=${diff.inOld.size}): ${diff.inOld}")
-                LOGGER.info("    New Evidence (n=${diff.inNew.size}): ${diff.inNew}")
+                LOGGER.info("    Old Evidence: ${diff.inOld}")
+                LOGGER.info("    New Evidence: ${diff.inNew}")
             }
         }
         if (changedBases.isNotEmpty()) {
             LOGGER.info("[$label] Changed evidence: ${changedBases.size}")
             changedBases.forEach { diff ->
                 LOGGER.info("  Base: ${diff.base}")
-                LOGGER.info("    Old Evidence (n=${diff.inOld.size}): ${diff.inOld}")
-                LOGGER.info("    New Evidence (n=${diff.inNew.size}): ${diff.inNew}")
+                LOGGER.info("    Old Evidence: ${diff.inOld}")
+                LOGGER.info("    New Evidence: ${diff.inNew}")
+                if (diff.inOld != null && diff.inNew != null && diff.inOld != diff.inNew) {
+                    compareEvidence(label, diff.inOld, diff.inNew)
+                }
             }
         }
     }
@@ -162,17 +165,8 @@ object EvidenceRegressionReporter {
         val newBase = new?.let { clearEvidence(it) }
         if (oldBase == newBase) {
             if (old != null && new != null && getEvidence(old) != getEvidence(new)) {
-                val oldEvidence = getEvidence(old)
-                val newEvidence = getEvidence(new)
-                val oldSet = oldEvidence.treatmentEvidence
-                val newSet = newEvidence.treatmentEvidence
-                val inBoth = oldSet.intersect(newSet)
-                val onlyInOld = oldSet - newSet
-                val onlyInNew = newSet - oldSet
                 LOGGER.info("[$label] Evidence changed")
-                LOGGER.info("  Evidence in both (n=${inBoth.size}): $inBoth")
-                LOGGER.info("  Only in old (n=${onlyInOld.size}): $onlyInOld")
-                LOGGER.info("  Only in new (n=${onlyInNew.size}): $onlyInNew")
+                compareEvidence(label, getEvidence(old), getEvidence(new))
             }
         } else {
             LOGGER.info("[$label] Base characteristic changed")
@@ -181,7 +175,33 @@ object EvidenceRegressionReporter {
         }
     }
 
-    // --- Evidence clearing and extraction for each actionable type ---
+    private fun compareEvidence(
+        label: String,
+        oldEvidence: ClinicalEvidence,
+        newEvidence: ClinicalEvidence
+    ) {
+        // Treatments
+        val oldTreatments = oldEvidence.treatmentEvidence
+        val newTreatments = newEvidence.treatmentEvidence
+        val commonTreatments = oldTreatments.intersect(newTreatments)
+        val onlyInOldTreatments = oldTreatments - newTreatments
+        val onlyInNewTreatments = newTreatments - oldTreatments
+
+        LOGGER.info("  Treatments in both (n=${commonTreatments.size})")
+        LOGGER.info("  Treatments only in old (n=${onlyInOldTreatments.size}): $onlyInOldTreatments")
+        LOGGER.info("  Treatments only in new (n=${onlyInNewTreatments.size}): $onlyInNewTreatments")
+
+        // Trials
+        val oldTrials = oldEvidence.eligibleTrials
+        val newTrials = newEvidence.eligibleTrials
+        val commonTrials = oldTrials.intersect(newTrials)
+        val onlyInOldTrials = oldTrials - newTrials
+        val onlyInNewTrials = newTrials - oldTrials
+
+        LOGGER.info("  Trials in both (n=${commonTrials.size})")
+        LOGGER.info("  Trials only in old (n=${onlyInOldTrials.size}): $onlyInOldTrials")
+        LOGGER.info("  Trials only in new (n=${onlyInNewTrials.size}): $onlyInNewTrials")
+    }
 
     fun clearEvidence(variant: Variant): Variant =
         variant.copy(evidence = ClinicalEvidence(emptySet(), emptySet()))
