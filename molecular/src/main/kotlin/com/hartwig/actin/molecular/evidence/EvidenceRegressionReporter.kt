@@ -126,24 +126,24 @@ object EvidenceRegressionReporter {
             LOGGER.info("[$label] Only in old: ${onlyInOldBases.size}")
             onlyInOldBases.forEach { diff ->
                 LOGGER.info("  Base: ${diff.base}")
-                LOGGER.info("    Old Evidence: ${diff.inOld}")
-                LOGGER.info("    New Evidence: ${diff.inNew}")
+                LOGGER.info("    Old Evidence (n=${diff.inOld.size}): ${diff.inOld}")
+                LOGGER.info("    New Evidence (n=${diff.inNew.size}): ${diff.inNew}")
             }
         }
         if (onlyInNewBases.isNotEmpty()) {
             LOGGER.info("[$label] Only in new: ${onlyInNewBases.size}")
             onlyInNewBases.forEach { diff ->
                 LOGGER.info("  Base: ${diff.base}")
-                LOGGER.info("    Old Evidence: ${diff.inOld}")
-                LOGGER.info("    New Evidence: ${diff.inNew}")
+                LOGGER.info("    Old Evidence (n=${diff.inOld.size}): ${diff.inOld}")
+                LOGGER.info("    New Evidence (n=${diff.inNew.size}): ${diff.inNew}")
             }
         }
         if (changedBases.isNotEmpty()) {
             LOGGER.info("[$label] Changed evidence: ${changedBases.size}")
             changedBases.forEach { diff ->
                 LOGGER.info("  Base: ${diff.base}")
-                LOGGER.info("    Old Evidence: ${diff.inOld}")
-                LOGGER.info("    New Evidence: ${diff.inNew}")
+                LOGGER.info("    Old Evidence (n=${diff.inOld.size}): ${diff.inOld}")
+                LOGGER.info("    New Evidence (n=${diff.inNew.size}): ${diff.inNew}")
             }
         }
     }
@@ -154,14 +154,25 @@ object EvidenceRegressionReporter {
         new: T?,
         clearEvidence: (T) -> T
     ) where T : Any {
-        if (old == null && new == null) return
+        if (old == null && new == null) {
+            LOGGER.info("[$label] Both old and new are null (not present in either test)")
+            return
+        }
         val oldBase = old?.let { clearEvidence(it) }
         val newBase = new?.let { clearEvidence(it) }
         if (oldBase == newBase) {
             if (old != null && new != null && getEvidence(old) != getEvidence(new)) {
+                val oldEvidence = getEvidence(old)
+                val newEvidence = getEvidence(new)
+                val oldSet = oldEvidence.treatmentEvidence
+                val newSet = newEvidence.treatmentEvidence
+                val inBoth = oldSet.intersect(newSet)
+                val onlyInOld = oldSet - newSet
+                val onlyInNew = newSet - oldSet
                 LOGGER.info("[$label] Evidence changed")
-                LOGGER.info("  Old Evidence: ${getEvidence(old)}")
-                LOGGER.info("  New Evidence: ${getEvidence(new)}")
+                LOGGER.info("  Evidence in both (n=${inBoth.size}): $inBoth")
+                LOGGER.info("  Only in old (n=${onlyInOld.size}): $onlyInOld")
+                LOGGER.info("  Only in new (n=${onlyInNew.size}): $onlyInNew")
             }
         } else {
             LOGGER.info("[$label] Base characteristic changed")
