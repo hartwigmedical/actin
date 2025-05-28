@@ -42,4 +42,10 @@ class SequencingTestTest {
         val fusion = fusion.copy(geneUp = null, exonUp = null, exonDown = null)
         assertThat(fusion.display()).isEqualTo("geneDown fusion")
     }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception if geneUp and geneDown are null`() {
+        val fusion = fusion.copy(geneUp = null, exonUp = null,  geneDown = null, exonDown = null)
+        fusion.display()
+    }
 }

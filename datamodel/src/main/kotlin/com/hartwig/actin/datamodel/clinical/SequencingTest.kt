@@ -33,13 +33,14 @@ data class SequencedFusion(
     val exonDown: Int? = null
 ) : Displayable {
     override fun display(): String {
-        return buildString {
-            if (geneUp != null) append("$geneUp")
-            if (exonUp != null) append(" exon $exonUp")
-            if (geneUp != null && geneDown != null) append(" :: ")
-            if (geneDown != null) append("$geneDown")
-            if (exonDown != null) append(" exon $exonDown")
-            append(" fusion")
+        val formatUp = formatGeneAndExon(geneUp, exonUp)
+        val formatDown = formatGeneAndExon(geneDown, exonDown)
+
+        return when {
+            formatUp != null && formatDown != null -> "$formatUp :: $formatDown fusion"
+            formatUp != null -> "$formatUp fusion"
+            formatDown != null -> "$formatDown fusion"
+            else -> throw IllegalStateException("Fusion cannot be formatted")
         }
     }
 }
@@ -64,4 +65,8 @@ data class SequencingTest(
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
     val knownSpecifications: Boolean = false
-) 
+)
+
+private fun formatGeneAndExon(gene: String?, exon: Int?): String? {
+    return if (gene != null) exon?.let { "$gene exon $exon" } ?: "$gene" else null
+}
