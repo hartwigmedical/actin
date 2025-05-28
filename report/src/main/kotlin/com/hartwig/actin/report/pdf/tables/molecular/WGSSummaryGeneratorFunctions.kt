@@ -205,7 +205,7 @@ object WGSSummaryGeneratorFunctions {
     private fun determineOrderedKeys(isShort: Boolean): List<String> {
         return if (isShort) {
             listOf(
-                "High driver mutations",
+                "Driver mutations",
                 "Amplified genes",
                 "Gene fusions",
                 "Deleted genes",
@@ -218,7 +218,7 @@ object WGSSummaryGeneratorFunctions {
                 "Microsatellite (in)stability",
                 "HR status",
                 "",
-                "High driver mutations",
+                "Driver mutations",
                 "Amplified genes",
                 "Deleted genes",
                 "Homozygously disrupted genes",
