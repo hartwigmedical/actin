@@ -39,7 +39,8 @@ class MolecularDriversSummarizerTest {
             variant("high driver", DriverLikelihood.HIGH, true),
             variant("non-reportable", DriverLikelihood.HIGH, false),
             variant("medium likelihood", DriverLikelihood.MEDIUM, true),
-            variant("associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = true)
+            variant("associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = true),
+            variant("not associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = false)
         )
         val molecularDrivers = minimalDrivers.copy(variants = variants)
         
