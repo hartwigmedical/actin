@@ -36,12 +36,15 @@ class MolecularDriversSummarizerTest {
     @Test
     fun `Should return key variants`() {
         val variants = listOf(
-            variant(EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            variant("high driver", DriverLikelihood.HIGH, true),
             variant("non-reportable", DriverLikelihood.HIGH, false),
-            variant("medium likelihood", DriverLikelihood.MEDIUM, true)
+            variant("medium likelihood", DriverLikelihood.MEDIUM, true),
+            variant("associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = true)
         )
         val molecularDrivers = minimalDrivers.copy(variants = variants)
-        assertExpectedListResult(summarizer(molecularDrivers).keyVariants())
+        
+        val keyEntries = summarizer(molecularDrivers).keyVariants().distinct()
+        assertThat(keyEntries).containsExactly("high driver", "associated with resistance")
     }
 
     @Test
@@ -131,8 +134,8 @@ class MolecularDriversSummarizerTest {
         )
 
         val variants = listOf(
-            variant("key variant", DriverLikelihood.HIGH, true, externalEvidence),
-            variant("expected non-reportable variant", DriverLikelihood.HIGH, false, approvedTreatment),
+            variant("key variant", DriverLikelihood.HIGH, true, evidence = externalEvidence),
+            variant("expected non-reportable variant", DriverLikelihood.HIGH, false, evidence= approvedTreatment),
             variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true),
             variant("no evidence", DriverLikelihood.MEDIUM, true)
         )
@@ -183,6 +186,7 @@ class MolecularDriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
+        isAssociatedWithDrugResistance: Boolean? = null,
         evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
@@ -190,7 +194,8 @@ class MolecularDriversSummarizerTest {
             event = name,
             driverLikelihood = driverLikelihood,
             isReportable = isReportable,
-            evidence = evidence
+            evidence = evidence,
+            isAssociatedWithDrugResistance = isAssociatedWithDrugResistance
         )
     }
 
