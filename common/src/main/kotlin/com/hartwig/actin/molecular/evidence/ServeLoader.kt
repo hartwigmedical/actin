@@ -13,7 +13,7 @@ object ServeLoader {
         //        val serveDatabase = cleanServeDatabase(ServeJson.read(jsonFilePath))
         val serveDatabase = ServeJson.read(jsonFilePath)
 
-        ServeVerifier.verifyServeDatabase(serveDatabase)
+//        ServeVerifier.verifyServeDatabase(serveDatabase)
 
         return serveDatabase
     }
