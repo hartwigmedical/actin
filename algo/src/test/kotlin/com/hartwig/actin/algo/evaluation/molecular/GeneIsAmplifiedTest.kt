@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val REQUIRED_COPY_NR = 5
@@ -21,6 +21,7 @@ private const val NON_PASSING_COPY_NR = REQUIRED_COPY_NR - 2
 private const val GENE = "gene A"
 
 class GeneIsAmplifiedTest {
+
     private val eligibleImpact =
         TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
             CopyNumberType.FULL_GAIN,
@@ -298,9 +299,8 @@ class GeneIsAmplifiedTest {
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )
         )
-        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
-            .containsExactly("Amplification of gene gene A undetermined (not tested for amplifications)")
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessages).containsExactly("Amplification of gene gene A undetermined (not tested for amplifications)")
     }
 
     private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {

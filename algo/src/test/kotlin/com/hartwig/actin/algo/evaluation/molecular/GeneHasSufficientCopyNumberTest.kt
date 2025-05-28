@@ -5,12 +5,12 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val REQUIRED_COPY_NR = 5
@@ -19,6 +19,7 @@ private const val NON_PASSING_COPY_NR = REQUIRED_COPY_NR - 2
 private const val GENE = "gene A"
 
 class GeneHasSufficientCopyNumberTest {
+
     private val eligibleImpact =
         TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, PASSING_COPY_NR, PASSING_COPY_NR)
     private val impactAmpWithInsufficientCopyNr = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
@@ -211,8 +212,8 @@ class GeneHasSufficientCopyNumberTest {
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )
         )
-        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessages)
             .containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
     }
 }
