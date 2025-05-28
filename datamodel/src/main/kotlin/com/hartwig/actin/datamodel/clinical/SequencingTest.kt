@@ -68,5 +68,5 @@ data class SequencingTest(
 )
 
 private fun formatGeneAndExon(gene: String?, exon: Int?): String? {
-    return if (gene != null) exon?.let { "$gene exon $exon" } ?: "$gene" else null
+    return gene?.let { exon?.let { "$gene exon $exon" } ?: gene }
 }
