@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
@@ -12,10 +12,8 @@ import java.time.LocalDate
 
 class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
-    override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("MSI status undetermined")
-
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val drivers = molecular.drivers
+    override fun evaluate(test: MolecularTest): Evaluation {
+        val drivers = test.drivers
         val msiVariants = drivers.variants
             .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
 
@@ -32,7 +30,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
 
         val msiGenesWithUnknownBiallelicDriver = genesFrom(unknownBiallelicMsiVariants)
 
-        return when (molecular.characteristics.microsatelliteStability?.isUnstable) {
+        return when (test.characteristics.microsatelliteStability?.isUnstable) {
             null -> {
                 val message = when {
                     msiGenesWithBiallelicDriver.isNotEmpty() -> {

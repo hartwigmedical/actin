@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
@@ -128,13 +127,6 @@ class IsMicrosatelliteUnstableTest {
             EvaluationResult.FAIL,
             function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(false, msiVariant(isReportable = true)))
         )
-    }
-
-    @Test
-    fun `Should return undetermined and state that MSI status is unknown when molecular record not available`() {
-        val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
-        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessages).containsExactly("MSI status undetermined")
     }
 
     @Test
