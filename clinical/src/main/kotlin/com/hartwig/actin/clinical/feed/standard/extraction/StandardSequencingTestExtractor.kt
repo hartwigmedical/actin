@@ -23,8 +23,7 @@ import com.hartwig.feed.datamodel.FeedSequencingTest
 class StandardSequencingTestExtractor(
     private val testCuration: CurationDatabase<SequencingTestConfig>,
     private val testResultCuration: CurationDatabase<SequencingTestResultConfig>
-) :
-    StandardDataExtractor<List<SequencingTest>> {
+) : StandardDataExtractor<List<SequencingTest>> {
 
     override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
         return feedPatientRecord.sequencingTests.map { test ->
