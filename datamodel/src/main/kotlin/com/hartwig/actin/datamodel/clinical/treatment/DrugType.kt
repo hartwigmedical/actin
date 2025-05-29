@@ -196,6 +196,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     TYROSINE_KINASE_INHIBITOR_GEN_1(TreatmentCategory.TARGETED_THERAPY),
     TYROSINE_KINASE_INHIBITOR_GEN_2(TreatmentCategory.TARGETED_THERAPY),
+    TYROSINE_KINASE_INHIBITOR_GEN_3(TreatmentCategory.TARGETED_THERAPY),
     VACCINE(TreatmentCategory.IMMUNOTHERAPY),
     VEGF_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "VEGF antibody"),
     VEGF_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGF TKI"),

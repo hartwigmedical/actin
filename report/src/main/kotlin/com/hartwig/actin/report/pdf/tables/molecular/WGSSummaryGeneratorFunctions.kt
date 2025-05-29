@@ -192,7 +192,7 @@ object WGSSummaryGeneratorFunctions {
         val keyToValueMap = mapOf(
             "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
             "HR status" to characteristicsGenerator.createHRStatusString(),
-            "High driver mutations" to formatList(summarizer.keyVariants()),
+            "Driver mutations" to formatList(summarizer.keyVariants()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
@@ -205,7 +205,7 @@ object WGSSummaryGeneratorFunctions {
     private fun determineOrderedKeys(isShort: Boolean): List<String> {
         return if (isShort) {
             listOf(
-                "High driver mutations",
+                "Driver mutations",
                 "Amplified genes",
                 "Gene fusions",
                 "Deleted genes",
@@ -218,7 +218,7 @@ object WGSSummaryGeneratorFunctions {
                 "Microsatellite (in)stability",
                 "HR status",
                 "",
-                "High driver mutations",
+                "Driver mutations",
                 "Amplified genes",
                 "Deleted genes",
                 "Homozygously disrupted genes",
