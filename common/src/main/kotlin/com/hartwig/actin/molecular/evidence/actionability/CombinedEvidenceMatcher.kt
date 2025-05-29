@@ -238,8 +238,6 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
                 } ?: Failure
             }
 
-            // note that VirusEvidence has a HPV_POSITIVE_TYPES that contains just TumorCharacteristicType.HPV_POSITIVE (serve data model)
-            // can we reuse that here?
             TumorCharacteristicType.HPV_POSITIVE -> {
                 val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HUMAN_PAPILLOMA_VIRUS }
                 if (hits.isNotEmpty()) {
@@ -264,8 +262,6 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>) {
         if (efficacyEvidence.molecularCriterium().hla().isEmpty()) {
             return Success()
         } else {
-            // TODO don't notice previous support for hla matching, and SERVE has no criteria with
-            // populated hla entries ... is this a problem? Should check in serve verifier? warn for now
             logger.warn("evidence contains HLA but matching supported")
             return Failure
         }

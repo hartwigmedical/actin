@@ -109,6 +109,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
             val serveRecord = selectForRefGenomeVersion(serveDatabase, orangeRefGenomeVersion)
             val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
+            val evidenceAnnotator = EvidenceAnnotatorFactory.create(serveRecord, doidEntry, tumorDoids)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
@@ -116,9 +117,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 MolecularInterpreter(OrangeExtractor(geneFilter, panelSpecifications), MolecularRecordAnnotator(evidenceDatabase))
 
             val orangeMolecularTests = orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
-            val testsWithUpdatedEvidence = updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
-                orangeMolecularTests, serveDatabase, doidEntry, tumorDoids, orangeRefGenomeVersion
-            )
+            val testsWithUpdatedEvidence = orangeMolecularTests.map { evidenceAnnotator.annotate(it) }
 
             orangeMolecularTests.zip(testsWithUpdatedEvidence).map { (oldTest, newTest) -> EvidenceRegressionReporter.report(oldTest, newTest) }
             testsWithUpdatedEvidence
@@ -174,6 +173,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
         val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
         val panelEvidenceAnnotator = PanelEvidenceAnnotator(evidenceDatabase)
+        val evidenceAnnotator = EvidenceAnnotatorFactory.create(serveRecord, doidEntry, tumorDoids)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical.sequencingTests,
@@ -191,9 +191,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
 
         val allTests = sequencingMolecularTests + ihcMolecularTests
-        val molecularTestsWithUpdatedEvidence = updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
-            allTests, serveDatabase, doidEntry, tumorDoids, CLINICAL_TESTS_REF_GENOME_VERSION
-        )
+        val molecularTestsWithUpdatedEvidence = allTests.map { evidenceAnnotator.annotate(it) }
 
         allTests.zip(molecularTestsWithUpdatedEvidence).forEach { (oldTest, newTest) ->
             EvidenceRegressionReporter.report(oldTest, newTest)
@@ -201,22 +199,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
         LOGGER.info("Completed interpretation of {} clinical molecular test(s)", sequencingMolecularTests.size)
         return molecularTestsWithUpdatedEvidence
-    }
-
-    private fun updateClinicalEvidenceForMolecularTestsUsingCombinedMatcher(
-        molecularTests: List<MolecularTest>,
-        serveDatabase: ServeDatabase,
-        doidEntry: DoidEntry,
-        tumorDoids: Set<String>,
-        refGenomeVersion: RefGenomeVersion
-    ): List<MolecularTest> {
-        val evidenceAnnotator = EvidenceAnnotatorFactory.create(
-            selectForRefGenomeVersion(serveDatabase, refGenomeVersion),
-            doidEntry,
-            tumorDoids
-        )
-
-        return molecularTests.map { molecularTest -> evidenceAnnotator.annotate(molecularTest) }
     }
 
     private fun interpretSequencingMolecularTests(

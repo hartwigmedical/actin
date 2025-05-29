@@ -164,28 +164,4 @@ class EvidenceAnnotator(
         val clinicalEvidence = clinicalEvidenceFactory.create(actionabilityMatch).copy(eligibleTrials = tml.evidence.eligibleTrials)
         return tml.copy(evidence = clinicalEvidence)
     }
-
-
-// TODO (maybe): if we want super generalized code, can use a helper like the following:
-//
-//    private inline fun <T : Actionable> annotateWithEvidence(
-//        actionable: T,
-//        evidencesForActionable: EvidencesForActionable,
-//        crossinline copyWithEvidence: (T, ClinicalEvidence) -> T
-//    ): T {
-//        val evidences = evidencesForActionable[actionable]
-//            ?: throw IllegalStateException("No evidences found for actionable: $actionable")
-//        val actionabilityMatch = ActionabilityMatch(evidenceMatches = evidences.toList(), matchingCriteriaPerTrialMatch = emptyMap())
-//        val clinicalEvidence = clinicalEvidenceFactory.create(actionabilityMatch).copy(eligibleTrials = actionable.evidence.eligibleTrials)
-//        return copyWithEvidence(actionable, clinicalEvidence)
-//    }
-//
-// And here's a usage example:
-//
-//    private fun annotateHrWithEvidence(
-//        hr: HomologousRecombination,
-//        evidencesForActionable: EvidencesForActionable
-//    ): HomologousRecombination = annotateWithEvidence(hr, evidencesForActionable) { obj, evidence -> obj.copy(evidence = evidence) }
-//
-// But it may be overly complex for the value its providing
 }

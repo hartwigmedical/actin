@@ -52,7 +52,6 @@ class EvidenceAnnotatorTest {
         val tumorDoids = setOf("DOID:162", "DOID:14502")
         val cancerTypeResolver = CancerTypeApplicabilityResolver(tumorDoids)
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
-//        val combinedEvidenceMatcher = CombinedEvidenceMatcherFactory.create(serveRecord)
         val combinedEvidenceMatcher = CombinedEvidenceMatcher(listOf(evidence))
 
         val evidenceAnnotator = EvidenceAnnotator(
