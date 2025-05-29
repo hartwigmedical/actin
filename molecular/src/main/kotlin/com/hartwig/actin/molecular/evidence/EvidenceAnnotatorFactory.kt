@@ -9,7 +9,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.actionability.CombinedEvidenceMatcherFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
 import com.hartwig.serve.datamodel.ServeRecord
 
 object EvidenceAnnotatorFactory {
@@ -22,7 +22,7 @@ object EvidenceAnnotatorFactory {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
-        val combinedEvidenceMatcher = CombinedEvidenceMatcherFactory.create(serveRecord)
+        val combinedEvidenceMatcher = ActionabilityMatcherFactory.create(serveRecord)
 
         return EvidenceAnnotator(
             clinicalEvidenceFactory = clinicalEvidenceFactory,

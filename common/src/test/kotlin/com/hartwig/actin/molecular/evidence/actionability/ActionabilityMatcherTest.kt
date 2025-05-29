@@ -638,7 +638,7 @@ class ActionabilityMatcherTest {
     }
 
     fun matcherFactory(evidences: List<EfficacyEvidence>): ActionabilityMatcher {
-        return CombinedEvidenceMatcherFactory.create(serveRecordWithEvidences(evidences))
+        return ActionabilityMatcherFactory.create(serveRecordWithEvidences(evidences))
     }
 
     fun serveRecordWithEvidences(evidences: List<EfficacyEvidence>): ServeRecord {

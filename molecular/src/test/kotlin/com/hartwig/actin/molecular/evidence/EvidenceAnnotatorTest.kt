@@ -5,11 +5,14 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -43,20 +46,25 @@ class EvidenceAnnotatorTest {
     @Test
     fun `Should annotate variants with evidence`() {
 
+        val molecularCriterium = ImmutableMolecularCriterium.builder()
+            .addAllHotspots(listOf(brafActionableHotspot))
+            .build()
         val evidence = TestServeEvidenceFactory.create(
-            molecularCriterium = ImmutableMolecularCriterium.builder()
-                .addAllHotspots(listOf(brafActionableHotspot))
-                .build(),
+            molecularCriterium = molecularCriterium,
         )
-
-        val trial = TestServeTrialFactory.createTrialForHotspot()
 
         val variant = TestMolecularFactory.createProperVariant()
         assertThat(variant.evidence.treatmentEvidence).isNotEmpty
-
-        val tumorDoids = setOf("DOID:162", "DOID:14502")
-        val cancerTypeResolver = CancerTypeApplicabilityResolver(tumorDoids)
+        val indication = evidence.indication()
+        val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver> {
+            every { resolve(indication) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+        }
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val trial = TestServeTrialFactory.create(
+            anyMolecularCriteria = setOf(molecularCriterium),
+            indications = setOf(indication),
+            title = "title"
+        )
         val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial))
 
         val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
@@ -73,6 +81,7 @@ class EvidenceAnnotatorTest {
 
         assertThat(clearEvidence(annotatedVariant)).isEqualTo(clearEvidence(brafMolecularTestVariant))
         assertThat(annotatedVariant.evidence.treatmentEvidence.first().treatment).isEqualTo("treatment")  // replaced Vemurafenib
+        assertThat(annotatedVariant.evidence.eligibleTrials.first().title).isEqualTo("title")
     }
 
     @Test
