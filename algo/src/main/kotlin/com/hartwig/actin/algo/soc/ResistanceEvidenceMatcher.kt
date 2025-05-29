@@ -7,9 +7,11 @@ import com.hartwig.actin.datamodel.algo.ResistanceEvidence
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
+import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
@@ -18,7 +20,7 @@ class ResistanceEvidenceMatcher(
     private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
     // TODO (CB): Use clinicalEvidenceMatcher to generate all matches and then simplify this function?
-    @Suppress("unused") private val clinicalEvidenceMatcher: MatchesForActionable,
+    @Suppress("unused") private val actionabilityMatcher: ActionabilityMatcher,
     private val molecularHistory: MolecularHistory
 ) {
 
@@ -76,7 +78,7 @@ class ResistanceEvidenceMatcher(
                 fusions().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.fusions.any {
-                            hasEvidence(it)
+                            hasEvidence(it, molecularTest)
                         }
                     }
                 }
@@ -87,8 +89,8 @@ class ResistanceEvidenceMatcher(
         }
     }
 
-    private fun hasEvidence(it: Actionable) =
-        clinicalEvidenceMatcher[it]?.evidenceMatches?.isNotEmpty() == true
+    private fun hasEvidence(it: Actionable, molecularTest: MolecularTest) =
+        actionabilityMatcher.match(molecularTest)[it]?.evidenceMatches?.isNotEmpty() == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
         return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))
@@ -148,13 +150,19 @@ class ResistanceEvidenceMatcher(
             tumorDoids: Set<String>,
             evidences: List<EfficacyEvidence>,
             treatmentDatabase: TreatmentDatabase,
-            molecularHistory: MolecularHistory
+            molecularHistory: MolecularHistory,
+            serveRecord: ServeRecord
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
 
 
-            return ResistanceEvidenceMatcher(onLabelNonPositiveEvidence, treatmentDatabase, emptyMap(), molecularHistory)
+            return ResistanceEvidenceMatcher(
+                onLabelNonPositiveEvidence,
+                treatmentDatabase,
+                ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials()),
+                molecularHistory
+            )
         }
 
         private fun isOnLabel(event: EfficacyEvidence, expandedTumorDoids: Set<String>): Boolean {
