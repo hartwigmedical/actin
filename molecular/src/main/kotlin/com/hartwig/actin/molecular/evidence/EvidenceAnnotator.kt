@@ -1,45 +1,29 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
+import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 import com.hartwig.actin.molecular.util.ExtractionUtil
 
-class EvidenceAnnotator(
+class EvidenceAnnotator<T : MolecularTest>(
     private val clinicalEvidenceFactory: ClinicalEvidenceFactory,
-    val actionabilityMatcher: ActionabilityMatcher,
-) : MolecularAnnotator<MolecularTest, MolecularTest> {
-    override fun annotate(input: MolecularTest): MolecularTest {
+    private val actionabilityMatcher: ActionabilityMatcher,
+    private val annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
+) : MolecularAnnotator<T, T> {
 
+    override fun annotate(input: T): T {
         val matchesForActionable = actionabilityMatcher.match(input)
-
-        when (input) {
-            is MolecularRecord -> {
-                return input.copy(
-                    drivers = annotateDriversWithEvidence(input.drivers, matchesForActionable),
-                    characteristics = annotateCharacteristicsWithEvidence(input.characteristics, matchesForActionable)
-                )
-            }
-
-            is PanelRecord -> {
-                return input.copy(
-                    drivers = annotateDriversWithEvidence(input.drivers, matchesForActionable),
-                    characteristics = annotateCharacteristicsWithEvidence(input.characteristics, matchesForActionable)
-                )
-            }
-
-            else -> {
-                throw IllegalArgumentException("Unsupported MolecularTest type: ${input::class.java}")
-            }
-        }
+        return annotationFunction.invoke(
+            input,
+            annotateDriversWithEvidence(input.drivers, matchesForActionable),
+            annotateCharacteristicsWithEvidence(input.characteristics, matchesForActionable)
+        )
     }
 
     private fun annotateDriversWithEvidence(
