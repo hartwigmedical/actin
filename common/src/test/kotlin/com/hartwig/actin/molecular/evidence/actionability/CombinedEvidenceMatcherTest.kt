@@ -624,8 +624,8 @@ class CombinedEvidenceMatcherTest {
 
     fun minimalHrdCharacteristic(): HomologousRecombination {
         return HomologousRecombination(
-            score = null,
             isDeficient = false,
+            score = null,
             type = null,
             brca1Value = null,
             brca2Value = null,

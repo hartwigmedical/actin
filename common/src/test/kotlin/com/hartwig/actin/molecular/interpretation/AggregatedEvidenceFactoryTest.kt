@@ -35,8 +35,8 @@ class AggregatedEvidenceFactoryTest {
                 evidence = TestClinicalEvidenceFactory.createEmpty()
             ),
             homologousRecombination = HomologousRecombination(
-                score = 1.0,
                 isDeficient = true,
+                score = 1.0,
                 type = HomologousRecombinationType.BRCA1_TYPE,
                 brca1Value = 1.0,
                 brca2Value = 0.0,

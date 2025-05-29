@@ -212,8 +212,8 @@ object TestMolecularFactory {
 
     private fun createProperHomologousRecombination(): HomologousRecombination {
         return HomologousRecombination(
-            score = 0.45,
             isDeficient = false,
+            score = 0.45,
             type = HomologousRecombinationType.NONE,
             brca1Value = 0.4,
             brca2Value = 0.05,

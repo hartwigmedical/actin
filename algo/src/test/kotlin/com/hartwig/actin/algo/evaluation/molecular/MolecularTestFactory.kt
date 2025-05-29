@@ -202,20 +202,24 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withHomologousRecombinationAndVariant(isHrDeficient: Boolean?, variant: Variant): PatientRecord {
+    fun withEmptyHomologousRecombinationAndVariant(variant: Variant): PatientRecord {
+        return withCharacteristicsAndDriver(baseMolecular.characteristics.copy(homologousRecombination = null), variant)
+    }
+
+    fun withHomologousRecombinationAndVariant(isHrDeficient: Boolean, variant: Variant): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), variant
         )
     }
 
-    fun withHomologousRecombinationAndDeletion(isHrDeficient: Boolean?, del: CopyNumber): PatientRecord {
+    fun withHomologousRecombinationAndDeletion(isHrDeficient: Boolean, del: CopyNumber): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), del
         )
     }
 
     fun withHomologousRecombinationAndHomozygousDisruption(
-        isHrDeficient: Boolean?,
+        isHrDeficient: Boolean,
         homozygousDisruption: HomozygousDisruption
     ): PatientRecord {
         return withCharacteristicsAndDriver(
@@ -224,14 +228,14 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withHomologousRecombinationAndDisruption(isHrDeficient: Boolean?, disruption: Disruption): PatientRecord {
+    fun withHomologousRecombinationAndDisruption(isHrDeficient: Boolean, disruption: Disruption): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), disruption
         )
     }
 
     fun withHomologousRecombinationAndVariantAndDisruption(
-        isHrDeficient: Boolean?,
+        isHrDeficient: Boolean,
         disruption: Disruption,
         variant: Variant
     ): PatientRecord {
@@ -341,11 +345,11 @@ internal object MolecularTestFactory {
         }
     }
 
-    private fun createTestHomologousRecombination(isDeficient: Boolean?): HomologousRecombination? {
-        return isDeficient?.let {
+    private fun createTestHomologousRecombination(isDeficient: Boolean): HomologousRecombination {
+        return isDeficient.let {
             HomologousRecombination(
-                score = if (it) 1.0 else 0.0,
                 isDeficient = it,
+                score = if (it) 1.0 else 0.0,
                 type = if (it) HomologousRecombinationType.BRCA1_TYPE else HomologousRecombinationType.CANNOT_BE_DETERMINED,
                 brca1Value = if (it) 1.0 else 0.0,
                 brca2Value = 0.0,

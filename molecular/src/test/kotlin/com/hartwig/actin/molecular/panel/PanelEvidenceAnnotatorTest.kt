@@ -130,8 +130,8 @@ class PanelEvidenceAnnotatorTest {
 
         val homologousRecombination = isDeficient?.let {
             HomologousRecombination(
-                score = null,
                 isDeficient = isDeficient,
+                score = null,
                 type = null,
                 brca1Value = null,
                 brca2Value = null,

@@ -22,7 +22,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     fun `Should fail when HRD status unknown and no reportable drivers in HR genes`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withEmptyHomologousRecombinationAndVariant(hrdVariant()))
         )
     }
 
@@ -69,7 +69,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant(isReportable = true))
+                MolecularTestFactory.withEmptyHomologousRecombinationAndVariant(hrdVariant(isReportable = true))
             )
         )
     }

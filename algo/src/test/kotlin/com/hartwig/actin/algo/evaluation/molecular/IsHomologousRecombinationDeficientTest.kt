@@ -20,26 +20,25 @@ class IsHomologousRecombinationDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant())
+                MolecularTestFactory.withEmptyHomologousRecombinationAndVariant(hrdVariant())
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant(isReportable = true, isBiallelic = true))
+                MolecularTestFactory.withEmptyHomologousRecombinationAndVariant(hrdVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withEmptyHomologousRecombinationAndVariant(hrdVariant(isReportable = true, isBiallelic = false))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRecombinationAndVariant(
-                    null,
+                MolecularTestFactory.withEmptyHomologousRecombinationAndVariant(
                     TestVariantFactory.createMinimal().copy(isReportable = true, gene = hrdGene)
                 )
             )
