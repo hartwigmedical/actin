@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -28,7 +29,8 @@ class EvaluatedTreatmentAnnotatorTest {
         emptySet(),
         evidences,
         treatmentDatabase,
-        TestMolecularFactory.createMinimalTestMolecularHistory()
+        TestMolecularFactory.createMinimalTestMolecularHistory(),
+        mockk()
     )
     private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, resistanceEvidenceMatcher)
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))

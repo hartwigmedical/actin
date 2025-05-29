@@ -20,8 +20,8 @@ import org.apache.logging.log4j.Logger
 
 typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 
-class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, private val trials: List<ActionableTrial>) {
-    val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
+class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>, private val trials: List<ActionableTrial>) {
+    val logger: Logger = LogManager.getLogger(CombinedEvidenceMatcher::class.java)
 
     fun match(molecularTest: MolecularTest): MatchesForActionable {
         val evidences = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }

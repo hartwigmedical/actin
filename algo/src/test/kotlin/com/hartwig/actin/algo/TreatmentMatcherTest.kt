@@ -49,7 +49,8 @@ class TreatmentMatcherTest {
         emptySet(),
         evidences,
         treatmentDatabase,
-        TestMolecularFactory.createMinimalTestMolecularHistory()
+        TestMolecularFactory.createMinimalTestMolecularHistory(),
+        mockk()
     )
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher,

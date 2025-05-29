@@ -25,6 +25,7 @@ import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -47,7 +48,7 @@ private val MOLECULAR_HISTORY = TestMolecularFactory.createMinimalTestMolecularH
 class ResistanceEvidenceMatcherTest {
 
     private val resistanceEvidenceMatcher =
-        ResistanceEvidenceMatcher.create(DOID_MODEL, TUMOR_DOIDS, listOf(EFFICACY_EVIDENCE), TREATMENT_DATABASE, MOLECULAR_HISTORY)
+        ResistanceEvidenceMatcher.create(DOID_MODEL, TUMOR_DOIDS, listOf(EFFICACY_EVIDENCE), TREATMENT_DATABASE, MOLECULAR_HISTORY, mockk())
 
     @Test
     fun `Should match resistance evidence to SOC treatments`() {

@@ -289,7 +289,7 @@ class CombinedEvidenceMatcherTest {
             treatment = "Treatment 2",
         )
 
-        val matcher = ActionabilityMatcher(listOf(evidence1, evidence2), emptyList())
+        val matcher = CombinedEvidenceMatcher(listOf(evidence1, evidence2), emptyList())
 
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
             .copy(
@@ -608,7 +608,7 @@ class CombinedEvidenceMatcherTest {
 
     @Test
     fun `Should create Success MatchResult from Actionable`() {
-        assertThat(ActionabilityMatcher.successWhenNotEmpty(listOf(brafMolecularTestVariant))).isEqualTo(
+        assertThat(CombinedEvidenceMatcher.successWhenNotEmpty(listOf(brafMolecularTestVariant))).isEqualTo(
             ActionabilityMatchResult.Success(
                 listOf(brafMolecularTestVariant)
             )
@@ -617,11 +617,11 @@ class CombinedEvidenceMatcherTest {
 
     @Test
     fun `Should create Failure MatchResult from empty list`() {
-        assertThat(ActionabilityMatcher.successWhenNotEmpty(emptyList())).isEqualTo(ActionabilityMatchResult.Failure)
+        assertThat(CombinedEvidenceMatcher.successWhenNotEmpty(emptyList())).isEqualTo(ActionabilityMatchResult.Failure)
     }
 
-    fun matcherFactory(evidences: List<EfficacyEvidence>): ActionabilityMatcher {
-        return ActionabilityMatcher(evidences, emptyList())
+    fun matcherFactory(evidences: List<EfficacyEvidence>): CombinedEvidenceMatcher {
+        return CombinedEvidenceMatcher(evidences, emptyList())
     }
 
     fun panelTestWithMsi(isUnstable: Boolean): PanelRecord {
