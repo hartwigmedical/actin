@@ -22,6 +22,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TestTrialFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import io.mockk.every
 import io.mockk.mockk
@@ -50,7 +51,7 @@ class TreatmentMatcherTest {
         evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalTestMolecularHistory(),
-        mockk()
+        mockk<ActionabilityMatcher>()
     )
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher,

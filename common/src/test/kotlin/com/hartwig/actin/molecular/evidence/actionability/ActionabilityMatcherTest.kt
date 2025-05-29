@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -15,18 +16,21 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
-import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher.Companion.successWhenNotEmpty
+import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
+import com.hartwig.serve.datamodel.ImmutableServeRecord
+import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.fusion.ImmutableActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 private val brafActionableHotspot =
@@ -81,8 +85,7 @@ private val actionableFusion: ActionableFusion = ImmutableActionableFusion.build
 private val molecularTestFusion = TestFusionFactory.createMinimal()
     .copy(geneStart = "EGFR", geneEnd = "RAD51", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
 
-@Ignore
-class CombinedEvidenceMatcherTest {
+class ActionabilityMatcherTest {
 
     @Test
     fun `Should match combined evidence having multiple hotspots when also present in panel`() {
@@ -103,8 +106,8 @@ class CombinedEvidenceMatcherTest {
         val matches = matcher.match(molecularTest)
         assertThat(matches).isNotEmpty
         assertThat(matches).hasSize(2)
-        assertThat(matches.get(brafMolecularTestVariant as Actionable)).isEqualTo(setOf(evidence))
-        assertThat(matches.get(krasMolecularTestVariant as Actionable)).isEqualTo(setOf(evidence))
+        assertThat(matches[brafMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence), emptyMap()))
+        assertThat(matches[krasMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence), emptyMap()))
     }
 
     @Test
@@ -121,6 +124,50 @@ class CombinedEvidenceMatcherTest {
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
             )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).isEmpty()
+    }
+
+    @Test
+    fun `Should match hotspot to gene events on eligible genes`() {
+        val evidence = TestServeEvidenceFactory.create(
+            molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = "BRAF", geneEvent = GeneEvent.ANY_MUTATION)
+        )
+
+        val matcher = matcherFactory(listOf(evidence))
+
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(
+                drivers = TestMolecularFactory.createMinimalTestDrivers()
+                    .copy(
+                        variants = listOf(
+                            brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
+                        )
+                    )
+            )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(1)
+    }
+
+    @Test
+    fun `Should not match hotspots to gene events on ineligible genes`() {
+        val inapplicableGene = ApplicabilityFiltering.NON_APPLICABLE_GENES.first()
+
+        val evidence = TestServeEvidenceFactory.create(
+            molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = inapplicableGene, geneEvent = GeneEvent.ANY_MUTATION)
+        )
+
+        val variantOnInapplicableGene = TestVariantFactory.createMinimal().copy(
+            gene = inapplicableGene,
+            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+        )
+
+        val matcher = matcherFactory(listOf(evidence))
+
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(variantOnInapplicableGene)))
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).isEmpty()
@@ -151,7 +198,7 @@ class CombinedEvidenceMatcherTest {
 
         val matches = matcher.match(molecularTest)
         assertThat(matches.size).isEqualTo(1)
-        assertThat(matches.get(brafMolecularTestVariant as Actionable)).isEqualTo(setOf(evidence1, evidence2))
+        assertThat(matches[brafMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence1, evidence2), emptyMap()))
     }
 
     @Test
@@ -176,8 +223,8 @@ class CombinedEvidenceMatcherTest {
         val matches = matcher.match(molecularTest)
         assertThat(matches).isNotEmpty
         assertThat(matches).hasSize(2)
-        assertThat(matches.get(brafMolecularTestVariant as Actionable)).isEqualTo(setOf(evidence))
-        assertThat(matches.get(molecularTestFusion as Actionable)).isEqualTo(setOf(evidence))
+        assertThat(matches[brafMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence), emptyMap()))
+        assertThat(matches[molecularTestFusion]).isEqualTo(ActionabilityMatch(listOf(evidence), emptyMap()))
     }
 
     @Test
@@ -248,11 +295,8 @@ class CombinedEvidenceMatcherTest {
         val matches = matcher.match(molecularTest)
         assertThat(matches).isNotEmpty
         assertThat(matches).hasSize(1)
-        assertThat(evidences(matches)).contains(evidence)
+        assertThat(matches.values.flatMap { it.evidenceMatches }).contains(evidence)
     }
-
-    private fun evidences(matches: MatchesForActionable) =
-        matches.values.flatMap { it.evidenceMatches }
 
     @Test
     fun `Should match hla`() {
@@ -289,7 +333,7 @@ class CombinedEvidenceMatcherTest {
             treatment = "Treatment 2",
         )
 
-        val matcher = CombinedEvidenceMatcher(listOf(evidence1, evidence2), emptyList())
+        val matcher = ActionabilityMatcher(listOf(evidence1, evidence2), emptyList())
 
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
             .copy(
@@ -298,17 +342,7 @@ class CombinedEvidenceMatcherTest {
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
-        assertThat(matches.get(brafMolecularTestVariant as Actionable)).isEqualTo(setOf(evidence1, evidence2))
-    }
-
-    @Test
-    fun `Should match msi stable evidence with msi stable tumor`() {
-        val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.MICROSATELLITE_STABLE)
-        val matcher = matcherFactory(listOf(evidence))
-
-        val evidenceMatches = matcher.match(panelTestWithMsi(isUnstable = false))
-        assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).contains(evidence)
+        assertThat(matches[brafMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence1, evidence2), emptyMap()))
     }
 
     @Test
@@ -337,13 +371,13 @@ class CombinedEvidenceMatcherTest {
         val evidence = TestServeEvidenceFactory.create(
             molecularCriterium = ImmutableMolecularCriterium.builder()
                 .addHotspots(brafActionableHotspot)
-                .addCharacteristics(TestServeMolecularFactory.createCharacteristic(TumorCharacteristicType.MICROSATELLITE_STABLE))
+                .addCharacteristics(TestServeMolecularFactory.createCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE))
                 .build(),
         )
 
         val matcher = matcherFactory(listOf(evidence))
 
-        val molecularTest = panelTestWithMsi(isUnstable = false)
+        val molecularTest = panelTestWithMsi(isUnstable = true)
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers()
                     .copy(variants = listOf(brafMolecularTestVariant))
@@ -351,8 +385,13 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(molecularTest)
         assertThat(evidenceMatches).hasSize(2)
-        assertThat(evidenceMatches.get(brafMolecularTestVariant as Actionable)).isEqualTo(setOf(evidence))
-        assertThat(evidenceMatches.get(molecularTest.characteristics.microsatelliteStability as Actionable)).isEqualTo(setOf(evidence))
+        assertThat(evidenceMatches[brafMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence), emptyMap()))
+        assertThat(evidenceMatches[molecularTest.characteristics.microsatelliteStability!!]).isEqualTo(
+            ActionabilityMatch(
+                listOf(evidence),
+                emptyMap()
+            )
+        )
     }
 
     @Test
@@ -382,7 +421,7 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(panelTestWithMsi(isUnstable = true))
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -411,27 +450,7 @@ class CombinedEvidenceMatcherTest {
             )
         )
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
-    }
-
-    @Test
-    fun `Should match low tml evidence with low tml tumor`() {
-        val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
-        val matcher = matcherFactory(listOf(evidence))
-
-        val evidenceMatches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
-                    tumorMutationalLoad = TumorMutationalLoad(
-                        score = 185,
-                        isHigh = false,
-                        evidence = TestClinicalEvidenceFactory.createEmpty()
-                    )
-                )
-            )
-        )
-        assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -442,8 +461,8 @@ class CombinedEvidenceMatcherTest {
         val evidenceMatches = matcher.match(
             TestMolecularFactory.createMinimalTestPanelRecord().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
-                    tumorMutationalLoad = TumorMutationalLoad(
-                        score = 185,
+                    tumorMutationalBurden = TumorMutationalBurden(
+                        score = 100.0,
                         isHigh = true,
                         evidence = TestClinicalEvidenceFactory.createEmpty()
                     )
@@ -451,27 +470,7 @@ class CombinedEvidenceMatcherTest {
             )
         )
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
-    }
-
-    @Test
-    fun `Should match low tmb evidence with low tmb tumor`() {
-        val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
-        val matcher = matcherFactory(listOf(evidence))
-
-        val evidenceMatches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
-                    tumorMutationalLoad = TumorMutationalLoad(
-                        score = 185,
-                        isHigh = false,
-                        evidence = TestClinicalEvidenceFactory.createEmpty()
-                    )
-                )
-            )
-        )
-        assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -487,7 +486,7 @@ class CombinedEvidenceMatcherTest {
             )
         )
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -504,7 +503,23 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(molecularTest)
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
+    }
+
+    @Test
+    fun `Should not match gene evidence for ineligible event with variant on that gene`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.FUSION)
+        val matcher = matcherFactory(listOf(evidence))
+
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(
+                drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                    variants = listOf(brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)))
+                )
+            )
+
+        val evidenceMatches = matcher.match(molecularTest)
+        assertThat(evidenceMatches).isEmpty()
     }
 
     @Test
@@ -521,7 +536,7 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(molecularTest)
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -540,7 +555,7 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(molecularTest)
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -559,7 +574,7 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(molecularTest)
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -581,7 +596,7 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(molecularTest)
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
@@ -603,25 +618,34 @@ class CombinedEvidenceMatcherTest {
 
         val evidenceMatches = matcher.match(molecularTest)
         assertThat(evidenceMatches).hasSize(1)
-        assertThat(evidences(evidenceMatches)).containsExactly(evidence)
+        assertThat(evidenceMatches.values.flatMap { it.evidenceMatches }).containsExactly(evidence)
     }
 
     @Test
     fun `Should create Success MatchResult from Actionable`() {
-        assertThat(CombinedEvidenceMatcher.successWhenNotEmpty(listOf(brafMolecularTestVariant))).isEqualTo(
+        assertThat(successWhenNotEmpty(listOf(brafMolecularTestVariant))).isEqualTo(
             ActionabilityMatchResult.Success(
-                listOf(brafMolecularTestVariant)
+                listOf(
+                    brafMolecularTestVariant
+                )
             )
         )
     }
 
     @Test
     fun `Should create Failure MatchResult from empty list`() {
-        assertThat(CombinedEvidenceMatcher.successWhenNotEmpty(emptyList())).isEqualTo(ActionabilityMatchResult.Failure)
+        assertThat(successWhenNotEmpty(emptyList())).isEqualTo(ActionabilityMatchResult.Failure)
     }
 
-    fun matcherFactory(evidences: List<EfficacyEvidence>): CombinedEvidenceMatcher {
-        return CombinedEvidenceMatcher(evidences, emptyList())
+    fun matcherFactory(evidences: List<EfficacyEvidence>): ActionabilityMatcher {
+        return CombinedEvidenceMatcherFactory.create(serveRecordWithEvidences(evidences))
+    }
+
+    fun serveRecordWithEvidences(evidences: List<EfficacyEvidence>): ServeRecord {
+        return ImmutableServeRecord.builder()
+            .knownEvents(ImmutableKnownEvents.builder().build())
+            .addAllEvidences(evidences)
+            .build()
     }
 
     fun panelTestWithMsi(isUnstable: Boolean): PanelRecord {
@@ -659,4 +683,5 @@ class CombinedEvidenceMatcherTest {
             evidence = TestClinicalEvidenceFactory.createEmpty()
         )
     }
+
 }

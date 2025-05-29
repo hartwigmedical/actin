@@ -14,6 +14,8 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
+import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
+import com.hartwig.actin.molecular.evidence.EvidenceRegressionReporter
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -79,7 +81,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelSpecifications =
             config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
 
-        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, panelSpecifications)
+        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, panelSpecifications, doidEntry, tumorDoids)
         val clinicalMolecularTests =
             interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
 
@@ -95,13 +97,16 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun interpretOrangeRecord(
         config: MolecularInterpreterConfig,
         serveDatabase: ServeDatabase,
-        panelSpecifications: PanelSpecifications
+        panelSpecifications: PanelSpecifications, 
+        doidEntry: DoidEntry,
+        tumorDoids: Set<String>,
     ): List<MolecularTest> {
         return if (config.orangeJson != null) {
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
-
-            val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
+            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(orange.refGenomeVersion())
+            val serveRecord = selectForRefGenomeVersion(serveDatabase, orangeRefGenomeVersion)
+            val evidenceAnnotator = EvidenceAnnotatorFactory.create(serveRecord, doidEntry, tumorDoids)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
@@ -111,7 +116,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                     MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()))
                 )
 
-            orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
+            val orangeMolecularTests = orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
+            val testsWithUpdatedEvidence = orangeMolecularTests.map { evidenceAnnotator.annotate(it) }
+
+            orangeMolecularTests.zip(testsWithUpdatedEvidence).map { (oldTest, newTest) -> EvidenceRegressionReporter.report(oldTest, newTest) }
+            testsWithUpdatedEvidence
         } else {
             emptyList()
         }
@@ -163,6 +172,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
         val panelDriverAttributeAnnotator =
             PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), geneDriverLikelihoodModel)
+        val evidenceAnnotator = EvidenceAnnotatorFactory.create(serveRecord, doidEntry, tumorDoids)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical.sequencingTests,
@@ -178,8 +188,15 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelFusionAnnotator
         )
 
+        val allTests = sequencingMolecularTests + ihcMolecularTests
+        val molecularTestsWithUpdatedEvidence = allTests.map { evidenceAnnotator.annotate(it) }
+
+        allTests.zip(molecularTestsWithUpdatedEvidence).forEach { (oldTest, newTest) ->
+            EvidenceRegressionReporter.report(oldTest, newTest)
+        }
+
         LOGGER.info("Completed interpretation of {} clinical molecular test(s)", sequencingMolecularTests.size)
-        return sequencingMolecularTests + ihcMolecularTests
+        return molecularTestsWithUpdatedEvidence
     }
 
     private fun interpretSequencingMolecularTests(

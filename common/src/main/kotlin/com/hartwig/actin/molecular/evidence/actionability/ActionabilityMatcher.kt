@@ -20,8 +20,8 @@ import org.apache.logging.log4j.Logger
 
 typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 
-class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>, private val trials: List<ActionableTrial>) {
-    val logger: Logger = LogManager.getLogger(CombinedEvidenceMatcher::class.java)
+class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, private val trials: List<ActionableTrial>) {
+    val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
 
     fun match(molecularTest: MolecularTest): MatchesForActionable {
         val evidences = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }
@@ -202,13 +202,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>, pri
 
         return when (characteristic.type()) {
             TumorCharacteristicType.MICROSATELLITE_STABLE -> {
-                molecularTest.characteristics.microsatelliteStability?.let { msi ->
-                    if (msi.isUnstable) {
-                        ActionabilityMatchResult.Failure
-                    } else {
-                        ActionabilityMatchResult.Success(listOf(msi))
-                    }
-                } ?: ActionabilityMatchResult.Failure
+                ActionabilityMatchResult.Failure
             }
 
             TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> {
@@ -232,19 +226,13 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>, pri
             }
 
             TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        ActionabilityMatchResult.Failure
-                    } else {
-                        ActionabilityMatchResult.Success(listOf(tml))
-                    }
-                } ?: ActionabilityMatchResult.Failure
+                ActionabilityMatchResult.Failure
             }
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        ActionabilityMatchResult.Success(listOf(tml))
+                molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
+                    if (tmb.isHigh) {
+                        ActionabilityMatchResult.Success(listOf(tmb))
 
                     } else {
                         ActionabilityMatchResult.Failure
@@ -253,13 +241,7 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>, pri
             }
 
             TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        ActionabilityMatchResult.Failure
-                    } else {
-                        ActionabilityMatchResult.Success(listOf(tml))
-                    }
-                } ?: ActionabilityMatchResult.Failure
+                ActionabilityMatchResult.Failure
             }
 
             TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> {
@@ -272,8 +254,6 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>, pri
                 } ?: ActionabilityMatchResult.Failure
             }
 
-            // note that VirusEvidence has a HPV_POSITIVE_TYPES that contains just TumorCharacteristicType.HPV_POSITIVE (serve data model)
-            // can we reuse that here?
             TumorCharacteristicType.HPV_POSITIVE -> {
                 val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HUMAN_PAPILLOMA_VIRUS }
                 if (hits.isNotEmpty()) {
@@ -298,8 +278,6 @@ class CombinedEvidenceMatcher(private val evidences: List<EfficacyEvidence>, pri
         if (criterium.hla().isEmpty()) {
             return ActionabilityMatchResult.Success()
         } else {
-            // TODO don't notice previous support for hla matching, and SERVE has no criteria with
-            // populated hla entries ... is this a problem? Should check in serve verifier? warn for now
             logger.warn("evidence contains HLA but matching supported")
             return ActionabilityMatchResult.Failure
         }

@@ -67,16 +67,12 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate fusion`() {
-        val interpretedFusion = TestMolecularFactory.createMinimalFusion().copy(
+        val annotatedFusion = TestMolecularFactory.createMinimalFusion().copy(
             geneStart = GENE,
             geneEnd = OTHER_GENE,
         )
 
-        val annotatedFusion = interpretedFusion.copy(
-            evidence = ON_LABEL_MATCH
-        )
-
-        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(interpretedFusion)
+        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(annotatedFusion)
 
         val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(annotatedFusion))

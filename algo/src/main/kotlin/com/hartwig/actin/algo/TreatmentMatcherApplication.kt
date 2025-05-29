@@ -19,6 +19,7 @@ import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -93,7 +94,13 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val evidences = serveRecord.evidences()
         val tumorDoids = patient.tumor.doids.orEmpty().toSet()
         val resistanceEvidenceMatcher =
-            ResistanceEvidenceMatcher.create(doidModel, tumorDoids, evidences, treatmentDatabase, patient.molecularHistory, serveRecord)
+            ResistanceEvidenceMatcher.create(
+                doidModel,
+                tumorDoids,
+                evidences,
+                treatmentDatabase,
+                patient.molecularHistory, ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials())
+            )
 
         val treatmentMatcher =
             TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
