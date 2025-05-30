@@ -172,6 +172,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "MEETS_SPECIFIC_CRITERIA_REGARDING_RECURRENT_CANCER",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_INCURABLE_CANCER",
     "usedStatus": "UNUSED"
   },
@@ -432,7 +436,7 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X",
+    "eligibilityRule": "HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_X",
     "usedStatus": "UNUSED"
   },
   {
@@ -1805,6 +1809,10 @@
   },
   {
     "eligibilityRule": "HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_IGNORING_ICD_TITLES_Y",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAD_TOXICITY_X_OF_AT_LEAST_GRADE_Y_DURING_PREVIOUS_TREATMENT",
     "usedStatus": "UNUSED"
   },
   {

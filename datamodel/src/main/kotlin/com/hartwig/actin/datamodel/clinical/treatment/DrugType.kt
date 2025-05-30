@@ -121,6 +121,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     HORMONE_ANTINEOPLASTIC(TreatmentCategory.HORMONE_THERAPY),
     HPV_VACCINE(TreatmentCategory.IMMUNOTHERAPY, "HPV vaccine"),
     HPV16_VACCINE(TreatmentCategory.IMMUNOTHERAPY, "HPV-16 vaccine"),
+    IDH_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "IDH inhibitor"),
     IDO1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "IDO1 inhibitor"),
     IGF_1R_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "IGF-1R inhibitor"),
     IGF_1R_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "IGF-1R TKI"),
