@@ -340,6 +340,20 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many treatment categories`() {
+        val rule = firstOfType(FunctionInput.MANY_TREATMENT_CATEGORIES)
+        val valid = create(rule, listOf(TreatmentCategory.IMMUNOTHERAPY.display() + ";" + TreatmentCategory.TARGETED_THERAPY.display()))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createManyTreatmentCategories(valid)
+        assertThat(inputs.treatmentCategories).isEqualTo(setOf(TreatmentCategory.IMMUNOTHERAPY, TreatmentCategory.TARGETED_THERAPY))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment category")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.IMMUNOTHERAPY, "test")))).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one specific treatment input`() {
         val rule = firstOfType(FunctionInput.ONE_SPECIFIC_TREATMENT)
         val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
