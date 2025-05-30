@@ -65,7 +65,16 @@ class PanelAnnotator(
                         evidence = ExtractionUtil.noEvidence()
                     )
                 },
-                homologousRecombination = extractHomologousRecombination(input.isHomologousRecombinationDeficient),
+                homologousRecombination = input.isHomologousRecombinationDeficient?.let {
+                    HomologousRecombination(
+                        score = null,
+                        isDeficient = it,
+                        type = null,
+                        brca1Value = null,
+                        brca2Value = null,
+                        evidence = ExtractionUtil.noEvidence()
+                    )
+                },
                 tumorMutationalBurden = input.tumorMutationalBurden?.let {
                     val isHigh = it > TMB_HIGH_CUTOFF
                     TumorMutationalBurden(
@@ -80,17 +89,5 @@ class PanelAnnotator(
             hasSufficientPurity = true,
             hasSufficientQuality = true
         )
-    }
-
-    private fun extractHomologousRecombination(isDeficient: Boolean?): HomologousRecombination? {
-        return if (isDeficient == null) null else
-            HomologousRecombination(
-                isDeficient = isDeficient,
-                score = null,
-                type = null,
-                brca1Value = null,
-                brca2Value = null,
-                evidence = ExtractionUtil.noEvidence()
-            )
     }
 }

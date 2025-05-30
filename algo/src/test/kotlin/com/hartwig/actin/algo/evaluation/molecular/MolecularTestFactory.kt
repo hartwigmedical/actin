@@ -202,10 +202,6 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withEmptyHomologousRecombinationAndVariant(variant: Variant): PatientRecord {
-        return withCharacteristicsAndDriver(baseMolecular.characteristics.copy(homologousRecombination = null), variant)
-    }
-
     fun withHomologousRecombinationAndVariant(isHrDeficient: Boolean, variant: Variant): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), variant

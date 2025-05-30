@@ -52,7 +52,7 @@ object CharacteristicsExtraction {
     }
 
     private fun determineHomologousRecombination(chord: ChordRecord?): HomologousRecombination? {
-        return if (chord == null || chord.hrStatus() in setOf(ChordStatus.CANNOT_BE_DETERMINED, ChordStatus.UNKNOWN)) null else chord.let {
+        return chord?.takeIf { it.hrStatus() in setOf(ChordStatus.HR_DEFICIENT, ChordStatus.HR_PROFICIENT) }?.let {
             HomologousRecombination(
                 isDeficient = isHomologousRecombinationDeficient(it.hrStatus()),
                 score = it.hrdValue(),
