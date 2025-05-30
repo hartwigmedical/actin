@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.util
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 
 object FormatFunctions {
+    
     fun formatVariantImpact(
         hgvsProteinImpact: String,
         hgvsCodingImpact: String,
