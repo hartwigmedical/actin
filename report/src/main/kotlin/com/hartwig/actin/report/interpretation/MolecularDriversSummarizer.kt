@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 
 class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
@@ -13,15 +13,20 @@ class MolecularDriversSummarizer private constructor(
 ) {
 
     fun keyVariants(): List<String> {
-        return drivers.variants.filter(::isKeyDriver).map { it.event }
+        val highDriverVariants = drivers.variants.filter(::isReportableHighDriver)
+        val variantsAssociatedWithDrugResistance = drivers.variants.filter { it.isReportable && it.isAssociatedWithDrugResistance == true }
+        return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { it.event }.sorted()
     }
 
     fun keyAmplifiedGenes(): List<String> {
         return drivers.copyNumbers
             .asSequence()
             .filter { copyNumber -> copyNumber.canonicalImpact.type.isGain || copyNumber.otherImpacts.any { it.type.isGain } }
-            .filter(::isKeyDriver)
-            .map { it.gene + annotateCopyNumber(it.canonicalImpact.minCopies, it.canonicalImpact.maxCopies, it.canonicalImpact.type) }
+            .filter(::isReportableHighDriver)
+            .map {
+                it.gene + if (it.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" +
+                        if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else ""
+            }
             .distinct()
             .toList()
     }
@@ -30,23 +35,23 @@ class MolecularDriversSummarizer private constructor(
         return drivers.copyNumbers
             .asSequence()
             .filter { copyNumber -> copyNumber.canonicalImpact.type.isDeletion || copyNumber.otherImpacts.any { it.type.isDeletion } }
-            .filter(::isKeyDriver)
+            .filter(::isReportableHighDriver)
             .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else "" }
             .distinct()
             .toList()
     }
 
     fun keyHomozygouslyDisruptedGenes(): List<String> {
-        return drivers.homozygousDisruptions.filter(::isKeyDriver).map(GeneAlteration::gene).distinct()
+        return drivers.homozygousDisruptions.filter(::isReportableHighDriver).map(GeneAlteration::gene).distinct()
     }
 
     fun keyFusionEvents(): List<String> {
-        return drivers.fusions.filter(::isKeyDriver).map(Fusion::event).distinct()
+        return drivers.fusions.filter(::isReportableHighDriver).map(Fusion::event).distinct()
     }
 
     fun keyVirusEvents(): List<String> {
         return drivers.viruses
-            .filter(::isKeyDriver)
+            .filter(::isReportableHighDriver)
             .map { String.format("%s (%s int. detected)", it.event, it.integrations) }
             .distinct()
     }
@@ -58,22 +63,13 @@ class MolecularDriversSummarizer private constructor(
             drivers.fusions,
             drivers.homozygousDisruptions,
             drivers.viruses
-        ).flatten().filterNot(::isKeyDriver)
+        ).flatten().filterNot(::isReportableHighDriver)
         return (nonDisruptionDrivers + drivers.disruptions.toList())
             .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
-
-    private fun isKeyDriver(driver: Driver): Boolean {
+    
+    private fun isReportableHighDriver(driver: Driver): Boolean {
         return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
-    }
-
-    private fun annotateCopyNumber(minCopies: Int?, maxCopies: Int?, impactType: CopyNumberType): String {
-        return when (impactType) {
-            CopyNumberType.FULL_GAIN -> minCopies?.let { "$minCopies copies" } ?: ""
-            CopyNumberType.PARTIAL_GAIN -> maxCopies?.let { "$maxCopies copies (partial)" } ?: " (partial)"
-            CopyNumberType.NONE -> " (alt transcript)"
-            else -> ""
-        }
     }
 
     companion object {
