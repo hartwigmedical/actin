@@ -45,7 +45,6 @@ class EvidenceAnnotatorTest {
 
     @Test
     fun `Should annotate variants with evidence`() {
-
         val molecularCriterium = ImmutableMolecularCriterium.builder()
             .addAllHotspots(listOf(brafActionableHotspot))
             .build()
@@ -117,8 +116,8 @@ class EvidenceAnnotatorTest {
     ) = EvidenceAnnotator<PanelRecord>(
         clinicalEvidenceFactory,
         actionabilityMatcher
-    ) { input, drivers, charateristics ->
-        input.copy(drivers = drivers, characteristics = charateristics)
+    ) { input, drivers, characteristics ->
+        input.copy(drivers = drivers, characteristics = characteristics)
     }
 
     private fun clearEvidence(variant: Variant): Variant {
