@@ -18,7 +18,7 @@ object ServeCleaner {
             .build()
     }
 
-    fun cleanCombinedEvidences(record: ServeRecord): ServeRecord {
+    private fun cleanCombinedEvidences(record: ServeRecord): ServeRecord {
         val cleanedEvidences = record.evidences().filterNot { evidence ->
             ServeVerifier.isCombinedProfile(evidence.molecularCriterium())
         }

@@ -51,27 +51,27 @@ object ActionableEventExtraction {
         }
     }
 
-    fun extractHotspot(molecularCriterium: MolecularCriterium): ActionableHotspot {
+    private fun extractHotspot(molecularCriterium: MolecularCriterium): ActionableHotspot {
         return molecularCriterium.hotspots().first()
     }
 
-    fun extractCodon(molecularCriterium: MolecularCriterium): ActionableRange {
+    private fun extractCodon(molecularCriterium: MolecularCriterium): ActionableRange {
         return molecularCriterium.codons().first()
     }
 
-    fun extractExon(molecularCriterium: MolecularCriterium): ActionableRange {
+    private fun extractExon(molecularCriterium: MolecularCriterium): ActionableRange {
         return molecularCriterium.exons().first()
     }
 
-    fun extractGene(molecularCriterium: MolecularCriterium): ActionableGene {
+    private fun extractGene(molecularCriterium: MolecularCriterium): ActionableGene {
         return molecularCriterium.genes().first()
     }
 
-    fun extractFusion(molecularCriterium: MolecularCriterium): ActionableFusion {
+    private fun extractFusion(molecularCriterium: MolecularCriterium): ActionableFusion {
         return molecularCriterium.fusions().first()
     }
 
-    fun extractCharacteristic(molecularCriterium: MolecularCriterium): ActionableCharacteristic {
+    private fun extractCharacteristic(molecularCriterium: MolecularCriterium): ActionableCharacteristic {
         return molecularCriterium.characteristics().first()
     }
 
@@ -79,27 +79,27 @@ object ActionableEventExtraction {
         return molecularCriterium.hla().first()
     }
 
-    fun hotspotFilter(): Predicate<MolecularCriterium> {
+    private fun hotspotFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.hotspots().isNotEmpty() }
     }
 
-    fun codonFilter(): Predicate<MolecularCriterium> {
+    private fun codonFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.codons().isNotEmpty() }
     }
 
-    fun exonFilter(): Predicate<MolecularCriterium> {
+    private fun exonFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.exons().isNotEmpty() }
     }
 
-    fun geneFilter(validGeneEvents: Set<GeneEvent>): Predicate<MolecularCriterium> {
+    private fun geneFilter(validGeneEvents: Set<GeneEvent>): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.genes().any { validGeneEvents.contains(it.event()) } }
     }
 
-    fun fusionFilter(): Predicate<MolecularCriterium> {
+    private fun fusionFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.fusions().isNotEmpty() }
     }
 
-    fun characteristicsFilter(validTypes: Set<TumorCharacteristicType>): Predicate<MolecularCriterium> {
+    private fun characteristicsFilter(validTypes: Set<TumorCharacteristicType>): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.characteristics().any { validTypes.contains(it.type()) } }
     }
 
@@ -128,8 +128,17 @@ object ActionableEventExtraction {
 
     private fun fromActionableCharacteristic(characteristic: ActionableCharacteristic): EvidenceType {
         return when (characteristic.type()) {
-            TumorCharacteristicType.MICROSATELLITE_UNSTABLE, TumorCharacteristicType.MICROSATELLITE_STABLE, TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD, TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD, TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN, TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN, TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> EvidenceType.SIGNATURE
-            TumorCharacteristicType.HPV_POSITIVE, TumorCharacteristicType.EBV_POSITIVE -> EvidenceType.VIRAL_PRESENCE
+            TumorCharacteristicType.MICROSATELLITE_UNSTABLE,
+            TumorCharacteristicType.MICROSATELLITE_STABLE,
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD,
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD,
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN,
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN,
+            TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> EvidenceType.SIGNATURE
+
+            TumorCharacteristicType.HPV_POSITIVE,
+            TumorCharacteristicType.EBV_POSITIVE -> EvidenceType.VIRAL_PRESENCE
+
             else -> {
                 throw java.lang.IllegalStateException("Unsupported tumor characteristic: " + characteristic.type())
             }
