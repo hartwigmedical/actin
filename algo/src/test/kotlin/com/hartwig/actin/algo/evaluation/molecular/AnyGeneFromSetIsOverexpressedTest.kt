@@ -11,8 +11,6 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val GENES = setOf("gene a", "gene b", "gene c")
-
 class AnyGeneFromSetIsOverexpressedTest {
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
         every { evaluate(any<MolecularRecord>()) } returns EvaluationFactory.pass("amplification")
@@ -33,11 +31,8 @@ class AnyGeneFromSetIsOverexpressedTest {
                 else -> alwaysWarnGeneAmplificationEvaluation
             }
         }
-        val evaluation = AnyGeneFromSetIsOverexpressed(
-            null,
-            GENES,
-            geneIsAmplifiedCreator
-        ).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        val evaluation =
+            createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessages).contains("gene a and gene c is amplified therefore possible overexpression in RNA")
     }
@@ -45,11 +40,8 @@ class AnyGeneFromSetIsOverexpressedTest {
     @Test
     fun `Should evaluate to undetermined when no amplification`() {
         val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
-        val evaluation = AnyGeneFromSetIsOverexpressed(
-            null,
-            GENES,
-            geneIsAmplifiedCreator
-        ).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        val evaluation =
+            createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages)
             .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
@@ -58,12 +50,17 @@ class AnyGeneFromSetIsOverexpressedTest {
     @Test
     fun `Should evaluate to undetermined when molecular record not available`() {
         val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
-        val evaluation = AnyGeneFromSetIsOverexpressed(
-            null,
-            GENES,
-            geneIsAmplifiedCreator
-        ).evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+        val evaluation =
+            createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly("No molecular data to determine overexpression of gene a, gene b and gene c in RNA")
+    }
+
+    private fun createFunctionWithEvaluations(geneIsAmplified: (String, LocalDate?) -> GeneIsAmplified): AnyGeneFromSetIsOverexpressed {
+        return AnyGeneFromSetIsOverexpressed(
+            LocalDate.of(2024, 11, 6),
+            setOf("gene a", "gene b", "gene c"),
+            geneIsAmplified
+        )
     }
 }
