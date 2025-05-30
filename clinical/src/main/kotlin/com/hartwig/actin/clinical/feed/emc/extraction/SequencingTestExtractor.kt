@@ -78,13 +78,13 @@ class SequencingTestExtractor(
                                 knownSpecifications = false
                             )
                         ),
-                        sequencingResults.extractionEvaluation
+                        sequencingResults.extractionEvaluation.copy(sequencingTestEvaluatedInputs = sequencingResults.extractionEvaluation.sequencingTestResultEvaluatedInputs)
                     )
                 } else {
-                    ExtractionResult(emptyList(), sequencingResults.extractionEvaluation.copy(warnings = emptySet()))
+                    ExtractionResult(emptyList(), CurationExtractionEvaluation())
                 }
 
-            } ?: ExtractionResult(emptyList(), testCurationConfig.extractionEvaluation.copy(warnings = emptySet()))
+            } ?: ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
         return extracted.fold(
             ExtractionResult(emptyList(), CurationExtractionEvaluation())

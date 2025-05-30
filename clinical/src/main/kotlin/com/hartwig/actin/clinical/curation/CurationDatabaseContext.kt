@@ -169,7 +169,7 @@ data class CurationDatabaseContext(
                 CurationDatabaseReader.SEQUENCING_TEST_RESULT_TSV,
                 SequencingTestResultConfigFactory(),
                 CurationCategory.SEQUENCING_TEST_RESULT
-            ) { it.sequencingTestEvaluatedInputs },
+            ) { it.sequencingTestResultEvaluatedInputs },
             medicationNameCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MEDICATION_NAME_TSV,
