@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.amplifications
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.deletions
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.hrd
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.msi
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.negativeResults
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.skippedExons
@@ -22,14 +23,13 @@ import com.hartwig.feed.datamodel.FeedSequencingTest
 class StandardSequencingTestExtractor(
     private val testCuration: CurationDatabase<SequencingTestConfig>,
     private val testResultCuration: CurationDatabase<SequencingTestResultConfig>
-) :
-    StandardDataExtractor<List<SequencingTest>> {
+) : StandardDataExtractor<List<SequencingTest>> {
 
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
-        return ehrPatientRecord.sequencingTests.map { test ->
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<SequencingTest>> {
+        return feedPatientRecord.sequencingTests.map { test ->
             val testCurationResponse = CurationResponse.createFromConfigs(
                 testCuration.find(test.name),
-                ehrPatientRecord.patientDetails.patientId,
+                feedPatientRecord.patientDetails.patientId,
                 CurationCategory.SEQUENCING_TEST,
                 test.name,
                 "sequencing test",
@@ -39,7 +39,7 @@ class StandardSequencingTestExtractor(
             if (testCurationResponse.config()?.ignore == true) {
                 ExtractionResult(emptyList(), testCurationResponse.extractionEvaluation)
             } else {
-                extractTestResults(test, testCurationResponse, ehrPatientRecord.patientDetails.patientId)
+                extractTestResults(test, testCurationResponse, feedPatientRecord.patientDetails.patientId)
             }
         }
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
@@ -65,6 +65,7 @@ class StandardSequencingTestExtractor(
                         skippedExons = skippedExons(allResults),
                         tumorMutationalBurden = tmb(allResults),
                         isMicrosatelliteUnstable = msi(allResults),
+                        isHomologousRecombinationDeficient = hrd(allResults),
                         negativeResults = negativeResults(allResults),
                         knownSpecifications = test.knownSpecifications
                     )

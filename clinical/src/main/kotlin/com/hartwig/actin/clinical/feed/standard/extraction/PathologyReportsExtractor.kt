@@ -6,9 +6,9 @@ import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class PathologyReportsExtractor : StandardDataExtractor<List<PathologyReport>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<PathologyReport>> {
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<PathologyReport>> {
         return ExtractionResult(
-            ehrPatientRecord.tumorDetails.pathology.takeIf { it.isNotEmpty() }?.map {
+            feedPatientRecord.tumorDetails.pathology.takeIf { it.isNotEmpty() }?.map {
                 PathologyReport(
                     tissueId = it.tissueId,
                     lab = it.lab,

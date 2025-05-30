@@ -4,5 +4,5 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
 interface StandardDataExtractor<T> {
-    fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<T>
+    fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<T>
 }

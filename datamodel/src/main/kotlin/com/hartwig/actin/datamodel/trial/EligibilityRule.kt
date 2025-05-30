@@ -70,6 +70,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_BONE_METASTASES_ONLY(FunctionInput.NONE),
     HAS_LUNG_METASTASES(FunctionInput.NONE),
     HAS_LYMPH_NODE_METASTASES(FunctionInput.NONE),
+    HAS_LUNG_AND_OR_LUNG_LYMPH_NODE_METASTASES_ONLY(FunctionInput.NONE),
     HAS_VISCERAL_METASTASES(FunctionInput.NONE),
     HAS_UNRESECTABLE_PERITONEAL_METASTASES(FunctionInput.NONE),
     HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY(FunctionInput.NONE),

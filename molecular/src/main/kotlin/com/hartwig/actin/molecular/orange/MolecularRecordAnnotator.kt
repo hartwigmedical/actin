@@ -18,7 +18,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.actin.molecular.util.ExtractionUtil
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -52,10 +51,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateHomologousRecombination(homologousRecombination: HomologousRecombination?): HomologousRecombination? {
         return homologousRecombination?.let {
-            val evidence =
-                it.isDeficient?.let { isDeficient -> evidenceDatabase.evidenceForHomologousRecombinationStatus(isDeficient) }
-                    ?: ExtractionUtil.noEvidence()
-            it.copy(evidence = evidence)
+            it.copy(evidence = evidenceDatabase.evidenceForHomologousRecombinationStatus(it.isDeficient))
         }
     }
 

@@ -8,12 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -79,18 +74,6 @@ private val EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT = EXON_SKIP_FUSION.copy(
     geneTranscriptEnd = CANONICAL_TRANSCRIPT
 )
 
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-
-private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
-    TestTreatmentEvidenceFactory.create(
-        treatment = "treatment",
-        evidenceLevel = EvidenceLevel.A,
-        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE
-    )
-)
-
 private val KNOWN_FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)
     .proteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN).build()
 
@@ -105,7 +88,7 @@ class PanelFusionAnnotatorTest {
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
 
-    private val annotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensembleDataCache)
+    private val annotator = PanelFusionAnnotator(knownFusionCache, ensembleDataCache)
 
     @Test
     fun `Should determine fusion driver likelihood`() {
@@ -193,15 +176,7 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START::$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEvidence(
-                    TestTreatmentEvidenceFactory.create(
-                        treatment = "treatment",
-                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-                        evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                    )
-                )
+                evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
     }
@@ -223,17 +198,10 @@ class PanelFusionAnnotatorTest {
                 geneTranscriptEnd = TRANSCRIPT_END,
                 fusedExonUp = FUSED_EXON_UP,
                 fusedExonDown = FUSED_EXON_DOWN,
-                event = "$GENE_START::$GENE_END fusion",
+                event = "$GENE_START(exon$FUSED_EXON_UP)::$GENE_END(exon$FUSED_EXON_DOWN) fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEvidence(
-                    TestTreatmentEvidenceFactory.create(
-                        treatment = "treatment",
-                        evidenceLevel = EvidenceLevel.A,
-                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
-                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE)
-                )
+                evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
     }
@@ -300,6 +268,24 @@ class PanelFusionAnnotatorTest {
                 )
             )
         )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception if exonUp is curated but geneUp is null`() {
+        val fusion = SequencedFusion(geneUp = null, exonUp = 5)
+        annotator.annotate(setOf(fusion), emptySet())
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception if exonDown is curated but geneDown is null`() {
+        val fusion = SequencedFusion(geneDown = null, exonDown = 5)
+        annotator.annotate(setOf(fusion), emptySet())
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception if both genes are null`() {
+        val fusion = SequencedFusion(geneUp = null, geneDown = null)
+        annotator.annotate(setOf(fusion), emptySet())
     }
 
     private fun setupKnownFusionCache() {

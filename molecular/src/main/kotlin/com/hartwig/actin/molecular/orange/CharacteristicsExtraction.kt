@@ -52,10 +52,10 @@ object CharacteristicsExtraction {
     }
 
     private fun determineHomologousRecombination(chord: ChordRecord?): HomologousRecombination? {
-        return chord?.let {
+        return chord?.takeIf { it.hrStatus() in setOf(ChordStatus.HR_DEFICIENT, ChordStatus.HR_PROFICIENT) }?.let {
             HomologousRecombination(
-                score = it.hrdValue(),
                 isDeficient = isHomologousRecombinationDeficient(it.hrStatus()),
+                score = it.hrdValue(),
                 type = HomologousRecombinationType.valueOf(it.hrdType().uppercase()),
                 brca1Value = it.brca1Value(),
                 brca2Value = it.brca2Value(),
@@ -92,11 +92,11 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun isHomologousRecombinationDeficient(hrStatus: ChordStatus): Boolean? {
+    private fun isHomologousRecombinationDeficient(hrStatus: ChordStatus): Boolean {
         return when (hrStatus) {
             ChordStatus.HR_DEFICIENT -> true
             ChordStatus.HR_PROFICIENT -> false
-            ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> null
+            else -> throw IllegalStateException("HR status must be deficient or proficient")
         }
     }
 

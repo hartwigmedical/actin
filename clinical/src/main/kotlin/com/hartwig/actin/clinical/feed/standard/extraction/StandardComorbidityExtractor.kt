@@ -20,8 +20,8 @@ import com.hartwig.feed.datamodel.FeedToxicity
 class StandardComorbidityExtractor(
     private val comorbidityCuration: CurationDatabase<ComorbidityConfig>
 ) : StandardDataExtractor<List<Comorbidity>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<Comorbidity>> {
-        return with(ehrPatientRecord) {
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<Comorbidity>> {
+        return with(feedPatientRecord) {
             val patientId = patientDetails.patientId
             listOf(
                 extractCategory(otherConditions, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history", patientId),

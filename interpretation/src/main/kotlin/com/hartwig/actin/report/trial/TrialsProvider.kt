@@ -75,22 +75,24 @@ class TrialsProvider(
 
         val (nationalTrials, internationalTrials) = partitionByCountry(eligibleExternalTrials, countryOfReference)
 
+        val filteredNationalTrials = nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
+            .filterExclusivelyInChildrensHospitalsInReferenceCountry(
+                patientRecord.patient.birthYear,
+                treatmentMatch.referenceDate,
+                countryOfReference
+            )
+
         val nationalTrialsNotOverlappingHospital =
             hideOverlappingTrials(
                 nationalTrials,
-                nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
-                    .filterExclusivelyInChildrensHospitalsInReferenceCountry(
-                        patientRecord.patient.birthYear,
-                        treatmentMatch.referenceDate,
-                        countryOfReference
-                    ),
+                filteredNationalTrials,
                 enableExtendedMode
             )
 
         val internationalTrialsNotOverlappingHospitalOrNational = hideOverlappingTrials(
             internationalTrials,
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
-                .filterMolecularCriteriaAlreadyPresentInTrials(nationalTrials),
+                .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials),
             enableExtendedMode
         )
         return ExternalTrials(nationalTrialsNotOverlappingHospital, internationalTrialsNotOverlappingHospitalOrNational)

@@ -212,8 +212,8 @@ object TestMolecularFactory {
 
     private fun createProperHomologousRecombination(): HomologousRecombination {
         return HomologousRecombination(
-            score = 0.45,
             isDeficient = false,
+            score = 0.45,
             type = HomologousRecombinationType.NONE,
             brca1Value = 0.4,
             brca2Value = 0.05,
@@ -267,6 +267,19 @@ object TestMolecularFactory {
             viruses = emptyList()
         )
     }
+
+    fun createMinimalCopyNumber() = CopyNumber(
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+        otherImpacts = emptySet(),
+        isReportable = false,
+        event = "",
+        driverLikelihood = DriverLikelihood.LOW,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+        gene = "",
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null
+    )
 
     fun createProperCopyNumber() = CopyNumber(
         isReportable = true,
@@ -357,24 +370,24 @@ object TestMolecularFactory {
     )
 
     fun createMinimalFusion() = Fusion(
+        geneStart = "",
+        geneEnd = "",
+        driverType = FusionDriverType.NONE,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null,
+        geneTranscriptStart = null,
+        geneTranscriptEnd = null,
+        fusedExonUp = null,
+        fusedExonDown = null,
         isReportable = false,
         event = "",
         driverLikelihood = null,
         evidence = TestClinicalEvidenceFactory.createEmpty(),
-        geneStart = "",
-        geneEnd = "",
-        proteinEffect = ProteinEffect.UNKNOWN,
-        driverType = FusionDriverType.NONE,
-        isAssociatedWithDrugResistance = null,
-        geneTranscriptStart = null,
-        geneTranscriptEnd = null,
-        fusedExonUp = 0,
-        fusedExonDown = 0,
     )
 
     fun createProperFusion() = Fusion(
         isReportable = true,
-        event = "EML4::ALK fusion",
+        event = "EML4(exon6)::ALK(exon20) fusion",
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = TestClinicalEvidenceFactory.createExhaustive(),
         geneStart = "EML4",
@@ -452,12 +465,45 @@ object TestMolecularFactory {
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
             ) + CopyNumber(
-                isReportable = false,
-                event = "MET copy number",
-                driverLikelihood = null,
+                isReportable = true,
+                event = "FGFR1 amp",
+                driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                gene = "MET",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(minCopies = 6, maxCopies = 6),
+                gene = "FGFR1",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, 2, 2),
+                otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 60)),
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
+            ) + CopyNumber(
+                isReportable = true,
+                event = "EGFR amp",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                gene = "EGFR",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN, 20, 20),
+                otherImpacts = emptySet(),
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
+            ) + CopyNumber(
+                isReportable = true,
+                event = "PIK3CA amp",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                gene = "PIK3CA",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN, null, null),
+                otherImpacts = emptySet(),
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
+            ) + CopyNumber(
+                isReportable = false,
+                event = "Unreported gene copy number",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                gene = "Unreported gene",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN, 20, 20),
                 otherImpacts = emptySet(),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
@@ -488,7 +534,7 @@ object TestMolecularFactory {
                 clusterGroup = 0
             ), fusions = proper.fusions + Fusion(
                 isReportable = false,
-                event = "EML4::ALK fusion",
+                event = "EML4(exon6)::ALK(exon20) fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 geneStart = "EML4",

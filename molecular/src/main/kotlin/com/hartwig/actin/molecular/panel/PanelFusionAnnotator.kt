@@ -6,15 +6,13 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
+import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
 
 class PanelFusionAnnotator(
-    private val evidenceDatabase: EvidenceDatabase,
     private val knownFusionCache: KnownFusionCache,
     private val ensembleDataCache: EnsemblDataCache
 ) {
@@ -23,7 +21,6 @@ class PanelFusionAnnotator(
 
     fun annotate(fusions: Set<SequencedFusion>, skippedExons: Set<SequencedSkippedExons>): List<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
-            .map { annotateFusion(it) }
     }
 
     fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood {
@@ -37,8 +34,11 @@ class PanelFusionAnnotator(
     }
 
     private fun createFusion(sequencedFusion: SequencedFusion): Fusion {
-        if (sequencedFusion.geneUp == null && sequencedFusion.geneDown == null) {
-            throw IllegalArgumentException("Invalid fusion, no genes provided")
+        if ((sequencedFusion.geneUp == null && sequencedFusion.geneDown == null) ||
+            (sequencedFusion.geneUp == null && sequencedFusion.exonUp != null) ||
+            (sequencedFusion.geneDown == null && sequencedFusion.exonDown != null)
+        ) {
+            throw IllegalArgumentException("Invalid fusion - check data")
         }
 
         val isReportable = true
@@ -50,7 +50,12 @@ class PanelFusionAnnotator(
             driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
-            event = sequencedFusion.display(),
+            event = FormatFunctions.formatFusionEvent(
+                geneUp = sequencedFusion.geneUp,
+                exonUp = sequencedFusion.exonUp,
+                geneDown = sequencedFusion.geneDown,
+                exonDown = sequencedFusion.exonDown
+            ),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
@@ -115,15 +120,5 @@ class PanelFusionAnnotator(
         val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
         return transcript
-    }
-
-    private fun annotateFusion(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
-        val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
-        val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
-        val fusionWithGeneAlteration =
-            fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(fusionWithGeneAlteration)
-        return fusionWithGeneAlteration.copy(evidence = evidence)
     }
 }

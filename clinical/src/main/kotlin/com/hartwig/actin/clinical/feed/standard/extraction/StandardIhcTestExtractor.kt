@@ -13,12 +13,12 @@ import java.time.LocalDate
 class StandardIhcTestExtractor(
     private val molecularTestCuration: CurationDatabase<IhcTestConfig>
 ) : StandardDataExtractor<List<IhcTest>> {
-    override fun extract(ehrPatientRecord: FeedPatientRecord): ExtractionResult<List<IhcTest>> {
-        return ehrPatientRecord.ihcTests
+    override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<IhcTest>> {
+        return feedPatientRecord.ihcTests
             .asSequence()
             .mapNotNull { test ->
-                val curations = listOf(test.name, "${ehrPatientRecord.patientDetails.patientId} | ${test.name}").map { curationString ->
-                    curate(curationString, ehrPatientRecord.patientDetails.patientId, test.startDate)
+                val curations = listOf(test.name, "${feedPatientRecord.patientDetails.patientId} | ${test.name}").map { curationString ->
+                    curate(curationString, feedPatientRecord.patientDetails.patientId, test.startDate)
                 }
                 if (curations.any { it.config()?.ignore == true }) {
                     null
