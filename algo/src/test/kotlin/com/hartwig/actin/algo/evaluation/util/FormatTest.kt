@@ -110,11 +110,11 @@ class FormatTest {
         assertThat(
             Format.concatFusions(
                 setOf(
-                    "X exon 1 :: Y exon 2 fusion",
-                    "Z exon 1 :: A exon 2 fusion"
+                    "X(exon1)::Y(exon2) fusion",
+                    "Z(exon1)::A(exon2) fusion"
                 )
             )
-        ).isEqualTo("X exon 1 :: Y exon 2 and Z exon 1 :: A exon 2")
+        ).isEqualTo("X(exon1)::Y(exon2) and Z(exon1)::A(exon2)")
         assertThat(Format.concatFusions(setOf("A::B fusion", "C::D fusion", "E::F fusion"))).isEqualTo("A::B, C::D and E::F")
         assertThat(Format.concatFusions(setOf("X::Y fusion"))).isEqualTo("X::Y")
     }

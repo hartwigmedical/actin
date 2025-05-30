@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.ExtractionUtil
+import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
@@ -49,7 +50,12 @@ class PanelFusionAnnotator(
             driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
-            event = sequencedFusion.display(),
+            event = FormatFunctions.formatFusionEvent(
+                geneUp = sequencedFusion.geneUp,
+                exonUp = sequencedFusion.exonUp,
+                geneDown = sequencedFusion.geneDown,
+                exonDown = sequencedFusion.exonDown
+            ),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,

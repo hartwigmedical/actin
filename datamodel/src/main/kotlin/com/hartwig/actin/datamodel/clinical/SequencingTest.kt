@@ -31,17 +31,7 @@ data class SequencedFusion(
     val transcriptDown: String? = null,
     val exonUp: Int? = null,
     val exonDown: Int? = null
-) : Displayable {
-    override fun display(): String {
-        val formatUp = formatGeneAndExon(geneUp, exonUp)
-        val formatDown = formatGeneAndExon(geneDown, exonDown)
-
-        if (formatUp == null && formatDown == null) {
-            throw IllegalStateException("Fusion cannot be formatted")
-        }
-        return listOfNotNull(formatUp, formatDown).joinToString(" :: ") + " fusion"
-    }
-}
+)
 
 data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int, val transcript: String? = null) : Displayable {
     override fun display(): String {
@@ -64,7 +54,3 @@ data class SequencingTest(
     val isMicrosatelliteUnstable: Boolean? = null,
     val knownSpecifications: Boolean = false
 )
-
-private fun formatGeneAndExon(gene: String?, exon: Int?): String? {
-    return gene?.let { exon?.let { "$gene exon $exon" } ?: gene }
-}

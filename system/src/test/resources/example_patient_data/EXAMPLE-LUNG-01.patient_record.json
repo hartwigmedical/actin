@@ -771,7 +771,7 @@
               "fusedExonUp": 13,
               "fusedExonDown": 15,
               "isReportable": true,
-              "event": "MET exon 13 :: MET exon 15 fusion",
+              "event": "MET(exon13)::MET(exon15) fusion",
               "driverLikelihood": "HIGH",
               "evidence": {
                 "treatmentEvidence": [],

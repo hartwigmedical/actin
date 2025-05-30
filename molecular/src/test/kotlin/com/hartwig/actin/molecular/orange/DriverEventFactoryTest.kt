@@ -64,15 +64,6 @@ class DriverEventFactoryTest {
     }
 
     @Test
-    fun `Should generate events for fusions`() {
-        assertThat(
-            DriverEventFactory.fusionEvent(
-                TestLinxFactory.fusionBuilder().geneStart("EML4").geneEnd("ALK").fusedExonUp(6).fusedExonDown(20).build()
-            )
-        ).isEqualTo("EML4 exon 6 :: ALK exon 20 fusion")
-    }
-
-    @Test
     fun `Should generate events for viruses`() {
         assertThat(DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV))).isEqualTo("HPV (Papilloma) positive")
         assertThat(DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.EBV))).isEqualTo("EBV positive")

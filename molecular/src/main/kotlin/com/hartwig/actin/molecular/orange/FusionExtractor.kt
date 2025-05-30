@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
+import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
@@ -18,7 +19,7 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
             val included = geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())
             if (!included && fusion.reported()) {
                 throw IllegalStateException(
-                    "Filtered a reported fusion through gene filtering: '${DriverEventFactory.fusionEvent(fusion)}'."
+                    "Filtered a reported fusion through gene filtering."
                             + " Please make sure either '${fusion.geneStart()}' or '${fusion.geneEnd()}' is configured as a known gene."
                 )
             }
@@ -26,7 +27,12 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
         }.map { fusion ->
             Fusion(
                 isReportable = fusion.reported(),
-                event = DriverEventFactory.fusionEvent(fusion),
+                event = FormatFunctions.formatFusionEvent(
+                    geneUp = fusion.geneStart(),
+                    exonUp = fusion.fusedExonUp(),
+                    geneDown = fusion.geneEnd(),
+                    exonDown = fusion.fusedExonDown()
+                ),
                 driverLikelihood = determineDriverLikelihood(fusion),
                 evidence = ExtractionUtil.noEvidence(),
                 geneStart = fusion.geneStart(),
