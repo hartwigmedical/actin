@@ -295,7 +295,6 @@ class ActionabilityMatcherTest {
             )
 
         val matches = matcher.match(molecularTest)
-        assertThat(matches).isNotEmpty
         assertThat(matches).hasSize(1)
         assertThat(matches.values.flatMap { it.evidenceMatches }).contains(evidence)
     }
@@ -499,7 +498,11 @@ class ActionabilityMatcherTest {
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
-                    variants = listOf(brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)))
+                    variants = listOf(
+                        brafMolecularTestVariant.copy(
+                            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+                        )
+                    )
                 )
             )
 
@@ -516,7 +519,11 @@ class ActionabilityMatcherTest {
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
-                    variants = listOf(brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)))
+                    variants = listOf(
+                        brafMolecularTestVariant.copy(
+                            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+                        )
+                    )
                 )
             )
 
@@ -639,18 +646,18 @@ class ActionabilityMatcherTest {
         assertThat(successWhenNotEmpty(emptyList())).isEqualTo(ActionabilityMatchResult.Failure)
     }
 
-    fun matcherFactory(evidences: List<EfficacyEvidence>): ActionabilityMatcher {
+    private fun matcherFactory(evidences: List<EfficacyEvidence>): ActionabilityMatcher {
         return ActionabilityMatcherFactory.create(serveRecordWithEvidences(evidences))
     }
 
-    fun serveRecordWithEvidences(evidences: List<EfficacyEvidence>): ServeRecord {
+    private fun serveRecordWithEvidences(evidences: List<EfficacyEvidence>): ServeRecord {
         return ImmutableServeRecord.builder()
             .knownEvents(ImmutableKnownEvents.builder().build())
             .addAllEvidences(evidences)
             .build()
     }
 
-    fun panelTestWithMsi(isUnstable: Boolean): PanelRecord {
+    private fun panelTestWithMsi(isUnstable: Boolean): PanelRecord {
         return TestMolecularFactory.createMinimalTestPanelRecord().copy(
             characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                 microsatelliteStability = MicrosatelliteStability(
@@ -662,7 +669,7 @@ class ActionabilityMatcherTest {
         )
     }
 
-    fun minimalTranscriptImpact(): TranscriptVariantImpact {
+    private fun minimalTranscriptImpact(): TranscriptVariantImpact {
         return TranscriptVariantImpact(
             transcriptId = "",
             hgvsCodingImpact = "",
@@ -675,7 +682,7 @@ class ActionabilityMatcherTest {
         )
     }
 
-    fun minimalHrdCharacteristic(): HomologousRecombination {
+    private fun minimalHrdCharacteristic(): HomologousRecombination {
         return HomologousRecombination(
             score = 0.0,
             isDeficient = false,
@@ -685,5 +692,4 @@ class ActionabilityMatcherTest {
             evidence = TestClinicalEvidenceFactory.createEmpty()
         )
     }
-
 }
