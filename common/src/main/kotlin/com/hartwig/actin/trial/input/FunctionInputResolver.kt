@@ -1006,7 +1006,7 @@ class FunctionInputResolver(
     }
 
     private fun toTreatmentCategoriesSet(input: Any): Set<TreatmentCategory> {
-        return toStringList(input).map{TreatmentCategoryResolver.fromString(it)}.toSet()
+        return toStringList(input).map(TreatmentCategoryResolver::fromString).toSet()
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String

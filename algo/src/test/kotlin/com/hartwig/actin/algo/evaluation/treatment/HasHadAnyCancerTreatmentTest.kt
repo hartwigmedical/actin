@@ -15,18 +15,18 @@ private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
 
 class HasHadAnyCancerTreatmentTest {
 
-    private val functionWithoutCategoryToIgnore = HasHadAnyCancerTreatment(emptySet(), setOf(ATC_LEVELS))
-    private val functionWithCategoryToIgnore = HasHadAnyCancerTreatment(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.HORMONE_THERAPY), setOf(ATC_LEVELS))
+    private val functionWithoutCategoriesToIgnore = HasHadAnyCancerTreatment(emptySet(), setOf(ATC_LEVELS))
+    private val functionWithCategoriesToIgnore = HasHadAnyCancerTreatment(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.HORMONE_THERAPY), setOf(ATC_LEVELS))
 
     @Test
     fun `Should fail when treatment history is empty`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithoutCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         )
     }
 
@@ -36,11 +36,11 @@ class HasHadAnyCancerTreatmentTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithoutCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
     }
 
@@ -51,11 +51,11 @@ class HasHadAnyCancerTreatmentTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatment1, treatment2)))
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithoutCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
     }
 
@@ -68,7 +68,7 @@ class HasHadAnyCancerTreatmentTest {
             WashoutTestFactory.medication(atc, null)
                 .copy(drug = Drug(name = "", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
-        listOf(functionWithCategoryToIgnore, functionWithoutCategoryToIgnore).forEach { function ->
+        listOf(functionWithCategoriesToIgnore, functionWithoutCategoriesToIgnore).forEach { function ->
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
@@ -83,7 +83,7 @@ class HasHadAnyCancerTreatmentTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatment1, treatment2)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
     }
 
@@ -92,7 +92,7 @@ class HasHadAnyCancerTreatmentTest {
         val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithCategoryToIgnore.evaluate(WashoutTestFactory.withMedications(medications))
+            functionWithCategoriesToIgnore.evaluate(WashoutTestFactory.withMedications(medications))
         )
     }
 }
