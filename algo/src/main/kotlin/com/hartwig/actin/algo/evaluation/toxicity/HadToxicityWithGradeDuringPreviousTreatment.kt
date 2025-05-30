@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HadToxicityWithGradeDuringPreviousTreatment(private val toxicityName: String, private val grade: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient had $toxicityName toxicity with at least grade $grade during previous treatment")
+        return EvaluationFactory.undetermined("Undetermined if patient had $toxicityName toxicity with at least grade $grade " +
+                "during previous treatment")
     }
 }

@@ -88,7 +88,8 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     private fun hadToxicityWithGradeDuringPreviousTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (grade, name) = functionInputResolver().createOneStringOneIntegerInput(function)
-            HadToxicityWithGradeDuringPreviousTreatment(name, grade) }
+            HadToxicityWithGradeDuringPreviousTreatment(name, grade)
+        }
     }
 
     private fun createHasToxicityWithGrade(
