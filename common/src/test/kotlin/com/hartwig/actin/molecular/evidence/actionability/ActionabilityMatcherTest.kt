@@ -105,7 +105,6 @@ class ActionabilityMatcherTest {
             )
 
         val matches = matcher.match(molecularTest)
-        assertThat(matches).isNotEmpty
         assertThat(matches).hasSize(2)
         assertThat(matches[brafMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence), emptyMap()))
         assertThat(matches[krasMolecularTestVariant]).isEqualTo(ActionabilityMatch(listOf(evidence), emptyMap()))
@@ -143,7 +142,9 @@ class ActionabilityMatcherTest {
                 drivers = TestMolecularFactory.createMinimalTestDrivers()
                     .copy(
                         variants = listOf(
-                            brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
+                            brafMolecularTestVariant.copy(
+                                canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+                            )
                         )
                     )
             )
