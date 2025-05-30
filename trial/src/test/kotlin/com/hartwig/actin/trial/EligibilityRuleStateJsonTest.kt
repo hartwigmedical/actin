@@ -27,7 +27,7 @@ class EligibilityRuleStateJsonTest {
         EligibilityRuleStateJson.write(eligibilityRules, trialDirectory)
         val expected = Files.readString(Path.of(trialDirectory, "valid_eligibility_rules.json"))
         val actual = Files.readString(Path.of(trialDirectory, outputFileName))
-        assertThat(expected.normalise()).isEqualTo(actual.normalise())
+        assertThat(actual.normalise()).isEqualTo(expected.normalise())
     }
 
     private fun String.normalise() = this.replace("\\s+".toRegex(), "")
