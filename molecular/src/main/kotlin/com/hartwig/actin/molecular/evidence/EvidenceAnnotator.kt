@@ -81,8 +81,8 @@ class EvidenceAnnotator<T : MolecularTest>(
         )
     }
 
-    private fun matchEvidence(variant: Actionable, matchesForActionable: MatchesForActionable): ClinicalEvidence {
-        val actionabilityMatch = matchesForActionable[variant]
+    private fun matchEvidence(actionable: Actionable, matchesForActionable: MatchesForActionable): ClinicalEvidence {
+        val actionabilityMatch = matchesForActionable[actionable]
         val clinicalEvidence = actionabilityMatch?.let { clinicalEvidenceFactory.create(it) }
         return clinicalEvidence ?: ExtractionUtil.noEvidence()
     }

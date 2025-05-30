@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger
 typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 
 class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, private val trials: List<ActionableTrial>) {
+    
     val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
 
     fun match(molecularTest: MolecularTest): MatchesForActionable {
@@ -159,7 +160,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             emptyList()
         }
 
-        val copyNumberDeletionmatches = if (CopyNumberEvidence.isDeletionEvent(gene.event())) {
+        val copyNumberDeletionMatches = if (CopyNumberEvidence.isDeletionEvent(gene.event())) {
             molecularTest.drivers.copyNumbers
                 .filter { copyNumber ->
                     CopyNumberEvidence.isDeletionMatch(gene, copyNumber)
@@ -170,7 +171,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
         return successWhenNotEmpty(
             variantMatches + promiscuousFusionMatches + disruptionMatches +
-                    homozygousDisruptionMatches + copyNumberAmplificationMatches + copyNumberDeletionmatches
+                    homozygousDisruptionMatches + copyNumberAmplificationMatches + copyNumberDeletionMatches
         )
     }
 
@@ -199,7 +200,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     }
 
     private fun matchCharacteristic(molecularTest: MolecularTest, characteristic: ActionableCharacteristic): ActionabilityMatchResult {
-
         return when (characteristic.type()) {
             TumorCharacteristicType.MICROSATELLITE_STABLE -> {
                 ActionabilityMatchResult.Failure
@@ -275,11 +275,11 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     }
 
     private fun matchHlas(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        if (criterium.hla().isEmpty()) {
-            return ActionabilityMatchResult.Success()
+        return if (criterium.hla().isEmpty()) {
+            ActionabilityMatchResult.Success()
         } else {
-            logger.warn("evidence contains HLA but matching supported")
-            return ActionabilityMatchResult.Failure
+            logger.warn("Evidence contains HLA but matching supported")
+            ActionabilityMatchResult.Failure
         }
     }
 

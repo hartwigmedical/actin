@@ -65,6 +65,7 @@ private val brafMolecularTestVariant = TestVariantFactory.createMinimal()
         driverLikelihood = DriverLikelihood.HIGH,
         isReportable = true
     )
+
 private val krasMolecularTestVariant = TestVariantFactory.createMinimal()
     .copy(
         gene = "KRAS",
