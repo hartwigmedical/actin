@@ -7,30 +7,13 @@ import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteri
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
 import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
 import com.hartwig.serve.datamodel.ServeRecord
 
 object EvidenceAnnotatorFactory {
-    fun <T : MolecularTest> create(
-        serveRecord: ServeRecord,
-        doidEntry: DoidEntry,
-        tumorDoids: Set<String>,
-        annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
-    ): EvidenceAnnotator<T> {
-        val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
-        val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
-        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
-        val combinedEvidenceMatcher = ActionabilityMatcherFactory.create(serveRecord)
-
-        return EvidenceAnnotator(
-            clinicalEvidenceFactory = clinicalEvidenceFactory,
-            actionabilityMatcher = combinedEvidenceMatcher,
-            annotationFunction
-        )
-    }
-
+    
     fun createPanelRecordAnnotator(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
@@ -49,5 +32,23 @@ object EvidenceAnnotatorFactory {
         return create(serveRecord, doidEntry, tumorDoids) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
+    }
+
+    private fun <T : MolecularTest> create(
+        serveRecord: ServeRecord,
+        doidEntry: DoidEntry,
+        tumorDoids: Set<String>,
+        annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
+    ): EvidenceAnnotator<T> {
+        val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+        val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val actionabilityMatcher = ActionabilityMatcherFactory.create(serveRecord)
+
+        return EvidenceAnnotator(
+            clinicalEvidenceFactory = clinicalEvidenceFactory,
+            actionabilityMatcher = actionabilityMatcher,
+            annotationFunction = annotationFunction
+        )
     }
 }
