@@ -16,7 +16,7 @@ class IhcTestConfigFactoryTest {
     fun `Should return MolecularTestConfig from valid inputs`() {
         val config = IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
             fields,
-            arrayOf("input", "test", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "1")
+            arrayOf("input", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "1")
         )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
@@ -34,7 +34,7 @@ class IhcTestConfigFactoryTest {
     fun `Should set curated test to null when ignore is set`() {
         val config: ValidatedCurationConfig<IhcTestConfig> = IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
             fields,
-            arrayOf("input", "<ignore>", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "1")
+            arrayOf("input", "<ignore>", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "1")
         )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
@@ -46,7 +46,7 @@ class IhcTestConfigFactoryTest {
     fun `Should return validation error and set curated test to null when invalid impliesPotentialIndeterminateStatus`() {
         val config: ValidatedCurationConfig<IhcTestConfig> = IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
             fields,
-            arrayOf("input", "test", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "invalid")
+            arrayOf("input", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "invalid")
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
@@ -61,5 +61,4 @@ class IhcTestConfigFactoryTest {
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.curated).isNull()
     }
-
 }
