@@ -24,14 +24,14 @@ import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.serialization.ServeJson
-import java.time.Period
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.time.Period
+import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
@@ -84,22 +84,21 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
-        val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-        LOGGER.info("Loading SERVE database for resistance evidence from {}", jsonFilePath)
+        val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
+        LOGGER.info("Loading SERVE database for resistance evidence from {}", serveJsonFilePath)
         val serveRecord = ServeLoader.loadServeRecord(
-            jsonFilePath,
+            serveJsonFilePath,
             patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37
         )
         LOGGER.info(" Loaded {} evidences", serveRecord.evidences().size)
-        val evidences = serveRecord.evidences()
-        val tumorDoids = patient.tumor.doids.orEmpty().toSet()
         val resistanceEvidenceMatcher =
             ResistanceEvidenceMatcher.create(
-                doidModel,
-                tumorDoids,
-                evidences,
-                treatmentDatabase,
-                patient.molecularHistory, ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials())
+                doidModel = doidModel,
+                tumorDoids = patient.tumor.doids.orEmpty().toSet(),
+                evidences = serveRecord.evidences(),
+                treatmentDatabase = treatmentDatabase,
+                molecularHistory = patient.molecularHistory, 
+                actionabilityMatcher = ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials())
             )
 
         val treatmentMatcher =
