@@ -11,6 +11,8 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val GENES = setOf("gene a", "gene b", "gene c")
+
 class AnyGeneFromSetIsOverexpressedTest {
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
         every { evaluate(any<MolecularRecord>()) } returns EvaluationFactory.pass("amplification")
@@ -24,28 +26,30 @@ class AnyGeneFromSetIsOverexpressedTest {
 
     @Test
     fun `Should warn when amplification`() {
-        val function = createFunctionWithEvaluations(
-            mapOf(
-                "gene a" to alwaysPassGeneAmplificationEvaluation,
-                "gene b" to alwaysFailGeneAmplificationEvaluation,
-                "gene c" to alwaysWarnGeneAmplificationEvaluation
-            )
-        )
-        val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { gene, _ ->
+            when (gene) {
+                "gene a" -> alwaysPassGeneAmplificationEvaluation
+                "gene b" -> alwaysFailGeneAmplificationEvaluation
+                else -> alwaysWarnGeneAmplificationEvaluation
+            }
+        }
+        val evaluation = AnyGeneFromSetIsOverexpressed(
+            null,
+            GENES,
+            geneIsAmplifiedCreator
+        ).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessages).contains("gene a and gene c is amplified therefore possible overexpression in RNA")
     }
 
     @Test
     fun `Should evaluate to undetermined when no amplification`() {
-        val function = createFunctionWithEvaluations(
-            mapOf(
-                "gene a" to alwaysFailGeneAmplificationEvaluation,
-                "gene b" to alwaysFailGeneAmplificationEvaluation,
-                "gene c" to alwaysFailGeneAmplificationEvaluation
-            )
-        )
-        val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
+        val evaluation = AnyGeneFromSetIsOverexpressed(
+            null,
+            GENES,
+            geneIsAmplifiedCreator
+        ).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages)
             .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
@@ -53,22 +57,13 @@ class AnyGeneFromSetIsOverexpressedTest {
 
     @Test
     fun `Should evaluate to undetermined when molecular record not available`() {
-        val function = createFunctionWithEvaluations(
-            mapOf(
-                "gene a" to alwaysFailGeneAmplificationEvaluation,
-                "gene b" to alwaysFailGeneAmplificationEvaluation,
-                "gene c" to alwaysFailGeneAmplificationEvaluation
-            )
-        )
-        val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
+        val evaluation = AnyGeneFromSetIsOverexpressed(
+            null,
+            GENES,
+            geneIsAmplifiedCreator
+        ).evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly("No molecular data to determine overexpression of gene a, gene b and gene c in RNA")
-    }
-
-    private fun createFunctionWithEvaluations(evaluations: Map<String, GeneIsAmplified>): AnyGeneFromSetIsOverexpressed {
-        return AnyGeneFromSetIsOverexpressed(
-            LocalDate.of(2024, 11, 6),
-            evaluations
-        )
     }
 }

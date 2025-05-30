@@ -9,11 +9,11 @@ import java.time.LocalDate
 
 class AnyGeneFromSetIsOverexpressed(
     maxTestAge: LocalDate? = null,
-    private val genesToAmplification: Map<String, GeneIsAmplified>
-) :
-    MolecularEvaluationFunction(maxTestAge) {
+    private val genes: Set<String>,
+    private val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { gene, maxAge -> GeneIsAmplified(gene, null, maxAge) }
+) : MolecularEvaluationFunction(maxTestAge) {
 
-    val genes = genesToAmplification.map { it.key }
+    private val genesToAmplification: Map<String, GeneIsAmplified> = genes.associateWith { geneIsAmplifiedCreator(it, maxTestAge) }
 
     override fun noMolecularRecordEvaluation(): Evaluation {
         return EvaluationFactory.undetermined(
