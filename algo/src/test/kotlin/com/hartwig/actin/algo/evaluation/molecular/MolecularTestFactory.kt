@@ -342,16 +342,14 @@ internal object MolecularTestFactory {
     }
 
     private fun createTestHomologousRecombination(isDeficient: Boolean): HomologousRecombination {
-        return isDeficient.let {
-            HomologousRecombination(
-                isDeficient = it,
-                score = if (it) 1.0 else 0.0,
-                type = if (it) HomologousRecombinationType.BRCA1_TYPE else HomologousRecombinationType.CANNOT_BE_DETERMINED,
-                brca1Value = if (it) 1.0 else 0.0,
-                brca2Value = 0.0,
-                evidence = TestClinicalEvidenceFactory.createEmpty()
-            )
-        }
+        return HomologousRecombination(
+            isDeficient = isDeficient,
+            score = if (isDeficient) 1.0 else 0.0,
+            type = if (isDeficient) HomologousRecombinationType.BRCA1_TYPE else HomologousRecombinationType.NONE,
+            brca1Value = if (isDeficient) 1.0 else 0.0,
+            brca2Value = 0.0,
+            evidence = TestClinicalEvidenceFactory.createEmpty()
+        )
     }
 
     private fun createTestTumorMutationalBurden(score: Double = 0.0, isHigh: Boolean? = false): TumorMutationalBurden? {

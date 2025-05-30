@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
@@ -69,7 +70,7 @@ class PanelAnnotator(
                     HomologousRecombination(
                         score = null,
                         isDeficient = it,
-                        type = null,
+                        type = if (!it) HomologousRecombinationType.NONE else null,
                         brca1Value = null,
                         brca2Value = null,
                         evidence = ExtractionUtil.noEvidence()
