@@ -28,7 +28,6 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
-import junit.framework.TestCase.assertEquals
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -212,6 +211,6 @@ class ReportContentProviderTest {
             eligibleTrialGenerators.sumOf { it.cohortSize() } + trialTableGenerators.sumOf { it.cohortSize() }
         val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
 
-        assertEquals(totalCohortSizeOnReport, totalCohortSizeInput)
+        assertThat(totalCohortSizeInput).isEqualTo(totalCohortSizeOnReport)
     }
 }

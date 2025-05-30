@@ -45,7 +45,7 @@ class MolecularDriversSummarizerTest {
         val molecularDrivers = minimalDrivers.copy(variants = variants)
         
         val keyEntries = summarizer(molecularDrivers).keyVariants().distinct()
-        assertThat(keyEntries).containsExactly("high driver", "associated with resistance")
+        assertThat(keyEntries).containsExactly("associated with resistance", "high driver")
     }
 
     @Test
