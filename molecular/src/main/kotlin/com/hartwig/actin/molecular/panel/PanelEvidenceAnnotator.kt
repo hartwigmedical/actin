@@ -30,13 +30,18 @@ class PanelEvidenceAnnotator(
             it.copy(evidence = evidenceDatabase.evidenceForMicrosatelliteStatus(it.isUnstable))
         }
 
+        val homologousRecombination = characteristics.homologousRecombination?.let {
+            it.copy(evidence = evidenceDatabase.evidenceForHomologousRecombinationStatus(it.isDeficient))
+        }
+
         val tumorMutationalBurden = characteristics.tumorMutationalBurden?.let {
             it.copy(evidence = evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it.isHigh))
         }
 
         return characteristics.copy(
             microsatelliteStability = microsatelliteStability,
-            tumorMutationalBurden = tumorMutationalBurden
+            homologousRecombination = homologousRecombination,
+            tumorMutationalBurden = tumorMutationalBurden,
         )
     }
 

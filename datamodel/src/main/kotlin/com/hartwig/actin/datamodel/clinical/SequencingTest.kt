@@ -20,7 +20,7 @@ data class SequencedVariant(
         impact?.let { if (!impact.startsWith(notationPrefix)) "$notationPrefix.$it" else it }
 }
 
-data class SequencedAmplification(val gene: String, val transcript: String? = null)
+data class SequencedAmplification(val gene: String, val transcript: String? = null, val copies: Int? = null)
 
 data class SequencedDeletion(val gene: String, val transcript: String? = null)
 
@@ -52,5 +52,6 @@ data class SequencingTest(
     val negativeResults: Set<SequencedNegativeResult> = emptySet(),
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
+    val isHomologousRecombinationDeficient: Boolean? = null,
     val knownSpecifications: Boolean = false
 )

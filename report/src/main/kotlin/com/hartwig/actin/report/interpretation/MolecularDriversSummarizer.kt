@@ -23,10 +23,7 @@ class MolecularDriversSummarizer private constructor(
             .asSequence()
             .filter { copyNumber -> copyNumber.canonicalImpact.type.isGain || copyNumber.otherImpacts.any { it.type.isGain } }
             .filter(::isReportableHighDriver)
-            .map {
-                it.gene + if (it.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" +
-                        if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else ""
-            }
+            .map { it.gene + annotateCopyNumber(it.canonicalImpact.minCopies, it.canonicalImpact.maxCopies, it.canonicalImpact.type) }
             .distinct()
             .toList()
     }
@@ -67,9 +64,18 @@ class MolecularDriversSummarizer private constructor(
         return (nonDisruptionDrivers + drivers.disruptions.toList())
             .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
-    
+
     private fun isReportableHighDriver(driver: Driver): Boolean {
         return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
+    }
+
+    private fun annotateCopyNumber(minCopies: Int?, maxCopies: Int?, impactType: CopyNumberType): String {
+        return when (impactType) {
+            CopyNumberType.FULL_GAIN -> minCopies?.let { " $minCopies copies" } ?: ""
+            CopyNumberType.PARTIAL_GAIN -> maxCopies?.let { " $maxCopies copies (partial)" } ?: " (partial)"
+            CopyNumberType.NONE -> " (alt transcript)"
+            else -> ""
+        }
     }
 
     companion object {

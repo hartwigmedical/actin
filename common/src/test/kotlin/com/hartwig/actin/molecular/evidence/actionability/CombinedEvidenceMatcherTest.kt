@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
-import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
@@ -625,11 +624,11 @@ class CombinedEvidenceMatcherTest {
 
     fun minimalHrdCharacteristic(): HomologousRecombination {
         return HomologousRecombination(
-            score = 0.0,
             isDeficient = false,
-            type = HomologousRecombinationType.NONE,
-            brca1Value = 0.0,
-            brca2Value = 0.0,
+            score = null,
+            type = null,
+            brca1Value = null,
+            brca2Value = null,
             evidence = TestClinicalEvidenceFactory.createEmpty()
         )
     }

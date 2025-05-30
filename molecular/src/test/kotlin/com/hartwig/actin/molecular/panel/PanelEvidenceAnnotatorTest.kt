@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
@@ -72,8 +73,23 @@ class PanelEvidenceAnnotatorTest {
         val panelWithMSS = panelEvidenceAnnotator.annotate(panelRecordWithMsi(isUnstable = false))
         assertThat(panelWithMSS.characteristics.microsatelliteStability!!.evidence).isEqualTo(EMPTY_MATCH)
 
-        val panelWithoutMicrosatelliteStatus = panelEvidenceAnnotator.annotate(panelRecordWithMsi(isUnstable = null))
-        assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteStability).isNull()
+        val panelWithoutMSI = panelEvidenceAnnotator.annotate(TestMolecularFactory.createMinimalTestPanelRecord())
+        assertThat(panelWithoutMSI.characteristics.microsatelliteStability).isNull()
+    }
+
+    @Test
+    fun `Should annotate HR status with evidence`() {
+        every { evidenceDatabase.evidenceForHomologousRecombinationStatus(true) } returns ON_LABEL_MATCH
+        every { evidenceDatabase.evidenceForHomologousRecombinationStatus(false) } returns EMPTY_MATCH
+
+        val panelWithHRD = panelEvidenceAnnotator.annotate(panelRecordWithHrd(isDeficient = true))
+        assertThat(panelWithHRD.characteristics.homologousRecombination!!.evidence).isEqualTo(ON_LABEL_MATCH)
+
+        val panelWithHRP = panelEvidenceAnnotator.annotate(panelRecordWithHrd(isDeficient = false))
+        assertThat(panelWithHRP.characteristics.homologousRecombination!!.evidence).isEqualTo(EMPTY_MATCH)
+
+        val panelWithoutHR = panelEvidenceAnnotator.annotate(TestMolecularFactory.createMinimalTestPanelRecord())
+        assertThat(panelWithoutHR.characteristics.homologousRecombination).isNull()
     }
 
     @Test
@@ -81,28 +97,24 @@ class PanelEvidenceAnnotatorTest {
         every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
 
-        val panelRecord = panelRecordWithTmb(isHigh = true)
-
         val panelWithHighTmb = panelEvidenceAnnotator.annotate(panelRecordWithTmb(isHigh = true))
         assertThat(panelWithHighTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(ON_LABEL_MATCH)
 
         val panelWithLowTmb = panelEvidenceAnnotator.annotate(panelRecordWithTmb(isHigh = false))
         assertThat(panelWithLowTmb.characteristics.tumorMutationalBurden!!.evidence).isEqualTo(EMPTY_MATCH)
 
-        val panelWithoutTmb = panelEvidenceAnnotator.annotate(panelRecordWithTmb(isHigh = null))
-        assertThat(panelWithoutTmb.characteristics.tumorMutationalBurden).isNull()
+        val panelWithoutTMB = panelEvidenceAnnotator.annotate(TestMolecularFactory.createMinimalTestPanelRecord())
+        assertThat(panelWithoutTMB.characteristics.tumorMutationalBurden).isNull()
     }
 
-    private fun panelRecordWithMsi(isUnstable: Boolean?): PanelRecord {
+    private fun panelRecordWithMsi(isUnstable: Boolean): PanelRecord {
         val characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
 
-        val microsatelliteStability = isUnstable?.let { isUnstable ->
-            MicrosatelliteStability(
+        val microsatelliteStability = MicrosatelliteStability(
                 microsatelliteIndelsPerMb = if (isUnstable) 100.0 else 0.0,
                 isUnstable = isUnstable,
                 evidence = TestClinicalEvidenceFactory.createEmpty()
             )
-        }
 
         return TestMolecularFactory.createMinimalTestPanelRecord().copy(
             characteristics = characteristics.copy(
@@ -111,16 +123,33 @@ class PanelEvidenceAnnotatorTest {
         )
     }
 
-    private fun panelRecordWithTmb(isHigh: Boolean?): PanelRecord {
+    private fun panelRecordWithHrd(isDeficient: Boolean): PanelRecord {
         val characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
 
-        val tumorMutationalBurden = isHigh?.let { isHigh ->
-            TumorMutationalBurden(
+        val homologousRecombination = HomologousRecombination(
+                isDeficient = isDeficient,
+                score = null,
+                type = null,
+                brca1Value = null,
+                brca2Value = null,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+
+        return TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            characteristics = characteristics.copy(
+                homologousRecombination = homologousRecombination
+            )
+        )
+    }
+
+    private fun panelRecordWithTmb(isHigh: Boolean): PanelRecord {
+        val characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
+
+        val tumorMutationalBurden = TumorMutationalBurden(
                 score = if (isHigh) 100.0 else 0.0,
                 isHigh = isHigh,
                 evidence = TestClinicalEvidenceFactory.createEmpty()
             )
-        }
 
         return TestMolecularFactory.createMinimalTestPanelRecord().copy(
             characteristics = characteristics.copy(
