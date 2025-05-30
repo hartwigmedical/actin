@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.molecular.util.ImpactDisplay
+import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
@@ -22,7 +22,7 @@ object DriverEventFactory {
     private fun impact(variant: PurpleVariant): String {
         val canonical = variant.canonicalImpact()
 
-        return ImpactDisplay.formatVariantImpact(
+        return FormatFunctions.formatVariantImpact(
             canonical.hgvsProteinImpact(),
             canonical.hgvsCodingImpact(),
             canonical.codingEffect() == PurpleCodingEffect.SPLICE,
@@ -56,7 +56,12 @@ object DriverEventFactory {
     }
 
     fun fusionEvent(fusion: LinxFusion): String {
-        return fusion.geneStart() + "::" + fusion.geneEnd() + " fusion"
+        return FormatFunctions.formatFusionEvent(
+            geneUp = fusion.geneStart(),
+            exonUp = fusion.fusedExonUp(),
+            geneDown = fusion.geneEnd(),
+            exonDown = fusion.fusedExonDown()
+        )
     }
 
     fun virusEvent(virus: VirusInterpreterEntry): String {

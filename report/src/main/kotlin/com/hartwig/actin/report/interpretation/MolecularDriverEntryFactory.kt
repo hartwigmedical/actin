@@ -151,12 +151,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        val name = if (fusion.fusedExonUp == null || fusion.fusedExonDown == null) {
-            fusion.event
-        } else {
-            "${fusion.event}, exon ${fusion.fusedExonUp} - exon ${fusion.fusedExonDown}"
-        }
-        return driverEntry(fusion.driverType.display(), name, fusion, fusion.proteinEffect)
+        return driverEntry(fusion.driverType.display(), fusion.event, fusion, fusion.proteinEffect)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {

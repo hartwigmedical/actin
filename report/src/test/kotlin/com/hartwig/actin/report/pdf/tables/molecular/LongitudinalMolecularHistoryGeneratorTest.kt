@@ -112,7 +112,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             )
         )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
-        assertRow(result, 0, "EML4::ALK fusion\n(Tier I)", "Known fusion\nGain of function", HIGH, DETECTED, NOT_DETECTED)
+        assertRow(result, 0, "EML4(exon6)::ALK(exon20) fusion\n(Tier I)", "Known fusion\nGain of function", HIGH, DETECTED, NOT_DETECTED)
     }
 
     private fun withTumorMutationalBurden(test: MolecularRecord, score: Double): MolecularCharacteristics {

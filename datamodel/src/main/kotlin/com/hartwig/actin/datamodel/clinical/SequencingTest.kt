@@ -31,16 +31,7 @@ data class SequencedFusion(
     val transcriptDown: String? = null,
     val exonUp: Int? = null,
     val exonDown: Int? = null
-) : Displayable {
-    override fun display(): String {
-        return when {
-            geneUp != null && geneDown == null -> "$geneUp fusion"
-            geneUp == null && geneDown != null -> "$geneDown fusion"
-            geneUp != null && geneDown != null -> "$geneUp::$geneDown fusion"
-            else -> throw IllegalStateException("Both genes in fusion are null")
-        }
-    }
-}
+)
 
 data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int, val transcript: String? = null) : Displayable {
     override fun display(): String {
@@ -62,4 +53,4 @@ data class SequencingTest(
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
     val knownSpecifications: Boolean = false
-) 
+)
