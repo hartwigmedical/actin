@@ -43,18 +43,15 @@ class SequencingTestExtractorTest {
     fun `Should curate any free text results using default test name`() {
         every { testCuration.find(TEST) } returns emptySet()
         every { testResultCuration.find(TEST) } returns setOf(
-            SequencingTestResultConfig(
-                input = TEST,
-                gene = GENE,
-                hgvsCodingImpact = CODING
-            )
+            SequencingTestResultConfig(input = TEST, gene = GENE, hgvsCodingImpact = CODING)
         )
         val result = extractor.extract(PATIENT_ID, questionnaire)
 
         assertResultContains(
-            result, SEQUENCING_TEST.copy(
-                test = "Unknown test",
-                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
+            1,
+            result,
+            SEQUENCING_TEST.copy(
+                test = "Unknown test", variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
             )
         )
     }
@@ -62,16 +59,14 @@ class SequencingTestExtractorTest {
     @Test
     fun `Should curate any free text results`() {
         every { testResultCuration.find(TEST) } returns setOf(
-            SequencingTestResultConfig(
-                input = TEST,
-                gene = GENE,
-                hgvsCodingImpact = CODING
-            )
+            SequencingTestResultConfig(input = TEST, gene = GENE, hgvsCodingImpact = CODING)
         )
         val result = extractor.extract(PATIENT_ID, questionnaire)
 
         assertResultContains(
-            result, SEQUENCING_TEST.copy(
+            1,
+            result,
+            SEQUENCING_TEST.copy(
                 variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
             )
         )
@@ -86,12 +81,7 @@ class SequencingTestExtractorTest {
 
     @Test
     fun `Should respect ignore flag when curating free text`() {
-        every { testResultCuration.find(TEST) } returns setOf(
-            SequencingTestResultConfig(
-                input = TEST,
-                ignore = true
-            )
-        )
+        every { testResultCuration.find(TEST) } returns setOf(SequencingTestResultConfig(input = TEST, ignore = true))
         val result = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted.isEmpty())
@@ -99,13 +89,7 @@ class SequencingTestExtractorTest {
 
     @Test
     fun `Should allow for ignoring of full tests`() {
-        every { testCuration.find(TEST) } returns setOf(
-            SequencingTestConfig(
-                input = TEST,
-                ignore = true,
-                curatedName = "<ignore>"
-            )
-        )
+        every { testCuration.find(TEST) } returns setOf(SequencingTestConfig(input = TEST, ignore = true, curatedName = "<ignore>"))
         val result = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(result.extracted).isEmpty()
     }
@@ -113,51 +97,44 @@ class SequencingTestExtractorTest {
     @Test
     fun `Should allow for ignoring of individual test results`() {
         every { testResultCuration.find(TEST) } returns setOf(
-            SequencingTestResultConfig(
-                input = TEST,
-                ignore = false,
-                gene = GENE,
-                hgvsCodingImpact = CODING
-            ),
-            SequencingTestResultConfig(
-                input = TEST,
-                ignore = true,
-                gene = GENE2,
-                hgvsProteinImpact = PROTEIN
-            )
+            SequencingTestResultConfig(input = TEST, ignore = false, gene = GENE, hgvsCodingImpact = CODING),
+            SequencingTestResultConfig(input = TEST, ignore = true, gene = GENE2, hgvsProteinImpact = PROTEIN)
         )
         val result = extractor.extract(PATIENT_ID, questionnaire.copy(ihcTestResults = listOf(TEST)))
-        assertThat(result.extracted.size).isEqualTo(1)
-        assertThat(result.extracted[0].variants).containsExactly(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
+        assertResultContains(
+            1,
+            result,
+            SEQUENCING_TEST.copy(
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
+            )
+        )
     }
 
     @Test
     fun `Should curated multiple sequencing test results `() {
         every { testResultCuration.find(TEST) } returns setOf(
-            SequencingTestResultConfig(
-                input = TEST,
-                ignore = false,
-                gene = GENE,
-                hgvsCodingImpact = CODING
-            ),
-            SequencingTestResultConfig(
-                input = TEST,
-                ignore = false,
-                gene = GENE2,
-                hgvsProteinImpact = PROTEIN
-            )
+            SequencingTestResultConfig(input = TEST, ignore = false, gene = GENE, hgvsCodingImpact = CODING),
+            SequencingTestResultConfig(input = TEST, ignore = false, gene = GENE2, hgvsProteinImpact = PROTEIN)
         )
         val result = extractor.extract(PATIENT_ID, questionnaire.copy(ihcTestResults = listOf(TEST)))
-        assertThat(result.extracted.size).isEqualTo(1)
-        assertThat(result.extracted[0].variants).containsExactly(
-            SequencedVariant(gene = GENE, hgvsCodingImpact = CODING),
-            SequencedVariant(gene = GENE2, hgvsProteinImpact = PROTEIN)
+        assertResultContains(
+            1, result, SEQUENCING_TEST.copy(
+                variants = setOf(
+                    SequencedVariant(gene = GENE, hgvsCodingImpact = CODING), SequencedVariant(gene = GENE2, hgvsProteinImpact = PROTEIN)
+                )
+            )
         )
     }
 
-    private fun assertResultContains(result: ExtractionResult<List<SequencingTest>>, sequencingTest: SequencingTest) {
+    private fun assertResultContains(
+        numberOfInputs: Int,
+        result: ExtractionResult<List<SequencingTest>>,
+        sequencingTest: SequencingTest
+    ) {
         assertThat(result.extracted).hasSize(1)
         assertThat(result.extracted[0]).isEqualTo(sequencingTest)
         assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.evaluation.sequencingTestEvaluatedInputs.size).isEqualTo(numberOfInputs)
+        assertThat(result.evaluation.sequencingTestResultEvaluatedInputs.size).isEqualTo(numberOfInputs)
     }
 }
