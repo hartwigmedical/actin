@@ -42,53 +42,15 @@ object TestServeEvidenceFactory {
             )
         )
     }
-
-    fun createEvidenceForExon(
-        gene: String = "",
-        chromosome: String = "",
-        start: Int = 0,
-        end: Int = 0,
-        applicableMutationType: MutationType = MutationType.ANY
-    ): EfficacyEvidence {
-        return create(
-            molecularCriterium = TestServeMolecularFactory.createExonCriterium(
-                gene = gene,
-                chromosome = chromosome,
-                start = start,
-                end = end,
-                applicableMutationType = applicableMutationType
-            )
-        )
-    }
-
+    
     fun createEvidenceForGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION): EfficacyEvidence {
         return create(molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = gene, geneEvent = geneEvent))
     }
-
-    fun createEvidenceForFusion(
-        geneUp: String = "",
-        geneDown: String = "",
-        minExonUp: Int? = null,
-        maxExonUp: Int? = null
-    ): EfficacyEvidence {
-        return create(
-            molecularCriterium = TestServeMolecularFactory.createFusionCriterium(
-                geneUp = geneUp,
-                geneDown = geneDown,
-                minExonUp = minExonUp,
-                maxExonUp = maxExonUp
-            )
-        )
-    }
-
+    
     fun createEvidenceForCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
         return create(molecularCriterium = TestServeMolecularFactory.createCharacteristicCriterium(type = type))
     }
-
-    fun createEvidenceForHla(): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createHlaCriterium())
-    }
-
+    
     fun create(
         source: Knowledgebase = ActionabilityConstants.EVIDENCE_SOURCE,
         treatment: String = "treatment",
