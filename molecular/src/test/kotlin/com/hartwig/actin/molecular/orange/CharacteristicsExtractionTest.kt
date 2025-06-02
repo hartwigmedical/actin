@@ -32,7 +32,7 @@ class CharacteristicsExtractionTest {
         assertThat(characteristics.tumorMutationalBurden).isNull()
         assertThat(characteristics.tumorMutationalLoad).isNull()
     }
-    
+
     @Test
     fun `Should extract characteristics from proper test data`() {
         val characteristics = CharacteristicsExtraction.extract(TestOrangeFactory.createProperTestOrangeRecord())
@@ -92,7 +92,7 @@ class CharacteristicsExtractionTest {
     }
 
     @Test
-    fun `Should interpret all homologous recombination states`() {
+    fun `Should interpret deficient and proficient homologous recombination statuses`() {
         val deficient = CharacteristicsExtraction.extract(
             withHomologousRecombinationStatus(
                 ChordStatus.HR_DEFICIENT,
@@ -112,26 +112,30 @@ class CharacteristicsExtractionTest {
 
         assertThat(proficient.isDeficient).isFalse()
         assertThat(proficient.type).isEqualTo(HomologousRecombinationType.NONE)
+    }
 
-        val cannotBeDetermined = CharacteristicsExtraction.extract(
+    @Test
+    fun `Should set HR object to null for cannot-be-determined status`() {
+        val undetermined = CharacteristicsExtraction.extract(
             withHomologousRecombinationStatus(
                 ChordStatus.CANNOT_BE_DETERMINED,
                 HomologousRecombinationType.CANNOT_BE_DETERMINED
             )
-        ).homologousRecombination!!
+        ).homologousRecombination
 
-        assertThat(cannotBeDetermined.isDeficient).isNull()
-        assertThat(cannotBeDetermined.type).isEqualTo(HomologousRecombinationType.CANNOT_BE_DETERMINED)
+        assertThat(undetermined).isNull()
+    }
 
+    @Test
+    fun `Should set HR object to null for unknown status`() {
         val unknown = CharacteristicsExtraction.extract(
             withHomologousRecombinationStatus(
                 ChordStatus.UNKNOWN,
-                HomologousRecombinationType.CANNOT_BE_DETERMINED
+                HomologousRecombinationType.BRCA2_TYPE
             )
-        ).homologousRecombination!!
+        ).homologousRecombination
 
-        assertThat(unknown.isDeficient).isNull()
-        assertThat(unknown.type).isEqualTo(HomologousRecombinationType.CANNOT_BE_DETERMINED)
+        assertThat(unknown).isNull()
     }
 
     @Test
@@ -161,7 +165,7 @@ class CharacteristicsExtractionTest {
     private fun withMicrosatelliteStatus(microsatelliteStatus: PurpleMicrosatelliteStatus): OrangeRecord {
         return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder().microsatelliteStatus(microsatelliteStatus).build())
     }
-    
+
     private fun withHomologousRecombinationStatus(
         hrStatus: ChordStatus,
         homologousRecombinationType: HomologousRecombinationType

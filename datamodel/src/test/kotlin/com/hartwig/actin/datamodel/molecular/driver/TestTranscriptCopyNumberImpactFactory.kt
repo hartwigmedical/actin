@@ -4,8 +4,8 @@ object TestTranscriptCopyNumberImpactFactory {
 
     fun createTranscriptCopyNumberImpact(
         type: CopyNumberType = CopyNumberType.NONE,
-        minCopies: Int = 0,
-        maxCopies: Int = 0
+        minCopies: Int? = null,
+        maxCopies: Int? = null
     ): TranscriptCopyNumberImpact {
         return TranscriptCopyNumberImpact(
             transcriptId = "",

@@ -127,9 +127,9 @@ class StandardSequencingTestExtractorTest {
     }
 
     @Test
-    fun `Should extract sequencing with TMB and MSI`() {
-        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, tmb = 1.0, msi = true))
-        assertResultContains(BASE_SEQUENCING_TEST.copy(tumorMutationalBurden = 1.0, isMicrosatelliteUnstable = true))
+    fun `Should extract sequencing with TMB and MSI and HRD`() {
+        setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, tmb = 1.0, msi = true, hrd = true))
+        assertResultContains(BASE_SEQUENCING_TEST.copy(tumorMutationalBurden = 1.0, isMicrosatelliteUnstable = true, isHomologousRecombinationDeficient = true))
     }
 
     @Test

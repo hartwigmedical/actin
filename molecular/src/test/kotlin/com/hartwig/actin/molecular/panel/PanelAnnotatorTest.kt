@@ -87,12 +87,6 @@ class PanelAnnotatorTest {
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
     }
 
-    @Test
-    fun `Should infer ploidy`() {
-        val annotated = annotator.annotate(createTestSequencingTest())
-        assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
-    }
-
     private fun createTestSequencingTest(): SequencingTest {
         return SequencingTest(test = TEST_NAME, knownSpecifications = true)
     }

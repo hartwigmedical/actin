@@ -110,8 +110,8 @@ class MolecularCharacteristicFormatTest {
         assertThat(
             MolecularCharacteristicFormat.formatHomologousRecombination(
                 withHomologousRecombination(
-                    score = 1.0,
                     isDeficient = true,
+                    score = 1.0,
                     type = HomologousRecombinationType.BRCA1_TYPE,
                     brca1Value = 0.8
                 )
@@ -120,15 +120,15 @@ class MolecularCharacteristicFormatTest {
 
         assertThat(
             MolecularCharacteristicFormat.formatHomologousRecombination(
-                withHomologousRecombination(score = 0.2, isDeficient = false)
+                withHomologousRecombination(isDeficient = false, score = 0.2)
             )
         ).isEqualTo("Proficient (0.2)")
 
         assertThat(
             MolecularCharacteristicFormat.formatHomologousRecombination(
                 withHomologousRecombination(
-                    score = 1.0,
                     isDeficient = true,
+                    score = 1.0,
                     type = HomologousRecombinationType.BRCA2_TYPE,
                     brca2Value = 0.9
                 )
@@ -167,16 +167,16 @@ class MolecularCharacteristicFormatTest {
     }
 
     private fun withHomologousRecombination(
+        isDeficient: Boolean,
         score: Double,
-        isDeficient: Boolean?,
         type: HomologousRecombinationType = HomologousRecombinationType.CANNOT_BE_DETERMINED,
         brca1Value: Double = 0.0,
         brca2Value: Double = 0.0
     ): MolecularCharacteristics {
         return TestMolecularFactory.createMinimalTestCharacteristics().copy(
             homologousRecombination = HomologousRecombination(
-                score = score,
                 isDeficient = isDeficient,
+                score = score,
                 type = type,
                 brca1Value = brca1Value,
                 brca2Value = brca2Value,

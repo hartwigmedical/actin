@@ -35,6 +35,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_UNRESECTABLE_CANCER to hasUnresectableCancerCreator(),
             EligibilityRule.HAS_UNRESECTABLE_STAGE_III_CANCER to hasUnresectableStageIIICancerCreator(),
             EligibilityRule.HAS_RECURRENT_CANCER to hasRecurrentCancerCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_RECURRENT_CANCER to meetsSpecificCriteriaRegardingRecurrentCancerCreator(),
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
             EligibilityRule.HAS_AT_MOST_X_DISTANT_METASTASES to hasLimitedDistantMetastasesCreator(),
@@ -214,6 +215,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasRecurrentCancerCreator(): FunctionCreator {
         return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer()) }
+    }
+
+    private fun meetsSpecificCriteriaRegardingRecurrentCancerCreator(): FunctionCreator {
+        return { MeetsSpecificCriteriaRegardingRecurrentCancer() }
     }
 
     private fun hasIncurableCancerCreator(): FunctionCreator {

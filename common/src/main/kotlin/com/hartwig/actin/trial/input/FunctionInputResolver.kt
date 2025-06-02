@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -33,6 +34,7 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
+import com.hartwig.actin.trial.input.single.ManyTreatmentCategories
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
@@ -177,6 +179,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER -> {
                     createOneTreatmentTypeOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_TREATMENT_CATEGORIES -> {
+                    createManyTreatmentCategories(function)
                     return true
                 }
 
@@ -539,6 +546,11 @@ class FunctionInputResolver(
             type = TreatmentCategoryInput.treatmentTypeFromString(parameterAsString(function, 0)),
             integer = parameterAsInt(function, 1)
         )
+    }
+
+    fun createManyTreatmentCategories(function: EligibilityFunction): ManyTreatmentCategories {
+        assertParamConfig(function, FunctionInput.MANY_TREATMENT_CATEGORIES, 1)
+        return ManyTreatmentCategories(treatmentCategories =  toTreatmentCategoriesSet(function.parameters.first()))
     }
 
     fun createOneSpecificTreatmentInput(function: EligibilityFunction): Treatment {
@@ -991,6 +1003,10 @@ class FunctionInputResolver(
     fun createOneProteinOneStringInput(function: EligibilityFunction): OneProteinOneString {
         assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_STRING, 2)
         return OneProteinOneString(proteinName = parameterAsString(function, 0), string = parameterAsString(function, 1))
+    }
+
+    private fun toTreatmentCategoriesSet(input: Any): Set<TreatmentCategory> {
+        return toStringList(input).map(TreatmentCategoryResolver::fromString).toSet()
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String
