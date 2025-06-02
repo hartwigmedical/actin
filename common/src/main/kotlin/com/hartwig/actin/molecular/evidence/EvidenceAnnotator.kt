@@ -9,7 +9,6 @@ import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
-import com.hartwig.actin.molecular.util.ExtractionUtil
 
 class EvidenceAnnotator<T : MolecularTest>(
     private val clinicalEvidenceFactory: ClinicalEvidenceFactory,
@@ -84,6 +83,6 @@ class EvidenceAnnotator<T : MolecularTest>(
     private fun matchEvidence(actionable: Actionable, matchesForActionable: MatchesForActionable): ClinicalEvidence {
         val actionabilityMatch = matchesForActionable[actionable]
         val clinicalEvidence = actionabilityMatch?.let { clinicalEvidenceFactory.create(it) }
-        return clinicalEvidence ?: ExtractionUtil.noEvidence()
+        return clinicalEvidence ?: ClinicalEvidence(emptySet(), emptySet())
     }
 }

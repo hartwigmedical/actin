@@ -21,17 +21,20 @@ import org.apache.logging.log4j.Logger
 typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 
 class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, private val trials: List<ActionableTrial>) {
-    
+
     val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
 
     fun match(molecularTest: MolecularTest): MatchesForActionable {
         val evidences = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }
         val trials = match(molecularTest, trials) { it.anyMolecularCriteria().toList() }
 
-        return evidences.entries.associate { entry ->
-            val trialMatches = trials[entry.key] ?: emptySet()
-            entry.key to ActionabilityMatch(
-                entry.value.map { it.first }.toList(),
+        val allActionables = evidences.keys + trials.keys
+
+        return allActionables.associateWith { actionable ->
+            val evidenceMatch = evidences[actionable] ?: emptySet()
+            val trialMatches = trials[actionable] ?: emptySet()
+            ActionabilityMatch(
+                evidenceMatch.map { it.first },
                 trialMatches.groupBy { it.first }.mapValues { it.value.map { p -> p.second }.toSet() }
             )
         }

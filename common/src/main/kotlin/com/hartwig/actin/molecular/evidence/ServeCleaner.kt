@@ -9,7 +9,7 @@ object ServeCleaner {
 
     fun cleanServeDatabase(database: ServeDatabase): ServeDatabase {
         val cleanedRecords = database.records().mapValues { (_, record) ->
-            cleanCombinedEvidences(record)
+            cleanCombinedTrials(cleanCombinedEvidences(record))
         }
 
         return ImmutableServeDatabase.builder()
@@ -26,6 +26,18 @@ object ServeCleaner {
         return ImmutableServeRecord.builder()
             .from(record)
             .evidences(cleanedEvidences)
+            .build()
+    }
+
+    private fun cleanCombinedTrials(record: ServeRecord): ServeRecord {
+        val cleanedTrials = record.trials().filterNot { trial ->
+            trial.anyMolecularCriteria().any {
+                ServeVerifier.isCombinedProfile(it)
+            }
+        }
+        return ImmutableServeRecord.builder()
+            .from(record)
+            .trials(cleanedTrials)
             .build()
     }
 }
