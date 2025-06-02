@@ -38,7 +38,7 @@ class SequencingTestExtractor(
                     CurationCategory.SEQUENCING_TEST,
                     result,
                     "sequencing test",
-                    false
+                    true
                 )
 
             val sequencingResults = CurationResponse.createFromConfigs(
