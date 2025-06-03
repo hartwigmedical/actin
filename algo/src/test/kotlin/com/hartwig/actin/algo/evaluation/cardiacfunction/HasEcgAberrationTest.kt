@@ -36,14 +36,14 @@ class HasEcgAberrationTest {
         val record = ComorbidityTestFactory.withComorbidities(
             listOf(
                 otherCondition(
-                    name = "cardiac arrhythima",
+                    name = "cardiac arrhythmia",
                     icdMainCode = IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK
                 ), Ecg("ecg abnormality", null, null)
             )
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsExactly("ECG abnormalities (description) and cardiac arrhythmia (cardiac arrhythima) in history")
+        assertThat(evaluation.passMessages).containsExactly("ECG abnormalities (ecg abnormality) and cardiac arrhythmia (cardiac arrhythmia) in history")
     }
 
     @Test

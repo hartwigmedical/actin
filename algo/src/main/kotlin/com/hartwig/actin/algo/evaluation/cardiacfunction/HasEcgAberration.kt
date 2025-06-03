@@ -12,10 +12,11 @@ import com.hartwig.actin.icd.IcdModel
 class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val ecgsIcdCodes = record.ecgs.flatMap { it.icdCodes }
         val cardiacArrhythmiaComorbidities = icdModel.findInstancesMatchingAnyIcdCode(
             record.comorbidities,
             listOf(IcdCode(IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK))
-        ).fullMatches
+        ).fullMatches.filterNot { it.icdCodes.any { icdCode -> icdCode in ecgsIcdCodes } }
 
         val aberrations = Format.concat(record.ecgs.map { it.name ?: "details unknown" })
 
