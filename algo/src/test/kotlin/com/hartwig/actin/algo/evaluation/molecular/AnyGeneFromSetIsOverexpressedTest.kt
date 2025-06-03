@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -13,13 +13,13 @@ import org.junit.Test
 
 class AnyGeneFromSetIsOverexpressedTest {
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
-        every { evaluate(any<MolecularRecord>()) } returns EvaluationFactory.pass("amplification")
+        every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.pass("amplification")
     }
     private val alwaysWarnGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
-        every { evaluate(any<MolecularRecord>()) } returns EvaluationFactory.warn("possible amplification")
+        every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.warn("possible amplification")
     }
     private val alwaysFailGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
-        every { evaluate(any<MolecularRecord>()) } returns EvaluationFactory.fail("no amplification")
+        every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.fail("no amplification")
     }
 
     @Test
@@ -45,15 +45,6 @@ class AnyGeneFromSetIsOverexpressedTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages)
             .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
-    }
-
-    @Test
-    fun `Should evaluate to undetermined when molecular record not available`() {
-        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
-        val evaluation =
-            createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("No molecular data to determine overexpression of gene a, gene b and gene c in RNA")
     }
 
     private fun createFunctionWithEvaluations(geneIsAmplified: (String, LocalDate?) -> GeneIsAmplified): AnyGeneFromSetIsOverexpressed {
