@@ -44,6 +44,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE to
                     hasMolecularEventInNSCLCWithAvailableSocAnyLineCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE_EXCLUDING_GENES_X to
+                    hasMolecularEventInNSCLCWithAvailableSocAnyLineExcludingSomeGenesCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE to
                     hasMolecularEventInNSCLCWithAvailableSocFirstlineCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
@@ -149,6 +151,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 maxMolecularTestAge(),
                 false
             )
+        }
+    }
+
+    private fun hasMolecularEventInNSCLCWithAvailableSocAnyLineExcludingSomeGenesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genes = setOf(functionInputResolver().createManyGenesInput(function).toString())
+            HasMolecularDriverEventInNSCLC(NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE - genes, emptySet(), maxMolecularTestAge(), false)
         }
     }
 
