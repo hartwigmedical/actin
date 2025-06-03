@@ -221,6 +221,10 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
                 ALK_INHIBITOR_GEN_2,
                 ALK_INHIBITOR_GEN_3
             ),
+            "BRAF" to setOf(
+                BRAF_INHIBITOR,
+                BRAF_TYROSINE_KINASE_INHIBITOR
+            ),
             "EGFR" to setOf(
                 EGFR_INHIBITOR,
                 EGFR_EXON_20_INS_TARGETED_THERAPY,
@@ -230,6 +234,15 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
                 EGFR_INHIBITOR_GEN_3,
                 EGFR_EXON_20_INS_TARGETED_THERAPY,
                 EGFR_TYROSINE_KINASE_INHIBITOR
+            ),
+            "ERBB2" to setOf(
+                HER2_ANTIBODY,
+                HER2_INHIBITOR,
+                HER2_TYROSINE_KINASE_INHIBITOR,
+                HER2_EXON_20_INS_TKI,
+            ),
+            "KRAS" to setOf(
+                KRAS_G12C_INHIBITOR,
             ),
             "MET" to setOf(
                 MET_INHIBITOR,
@@ -242,10 +255,6 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
             "ROS1" to setOf(
                 ROS1_INHIBITOR,
                 ROS1_TYROSINE_KINASE_INHIBITOR
-            ),
-            "BRAF" to setOf(
-                BRAF_INHIBITOR,
-                BRAF_TYROSINE_KINASE_INHIBITOR
             ),
             "NTRK1" to setOf(
                 TRK_RECEPTOR_INHIBITOR,
