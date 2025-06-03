@@ -13,7 +13,7 @@ class EligibilityRuleUsageEvaluatorTest {
 
     @Test
     fun `Should evaluate eligibility rule usage`() {
-        val trials = listOf(TestTrialFactory.createMinimalTestTrial(), TestTrialFactory.createProperTestTrial())
+        val trials = listOf(createMinimalTestTrial(), TestTrialFactory.createProperTestTrial())
         val expectedUnusedRule = EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X
         val expectedUsedRules = setOf(
             EligibilityRule.IS_AT_LEAST_X_YEARS_OLD,
