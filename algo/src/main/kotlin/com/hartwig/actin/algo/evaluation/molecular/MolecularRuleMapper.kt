@@ -24,7 +24,9 @@ private val EGFR_PACC_CODON_VARIANTS = listOf(
     "L718",
     "G719",
 )
-private val NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC = setOf("ALK", "BRAF", "EGFR", "ERBB2", "MET", "NTRK1", "NTRK2", "NTRK3", "RET", "ROS1")
+private val NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE =
+    setOf("ALK", "BRAF", "EGFR", "ERBB2", "MET", "NTRK1", "NTRK2", "NTRK3", "RET", "ROS1")
+private val NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE = NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE + "KRAS"
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -40,8 +42,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     hasMolecularDriverEventInNSCLCInAtLeastSpecificGenesCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_EXCLUDING_GENES_X to
                     hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(),
-            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC to
-                    hasMolecularEventInNSCLCWithAvailableSocCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE to
+                    hasMolecularEventInNSCLCWithAvailableSocAnyLineCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE to
+                    hasMolecularEventInNSCLCWithAvailableSocFirstlineCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
@@ -137,10 +141,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasMolecularEventInNSCLCWithAvailableSocCreator(): FunctionCreator {
+    private fun hasMolecularEventInNSCLCWithAvailableSocAnyLineCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasMolecularDriverEventInNSCLC(
-                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC,
+                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE,
+                emptySet(),
+                maxMolecularTestAge(),
+                false
+            )
+        }
+    }
+
+    private fun hasMolecularEventInNSCLCWithAvailableSocFirstlineCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasMolecularDriverEventInNSCLC(
+                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE,
                 emptySet(),
                 maxMolecularTestAge(),
                 false

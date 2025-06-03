@@ -33,7 +33,7 @@ class HasMolecularDriverEventInNSCLC(
             )
                 evaluation.copy(
                     result = EvaluationResult.WARN,
-                    warnMessages = setOf("Undetermined if patient's molecular driver event is applicable as 'molecular driver event' in NSCLC"),
+                    warnMessages = setOf("Undetermined if patient's molecular driver event is applicable here as 'driver event' in NSCLC"),
                     passMessages = emptySet(),
                     inclusionMolecularEvents = emptySet(),
                     exclusionMolecularEvents = emptySet(),

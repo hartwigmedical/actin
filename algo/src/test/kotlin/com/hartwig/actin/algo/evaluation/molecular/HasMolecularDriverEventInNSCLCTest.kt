@@ -243,7 +243,7 @@ class HasMolecularDriverEventInNSCLCTest {
         assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
         evaluateMessages(
             function.evaluate(record).warnMessages,
-            setOf("Undetermined if patient's molecular driver event is applicable as 'molecular driver event' in NSCLC")
+            setOf("Undetermined if patient's molecular driver event is applicable here as 'driver event' in NSCLC")
         )
     }
 
