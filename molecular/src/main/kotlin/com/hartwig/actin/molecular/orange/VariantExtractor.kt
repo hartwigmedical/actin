@@ -72,7 +72,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                         phaseGroups = variant.localPhaseSets()?.toSet(),
                         clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     ),
-                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                    isCancerAssociatedVariant = variant.hotspot() == HotspotType.HOTSPOT,
                     isReportable = variant.reported(),
                     event = event,
                     driverLikelihood = driverLikelihood,

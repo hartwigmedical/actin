@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.hotspotcomparison
+package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -14,9 +14,9 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 
-object HotspotEvaluator {
+object CancerAssociatedVariantEvaluator {
 
-    fun annotateHotspots(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedHotspot> {
+    fun annotateCavs(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedCancerAssociatedVariant> {
         val knownGenes = serveRecord.knownEvents().genes().map(KnownGene::gene).toSet()
         return orange.purple().allSomaticVariants().filter { it.gene() in knownGenes }
             .mapNotNull { variant ->
@@ -24,10 +24,10 @@ object HotspotEvaluator {
                 val knownEventResolver =
                     KnownEventResolverFactory.create(KnownEventResolverFactory.includeKnownEvents(serveRecord.knownEvents(), true))
                 val serveVariantAlteration = knownEventResolver.resolveForVariant(criteria)
-                val isHotspotServe = serveVariantAlteration.isHotspot
-                val isHotspotOrange = variant.hotspot() == HotspotType.HOTSPOT
-                if (isHotspotServe || isHotspotOrange) {
-                    AnnotatedHotspot(
+                val isCavServe = serveVariantAlteration.isCancerAssociatedVariant
+                val isCavOrange = variant.hotspot() == HotspotType.HOTSPOT
+                if (isCavServe || isCavOrange) {
+                    AnnotatedCancerAssociatedVariant(
                         gene = variant.gene(),
                         chromosome = variant.chromosome(),
                         position = variant.position(),
@@ -35,8 +35,8 @@ object HotspotEvaluator {
                         alt = variant.alt(),
                         codingImpact = variant.canonicalImpact().hgvsCodingImpact(),
                         proteinImpact = variant.canonicalImpact().hgvsProteinImpact(),
-                        isHotspotOrange = isHotspotOrange,
-                        isHotspotServe = isHotspotServe,
+                        isCavOrange = isCavOrange,
+                        isCavServe = isCavServe,
                     )
                 } else {
                     null
@@ -65,7 +65,7 @@ object HotspotEvaluator {
             ),
             otherImpacts = emptySet(),
             extendedVariantDetails = null,
-            isHotspot = false,
+            isCancerAssociatedVariant = false,
             isReportable = false,
             event = "",
             driverLikelihood = null,

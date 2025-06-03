@@ -7,14 +7,14 @@ object TestVariantAlterationFactory {
         geneRole: GeneRole = GeneRole.UNKNOWN,
         proteinEffect: ProteinEffect = ProteinEffect.UNKNOWN,
         isAssociatedWithDrugResistance: Boolean? = null,
-        isHotspot: Boolean = false
+        isCancerAssociatedVariant: Boolean = false
     ): VariantAlteration {
         return VariantAlteration(
             gene = gene,
             geneRole = geneRole,
             proteinEffect = proteinEffect,
             isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
-            isHotspot = isHotspot
+            isCancerAssociatedVariant = isCancerAssociatedVariant
         )
     }
 }

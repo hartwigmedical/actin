@@ -124,7 +124,7 @@ class PanelVariantAnnotator(
         variantAlleleFrequency = variant.variantAlleleFrequency,
         canonicalImpact = canonicalImpact(paveResponse.impact, transvarAnnotation),
         otherImpacts = otherImpacts(paveResponse, transvarAnnotation),
-        isHotspot = false,
+        isCancerAssociatedVariant = false,
         isReportable = true,
         event = "${variant.gene} ${eventString(paveResponse)}",
         driverLikelihood = null,

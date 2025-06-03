@@ -6,35 +6,35 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 
-private data class HRDDriverClassification(val isBiallelic: Boolean, val isHotspot: Boolean, val isHighDriver: Boolean)
+private data class HRDDriverClassification(val isBiallelic: Boolean, val isCav: Boolean, val isHighDriver: Boolean)
 
 data class HomologousRecombinationDeficiencyGeneSummary(
-    val hrdGenesWithNonBiallelicHotspot: Set<String>,
-    val hrdGenesWithBiallelicHotspot: Set<String>,
-    val hrdGenesWithNonBiallelicNonHotspotHighDriver: Set<String>,
-    val hrdGenesWithNonBiallelicNonHotspotNonHighDriver: Set<String>,
-    val hrdGenesWithBiallelicNonHotspotHighDriver: Set<String>,
-    val hrdGenesWithBiallelicNonHotspotNonHighDriver: Set<String>,
+    val hrdGenesWithNonBiallelicCav: Set<String>,
+    val hrdGenesWithBiallelicCav: Set<String>,
+    val hrdGenesWithNonBiallelicNonCavHighDriver: Set<String>,
+    val hrdGenesWithNonBiallelicNonCavNonHighDriver: Set<String>,
+    val hrdGenesWithBiallelicNonCavHighDriver: Set<String>,
+    val hrdGenesWithBiallelicNonCavNonHighDriver: Set<String>,
     val hrdGenesWithDeletionOrPartialDel: Set<String>,
     val hrdGenesWithHomozygousDisruption: Set<String>,
     val hrdGenesWithNonHomozygousDisruption : Set<String>
 ) {
 
-    val hrdGenesWithBiallelicDriver = (hrdGenesWithBiallelicHotspot + hrdGenesWithBiallelicNonHotspotHighDriver +
-            hrdGenesWithBiallelicNonHotspotNonHighDriver + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialDel)
-    val hrdGenesWithNonBiallelicDriver = (hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot +
-            hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
+    val hrdGenesWithBiallelicDriver = (hrdGenesWithBiallelicCav + hrdGenesWithBiallelicNonCavHighDriver +
+            hrdGenesWithBiallelicNonCavNonHighDriver + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialDel)
+    val hrdGenesWithNonBiallelicDriver = (hrdGenesWithNonBiallelicNonCavHighDriver + hrdGenesWithNonBiallelicCav +
+            hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonCavNonHighDriver)
 
     companion object {
-        private val BIALLELIC_HOTSPOT = HRDDriverClassification(isBiallelic = true, isHotspot = true, isHighDriver = true)
-        private val NON_BIALLELIC_HOTSPOT = HRDDriverClassification(isBiallelic = false, isHotspot = true, isHighDriver = true)
-        private val BIALLELIC_NON_HOTSPOT_HIGH_DRIVER = HRDDriverClassification(isBiallelic = true, isHotspot = false, isHighDriver = true)
-        private val BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER =
-            HRDDriverClassification(isBiallelic = true, isHotspot = false, isHighDriver = false)
-        private val NON_BIALLELIC_NON_HOTSPOT_HIGH_DRIVER =
-            HRDDriverClassification(isBiallelic = false, isHotspot = false, isHighDriver = true)
-        private val NON_BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER =
-            HRDDriverClassification(isBiallelic = false, isHotspot = false, isHighDriver = false)
+        private val BIALLELIC_CAV = HRDDriverClassification(isBiallelic = true, isCav = true, isHighDriver = true)
+        private val NON_BIALLELIC_CAV = HRDDriverClassification(isBiallelic = false, isCav = true, isHighDriver = true)
+        private val BIALLELIC_NON_CAV_HIGH_DRIVER = HRDDriverClassification(isBiallelic = true, isCav = false, isHighDriver = true)
+        private val BIALLELIC_NON_CAV_NON_HIGH_DRIVER =
+            HRDDriverClassification(isBiallelic = true, isCav = false, isHighDriver = false)
+        private val NON_BIALLELIC_NON_CAV_HIGH_DRIVER =
+            HRDDriverClassification(isBiallelic = false, isCav = false, isHighDriver = true)
+        private val NON_BIALLELIC_NON_CAV_NON_HIGH_DRIVER =
+            HRDDriverClassification(isBiallelic = false, isCav = false, isHighDriver = false)
 
         fun createForDrivers(drivers: Drivers): HomologousRecombinationDeficiencyGeneSummary {
             val hrdVariantGroups = drivers.variants
@@ -43,7 +43,7 @@ data class HomologousRecombinationDeficiencyGeneSummary(
                     { variant ->
                         HRDDriverClassification(
                             variant.extendedVariantDetails!!.isBiallelic,
-                            variant.isHotspot,
+                            variant.isCancerAssociatedVariant,
                             variant.driverLikelihood == DriverLikelihood.HIGH
                         )
                     },
@@ -64,12 +64,12 @@ data class HomologousRecombinationDeficiencyGeneSummary(
                 .toSet()
 
             return HomologousRecombinationDeficiencyGeneSummary(
-                hrdGenesWithNonBiallelicHotspot = hrdVariantGroups[NON_BIALLELIC_HOTSPOT] ?: emptySet(),
-                hrdGenesWithBiallelicHotspot = hrdVariantGroups[BIALLELIC_HOTSPOT] ?: emptySet(),
-                hrdGenesWithNonBiallelicNonHotspotHighDriver = hrdVariantGroups[NON_BIALLELIC_NON_HOTSPOT_HIGH_DRIVER] ?: emptySet(),
-                hrdGenesWithNonBiallelicNonHotspotNonHighDriver = hrdVariantGroups[NON_BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER] ?: emptySet(),
-                hrdGenesWithBiallelicNonHotspotHighDriver = hrdVariantGroups[BIALLELIC_NON_HOTSPOT_HIGH_DRIVER] ?: emptySet(),
-                hrdGenesWithBiallelicNonHotspotNonHighDriver = hrdVariantGroups[BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER] ?: emptySet(),
+                hrdGenesWithNonBiallelicCav = hrdVariantGroups[NON_BIALLELIC_CAV] ?: emptySet(),
+                hrdGenesWithBiallelicCav = hrdVariantGroups[BIALLELIC_CAV] ?: emptySet(),
+                hrdGenesWithNonBiallelicNonCavHighDriver = hrdVariantGroups[NON_BIALLELIC_NON_CAV_HIGH_DRIVER] ?: emptySet(),
+                hrdGenesWithNonBiallelicNonCavNonHighDriver = hrdVariantGroups[NON_BIALLELIC_NON_CAV_NON_HIGH_DRIVER] ?: emptySet(),
+                hrdGenesWithBiallelicNonCavHighDriver = hrdVariantGroups[BIALLELIC_NON_CAV_HIGH_DRIVER] ?: emptySet(),
+                hrdGenesWithBiallelicNonCavNonHighDriver = hrdVariantGroups[BIALLELIC_NON_CAV_NON_HIGH_DRIVER] ?: emptySet(),
                 hrdGenesWithDeletionOrPartialDel = hrdGenesWithDeletionOrPartialDel,
                 hrdGenesWithHomozygousDisruption = hrdGenesWithHomozygousDisruption,
                 hrdGenesWithNonHomozygousDisruption = hrdGenesWithNonHomozygousDisruption

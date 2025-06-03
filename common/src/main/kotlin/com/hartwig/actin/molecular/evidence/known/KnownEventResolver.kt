@@ -32,14 +32,17 @@ class KnownEventResolver(
         val secondaryAlteration = findHotspot(secondaryKnownEvents.hotspots(), variant)
 
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, primaryAlteration)
-        val isHotspot = HotspotFunctions.isHotspot(primaryAlteration) || HotspotFunctions.isHotspot(secondaryAlteration)
+        val isCancerAssociatedVariant =
+            CancerAssociatedVariantFunctions.isCancerAssociatedVariant(primaryAlteration) || CancerAssociatedVariantFunctions.isCancerAssociatedVariant(
+                secondaryAlteration
+            )
 
         return VariantAlteration(
             gene = geneAlteration.gene,
             geneRole = geneAlteration.geneRole,
             proteinEffect = geneAlteration.proteinEffect,
             isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-            isHotspot = isHotspot
+            isCancerAssociatedVariant = isCancerAssociatedVariant
         )
     }
 

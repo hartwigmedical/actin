@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.hotspotcomparison
+package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
@@ -64,13 +64,13 @@ private val ORANGE_RECORD = ImmutableOrangeRecord.builder()
     .from(createMinimalTestOrangeRecord())
     .purple(PURPLE_RECORD).build()
 
-class HotspotEvaluatorTest {
+class CancerAssociatedVariantEvaluatorTest {
 
     @Test
-    fun `Should compare hotspots between ORANGE and SERVE`() {
-        val hotspots = HotspotEvaluator.annotateHotspots(ORANGE_RECORD, SERVE_RECORD)
-        assertThat(hotspots.count { it.isHotspotOrange }).isEqualTo(2)
-        assertThat(hotspots.count { it.isHotspotServe }).isEqualTo(1)
-        assertThat(hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }).isEqualTo(1)
+    fun `Should compare cancer associated variants between ORANGE and SERVE`() {
+        val cavs = CancerAssociatedVariantEvaluator.annotateCavs(ORANGE_RECORD, SERVE_RECORD)
+        assertThat(cavs.count { it.isCavOrange }).isEqualTo(2)
+        assertThat(cavs.count { it.isCavServe }).isEqualTo(1)
+        assertThat(cavs.count { !(it.isCavOrange && it.isCavServe) }).isEqualTo(1)
     }
 }

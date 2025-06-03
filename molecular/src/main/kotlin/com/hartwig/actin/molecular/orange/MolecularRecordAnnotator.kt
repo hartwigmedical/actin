@@ -13,9 +13,11 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihoodComparator
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
+import com.hartwig.actin.molecular.MolecularAnnotatorFunctions
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import org.apache.logging.log4j.LogManager
@@ -81,15 +83,17 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     fun annotateVariant(variant: Variant): Variant {
         val alteration = evidenceDatabase.alterationForVariant(variant)
 
-        if (!variant.isHotspot && alteration.isHotspot) {
-            logger.info("Overwriting isHotspot to true and setting driverLikelihood to HIGH for ${variant.event}")
+        if (!variant.isCancerAssociatedVariant && alteration.isCancerAssociatedVariant) {
+            logger.info("Overwriting isCancerAssociatedVariant to true and setting driverLikelihood to HIGH for ${variant.event}")
         }
 
+        val proteinEffect = MolecularAnnotatorFunctions.annotateProteinEffect(variant, alteration)
+
         val variantWithGeneAlteration = variant.copy(
-            isHotspot = alteration.isHotspot,
-            driverLikelihood = if (alteration.isHotspot) DriverLikelihood.HIGH else variant.driverLikelihood,
+            isCancerAssociatedVariant = alteration.isCancerAssociatedVariant,
+            driverLikelihood = if (alteration.isCancerAssociatedVariant || proteinEffect == ProteinEffect.LOSS_OF_FUNCTION) DriverLikelihood.HIGH else variant.driverLikelihood,
             geneRole = alteration.geneRole,
-            proteinEffect = alteration.proteinEffect,
+            proteinEffect = proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
         val evidence = evidenceDatabase.evidenceForVariant(variantWithGeneAlteration)

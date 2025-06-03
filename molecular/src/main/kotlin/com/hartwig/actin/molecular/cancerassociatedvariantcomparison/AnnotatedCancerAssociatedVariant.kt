@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.hotspotcomparison
+package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
-data class AnnotatedHotspot(
+data class AnnotatedCancerAssociatedVariant(
     val gene: String,
     val chromosome: String,
     val position: Int,
@@ -8,6 +8,6 @@ data class AnnotatedHotspot(
     val alt: String,
     val codingImpact: String,
     val proteinImpact: String,
-    val isHotspotOrange: Boolean,
-    val isHotspotServe: Boolean
+    val isCavOrange: Boolean,
+    val isCavServe: Boolean
 )

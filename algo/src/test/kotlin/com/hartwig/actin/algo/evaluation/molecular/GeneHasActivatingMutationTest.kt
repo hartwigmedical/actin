@@ -83,8 +83,11 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should warn with activating mutation for gene with no protein effect or hotspot`() {
-        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isHotspot = false))
+    fun `Should warn with activating mutation for gene with no protein effect or cancer-associated variant`() {
+        assertResultForVariant(
+            EvaluationResult.WARN,
+            ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isCancerAssociatedVariant = false)
+        )
     }
 
     @Test
@@ -103,16 +106,17 @@ class GeneHasActivatingMutationTest {
             TestVariantFactory.createMinimal().copy(
                 gene = GENE,
                 isReportable = false,
-                isHotspot = false,
+                isCancerAssociatedVariant = false,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         )
     }
 
     @Test
-    fun `Should warn with non reportable hotspot mutation for gene`() {
+    fun `Should warn with non reportable cancer-associated variant for gene`() {
         assertResultForVariant(
-            EvaluationResult.WARN, TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isHotspot = true)
+            EvaluationResult.WARN,
+            TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isCancerAssociatedVariant = true)
         )
     }
 
@@ -247,7 +251,7 @@ class GeneHasActivatingMutationTest {
             driverLikelihood = DriverLikelihood.HIGH,
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isHotspot = true,
+            isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(300),
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
@@ -259,7 +263,7 @@ class GeneHasActivatingMutationTest {
             driverLikelihood = DriverLikelihood.HIGH,
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isHotspot = true,
+            isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(100),
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)

@@ -19,10 +19,10 @@ private val VARIANT = TestVariantFactory.createMinimal()
 
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 
-private val HOTSPOT =
+private val CANCER_ASSOCIATED_VARIANT =
     TestVariantAlterationFactory.createVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
 
-private val NON_HOTSPOT =
+private val NON_CANCER_ASSOCIATED_VARIANT =
     TestVariantAlterationFactory.createVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
 
 class MolecularRecordAnnotatorTest {
@@ -52,31 +52,31 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variant that is hotspot`() {
+    fun `Should annotate variant that is cancer-associated variant`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns HOTSPOT
+            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns CANCER_ASSOCIATED_VARIANT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
-        assertThat(annotated.isHotspot).isTrue()
+        assertThat(annotated.isCancerAssociatedVariant).isTrue()
         assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(annotated.proteinEffect.name).isEqualTo(HOTSPOT.proteinEffect.name)
-        assertThat(annotated.geneRole.name).isEqualTo(HOTSPOT.geneRole.name)
+        assertThat(annotated.proteinEffect.name).isEqualTo(CANCER_ASSOCIATED_VARIANT.proteinEffect.name)
+        assertThat(annotated.geneRole.name).isEqualTo(CANCER_ASSOCIATED_VARIANT.geneRole.name)
     }
 
     @Test
-    fun `Should annotate variant that is no hotspot`() {
+    fun `Should annotate variant that is no cancer-associated variant`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_HOTSPOT
+            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_CANCER_ASSOCIATED_VARIANT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
-        assertThat(annotated.isHotspot).isFalse()
+        assertThat(annotated.isCancerAssociatedVariant).isFalse()
         assertThat(annotated.driverLikelihood).isEqualTo(VARIANT.driverLikelihood)
-        assertThat(annotated.proteinEffect.name).isEqualTo(NON_HOTSPOT.proteinEffect.name)
-        assertThat(annotated.geneRole.name).isEqualTo(NON_HOTSPOT.geneRole.name)
+        assertThat(annotated.proteinEffect.name).isEqualTo(NON_CANCER_ASSOCIATED_VARIANT.proteinEffect.name)
+        assertThat(annotated.geneRole.name).isEqualTo(NON_CANCER_ASSOCIATED_VARIANT.geneRole.name)
     }
 
     @Test

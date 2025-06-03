@@ -9,10 +9,10 @@ import kotlin.math.max
 class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
 
     fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
-        val hasHotspot = variants.any { it.isHotspot }
+        val hasCancerAssociatedVariant = variants.any { it.isCancerAssociatedVariant }
         return if (variants.isEmpty()) {
             return null
-        } else if (hasHotspot) {
+        } else if (hasCancerAssociatedVariant) {
             return 1.0
         } else {
             handleVariantsOfUnknownSignificance(gene, geneRole, variants)

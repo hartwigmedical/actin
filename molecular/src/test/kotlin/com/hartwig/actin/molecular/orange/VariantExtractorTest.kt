@@ -107,7 +107,7 @@ class VariantExtractorTest {
         assertThat(variant.extendedVariantDetails?.variantCopyNumber).isEqualTo(0.4, Offset.offset(EPSILON))
         assertThat(variant.extendedVariantDetails?.totalCopyNumber).isEqualTo(0.8, Offset.offset(EPSILON))
         assertThat(variant.extendedVariantDetails?.isBiallelic).isFalse
-        assertThat(variant.isHotspot).isFalse
+        assertThat(variant.isCancerAssociatedVariant).isFalse
         assertThat(variant.extendedVariantDetails?.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
         assertThat(variant.extendedVariantDetails?.phaseGroups).isEqualTo(setOf(1))
 

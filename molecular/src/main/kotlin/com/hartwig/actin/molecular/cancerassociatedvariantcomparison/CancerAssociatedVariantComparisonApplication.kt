@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.hotspotcomparison
+package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.util.Paths
@@ -18,7 +18,7 @@ import java.io.FileWriter
 import kotlin.system.exitProcess
 import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
-class HotspotComparisonApplication(private val config: HotspotComparisonConfig) {
+class CancerAssociatedVariantComparisonApplication(private val config: CancerAssociatedVariantComparisonConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -30,39 +30,39 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
 
         val orange = OrangeJson.getInstance().read(config.orangeJson)
         val serveRecord = selectForRefGenomeVersion(serveDatabase, orange.refGenomeVersion())
-        val hotspots = HotspotEvaluator.annotateHotspots(orange, serveRecord)
+        val cavs = CancerAssociatedVariantEvaluator.annotateCavs(orange, serveRecord)
 
-        LOGGER.info("Hotspot comparison DONE!")
+        LOGGER.info("Cancer-associated variant comparison DONE!")
         LOGGER.info(
-            "{} hotspot(s) according to ORANGE. {} hotspot(s) according to SERVE. {} hotspot(s) different",
-            hotspots.count { it.isHotspotOrange },
-            hotspots.count { it.isHotspotServe },
-            hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }
+            "{} CAV(s) according to ORANGE. {} CAV(s) according to SERVE. {} CAV(s) different",
+            cavs.count { it.isCavOrange },
+            cavs.count { it.isCavServe },
+            cavs.count { !(it.isCavOrange && it.isCavServe) }
         )
-        write(config.outputDirectory, orange.sampleId(), hotspots)
+        write(config.outputDirectory, orange.sampleId(), cavs)
     }
 
-    private fun write(directory: String, sampleId: String, hotspots: List<AnnotatedHotspot>) {
+    private fun write(directory: String, sampleId: String, cavs: List<AnnotatedCancerAssociatedVariant>) {
         val path = Paths.forceTrailingFileSeparator(directory)
-        val file = "$path$sampleId.hotspotComparison"
-        LOGGER.info("Writing hotspot comparison to {}", file)
+        val file = "$path$sampleId.cancerAssociatedVariantComparison"
+        LOGGER.info("Writing cancer-associated variant comparison to {}", file)
         BufferedWriter(FileWriter(file)).use { writer ->
-            writer.write("gene\tchromosome\tposition\tref\talt\tcodingImpact\tproteinImpact\tisHotspotOrange\tisHotspotServe\n")
-            hotspots.forEach { writer.write(toTabSeparatedString(it) + "\n") }
+            writer.write("gene\tchromosome\tposition\tref\talt\tcodingImpact\tproteinImpact\tisCavOrange\tisCavServe\n")
+            cavs.forEach { writer.write(toTabSeparatedString(it) + "\n") }
         }
     }
 
-    private fun toTabSeparatedString(hotspot: AnnotatedHotspot): String {
+    private fun toTabSeparatedString(cancerAssociatedVariant: AnnotatedCancerAssociatedVariant): String {
         return listOf(
-            hotspot.gene,
-            hotspot.chromosome,
-            hotspot.position,
-            hotspot.ref,
-            hotspot.alt,
-            hotspot.codingImpact,
-            hotspot.proteinImpact,
-            hotspot.isHotspotOrange,
-            hotspot.isHotspotServe
+            cancerAssociatedVariant.gene,
+            cancerAssociatedVariant.chromosome,
+            cancerAssociatedVariant.position,
+            cancerAssociatedVariant.ref,
+            cancerAssociatedVariant.alt,
+            cancerAssociatedVariant.codingImpact,
+            cancerAssociatedVariant.proteinImpact,
+            cancerAssociatedVariant.isCavOrange,
+            cancerAssociatedVariant.isCavServe
         ).joinToString("\t")
     }
 
@@ -84,22 +84,23 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
     }
 
     companion object {
-        const val APPLICATION: String = "ACTIN Hotspot Comparator"
+        const val APPLICATION: String = "ACTIN Cancer Associated Variant Comparator"
 
-        val LOGGER: Logger = LogManager.getLogger(HotspotComparisonApplication::class.java)
-        private val VERSION = HotspotComparisonApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+        val LOGGER: Logger = LogManager.getLogger(CancerAssociatedVariantComparisonApplication::class.java)
+        private val VERSION =
+            CancerAssociatedVariantComparisonApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
-    val options: Options = HotspotComparisonConfig.createOptions()
+    val options: Options = CancerAssociatedVariantComparisonConfig.createOptions()
 
     try {
-        val config = HotspotComparisonConfig.createConfig(DefaultParser().parse(options, args))
-        HotspotComparisonApplication(config).run()
+        val config = CancerAssociatedVariantComparisonConfig.createConfig(DefaultParser().parse(options, args))
+        CancerAssociatedVariantComparisonApplication(config).run()
     } catch (exception: ParseException) {
-        HotspotComparisonApplication.LOGGER.warn(exception)
-        HelpFormatter().printHelp(HotspotComparisonApplication.APPLICATION, options)
+        CancerAssociatedVariantComparisonApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(CancerAssociatedVariantComparisonApplication.APPLICATION, options)
         exitProcess(1)
     }
 }
