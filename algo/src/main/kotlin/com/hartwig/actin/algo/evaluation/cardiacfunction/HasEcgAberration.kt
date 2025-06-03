@@ -17,9 +17,16 @@ class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
             listOf(IcdCode(IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK))
         ).fullMatches
 
+        val aberrations = Format.concat(record.ecgs.map { it.name ?: "details unknown" })
+
         return when {
+            record.ecgs.isNotEmpty() && cardiacArrhythmiaComorbidities.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(
+                    "ECG abnormalities ($aberrations) and cardiac arrhythmia (${Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)}) in history"
+                )
+            }
+
             record.ecgs.isNotEmpty() -> {
-                val aberrations = Format.concat(record.ecgs.map { it.name ?: "details unknown" })
                 EvaluationFactory.recoverablePass("ECG abnormalities present ($aberrations)")
             }
 

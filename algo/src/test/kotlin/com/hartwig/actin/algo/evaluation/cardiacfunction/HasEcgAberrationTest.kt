@@ -5,7 +5,9 @@ import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.icd.TestIcdFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasEcgAberrationTest {
@@ -27,6 +29,21 @@ class HasEcgAberrationTest {
             function.evaluate(ComorbidityTestFactory.withComorbidity(otherCondition(icdMainCode = IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK)))
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withEcgDescription(null)))
+    }
+
+    @Test
+    fun `Should pass with ECG aberration and cardiac arrhythmia in history`() {
+        val record = ComorbidityTestFactory.withComorbidities(
+            listOf(
+                otherCondition(
+                    name = "cardiac arrhythima",
+                    icdMainCode = IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK
+                ), Ecg("ecg abnormality", null, null)
+            )
+        )
+        val evaluation = function.evaluate(record)
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessages).containsExactly("ECG abnormalities (description) and cardiac arrhythmia (cardiac arrhythima) in history")
     }
 
     @Test
