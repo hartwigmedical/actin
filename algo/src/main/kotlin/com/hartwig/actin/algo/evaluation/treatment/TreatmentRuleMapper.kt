@@ -44,7 +44,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to hasHadLimitedSystemicTreatmentsCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT to hasHadAnyCancerTreatmentCreator(),
-            EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X to hasHadAnyCancerTreatmentIgnoringSomeCategoryCreator(),
+            EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_X to hasHadAnyCancerTreatmentIgnoringCategoriesCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_ANY_SYSTEMIC_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(true),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
@@ -198,13 +198,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasHadAnyCancerTreatmentCreator(): FunctionCreator {
-        return { HasHadAnyCancerTreatment(null, antiCancerCategories) }
+        return { HasHadAnyCancerTreatment(emptySet(), antiCancerCategories) }
     }
 
-    private fun hasHadAnyCancerTreatmentIgnoringSomeCategoryCreator(): FunctionCreator {
+    private fun hasHadAnyCancerTreatmentIgnoringCategoriesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            HasHadAnyCancerTreatment(treatment.mappedCategory, antiCancerCategories)
+            val treatmentCategories = functionInputResolver().createManyTreatmentCategories(function)
+            HasHadAnyCancerTreatment(treatmentCategories.treatmentCategories, antiCancerCategories)
         }
     }
 

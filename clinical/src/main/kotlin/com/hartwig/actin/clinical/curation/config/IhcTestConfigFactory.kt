@@ -7,8 +7,8 @@ import com.hartwig.actin.util.ResourceFile
 
 class IhcTestConfigFactory(private val curationCategory: CurationCategory) : CurationConfigFactory<IhcTestConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<IhcTestConfig> {
-        val test = parts[fields["test"]!!]
-        val ignore = CurationUtil.isIgnoreString(test)
+        val item = parts[fields["item"]!!]
+        val ignore = CurationUtil.isIgnoreString(item)
         val input = parts[fields["input"]!!]
         val (impliesPotentialIndeterminateStatus, impliesPotentialIndeterminateStatusValidationErrors)
                 = validateBoolean(curationCategory, input, "impliesPotentialIndeterminateStatus", fields, parts)

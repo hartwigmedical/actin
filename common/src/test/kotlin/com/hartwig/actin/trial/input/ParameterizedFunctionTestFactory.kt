@@ -91,6 +91,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf(DrugType.ANTI_PD_L1.toString(), "1")
             }
 
+            FunctionInput.MANY_TREATMENT_CATEGORIES -> {
+                listOf("${TreatmentCategory.IMMUNOTHERAPY.display()};${TreatmentCategory.CHEMOTHERAPY.display()}")
+            }
+
             FunctionInput.ONE_SPECIFIC_TREATMENT -> {
                 listOf("CAPECITABINE+OXALIPLATIN")
             }

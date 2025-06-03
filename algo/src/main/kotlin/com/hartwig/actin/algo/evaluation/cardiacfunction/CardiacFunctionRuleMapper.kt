@@ -40,7 +40,8 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
                     HasEcgAberration(icdModel()),
                     HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                         icdModel(),
-                        IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
+                        IcdConstants.HEART_DISEASE_SET.filterNot { it == IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK }.map { IcdCode(it) }
+                            .toSet(),
                         "potential significant heart disease",
                         referenceDateProvider().date()
                     )
