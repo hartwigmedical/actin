@@ -12,44 +12,34 @@ private val PROTEIN_IMPACT_LIST = listOf(Pair("BRAF", "V600E"), Pair("KRAS", "G1
 private val FUSION_LIST = listOf("ALK", "NRG1", "NTRK1", "NTRK2", "NTRK3", "RET", "ROS1")
 private val EXON_SKIPPING_LIST = listOf(Pair("MET", 14))
 private val ALL_GENES =
-    listOf(ACTIVATING_MUTATION_LIST, PROTEIN_IMPACT_LIST.map { it.first }, FUSION_LIST, EXON_SKIPPING_LIST.map { it.first }).flatten()
-        .distinct()
+    ACTIVATING_MUTATION_LIST + PROTEIN_IMPACT_LIST.map { it.first } + FUSION_LIST + EXON_SKIPPING_LIST.map { it.first }.distinct()
 
 class HasMolecularDriverEventInNSCLC(
     private val genesToInclude: Set<String>? = null,
     private val genesToIgnore: Set<String>,
     private val maxTestAge: LocalDate? = null,
-    private val includeGenesAtLeast: Boolean? = false
+    private val includeGenesAtLeast: Boolean = false
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (includeGenesAtLeast == true && genesToInclude != null) {
+        return if (includeGenesAtLeast && genesToInclude != null) {
             val evaluation = Or(createEvaluationFunctions(null, genesToIgnore)).evaluate(record)
-            val genesToWarn = ALL_GENES - genesToInclude
-            return if (hasPositiveEvaluationEventInGenes(evaluation, genesToWarn) && !hasPositiveEvaluationEventInGenes(
+            if (hasPositiveEvaluationEventInGenes(evaluation, ALL_GENES - genesToInclude) && !hasPositiveEvaluationEventInGenes(
                     evaluation,
                     genesToInclude.toList()
                 )
-            )
-                evaluation.copy(
+            ) {
+                clearMolecularEvents(evaluation).copy(
                     result = EvaluationResult.WARN,
                     warnMessages = setOf("Undetermined if patient's molecular driver event is applicable here as 'driver event' in NSCLC"),
-                    passMessages = emptySet(),
-                    inclusionMolecularEvents = emptySet(),
-                    exclusionMolecularEvents = emptySet(),
-                    isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
-                ) else evaluation.copy(
-                inclusionMolecularEvents = emptySet(),
-                exclusionMolecularEvents = emptySet(),
-                isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
-            )
+                    passMessages = emptySet()
+                )
+            } else {
+                clearMolecularEvents(evaluation)
+            }
         } else {
             val evaluation = Or(createEvaluationFunctions(genesToInclude, genesToIgnore)).evaluate(record)
-            return evaluation.copy(
-                inclusionMolecularEvents = emptySet(),
-                exclusionMolecularEvents = emptySet(),
-                isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
-            )
+            clearMolecularEvents(evaluation)
         }
     }
 
@@ -67,5 +57,12 @@ class HasMolecularDriverEventInNSCLC(
         return genesList.any { gene ->
             evaluation.inclusionMolecularEvents.any { string -> string.contains(gene) }
         } && (evaluation.result == EvaluationResult.PASS || evaluation.result == EvaluationResult.WARN)
+    }
+
+    private fun clearMolecularEvents(evaluation: Evaluation): Evaluation {
+        return evaluation.copy(
+            inclusionMolecularEvents = emptySet(),
+            exclusionMolecularEvents = emptySet(),
+        )
     }
 }
