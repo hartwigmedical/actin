@@ -7,13 +7,13 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 
 typealias PanelRecordWithDriverAttributes = PanelRecord
 
 class PanelDriverAttributeAnnotator(
-    private val evidenceDatabase: EvidenceDatabase,
+    private val knownEventResolver: KnownEventResolver,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
 ) : MolecularAnnotator<PanelRecord, PanelRecordWithDriverAttributes> {
 
@@ -33,7 +33,7 @@ class PanelDriverAttributeAnnotator(
     }
 
     private fun annotateVariantWithGeneAlteration(variant: Variant): Variant {
-        val alteration = evidenceDatabase.alterationForVariant(variant)
+        val alteration = knownEventResolver.resolveForVariant(variant)
 
         return variant.copy(
             isHotspot = alteration.isHotspot,
@@ -59,7 +59,7 @@ class PanelDriverAttributeAnnotator(
     }
 
     private fun annotatedCopyNumberWithDriverAttributes(copyNumber: CopyNumber): CopyNumber {
-        val alteration = evidenceDatabase.alterationForCopyNumber(copyNumber)
+        val alteration = knownEventResolver.resolveForCopyNumber(copyNumber)
         return copyNumber.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
@@ -68,7 +68,7 @@ class PanelDriverAttributeAnnotator(
     }
 
     private fun annotateFusionWithDriverAttributes(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
+        val knownFusion = knownEventResolver.resolveForFusion(fusion)
         val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
         val isAssociatedWithDrugResistance = knownFusion.associatedWithDrugResistance()
 

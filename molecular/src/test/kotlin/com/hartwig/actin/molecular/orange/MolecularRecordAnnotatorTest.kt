@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
+import com.hartwig.actin.molecular.evidence.known.TestKnownEventResolverFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +27,7 @@ private val NON_HOTSPOT =
 
 class MolecularRecordAnnotatorTest {
 
-    private val annotator = MolecularRecordAnnotator(TestEvidenceDatabaseFactory.createProperDatabase())
+    private val annotator = MolecularRecordAnnotator(TestKnownEventResolverFactory.createProper())
 
     @Test
     fun `Should retain characteristics during annotation that are originally present`() {
@@ -53,9 +53,8 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should annotate variant that is hotspot`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns HOTSPOT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+        val evidenceDatabase = mockk<KnownEventResolver> {
+            every { resolveForVariant(VARIANT.copy(driverLikelihood = null)) } returns HOTSPOT
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
@@ -67,9 +66,8 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should annotate variant that is no hotspot`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_HOTSPOT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+        val evidenceDatabase = mockk<KnownEventResolver> {
+            every { resolveForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_HOTSPOT
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
