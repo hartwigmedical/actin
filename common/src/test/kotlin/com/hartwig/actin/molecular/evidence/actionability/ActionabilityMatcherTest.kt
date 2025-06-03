@@ -628,7 +628,7 @@ class ActionabilityMatcherTest {
         val matchingHotspotAndCharacteristicCriterium =
             ImmutableMolecularCriterium.builder().addHotspots(brafActionableHotspot).addCharacteristics(tmbHighCharacteristic).build()
         val matchingHotspotCriterium = ImmutableMolecularCriterium.builder().addHotspots(brafActionableHotspot).build()
-        
+
         val trial = TestServeTrialFactory.create(
             anyMolecularCriteria = setOf(
                 nonApplicableGeneCriterium,
@@ -648,17 +648,25 @@ class ActionabilityMatcherTest {
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(tumorMutationalBurden = highTmb)
             )
         )
+
+        val filteredTrial = TestServeTrialFactory.create(
+            anyMolecularCriteria = setOf(
+                matchingHotspotAndCharacteristicCriterium,
+                matchingHotspotCriterium
+            )
+        )
+
         assertThat(matches).hasSize(2)
         assertThat(matches[brafMolecularTestVariant]).isEqualTo(
             ActionabilityMatch(
                 emptyList(),
-                mapOf(trial to setOf(matchingHotspotAndCharacteristicCriterium, matchingHotspotCriterium))
+                mapOf(filteredTrial to setOf(matchingHotspotAndCharacteristicCriterium, matchingHotspotCriterium))
             )
         )
         assertThat(matches[highTmb]).isEqualTo(
             ActionabilityMatch(
                 emptyList(),
-                mapOf(trial to setOf(matchingHotspotAndCharacteristicCriterium))
+                mapOf(filteredTrial to setOf(matchingHotspotAndCharacteristicCriterium))
             )
         )
     }
