@@ -84,7 +84,7 @@ class HasMolecularDriverEventInNSCLCTest {
             setOf("$CORRECT_ACTIVATING_MUTATION_GENE activating mutation(s): $CORRECT_ACTIVATING_MUTATION_PROTEIN_IMPACT")
 
         evaluateIncludeFunctions(EvaluationResult.PASS, record)
-        evaluateIncludeMessages(expectedMessages, record)
+        evaluateIncludePassMessages(expectedMessages, record)
     }
 
     @Test
@@ -167,7 +167,7 @@ class HasMolecularDriverEventInNSCLCTest {
         )
 
         evaluateIncludeFunctions(EvaluationResult.PASS, record)
-        evaluateIncludeMessages(expectedMessages, record)
+        evaluateIncludePassMessages(expectedMessages, record)
 
         evaluateMessages(
             HasMolecularDriverEventInNSCLC(
@@ -284,7 +284,7 @@ class HasMolecularDriverEventInNSCLCTest {
         assertEvaluation(expected, functionIncludingAtLeastGenes.evaluate(record))
     }
 
-    private fun evaluateIncludeMessages(expected: Set<String>, record: PatientRecord) {
+    private fun evaluateIncludePassMessages(expected: Set<String>, record: PatientRecord) {
         evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expected)
         evaluateMessages(functionIncludingSpecificGenes.evaluate(record).passMessages, expected)
         evaluateMessages(functionIncludingAtLeastGenes.evaluate(record).passMessages, expected)
