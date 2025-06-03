@@ -135,7 +135,7 @@ In addition to the (gene) driver fields, the following data is captured for vari
 | canonicalImpact           | See impact    | The impact of this variant on the canonical transcript of the gene                        |
 | otherImpacts              | See impact    | The impact of this variant on other transcripts of the gene                               |
 | extendedVariantDetails    | See below     | Optional field with extended details on the variant                                       |
-| isCancerAssociatedVariant | true          | Indicates whether this specific variant is a known (pathogenic) cancer associated variant |
+| isCancerAssociatedVariant | true          | Indicates whether this specific variant is a known (pathogenic) cancer-associated variant |
 
 Depending on the type of molecular test, more details may be available for a variant as follows:
 

@@ -17,7 +17,6 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.MolecularAnnotatorFunctions
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import org.apache.logging.log4j.LogManager
@@ -87,13 +86,11 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
             logger.info("Overwriting isCancerAssociatedVariant to true and setting driverLikelihood to HIGH for ${variant.event}")
         }
 
-        val proteinEffect = MolecularAnnotatorFunctions.annotateProteinEffect(variant, alteration)
-
         val variantWithGeneAlteration = variant.copy(
             isCancerAssociatedVariant = alteration.isCancerAssociatedVariant,
-            driverLikelihood = if (alteration.isCancerAssociatedVariant || proteinEffect == ProteinEffect.LOSS_OF_FUNCTION) DriverLikelihood.HIGH else variant.driverLikelihood,
+            driverLikelihood = if (alteration.isCancerAssociatedVariant) DriverLikelihood.HIGH else variant.driverLikelihood,
             geneRole = alteration.geneRole,
-            proteinEffect = proteinEffect,
+            proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
         val evidence = evidenceDatabase.evidenceForVariant(variantWithGeneAlteration)

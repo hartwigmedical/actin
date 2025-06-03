@@ -44,7 +44,7 @@ class PanelDriverAttributeAnnotatorTest {
     private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
 
     @Test
-    fun `Should annotate variant that is cancer-associated variant`() {
+    fun `Should annotate variant that is a cancer-associated variant`() {
         every { evidenceDatabase.alterationForVariant(any()) } returns CANCER_ASSOCIATED_VARIANT
 
         val panelRecord = panelRecordWith(VARIANT)

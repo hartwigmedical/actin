@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.MolecularAnnotatorFunctions
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -39,7 +38,7 @@ class PanelDriverAttributeAnnotator(
         return variant.copy(
             isCancerAssociatedVariant = alteration.isCancerAssociatedVariant,
             geneRole = alteration.geneRole,
-            proteinEffect = MolecularAnnotatorFunctions.annotateProteinEffect(variant, alteration),
+            proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
     }

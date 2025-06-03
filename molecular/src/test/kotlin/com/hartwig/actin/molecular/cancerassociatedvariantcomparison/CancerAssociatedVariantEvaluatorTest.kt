@@ -67,10 +67,12 @@ private val ORANGE_RECORD = ImmutableOrangeRecord.builder()
 class CancerAssociatedVariantEvaluatorTest {
 
     @Test
-    fun `Should compare cancer associated variants between ORANGE and SERVE`() {
-        val cavs = CancerAssociatedVariantEvaluator.annotateCavs(ORANGE_RECORD, SERVE_RECORD)
-        assertThat(cavs.count { it.isCavOrange }).isEqualTo(2)
-        assertThat(cavs.count { it.isCavServe }).isEqualTo(1)
-        assertThat(cavs.count { !(it.isCavOrange && it.isCavServe) }).isEqualTo(1)
+    fun `Should compare cancer-associated variants between ORANGE and SERVE`() {
+        val cancerAssociatedVariants = CancerAssociatedVariantEvaluator.annotateCancerAssociatedVariants(ORANGE_RECORD, SERVE_RECORD)
+        assertThat(cancerAssociatedVariants.count { it.isCancerAssociatedVariantOrange }).isEqualTo(2)
+        assertThat(cancerAssociatedVariants.count { it.isCancerAssociatedVariantServe }).isEqualTo(1)
+        assertThat(cancerAssociatedVariants.count { !(it.isCancerAssociatedVariantOrange && it.isCancerAssociatedVariantServe) }).isEqualTo(
+            1
+        )
     }
 }

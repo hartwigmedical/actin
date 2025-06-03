@@ -8,10 +8,13 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.Knowledgebase
@@ -67,7 +70,7 @@ class KnownEventResolverTest {
     }
 
     @Test
-    fun `Should resolve variant when variant is no cancer-associated variant in any source`() {
+    fun `Should resolve variant when variant is not a cancer-associated variant in any source`() {
         val hotspotCkb = createHotspot(Knowledgebase.CKB, ServeProteinEffect.NO_EFFECT)
         val primaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
         val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
@@ -82,7 +85,7 @@ class KnownEventResolverTest {
     }
 
     @Test
-    fun `Should resolve variant when variant is not in CKB and no cancer-associated variant in any other source`() {
+    fun `Should resolve variant when variant is not in CKB and not a cancer-associated variant in any other source`() {
         val primaryKnownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
         val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
@@ -200,6 +203,23 @@ class KnownEventResolverTest {
         val fusionMismatch = fusionMatch.copy(geneStart = "down", geneEnd = "up")
         val otherFusion = TestServeKnownFactory.fusionBuilder().geneUp("down").geneDown("up").build()
         assertThat(resolver.resolveForFusion(fusionMismatch)).isEqualTo(otherFusion)
+    }
+
+    @Test
+    fun `Should annotate protein effect for frameshift in TSG`() {
+        val variant = TestVariantFactory.createMinimal().copy(
+            gene = GENE,
+            geneRole = GeneRole.TSG,
+            canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        )
+        val alteration = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.TSG, ProteinEffect.UNKNOWN)
+        val primaryKnownEvents = ImmutableKnownEvents.builder().build()
+        val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
+        val output = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes()).reannotateProteinEffect(
+            variant,
+            alteration
+        )
+        assertThat(output.proteinEffect).isEqualTo(ProteinEffect.LOSS_OF_FUNCTION)
     }
 
     private fun createHotspot(

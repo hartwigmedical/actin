@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 
-private data class HRDDriverClassification(val isBiallelic: Boolean, val isCav: Boolean, val isHighDriver: Boolean)
+private data class HRDDriverClassification(val isBiallelic: Boolean, val isCancerAssociatedVariant: Boolean, val isHighDriver: Boolean)
 
 data class HomologousRecombinationDeficiencyGeneSummary(
     val hrdGenesWithNonBiallelicCav: Set<String>,
@@ -26,15 +26,16 @@ data class HomologousRecombinationDeficiencyGeneSummary(
             hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonCavNonHighDriver)
 
     companion object {
-        private val BIALLELIC_CAV = HRDDriverClassification(isBiallelic = true, isCav = true, isHighDriver = true)
-        private val NON_BIALLELIC_CAV = HRDDriverClassification(isBiallelic = false, isCav = true, isHighDriver = true)
-        private val BIALLELIC_NON_CAV_HIGH_DRIVER = HRDDriverClassification(isBiallelic = true, isCav = false, isHighDriver = true)
+        private val BIALLELIC_CAV = HRDDriverClassification(isBiallelic = true, isCancerAssociatedVariant = true, isHighDriver = true)
+        private val NON_BIALLELIC_CAV = HRDDriverClassification(isBiallelic = false, isCancerAssociatedVariant = true, isHighDriver = true)
+        private val BIALLELIC_NON_CAV_HIGH_DRIVER =
+            HRDDriverClassification(isBiallelic = true, isCancerAssociatedVariant = false, isHighDriver = true)
         private val BIALLELIC_NON_CAV_NON_HIGH_DRIVER =
-            HRDDriverClassification(isBiallelic = true, isCav = false, isHighDriver = false)
+            HRDDriverClassification(isBiallelic = true, isCancerAssociatedVariant = false, isHighDriver = false)
         private val NON_BIALLELIC_NON_CAV_HIGH_DRIVER =
-            HRDDriverClassification(isBiallelic = false, isCav = false, isHighDriver = true)
+            HRDDriverClassification(isBiallelic = false, isCancerAssociatedVariant = false, isHighDriver = true)
         private val NON_BIALLELIC_NON_CAV_NON_HIGH_DRIVER =
-            HRDDriverClassification(isBiallelic = false, isCav = false, isHighDriver = false)
+            HRDDriverClassification(isBiallelic = false, isCancerAssociatedVariant = false, isHighDriver = false)
 
         fun createForDrivers(drivers: Drivers): HomologousRecombinationDeficiencyGeneSummary {
             val hrdVariantGroups = drivers.variants

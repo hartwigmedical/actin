@@ -52,7 +52,7 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variant that is cancer-associated variant`() {
+    fun `Should annotate variant that is a cancer-associated variant`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
             every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns CANCER_ASSOCIATED_VARIANT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH
@@ -66,7 +66,7 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variant that is no cancer-associated variant`() {
+    fun `Should annotate variant that is not a cancer-associated variant`() {
         val evidenceDatabase = mockk<EvidenceDatabase> {
             every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_CANCER_ASSOCIATED_VARIANT
             every { evidenceForVariant(any()) } returns EMPTY_MATCH

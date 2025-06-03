@@ -1,10 +1,13 @@
 package com.hartwig.actin.molecular.evidence.known
 
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
@@ -31,11 +34,9 @@ class KnownEventResolver(
 
         val secondaryAlteration = findHotspot(secondaryKnownEvents.hotspots(), variant)
 
-        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, primaryAlteration)
-        val isCancerAssociatedVariant =
-            CancerAssociatedVariantFunctions.isCancerAssociatedVariant(primaryAlteration) || CancerAssociatedVariantFunctions.isCancerAssociatedVariant(
-                secondaryAlteration
-            )
+        val geneAlteration = reannotateProteinEffect(variant, GeneAlterationFactory.convertAlteration(variant.gene, primaryAlteration))
+        val isCancerAssociatedVariant = CancerAssociatedVariantFunctions.isCancerAssociatedVariant(primaryAlteration) ||
+                CancerAssociatedVariantFunctions.isCancerAssociatedVariant(secondaryAlteration)
 
         return VariantAlteration(
             gene = geneAlteration.gene,
@@ -44,6 +45,16 @@ class KnownEventResolver(
             isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
             isCancerAssociatedVariant = isCancerAssociatedVariant
         )
+    }
+
+    fun reannotateProteinEffect(variant: Variant, alteration: GeneAlteration): GeneAlteration {
+        val overwrite = variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT && alteration.geneRole == GeneRole.TSG
+        return object : GeneAlteration {
+            override val gene: String = alteration.gene
+            override val geneRole: GeneRole = alteration.geneRole
+            override val proteinEffect: ProteinEffect = if (overwrite) ProteinEffect.LOSS_OF_FUNCTION else alteration.proteinEffect
+            override val isAssociatedWithDrugResistance: Boolean? = alteration.isAssociatedWithDrugResistance
+        }
     }
 
     fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration {

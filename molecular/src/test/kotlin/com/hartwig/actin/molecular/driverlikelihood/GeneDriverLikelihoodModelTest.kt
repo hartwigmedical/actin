@@ -52,7 +52,7 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should assign driver likelihood of high when variant is already marked as cancer-associated variant`() {
+    fun `Should assign driver likelihood of high when variant is already marked as a cancer-associated variant`() {
         val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.ONCO,

@@ -8,6 +8,6 @@ data class AnnotatedCancerAssociatedVariant(
     val alt: String,
     val codingImpact: String,
     val proteinImpact: String,
-    val isCavOrange: Boolean,
-    val isCavServe: Boolean
+    val isCancerAssociatedVariantOrange: Boolean,
+    val isCancerAssociatedVariantServe: Boolean
 )

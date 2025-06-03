@@ -30,25 +30,25 @@ class CancerAssociatedVariantComparisonApplication(private val config: CancerAss
 
         val orange = OrangeJson.getInstance().read(config.orangeJson)
         val serveRecord = selectForRefGenomeVersion(serveDatabase, orange.refGenomeVersion())
-        val cavs = CancerAssociatedVariantEvaluator.annotateCavs(orange, serveRecord)
+        val cancerAssociatedVariants = CancerAssociatedVariantEvaluator.annotateCancerAssociatedVariants(orange, serveRecord)
 
         LOGGER.info("Cancer-associated variant comparison DONE!")
         LOGGER.info(
             "{} CAV(s) according to ORANGE. {} CAV(s) according to SERVE. {} CAV(s) different",
-            cavs.count { it.isCavOrange },
-            cavs.count { it.isCavServe },
-            cavs.count { !(it.isCavOrange && it.isCavServe) }
+            cancerAssociatedVariants.count { it.isCancerAssociatedVariantOrange },
+            cancerAssociatedVariants.count { it.isCancerAssociatedVariantServe },
+            cancerAssociatedVariants.count { !(it.isCancerAssociatedVariantOrange && it.isCancerAssociatedVariantServe) }
         )
-        write(config.outputDirectory, orange.sampleId(), cavs)
+        write(config.outputDirectory, orange.sampleId(), cancerAssociatedVariants)
     }
 
-    private fun write(directory: String, sampleId: String, cavs: List<AnnotatedCancerAssociatedVariant>) {
+    private fun write(directory: String, sampleId: String, cancerAssociatedVariants: List<AnnotatedCancerAssociatedVariant>) {
         val path = Paths.forceTrailingFileSeparator(directory)
         val file = "$path$sampleId.cancerAssociatedVariantComparison"
         LOGGER.info("Writing cancer-associated variant comparison to {}", file)
         BufferedWriter(FileWriter(file)).use { writer ->
             writer.write("gene\tchromosome\tposition\tref\talt\tcodingImpact\tproteinImpact\tisCavOrange\tisCavServe\n")
-            cavs.forEach { writer.write(toTabSeparatedString(it) + "\n") }
+            cancerAssociatedVariants.forEach { writer.write(toTabSeparatedString(it) + "\n") }
         }
     }
 
@@ -61,8 +61,8 @@ class CancerAssociatedVariantComparisonApplication(private val config: CancerAss
             cancerAssociatedVariant.alt,
             cancerAssociatedVariant.codingImpact,
             cancerAssociatedVariant.proteinImpact,
-            cancerAssociatedVariant.isCavOrange,
-            cancerAssociatedVariant.isCavServe
+            cancerAssociatedVariant.isCancerAssociatedVariantOrange,
+            cancerAssociatedVariant.isCancerAssociatedVariantServe
         ).joinToString("\t")
     }
 

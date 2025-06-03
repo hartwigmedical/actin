@@ -16,7 +16,7 @@ import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 
 object CancerAssociatedVariantEvaluator {
 
-    fun annotateCavs(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedCancerAssociatedVariant> {
+    fun annotateCancerAssociatedVariants(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedCancerAssociatedVariant> {
         val knownGenes = serveRecord.knownEvents().genes().map(KnownGene::gene).toSet()
         return orange.purple().allSomaticVariants().filter { it.gene() in knownGenes }
             .mapNotNull { variant ->
@@ -24,9 +24,9 @@ object CancerAssociatedVariantEvaluator {
                 val knownEventResolver =
                     KnownEventResolverFactory.create(KnownEventResolverFactory.includeKnownEvents(serveRecord.knownEvents(), true))
                 val serveVariantAlteration = knownEventResolver.resolveForVariant(criteria)
-                val isCavServe = serveVariantAlteration.isCancerAssociatedVariant
-                val isCavOrange = variant.hotspot() == HotspotType.HOTSPOT
-                if (isCavServe || isCavOrange) {
+                val isCancerAssociatedVariantServe = serveVariantAlteration.isCancerAssociatedVariant
+                val isCancerAssociatedVariantOrange = variant.hotspot() == HotspotType.HOTSPOT
+                if (isCancerAssociatedVariantServe || isCancerAssociatedVariantOrange) {
                     AnnotatedCancerAssociatedVariant(
                         gene = variant.gene(),
                         chromosome = variant.chromosome(),
@@ -35,8 +35,8 @@ object CancerAssociatedVariantEvaluator {
                         alt = variant.alt(),
                         codingImpact = variant.canonicalImpact().hgvsCodingImpact(),
                         proteinImpact = variant.canonicalImpact().hgvsProteinImpact(),
-                        isCavOrange = isCavOrange,
-                        isCavServe = isCavServe,
+                        isCancerAssociatedVariantOrange = isCancerAssociatedVariantOrange,
+                        isCancerAssociatedVariantServe = isCancerAssociatedVariantServe,
                     )
                 } else {
                     null
