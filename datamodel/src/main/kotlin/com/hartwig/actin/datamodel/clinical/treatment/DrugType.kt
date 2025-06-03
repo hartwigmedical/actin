@@ -150,6 +150,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     MONOCLONAL_ANTIBODY_TARGETED_THERAPY(TreatmentCategory.TARGETED_THERAPY, "monoclonal antibody - targeted therapies"),
     MTORC1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MTORC1 inhibitor"),
     MUC16_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MUC16 inhibitor"),
+    NECTIN_4_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "Nectin-4 antibody"),
     NK_CELL_BASED_THERAPY(TreatmentCategory.IMMUNOTHERAPY, "NK cell-based therapy"),
     NITROSOUREAS(TreatmentCategory.CHEMOTHERAPY),
     NONSTEROIDAL_ANTI_ANDROGEN(TreatmentCategory.HORMONE_THERAPY),

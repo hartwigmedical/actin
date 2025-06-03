@@ -38,58 +38,56 @@ class SequencingTestExtractor(
                     CurationCategory.SEQUENCING_TEST,
                     result,
                     "sequencing test",
-                    false
+                    true
                 )
 
-            val curatedTestName = when (val config = testCurationConfig.config()) {
-                null -> "Unknown test"
-                else -> when {
-                    config.ignore -> null
-                    else -> config.curatedName
-                }
+            val sequencingResults = CurationResponse.createFromConfigs(
+                testResultCuration.find(result),
+                patientId,
+                CurationCategory.SEQUENCING_TEST_RESULT,
+                result,
+                "sequencing test result",
+                false
+            )
+
+            if (testCurationConfig.configs.isEmpty() && sequencingResults.configs.isEmpty()) {
+                return ExtractionResult(emptyList(), CurationExtractionEvaluation())
             }
 
-            curatedTestName?.let { name ->
-                val sequencingResults = CurationResponse.createFromConfigs(
-                    testResultCuration.find(result),
-                    patientId,
-                    CurationCategory.SEQUENCING_TEST_RESULT,
-                    result,
-                    "sequencing test result",
-                    false
-                )
+            val sequencingTestConfig = testCurationConfig.config()?.takeUnless { it.ignore }
+            val sequencingTestResultConfig = sequencingResults.configs.filterNot { it.ignore }.toSet()
 
-                val notIgnoredResults = sequencingResults.configs.filter { !it.ignore }.toSet()
+            val extractionEvaluation = sequencingResults.extractionEvaluation + testCurationConfig.extractionEvaluation
+            when {
+                sequencingTestConfig == null && sequencingTestResultConfig.isEmpty() ->
+                    ExtractionResult(emptyList(), extractionEvaluation.copy(warnings = emptySet()))
 
-                if (notIgnoredResults.isNotEmpty()) {
+                sequencingTestConfig != null && sequencingTestResultConfig.isNotEmpty() ->
                     ExtractionResult(
                         listOf(
                             SequencingTest(
-                                test = name,
-                                variants = variants(notIgnoredResults),
-                                amplifications = amplifications(notIgnoredResults),
-                                deletions = deletions(notIgnoredResults),
-                                fusions = fusions(notIgnoredResults),
-                                skippedExons = skippedExons(notIgnoredResults),
-                                tumorMutationalBurden = tmb(notIgnoredResults),
-                                isMicrosatelliteUnstable = msi(notIgnoredResults),
-                                isHomologousRecombinationDeficient = hrd(notIgnoredResults),
-                                negativeResults = negativeResults(notIgnoredResults),
+                                test = testCurationConfig.config()?.curatedName ?: "",
+                                variants = variants(sequencingTestResultConfig),
+                                amplifications = amplifications(sequencingTestResultConfig),
+                                deletions = deletions(sequencingTestResultConfig),
+                                fusions = fusions(sequencingTestResultConfig),
+                                skippedExons = skippedExons(sequencingTestResultConfig),
+                                tumorMutationalBurden = tmb(sequencingTestResultConfig),
+                                isMicrosatelliteUnstable = msi(sequencingTestResultConfig),
+                                isHomologousRecombinationDeficient = hrd(sequencingTestResultConfig),
+                                negativeResults = negativeResults(sequencingTestResultConfig),
                                 knownSpecifications = false
                             )
                         ),
-                        sequencingResults.extractionEvaluation
+                        extractionEvaluation
                     )
-                } else {
-                    ExtractionResult(emptyList(), sequencingResults.extractionEvaluation.copy(warnings = emptySet()))
-                }
 
-            } ?: ExtractionResult(emptyList(), testCurationConfig.extractionEvaluation.copy(warnings = emptySet()))
+                else ->
+                    ExtractionResult(emptyList(), extractionEvaluation)
+            }
         }
-        return extracted.fold(
-            ExtractionResult(emptyList(), CurationExtractionEvaluation())
-        ) { acc, extractionResult ->
-            ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
+        return extracted.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, res ->
+            ExtractionResult(acc.extracted + res.extracted, acc.evaluation + res.evaluation)
         }
     }
 

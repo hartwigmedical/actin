@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.driverlikelihood.TEST_ONCO_DNDS_TSV
 import com.hartwig.actin.molecular.driverlikelihood.TEST_TSG_DNDS_TSV
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 import io.mockk.every
 import io.mockk.mockk
@@ -39,13 +39,13 @@ private val NON_CANCER_ASSOCIATED_VARIANT =
 
 class PanelDriverAttributeAnnotatorTest {
 
-    private val evidenceDatabase = mockk<EvidenceDatabase>()
+    private val knownEventResolver = mockk<KnownEventResolver>()
     private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
-    private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
+    private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(knownEventResolver, geneDriverLikelihoodModel)
 
     @Test
     fun `Should annotate variant that is a cancer-associated variant`() {
-        every { evidenceDatabase.alterationForVariant(any()) } returns CANCER_ASSOCIATED_VARIANT
+        every { knownEventResolver.resolveForVariant(any()) } returns CANCER_ASSOCIATED_VARIANT
 
         val panelRecord = panelRecordWith(VARIANT)
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
@@ -62,7 +62,7 @@ class PanelDriverAttributeAnnotatorTest {
 
     @Test
     fun `Should annotate variant that is not a cancer-associated variant`() {
-        every { evidenceDatabase.alterationForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
+        every { knownEventResolver.resolveForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
 
         val panelRecord = panelRecordWith(VARIANT.copy(isCancerAssociatedVariant = false))
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
@@ -79,7 +79,7 @@ class PanelDriverAttributeAnnotatorTest {
 
     @Test
     fun `Should not annotate with evidence when no matches found`() {
-        every { evidenceDatabase.alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+        every { knownEventResolver.resolveForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
 
         val panelRecord = panelRecordWith(VARIANT.copy(gene = "other gene"))
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
@@ -90,7 +90,7 @@ class PanelDriverAttributeAnnotatorTest {
 
     @Test
     fun `Should annotate fusion`() {
-        every { evidenceDatabase.lookupKnownFusion(any()) } returns KNOWN_FUSION
+        every { knownEventResolver.resolveForFusion(any()) } returns KNOWN_FUSION
 
         val panelRecord = panelRecordWith(TestMolecularFactory.createMinimalFusion())
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
@@ -105,7 +105,7 @@ class PanelDriverAttributeAnnotatorTest {
 
     @Test
     fun `Should annotate copy number`() {
-        every { evidenceDatabase.alterationForCopyNumber(any()) } returns AMPLIFICATION
+        every { knownEventResolver.resolveForCopyNumber(any()) } returns AMPLIFICATION
 
         val panelRecord = panelRecordWith(TestMolecularFactory.createMinimalCopyNumber())
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)

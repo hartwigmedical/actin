@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
+import com.hartwig.actin.molecular.evidence.known.TestKnownEventResolverFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -16,8 +16,6 @@ import org.junit.Test
 
 private val GENE = "gene 1"
 private val VARIANT = TestVariantFactory.createMinimal()
-
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 
 private val CANCER_ASSOCIATED_VARIANT =
     TestVariantAlterationFactory.createVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
@@ -27,7 +25,7 @@ private val NON_CANCER_ASSOCIATED_VARIANT =
 
 class MolecularRecordAnnotatorTest {
 
-    private val annotator = MolecularRecordAnnotator(TestEvidenceDatabaseFactory.createProperDatabase())
+    private val annotator = MolecularRecordAnnotator(TestKnownEventResolverFactory.createProper())
 
     @Test
     fun `Should retain characteristics during annotation that are originally present`() {
@@ -53,9 +51,8 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should annotate variant that is a cancer-associated variant`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns CANCER_ASSOCIATED_VARIANT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+        val evidenceDatabase = mockk<KnownEventResolver> {
+            every { resolveForVariant(VARIANT.copy(driverLikelihood = null)) } returns CANCER_ASSOCIATED_VARIANT
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
@@ -67,9 +64,8 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should annotate variant that is not a cancer-associated variant`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_CANCER_ASSOCIATED_VARIANT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+        val evidenceDatabase = mockk<KnownEventResolver> {
+            every { resolveForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_CANCER_ASSOCIATED_VARIANT
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
