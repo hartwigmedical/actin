@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 object MolecularAnnotatorFunctions {
 
     fun annotateProteinEffect(variant: Variant, alteration: VariantAlteration): ProteinEffect {
-        return if (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT && variant.geneRole == GeneRole.TSG) {
+        return if (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT && alteration.geneRole == GeneRole.TSG) {
             ProteinEffect.LOSS_OF_FUNCTION
         } else alteration.proteinEffect
     }

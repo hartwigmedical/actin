@@ -10,9 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val GENE = "gene 1"
-private val VARIANT =
-    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
-
+private val VARIANT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.TSG, ProteinEffect.UNKNOWN)
 
 class MolecularAnnotatorFunctionsTest {
 
