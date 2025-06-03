@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
@@ -18,6 +17,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -25,7 +25,6 @@ import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableKnownHotspot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val GENE = "gene 1"
 private val CANCER_ASSOCIATED_VARIANT_MATCH = TestMolecularFactory.createMinimalVariant().copy(
@@ -209,16 +208,13 @@ class KnownEventResolverTest {
     fun `Should annotate protein effect for frameshift in TSG`() {
         val variant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
-            geneRole = GeneRole.TSG,
             canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
         )
-        val alteration = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.TSG, ProteinEffect.UNKNOWN)
-        val primaryKnownEvents = ImmutableKnownEvents.builder().build()
-        val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
-        val output = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes()).reannotateProteinEffect(
-            variant,
-            alteration
-        )
+        val knownGene =
+            TestServeKnownFactory.geneBuilder().gene(GENE).geneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.TSG).build()
+        val knownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
+        val resolver = KnownEventResolver(knownEvents, knownEvents, knownEvents.genes())
+        val output = resolver.resolveForVariant(variant)
         assertThat(output.proteinEffect).isEqualTo(ProteinEffect.LOSS_OF_FUNCTION)
     }
 

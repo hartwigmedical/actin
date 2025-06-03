@@ -34,27 +34,22 @@ class KnownEventResolver(
 
         val secondaryAlteration = findHotspot(secondaryKnownEvents.hotspots(), variant)
 
-        val geneAlteration = reannotateProteinEffect(variant, GeneAlterationFactory.convertAlteration(variant.gene, primaryAlteration))
+        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, primaryAlteration)
+        val nonsenseOrFrameShiftInTsg = nonsenseOrFrameShiftInTsg(variant, geneAlteration)
         val isCancerAssociatedVariant = CancerAssociatedVariantFunctions.isCancerAssociatedVariant(primaryAlteration) ||
-                CancerAssociatedVariantFunctions.isCancerAssociatedVariant(secondaryAlteration)
+                CancerAssociatedVariantFunctions.isCancerAssociatedVariant(secondaryAlteration) || nonsenseOrFrameShiftInTsg
 
         return VariantAlteration(
             gene = geneAlteration.gene,
             geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
+            proteinEffect = if (nonsenseOrFrameShiftInTsg) ProteinEffect.LOSS_OF_FUNCTION else geneAlteration.proteinEffect,
             isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
             isCancerAssociatedVariant = isCancerAssociatedVariant
         )
     }
 
-    fun reannotateProteinEffect(variant: Variant, alteration: GeneAlteration): GeneAlteration {
-        val overwrite = variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT && alteration.geneRole == GeneRole.TSG
-        return object : GeneAlteration {
-            override val gene: String = alteration.gene
-            override val geneRole: GeneRole = alteration.geneRole
-            override val proteinEffect: ProteinEffect = if (overwrite) ProteinEffect.LOSS_OF_FUNCTION else alteration.proteinEffect
-            override val isAssociatedWithDrugResistance: Boolean? = alteration.isAssociatedWithDrugResistance
-        }
+    private fun nonsenseOrFrameShiftInTsg(variant: Variant, alteration: GeneAlteration): Boolean {
+        return variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT && alteration.geneRole == GeneRole.TSG
     }
 
     fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration {
@@ -98,3 +93,36 @@ class KnownEventResolver(
         return knownExons.find { RangeMatching.isMatch(it, variant) }
     }
 }
+
+//
+//val reannotatedPrimaryAlteration = reannotateProteinEffect(variant, primaryAlteration)
+//val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, reannotatedPrimaryAlteration)
+//val isCancerAssociatedVariant = CancerAssociatedVariantFunctions.isCancerAssociatedVariant(reannotatedPrimaryAlteration) ||
+//        CancerAssociatedVariantFunctions.isCancerAssociatedVariant(secondaryAlteration)
+//
+//return VariantAlteration(
+//gene = geneAlteration.gene,
+//geneRole = geneAlteration.geneRole,
+//proteinEffect = geneAlteration.proteinEffect,
+//isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
+//isCancerAssociatedVariant = isCancerAssociatedVariant
+//)
+//}
+//
+//fun reannotateProteinEffect(variant: Variant, alteration: ServeGeneAlteration?): ServeGeneAlteration? {
+//    if (alteration == null) return null
+//    val overwrite = variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT && alteration.geneRole() == ServeGeneRole.TSG
+//    return object : ServeGeneAlteration {
+//        override fun geneRole(): ServeGeneRole {
+//            return alteration.geneRole()
+//        }
+//
+//        override fun proteinEffect(): ServeProteinEffect {
+//            return if (overwrite) ServeProteinEffect.LOSS_OF_FUNCTION else alteration.proteinEffect()
+//        }
+//
+//        override fun associatedWithDrugResistance(): Boolean? {
+//            return alteration.associatedWithDrugResistance()
+//        }
+//    }
+//}
