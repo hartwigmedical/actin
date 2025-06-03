@@ -784,7 +784,15 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC",
+    "eligibilityRule": "HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE_EXCLUDING_GENES_X",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE",
     "usedStatus": "UNUSED"
   },
   {
