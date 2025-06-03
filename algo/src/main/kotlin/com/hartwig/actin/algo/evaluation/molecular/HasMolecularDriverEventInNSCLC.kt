@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import java.time.LocalDate
 
 private val ACTIVATING_MUTATION_LIST = listOf("EGFR", "ERBB2")
-private val PROTEIN_IMPACT_LIST = listOf(Pair("BRAF", "V600E"), Pair("KRAS", "G12C"))
+private val PROTEIN_IMPACT_LIST = listOf("BRAF" to "V600E", "KRAS" to "G12C")
 private val FUSION_LIST = listOf("ALK", "NRG1", "NTRK1", "NTRK2", "NTRK3", "RET", "ROS1")
-private val EXON_SKIPPING_LIST = listOf(Pair("MET", 14))
+private val EXON_SKIPPING_LIST = listOf("MET" to 14)
 private val ALL_GENES =
     ACTIVATING_MUTATION_LIST + PROTEIN_IMPACT_LIST.map { it.first } + FUSION_LIST + EXON_SKIPPING_LIST.map { it.first }.distinct()
 
