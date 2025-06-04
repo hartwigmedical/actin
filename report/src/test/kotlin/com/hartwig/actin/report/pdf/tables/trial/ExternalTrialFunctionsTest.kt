@@ -94,11 +94,11 @@ class ExternalTrialFunctionsTest {
     @Test
     fun `Should return country names and cities`() {
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
-            .isEqualTo("NL (Amsterdam, Leiden), Germany (Berlin)")
+            .isEqualTo("NL: Amsterdam, Leiden, Germany: Berlin")
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialBelgium))
-            .isEqualTo("Belgium (3+ locations (see link))")
+            .isEqualTo("Belgium: 3+ locations (see link)")
         assertThat(ExternalTrialFunctions.countryNamesWithCities(externalTrialNetherlands))
-            .isEqualTo("NL (Nijmegen, Leiden, Amsterdam)")
+            .isEqualTo("NL: Nijmegen, Leiden, Amsterdam")
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)

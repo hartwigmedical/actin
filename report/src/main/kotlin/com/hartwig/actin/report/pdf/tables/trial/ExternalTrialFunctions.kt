@@ -31,7 +31,7 @@ object ExternalTrialFunctions {
     fun countryNamesWithCities(externalTrial: ExternalTrialSummary): String {
         return externalTrial.countries.joinToString { country ->
             val (_, cities) = formatHospitalsAndCities(country.hospitalsPerCity)
-            "${country.country.display()} ($cities)"
+            "${country.country.display()}: $cities"
         }
     }
 }
