@@ -33,7 +33,15 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
 
         return when {
             record.molecularHistory.molecularTests.isEmpty() -> EvaluationFactory.fail("No molecular data")
-            isLungCancer -> HasMolecularDriverEventInNSCLC(genes.toSet(), emptySet(), maxTestAge).evaluate(record)
+
+            isLungCancer -> HasMolecularDriverEventInNSCLC(
+                genes.toSet(),
+                emptySet(),
+                maxTestAge,
+                includeGenesAtLeast = false,
+                withAvailableSOC = false
+            ).evaluate(record)
+
             isColorectalCancer -> hasMolecularEventWithSocForCRC(record)
 
             else -> {

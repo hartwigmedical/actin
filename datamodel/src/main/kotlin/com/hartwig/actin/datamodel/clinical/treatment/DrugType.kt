@@ -248,14 +248,6 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
                 MET_INHIBITOR,
                 MET_TYROSINE_KINASE_INHIBITOR
             ),
-            "RET" to setOf(
-                RET_INHIBITOR,
-                RET_TYROSINE_KINASE_INHIBITOR
-            ),
-            "ROS1" to setOf(
-                ROS1_INHIBITOR,
-                ROS1_TYROSINE_KINASE_INHIBITOR
-            ),
             "NTRK1" to setOf(
                 TRK_RECEPTOR_INHIBITOR,
                 TRK_TYROSINE_KINASE_INHIBITOR
@@ -267,6 +259,14 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
             "NTRK3" to setOf(
                 TRK_RECEPTOR_INHIBITOR,
                 TRK_TYROSINE_KINASE_INHIBITOR
+            ),
+            "RET" to setOf(
+                RET_INHIBITOR,
+                RET_TYROSINE_KINASE_INHIBITOR
+            ),
+            "ROS1" to setOf(
+                ROS1_INHIBITOR,
+                ROS1_TYROSINE_KINASE_INHIBITOR
             )
         )
 

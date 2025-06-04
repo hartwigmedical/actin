@@ -36,7 +36,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
                     hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC to
-                    { HasMolecularDriverEventInNSCLC(null, emptySet(), maxMolecularTestAge(), false) },
+                    { HasMolecularDriverEventInNSCLC(null, emptySet(), maxMolecularTestAge(), false, false) },
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_ANY_GENES_X to
                     hasMolecularDriverEventInNSCLCInSpecificGenesCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_AT_LEAST_GENES_X to
@@ -48,7 +48,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE_EXCLUDING_GENES_X to
                     hasMolecularEventInNSCLCWithAvailableSocAnyLineExcludingSomeGenesCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE to
-                    hasMolecularEventInNSCLCWithAvailableSocFirstlineCreator(),
+                    hasMolecularEventInNSCLCWithAvailableSocFirstLineCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
@@ -126,21 +126,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularDriverEventInNSCLCInSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNSCLC(genes.geneNames, emptySet(), maxMolecularTestAge(), false)
+            HasMolecularDriverEventInNSCLC(genes.geneNames, emptySet(), maxMolecularTestAge(), false, false)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInAtLeastSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNSCLC(genes.geneNames, emptySet(), maxMolecularTestAge(), true)
+            HasMolecularDriverEventInNSCLC(genes.geneNames, emptySet(), maxMolecularTestAge(), true, false)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNSCLC(null, genes.geneNames, maxMolecularTestAge(), false)
+            HasMolecularDriverEventInNSCLC(null, genes.geneNames, maxMolecularTestAge(), false, false)
         }
     }
 
@@ -150,7 +150,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE,
                 emptySet(),
                 maxMolecularTestAge(),
-                false
+                false,
+                true
             )
         }
     }
@@ -158,17 +159,24 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularEventInNSCLCWithAvailableSocAnyLineExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = setOf(functionInputResolver().createManyGenesInput(function).toString())
-            HasMolecularDriverEventInNSCLC(NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE - genes, emptySet(), maxMolecularTestAge(), false)
+            HasMolecularDriverEventInNSCLC(
+                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE - genes,
+                emptySet(),
+                maxMolecularTestAge(),
+                false,
+                true
+            )
         }
     }
 
-    private fun hasMolecularEventInNSCLCWithAvailableSocFirstlineCreator(): FunctionCreator {
+    private fun hasMolecularEventInNSCLCWithAvailableSocFirstLineCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasMolecularDriverEventInNSCLC(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE,
                 emptySet(),
                 maxMolecularTestAge(),
-                false
+                false,
+                true
             )
         }
     }

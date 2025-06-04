@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -15,10 +16,11 @@ private val ALL_GENES =
     ACTIVATING_MUTATION_LIST + PROTEIN_IMPACT_LIST.map { it.first } + FUSION_LIST + EXON_SKIPPING_LIST.map { it.first }.distinct()
 
 class HasMolecularDriverEventInNSCLC(
-    private val genesToInclude: Set<String>? = null,
+    private val genesToInclude: Set<String>?,
     private val genesToIgnore: Set<String>,
     private val maxTestAge: LocalDate? = null,
-    private val includeGenesAtLeast: Boolean = false
+    private val includeGenesAtLeast: Boolean,
+    private val withAvailableSOC: Boolean,
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -29,17 +31,13 @@ class HasMolecularDriverEventInNSCLC(
                     genesToInclude.toList()
                 )
             ) {
-                clearMolecularEvents(evaluation).copy(
-                    result = EvaluationResult.WARN,
-                    warnMessages = setOf("Undetermined if patient's molecular driver event is applicable here as 'driver event' in NSCLC"),
-                    passMessages = emptySet()
-                )
+                clearMolecularEventsAndConfigureMessages(evaluation, true)
             } else {
-                clearMolecularEvents(evaluation)
+                clearMolecularEventsAndConfigureMessages(evaluation, false)
             }
         } else {
             val evaluation = Or(createEvaluationFunctions(genesToInclude, genesToIgnore)).evaluate(record)
-            clearMolecularEvents(evaluation)
+            clearMolecularEventsAndConfigureMessages(evaluation, false)
         }
     }
 
@@ -59,10 +57,34 @@ class HasMolecularDriverEventInNSCLC(
         } && (evaluation.result == EvaluationResult.PASS || evaluation.result == EvaluationResult.WARN)
     }
 
-    private fun clearMolecularEvents(evaluation: Evaluation): Evaluation {
+    private fun clearMolecularEventsAndConfigureMessages(evaluation: Evaluation, mustWarnIfPass: Boolean = false): Evaluation {
+        val soc = if (withAvailableSOC) " with available SOC" else ""
+        val message = "NSCLC driver event(s)$soc detected: ${Format.concat(evaluation.inclusionMolecularEvents)}"
         return evaluation.copy(
+            result = if (mustWarnIfPass) EvaluationResult.WARN else evaluation.result,
+            passMessages = writePassMessage(evaluation.passMessages, mustWarnIfPass, message),
+            warnMessages = writeWarnMessage(evaluation.passMessages, evaluation.warnMessages, mustWarnIfPass, message),
+            failMessages = writeFailMessage(evaluation.failMessages),
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
         )
+    }
+
+    private fun writePassMessage(passInput: Set<String>, mustWarnIfPass: Boolean, message: String): Set<String> {
+        return if (mustWarnIfPass || passInput.isEmpty()) emptySet() else setOf(message)
+    }
+
+    private fun writeWarnMessage(passInput: Set<String>, warnInput: Set<String>, mustWarnIfPass: Boolean, message: String): Set<String> {
+        return when {
+            mustWarnIfPass && passInput.isNotEmpty() -> setOf("Potential $message (but undetermined if applicable)")
+
+            warnInput.isNotEmpty() -> setOf("Potential $message")
+
+            else -> emptySet()
+        }
+    }
+
+    private fun writeFailMessage(failInput: Set<String>): Set<String> {
+        return if (failInput.isEmpty()) emptySet() else setOf("No (applicable) NSCLC driver event(s) detected")
     }
 }
