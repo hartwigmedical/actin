@@ -57,26 +57,26 @@ class HasMolecularDriverEventInNSCLC(
         } && (evaluation.result == EvaluationResult.PASS || evaluation.result == EvaluationResult.WARN)
     }
 
-    private fun clearMolecularEventsAndConfigureMessages(evaluation: Evaluation, mustWarnIfPass: Boolean = false): Evaluation {
+    private fun clearMolecularEventsAndConfigureMessages(evaluation: Evaluation, mustWarn: Boolean = false): Evaluation {
         val soc = if (withAvailableSOC) " with available SOC" else ""
         val message = "NSCLC driver event(s)$soc detected: ${Format.concat(evaluation.inclusionMolecularEvents)}"
         return evaluation.copy(
-            result = if (mustWarnIfPass) EvaluationResult.WARN else evaluation.result,
-            passMessages = writePassMessage(evaluation.passMessages, mustWarnIfPass, message),
-            warnMessages = writeWarnMessage(evaluation.passMessages, evaluation.warnMessages, mustWarnIfPass, message),
+            result = if (mustWarn) EvaluationResult.WARN else evaluation.result,
+            passMessages = writePassMessage(evaluation.passMessages, mustWarn, message),
+            warnMessages = writeWarnMessage(evaluation.passMessages, evaluation.warnMessages, mustWarn, message),
             failMessages = writeFailMessage(evaluation.failMessages),
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
         )
     }
 
-    private fun writePassMessage(passInput: Set<String>, mustWarnIfPass: Boolean, message: String): Set<String> {
-        return if (mustWarnIfPass || passInput.isEmpty()) emptySet() else setOf(message)
+    private fun writePassMessage(passInput: Set<String>, mustWarn: Boolean, message: String): Set<String> {
+        return if (mustWarn || passInput.isEmpty()) emptySet() else setOf(message)
     }
 
-    private fun writeWarnMessage(passInput: Set<String>, warnInput: Set<String>, mustWarnIfPass: Boolean, message: String): Set<String> {
+    private fun writeWarnMessage(passInput: Set<String>, warnInput: Set<String>, mustWarn: Boolean, message: String): Set<String> {
         return when {
-            mustWarnIfPass && passInput.isNotEmpty() -> setOf("Potential $message (but undetermined if applicable)")
+            mustWarn && passInput.isNotEmpty() -> setOf("Potential $message (but undetermined if applicable)")
 
             warnInput.isNotEmpty() -> setOf("Potential $message")
 
