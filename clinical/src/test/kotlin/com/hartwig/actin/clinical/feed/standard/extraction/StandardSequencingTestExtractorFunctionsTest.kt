@@ -61,7 +61,7 @@ class StandardSequencingTestExtractorFunctionsTest {
     }
 
     @Test
-    fun `Should extract amplifications`() {
+    fun `Should extract amplifications without copy nr`() {
         val test = setOf(
             SequencingTestResultConfig(
                 input = "",
@@ -70,6 +70,24 @@ class StandardSequencingTestExtractorFunctionsTest {
             )
         )
         assertThat(StandardSequencingTestExtractorFunctions.amplifications(test)).containsExactly(SequencedAmplification(gene = GENE))
+    }
+
+    @Test
+    fun `Should extract amplifications with copy nr`() {
+        val test = setOf(
+            SequencingTestResultConfig(
+                input = "",
+                gene = GENE,
+                amplifiedGene = GENE,
+                amplifiedGeneCopyNr = 5
+            )
+        )
+        assertThat(StandardSequencingTestExtractorFunctions.amplifications(test)).containsExactly(
+            SequencedAmplification(
+                gene = GENE,
+                copies = 5
+            )
+        )
     }
 
     @Test(expected = IllegalArgumentException::class)
