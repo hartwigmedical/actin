@@ -285,17 +285,37 @@ object TestMolecularFactory {
         isReportable = true,
         event = "PTEN del",
         driverLikelihood = DriverLikelihood.HIGH,
-        evidence = TestClinicalEvidenceFactory.withEligibleTrial(
-            TestExternalTrialFactory.create(
-                nctId = "NCT00000020",
-                title = ("A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
-                        "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
-                        "for Participants With Advanced Solid Tumor (acronym)"),
-                countries = setOf(
-                    CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet())),
-                    CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
-                ),
-                url = "https://clinicaltrials.gov/study/NCT00000020"
+        evidence = TestClinicalEvidenceFactory.withEligibleTrials(
+            setOf(
+                TestExternalTrialFactory.create(
+                    nctId = "NCT00000020",
+                    title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
+                            "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
+                            "for Participants With Advanced Solid Tumor (acronym)",
+                    countries = setOf(
+                        CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet())),
+                        CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
+                    ),
+                    url = "https://clinicaltrials.gov/study/NCT00000020"
+                ), TestExternalTrialFactory.create(
+                    nctId = "NCT00000021",
+                    title = "Another A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
+                            "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
+                            "for Participants With Advanced Solid Tumor (acronym)",
+                    countries = setOf(
+                        CountryDetails(
+                            Country.BELGIUM,
+                            mapOf(
+                                "Location 1" to emptySet(),
+                                "Location 2" to emptySet(),
+                                "Location 3" to emptySet(),
+                                "Location 4" to emptySet()
+                            )
+                        ),
+                        CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
+                    ),
+                    url = "https://clinicaltrials.gov/study/NCT00000021"
+                )
             )
         ),
         gene = "PTEN",
@@ -471,7 +491,13 @@ object TestMolecularFactory {
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 gene = "FGFR1",
                 canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, 2, 2),
-                otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 60)),
+                otherImpacts = setOf(
+                    TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.FULL_GAIN,
+                        40,
+                        60
+                    )
+                ),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
@@ -481,7 +507,11 @@ object TestMolecularFactory {
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 gene = "EGFR",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN, 20, 20),
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    CopyNumberType.PARTIAL_GAIN,
+                    20,
+                    20
+                ),
                 otherImpacts = emptySet(),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
@@ -492,7 +522,11 @@ object TestMolecularFactory {
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 gene = "PIK3CA",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN, null, null),
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    CopyNumberType.PARTIAL_GAIN,
+                    null,
+                    null
+                ),
                 otherImpacts = emptySet(),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
@@ -503,7 +537,11 @@ object TestMolecularFactory {
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 gene = "Unreported gene",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN, 20, 20),
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    CopyNumberType.PARTIAL_GAIN,
+                    20,
+                    20
+                ),
                 otherImpacts = emptySet(),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
