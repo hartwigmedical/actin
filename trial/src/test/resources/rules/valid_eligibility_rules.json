@@ -792,6 +792,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "ACTIVATING_MUTATION_IN_KINASE_DOMAIN_IN_ANY_GENES_X",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
     "usedStatus": "UNUSED"
   },

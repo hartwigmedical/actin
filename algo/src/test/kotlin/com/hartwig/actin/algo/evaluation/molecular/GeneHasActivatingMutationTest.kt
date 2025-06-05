@@ -38,6 +38,15 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
+    fun `Should warn with activating mutation for gene if kinase domain requirement is true`() {
+        val function = GeneHasActivatingMutation(GENE, null, inKinaseDomain = true)
+        val result = function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
+
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessages).containsExactly("gene A activating mutation(s): event but undetermined if in kinase domain")
+    }
+
+    @Test
     fun `Should fail with activating mutation for other gene`() {
         assertResultForVariant(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
         assertResultForVariantIgnoringCodons(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
@@ -185,6 +194,24 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
+    fun `Should warn for MET splice region mutations`() {
+        val function = GeneHasActivatingMutation("MET", null)
+        val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIALLY_RELEVANT_MET_EXON_14_VARIANT))
+
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessages).containsExactly("MET has non-coding splice region mutation(s) in exon 14 undetermined if this could still potentially be an activating mutation")
+    }
+
+    @Test
+    fun `Should warn for MET splice region mutations with right message if looking for kinase domain mutations`() {
+        val function = GeneHasActivatingMutation("MET", null, inKinaseDomain = true)
+        val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIALLY_RELEVANT_MET_EXON_14_VARIANT))
+
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessages).containsExactly("MET has non-coding splice region mutation(s) in exon 14 undetermined if this could still potentially be an activating mutation and undetermined if in kinase domain")
+    }
+
+    @Test
     fun `Should evaluate to undetermined when no molecular input`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -247,6 +274,7 @@ class GeneHasActivatingMutationTest {
         private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
         private val ACTIVATING_VARIANT = TestVariantFactory.createMinimal().copy(
             gene = GENE,
+            event = "event",
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
             geneRole = GeneRole.ONCO,
@@ -269,8 +297,17 @@ class GeneHasActivatingMutationTest {
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
         )
 
+        private val POTENTIALLY_RELEVANT_MET_EXON_14_VARIANT = TestVariantFactory.createMinimal().copy(
+            gene = "MET",
+            isReportable = true,
+            canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
+                affectedExon = 14,
+                isSpliceRegion = true,
+                codingEffect = CodingEffect.NONE
+            )
+        )
+
         private fun impactWithCodon(affectedCodon: Int) =
             TestTranscriptVariantImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
-
     }
 }
