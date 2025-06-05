@@ -109,8 +109,8 @@ class PanelFusionAnnotator(
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = transcript,
             geneTranscriptEnd = transcript,
-            fusedExonUp = sequencedSkippedExons.exonStart,
-            fusedExonDown = sequencedSkippedExons.exonEnd
+            fusedExonUp = sequencedSkippedExons.exonStart - 1,
+            fusedExonDown = sequencedSkippedExons.exonEnd + 1
         )
     }
 
