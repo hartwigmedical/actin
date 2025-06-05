@@ -9,12 +9,15 @@ import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicT
 import com.hartwig.serve.datamodel.molecular.fusion.ImmutableActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
+import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableVariantAnnotation
 import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import com.hartwig.serve.datamodel.molecular.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
 import java.time.LocalDate
+
+const val SOURCE_EVENT_URL: String = "sourceEventUrl"
 
 object TestServeMolecularFactory {
 
@@ -131,7 +134,7 @@ object TestServeMolecularFactory {
     fun createActionableEvent(
         sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
         sourceEvent: String = "",
-        sourceUrls: Set<String> = emptySet()
+        sourceUrls: Set<String> = setOf(SOURCE_EVENT_URL)
     ): ActionableEvent {
         return object : ActionableEvent {
             override fun sourceDate(): LocalDate {
@@ -148,6 +151,13 @@ object TestServeMolecularFactory {
         }
     }
 
+    fun hotspot(variant: VariantAnnotation): ActionableHotspot {
+        return ImmutableActionableHotspot.builder()
+            .from(createActionableEvent())
+            .variants(listOf(variant))
+            .build()
+    }
+
     fun createVariantAnnotation(
         gene: String = "",
         chromosome: String = "",
@@ -156,5 +166,12 @@ object TestServeMolecularFactory {
         alt: String = ""
     ): VariantAnnotation {
         return ImmutableVariantAnnotation.builder().gene(gene).chromosome(chromosome).position(position).ref(ref).alt(alt).build()
+    }
+
+    fun createCharacteristic(type: TumorCharacteristicType): ImmutableActionableCharacteristic {
+        return ImmutableActionableCharacteristic.builder()
+            .from(createActionableEvent())
+            .type(type)
+            .build()
     }
 }

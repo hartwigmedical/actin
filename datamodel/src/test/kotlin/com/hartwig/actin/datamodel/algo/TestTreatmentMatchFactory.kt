@@ -52,7 +52,8 @@ object TestTreatmentMatchFactory {
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.NKI,
                     sourceId = "Source ID 1",
-                    locations = listOf("Antoni van Leeuwenhoek")
+                    locations = setOf("Antoni van Leeuwenhoek"),
+                    url = null
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
@@ -65,7 +66,12 @@ object TestTreatmentMatchFactory {
                     open = true,
                     acronym = "TEST-2",
                     title = "Example test trial 2",
-                    nctId = "NCT00000002"
+                    nctId = "NCT00000002",
+                    phase = TrialPhase.PHASE_2,
+                    source = TrialSource.NKI,
+                    sourceId = "Source ID 2",
+                    locations = setOf("Antoni van Leeuwenhoek"),
+                    url = "https://hartwigmedicalfoundation.nl"
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),

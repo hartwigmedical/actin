@@ -13,27 +13,20 @@ data class TumorDetails(
     val hasBrainLesions: Boolean? = null,
     val hasSuspectedBrainLesions: Boolean? = null,
     val hasActiveBrainLesions: Boolean? = null,
-    val brainLesionsCount: Int? = null,
     val hasCnsLesions: Boolean? = null,
     val hasSuspectedCnsLesions: Boolean? = null,
     val hasActiveCnsLesions: Boolean? = null,
-    val cnsLesionsCount: Int? = null,
     val hasBoneLesions: Boolean? = null,
     val hasSuspectedBoneLesions: Boolean? = null,
-    val boneLesionsCount: Int? = null,
     val hasLiverLesions: Boolean? = null,
     val hasSuspectedLiverLesions: Boolean? = null,
-    val liverLesionsCount: Int? = null,
     val hasLungLesions: Boolean? = null,
     val hasSuspectedLungLesions: Boolean? = null,
-    val lungLesionsCount: Int? = null,
     val hasLymphNodeLesions: Boolean? = null,
     val hasSuspectedLymphNodeLesions: Boolean? = null,
-    val lymphNodeLesionsCount: Int? = null,
     val otherLesions: List<String>? = null,
     val otherSuspectedLesions: List<String>? = null,
-    val biopsyLocation: String? = null,
-    val rawPathologyReport: String? = null
+    val biopsyLocation: String? = null
 ) {
 
     fun hasConfirmedBrainLesions() = hasBrainLesions == true || hasActiveBrainLesions == true

@@ -19,10 +19,10 @@ import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -84,10 +84,22 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
-        val evidences = loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
-        val tumorDoids = patient.tumor.doids.orEmpty().toSet()
+        val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
+        LOGGER.info("Loading SERVE database for resistance evidence from {}", serveJsonFilePath)
+        val serveRecord = ServeLoader.loadServeRecord(
+            serveJsonFilePath,
+            patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37
+        )
+        LOGGER.info(" Loaded {} evidences", serveRecord.evidences().size)
         val resistanceEvidenceMatcher =
-            ResistanceEvidenceMatcher.create(doidModel, tumorDoids, evidences, treatmentDatabase, patient.molecularHistory)
+            ResistanceEvidenceMatcher.create(
+                doidModel = doidModel,
+                tumorDoids = patient.tumor.doids.orEmpty().toSet(),
+                evidences = serveRecord.evidences(),
+                treatmentDatabase = treatmentDatabase,
+                molecularHistory = patient.molecularHistory,
+                actionabilityMatcher = ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials())
+            )
 
         val treatmentMatcher =
             TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
@@ -97,15 +109,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         TreatmentMatchPrinter.printMatch(treatmentMatch)
         TreatmentMatchJson.write(treatmentMatch, config.outputDirectory)
         LOGGER.info("Done!")
-    }
-
-    private fun loadEvidence(refGenomeVersion: RefGenomeVersion): List<EfficacyEvidence> {
-        val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-        LOGGER.info("Loading SERVE database for resistance evidence from {}", jsonFilePath)
-        val serveRecord = ServeLoader.loadServeRecord(jsonFilePath, refGenomeVersion)
-        LOGGER.info(" Loaded {} evidences", serveRecord.evidences().size)
-
-        return serveRecord.evidences()
     }
 
     companion object {

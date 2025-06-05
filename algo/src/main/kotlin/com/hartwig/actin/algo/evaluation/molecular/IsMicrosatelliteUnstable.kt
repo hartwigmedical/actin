@@ -4,18 +4,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
 class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
-    override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("MSI status undetermined")
-
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val drivers = molecular.drivers
+    override fun evaluate(test: MolecularTest): Evaluation {
+        val drivers = test.drivers
         val msiVariants = drivers.variants
             .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
 
@@ -23,7 +21,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
         val nonBiallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == false }
         val unknownBiallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == null }
 
-        val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.canonicalImpact.type == CopyNumberType.LOSS }
+        val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.canonicalImpact.type == CopyNumberType.DEL }
         val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in MSI_GENES }
         val msiGenesWithBiallelicDriver = genesFrom(biallelicMsiVariants, msiCopyNumbers, msiHomozygousDisruptions)
 
@@ -32,7 +30,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
 
         val msiGenesWithUnknownBiallelicDriver = genesFrom(unknownBiallelicMsiVariants)
 
-        return when (molecular.characteristics.isMicrosatelliteUnstable) {
+        return when (test.characteristics.microsatelliteStability?.isUnstable) {
             null -> {
                 val message = when {
                     msiGenesWithBiallelicDriver.isNotEmpty() -> {

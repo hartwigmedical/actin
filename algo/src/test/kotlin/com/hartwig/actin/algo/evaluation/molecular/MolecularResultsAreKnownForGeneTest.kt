@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import org.junit.Test
@@ -96,21 +96,21 @@ class MolecularResultsAreKnownForGeneTest {
     }
 
     @Test
-    fun `Should resolve to undetermined if no WGS or oncopanel has been performed but gene is in priorMolecularTest with indeterminate status`() {
+    fun `Should resolve to undetermined if no WGS or oncopanel has been performed but gene is in molecularTest with indeterminate status`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
-                    MolecularTestFactory.priorIHCTest(item = "gene 1", impliesIndeterminate = true)
+                    MolecularTestFactory.ihcTest(item = "gene 1", impliesIndeterminate = true)
                 )
             )
         )
     }
 
     @Test
-    fun `Should pass if no successful WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
+    fun `Should pass if no successful WGS or oncopanel has been performed but gene is in molecularTest`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -119,9 +119,8 @@ class MolecularResultsAreKnownForGeneTest {
                     false
 
                 ).copy(
-                    priorIHCTests = listOf(
-                        MolecularTestFactory.priorIHCTest(
-                            test = "IHC",
+                    ihcTests = listOf(
+                        MolecularTestFactory.ihcTest(
                             item = "gene 1",
                             impliesIndeterminate = false
                         )
@@ -132,19 +131,18 @@ class MolecularResultsAreKnownForGeneTest {
     }
 
     @Test
-    fun `Should pass if no WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
+    fun `Should pass if no WGS or oncopanel has been performed but gene is in molecularTest`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                    priorIHCTests =
-                    listOf(
-                        MolecularTestFactory.priorIHCTest(
-                            test = "IHC",
-                            item = "gene 1",
-                            impliesIndeterminate = false
+                    ihcTests =
+                        listOf(
+                            MolecularTestFactory.ihcTest(
+                                item = "gene 1",
+                                impliesIndeterminate = false
+                            )
                         )
-                    )
                 )
             )
         )
@@ -158,7 +156,7 @@ class MolecularResultsAreKnownForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
-                    MolecularTestFactory.priorIHCTest(item = "gene 2", impliesIndeterminate = false)
+                    MolecularTestFactory.ihcTest(item = "gene 2", impliesIndeterminate = false)
                 )
             )
         )
@@ -171,7 +169,10 @@ class MolecularResultsAreKnownForGeneTest {
             MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK")))
+                        listOf(
+                            TestMolecularFactory.createMinimalTestPanelRecord()
+                                .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
+                        )
                     )
                 )
         )
@@ -185,7 +186,10 @@ class MolecularResultsAreKnownForGeneTest {
             MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("EGFR")))
+                        listOf(
+                            TestMolecularFactory.createMinimalTestPanelRecord()
+                                .copy(specification = TestMolecularFactory.panelSpecifications(setOf("EGFR")))
+                        )
                     )
                 )
         )

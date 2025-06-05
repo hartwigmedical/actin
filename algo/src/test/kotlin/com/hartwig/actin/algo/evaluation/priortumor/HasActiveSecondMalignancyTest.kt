@@ -11,14 +11,14 @@ class HasActiveSecondMalignancyTest {
 
     @Test
     fun `Should fail on no second primaries`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())))
     }
 
     @Test
     fun `Should fail on no active prior second primaries`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                PriorTumorTestFactory.withPriorSecondPrimaries(listOf(PriorTumorTestFactory.priorSecondPrimary()))
+                PriorTumorTestFactory.withPriorPrimaries(listOf(PriorTumorTestFactory.priorPrimary()))
             )
         )
     }
@@ -27,8 +27,8 @@ class HasActiveSecondMalignancyTest {
     fun `Should warn on at least one expectative prior second primaries`() {
         assertEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                PriorTumorTestFactory.withPriorSecondPrimaries(
-                    listOf(PriorTumorTestFactory.priorSecondPrimary(status = TumorStatus.EXPECTATIVE))
+                PriorTumorTestFactory.withPriorPrimaries(
+                    listOf(PriorTumorTestFactory.priorPrimary(status = TumorStatus.EXPECTATIVE))
                 )
             )
         )
@@ -38,8 +38,8 @@ class HasActiveSecondMalignancyTest {
     fun `Should pass on at least one active second primaries`() {
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
-                PriorTumorTestFactory.withPriorSecondPrimaries(
-                    listOf(PriorTumorTestFactory.priorSecondPrimary(status = TumorStatus.ACTIVE))
+                PriorTumorTestFactory.withPriorPrimaries(
+                    listOf(PriorTumorTestFactory.priorPrimary(status = TumorStatus.ACTIVE))
                 )
             )
         )

@@ -97,8 +97,8 @@ CREATE TABLE `treatmentHistoryEntry`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `priorSecondPrimary`;
-CREATE TABLE `priorSecondPrimary`
+DROP TABLE IF EXISTS `priorPrimary`;
+CREATE TABLE `priorPrimary`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
     `tumorLocation` varchar(50) NOT NULL,
@@ -126,11 +126,10 @@ CREATE TABLE `otherCondition`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `priorIHCTest`;
-CREATE TABLE `priorIHCTest`
+DROP TABLE IF EXISTS `ihcTest`;
+CREATE TABLE `ihcTest`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `test` varchar(50) NOT NULL,
     `item` varchar(50),
     `measure` varchar(50),
     `measureDate` DATE,
@@ -344,7 +343,7 @@ CREATE TABLE `variant`
     `variantCopyNumber` double precision,
     `totalCopyNumber` double precision,
     `isBiallelic` BOOLEAN,
-    `isHotspot` BOOLEAN NOT NULL,
+    `isCancerAssociatedVariant` BOOLEAN NOT NULL,
     `clonalLikelihood` double precision,
     `phaseGroups` varchar(50),
     `canonicalTranscriptId` varchar(50) NOT NULL,

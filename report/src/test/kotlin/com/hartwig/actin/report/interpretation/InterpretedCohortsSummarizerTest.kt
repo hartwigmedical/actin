@@ -20,8 +20,8 @@ class InterpretedCohortsSummarizerTest {
     fun `Should return all eligible and open cohorts for driver`() {
         val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
         assertThat(matchingTrials).containsExactlyInAnyOrder(
-            TrialAcronymAndLocations(ELIGIBLE_COHORT, listOf(LOCATION)),
-            TrialAcronymAndLocations(ELIGIBLE_COHORT_2, emptyList())
+            TrialAcronymAndLocations(ELIGIBLE_COHORT, setOf(LOCATION)),
+            TrialAcronymAndLocations(ELIGIBLE_COHORT_2, emptySet())
         )
     }
 
@@ -70,7 +70,7 @@ class InterpretedCohortsSummarizerTest {
         isEligible: Boolean,
         isOpen: Boolean,
         event: String = name,
-        locations: List<String> = emptyList()
+        locations: Set<String> = emptySet()
     ): InterpretedCohort {
         return InterpretedCohortTestFactory.interpretedCohort(
             acronym = name,
@@ -86,7 +86,7 @@ class InterpretedCohortsSummarizerTest {
             listOf(
                 interpretedCohort(INELIGIBLE_COHORT, isEligible = false, isOpen = true),
                 interpretedCohort(CLOSED_COHORT, isEligible = true, isOpen = false),
-                interpretedCohort(ELIGIBLE_COHORT, isEligible = true, isOpen = true, ELIGIBLE_EVENT, listOf(LOCATION)),
+                interpretedCohort(ELIGIBLE_COHORT, isEligible = true, isOpen = true, ELIGIBLE_EVENT, setOf(LOCATION)),
                 interpretedCohort(ELIGIBLE_COHORT_2, isEligible = true, isOpen = true, ELIGIBLE_EVENT)
             )
         )

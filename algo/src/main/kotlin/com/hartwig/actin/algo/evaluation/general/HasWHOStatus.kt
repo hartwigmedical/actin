@@ -16,7 +16,7 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
             }
 
             who == requiredWHO -> {
-                EvaluationFactory.pass("Has required WHO status $requiredWHO")
+                EvaluationFactory.pass("Has WHO status $requiredWHO")
             }
 
             abs(who - requiredWHO) == 1 -> {

@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialSource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -15,7 +16,6 @@ class InterpretedCohortComparatorTest {
             create("trial 3", "cohort 2 + cohort 3", false, "Event C"),
             create("trial 3", "cohort 1", false, "Event B"),
             create("trial 5", "cohort 1", false, "Event D", "Event A"),
-            create("trial 5", "cohort 1", false, "Event C"),
             create("trial 1", null, false),
             create("trial 1", "cohort 1", false),
             create("trial 1", "cohort 2", false),
@@ -23,19 +23,31 @@ class InterpretedCohortComparatorTest {
         )
 
         val cohortList = listOf(
-            cohorts[7],
-            cohorts[4],
-            cohorts[2],
-            cohorts[8],
-            cohorts[1],
             cohorts[6],
+            cohorts[2],
+            cohorts[7],
+            cohorts[1],
+            cohorts[5],
             cohorts[0],
             cohorts[3],
-            cohorts[5]
+            cohorts[4]
         ).sortedWith(InterpretedCohortComparator())
 
         val cohortIterator = cohortList.iterator()
         cohorts.forEach { assertThat(cohortIterator.next()).isEqualTo(it) }
+    }
+
+    @Test
+    fun `Should place cohorts from requesting source before those from other sources or source null`() {
+        val cohort = cohort.copy(source = TrialSource.EXAMPLE)
+        assertExpectedOrder(listOf(cohort, cohort.copy(source = TrialSource.LKO)), TrialSource.EXAMPLE)
+        assertExpectedOrder(listOf(cohort, cohort.copy(source = null, locations = emptySet())), TrialSource.EXAMPLE)
+    }
+
+    @Test
+    fun `Should check if trial matches to requestingSource using location if source is null`() {
+        val cohort = cohort.copy(source = null, locations = setOf(TrialSource.NKI.description, TrialSource.EMC.description))
+        assertExpectedOrder(listOf(cohort, cohort.copy(locations = setOf("some location"))), TrialSource.NKI)
     }
 
     @Test
@@ -44,8 +56,13 @@ class InterpretedCohortComparatorTest {
     }
 
     @Test
-    fun `Should place cohorts with molecular events before those without`() {
-        assertExpectedOrder(listOf(cohort, cohort.copy(molecularEvents = emptySet())))
+    fun `Should place cohorts with molecular events before cohorts without molecular events`() {
+        assertExpectedOrder(
+            listOf(
+                cohort,
+                cohort.copy(molecularEvents = emptySet())
+            )
+        )
     }
 
     @Test
@@ -68,8 +85,8 @@ class InterpretedCohortComparatorTest {
         assertExpectedOrder(listOf(cohort, cohort.copy(warnings = setOf("Warning"))))
     }
 
-    private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>) {
-        assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator())).isEqualTo(expectedCohorts)
+    private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>, requestingSource: TrialSource? = null) {
+        assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator(requestingSource))).isEqualTo(expectedCohorts)
     }
 
     private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): InterpretedCohort {

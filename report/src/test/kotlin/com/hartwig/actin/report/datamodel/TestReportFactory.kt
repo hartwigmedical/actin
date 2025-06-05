@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import java.time.LocalDate
 
@@ -46,7 +47,6 @@ object TestReportFactory {
     }
 
     fun createExhaustiveTestReportWithOtherLocations(): Report {
-
         val matches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
         val trialMatch1 = matches[0]
         val trialMatch2 = matches[1]
@@ -57,8 +57,11 @@ object TestReportFactory {
                 acronym = "TEST-3",
                 title = "Example test trial 3",
                 nctId = "NCT00000003",
+                phase = TrialPhase.PHASE_1,
                 source = TrialSource.LKO,
-                locations = listOf("Radboud UMC", "UMC Groningen")
+                sourceId = "LKO-3",
+                locations = setOf("Radboud UMC", "UMC Groningen"),
+                url = "https://hartwigmedicalfoundation.nl"
             )
         )
         val trialMatch4 = trialMatch1.copy(
@@ -68,8 +71,11 @@ object TestReportFactory {
                 acronym = "TEST-4",
                 title = "Example test trial 4",
                 nctId = "NCT00000003",
+                phase = TrialPhase.PHASE_2,
                 source = TrialSource.LKO,
-                locations = listOf("LUMC"),
+                sourceId = "LKO-4",
+                locations = setOf("LUMC"),
+                url = "https://hartwigmedicalfoundation.nl"
             )
         )
         val trialMatch5 = trialMatch1.copy(
@@ -79,8 +85,11 @@ object TestReportFactory {
                 acronym = "TEST-5",
                 title = "Example test trial 5",
                 nctId = "NCT00000005",
+                phase = TrialPhase.PHASE_1,
                 source = TrialSource.LKO,
-                locations = listOf("LUMC"),
+                sourceId = "LKO-5",
+                locations = setOf("LUMC"),
+                url = "https://hartwigmedicalfoundation.nl"
             ),
             isPotentiallyEligible = false,
             cohorts = trialMatch1.cohorts.map { it.copy(isPotentiallyEligible = false) }

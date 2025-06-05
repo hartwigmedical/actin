@@ -6,17 +6,17 @@ import com.hartwig.hmftools.datamodel.hla.LilacAllele
 import com.hartwig.hmftools.datamodel.hla.LilacRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 
-internal object ImmunologyExtraction {
+object ImmunologyExtraction {
 
     const val LILAC_QC_PASS: String = "PASS"
 
     fun extract(record: OrangeRecord): MolecularImmunology {
         val lilac = record.lilac()
-        return MolecularImmunology(isReliable = isQCPass(lilac), hlaAlleles = toHlaAlleles(lilac.alleles()))
+        return MolecularImmunology(isReliable = isQCPass(lilac), hlaAlleles = toHlaAlleles(lilac?.alleles() ?: emptyList()))
     }
 
-    private fun isQCPass(lilac: LilacRecord): Boolean {
-        return lilac.qc() == LILAC_QC_PASS
+    private fun isQCPass(lilac: LilacRecord?): Boolean {
+        return lilac?.qc() == LILAC_QC_PASS
     }
 
     private fun toHlaAlleles(alleles: List<LilacAllele>): Set<HlaAllele> {

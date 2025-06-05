@@ -13,7 +13,7 @@ object TestVariantFactory {
             type = VariantType.SNV,
             canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal(),
             otherImpacts = emptySet(),
-            isHotspot = false,
+            isCancerAssociatedVariant = false,
             isReportable = false,
             event = "",
             driverLikelihood = null,
@@ -27,7 +27,7 @@ object TestVariantFactory {
 
     fun createMinimalExtended(): ExtendedVariantDetails {
         return ExtendedVariantDetails(
-            clonalLikelihood = 0.0,
+            clonalLikelihood = 1.0,
             variantCopyNumber = 0.0,
             totalCopyNumber = 0.0,
             isBiallelic = false,

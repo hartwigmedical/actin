@@ -11,7 +11,7 @@ import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 
 private val QC_PASS_STATUS = VirusBreakendQCStatus.NO_ABNORMALITIES
 
-internal class VirusExtractor() {
+class VirusExtractor() {
 
     fun extract(virusInterpreter: VirusInterpreterData): List<Virus> {
         return virusInterpreter.allViruses().map { virus ->

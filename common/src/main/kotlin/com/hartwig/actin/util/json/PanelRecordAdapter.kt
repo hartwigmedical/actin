@@ -5,10 +5,11 @@ import com.google.gson.JsonParser
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.PanelRecord
+import com.hartwig.actin.datamodel.molecular.PanelSpecification
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import java.time.LocalDate
 
 class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
@@ -28,9 +29,8 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
         val experimentType = ExperimentType.valueOf(jsonObject.get("experimentType").asString)
         val testTypeJson = jsonObject.get("testTypeDisplay")
         val testType = if (testTypeJson.isJsonNull) null else testTypeJson.asString
-
         return PanelRecord(
-            testedGenes = jsonObject.getAsJsonArray("testedGenes").map { it.asString }.toSet(),
+            specification = gson.fromJson(jsonObject.getAsJsonObject("specification"), PanelSpecification::class.java),
             testTypeDisplay = testType,
             experimentType = experimentType,
             date = gson.fromJson(jsonObject.get("date"), LocalDate::class.java),

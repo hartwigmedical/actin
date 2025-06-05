@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.molecular.util.ImpactDisplay
+import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleGainDeletion
 import com.hartwig.hmftools.datamodel.purple.PurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
@@ -22,7 +22,7 @@ object DriverEventFactory {
     private fun impact(variant: PurpleVariant): String {
         val canonical = variant.canonicalImpact()
 
-        return ImpactDisplay.formatVariantImpact(
+        return FormatFunctions.formatVariantImpact(
             canonical.hgvsProteinImpact(),
             canonical.hgvsCodingImpact(),
             canonical.codingEffect() == PurpleCodingEffect.SPLICE,
@@ -31,14 +31,14 @@ object DriverEventFactory {
         )
     }
 
-    fun gainLossEvent(gainLoss: PurpleGainLoss): String {
-        return when (gainLoss.interpretation()) {
+    fun gainDelEvent(gainDel: PurpleGainDeletion): String {
+        return when (gainDel.interpretation()) {
             CopyNumberInterpretation.PARTIAL_GAIN, CopyNumberInterpretation.FULL_GAIN -> {
-                gainLoss.gene() + " amp"
+                gainDel.gene() + " amp"
             }
 
-            CopyNumberInterpretation.PARTIAL_LOSS, CopyNumberInterpretation.FULL_LOSS -> {
-                gainLoss.gene() + " del"
+            CopyNumberInterpretation.PARTIAL_DEL, CopyNumberInterpretation.FULL_DEL -> {
+                gainDel.gene() + " del"
             }
         }
     }
@@ -56,7 +56,12 @@ object DriverEventFactory {
     }
 
     fun fusionEvent(fusion: LinxFusion): String {
-        return fusion.geneStart() + "::" + fusion.geneEnd() + " fusion"
+        return FormatFunctions.formatFusionEvent(
+            geneUp = fusion.geneStart(),
+            exonUp = fusion.fusedExonUp(),
+            geneDown = fusion.geneEnd(),
+            exonDown = fusion.fusedExonDown()
+        )
     }
 
     fun virusEvent(virus: VirusInterpreterEntry): String {

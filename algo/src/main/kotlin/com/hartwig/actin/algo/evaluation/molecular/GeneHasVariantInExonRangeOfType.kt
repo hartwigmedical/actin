@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
@@ -12,10 +13,14 @@ import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import java.time.LocalDate
 
 class GeneHasVariantInExonRangeOfType(
-    private val gene: String, private val minExon: Int, private val maxExon: Int,
-    private val requiredVariantType: VariantTypeInput?,
+    override val gene: String, private val minExon: Int, private val maxExon: Int, private val requiredVariantType: VariantTypeInput?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+) : MolecularEvaluationFunction(
+    targetCoveragePredicate = atLeast(
+        MolecularTestTarget.MUTATION,
+        messagePrefix = "Mutation in ${rangeText(minExon, maxExon)}${generateRequiredVariantTypeMessage(requiredVariantType)} in"
+    ), maxTestAge = maxTestAge
+) {
 
     private enum class VariantClassification {
         CANONICAL_HIGH_DRIVER,
@@ -24,8 +29,6 @@ class GeneHasVariantInExonRangeOfType(
         REPORTABLE_OTHER,
         NONE
     }
-
-    override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
@@ -151,24 +154,6 @@ class GeneHasVariantInExonRangeOfType(
         }
     }
 
-    private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
-        return if (requiredVariantType == null) {
-            ""
-        } else when (requiredVariantType) {
-            VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
-                " of type $requiredVariantType"
-            }
-
-            VariantTypeInput.INSERT -> {
-                " of type insertion"
-            }
-
-            VariantTypeInput.DELETE -> {
-                " of type deletion"
-            }
-        }
-    }
-
     private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
         return if (requiredVariantType == null) {
             VariantType.entries.toSet()
@@ -196,6 +181,25 @@ class GeneHasVariantInExonRangeOfType(
             else -> {
                 throw IllegalStateException("Could not map required variant type: $requiredVariantType")
             }
+        }
+    }
+}
+
+private fun rangeText(minExon: Int, maxExon: Int) = if (minExon != maxExon) "exon range $minExon to $maxExon" else "exon $minExon"
+
+private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
+    return when (requiredVariantType) {
+        null -> ""
+        VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
+            " of type $requiredVariantType"
+        }
+
+        VariantTypeInput.INSERT -> {
+            " of type insertion"
+        }
+
+        VariantTypeInput.DELETE -> {
+            " of type deletion"
         }
     }
 }

@@ -5,6 +5,7 @@ enum class TreatmentResponse {
     STABLE_DISEASE,
     MIXED,
     PARTIAL_RESPONSE,
+    NEAR_COMPLETE_RESPONSE,
     COMPLETE_RESPONSE,
     REMISSION;
 
@@ -15,6 +16,7 @@ enum class TreatmentResponse {
                 "SD" -> STABLE_DISEASE
                 "MIXED" -> MIXED
                 "PR" -> PARTIAL_RESPONSE
+                "NEAR CR" -> NEAR_COMPLETE_RESPONSE
                 "CR" -> COMPLETE_RESPONSE
                 "REMISSION" -> REMISSION
                 else -> null

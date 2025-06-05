@@ -10,7 +10,7 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val tumorMutationalBurden = test.characteristics.tumorMutationalBurden
+        val tumorMutationalBurden = test.characteristics.tumorMutationalBurden?.score
             ?: return EvaluationFactory.undetermined(
                 "Undetermined if TMB is above $minTumorMutationalBurden (no TMB result)",
                 isMissingMolecularResultForEvaluation = true

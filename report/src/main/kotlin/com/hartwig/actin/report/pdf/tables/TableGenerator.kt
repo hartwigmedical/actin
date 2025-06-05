@@ -6,5 +6,7 @@ interface TableGenerator {
 
     fun title(): String
 
+    fun forceKeepTogether(): Boolean
+    
     fun contents(): Table
 }

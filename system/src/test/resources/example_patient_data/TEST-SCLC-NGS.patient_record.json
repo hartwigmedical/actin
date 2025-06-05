@@ -28,19 +28,13 @@
     "derivedStages": null,
     "hasMeasurableDisease": true,
     "hasBrainLesions": false,
-    "brainLesionsCount": null,
     "hasActiveBrainLesions": false,
     "hasCnsLesions": false,
-    "cnsLesionsCount": null,
     "hasActiveCnsLesions": false,
     "hasBoneLesions": true,
-    "boneLesionsCount": 1,
     "hasLiverLesions": false,
-    "liverLesionsCount": null,
     "hasLungLesions": true,
-    "lungLesionsCount": 1,
     "hasLymphNodeLesions": true,
-    "lymphNodeLesionsCount": 1,
     "otherLesions": [],
     "biopsyLocation": "Lung",
     "rawPathologyReport": null
@@ -132,7 +126,7 @@
       "bodyLocations": null
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorPrimaries": [],
   "comorbidities": [
     {
       "name": "Cerebrovascular accident",
@@ -552,9 +546,8 @@
       }
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,
@@ -608,7 +601,7 @@
               },
               "otherImpacts": [],
               "extendedVariantDetails": null,
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "TP53 R273H",
               "driverLikelihood": "HIGH",
@@ -689,7 +682,7 @@
               },
               "otherImpacts": [],
               "extendedVariantDetails": null,
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "SMARCA4 T910M",
               "driverLikelihood": "HIGH",

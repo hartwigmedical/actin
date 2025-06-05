@@ -9,7 +9,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 import org.apache.logging.log4j.LogManager
 
-internal class DriverExtractor private constructor(
+class DriverExtractor private constructor(
     private val variantExtractor: VariantExtractor,
     private val copyNumberExtractor: CopyNumberExtractor,
     private val homozygousDisruptionExtractor: HomozygousDisruptionExtractor,
@@ -56,7 +56,7 @@ internal class DriverExtractor private constructor(
     internal fun reportableLostGenes(copyNumbers: Iterable<CopyNumber>): Set<String> {
         return copyNumbers.filter { copyNumber ->
             copyNumber.isReportable &&
-                    (copyNumber.canonicalImpact.type.isLoss || copyNumber.otherImpacts.any { it.type.isLoss })
+                    (copyNumber.canonicalImpact.type.isDeletion || copyNumber.otherImpacts.any { it.type.isDeletion })
         }
             .map(CopyNumber::gene)
             .toSet()

@@ -17,11 +17,4 @@ class AnyGeneFromSetIsNotExpressedTest {
         assertThat(evaluation.undeterminedMessages)
             .contains("Non-expression of gene a, gene b and gene c in RNA undetermined")
     }
-
-    @Test
-    fun `Should evaluate to undetermined when molecular record not available`() {
-        val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
-        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessages).containsExactly("No molecular data to determine non-expression of gene a, gene b and gene c in RNA")
-    }
 }

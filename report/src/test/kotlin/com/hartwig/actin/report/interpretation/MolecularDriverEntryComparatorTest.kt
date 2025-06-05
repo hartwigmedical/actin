@@ -13,7 +13,7 @@ class MolecularDriverEntryComparatorTest {
             create(DriverLikelihood.HIGH, "mutation", "driver 3"),
             create(DriverLikelihood.HIGH, "amplification", "driver 4"),
             create(DriverLikelihood.HIGH, "amplification", "driver 5"),
-            create(DriverLikelihood.HIGH, "loss", "driver 7"),
+            create(DriverLikelihood.HIGH, "deletion", "driver 7"),
             create(DriverLikelihood.HIGH, "fusion", "driver 7"),
             create(DriverLikelihood.HIGH, "disruption", "driver 7"),
             create(DriverLikelihood.HIGH, "virus", "driver 6"),
@@ -46,6 +46,7 @@ class MolecularDriverEntryComparatorTest {
             description = driver,
             event = driver,
             driverLikelihood = driverLikelihood,
+            driverLikelihoodDisplay = driverLikelihood.name,
             evidenceTier = EvidenceTier.I
         )
     }

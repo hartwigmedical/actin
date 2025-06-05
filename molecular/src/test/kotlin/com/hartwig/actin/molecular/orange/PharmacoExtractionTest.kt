@@ -43,6 +43,20 @@ class PharmacoExtractionTest {
         assertThat(haplotype2.function).isEqualTo(HaplotypeFunction.REDUCED_FUNCTION)
     }
 
+    @Test
+    fun `Should remove UGT1A1`() {
+        val peachEntry = TestPeachFactory.builder()
+            .gene("UGT1A1")
+            .allele("*1")
+            .alleleCount(1)
+            .function("normal function")
+            .build()
+        val orange = withPeachEntries(peachEntry)
+
+        val entries = PharmacoExtraction.extract(orange)
+        assertThat(entries).hasSize(0)
+    }
+
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception when unexpected pharmaco gene`() {
         val peachEntry = TestPeachFactory.builder()

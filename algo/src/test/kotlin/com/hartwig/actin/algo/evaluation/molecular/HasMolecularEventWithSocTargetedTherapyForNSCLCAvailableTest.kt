@@ -4,16 +4,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
-import com.hartwig.actin.datamodel.molecular.driver.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -36,6 +35,7 @@ private val BASE_VARIANT = TestVariantFactory.createMinimal().copy(
     isReportable = true,
     driverLikelihood = DriverLikelihood.HIGH,
     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+    isCancerAssociatedVariant = true,
     extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
 )
 
@@ -89,7 +89,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     fun `Should warn for mutation in correct gene when uncertain if activating`() {
         evaluateFunctions(
             EvaluationResult.WARN, MolecularTestFactory.withVariant(
-                BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN)
+                BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isCancerAssociatedVariant = false)
             )
         )
     }
@@ -114,19 +114,21 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             BASE_VARIANT.copy(
                 gene = CORRECT_VARIANT_GENE,
                 proteinEffect = ProteinEffect.UNKNOWN,
+                isCancerAssociatedVariant = false,
                 canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)
             ),
             BASE_VARIANT.copy(
                 gene = OTHER_CORRECT_VARIANT_GENE,
                 proteinEffect = ProteinEffect.UNKNOWN,
+                isCancerAssociatedVariant = false,
                 canonicalImpact = proteinImpact(OTHER_CORRECT_PROTEIN_IMPACT)
             )
         )
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             molecularHistory = MolecularHistory(
                 listOf(
-                    TestMolecularFactory.createMinimalTestOrangeRecord().copy(
-                        drivers = Drivers(variants = variants)
+                    TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                        drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
                     )
                 )
             )
@@ -142,7 +144,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     @Test
     fun `Should fail for unreported variant`() {
-        val record = MolecularTestFactory.withVariant(BASE_VARIANT.copy(isReportable = false))
+        val record = MolecularTestFactory.withVariant(BASE_VARIANT.copy(isReportable = false, isCancerAssociatedVariant = false))
         evaluateFunctions(EvaluationResult.FAIL, record)
     }
 

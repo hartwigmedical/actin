@@ -13,10 +13,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
-class EfficacyEvidenceGenerator(
-    private val treatments: List<AnnotatedTreatmentMatch>?,
-    private val width: Float
-) : TableGenerator {
+class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentMatch>?) : TableGenerator {
 
     private val patientCharacteristicHeadersAndFunctions = listOf<Pair<String, (PatientPopulation) -> String?>>(
         "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
@@ -31,21 +28,27 @@ class EfficacyEvidenceGenerator(
         return "Standard of care options considered potentially eligible"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
         if (treatments.isNullOrEmpty()) {
-            return Tables.createSingleColWithWidth(width)
+            return Tables.createSingleCol()
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
-            val table = Tables.createFixedWidthCols(1f, 3f).setWidth(width)
+            val table = Tables.createRelativeWidthCols(1f, 3f)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(SOCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
-                    val subTable = Tables.createSingleColWithWidth(width / 2)
+                    val subTable = Tables.createSingleCol()
                     for (annotation in treatment.annotations) {
                         for (trialReference in annotation.trialReferences) {
-                            subTable.addCell(Cells.create(createOneLiteraturePart(width, annotation, trialReference, treatment)))
+                            subTable.addCell(
+                                Cells.create(createOneLiteraturePart(annotation, trialReference, treatment))
+                            )
                         }
                     }
                     table.addCell(Cells.createContent(subTable))
@@ -56,9 +59,11 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createOneLiteraturePart(
-        width: Float, annotation: EfficacyEntry, trialReference: TrialReference, treatment: AnnotatedTreatmentMatch
+        annotation: EfficacyEntry,
+        trialReference: TrialReference,
+        treatment: AnnotatedTreatmentMatch
     ): Table {
-        val subTable = Tables.createSingleColWithWidth(width / 4 * 3)
+        val subTable = Tables.createSingleCol()
         val nestedTables = listOf(
             createTrialHeader(annotation),
             createPatientCharacteristics(trialReference, treatment),
@@ -74,9 +79,11 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createTrialHeader(annotation: EfficacyEntry): Table {
-        val table = Tables.createFixedWidthCols(10f, 15f).setWidth(250f)
-        table.addCell(Cells.createSubTitle(annotation.acronym).setAction(PdfAction.createURI(annotation.trialReferences.first().url))
-            .addStyle(Styles.urlStyle()))
+        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
+        table.addCell(
+            Cells.createSubTitle(annotation.acronym).setAction(PdfAction.createURI(annotation.trialReferences.first().url))
+                .addStyle(Styles.urlStyle())
+        )
         table.addCell(Cells.createValue(""))
         table.addCell(Cells.createValue("Patient characteristics: "))
         table.addCell(Cells.createKey(""))
@@ -84,7 +91,7 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createPatientCharacteristics(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
-        val table = Tables.createFixedWidthCols(1f, 3f).setWidth(width / 4 * 3)
+        val table = Tables.createRelativeWidthCols(1f, 3f)
         trialReference.patientPopulations.asSequence()
             .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
             .forEach { addPatientCharacteristicsToTable(it, table) }

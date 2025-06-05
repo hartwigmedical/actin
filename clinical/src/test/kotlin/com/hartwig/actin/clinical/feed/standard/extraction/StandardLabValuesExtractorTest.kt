@@ -4,25 +4,25 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
-import com.hartwig.actin.clinical.feed.standard.EhrTestData
+import com.hartwig.actin.clinical.feed.standard.FeedTestData
+import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
-import com.hartwig.actin.datamodel.clinical.provided.ProvidedLabValue
+import com.hartwig.feed.datamodel.FeedLabValue
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 private const val LAB_CODE = "Hb"
 private const val LAB_NAME = "Hemoglobine"
 private val LAB_MEASUREMENT = LabMeasurement.HEMOGLOBIN
 
-private val EHR_LAB_VALUE = ProvidedLabValue(
-    evaluationTime = LocalDateTime.of(2024, 2, 28, 0, 0),
+private val EHR_LAB_VALUE = FeedLabValue(
+    date = LocalDate.of(2024, 2, 28),
     measure = LAB_NAME,
     measureCode = LAB_CODE,
     value = 12.0,
@@ -57,15 +57,9 @@ class StandardLabValuesExtractorTest {
     fun `Should extract and curate lab values with lab measurement and known units`() {
         every { labCuration.find("$LAB_CODE | $LAB_NAME") } returns setOf(LAB_CONFIG)
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(
-                labValues = listOf(
-                    EHR_LAB_VALUE
-                )
-            )
+            FEED_PATIENT_RECORD.copy(labValues = listOf(EHR_LAB_VALUE))
         )
-        assertThat(result.extracted).containsExactly(
-            LAB_VALUE
-        )
+        assertThat(result.extracted).containsExactly(LAB_VALUE)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -73,15 +67,9 @@ class StandardLabValuesExtractorTest {
     fun `Should default unit to NONE when null`() {
         every { labCuration.find("$LAB_CODE | $LAB_NAME") } returns setOf(LAB_CONFIG)
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(
-                labValues = listOf(
-                    EHR_LAB_VALUE.copy(unit = null)
-                )
-            )
+            FEED_PATIENT_RECORD.copy(labValues = listOf(EHR_LAB_VALUE.copy(unit = null)))
         )
-        assertThat(result.extracted).containsExactly(
-            LAB_VALUE.copy(unit = LabUnit.NONE)
-        )
+        assertThat(result.extracted).containsExactly(LAB_VALUE.copy(unit = LabUnit.NONE))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
@@ -89,11 +77,7 @@ class StandardLabValuesExtractorTest {
     fun `Should return curation warning when curation not found`() {
         every { labCuration.find("$LAB_CODE | $LAB_NAME") } returns emptySet()
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(
-                labValues = listOf(
-                    EHR_LAB_VALUE
-                )
-            )
+            FEED_PATIENT_RECORD.copy(labValues = listOf(EHR_LAB_VALUE))
         )
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(

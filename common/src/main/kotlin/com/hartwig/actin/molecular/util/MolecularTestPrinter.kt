@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.actin.util.DatamodelPrinter.Companion.withDefaultIndentation
@@ -25,27 +25,30 @@ class MolecularTestPrinter(private val printer: DatamodelPrinter) {
         printer.print(" Experiment type '" + record.experimentType.display() + "' on " + formatDate(record.date))
         printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells))
         printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(record.hasSufficientQualityAndPurity()))
-        printer.print(" Purity: " + formatPercentage(record.characteristics.purity))
-        printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics.predictedTumorOrigin))
-        printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics.isMicrosatelliteUnstable))
-        printer.print(" Homologous recombination deficient?: " + toYesNoUnknown(record.characteristics.isHomologousRecombinationDeficient))
-        printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics.tumorMutationalBurden))
-        printer.print(" Tumor mutational load: " + formatInteger(record.characteristics.tumorMutationalLoad))
-        printer.print(" Number of drivers: " + driverCount(record.drivers))
+        with(record.characteristics) {
+            printer.print(" Purity: " + formatPercentage(purity))
+            printer.print(" Predicted tumor origin: " + predictedTumorString(predictedTumorOrigin))
+            printer.print(" Microsatellite unstable?: " + toYesNoUnknown(microsatelliteStability?.isUnstable))
+            printer.print(" Homologous recombination deficient?: " + toYesNoUnknown(homologousRecombination?.isDeficient))
+            printer.print(" Tumor mutational burden: " + formatDouble(tumorMutationalBurden?.score))
+            printer.print(" Tumor mutational load: " + formatInteger(tumorMutationalLoad?.score))
+            printer.print(" Number of drivers: " + driverCount(record.drivers))
+        }
         printEvidence(record)
     }
 
     fun printPanelRecord(record: PanelRecord) {
         printer.print("Test: " + formatPanelTestTypeDisplay(record.testTypeDisplay))
         printer.print(" Experiment type '" + record.experimentType.display() + "' on " + formatDate(record.date))
-        printer.print(" Number of genes tested: " + record.testedGenes.size)
         printer.print(" Has sufficient purity: " + toYesNoUnknown(record.hasSufficientPurity))
         printer.print(" Has sufficient quality: " + toYesNoUnknown(record.hasSufficientQuality))
-        printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics.isMicrosatelliteUnstable))
-        printer.print(" Homologous recombination deficient?: " + toYesNoUnknown(record.characteristics.isHomologousRecombinationDeficient))
-        printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics.tumorMutationalBurden))
-        printer.print(" Tumor mutational load: " + formatInteger(record.characteristics.tumorMutationalLoad))
-        printer.print(" Number of drivers: " + driverCount(record.drivers))
+        with(record.characteristics) {
+            printer.print(" Microsatellite unstable?: " + toYesNoUnknown(microsatelliteStability?.isUnstable))
+            printer.print(" Homologous recombination deficient?: " + toYesNoUnknown(homologousRecombination?.isDeficient))
+            printer.print(" Tumor mutational burden: " + formatDouble(tumorMutationalBurden?.score))
+            printer.print(" Tumor mutational load: " + formatInteger(tumorMutationalLoad?.score))
+            printer.print(" Number of drivers: " + driverCount(record.drivers))
+        }
         printEvidence(record)
     }
 

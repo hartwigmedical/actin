@@ -5,7 +5,7 @@ import com.hartwig.serve.datamodel.molecular.common.GeneRole
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 
-internal object GeneLookup {
+object GeneLookup {
 
     fun find(knownGenes: Set<KnownGene>, gene: String): GeneAlteration? {
         return GeneAggregator.aggregate(knownGenes).find { it.gene() == gene }?.let { fromKnownGene(it) }

@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,56 +16,56 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
 
     @Test
     fun `Should correctly classify HRD drivers`() {
-        val drivers = Drivers(
+        val drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
             variants = listOf(
                 hrdVariant(
                     gene = "BRCA1",
                     isBiallelic = true,
-                    isHotspot = true,
+                    isCancerAssociatedVariant = true,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "BRCA2",
                     isBiallelic = false,
-                    isHotspot = true,
+                    isCancerAssociatedVariant = true,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "PALB2",
                     isBiallelic = true,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "BRCA1",
                     isBiallelic = false,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "BRCA2",
                     isBiallelic = true,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.MEDIUM
                 ),
                 hrdVariant(
                     gene = "RAD51C",
                     isBiallelic = false,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.LOW
                 ),
                 hrdVariant(
                     gene = "PALB2",
                     isReportable = false,
                     isBiallelic = true,
-                    isHotspot = true,
+                    isCancerAssociatedVariant = true,
                     driverLikelihood = DriverLikelihood.HIGH
                 )
             ),
             copyNumbers = listOf(
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "BRCA2",
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
                 ),
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "BRCA1",
@@ -73,7 +73,7 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
                 ),
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "Unmatched",
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
                 )
             ),
             homozygousDisruptions = listOf(
@@ -88,13 +88,13 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
         )
 
         val summary = HomologousRecombinationDeficiencyGeneSummary.createForDrivers(drivers)
-        assertThat(summary.hrdGenesWithNonBiallelicHotspot).containsExactlyInAnyOrder("BRCA2")
-        assertThat(summary.hrdGenesWithBiallelicHotspot).containsExactlyInAnyOrder("BRCA1")
-        assertThat(summary.hrdGenesWithNonBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("BRCA1")
-        assertThat(summary.hrdGenesWithNonBiallelicNonHotspotNonHighDriver).containsExactlyInAnyOrder("RAD51C")
-        assertThat(summary.hrdGenesWithBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("PALB2")
-        assertThat(summary.hrdGenesWithBiallelicNonHotspotNonHighDriver).containsExactlyInAnyOrder("BRCA2")
-        assertThat(summary.hrdGenesWithDeletionOrPartialLoss).containsExactlyInAnyOrder("BRCA2")
+        assertThat(summary.hrdGenesWithNonBiallelicCav).containsExactlyInAnyOrder("BRCA2")
+        assertThat(summary.hrdGenesWithBiallelicCav).containsExactlyInAnyOrder("BRCA1")
+        assertThat(summary.hrdGenesWithNonBiallelicNonCavHighDriver).containsExactlyInAnyOrder("BRCA1")
+        assertThat(summary.hrdGenesWithNonBiallelicNonCavNonHighDriver).containsExactlyInAnyOrder("RAD51C")
+        assertThat(summary.hrdGenesWithBiallelicNonCavHighDriver).containsExactlyInAnyOrder("PALB2")
+        assertThat(summary.hrdGenesWithBiallelicNonCavNonHighDriver).containsExactlyInAnyOrder("BRCA2")
+        assertThat(summary.hrdGenesWithDeletionOrPartialDel).containsExactlyInAnyOrder("BRCA2")
         assertThat(summary.hrdGenesWithHomozygousDisruption).containsExactlyInAnyOrder("PALB2")
         assertThat(summary.hrdGenesWithNonHomozygousDisruption).containsExactlyInAnyOrder("RAD51C")
     }
@@ -102,14 +102,14 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
     private fun hrdVariant(
         gene: String,
         isBiallelic: Boolean,
-        isHotspot: Boolean,
+        isCancerAssociatedVariant: Boolean,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean = true
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = gene,
             isReportable = isReportable,
-            isHotspot = isHotspot,
+            isCancerAssociatedVariant = isCancerAssociatedVariant,
             driverLikelihood = driverLikelihood,
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )

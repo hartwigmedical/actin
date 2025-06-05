@@ -1,12 +1,12 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 data class Drivers(
-    val variants: List<Variant> = emptyList(),
-    val copyNumbers: List<CopyNumber> = emptyList(),
-    val homozygousDisruptions: List<HomozygousDisruption> = emptyList(),
-    val disruptions: List<Disruption> = emptyList(),
-    val fusions: List<Fusion> = emptyList(),
-    val viruses: List<Virus> = emptyList()
+    val variants: List<Variant>,
+    val copyNumbers: List<CopyNumber>,
+    val homozygousDisruptions: List<HomozygousDisruption>,
+    val disruptions: List<Disruption>,
+    val fusions: List<Fusion>,
+    val viruses: List<Virus>
 ) {
 
     fun combine(other: Drivers): Drivers {

@@ -17,7 +17,7 @@ import org.junit.Test
 class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
     private val MIN_CYCLES = 5
     private val MATCHING_TYPE = DrugType.ALK_INHIBITOR
-    private val RADIOTHERAPY = Radiotherapy("Radiotherapy", radioType = RadiotherapyType.CYBERKNIFE)
+    private val RADIOTHERAPY = Radiotherapy("Radiotherapy", radioType = RadiotherapyType.STEREOTACTIC)
     private val CHEMOTHERAPY = TreatmentTestFactory.drugTreatment("Alk inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(MATCHING_TYPE))
     private val REFERENCE_YEAR = 2024
 
@@ -46,7 +46,7 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
             treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2030, cycles = MIN_CYCLES)
         )
         val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
-        assertResultForPatient(EvaluationResult.FAIL, RadiotherapyType.CYBERKNIFE, record)
+        assertResultForPatient(EvaluationResult.FAIL, RadiotherapyType.STEREOTACTIC, record)
     }
 
     @Test

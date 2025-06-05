@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular
 
-import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -12,13 +12,13 @@ class MolecularInterpreterTest {
 
     var annotatorCalled: Boolean = false
 
-    private val extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
-        override fun extract(input: List<PriorSequencingTest>): List<PriorSequencingTest> {
+    private val extractor = object : MolecularExtractor<SequencingTest, SequencingTest> {
+        override fun extract(input: List<SequencingTest>): List<SequencingTest> {
             return input
         }
     }
-    private val annotator = object : MolecularAnnotator<PriorSequencingTest, MolecularTest> {
-        override fun annotate(input: PriorSequencingTest): MolecularTest {
+    private val annotator = object : MolecularAnnotator<SequencingTest, MolecularTest> {
+        override fun annotate(input: SequencingTest): MolecularTest {
             annotatorCalled = true
             return output
         }
@@ -29,7 +29,7 @@ class MolecularInterpreterTest {
         val result = MolecularInterpreter(
             extractor = extractor,
             annotator = annotator
-        ).run(listOf(PriorSequencingTest(test = "test")))
+        ).run(listOf(SequencingTest(test = "test")))
 
         assertThat(annotatorCalled).isTrue()
         assertThat(result).containsExactly(output)

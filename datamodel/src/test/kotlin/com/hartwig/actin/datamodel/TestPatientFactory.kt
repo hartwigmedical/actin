@@ -42,7 +42,7 @@ object TestPatientFactory {
             tumor = clinical.tumor,
             clinicalStatus = clinical.clinicalStatus,
             oncologicalHistory = clinical.oncologicalHistory,
-            priorSecondPrimaries = clinical.priorSecondPrimaries,
+            priorPrimaries = clinical.priorPrimaries,
             comorbidities = clinical.comorbidities,
             labValues = clinical.labValues,
             surgeries = clinical.surgeries,
@@ -51,7 +51,8 @@ object TestPatientFactory {
             vitalFunctions = clinical.vitalFunctions,
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,
-            priorIHCTests = clinical.priorIHCTests,
+            ihcTests = clinical.ihcTests,
+            pathologyReports = clinical.pathologyReports,
             molecularHistory = molecular ?: MolecularHistory.empty()
         )
     }

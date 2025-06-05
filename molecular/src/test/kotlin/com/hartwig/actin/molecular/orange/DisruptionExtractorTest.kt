@@ -115,7 +115,7 @@ class DisruptionExtractorTest {
     }
 
     @Test
-    fun `Should filter breakend with losses`() {
+    fun `Should filter breakend with deletions`() {
         val gene = "gene"
 
         val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).isCanonical(true).build()

@@ -8,8 +8,10 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?, private val atcLevelsToFind: Set<AtcLevel>) :
-    EvaluationFunction {
+class HasHadAnyCancerTreatment(
+    private val categoriesToIgnore: Set<TreatmentCategory>,
+    private val atcLevelsToFind: Set<AtcLevel>
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val effectiveTreatmentHistoryWithoutTrialMedication =
@@ -18,10 +20,10 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
             )
 
         val hasHadPriorCancerTreatment =
-            if (categoryToIgnore == null) {
+            if (categoriesToIgnore.isEmpty()) {
                 effectiveTreatmentHistoryWithoutTrialMedication.isNotEmpty()
             } else {
-                effectiveTreatmentHistoryWithoutTrialMedication.any { it.categories().any { category -> category != categoryToIgnore } }
+                effectiveTreatmentHistoryWithoutTrialMedication.any { it.categories().any { category -> category !in categoriesToIgnore } }
             }
 
         val hasHadTrial =

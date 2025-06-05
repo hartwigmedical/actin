@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -19,18 +20,17 @@ enum class ActivationWarningType(val description: String? = null) {
                 "but are also associated with drug resistance"
     ),
     NON_ONCOGENE,
-    NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION(
+    NO_CANCER_ASSOCIATED_VARIANT(
         "Potentially activating mutation(s) that have high driver likelihood " +
-                "but is not a hotspot and not associated with gain-of-function"
+                "but is not a cancer-associated variant"
     ),
     SUBCLONAL(
         "Potentially activating mutation(s) that have high driver likelihood " +
                 "but also have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)}"
     ),
-    NON_HIGH_DRIVER_GAIN_OF_FUNCTION,
     NON_HIGH_DRIVER_SUBCLONAL,
     NON_HIGH_DRIVER,
-    OTHER_MISSENSE_OR_HOTSPOT
+    OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT
 }
 
 data class ActivationProfile(
@@ -42,15 +42,15 @@ data class ActivationProfile(
 private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation(
-    private val gene: String,
+    override val gene: String,
     private val codonsToIgnore: List<String>?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
-
-    override fun genes() = listOf(gene)
-
+) : MolecularEvaluationFunction(
+    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in"),
+    maxTestAge = maxTestAge
+) {
     override fun evaluate(test: MolecularTest): Evaluation {
-        val hasHighMutationalLoad = test.characteristics.hasHighTumorMutationalLoad
+        val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         val evidenceSource = test.evidenceSource
         val variantCharacteristics =
             test.drivers.variants.filter { it.gene == gene }
@@ -65,7 +65,7 @@ class GeneHasActivatingMutation(
 
         val potentiallyActivatingWarnings = listOf(
             ActivationWarningType.ASSOCIATED_WITH_RESISTANCE,
-            ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION,
+            ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT,
             ActivationWarningType.SUBCLONAL,
         ).flatMap { warningType -> eventsByWarningType[warningType]?.map { event -> event to warningType } ?: emptyList() }
 
@@ -91,12 +91,11 @@ class GeneHasActivatingMutation(
                 val potentialWarnEvaluation = evaluatePotentialWarns(
                     eventsByWarningType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE],
                     eventsByWarningType[ActivationWarningType.NON_ONCOGENE],
-                    eventsByWarningType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION],
+                    eventsByWarningType[ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT],
                     eventsByWarningType[ActivationWarningType.SUBCLONAL],
-                    eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER],
-                    eventsByWarningType[ActivationWarningType.OTHER_MISSENSE_OR_HOTSPOT],
+                    eventsByWarningType[ActivationWarningType.OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT],
                     evidenceSource
                 )
 
@@ -105,19 +104,15 @@ class GeneHasActivatingMutation(
         }
     }
 
-    private fun evaluateVariant(
-        variant: Variant, hasHighMutationalLoad: Boolean?
-    ): ActivationProfile {
+    private fun evaluateVariant(variant: Variant, hasHighMutationalLoad: Boolean?): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
-        val isGainOfFunction =
-            variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
                 return when {
                     isAssociatedWithDrugResistance(variant) -> profile(variant.event, ActivationWarningType.ASSOCIATED_WITH_RESISTANCE)
-                    !variant.isHotspot && !isGainOfFunction -> profile(
+                    !variant.isCancerAssociatedVariant -> profile(
                         variant.event,
-                        ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION
+                        ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT
                     )
 
                     isNoOncogene -> profile(variant.event, ActivationWarningType.NON_ONCOGENE)
@@ -125,9 +120,7 @@ class GeneHasActivatingMutation(
                     else -> profile(variant.event, activating = true)
                 }
             } else {
-                if (isGainOfFunction) {
-                    profile(variant.event, ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION)
-                } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                     return if (isSubclonal(variant)) {
                         profile(variant.event, ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL)
                     } else {
@@ -137,8 +130,8 @@ class GeneHasActivatingMutation(
                     profile(variant.event)
                 }
             }
-        } else if (isMissenseOrHotspot(variant)) {
-            return profile(variant.event, ActivationWarningType.OTHER_MISSENSE_OR_HOTSPOT)
+        } else if (isMissenseOrCancerAssociatedVariant(variant)) {
+            return profile(variant.event, ActivationWarningType.OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT)
         } else {
             return profile(variant.event)
         }
@@ -160,12 +153,11 @@ class GeneHasActivatingMutation(
     private fun evaluatePotentialWarns(
         activatingVariantsAssociatedWithResistance: Set<String>?,
         activatingVariantsInNonOncogene: Set<String>?,
-        activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>?,
+        activatingVariantsNoCavAndNoGainOfFunction: Set<String>?,
         activatingSubclonalVariants: Set<String>?,
-        nonHighDriverGainOfFunctionVariants: Set<String>?,
         nonHighDriverSubclonalVariants: Set<String>?,
         nonHighDriverVariants: Set<String>?,
-        otherMissenseOrHotspotVariants: Set<String>?,
+        otherMissenseOrCancerAssociatedVariants: Set<String>?,
         evidenceSource: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
@@ -181,21 +173,17 @@ class GeneHasActivatingMutation(
                             "- however gene known as TSG in $evidenceSource"
                 ),
                 EventsWithMessages(
-                    activatingVariantsNoHotspotAndNoGainOfFunction,
-                    "$gene potentially activating mutation(s) ${activatingVariantsNoHotspotAndNoGainOfFunction?.let {
+                    activatingVariantsNoCavAndNoGainOfFunction,
+                    "$gene potentially activating mutation(s) ${
+                        activatingVariantsNoCavAndNoGainOfFunction?.let {
                             concatVariants(it, gene)
                         }
-                    } with high driver likelihood - however not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                    } with high driver likelihood - however not a cancer-associated variant"
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,
                     gene + " potentially activating mutation(s) " + activatingSubclonalVariants?.let { concatVariants(it, gene) } +
                             " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
-                ),
-                EventsWithMessages(
-                    nonHighDriverGainOfFunctionVariants,
-                    "$gene potentially activating mutation(s) " + nonHighDriverGainOfFunctionVariants?.let { concatVariants(it, gene) } +
-                            " without high driver prediction but having gain-of-function protein effect evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     nonHighDriverSubclonalVariants,
@@ -208,9 +196,14 @@ class GeneHasActivatingMutation(
                             " but no high driver likelihood"
                 ),
                 EventsWithMessages(
-                    otherMissenseOrHotspotVariants,
-                    "$gene potentially activating mutation(s) " + otherMissenseOrHotspotVariants?.let { concatVariants(it, gene) } +
-                            " that are missense or have hotspot status but are not considered reportable"
+                    otherMissenseOrCancerAssociatedVariants,
+                    "$gene potentially activating mutation(s) " + otherMissenseOrCancerAssociatedVariants?.let {
+                        concatVariants(
+                            it,
+                            gene
+                        )
+                    } +
+                            " that are missense or have cancer-associated variant status but are not considered reportable"
                 )
             )
         )
@@ -221,8 +214,8 @@ class GeneHasActivatingMutation(
         return isAssociatedWithDrugResistance != null && isAssociatedWithDrugResistance
     }
 
-    private fun isMissenseOrHotspot(variant: Variant): Boolean {
-        return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isHotspot
+    private fun isMissenseOrCancerAssociatedVariant(variant: Variant): Boolean {
+        return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isCancerAssociatedVariant
     }
 
     private fun isCodonMatch(affectedCodon: Int?, codonsToMatch: String): Boolean {

@@ -1,11 +1,14 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
@@ -13,15 +16,12 @@ import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.Virus
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.driver.Virus
-import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -31,33 +31,44 @@ private const val VIRUS_INTEGRATIONS = 3
 
 class MolecularDriversSummarizerTest {
 
-    private val minimalDrivers = TestMolecularFactory.createMinimalTestOrangeRecord().drivers
+    private val minimalDrivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers
 
     @Test
     fun `Should return key variants`() {
         val variants = listOf(
-            variant(EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            variant("high driver", DriverLikelihood.HIGH, true),
             variant("non-reportable", DriverLikelihood.HIGH, false),
-            variant("medium likelihood", DriverLikelihood.MEDIUM, true)
+            variant("medium likelihood", DriverLikelihood.MEDIUM, true),
+            variant("associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = true),
+            variant("not associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = false)
         )
         val molecularDrivers = minimalDrivers.copy(variants = variants)
-        assertExpectedListResult(summarizer(molecularDrivers).keyVariants())
+        
+        val keyEntries = summarizer(molecularDrivers).keyVariants().distinct()
+        assertThat(keyEntries).containsExactly("associated with resistance", "high driver")
     }
 
     @Test
-    fun `Should return key amplified genes and indicate partial amplifications`() {
-        val partialAmpGene = "partial amp"
-        val fullAmpGene = "full amp"
+    fun `Should return key amplified genes and indicate partial amplifications and copy nrs if available`() {
         val copyNumbers = listOf(
-            copyNumber(CopyNumberType.FULL_GAIN, fullAmpGene, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.LOSS, "loss", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false)
+            copyNumber(CopyNumberType.FULL_GAIN, "gene 1", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "gene 2", DriverLikelihood.HIGH, true, 20),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 3", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 4", DriverLikelihood.HIGH, true, 10, 20),
+            copyNumber(CopyNumberType.NONE, "gene 5", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
+            copyNumber(CopyNumberType.DEL, "deletion", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false),
         )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().toSet()
-        assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene (partial)", fullAmpGene)
+        assertThat(amplifiedGenes).containsExactlyInAnyOrder(
+            "gene 1",
+            "gene 2 20 copies",
+            "gene 3 (partial)",
+            "gene 4 20 copies (partial)",
+            "gene 5 (alt transcript)"
+        )
     }
 
     @Test
@@ -65,9 +76,9 @@ class MolecularDriversSummarizerTest {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.LOSS, EXPECTED_GENE, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.LOSS, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.LOSS, "non-reportable", DriverLikelihood.HIGH, false)
+            copyNumber(CopyNumberType.DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.DEL, "low", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.DEL, "non-reportable", DriverLikelihood.HIGH, false)
         )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         assertExpectedListResult(summarizer(molecularDrivers).keyDeletedGenes())
@@ -123,7 +134,7 @@ class MolecularDriversSummarizerTest {
                     "key virus",
                     "key gain",
                     "expected amplification",
-                    "expected loss",
+                    "expected deletion",
                     "expected key disruption",
                     "expected non-reportable fusion"
                 )
@@ -131,16 +142,16 @@ class MolecularDriversSummarizerTest {
         )
 
         val variants = listOf(
-            variant("key variant", DriverLikelihood.HIGH, true, externalEvidence),
-            variant("expected non-reportable variant", DriverLikelihood.HIGH, false, approvedTreatment),
+            variant("key variant", DriverLikelihood.HIGH, true, evidence = externalEvidence),
+            variant("expected non-reportable variant", DriverLikelihood.HIGH, false, evidence= approvedTreatment),
             variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true),
             variant("no evidence", DriverLikelihood.MEDIUM, true)
         )
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, "expected amplification", null, false),
-            copyNumber(CopyNumberType.LOSS, "expected loss", DriverLikelihood.HIGH, false),
-            copyNumber(CopyNumberType.FULL_GAIN, "no evidence", DriverLikelihood.LOW, true)
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "no evidence", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "expected amplification", null, false),
+            copyNumber(CopyNumberType.DEL, "expected deletion", DriverLikelihood.HIGH, false),
         )
         val homozygousDisruptions = listOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
@@ -183,6 +194,7 @@ class MolecularDriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
+        isAssociatedWithDrugResistance: Boolean? = null,
         evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
@@ -190,13 +202,33 @@ class MolecularDriversSummarizerTest {
             event = name,
             driverLikelihood = driverLikelihood,
             isReportable = isReportable,
-            evidence = evidence
+            evidence = evidence,
+            isAssociatedWithDrugResistance = isAssociatedWithDrugResistance
         )
     }
 
-    private fun copyNumber(type: CopyNumberType, name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean): CopyNumber {
+    private fun copyNumber(
+        canonicalType: CopyNumberType,
+        name: String,
+        driverLikelihood: DriverLikelihood?,
+        isReportable: Boolean,
+        minCopies: Int? = null,
+        maxCopies: Int? = null,
+        otherType: CopyNumberType? = null
+    ): CopyNumber {
         return TestCopyNumberFactory.createMinimal().copy(
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type),
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                canonicalType,
+                minCopies,
+                maxCopies
+            ),
+            otherImpacts = setOf(
+                TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    otherType ?: canonicalType,
+                    minCopies,
+                    maxCopies
+                )
+            ),
             gene = name,
             event = name,
             driverLikelihood = driverLikelihood,

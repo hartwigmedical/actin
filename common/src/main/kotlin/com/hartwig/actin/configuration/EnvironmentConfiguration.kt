@@ -26,6 +26,10 @@ data class AlgoConfiguration(
     val maxMolecularTestAgeInDays: Int? = null
 )
 
+data class ClinicalConfiguration(
+    val useOnlyPriorOtherConditions: Boolean = false
+)
+
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
@@ -47,6 +51,7 @@ data class ReportConfiguration(
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
+    val includeTreatmentEvidenceRanking: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS,
     val reportDate: LocalDate? = null
 )
@@ -57,7 +62,8 @@ const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration ov
 data class EnvironmentConfiguration(
     val requestingHospital: String? = null,
     val algo: AlgoConfiguration = AlgoConfiguration(),
-    val report: ReportConfiguration = ReportConfiguration()
+    val report: ReportConfiguration = ReportConfiguration(),
+    val clinical: ClinicalConfiguration = ClinicalConfiguration()
 ) {
 
     companion object {
@@ -100,6 +106,7 @@ data class EnvironmentConfiguration(
                         includeExternalTrialsInSummary = false,
                         includeLongitudinalMolecularChapter = true,
                         includeMolecularEvidenceChapter = true,
+                        includeTreatmentEvidenceRanking = true,
                         countryOfReference = Country.USA
                     )
                 )

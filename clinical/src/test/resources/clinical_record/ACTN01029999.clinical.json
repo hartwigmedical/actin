@@ -3,17 +3,10 @@
   "patient": {
     "gender": "MALE",
     "birthYear": 1953,
-    "registrationDate": {
-      "year": 2020,
-      "month": 7,
-      "day": 13
-    },
-    "questionnaireDate": {
-      "year": 2021,
-      "month": 8,
-      "day": 16
-    },
-    "hasHartwigSequencing": true
+    "registrationDate": "2020-07-13",
+    "questionnaireDate": "2021-08-16",
+    "hasHartwigSequencing": true,
+    "sourceId": null
   },
   "tumor": {
     "primaryTumorLocation": "Ovary",
@@ -30,27 +23,20 @@
     "hasBrainLesions": true,
     "hasSuspectedBrainLesions": null,
     "hasActiveBrainLesions": true,
-    "brainLesionsCount": null,
     "hasCnsLesions": false,
     "hasSuspectedCnsLesions": null,
     "hasActiveCnsLesions": null,
-    "cnsLesionsCount": null,
     "hasBoneLesions": null,
     "hasSuspectedBoneLesions": null,
-    "boneLesionsCount": null,
     "hasLiverLesions": false,
     "hasSuspectedLiverLesions": null,
-    "liverLesionsCount": null,
     "hasLungLesions": null,
     "hasSuspectedLungLesions": null,
-    "lungLesionsCount": null,
     "hasLymphNodeLesions": true,
     "hasSuspectedLymphNodeLesions": null,
-    "lymphNodeLesionsCount": null,
     "otherLesions": null,
     "otherSuspectedLesions": null,
-    "biopsyLocation": "Lymph node",
-    "rawPathologyReport": null
+    "biopsyLocation": "Lymph node"
   },
   "clinicalStatus": {
     "who": 0,
@@ -135,7 +121,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [
+  "priorPrimaries": [
     {
       "tumorLocation": "Prostate",
       "tumorSubLocation": "",
@@ -185,11 +171,7 @@
           "extensionCode": null
         }
       ],
-      "evaluatedDate": {
-        "year": 2021,
-        "month": 6,
-        "day": 6
-      },
+      "evaluatedDate": "2021-06-06",
       "source": "EHR",
       "grade": 3,
       "endDate": null,
@@ -203,11 +185,7 @@
           "extensionCode": null
         }
       ],
-      "evaluatedDate": {
-        "year": 2021,
-        "month": 8,
-        "day": 8
-      },
+      "evaluatedDate": "2021-08-08",
       "source": "EHR",
       "grade": 0,
       "endDate": null,
@@ -221,11 +199,7 @@
           "extensionCode": null
         }
       ],
-      "evaluatedDate": {
-        "year": 2021,
-        "month": 8,
-        "day": 16
-      },
+      "evaluatedDate": "2021-08-16",
       "source": "QUESTIONNAIRE",
       "grade": 3,
       "endDate": null,
@@ -257,9 +231,8 @@
       "comorbidityClass": "ECG"
     }
   ],
-  "priorIHCTests": [
+  "ihcTests": [
     {
-      "test": "IHC",
       "item": "ERBB2",
       "measure": null,
       "measureDate": null,
@@ -270,7 +243,6 @@
       "impliesPotentialIndeterminateStatus": false
     },
     {
-      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "measureDate": null,
@@ -281,14 +253,10 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-  "priorSequencingTests": [],
+  "sequencingTests": [],
   "labValues": [
     {
-      "date": {
-        "year": 2019,
-        "month": 6,
-        "day": 27
-      },
+      "date": "2019-06-27",
       "measurement": "ADRENOCORTICOTROPIC_HORMONE",
       "comparator": "",
       "value": 5.5,
@@ -301,11 +269,7 @@
   "surgeries": [
     {
       "name": "diagnostics stomach translated",
-      "endDate": {
-        "year": 2020,
-        "month": 8,
-        "day": 28
-      },
+      "endDate": "2020-08-28",
       "status": "PLANNED"
     }
   ],
@@ -336,11 +300,7 @@
   ],
   "bloodTransfusions": [
     {
-      "date": {
-        "year": 2021,
-        "month": 12,
-        "day": 17
-      },
+      "date": "2021-12-17",
       "product": "Thrombocyte concentrate"
     }
   ],
@@ -359,19 +319,13 @@
         "periodBetweenUnit": "mo",
         "ifNeeded": false
       },
-      "startDate": {
-        "year": 2019,
-        "month": 6,
-        "day": 7
-      },
-      "stopDate": {
-        "year": 2019,
-        "month": 6,
-        "day": 7
-      },
+      "startDate": "2019-06-07",
+      "stopDate": "2019-06-07",
       "drug": {
         "name": "PEMBROLIZUMAB",
-        "drugTypes": ["TOPO1_INHIBITOR"],
+        "drugTypes": [
+          "TOPO1_INHIBITOR"
+        ],
         "category": "IMMUNOTHERAPY",
         "displayOverride": null
       },
@@ -382,5 +336,6 @@
       "isSelfCare": false,
       "isTrialMedication": true
     }
-  ]
+  ],
+  "pathologyReports": []
 }

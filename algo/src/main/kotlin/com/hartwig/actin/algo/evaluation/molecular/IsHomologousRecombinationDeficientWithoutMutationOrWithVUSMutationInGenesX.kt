@@ -11,33 +11,33 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val isHRD = test.characteristics.isHomologousRecombinationDeficient
+        val isHRD = test.characteristics.homologousRecombination?.isDeficient
 
         with(HomologousRecombinationDeficiencyGeneSummary.createForDrivers(test.drivers)) {
-            val genesToFindWithDeletionOrPartialLoss = genesInGenesToFind(hrdGenesWithDeletionOrPartialLoss)
-            val genesToFindWithBiallelicHotspot = genesInGenesToFind(hrdGenesWithBiallelicHotspot)
-            val genesToFindWithNonBiallelicHotspot = genesInGenesToFind(hrdGenesWithNonBiallelicHotspot)
+            val genesToFindWithDeletionOrPartialDel = genesInGenesToFind(hrdGenesWithDeletionOrPartialDel)
+            val genesToFindWithBiallelicCav = genesInGenesToFind(hrdGenesWithBiallelicCav)
+            val genesToFindWithNonBiallelicCav = genesInGenesToFind(hrdGenesWithNonBiallelicCav)
 
             val warnEvaluations = mutableSetOf<String>()
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot biallelic high driver(s)",
-                genesInGenesToFind(hrdGenesWithBiallelicNonHotspotHighDriver)
+                "non-cancer-associated variant biallelic high driver(s)",
+                genesInGenesToFind(hrdGenesWithBiallelicNonCavHighDriver)
             )
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot biallelic non-high driver(s)",
-                genesInGenesToFind(hrdGenesWithBiallelicNonHotspotNonHighDriver)
+                "non-cancer-associated variant biallelic non-high driver(s)",
+                genesInGenesToFind(hrdGenesWithBiallelicNonCavNonHighDriver)
             )
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot non-biallelic high driver(s)",
-                genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotHighDriver)
+                "non-cancer-associated variant non-biallelic high driver(s)",
+                genesInGenesToFind(hrdGenesWithNonBiallelicNonCavHighDriver)
             )
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot non-biallelic non-high driver(s)",
-                genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
+                "non-cancer-associated variant non-biallelic non-high driver(s)",
+                genesInGenesToFind(hrdGenesWithNonBiallelicNonCavNonHighDriver)
             )
             addToWarnEvaluations(warnEvaluations, "homozygous disruption", genesInGenesToFind(hrdGenesWithHomozygousDisruption))
             addToWarnEvaluations(warnEvaluations, "non-homozygous disruption", genesInGenesToFind(hrdGenesWithNonHomozygousDisruption))
@@ -65,15 +65,15 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     EvaluationFactory.fail("Tumor is not HRD")
                 }
 
-                genesToFindWithBiallelicHotspot.isNotEmpty() || genesToFindWithNonBiallelicHotspot.isNotEmpty() -> {
+                genesToFindWithBiallelicCav.isNotEmpty() || genesToFindWithNonBiallelicCav.isNotEmpty() -> {
                     EvaluationFactory.fail(
                         "Tumor is HRD with " +
-                                "${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot"
+                                "${concat(genesToFindWithNonBiallelicCav + genesToFindWithBiallelicCav)} cancer-associated variant"
                     )
                 }
 
-                genesToFindWithDeletionOrPartialLoss.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with ${concat(genesToFindWithDeletionOrPartialLoss)} deletion or partial loss")
+                genesToFindWithDeletionOrPartialDel.isNotEmpty() -> {
+                    EvaluationFactory.fail("Tumor is HRD with ${concat(genesToFindWithDeletionOrPartialDel)} deletion or partial deletion")
                 }
 
                 warnEvaluations.isNotEmpty() -> {

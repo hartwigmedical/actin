@@ -3,10 +3,13 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -76,14 +79,6 @@ class HasFusionInGeneTest {
     }
 
     @Test
-    fun `Should warn on low driver gain of function fusion`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)))
-        )
-    }
-
-    @Test
     fun `Should warn on high driver fusion with no effect`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
@@ -98,18 +93,6 @@ class HasFusionInGeneTest {
                 MolecularTestFactory.withDrivers(
                     matchingFusion,
                     matchingFusion.copy(isReportable = false)
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should warn on matching high driver reportable gain of function fusion when non-high driver likelihood gain of function fusion also present`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withDrivers(
-                    matchingFusion,
-                    matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)
                 )
             )
         )
@@ -137,5 +120,17 @@ class HasFusionInGeneTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = function.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        Assertions.assertThat(result.undeterminedMessages)
+            .containsExactly("Fusion in gene gene A undetermined (not tested for fusions)")
     }
 }

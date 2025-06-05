@@ -11,14 +11,14 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
-internal class FusionExtractor(private val geneFilter: GeneFilter) {
+class FusionExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(linx: LinxRecord): List<Fusion> {
         return linx.allSomaticFusions().filter { fusion ->
             val included = geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())
             if (!included && fusion.reported()) {
                 throw IllegalStateException(
-                    "Filtered a reported fusion through gene filtering: '${DriverEventFactory.fusionEvent(fusion)}'."
+                    "Filtered a reported fusion '${fusion.geneStart()}::${fusion.geneEnd()}' through gene filtering."
                             + " Please make sure either '${fusion.geneStart()}' or '${fusion.geneEnd()}' is configured as a known gene."
                 )
             }

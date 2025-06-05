@@ -1,18 +1,19 @@
 package com.hartwig.actin.clinical.curation.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 
 data class CurationExtractionEvaluation(
     val warnings: Set<CurationWarning> = emptySet(),
     val primaryTumorEvaluatedInputs: Set<String> = emptySet(),
     val treatmentHistoryEntryEvaluatedInputs: Set<String> = emptySet(),
-    val secondPrimaryEvaluatedInputs: Set<String> = emptySet(),
+    val priorPrimaryEvaluatedInputs: Set<String> = emptySet(),
     val lesionLocationEvaluatedInputs: Set<String> = emptySet(),
     val comorbidityEvaluatedInputs: Set<String> = emptySet(),
     val periodBetweenUnitEvaluatedInputs: Set<String> = emptySet(),
     val molecularTestEvaluatedInputs: Set<String> = emptySet(),
     val sequencingTestEvaluatedInputs: Set<String> = emptySet(),
+    val sequencingTestResultEvaluatedInputs: Set<String> = emptySet(),
     val medicationNameEvaluatedInputs: Set<String> = emptySet(),
     val medicationDosageEvaluatedInputs: Set<String> = emptySet(),
     val surgeryCurationEvaluatedInputs: Set<String> = emptySet(),
@@ -26,12 +27,13 @@ data class CurationExtractionEvaluation(
             warnings = warnings + other.warnings,
             primaryTumorEvaluatedInputs = primaryTumorEvaluatedInputs + other.primaryTumorEvaluatedInputs,
             treatmentHistoryEntryEvaluatedInputs = treatmentHistoryEntryEvaluatedInputs + other.treatmentHistoryEntryEvaluatedInputs,
-            secondPrimaryEvaluatedInputs = secondPrimaryEvaluatedInputs + other.secondPrimaryEvaluatedInputs,
+            priorPrimaryEvaluatedInputs = priorPrimaryEvaluatedInputs + other.priorPrimaryEvaluatedInputs,
             lesionLocationEvaluatedInputs = lesionLocationEvaluatedInputs + other.lesionLocationEvaluatedInputs,
             comorbidityEvaluatedInputs = comorbidityEvaluatedInputs + other.comorbidityEvaluatedInputs,
             periodBetweenUnitEvaluatedInputs = periodBetweenUnitEvaluatedInputs + other.periodBetweenUnitEvaluatedInputs,
             molecularTestEvaluatedInputs = molecularTestEvaluatedInputs + other.molecularTestEvaluatedInputs,
             sequencingTestEvaluatedInputs = sequencingTestEvaluatedInputs + other.sequencingTestEvaluatedInputs,
+            sequencingTestResultEvaluatedInputs = sequencingTestResultEvaluatedInputs + other.sequencingTestResultEvaluatedInputs,
             medicationNameEvaluatedInputs = medicationNameEvaluatedInputs + other.medicationNameEvaluatedInputs,
             medicationDosageEvaluatedInputs = medicationDosageEvaluatedInputs + other.medicationDosageEvaluatedInputs,
             surgeryCurationEvaluatedInputs = surgeryCurationEvaluatedInputs + other.surgeryCurationEvaluatedInputs,

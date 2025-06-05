@@ -1,4 +1,4 @@
-input	treatmentName	bodyLocations	bodyLocationCategories	intents	startYear	startMonth	stopYear	stopMonth	cycles	bestResponse	stopReason	category	isSystemic	chemoType	immunoType	targetedType	hormoneType	radioType	carTType	transplantType	supportiveType	trialAcronym	ablationType
-capecitabine and oxi	CAPECITABINE+OXALIPLATIN																							
-ablation	ablation																						
-cisplatin	cisplatin																						
+input	treatmentName	bodyLocations	bodyLocationCategories	intents	startYear	startMonth	stopYear	stopMonth	cycles	bestResponse	stopReason	isTrial	trialAcronym	maintenanceTreatment	maintenanceTreatmentStartYear	maintenanceTreatmentStartMonth	switchToTreatment	switchToTreatmentStartYear	switchToTreatmentStartMonth	switchToTreatmentCycles
+capecitabine and oxi	CAPECITABINE+OXALIPLATIN								5			1								
+ablation	ablation																							
+cisplatin	cisplatin																							

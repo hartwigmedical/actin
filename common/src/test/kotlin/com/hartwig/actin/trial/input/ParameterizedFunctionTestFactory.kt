@@ -58,6 +58,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("1", "female")
             }
 
+            FunctionInput.ONE_SYSTEMIC_TREATMENT -> {
+                listOf("CAPECITABINE+OXALIPLATIN")
+            }
+
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE -> {
                 listOf(TreatmentCategory.IMMUNOTHERAPY.display())
             }
@@ -85,6 +89,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
 
             FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER -> {
                 listOf(DrugType.ANTI_PD_L1.toString(), "1")
+            }
+
+            FunctionInput.MANY_TREATMENT_CATEGORIES -> {
+                listOf("${TreatmentCategory.IMMUNOTHERAPY.display()};${TreatmentCategory.CHEMOTHERAPY.display()}")
             }
 
             FunctionInput.ONE_SPECIFIC_TREATMENT -> {
@@ -182,10 +190,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("string1;string2")
             }
 
-            FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
-                listOf("string1;string2", "1")
-            }
-
             FunctionInput.MANY_BODY_LOCATIONS -> {
                 listOf("${BodyLocationCategory.LIVER};${BodyLocationCategory.LUNG}")
             }
@@ -220,6 +224,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
 
             FunctionInput.ONE_GENE -> {
                 listOf("gene")
+            }
+
+            FunctionInput.ONE_PROTEIN_ONE_STRING -> {
+                listOf("protein", "string")
             }
 
             FunctionInput.ONE_GENE_ONE_INTEGER -> {
@@ -306,12 +314,8 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("FGFR2b", "1")
             }
 
-            FunctionInput.ONE_PROTEIN_ONE_GENE_ONE_INTEGER -> {
-                listOf("FGFR2b", "FGFR2", "1")
-            }
-
-            FunctionInput.ONE_PROTEIN_ONE_GENE -> {
-                listOf("FGFR2b", "FGFR2")
+            FunctionInput.MANY_TNM_T -> {
+                listOf("T2A")
             }
         }
     }

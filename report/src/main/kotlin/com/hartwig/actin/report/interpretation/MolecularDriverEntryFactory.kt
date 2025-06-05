@@ -13,12 +13,16 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
+
+    private val variantsGroupedByGene = molecularDriversInterpreter.filteredVariants().groupBy { it.gene }
 
     fun create(): List<MolecularDriverEntry> {
         with(molecularDriversInterpreter) {
@@ -36,9 +40,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromVariant(variant: Variant): MolecularDriverEntry {
-        val biallelicIndicator = if (variant.extendedVariantDetails?.isBiallelic == true) "Biallelic " else ""
-        val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
-        val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"
+        val mutationTypeString = formatMutationType(variant)
+        val driverType = "Mutation ($mutationTypeString)"
 
         val variantAndTotalCopies = variant.extendedVariantDetails?.let { details ->
             listOf(min(details.variantCopyNumber, details.totalCopyNumber), details.totalCopyNumber)
@@ -50,6 +53,61 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
         return driverEntryForGeneAlteration(driverType, name, variant)
     }
+
+    private fun formatMutationType(variant: Variant): String {
+        return when {
+            variant.isCancerAssociatedVariant && variant.proteinEffect == ProteinEffect.UNKNOWN -> {
+                "Cancer-associated variant with unknown protein effect"
+            }
+
+            variant.isCancerAssociatedVariant && isNoEffect(variant) -> {
+                "Cancer-associated variant with no protein effect"
+            }
+
+            isNoEffect(variant) -> {
+                "No protein effect"
+            }
+
+            variant.geneRole == GeneRole.ONCO && isGainOfFunction(variant) -> {
+                "Gain of function"
+            }
+
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "Loss of function, biallelic"
+            }
+
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) -> {
+                "Loss of function"
+            }
+
+            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)
+                    && variant.isCancerAssociatedVariant && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "Cancer-associated variant, biallelic"
+            }
+
+            variant.isCancerAssociatedVariant -> {
+                "Cancer-associated variant"
+            }
+
+            (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG) &&
+                    (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "No known cancer-associated variant, biallelic"
+            }
+
+            else -> {
+                "No known cancer-associated variant"
+            }
+        }
+    }
+
+    private fun isNoEffect(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.NO_EFFECT, ProteinEffect.NO_EFFECT_PREDICTED)
+
+    private fun isGainOfFunction(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.GAIN_OF_FUNCTION, ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+
+    private fun isLossOfFunction(variant: Variant) =
+        variant.proteinEffect in listOf(ProteinEffect.LOSS_OF_FUNCTION, ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
 
     private fun formatCopyNumberString(copyNumber: Double): String {
         val boundedCopyNumber = copyNumber.coerceAtLeast(0.0)
@@ -75,7 +133,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     private fun getDriverType(type: CopyNumberType): String {
         return when (type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> "Amplification"
-            CopyNumberType.LOSS -> "Loss"
+            CopyNumberType.DEL -> "Deletion"
             CopyNumberType.NONE -> "Copy Number"
         }
     }
@@ -93,33 +151,35 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        val name = if (fusion.fusedExonUp == null || fusion.fusedExonDown == null) {
-            fusion.event
-        } else {
-            "${fusion.event}, exon ${fusion.fusedExonUp} - exon ${fusion.fusedExonDown}"
-        }
-        return driverEntry(fusion.driverType.display(), name, fusion, fusion.proteinEffect)
+        return driverEntry(
+            fusion.driverType.display(),
+            fusion.event,
+            fusion,
+            fusion.proteinEffect,
+            formatDriverLikelihood(fusion.driverLikelihood)
+        )
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
         val name = "${virus.event}, ${virus.integrations} integrations detected"
-        return driverEntry("Virus", name, virus)
+        return driverEntry("Virus", name, virus, null, formatDriverLikelihood(virus.driverLikelihood))
     }
 
     private fun <T> driverEntryForGeneAlteration(
         driverType: String, name: String, geneAlteration: T
     ): MolecularDriverEntry where T : Driver, T : GeneAlteration {
-        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect)
+        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect, driverLikelihoodDisplay(geneAlteration))
     }
 
     private fun driverEntry(
-        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null
+        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null, driverLikelihoodDisplay: String
     ): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
             description = name,
             event = driver.event,
             driverLikelihood = driver.driverLikelihood,
+            driverLikelihoodDisplay = driverLikelihoodDisplay,
             evidenceTier = driver.evidenceTier(),
             proteinEffect = proteinEffect,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
@@ -127,6 +187,20 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             bestResponsiveEvidence = bestResponsiveEvidence(driver),
             bestResistanceEvidence = bestResistanceEvidence(driver)
         )
+    }
+
+    private fun <T> driverLikelihoodDisplay(geneAlteration: T): String where T : Driver, T : GeneAlteration {
+        return geneAlteration.driverLikelihood?.let { likelihood ->
+            if (geneAlteration is Variant && variantsGroupedByGene[geneAlteration.gene]?.any { it.isCancerAssociatedVariant } == true) {
+                ""
+            } else {
+                formatDriverLikelihood(likelihood)
+            }
+        } ?: Formats.VALUE_NOT_AVAILABLE
+    }
+
+    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
+        return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_NOT_AVAILABLE
     }
 
     private fun bestResponsiveEvidence(driver: Driver): String? {

@@ -7,8 +7,9 @@
     "nctId": "NCT00000004",
     "phase": "2",
     "locations": [
-      "NKI AvL"
-    ]
+      "NKI-AvL"
+    ],
+    "url": "https://hartwigmedicalfoundation.nl"
   },
   "generalEligibility": [
     {

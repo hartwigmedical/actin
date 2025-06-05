@@ -12,6 +12,7 @@ class TumorStageDeriverTest {
     private val tumorStageDeriver = TumorStageDeriver.create(doidModel)
     private val breastCancerWithNoStage = TumorDetails(doids = setOf(DoidConstants.BREAST_CANCER_DOID))
     private val lungCancerWithNoStage = TumorDetails(doids = setOf(DoidConstants.LUNG_CANCER_DOID))
+    private val liverCancerWithNoStage = TumorDetails(doids = setOf(DoidConstants.LIVER_CANCER_DOID))
 
     @Test
     fun `Should return null when no doids configured`() {
@@ -40,51 +41,98 @@ class TumorStageDeriverTest {
     }
 
     @Test
-    fun `Should return stage III and IV when one categorized location`() {
-        assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(hasLymphNodeLesions = true)))
-            .containsOnly(TumorStage.III, TumorStage.IV)
+    fun `Should return stage III or IV when non-categorized cancer and one categorized location`() {
+        assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(hasLymphNodeLesions = true))).containsOnly(
+            TumorStage.III,
+            TumorStage.IV
+        )
+        assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(hasLiverLesions = true))).containsOnly(
+            TumorStage.III,
+            TumorStage.IV
+        )
     }
 
     @Test
-    fun `Should return stage IV when multiple lesions`() {
-        assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(hasBoneLesions = true, hasBrainLesions = true)))
-            .containsOnly(TumorStage.IV)
-        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3, hasBoneLesions = true)))
-            .containsOnly(TumorStage.IV)
-    }
-
-    @Test
-    fun `Should include suspected lesions into stage derivation`() {
-        assertThat(
-            tumorStageDeriver.derive(
-                breastCancerWithNoStage.copy(
-                    hasSuspectedLungLesions = true,
-                    hasSuspectedBoneLesions = true,
-                    hasSuspectedBrainLesions = true
-                )
-            )
-        ).containsOnly(TumorStage.IV)
-
-        assertThat(
-            tumorStageDeriver.derive(
-                breastCancerWithNoStage.copy(
-                    hasLungLesions = true,
-                    hasSuspectedBoneLesions = true,
-                    otherLesions = listOf("lesion")
-                )
-            )
-        ).containsOnly(TumorStage.IV)
-    }
-
-    @Test
-    fun `Should return stage III and IV when one uncategorized location`() {
+    fun `Should return stage III or IV when non-categorized cancer and one uncategorized location`() {
         assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(otherLesions = listOf("lesion"))))
             .containsOnly(TumorStage.III, TumorStage.IV)
     }
 
     @Test
-    fun `Should return stage III and IV when lung cancer with other lung lesions besides the primary lung cancer`() {
-        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3)))
+    fun `Should return null when categorized cancer with only associated lesions`() {
+        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true))).isNull()
+        assertThat(tumorStageDeriver.derive(liverCancerWithNoStage.copy(hasLiverLesions = true))).isNull()
+    }
+
+    @Test
+    fun `Should return stage III or IV when categorized cancer and one uncategorized location`() {
+        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(otherLesions = listOf("lesion"))))
             .containsOnly(TumorStage.III, TumorStage.IV)
+    }
+
+    @Test
+    fun `Should return stage IV when non-categorized cancer and at least one other location`() {
+        assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(hasBoneLesions = true, hasBrainLesions = true))).containsOnly(
+            TumorStage.IV
+        )
+        assertThat(
+            tumorStageDeriver.derive(
+                breastCancerWithNoStage.copy(
+                    hasBoneLesions = true,
+                    hasBrainLesions = true,
+                    hasLymphNodeLesions = true
+                )
+            )
+        ).containsOnly(TumorStage.IV)
+    }
+
+    @Test
+    fun `Should return stage III or IV when categorized cancer and associated lesions and one other location`() {
+        assertThat(tumorStageDeriver.derive(lungCancerWithNoStage.copy(hasLungLesions = true, hasLymphNodeLesions = true)))
+            .containsOnly(TumorStage.III, TumorStage.IV)
+        assertThat(tumorStageDeriver.derive(liverCancerWithNoStage.copy(hasLiverLesions = true, hasLymphNodeLesions = true)))
+            .containsOnly(TumorStage.III, TumorStage.IV)
+    }
+
+    @Test
+    fun `Should return stage IV when categorized cancer and at least two other locations`() {
+        assertThat(
+            tumorStageDeriver.derive(
+                lungCancerWithNoStage.copy(
+                    hasLungLesions = true,
+                    hasBoneLesions = true,
+                    hasLymphNodeLesions = true
+                )
+            )
+        ).containsOnly(TumorStage.IV)
+        assertThat(
+            tumorStageDeriver.derive(
+                liverCancerWithNoStage.copy(
+                    hasLiverLesions = true,
+                    hasBoneLesions = true,
+                    hasLymphNodeLesions = true
+                )
+            )
+        ).containsOnly(TumorStage.IV)
+    }
+
+    @Test
+    fun `Should also count suspected lesions as lesions in stage derivation`() {
+        assertThat(
+            tumorStageDeriver.derive(
+                breastCancerWithNoStage.copy(
+                    hasSuspectedLungLesions = true
+                )
+            )
+        ).containsOnly(TumorStage.III, TumorStage.IV)
+
+        assertThat(
+            tumorStageDeriver.derive(
+                breastCancerWithNoStage.copy(
+                    hasLungLesions = true,
+                    hasSuspectedBoneLesions = true
+                )
+            )
+        ).containsOnly(TumorStage.IV)
     }
 }

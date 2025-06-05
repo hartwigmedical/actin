@@ -10,13 +10,13 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PatientDetails
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createMinimalTestClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createProperTestClinicalRecord
@@ -26,11 +26,11 @@ import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 
 class ClinicalRecordJsonTest {
 
@@ -72,7 +72,7 @@ class ClinicalRecordJsonTest {
         assertRequiredFieldsForClass(record.tumor, TumorDetails::class)
         assertRequiredFieldsForClass(record.clinicalStatus, ClinicalStatus::class)
 
-        assertCollectionOfClassWithSize(record.priorSecondPrimaries, PriorSecondPrimary::class, 1)
+        assertCollectionOfClassWithSize(record.priorPrimaries, PriorPrimary::class, 1)
         assertCollectionOfClassWithSize(record.oncologicalHistory, TreatmentHistoryEntry::class, 1)
         assertCollectionOfClassWithSize(
             record.oncologicalHistory.flatMap(TreatmentHistoryEntry::allTreatments), Treatment::class, 1
@@ -85,7 +85,7 @@ class ClinicalRecordJsonTest {
         assertCollectionOfClassWithSize(record.intolerances, Intolerance::class, 2)
         assertCollectionOfClassWithSize(record.ecgs, Ecg::class, 1)
 
-        assertCollectionOfClassWithSize(record.priorIHCTests, PriorIHCTest::class, 1)
+        assertCollectionOfClassWithSize(record.ihcTests, IhcTest::class, 1)
         assertCollectionOfClassWithSize(record.labValues, LabValue::class, 2)
         assertCollectionOfClassWithSize(record.surgeries, Surgery::class, 1)
         assertCollectionOfClassWithSize(record.bodyWeights, BodyWeight::class, 1)

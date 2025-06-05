@@ -8,29 +8,31 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 private const val SPECIFIC_OR_UNKNOWN = "specific prescription|unknown prescription"
 
-class MedicationGenerator(
-    private val medications: List<Medication>, private val totalWidth: Float, private val interpreter: MedicationStatusInterpreter
-) : TableGenerator {
+class MedicationGenerator(private val medications: List<Medication>, private val interpreter: MedicationStatusInterpreter) :
+    TableGenerator {
 
     override fun title(): String {
         return "Active medication details"
     }
 
+    override fun forceKeepTogether(): Boolean {
+        return false
+    }
+
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(1f, 1f, 1f, 1f, 1f, 1f).setWidth(
-            totalWidth
-        )
+        val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f, 1f)
+
         table.addHeaderCell(Cells.createHeader("Medication"))
         table.addHeaderCell(Cells.createHeader("Administration route"))
         table.addHeaderCell(Cells.createHeader("Start date"))
         table.addHeaderCell(Cells.createHeader("Stop date"))
         table.addHeaderCell(Cells.createHeader("Dosage"))
         table.addHeaderCell(Cells.createHeader("Frequency"))
+
         medications.distinct()
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             .forEach { medication: Medication ->
@@ -41,7 +43,8 @@ class MedicationGenerator(
                 table.addCell(Cells.createContent(dosage(medication)))
                 table.addCell(Cells.createContent(frequency(medication.dosage)))
             }
-        return makeWrapping(table)
+
+        return table
     }
 
     private fun administrationRoute(medication: Medication): String {

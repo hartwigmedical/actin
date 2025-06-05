@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.ImmutableActionableCharacteristic
@@ -28,7 +29,9 @@ class ActionableEventExtractionTest {
             variants = setOf(variantAnnotation)
         )
 
-        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(actionableHotspot)
+        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
+            EvidenceType.HOTSPOT_MUTATION to actionableHotspot
+        )
     }
 
     @Test
@@ -45,7 +48,9 @@ class ActionableEventExtractionTest {
             applicableMutationType = actionableCodon.applicableMutationType()
         )
 
-        assertThat(ActionableEventExtraction.extractCodon(molecularCriterium)).isEqualTo(actionableCodon)
+        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
+            EvidenceType.CODON_MUTATION to actionableCodon
+        )
     }
 
     @Test
@@ -62,7 +67,9 @@ class ActionableEventExtractionTest {
             applicableMutationType = actionableExon.applicableMutationType()
         )
 
-        assertThat(ActionableEventExtraction.extractExon(molecularCriterium)).isEqualTo(actionableExon)
+        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
+            EvidenceType.EXON_MUTATION to actionableExon
+        )
     }
 
     @Test
@@ -77,7 +84,9 @@ class ActionableEventExtractionTest {
             sourceEvent = actionableGene.sourceEvent()
         )
 
-        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(actionableGene)
+        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
+            EvidenceType.PROMISCUOUS_FUSION to actionableGene
+        )
     }
 
     @Test
@@ -93,7 +102,9 @@ class ActionableEventExtractionTest {
             maxExonUp = actionableFusion.maxExonUp()
         )
 
-        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(actionableFusion)
+        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
+            EvidenceType.FUSION_PAIR to actionableFusion
+        )
     }
 
     @Test
@@ -106,7 +117,9 @@ class ActionableEventExtractionTest {
             type = actionableCharacteristic.type()
         )
 
-        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(actionableCharacteristic)
+        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
+            EvidenceType.SIGNATURE to actionableCharacteristic
+        )
     }
 
     @Test
@@ -119,6 +132,8 @@ class ActionableEventExtractionTest {
             hlaAllele = actionableHla.hlaAllele()
         )
 
-        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(actionableHla)
+        assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(
+            EvidenceType.HLA to actionableHla
+        )
     }
 }

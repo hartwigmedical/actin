@@ -3,22 +3,23 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
 
 class GeneIsWildTypeTest {
+
     private val function = GeneIsWildType(MATCHING_GENE)
 
     @Test
@@ -255,7 +256,8 @@ class GeneIsWildTypeTest {
             .copy(
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK"))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -269,7 +271,8 @@ class GeneIsWildTypeTest {
             .copy(
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK"))
+                        TestMolecularFactory.createMinimalTestPanelRecord()
+                            .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
             )
@@ -284,8 +287,8 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            testedGenes = setOf("ALK"),
-                            drivers = Drivers(
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
                                     TestVariantFactory.createMinimal()
                                         .copy(
@@ -311,8 +314,8 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            testedGenes = setOf("ALK"),
-                            drivers = Drivers(
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 fusions = listOf(
                                     TestFusionFactory.createMinimal().copy(
                                         geneEnd = "ALK",
@@ -329,5 +332,17 @@ class GeneIsWildTypeTest {
             )
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+    }
+
+    @Test
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = function.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+            )
+        )
+        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        Assertions.assertThat(result.undeterminedMessages)
+            .containsExactly("Wildtype of gene gene A undetermined (not tested for at least mutations)")
     }
 }

@@ -7,9 +7,9 @@ class MolecularTestPrinterTest {
 
     @Test
     fun `Should print ORANGE records without error`() {
-        MolecularTestPrinter.printOrangeRecord(TestMolecularFactory.createExhaustiveTestOrangeRecord())
-        MolecularTestPrinter.printOrangeRecord(TestMolecularFactory.createProperTestOrangeRecord())
-        MolecularTestPrinter.printOrangeRecord(TestMolecularFactory.createMinimalTestOrangeRecord())
+        MolecularTestPrinter.printOrangeRecord(TestMolecularFactory.createExhaustiveTestMolecularRecord())
+        MolecularTestPrinter.printOrangeRecord(TestMolecularFactory.createProperTestMolecularRecord())
+        MolecularTestPrinter.printOrangeRecord(TestMolecularFactory.createMinimalTestMolecularRecord())
     }
 
     @Test

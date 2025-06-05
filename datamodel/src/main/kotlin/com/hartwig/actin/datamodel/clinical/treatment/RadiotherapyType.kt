@@ -2,7 +2,6 @@ package com.hartwig.actin.datamodel.clinical.treatment
 
 enum class RadiotherapyType : TreatmentType {
     BRACHYTHERAPY,
-    CYBERKNIFE,
     RADIOISOTOPE,
     STEREOTACTIC;
 

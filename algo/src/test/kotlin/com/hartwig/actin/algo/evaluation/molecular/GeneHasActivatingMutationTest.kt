@@ -3,14 +3,15 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -82,13 +83,11 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should warn with activating mutation for gene with no protein effect or hotspot`() {
-        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isHotspot = false))
-    }
-
-    @Test
-    fun `Should warn with activating mutation for gene with low driver likelihood`() {
-        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(driverLikelihood = DriverLikelihood.LOW))
+    fun `Should warn with activating mutation for gene with no protein effect or cancer-associated variant`() {
+        assertResultForVariant(
+            EvaluationResult.WARN,
+            ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isCancerAssociatedVariant = false)
+        )
     }
 
     @Test
@@ -107,16 +106,17 @@ class GeneHasActivatingMutationTest {
             TestVariantFactory.createMinimal().copy(
                 gene = GENE,
                 isReportable = false,
-                isHotspot = false,
+                isCancerAssociatedVariant = false,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         )
     }
 
     @Test
-    fun `Should warn with non reportable hotspot mutation for gene`() {
+    fun `Should warn with non reportable cancer-associated variant for gene`() {
         assertResultForVariant(
-            EvaluationResult.WARN, TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isHotspot = true)
+            EvaluationResult.WARN,
+            TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isCancerAssociatedVariant = true)
         )
     }
 
@@ -195,22 +195,14 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should evaluate to warn when activating mutation with potentially activating mutation`() {
-        val evaluation = functionNotIgnoringCodons.evaluate(
-            MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
-                false,
-                ACTIVATING_VARIANT.copy(event = "event"),
-                ACTIVATING_VARIANT.copy(
-                    event = "event2",
-                    isHotspot = false,
-                    geneRole = GeneRole.UNKNOWN,
-                    proteinEffect = ProteinEffect.UNKNOWN
-                ),
+    fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
+        val result = functionNotIgnoringCodons.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )
         )
-
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.inclusionMolecularEvents).containsExactly("event", "event2")
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessages).containsExactly("Activating mutation in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
@@ -259,7 +251,7 @@ class GeneHasActivatingMutationTest {
             driverLikelihood = DriverLikelihood.HIGH,
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isHotspot = true,
+            isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(300),
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
@@ -271,7 +263,7 @@ class GeneHasActivatingMutationTest {
             driverLikelihood = DriverLikelihood.HIGH,
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isHotspot = true,
+            isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(100),
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)

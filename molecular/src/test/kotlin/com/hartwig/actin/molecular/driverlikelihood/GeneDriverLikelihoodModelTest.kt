@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.driverlikelihood
 
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
@@ -53,19 +52,11 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should assign driver likelihood of high and hotspot true when gene has loss of function or gain of function (and predicted)`() {
-        evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.LOSS_OF_FUNCTION)
-        evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
-        evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.GAIN_OF_FUNCTION)
-        evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
-    }
-
-    @Test
-    fun `Should assign driver likelihood of high when variant is already marked as hotspot`() {
+    fun `Should assign driver likelihood of high when variant is already marked as a cancer-associated variant`() {
         val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.ONCO,
-            listOf(TestVariantFactory.createMinimal().copy(isHotspot = true))
+            listOf(TestVariantFactory.createMinimal().copy(isCancerAssociatedVariant = true))
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -243,13 +234,4 @@ class GeneDriverLikelihoodModelTest {
     )
 
     private fun dndsMap(dndsDriverType: DndsDriverType) = mapOf(GENE to mapOf(dndsDriverType to ENTRY))
-
-    private fun evaluateAndAssert(geneDriverLikelihoodModel: GeneDriverLikelihoodModel, proteinEffect: ProteinEffect) {
-        val result = geneDriverLikelihoodModel.evaluate(
-            GENE,
-            GeneRole.ONCO,
-            listOf(TestVariantFactory.createMinimal().copy(proteinEffect = proteinEffect))
-        )
-        assertThat(result).isEqualTo(1.0)
-    }
 }

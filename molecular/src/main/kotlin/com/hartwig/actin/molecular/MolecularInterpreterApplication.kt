@@ -4,26 +4,31 @@ import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.clinical.IhcTest
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.PanelRecord
+import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
+import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
-import com.hartwig.actin.molecular.panel.IHCAnnotator
-import com.hartwig.actin.molecular.panel.IHCExtractor
+import com.hartwig.actin.molecular.panel.IhcAnnotator
+import com.hartwig.actin.molecular.panel.IhcExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
+import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
+import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
@@ -37,13 +42,13 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
@@ -73,8 +78,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
         LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
 
-        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids)
+        LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
+        val panelSpecifications =
+            config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
+
+        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, panelSpecifications, doidEntry, tumorDoids)
+        val clinicalMolecularTests =
+            interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
@@ -88,22 +98,23 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun interpretOrangeRecord(
         config: MolecularInterpreterConfig,
         serveDatabase: ServeDatabase,
+        panelSpecifications: PanelSpecifications,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
     ): List<MolecularTest> {
         return if (config.orangeJson != null) {
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
-
-            val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
-            val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
+            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(orange.refGenomeVersion())
+            val serveRecord = selectForRefGenomeVersion(serveDatabase, orangeRefGenomeVersion)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
-            val orangeRecordMolecularRecordMolecularInterpreter =
-                MolecularInterpreter(OrangeExtractor(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
-
-            orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
+            MolecularInterpreter(
+                OrangeExtractor(geneFilter, panelSpecifications),
+                MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents())),
+                listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, doidEntry, tumorDoids))
+            ).run(listOf(orange))
         } else {
             emptyList()
         }
@@ -114,14 +125,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         clinical: ClinicalRecord,
         serveDatabase: ServeDatabase,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        panelSpecifications: PanelSpecifications
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
                     + "assuming ref genome version '$CLINICAL_TESTS_REF_GENOME_VERSION'"
         )
         val serveRecord = selectForRefGenomeVersion(serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
-        val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
 
         val ensemblRefGenomeVersion = toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)
         LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
@@ -139,7 +150,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
         }
 
-        LOGGER.info("Interpreting {} prior sequencing test(s)", clinical.priorSequencingTests.size)
+        LOGGER.info("Interpreting {} prior sequencing test(s)", clinical.sequencingTests.size)
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
             ensemblRefGenomeVersion, config.referenceGenomeFastaPath, ensemblDataCache
@@ -150,57 +161,73 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
         val paveLite = PaveLite(ensemblDataCache, false)
 
-        val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
-        val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
-        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(evidenceDatabase, ensemblDataCache)
+        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
+        val panelFusionAnnotator = PanelFusionAnnotator(knownFusionCache, ensemblDataCache)
+        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
+        val panelDriverAttributeAnnotator =
+            PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), geneDriverLikelihoodModel)
+        val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, doidEntry, tumorDoids)
 
-        val sequencingMolecularTests = interpretPriorSequencingMolecularTests(
-            clinical.priorSequencingTests,
-            evidenceDatabase,
+        val sequencingMolecularTests = interpretSequencingMolecularTests(
+            clinical.sequencingTests,
             panelVariantAnnotator,
             panelFusionAnnotator,
-            panelCopyNumberAnnotator
+            panelCopyNumberAnnotator,
+            panelDriverAttributeAnnotator,
+            panelSpecifications,
+            evidenceAnnotator
         )
 
-        val ihcMolecularTests = interpretPriorIHCMolecularTests(
-            clinical.priorIHCTests,
-            panelFusionAnnotator
+        val ihcMolecularTests = interpretIhcMolecularTests(
+            clinical.ihcTests,
+            panelFusionAnnotator,
+            evidenceAnnotator
         )
 
-        LOGGER.info("Completed interpretation of {} clinical molecular test(s)", sequencingMolecularTests.size)
+        LOGGER.info(
+            "Completed interpretation of {} clinical molecular test(s) and {} IHC molecular tests",
+            sequencingMolecularTests.size,
+            ihcMolecularTests.size
+        )
         return sequencingMolecularTests + ihcMolecularTests
     }
 
-    private fun interpretPriorSequencingMolecularTests(
-        priorSequencingTests: List<PriorSequencingTest>,
-        evidenceDatabase: EvidenceDatabase,
+    private fun interpretSequencingMolecularTests(
+        sequencingTests: List<SequencingTest>,
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
-        panelCopyNumberAnnotator: PanelCopyNumberAnnotator
+        panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+        panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
+        panelSpecifications: PanelSpecifications,
+        panelRecordEvidenceAnnotator: EvidenceAnnotator<PanelRecord>
     ): List<MolecularTest> {
         return MolecularInterpreter(
-            extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
-                override fun extract(input: List<PriorSequencingTest>): List<PriorSequencingTest> {
+            extractor = object : MolecularExtractor<SequencingTest, SequencingTest> {
+                override fun extract(input: List<SequencingTest>): List<SequencingTest> {
                     return input
                 }
             },
             annotator = PanelAnnotator(
-                evidenceDatabase,
                 panelVariantAnnotator,
                 panelFusionAnnotator,
-                panelCopyNumberAnnotator
+                panelCopyNumberAnnotator,
+                panelDriverAttributeAnnotator,
+                panelSpecifications
             ),
-        ).run(priorSequencingTests)
+            postAnnotators = listOf(panelRecordEvidenceAnnotator)
+        ).run(sequencingTests)
     }
 
-    private fun interpretPriorIHCMolecularTests(
-        priorIHCTests: List<PriorIHCTest>,
-        panelFusionAnnotator: PanelFusionAnnotator
+    private fun interpretIhcMolecularTests(
+        ihcTests: List<IhcTest>,
+        panelFusionAnnotator: PanelFusionAnnotator,
+        panelRecordEvidenceAnnotator: EvidenceAnnotator<PanelRecord>
     ): List<MolecularTest> {
         return MolecularInterpreter(
-            extractor = IHCExtractor(),
-            annotator = IHCAnnotator(panelFusionAnnotator),
-        ).run(priorIHCTests)
+            extractor = IhcExtractor(),
+            annotator = IhcAnnotator(panelFusionAnnotator),
+            postAnnotators = listOf(panelRecordEvidenceAnnotator)
+        ).run(ihcTests)
     }
 
     private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, refGenomeVersion: RefGenomeVersion): ServeRecord {

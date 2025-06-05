@@ -24,6 +24,7 @@ class PredictedTumorOriginTest {
                     snvPairwiseClassifier = likelihood,
                     genomicPositionClassifier = likelihood,
                     featureClassifier = likelihood,
+                    cuppaMode = CuppaMode.WGS
                 )
             }
         )

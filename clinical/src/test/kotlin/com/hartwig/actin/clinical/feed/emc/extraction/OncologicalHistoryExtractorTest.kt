@@ -1,13 +1,13 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
+import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -31,7 +31,7 @@ class OncologicalHistoryExtractorTest {
                 curated = treatmentHistoryEntry(setOf(drugTreatment(CURATED_TREATMENT_NAME, TreatmentCategory.CHEMOTHERAPY)))
             )
         ), TestCurationFactory.curationDatabase(
-            SecondPrimaryConfig(
+            PriorPrimaryConfig(
                 input = SECOND_PRIMARY_INPUT,
                 ignore = false,
                 curated = null

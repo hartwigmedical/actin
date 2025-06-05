@@ -3,7 +3,7 @@ package com.hartwig.actin.datamodel.molecular.evidence
 import com.hartwig.actin.datamodel.Displayable
 
 enum class Country(private val display: String) : Displayable {
-    NETHERLANDS("Netherlands"),
+    NETHERLANDS("NL"),
     BELGIUM("Belgium"),
     GERMANY("Germany"),
     USA("United States"),

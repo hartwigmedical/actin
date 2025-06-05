@@ -4,9 +4,6 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
-import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
@@ -18,16 +15,16 @@ import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.ComorbidityExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.IhcTestsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.OncologicalHistoryExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.PriorMolecularTestsExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.PriorSecondPrimaryExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.PriorPrimaryExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.SequencingTestExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
-import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
@@ -44,16 +41,22 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.ingestion.NO_QUESTIONNAIRE_FOUND
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
+import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 class EmcClinicalFeedIngestor(
     private val feed: FeedModel,
     private val tumorDetailsExtractor: TumorDetailsExtractor,
     private val comorbidityExtractor: ComorbidityExtractor,
     private val oncologicalHistoryExtractor: OncologicalHistoryExtractor,
-    private val priorSecondPrimaryExtractor: PriorSecondPrimaryExtractor,
-    private val priorMolecularTestsExtractor: PriorMolecularTestsExtractor,
+    private val priorPrimaryExtractor: PriorPrimaryExtractor,
+    private val ihcTestsExtractor: IhcTestsExtractor,
+    private val sequencingTestExtractor: SequencingTestExtractor,
     private val labValueExtractor: LabValueExtractor,
     private val medicationExtractor: MedicationExtractor,
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
@@ -66,14 +69,15 @@ class EmcClinicalFeedIngestor(
             val patientId = feedRecord.patientEntry.subject
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.latestQuestionnaireEntry)
+            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.questionnaireEntries)
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val comorbidityExtraction =
                 comorbidityExtractor.extract(patientId, questionnaire, feedRecord.toxicityEntries, feedRecord.intoleranceEntries)
             val (comorbidities, clinicalStatus) = comorbidityExtraction.extracted
             val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
-            val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
-            val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
+            val priorPrimaryExtraction = priorPrimaryExtractor.extract(patientId, questionnaire)
+            val ihcTestsExtraction = ihcTestsExtractor.extract(patientId, questionnaire)
+            val sequencingTestExtraction = sequencingTestExtractor.extract(patientId, questionnaire)
             val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries)
             val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusionEntries)
             val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries)
@@ -86,24 +90,26 @@ class EmcClinicalFeedIngestor(
                 comorbidities = comorbidities,
                 clinicalStatus = clinicalStatus,
                 oncologicalHistory = setStopDate(oncologicalHistoryExtraction.extracted),
-                priorSecondPrimaries = priorSecondPrimaryExtraction.extracted,
-                priorIHCTests = priorMolecularTestsExtraction.extracted,
-                priorSequencingTests = emptyList(),
+                priorPrimaries = priorPrimaryExtraction.extracted,
+                ihcTests = ihcTestsExtraction.extracted,
+                sequencingTests = sequencingTestExtraction.extracted,
                 labValues = labValuesExtraction.extracted,
                 surgeries = surgeryExtraction.extracted,
                 bodyWeights = extractBodyWeights(feedRecord),
                 bodyHeights = emptyList(),
                 vitalFunctions = extractVitalFunctions(feedRecord),
                 bloodTransfusions = bloodTransfusionsExtraction.extracted,
-                medications = medicationExtraction.extracted
+                medications = medicationExtraction.extracted,
+                pathologyReports = emptyList()
             )
 
             val patientEvaluation = listOf(
                 tumorExtraction,
                 comorbidityExtraction,
                 oncologicalHistoryExtraction,
-                priorSecondPrimaryExtraction,
-                priorMolecularTestsExtraction,
+                priorPrimaryExtraction,
+                ihcTestsExtraction,
+                sequencingTestExtraction,
                 labValuesExtraction,
                 bloodTransfusionsExtraction,
                 medicationExtraction,
@@ -112,7 +118,14 @@ class EmcClinicalFeedIngestor(
 
             Triple(
                 record,
-                ingestionResult(record.patientId, questionnaire, patientEvaluation, questionnaireCurationErrors, feedRecord),
+                ingestionResult(
+                    record.patientId,
+                    record.patient.registrationDate,
+                    questionnaire,
+                    patientEvaluation,
+                    questionnaireCurationErrors,
+                    feedRecord
+                ),
                 patientEvaluation
             )
         }
@@ -197,6 +210,7 @@ class EmcClinicalFeedIngestor(
 
     private fun ingestionResult(
         patientId: String,
+        registrationDate: LocalDate,
         questionnaire: Questionnaire?,
         patientEvaluation: CurationExtractionEvaluation,
         questionnaireCurationErrors: List<QuestionnaireCurationError>,
@@ -208,13 +222,14 @@ class EmcClinicalFeedIngestor(
             if (questionnaire == null || curationResults.isNotEmpty()) PatientIngestionStatus.WARN else PatientIngestionStatus.PASS
 
         val validationWarnings = if (questionnaire == null) {
-            feedRecord.validationWarnings + FeedValidationWarning(patientId, "No Questionnaire found")
+            feedRecord.validationWarnings + FeedValidationWarning(patientId, NO_QUESTIONNAIRE_FOUND)
         } else {
             feedRecord.validationWarnings
         }
 
         return PatientIngestionResult(
             patientId,
+            registrationDate,
             ingestionStatus,
             curationResults,
             questionnaireCurationErrors.toSet(),
@@ -244,8 +259,9 @@ class EmcClinicalFeedIngestor(
                 tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext, TumorStageDeriver.create(doidModel)),
                 comorbidityExtractor = ComorbidityExtractor.create(curationDatabaseContext),
                 oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
-                priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabaseContext),
-                priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),
+                priorPrimaryExtractor = PriorPrimaryExtractor.create(curationDatabaseContext),
+                ihcTestsExtractor = IhcTestsExtractor.create(curationDatabaseContext),
+                sequencingTestExtractor = SequencingTestExtractor.create(curationDatabaseContext),
                 labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
                 medicationExtractor = MedicationExtractor.create(
                     curationDatabaseContext,

@@ -35,9 +35,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_UNRESECTABLE_CANCER to hasUnresectableCancerCreator(),
             EligibilityRule.HAS_UNRESECTABLE_STAGE_III_CANCER to hasUnresectableStageIIICancerCreator(),
             EligibilityRule.HAS_RECURRENT_CANCER to hasRecurrentCancerCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_RECURRENT_CANCER to meetsSpecificCriteriaRegardingRecurrentCancerCreator(),
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
             EligibilityRule.HAS_AT_MOST_X_DISTANT_METASTASES to hasLimitedDistantMetastasesCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_METASTASES to meetsSpecificCriteriaRegardingMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES_ONLY to hasOnlyLiverMetastasesCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
@@ -51,6 +53,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_BONE_METASTASES_ONLY to hasOnlyBoneMetastasesCreator(),
             EligibilityRule.HAS_LUNG_METASTASES to hasLungMetastasesCreator(),
             EligibilityRule.HAS_LYMPH_NODE_METASTASES to hasLymphNodeMetastasesCreator(),
+            EligibilityRule.HAS_LUNG_AND_OR_LUNG_LYMPH_NODE_METASTASES_ONLY to hasOnlyLungAndOrLungLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
@@ -68,6 +71,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST to hasMeasurableDiseaseRecistCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RANO to hasMeasurableDiseaseRanoCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA to hasSpecificProgressiveDiseaseCriteriaCreator(),
+            EligibilityRule.HAS_RAPID_PROGRESSIVE_DISEASE to hasRapidProgressiveDiseaseCreator(),
             EligibilityRule.HAS_INJECTION_AMENABLE_LESION to hasInjectionAmenableLesionCreator(),
             EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION to hasMRIVolumeAmenableLesionCreator(),
             EligibilityRule.HAS_EVIDENCE_OF_CNS_HEMORRHAGE_BY_MRI to hasEvidenceOfCNSHemorrhageByMRICreator(),
@@ -171,8 +175,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasSpecificTnmTScoreCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val score = functionInputResolver().createOneStringInput(function)
-            HasTnmTScore(score)
+            val scores = functionInputResolver().createManyTnmTInput(function)
+            HasTnmTScore(scores)
         }
     }
 
@@ -213,6 +217,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer()) }
     }
 
+    private fun meetsSpecificCriteriaRegardingRecurrentCancerCreator(): FunctionCreator {
+        return { MeetsSpecificCriteriaRegardingRecurrentCancer() }
+    }
+
     private fun hasIncurableCancerCreator(): FunctionCreator {
         return { DerivedTumorStageEvaluationFunction(HasIncurableCancer()) }
     }
@@ -226,6 +234,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             val maxDistantMetastases = functionInputResolver().createOneIntegerInput(function)
             HasLimitedDistantMetastases(maxDistantMetastases)
         }
+    }
+
+    private fun meetsSpecificCriteriaRegardingMetastasesCreator(): FunctionCreator {
+        return { MeetsSpecificCriteriaRegardingMetastases(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasLiverMetastasesCreator(): FunctionCreator {
@@ -288,6 +300,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasLymphNodeMetastases() }
     }
 
+    private fun hasOnlyLungAndOrLungLymphNodeMetastasesCreator(): FunctionCreator {
+        return { HasOnlyLungAndOrLungLymphNodeMetastases()}
+    }
+
     private fun hasVisceralMetastasesCreator(): FunctionCreator {
         return { HasVisceralMetastases() }
     }
@@ -340,6 +356,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasSpecificProgressiveDiseaseCriteriaCreator(): FunctionCreator {
         return { HasSpecificProgressiveDiseaseCriteria() }
+    }
+
+    private fun hasRapidProgressiveDiseaseCreator(): FunctionCreator {
+        return { HasRapidProgressiveDisease() }
     }
 
     private fun hasInjectionAmenableLesionCreator(): FunctionCreator {
