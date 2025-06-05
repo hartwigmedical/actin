@@ -6,5 +6,5 @@ data class Surgery(
     val name: String?,
     val endDate: LocalDate?,
     val status: SurgeryStatus,
-    val type: SurgeryType?,
+    val type: SurgeryType,
 )

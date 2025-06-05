@@ -27,8 +27,8 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfigFactory
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfigFactory
+import com.hartwig.actin.clinical.curation.config.SurgeryConfig
+import com.hartwig.actin.clinical.curation.config.SurgeryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
@@ -56,7 +56,7 @@ data class CurationDatabaseContext(
     val sequencingTestResultCuration: CurationDatabase<SequencingTestResultConfig>,
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
-    val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>,
+    val surgeryCuration: CurationDatabase<SurgeryConfig>,
     val labMeasurementCuration: CurationDatabase<LabMeasurementConfig>,
     val administrationRouteTranslation: TranslationDatabase<String>,
     val toxicityTranslation: TranslationDatabase<String>,
@@ -78,7 +78,7 @@ data class CurationDatabaseContext(
             sequencingTestResultCuration,
             medicationNameCuration,
             medicationDosageCuration,
-            surgeryNameCuration,
+            surgeryCuration,
             labMeasurementCuration
         ).flatMap { it.reportUnusedConfig(extractionEvaluation) }.toSet()
 
@@ -104,7 +104,7 @@ data class CurationDatabaseContext(
         sequencingTestResultCuration.validationErrors,
         medicationNameCuration.validationErrors,
         medicationDosageCuration.validationErrors,
-        surgeryNameCuration.validationErrors,
+        surgeryCuration.validationErrors,
         labMeasurementCuration.validationErrors
     ).flatten().toSet()
 
@@ -182,11 +182,11 @@ data class CurationDatabaseContext(
                 MedicationDosageConfigFactory(),
                 CurationCategory.MEDICATION_DOSAGE
             ) { it.medicationDosageEvaluatedInputs },
-            surgeryNameCuration = CurationDatabaseReader.read(
+            surgeryCuration = CurationDatabaseReader.read(
                 curationDir,
-                CurationDatabaseReader.SURGERY_NAME_TSV,
-                SurgeryNameConfigFactory(),
-                CurationCategory.SURGERY_NAME
+                CurationDatabaseReader.SURGERY_TSV,
+                SurgeryConfigFactory(),
+                CurationCategory.SURGERY
             ) { it.surgeryCurationEvaluatedInputs },
             labMeasurementCuration = CurationDatabaseReader.read(
                 curationDir,

@@ -18,7 +18,7 @@ class SurgeryDescendingDateComparatorTest {
             Surgery(name = "Surgery 2", endDate = endDate.minusDays(6), status = SurgeryStatus.FINISHED, type = SurgeryType.DEBULKING_SURGERY),
             Surgery(name = null, endDate = endDate.minusDays(4), status = SurgeryStatus.FINISHED, type = SurgeryType.CYTOREDUCTIVE_SURGERY),
             Surgery(name = "Surgery 1", endDate = endDate.minusDays(2), status = SurgeryStatus.FINISHED, type = SurgeryType.DEBULKING_SURGERY),
-            Surgery(name = "Surgery 4", endDate = null, status = SurgeryStatus.FINISHED, type = null),
+            Surgery(name = "Surgery 4", endDate = null, status = SurgeryStatus.FINISHED, type = SurgeryType.UNKNOWN),
         )
 
         val sortedSurgeries = surgeries.sortedWith(SurgeryDescendingDateComparator())

@@ -129,7 +129,7 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(category = CurationCategory.DOSAGE_UNIT_TRANSLATION, input = "stuk"),
             UnusedCurationConfig(category = CurationCategory.SEQUENCING_TEST, input = "archer"),
             UnusedCurationConfig(category = CurationCategory.SEQUENCING_TEST_RESULT, input = "kras g12f"),
-            UnusedCurationConfig(category = CurationCategory.SURGERY_NAME, input = "surgery1"),
+            UnusedCurationConfig(category = CurationCategory.SURGERY, input = "surgery1"),
             UnusedCurationConfig(category = CurationCategory.LESION_LOCATION, input = "and possibly lymph nodes"),
             UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "morfine"),
             UnusedCurationConfig(category = CurationCategory.COMORBIDITY, input = "nikkel"),

@@ -215,7 +215,8 @@
   "surgeries": [
     {
       "endDate": "2012-10-10",
-      "status": "PLANNED"
+      "status": "PLANNED",
+      "type": "UNKNOWN"
     }
   ],
   "bodyWeights": [

@@ -4,23 +4,19 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.SurgeryType
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 
-class SurgeryNameConfigFactory : CurationConfigFactory<SurgeryNameConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SurgeryNameConfig> {
+class SurgeryConfigFactory : CurationConfigFactory<SurgeryConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SurgeryConfig> {
         val input = parts[fields["input"]!!]
         val name = parts[fields["name"]!!]
-        val (type, validationErrors) = validateOptionalEnum(
-            CurationCategory.SURGERY_NAME,
-            input,
-            "type",
-            fields,
-            parts
-        ) { SurgeryType.valueOf(it) }
+        val (type, validationErrors) = validateOptionalEnum(CurationCategory.SURGERY, input, "type", fields, parts) {
+            SurgeryType.valueOf(it)
+        }
         return ValidatedCurationConfig(
-            SurgeryNameConfig(
+            SurgeryConfig(
                 input = input,
                 ignore = CurationUtil.isIgnoreString(name),
                 name = name,
-                type = type
+                type = type ?: SurgeryType.UNKNOWN,
             ), validationErrors
         )
     }
