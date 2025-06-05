@@ -11,7 +11,6 @@ import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
@@ -20,7 +19,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
 
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
-        MolecularDriverEntry::driverLikelihoodDisplay,
+        MolecularDriverEntry::driverLikelihood,
         MolecularDriverEntry::event
     )
 
@@ -57,7 +56,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
                         entry.driverType,
                         if (entry.driverType.contains(entry.proteinEffect?.display() ?: "", true)) null else entry.proteinEffect?.display()
                     ).joinToString("\n"),
-                    entry.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE
+                    entry.driverLikelihoodDisplay
                 )
                 val testTextFields = eventVAFMapByTest.values.map { eventVAFMap ->
                     if (entry.event in eventVAFMap) {

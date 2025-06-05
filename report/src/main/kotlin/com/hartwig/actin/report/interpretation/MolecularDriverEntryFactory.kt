@@ -196,11 +196,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             } else {
                 formatDriverLikelihood(likelihood)
             }
-        } ?: Formats.VALUE_UNKNOWN
+        } ?: Formats.VALUE_NOT_AVAILABLE
     }
 
     private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
-        return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
+        return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_NOT_AVAILABLE
     }
 
     private fun bestResponsiveEvidence(driver: Driver): String? {

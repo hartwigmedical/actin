@@ -2,14 +2,12 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
@@ -277,7 +275,7 @@ class MolecularDriverEntryFactoryTest {
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverLikelihoodDisplay).isEqualTo("")
         assertThat(result[1].driverLikelihoodDisplay).isEqualTo("Medium")
-        assertThat(result[2].driverLikelihoodDisplay).isEqualTo("Unknown")
+        assertThat(result[2].driverLikelihoodDisplay).isEqualTo("N/A")
     }
 
     private fun assertVariantType(variant: Variant, expectedDriverType: String) {
