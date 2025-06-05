@@ -26,7 +26,7 @@ class StandardSurgeryExtractorTest {
     private val extractor = StandardSurgeryExtractor(surgeryCuration)
 
     @Test
-    fun `Should filter surgery entry and warn when no curation for surgery name`() {
+    fun `Should filter surgery entry and warn when no curation for surgery`() {
         every { surgeryCuration.find(PROVIDED_SURGERY_NAME) } returns emptySet()
         val result = extractor.extract(
             FEED_PATIENT_RECORD.copy(surgeries = listOf(PROVIDED_SURGERY_WITH_NAME))
@@ -83,7 +83,7 @@ class StandardSurgeryExtractorTest {
     }
 
     @Test
-    fun `Should return an unknown operation by default if there is no operation name`() {
+    fun `Should return an unknown surgery by default if there is no surgery name`() {
         val surgery = FeedTestData.createFeedSurgery(null)
         val result = extractor.extract(FEED_PATIENT_RECORD.copy(surgeries = listOf(surgery)))
 

@@ -11,24 +11,20 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 class HasHadCytoreductiveSurgery : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        // TODO: once we curate surgery names from the surgeries tsv file evaluate these as well
         val oncologicalHistory = record.oncologicalHistory
 
         val undeterminedSurgery = oncologicalHistory
             .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().equals("surgery", true) }
 
-        val hasHadCytoreductiveSurgeryFromSurgeries = record.surgeries.any {
-            it.type == SurgeryType.CYTOREDUCTIVE_SURGERY || it.type == SurgeryType.DEBULKING_SURGERY
-        }
+        val hasHadCytoreductiveSurgery = record.surgeries.any { it.type == SurgeryType.CYTOREDUCTIVE_SURGERY }
+                || oncologicalHistory.any {
+                    it.isOfType(OtherTreatmentType.CYTOREDUCTIVE_SURGERY) == true || it.allTreatments()
+                        .any { treatment -> treatment.name.uppercase() == "HIPEC" }
+                }
 
-        val hasHadCytoreductiveSurgery = hasHadCytoreductiveSurgeryFromSurgeries || oncologicalHistory
-            .any {
-                it.isOfType(OtherTreatmentType.CYTOREDUCTIVE_SURGERY) == true || it.allTreatments()
-                    .any { treatment -> treatment.name.uppercase() == "HIPEC" }
-            }
-
-        val hasHadDebulkingSurgery = oncologicalHistory
-            .any { it.isOfType(OtherTreatmentType.DEBULKING_SURGERY) == true }
+        val hasHadDebulkingSurgery = record.surgeries.any { it.type == SurgeryType.DEBULKING_SURGERY }
+                || oncologicalHistory
+                    .any { it.isOfType(OtherTreatmentType.DEBULKING_SURGERY) == true }
 
         return when {
             hasHadCytoreductiveSurgery -> {

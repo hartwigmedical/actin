@@ -9,8 +9,7 @@ import org.junit.Test
 
 class SurgeryConfigFactoryTest {
 
-    private val fields: Map<String, Int> =
-        TestCurationFactory.curationHeaders(CurationDatabaseReader.SURGERY_TSV)
+    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.SURGERY_TSV)
 
     @Test
     fun `Should return surgery config from valid inputs`() {
