@@ -202,7 +202,7 @@ class PanelFusionAnnotatorTest {
                     isAssociatedWithDrugResistance = null,
                     geneTranscriptStart = TRANSCRIPT,
                     geneTranscriptEnd = TRANSCRIPT,
-                    fusedExonUp = EXON_SKIPPED_UP -1 ,
+                    fusedExonUp = EXON_SKIPPED_UP - 1,
                     fusedExonDown = EXON_SKIPPED_DOWN + 1,
                     event = "$GENE exons $EXON_SKIPPED_UP-$EXON_SKIPPED_DOWN skipping",
                     isReportable = true,
