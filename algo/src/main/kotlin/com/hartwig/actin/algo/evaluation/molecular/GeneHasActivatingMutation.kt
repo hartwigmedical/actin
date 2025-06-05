@@ -119,7 +119,7 @@ class GeneHasActivatingMutation(
 
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-                return when {
+                when {
                     isAssociatedWithDrugResistance(variant) -> profile(variant.event, ActivationWarningType.ASSOCIATED_WITH_RESISTANCE)
                     !variant.isCancerAssociatedVariant -> profile(
                         variant.event,
@@ -131,11 +131,11 @@ class GeneHasActivatingMutation(
                     else -> profile(variant.event, activating = true)
                 }
             } else {
-                if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                    return if (isSubclonal(variant)) {
+                if (isNonCodingSpliceRegionVariantInMetExon14) {
+                    profile(variant.event, ActivationWarningType.POTENTIALLY_RELEVANT_MET_EXON_14_SKIPPING_MUTATIONS)
+                } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                    if (isSubclonal(variant)) {
                         profile(variant.event, ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL)
-                    } else if (isNonCodingSpliceRegionVariantInMetExon14) {
-                        profile(variant.event, ActivationWarningType.POTENTIALLY_RELEVANT_MET_EXON_14_SKIPPING_MUTATIONS)
                     } else {
                         profile(variant.event, ActivationWarningType.NON_HIGH_DRIVER)
                     }
@@ -144,9 +144,9 @@ class GeneHasActivatingMutation(
                 }
             }
         } else if (isMissenseOrCancerAssociatedVariant(variant)) {
-            return profile(variant.event, ActivationWarningType.OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT)
+            profile(variant.event, ActivationWarningType.OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT)
         } else {
-            return profile(variant.event)
+            profile(variant.event)
         }
     }
 
