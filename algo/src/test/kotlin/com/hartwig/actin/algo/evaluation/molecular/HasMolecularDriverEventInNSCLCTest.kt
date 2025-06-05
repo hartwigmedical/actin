@@ -35,7 +35,7 @@ private val BASE_SPECIFIC_VARIANT = TestVariantFactory.createMinimal().copy(
 val BASE_ACTIVATING_MUTATION = TestVariantFactory.createMinimal().copy(
     gene = CORRECT_ACTIVATING_MUTATION_GENE,
     event = "$CORRECT_ACTIVATING_MUTATION_GENE $CORRECT_ACTIVATING_MUTATION_PROTEIN_IMPACT",
-    isHotspot = true,
+    isCancerAssociatedVariant = true,
     isReportable = true,
     driverLikelihood = DriverLikelihood.HIGH,
     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
@@ -116,7 +116,7 @@ class HasMolecularDriverEventInNSCLCTest {
     @Test
     fun `Should warn for mutation in correct gene when this is outcome of evaluation`() {
         val record =
-            MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION.copy(isHotspot = false, proteinEffect = ProteinEffect.UNKNOWN))
+            MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION.copy(isCancerAssociatedVariant = false, proteinEffect = ProteinEffect.UNKNOWN))
         evaluateIncludeFunctions(EvaluationResult.WARN, record)
     }
 
