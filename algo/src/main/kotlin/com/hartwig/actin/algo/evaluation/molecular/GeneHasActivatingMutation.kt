@@ -114,8 +114,6 @@ class GeneHasActivatingMutation(
 
     private fun evaluateVariant(variant: Variant, hasHighMutationalLoad: Boolean?): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
-        val isNonCodingSpliceRegionVariantInMetExon14 =
-            gene == "MET" && variant.gene == "MET" && variant.canonicalImpact.affectedExon == 14 && variant.canonicalImpact.codingEffect == CodingEffect.NONE && variant.canonicalImpact.isSpliceRegion == true
 
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
@@ -131,9 +129,7 @@ class GeneHasActivatingMutation(
                     else -> profile(variant.event, activating = true)
                 }
             } else {
-                if (isNonCodingSpliceRegionVariantInMetExon14) {
-                    profile(variant.event, ActivationWarningType.POTENTIALLY_RELEVANT_MET_EXON_14_SKIPPING_MUTATIONS)
-                } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                     if (isSubclonal(variant)) {
                         profile(variant.event, ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL)
                     } else {

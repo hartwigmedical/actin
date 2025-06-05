@@ -194,24 +194,6 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should warn for MET splice region mutations`() {
-        val function = GeneHasActivatingMutation("MET", null)
-        val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIALLY_RELEVANT_MET_EXON_14_VARIANT))
-
-        assertMolecularEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages).containsExactly("MET has non-coding splice region mutation(s) in exon 14 undetermined if this could still potentially be an activating mutation")
-    }
-
-    @Test
-    fun `Should warn for MET splice region mutations with right message if looking for kinase domain mutations`() {
-        val function = GeneHasActivatingMutation("MET", null, inKinaseDomain = true)
-        val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIALLY_RELEVANT_MET_EXON_14_VARIANT))
-
-        assertMolecularEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages).containsExactly("MET has non-coding splice region mutation(s) in exon 14 undetermined if this could still potentially be an activating mutation and undetermined if in kinase domain")
-    }
-
-    @Test
     fun `Should evaluate to undetermined when no molecular input`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -295,16 +277,6 @@ class GeneHasActivatingMutationTest {
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(100),
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
-        )
-
-        private val POTENTIALLY_RELEVANT_MET_EXON_14_VARIANT = TestVariantFactory.createMinimal().copy(
-            gene = "MET",
-            isReportable = true,
-            canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
-                affectedExon = 14,
-                isSpliceRegion = true,
-                codingEffect = CodingEffect.NONE
-            )
         )
 
         private fun impactWithCodon(affectedCodon: Int) =
