@@ -41,13 +41,13 @@ class IhcResultGenerator(
         ihcTestInterpretation.results
             .sortedWith(compareBy({ it.sortPrecedence }, { it.grouping }))
             .groupBy { it.grouping }
-            .forEach { group ->
-                table.addCell(Cells.createKey(group.key))
-                val paragraphs = group.value
+            .forEach { (group, results) ->
+                table.addCell(Cells.createKey(group))
+                val paragraphs = results
                     .groupBy { it.date }.entries
                     .sortedWith(nullsLast(compareByDescending { it.key }))
-                    .map { sameDateGroup ->
-                        Paragraph(sameDateGroup.value.joinToString { it.details } + (sameDateGroup.key?.let { " ($it)" } ?: ""))
+                    .map { (date, resultsForDate) ->
+                        Paragraph(resultsForDate.joinToString { it.details } + (date?.let { " ($it)" } ?: ""))
                     }
                 table.addCell(Cells.createValue(paragraphs))
             }
