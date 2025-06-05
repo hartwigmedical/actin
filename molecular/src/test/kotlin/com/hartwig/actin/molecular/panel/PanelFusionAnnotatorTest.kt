@@ -2,13 +2,11 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -28,52 +26,6 @@ private const val TRANSCRIPT_END = "transcript_end"
 private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
 private val FULLY_SPECIFIED_SEQUENCED_FUSION =
     SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
-
-private val FUSION = TestMolecularFactory.createMinimalFusion().copy(
-    isReportable = true,
-    geneStart = GENE_START,
-    geneEnd = GENE_END,
-    fusedExonUp = null,
-    fusedExonDown = null,
-    driverType = FusionDriverType.KNOWN_PAIR,
-    driverLikelihood = DriverLikelihood.HIGH,
-    event = "$GENE_START::$GENE_END fusion"
-)
-
-private val FULLY_SPECIFIED_FUSION = TestMolecularFactory.createMinimalFusion().copy(
-    isReportable = true,
-    geneStart = GENE_START,
-    geneEnd = GENE_END,
-    fusedExonUp = FUSED_EXON_UP,
-    fusedExonDown = FUSED_EXON_DOWN,
-    driverType = FusionDriverType.KNOWN_PAIR,
-    geneTranscriptStart = TRANSCRIPT_START,
-    geneTranscriptEnd = TRANSCRIPT_END,
-    driverLikelihood = DriverLikelihood.HIGH,
-    event = "$GENE_START::$GENE_END fusion"
-
-)
-
-private val EXON_SKIP_FUSION = TestMolecularFactory.createMinimalFusion().copy(
-    isReportable = true,
-    geneStart = GENE,
-    geneEnd = GENE,
-    fusedExonUp = FUSED_EXON_UP,
-    fusedExonDown = FUSED_EXON_DOWN,
-    geneTranscriptStart = TRANSCRIPT,
-    geneTranscriptEnd = TRANSCRIPT,
-    driverLikelihood = DriverLikelihood.HIGH,
-    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
-    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
-)
-
-private val EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT = EXON_SKIP_FUSION.copy(
-    geneTranscriptStart = CANONICAL_TRANSCRIPT,
-    geneTranscriptEnd = CANONICAL_TRANSCRIPT
-)
-
-private val KNOWN_FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)
-    .proteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN).build()
 
 class PanelFusionAnnotatorTest {
     
@@ -223,7 +175,7 @@ class PanelFusionAnnotatorTest {
                     geneTranscriptEnd = CANONICAL_TRANSCRIPT,
                     fusedExonUp = FUSED_EXON_UP - 1 ,
                     fusedExonDown = FUSED_EXON_DOWN + 1,
-                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
+                    event = "$GENE exons $FUSED_EXON_UP-$FUSED_EXON_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty()
@@ -250,7 +202,7 @@ class PanelFusionAnnotatorTest {
                     geneTranscriptEnd = TRANSCRIPT,
                     fusedExonUp = FUSED_EXON_UP -1 ,
                     fusedExonDown = FUSED_EXON_DOWN + 1,
-                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
+                    event = "$GENE exons $FUSED_EXON_UP-$FUSED_EXON_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty()
