@@ -23,7 +23,6 @@ class PanelAnnotator(
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
     private val panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
-    private val panelEvidenceAnnotator: PanelEvidenceAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<SequencingTest, PanelRecord> {
 
@@ -31,7 +30,6 @@ class PanelAnnotator(
         return input
             .let(::interpret)
             .let(panelDriverAttributeAnnotator::annotate)
-            .let(panelEvidenceAnnotator::annotate)
     }
 
     private fun interpret(input: SequencingTest): PanelRecord {

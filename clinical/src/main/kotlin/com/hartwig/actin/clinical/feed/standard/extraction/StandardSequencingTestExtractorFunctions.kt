@@ -31,7 +31,7 @@ object StandardSequencingTestExtractorFunctions {
                 if (configuredGenesAreNotEqual(result.gene, amplifiedGene)) {
                     throw IllegalArgumentException("Gene must be equal to amplifiedGene if both are set.")
                 }
-                SequencedAmplification(amplifiedGene, result.transcript)
+                SequencedAmplification(amplifiedGene, result.transcript, result.amplifiedGeneCopyNr)
             }
         }.toSet()
 

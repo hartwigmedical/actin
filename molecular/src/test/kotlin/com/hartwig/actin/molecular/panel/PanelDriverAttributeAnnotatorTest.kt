@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.driverlikelihood.TEST_ONCO_DNDS_TSV
 import com.hartwig.actin.molecular.driverlikelihood.TEST_TSG_DNDS_TSV
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 import io.mockk.every
 import io.mockk.mockk
@@ -32,25 +32,27 @@ private val KNOWN_FUSION = mockk<KnownFusion> {
 
 private val AMPLIFICATION = TestGeneAlterationFactory.createGeneAlteration("gene 1", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true)
 
-private val HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
-private val NON_HOTSPOT = TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
+private val CANCER_ASSOCIATED_VARIANT =
+    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
+private val NON_CANCER_ASSOCIATED_VARIANT =
+    TestVariantAlterationFactory.createVariantAlteration(GENE, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
 
 class PanelDriverAttributeAnnotatorTest {
 
-    private val evidenceDatabase = mockk<EvidenceDatabase>()
+    private val knownEventResolver = mockk<KnownEventResolver>()
     private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
-    private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
+    private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(knownEventResolver, geneDriverLikelihoodModel)
 
     @Test
-    fun `Should annotate variant that is hotspot`() {
-        every { evidenceDatabase.alterationForVariant(any()) } returns HOTSPOT
+    fun `Should annotate variant that is a cancer-associated variant`() {
+        every { knownEventResolver.resolveForVariant(any()) } returns CANCER_ASSOCIATED_VARIANT
 
         val panelRecord = panelRecordWith(VARIANT)
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
 
         assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
         val annotatedVariant = annotatedPanelRecord.drivers.variants.first()
-        assertThat(annotatedVariant.isHotspot).isTrue
+        assertThat(annotatedVariant.isCancerAssociatedVariant).isTrue
         assertThat(annotatedVariant.evidence).isEqualTo(EMPTY_MATCH)
         assertThat(annotatedVariant.geneRole).isEqualTo(actinGeneRole.ONCO)
         assertThat(annotatedVariant.proteinEffect).isEqualTo(actinProteinEffect.GAIN_OF_FUNCTION)
@@ -59,15 +61,15 @@ class PanelDriverAttributeAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variant that is not a hotspot`() {
-        every { evidenceDatabase.alterationForVariant(any()) } returns NON_HOTSPOT
+    fun `Should annotate variant that is not a cancer-associated variant`() {
+        every { knownEventResolver.resolveForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
 
-        val panelRecord = panelRecordWith(VARIANT.copy(isHotspot = false))
+        val panelRecord = panelRecordWith(VARIANT.copy(isCancerAssociatedVariant = false))
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
 
         assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
         val annotatedVariant = annotatedPanelRecord.drivers.variants.first()
-        assertThat(annotatedVariant.isHotspot).isFalse
+        assertThat(annotatedVariant.isCancerAssociatedVariant).isFalse
         assertThat(annotatedVariant.evidence).isEqualTo(EMPTY_MATCH)
         assertThat(annotatedVariant.geneRole).isEqualTo(actinGeneRole.ONCO)
         assertThat(annotatedVariant.proteinEffect).isEqualTo(actinProteinEffect.NO_EFFECT)
@@ -77,7 +79,7 @@ class PanelDriverAttributeAnnotatorTest {
 
     @Test
     fun `Should not annotate with evidence when no matches found`() {
-        every { evidenceDatabase.alterationForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
+        every { knownEventResolver.resolveForVariant(any()) } returns TestVariantAlterationFactory.createVariantAlteration(GENE)
 
         val panelRecord = panelRecordWith(VARIANT.copy(gene = "other gene"))
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
@@ -88,7 +90,7 @@ class PanelDriverAttributeAnnotatorTest {
 
     @Test
     fun `Should annotate fusion`() {
-        every { evidenceDatabase.lookupKnownFusion(any()) } returns KNOWN_FUSION
+        every { knownEventResolver.resolveForFusion(any()) } returns KNOWN_FUSION
 
         val panelRecord = panelRecordWith(TestMolecularFactory.createMinimalFusion())
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
@@ -103,7 +105,7 @@ class PanelDriverAttributeAnnotatorTest {
 
     @Test
     fun `Should annotate copy number`() {
-        every { evidenceDatabase.alterationForCopyNumber(any()) } returns AMPLIFICATION
+        every { knownEventResolver.resolveForCopyNumber(any()) } returns AMPLIFICATION
 
         val panelRecord = panelRecordWith(TestMolecularFactory.createMinimalCopyNumber())
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)

@@ -344,7 +344,7 @@ CREATE TABLE `variant`
     `variantCopyNumber` double precision,
     `totalCopyNumber` double precision,
     `isBiallelic` BOOLEAN,
-    `isHotspot` BOOLEAN NOT NULL,
+    `isCancerAssociatedVariant` BOOLEAN NOT NULL,
     `clonalLikelihood` double precision,
     `phaseGroups` varchar(50),
     `canonicalTranscriptId` varchar(50) NOT NULL,

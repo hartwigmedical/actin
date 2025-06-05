@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
 class AnyGeneFromSetIsOverexpressed(
@@ -15,16 +15,9 @@ class AnyGeneFromSetIsOverexpressed(
 
     private val genesToAmplification: Map<String, GeneIsAmplified> = genes.associateWith { geneIsAmplifiedCreator(it, maxTestAge) }
 
-    override fun noMolecularRecordEvaluation(): Evaluation {
-        return EvaluationFactory.undetermined(
-            "No molecular data to determine overexpression of ${concat(genes)} in RNA",
-            isMissingMolecularResultForEvaluation = true
-        )
-    }
-
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(test: MolecularTest): Evaluation {
         val amplifiedGenes = genesToAmplification.filter { (_, geneIsAmplified) ->
-            val result = geneIsAmplified.evaluate(molecular)?.result
+            val result = geneIsAmplified.evaluate(test).result
             result == EvaluationResult.PASS || result == EvaluationResult.WARN
         }.map { it.key }
 

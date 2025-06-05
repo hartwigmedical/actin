@@ -46,6 +46,7 @@ class MolecularDriverEntryComparatorTest {
             description = driver,
             event = driver,
             driverLikelihood = driverLikelihood,
+            driverLikelihoodDisplay = driverLikelihood.name,
             evidenceTier = EvidenceTier.I
         )
     }

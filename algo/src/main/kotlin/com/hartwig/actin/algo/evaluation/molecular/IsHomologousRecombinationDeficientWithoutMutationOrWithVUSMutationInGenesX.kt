@@ -15,29 +15,29 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
 
         with(HomologousRecombinationDeficiencyGeneSummary.createForDrivers(test.drivers)) {
             val genesToFindWithDeletionOrPartialDel = genesInGenesToFind(hrdGenesWithDeletionOrPartialDel)
-            val genesToFindWithBiallelicHotspot = genesInGenesToFind(hrdGenesWithBiallelicHotspot)
-            val genesToFindWithNonBiallelicHotspot = genesInGenesToFind(hrdGenesWithNonBiallelicHotspot)
+            val genesToFindWithBiallelicCav = genesInGenesToFind(hrdGenesWithBiallelicCav)
+            val genesToFindWithNonBiallelicCav = genesInGenesToFind(hrdGenesWithNonBiallelicCav)
 
             val warnEvaluations = mutableSetOf<String>()
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot biallelic high driver(s)",
-                genesInGenesToFind(hrdGenesWithBiallelicNonHotspotHighDriver)
+                "non-cancer-associated variant biallelic high driver(s)",
+                genesInGenesToFind(hrdGenesWithBiallelicNonCavHighDriver)
             )
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot biallelic non-high driver(s)",
-                genesInGenesToFind(hrdGenesWithBiallelicNonHotspotNonHighDriver)
+                "non-cancer-associated variant biallelic non-high driver(s)",
+                genesInGenesToFind(hrdGenesWithBiallelicNonCavNonHighDriver)
             )
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot non-biallelic high driver(s)",
-                genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotHighDriver)
+                "non-cancer-associated variant non-biallelic high driver(s)",
+                genesInGenesToFind(hrdGenesWithNonBiallelicNonCavHighDriver)
             )
             addToWarnEvaluations(
                 warnEvaluations,
-                "non-hotspot non-biallelic non-high driver(s)",
-                genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
+                "non-cancer-associated variant non-biallelic non-high driver(s)",
+                genesInGenesToFind(hrdGenesWithNonBiallelicNonCavNonHighDriver)
             )
             addToWarnEvaluations(warnEvaluations, "homozygous disruption", genesInGenesToFind(hrdGenesWithHomozygousDisruption))
             addToWarnEvaluations(warnEvaluations, "non-homozygous disruption", genesInGenesToFind(hrdGenesWithNonHomozygousDisruption))
@@ -65,10 +65,10 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     EvaluationFactory.fail("Tumor is not HRD")
                 }
 
-                genesToFindWithBiallelicHotspot.isNotEmpty() || genesToFindWithNonBiallelicHotspot.isNotEmpty() -> {
+                genesToFindWithBiallelicCav.isNotEmpty() || genesToFindWithNonBiallelicCav.isNotEmpty() -> {
                     EvaluationFactory.fail(
                         "Tumor is HRD with " +
-                                "${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot"
+                                "${concat(genesToFindWithNonBiallelicCav + genesToFindWithBiallelicCav)} cancer-associated variant"
                     )
                 }
 

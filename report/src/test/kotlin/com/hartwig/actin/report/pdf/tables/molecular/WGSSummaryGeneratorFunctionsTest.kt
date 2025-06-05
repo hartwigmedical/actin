@@ -55,7 +55,7 @@ class WGSSummaryGeneratorFunctionsTest {
 
         assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo(
-                "event 1 (4 copies - with tumor ploidy 2.5), event 2 (dubious quality), event 3 (low driver likelihood), " +
+                "event 1 (4 copies - with tumor ploidy 2.5), event 2 (annotated as not a driver), event 3 (low driver likelihood), " +
                         "event 4 (medium driver likelihood), event 5"
             )
     }

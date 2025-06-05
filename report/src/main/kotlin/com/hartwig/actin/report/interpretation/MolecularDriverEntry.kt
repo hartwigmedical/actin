@@ -11,6 +11,7 @@ data class MolecularDriverEntry(
     val description: String,
     val event: String,
     val driverLikelihood: DriverLikelihood?,
+    val driverLikelihoodDisplay: String,
     val evidenceTier: EvidenceTier,
     val proteinEffect: ProteinEffect? = null,
     val actinTrials: Set<TrialAcronymAndLocations> = emptySet(),

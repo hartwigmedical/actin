@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
@@ -47,7 +46,7 @@ class MolecularDriversGenerator(
         factory.create().forEach { entry ->
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.display()))
-            table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
+            table.addCell(Cells.createContent(entry.driverLikelihoodDisplay))
             table.addCell(Cells.createContent(formatActinTrials(entry.actinTrials)))
             table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event] ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
@@ -58,10 +57,6 @@ class MolecularDriversGenerator(
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
         return table
-    }
-
-    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
-        return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
     }
 
     private fun formatActinTrials(actinTrials: Set<TrialAcronymAndLocations>): String {

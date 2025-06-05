@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
+import com.hartwig.actin.molecular.evidence.known.TestKnownEventResolverFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -17,17 +17,15 @@ import org.junit.Test
 private val GENE = "gene 1"
 private val VARIANT = TestVariantFactory.createMinimal()
 
-private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
-
-private val HOTSPOT =
+private val CANCER_ASSOCIATED_VARIANT =
     TestVariantAlterationFactory.createVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION, true, true)
 
-private val NON_HOTSPOT =
+private val NON_CANCER_ASSOCIATED_VARIANT =
     TestVariantAlterationFactory.createVariantAlteration(VARIANT.gene, GeneRole.ONCO, ProteinEffect.NO_EFFECT, false, false)
 
 class MolecularRecordAnnotatorTest {
 
-    private val annotator = MolecularRecordAnnotator(TestEvidenceDatabaseFactory.createProperDatabase())
+    private val annotator = MolecularRecordAnnotator(TestKnownEventResolverFactory.createProper())
 
     @Test
     fun `Should retain characteristics during annotation that are originally present`() {
@@ -52,31 +50,29 @@ class MolecularRecordAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate variant that is hotspot`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns HOTSPOT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+    fun `Should annotate variant that is a cancer-associated variant`() {
+        val evidenceDatabase = mockk<KnownEventResolver> {
+            every { resolveForVariant(VARIANT.copy(driverLikelihood = null)) } returns CANCER_ASSOCIATED_VARIANT
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
-        assertThat(annotated.isHotspot).isTrue()
+        assertThat(annotated.isCancerAssociatedVariant).isTrue()
         assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(annotated.proteinEffect.name).isEqualTo(HOTSPOT.proteinEffect.name)
-        assertThat(annotated.geneRole.name).isEqualTo(HOTSPOT.geneRole.name)
+        assertThat(annotated.proteinEffect.name).isEqualTo(CANCER_ASSOCIATED_VARIANT.proteinEffect.name)
+        assertThat(annotated.geneRole.name).isEqualTo(CANCER_ASSOCIATED_VARIANT.geneRole.name)
     }
 
     @Test
-    fun `Should annotate variant that is no hotspot`() {
-        val evidenceDatabase = mockk<EvidenceDatabase> {
-            every { alterationForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_HOTSPOT
-            every { evidenceForVariant(any()) } returns EMPTY_MATCH
+    fun `Should annotate variant that is not a cancer-associated variant`() {
+        val evidenceDatabase = mockk<KnownEventResolver> {
+            every { resolveForVariant(VARIANT.copy(driverLikelihood = null)) } returns NON_CANCER_ASSOCIATED_VARIANT
         }
 
         val annotated = MolecularRecordAnnotator(evidenceDatabase).annotateVariant(VARIANT)
-        assertThat(annotated.isHotspot).isFalse()
+        assertThat(annotated.isCancerAssociatedVariant).isFalse()
         assertThat(annotated.driverLikelihood).isEqualTo(VARIANT.driverLikelihood)
-        assertThat(annotated.proteinEffect.name).isEqualTo(NON_HOTSPOT.proteinEffect.name)
-        assertThat(annotated.geneRole.name).isEqualTo(NON_HOTSPOT.geneRole.name)
+        assertThat(annotated.proteinEffect.name).isEqualTo(NON_CANCER_ASSOCIATED_VARIANT.proteinEffect.name)
+        assertThat(annotated.geneRole.name).isEqualTo(NON_CANCER_ASSOCIATED_VARIANT.geneRole.name)
     }
 
     @Test

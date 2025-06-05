@@ -5,5 +5,5 @@ data class VariantAlteration(
     override val geneRole: GeneRole,
     override val proteinEffect: ProteinEffect,
     override val isAssociatedWithDrugResistance: Boolean?,
-    val isHotspot: Boolean
+    val isCancerAssociatedVariant: Boolean
 ) : GeneAlteration
