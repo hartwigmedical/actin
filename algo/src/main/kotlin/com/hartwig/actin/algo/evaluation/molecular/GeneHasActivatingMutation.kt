@@ -30,7 +30,6 @@ enum class ActivationWarningType(val description: String? = null) {
     NON_HIGH_DRIVER_SUBCLONAL,
     NON_HIGH_DRIVER,
     OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT,
-    POTENTIALLY_RELEVANT_MET_EXON_14_SKIPPING_MUTATIONS,
 }
 
 data class ActivationProfile(
@@ -103,7 +102,6 @@ class GeneHasActivatingMutation(
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER],
                     eventsByWarningType[ActivationWarningType.OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT],
-                    eventsByWarningType[ActivationWarningType.POTENTIALLY_RELEVANT_MET_EXON_14_SKIPPING_MUTATIONS],
                     evidenceSource
                 )
 
@@ -167,7 +165,6 @@ class GeneHasActivatingMutation(
         nonHighDriverSubclonalVariants: Set<String>?,
         nonHighDriverVariants: Set<String>?,
         otherMissenseOrCancerAssociatedVariants: Set<String>?,
-        spliceRegionPotentialMetExon14SkippingMutations: Set<String>?,
         evidenceSource: String
     ): Evaluation? {
         val inKinaseDomainString = if (inKinaseDomain) " and undetermined if in kinase domain" else ""
@@ -215,15 +212,6 @@ class GeneHasActivatingMutation(
                             gene
                         )
                     } + " that are missense or have cancer-associated variant status but are not considered reportable$inKinaseDomainString"
-                ),
-                EventsWithMessages(
-                    spliceRegionPotentialMetExon14SkippingMutations,
-                    "$gene has non-coding splice region mutation(s) in exon 14" + spliceRegionPotentialMetExon14SkippingMutations?.let {
-                        concatVariants(
-                            it,
-                            gene
-                        )
-                    } + " undetermined if this could still potentially be an activating mutation$inKinaseDomainString"
                 )
             )
         )
