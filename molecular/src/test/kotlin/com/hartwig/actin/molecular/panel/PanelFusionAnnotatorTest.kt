@@ -21,6 +21,8 @@ private const val GENE_START = "gene_start"
 private const val GENE_END = "gene_end"
 private const val FUSED_EXON_UP = 2
 private const val FUSED_EXON_DOWN = 4
+private const val EXON_SKIPPED_UP = 6
+private const val EXON_SKIPPED_DOWN = 8
 private const val TRANSCRIPT_START = "transcript_start"
 private const val TRANSCRIPT_END = "transcript_end"
 private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
@@ -161,7 +163,7 @@ class PanelFusionAnnotatorTest {
             every { geneId() } returns "geneId"
         }
 
-        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, 2, 4, null))
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, EXON_SKIPPED_UP, EXON_SKIPPED_DOWN, null))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             listOf(
@@ -173,9 +175,9 @@ class PanelFusionAnnotatorTest {
                     isAssociatedWithDrugResistance = null,
                     geneTranscriptStart = CANONICAL_TRANSCRIPT,
                     geneTranscriptEnd = CANONICAL_TRANSCRIPT,
-                    fusedExonUp = FUSED_EXON_UP - 1 ,
-                    fusedExonDown = FUSED_EXON_DOWN + 1,
-                    event = "$GENE exons $FUSED_EXON_UP-$FUSED_EXON_DOWN skipping",
+                    fusedExonUp = EXON_SKIPPED_UP - 1 ,
+                    fusedExonDown = EXON_SKIPPED_DOWN + 1,
+                    event = "$GENE exons $EXON_SKIPPED_UP-$EXON_SKIPPED_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty()
@@ -188,7 +190,7 @@ class PanelFusionAnnotatorTest {
     fun `Should annotate with provided transcript when available`() {
         setupKnownFusionCacheForExonDeletion()
 
-        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, FUSED_EXON_UP, FUSED_EXON_DOWN, TRANSCRIPT))
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, EXON_SKIPPED_UP, EXON_SKIPPED_DOWN, TRANSCRIPT))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             listOf(
@@ -200,9 +202,9 @@ class PanelFusionAnnotatorTest {
                     isAssociatedWithDrugResistance = null,
                     geneTranscriptStart = TRANSCRIPT,
                     geneTranscriptEnd = TRANSCRIPT,
-                    fusedExonUp = FUSED_EXON_UP -1 ,
-                    fusedExonDown = FUSED_EXON_DOWN + 1,
-                    event = "$GENE exons $FUSED_EXON_UP-$FUSED_EXON_DOWN skipping",
+                    fusedExonUp = EXON_SKIPPED_UP -1 ,
+                    fusedExonDown = EXON_SKIPPED_DOWN + 1,
+                    event = "$GENE exons $EXON_SKIPPED_UP-$EXON_SKIPPED_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty()
