@@ -4,14 +4,15 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
+import com.hartwig.actin.datamodel.clinical.SurgeryType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 internal object SurgeryTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
-    fun surgery(endDate: LocalDate?, status: SurgeryStatus = SurgeryStatus.UNKNOWN): Surgery {
-        return Surgery(name = "Surgery", endDate = endDate, status = status)
+    fun surgery(endDate: LocalDate?, status: SurgeryStatus = SurgeryStatus.UNKNOWN, surgeryType: SurgeryType? = null): Surgery {
+        return Surgery(name = "Surgery", endDate = endDate, status = status, type = surgeryType)
     }
 
     fun withSurgery(surgery: Surgery): PatientRecord {

@@ -30,11 +30,12 @@ class StandardSurgeryExtractor(
                     Surgery(
                         name = it.name,
                         endDate = providedSurgery.endDate,
-                        status = status
+                        status = status,
+                        type = it.type,
                     )
                 }
                 ExtractionResult(listOfNotNull(surgery), curationResponse.extractionEvaluation)
-            } ?: ExtractionResult(listOf(Surgery(null, providedSurgery.endDate, status)), CurationExtractionEvaluation())
+            } ?: ExtractionResult(listOf(Surgery(null, providedSurgery.endDate, status, null)), CurationExtractionEvaluation())
         }
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)

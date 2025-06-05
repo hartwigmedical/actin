@@ -504,8 +504,9 @@ object TestClinicalFactory {
 
     private fun createTestSurgeries(): List<Surgery> {
         return listOf(
-            Surgery(name = "Surgery 1", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED),
-            Surgery(name = "Surgery 2", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED)
+            Surgery(name = "Surgery 1", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED, type = SurgeryType.CYTOREDUCTIVE_SURGERY),
+            Surgery(name = "Surgery 2", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED, type = SurgeryType.DEBULKING_SURGERY),
+            Surgery(name = "Surgery 3", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED, type = null)
         )
     }
 

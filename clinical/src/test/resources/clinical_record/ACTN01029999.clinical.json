@@ -270,7 +270,8 @@
     {
       "name": "diagnostics stomach translated",
       "endDate": "2020-08-28",
-      "status": "PLANNED"
+      "status": "PLANNED",
+      "type": "DEBULKING_SURGERY"
     }
   ],
   "bodyWeights": [

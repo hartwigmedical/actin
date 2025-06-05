@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
+import com.hartwig.actin.datamodel.clinical.SurgeryType
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -46,10 +47,10 @@ class StandardSurgeryExtractorTest {
         val ignoredName = "Geen ingreep- operatie uitgesteld"
 
         every { surgeryNameCuration.find(PROVIDED_SURGERY_NAME) } returns setOf(
-            SurgeryNameConfig(input = PROVIDED_SURGERY_NAME, ignore = false, name = CURATED_SURGERY_NAME)
+            SurgeryNameConfig(input = PROVIDED_SURGERY_NAME, ignore = false, name = CURATED_SURGERY_NAME, type = SurgeryType.CYTOREDUCTIVE_SURGERY)
         )
         every { surgeryNameCuration.find(ignoredName) } returns setOf(
-            SurgeryNameConfig(input = ignoredName, ignore = true, name = "<ignore>")
+            SurgeryNameConfig(input = ignoredName, ignore = true, name = "<ignore>", type = null)
         )
 
         val result = extractor.extract(
@@ -63,7 +64,8 @@ class StandardSurgeryExtractorTest {
             Surgery(
                 name = CURATED_SURGERY_NAME,
                 endDate = PROVIDED_SURGERY_WITH_NAME.endDate,
-                status = SurgeryStatus.FINISHED
+                status = SurgeryStatus.FINISHED,
+                type = SurgeryType.CYTOREDUCTIVE_SURGERY,
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
@@ -75,7 +77,18 @@ class StandardSurgeryExtractorTest {
         val result = extractor.extract(FEED_PATIENT_RECORD.copy(surgeries = listOf(surgery)))
 
         assertThat(result.extracted).containsExactly(
-            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED)
+            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED, type = null),
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should return validation errors when surgery type is unknown`() {
+        val surgery = FeedTestData.createFeedSurgery(null)
+        val result = extractor.extract(FEED_PATIENT_RECORD.copy(surgeries = listOf(surgery)))
+
+        assertThat(result.extracted).containsExactly(
+            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED, type = null),
         )
         assertThat(result.evaluation.warnings).isEmpty()
     }

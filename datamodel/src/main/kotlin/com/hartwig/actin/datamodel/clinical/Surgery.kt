@@ -5,5 +5,6 @@ import java.time.LocalDate
 data class Surgery(
     val name: String?,
     val endDate: LocalDate?,
-    val status: SurgeryStatus
+    val status: SurgeryStatus,
+    val type: SurgeryType?,
 )

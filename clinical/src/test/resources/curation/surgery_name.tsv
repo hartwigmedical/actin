@@ -1,4 +1,4 @@
-input	name
-Surgery1	Translated Surgery
-diagnostics stomach	diagnostics stomach translated
-Geen ingreep- operatie uitgesteld	<ignore>
+input	name	type
+Surgery1	Translated Surgery	CYTOREDUCTIVE_SURGERY
+diagnostics stomach	diagnostics stomach translated	DEBULKING_SURGERY
+Geen ingreep- operatie uitgesteld	<ignore>	

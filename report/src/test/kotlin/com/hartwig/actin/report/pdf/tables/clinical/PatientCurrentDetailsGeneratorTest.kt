@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
+import com.hartwig.actin.datamodel.clinical.SurgeryType
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
@@ -51,9 +52,9 @@ class PatientCurrentDetailsGeneratorTest {
 
         val patientRecord = minimalPatientRecord.copy(
             surgeries = listOf(
-                Surgery(name = "Surgery 2", endDateMinus6, status = SurgeryStatus.FINISHED),
-                Surgery(name = "Surgery 1", endDate, status = SurgeryStatus.FINISHED),
-                Surgery(name = null, endDateMinus4, status = SurgeryStatus.FINISHED)
+                Surgery(name = "Surgery 2", endDateMinus6, status = SurgeryStatus.FINISHED, type = SurgeryType.DEBULKING_SURGERY),
+                Surgery(name = "Surgery 1", endDate, status = SurgeryStatus.FINISHED, type = SurgeryType.CYTOREDUCTIVE_SURGERY),
+                Surgery(name = null, endDateMinus4, status = SurgeryStatus.FINISHED, type = null)
             )
         )
 
