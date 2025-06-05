@@ -27,7 +27,8 @@ class PathologyReportsExtractorTest {
             diagnosis = "diagnosis",
             tissueDate = defaultDate,
             authorisationDate = defaultDate,
-            rawPathologyReport = "rawPathologyReport"
+            rawPathologyReport = "rawPathologyReport",
+            reportHash = "ID 1"
         )
 
         val record = FEED_PATIENT_RECORD.copy(

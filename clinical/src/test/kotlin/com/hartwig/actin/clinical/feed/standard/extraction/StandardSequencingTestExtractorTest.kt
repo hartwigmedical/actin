@@ -90,6 +90,19 @@ class StandardSequencingTestExtractorTest {
     }
 
     @Test
+    fun `Should propagate report hash with extracted test`() {
+        setUpSequencingTestResultCuration()
+        val palgaReportHash = "ID 1"
+        val feedPatientRecord = PATIENT_WITH_TEST_RESULT.copy(
+            sequencingTests = PATIENT_WITH_TEST_RESULT.sequencingTests.map { it.copy(reportHash = palgaReportHash) }
+        )
+        val extracted = extractor.extract(feedPatientRecord).extracted
+        assertThat(extracted).containsExactly(
+            SequencingTest(CURATED_TEST, TEST_DATE, knownSpecifications = true, reportHash = palgaReportHash)
+        )
+    }
+
+    @Test
     fun `Should extract sequencing with variants`() {
         setUpSequencingTestResultCuration(
             SequencingTestResultConfig(input = FREE_TEXT, gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN)

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
@@ -12,6 +13,12 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import java.time.LocalDate
+
+data class MolecularTestGroup(
+    val records: List<MolecularRecord>,
+    val tests: List<MolecularTest>,
+    val ihc: List<IhcTest>
+)
 
 object PathologyReportFunctions {
 
@@ -68,28 +75,29 @@ object PathologyReportFunctions {
         molecularTests: List<MolecularTest>,
         ihcTests: List<IhcTest>,
         pathologyReports: List<PathologyReport>?
-    ): Map<PathologyReport?, Triple<List<MolecularRecord>, List<MolecularTest>, List<IhcTest>>> {
+    ): Map<PathologyReport?, MolecularTestGroup> {
 
-        val reportDates = pathologyReports.orEmpty().map { it.date }.toSet()
-        val orangeResultsByDate = orangeMolecularRecords.groupBy { it.date.takeIf(reportDates::contains) }
-        val molecularTestsByDate = molecularTests.groupBy { it.date.takeIf(reportDates::contains) }
-        val ihcTestsByDate = ihcTests.groupBy { it.measureDate.takeIf(reportDates::contains) }
+        val reportKeys = pathologyReports.orEmpty().flatMap { listOfNotNull(it.date.toString(), it.reportHash) }.toSet()
+        val orangeResultsByKey = orangeMolecularRecords.groupBy { findReportKey(reportKeys, it.date) }
+        val molecularTestsByKey = molecularTests.groupBy { findReportKey(reportKeys, it.date, (it as? PanelRecord)?.reportHash) }
+        val ihcTestsByKey = ihcTests.groupBy { findReportKey(reportKeys, it.measureDate, it.reportHash) }
 
-        val matchedReports: Map<PathologyReport, Triple<List<MolecularRecord>, List<MolecularTest>, List<IhcTest>>> =
-            pathologyReports.orEmpty().associateWith { report ->
-                Triple(
-                    orangeResultsByDate[report.date].orEmpty(),
-                    molecularTestsByDate[report.date].orEmpty(),
-                    ihcTestsByDate[report.date].orEmpty()
-                )
+        val matchedReports: Map<PathologyReport, MolecularTestGroup> =
+            pathologyReports.orEmpty().groupBy { it.date }.entries.flatMap { (date, reports) ->
+                val firstReport = reports.first()
+                val firstReportKeys = listOfNotNull(date.toString(), firstReport.reportHash)
+                listOf(firstReport to resultsForKeys(orangeResultsByKey, molecularTestsByKey, ihcTestsByKey, firstReportKeys)) +
+                        reports.drop(1).map { report ->
+                            report to (report.reportHash?.let { resultsForKeys(orangeResultsByKey, molecularTestsByKey, ihcTestsByKey, listOf(it)) }
+                                ?: MolecularTestGroup(emptyList(), emptyList(), emptyList()))
+                        }
             }
+                .toMap()
 
-        val unmatchedEntry = Triple(
-            orangeResultsByDate[null].orEmpty(),
-            molecularTestsByDate[null].orEmpty(),
-            ihcTestsByDate[null].orEmpty()
+        val unmatchedEntry = MolecularTestGroup(
+            orangeResultsByKey[null].orEmpty(), molecularTestsByKey[null].orEmpty(), ihcTestsByKey[null].orEmpty()
         )
-            .takeIf { it.toList().any { e -> e.isNotEmpty() } }
+            .takeIf { listOf(it.records, it.tests, it.ihc).any { e -> e.isNotEmpty() } }
             ?.let { null to it }
 
         return (matchedReports + listOfNotNull(unmatchedEntry))
@@ -100,4 +108,18 @@ object PathologyReportFunctions {
             .sortedWith(compareBy(nullsLast(reverseOrder())) { it.first?.date })
             .toMap(LinkedHashMap())
     }
+
+    private fun findReportKey(reportKeys: Set<String>, date: LocalDate?, reportHash: String? = null): String? =
+        listOfNotNull(reportHash, date.toString()).find(reportKeys::contains)
+
+    private fun resultsForKeys(
+        orangeResultsByKey: Map<String?, List<MolecularRecord>>,
+        molecularTestsByKey: Map<String?, List<MolecularTest>>,
+        ihcTestsByKey: Map<String?, List<IhcTest>>,
+        keys: List<String>
+    ) = MolecularTestGroup(
+        keys.flatMap { orangeResultsByKey[it].orEmpty() },
+        keys.flatMap { molecularTestsByKey[it].orEmpty() },
+        keys.flatMap { ihcTestsByKey[it].orEmpty() },
+    )
 }
