@@ -64,11 +64,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                undetermined(hasTreatmentMessage(" with PD but unknown nr of cycles"))
+                undetermined(hasTreatmentMessage(" but unknown nr of cycles"))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                undetermined(hasTreatmentMessage(" with PD but unknown nr of weeks"))
+                undetermined(hasTreatmentMessage(" but unknown nr of weeks"))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {

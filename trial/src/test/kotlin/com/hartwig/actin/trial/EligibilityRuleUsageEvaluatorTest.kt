@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TestTrialFactory
-import com.hartwig.actin.datamodel.trial.TestTrialFactory.createMinimalTestTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -27,9 +26,9 @@ class EligibilityRuleUsageEvaluatorTest {
 
     @Test
     fun `Should generate list of IHC-adjacent proteins based on parameters and IHC metadata`() {
-        val minimal = createMinimalTestTrial()
+        val minimal = TestTrialFactory.createMinimalTestTrial()
         val trials = listOf(
-            createMinimalTestTrial().copy(
+            minimal.copy(
                 identification = minimal.identification.copy(
                     acronym = "TEST-TRIAL",
                     title = "This is an ACTIN test trial",
