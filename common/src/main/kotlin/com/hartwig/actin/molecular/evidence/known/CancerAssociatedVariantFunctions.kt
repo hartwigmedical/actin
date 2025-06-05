@@ -15,7 +15,7 @@ object CancerAssociatedVariantFunctions {
         ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
     )
 
-    fun isCancerAssociatedVariant(geneAlteration: GeneAlteration?): Boolean {
+    fun isAssociatedWithCancer(geneAlteration: GeneAlteration?): Boolean {
         return if ((geneAlteration is KnownHotspot && geneAlteration.sources().contains(PRIMARY_KNOWN_EVENT_SOURCE)) ||
             (geneAlteration is KnownCodon && geneAlteration.sources().contains(PRIMARY_KNOWN_EVENT_SOURCE))
         ) {

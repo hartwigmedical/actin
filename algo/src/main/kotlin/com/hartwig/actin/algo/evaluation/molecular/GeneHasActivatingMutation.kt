@@ -20,9 +20,9 @@ enum class ActivationWarningType(val description: String? = null) {
                 "but are also associated with drug resistance"
     ),
     NON_ONCOGENE,
-    NO_CANCER_ASSOCIATED_VARIANT_AND_NO_GAIN_OF_FUNCTION(
+    NO_CANCER_ASSOCIATED_VARIANT(
         "Potentially activating mutation(s) that have high driver likelihood " +
-                "but is not a cancer-associated variant and not associated with gain-of-function"
+                "but is not a cancer-associated variant"
     ),
     SUBCLONAL(
         "Potentially activating mutation(s) that have high driver likelihood " +
@@ -65,7 +65,7 @@ class GeneHasActivatingMutation(
 
         val potentiallyActivatingWarnings = listOf(
             ActivationWarningType.ASSOCIATED_WITH_RESISTANCE,
-            ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT_AND_NO_GAIN_OF_FUNCTION,
+            ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT,
             ActivationWarningType.SUBCLONAL,
         ).flatMap { warningType -> eventsByWarningType[warningType]?.map { event -> event to warningType } ?: emptyList() }
 
@@ -91,7 +91,7 @@ class GeneHasActivatingMutation(
                 val potentialWarnEvaluation = evaluatePotentialWarns(
                     eventsByWarningType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE],
                     eventsByWarningType[ActivationWarningType.NON_ONCOGENE],
-                    eventsByWarningType[ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT_AND_NO_GAIN_OF_FUNCTION],
+                    eventsByWarningType[ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT],
                     eventsByWarningType[ActivationWarningType.SUBCLONAL],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL],
                     eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER],
@@ -106,15 +106,13 @@ class GeneHasActivatingMutation(
 
     private fun evaluateVariant(variant: Variant, hasHighMutationalLoad: Boolean?): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
-        val isGainOfFunction =
-            variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
                 return when {
                     isAssociatedWithDrugResistance(variant) -> profile(variant.event, ActivationWarningType.ASSOCIATED_WITH_RESISTANCE)
-                    !variant.isCancerAssociatedVariant && !isGainOfFunction -> profile(
+                    !variant.isCancerAssociatedVariant -> profile(
                         variant.event,
-                        ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT_AND_NO_GAIN_OF_FUNCTION
+                        ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT
                     )
 
                     isNoOncogene -> profile(variant.event, ActivationWarningType.NON_ONCOGENE)
@@ -180,8 +178,7 @@ class GeneHasActivatingMutation(
                         activatingVariantsNoCavAndNoGainOfFunction?.let {
                             concatVariants(it, gene)
                         }
-                    } with high driver likelihood - " +
-                            "however not a cancer-associated variant and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                    } with high driver likelihood - however not a cancer-associated variant"
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,

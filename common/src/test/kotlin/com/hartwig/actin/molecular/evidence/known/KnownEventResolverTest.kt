@@ -215,7 +215,7 @@ class KnownEventResolverTest {
         val knownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
         val resolver = KnownEventResolver(knownEvents, knownEvents, knownEvents.genes())
         val output = resolver.resolveForVariant(variant)
-        assertThat(output.proteinEffect).isEqualTo(ProteinEffect.LOSS_OF_FUNCTION)
+        assertThat(output.proteinEffect).isEqualTo(ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
     }
 
     private fun createHotspot(

@@ -20,7 +20,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
 
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
-        MolecularDriverEntry::driverLikelihood,
+        MolecularDriverEntry::driverLikelihoodDisplay,
         MolecularDriverEntry::event
     )
 

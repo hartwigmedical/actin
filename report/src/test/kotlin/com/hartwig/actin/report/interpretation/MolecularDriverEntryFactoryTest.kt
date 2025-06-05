@@ -149,20 +149,6 @@ class MolecularDriverEntryFactoryTest {
         assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
         assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function)")
         assertVariantType(tsgNoCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function, biallelic)")
-        assertVariantType(
-            tsgNoCav.copy(
-                proteinEffect = ProteinEffect.UNKNOWN,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
-                    .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            ), "Mutation (Loss of function)"
-        )
-        assertVariantType(
-            tsgNoCavBi.copy(
-                proteinEffect = ProteinEffect.UNKNOWN,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
-                    .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            ), "Mutation (Loss of function, biallelic)"
-        )
         assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known cancer-associated variant)")
         assertVariantType(
             tsgNoCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),

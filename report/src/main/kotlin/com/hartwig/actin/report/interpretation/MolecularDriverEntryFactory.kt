@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
@@ -52,12 +51,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
         val name = "${variant.event} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
 
-        return driverEntryForGeneAlteration(driverType, name, variant, driverLikelihoodDisplay(variant))
-    }
-
-    private fun driverLikelihoodDisplay(variant: Variant): String {
-        val geneHasCancerAssociatedVariant = variantsGroupedByGene[variant.gene]?.any { it.isCancerAssociatedVariant } == true
-        return if (geneHasCancerAssociatedVariant) "" else formatDriverLikelihood(variant.driverLikelihood)
+        return driverEntryForGeneAlteration(driverType, name, variant)
     }
 
     private fun formatMutationType(variant: Variant): String {
@@ -78,13 +72,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
                 "Gain of function"
             }
 
-            variant.geneRole == GeneRole.TSG && (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT ||
-                    isLossOfFunction(variant)) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
                 "Loss of function, biallelic"
             }
 
-            variant.geneRole == GeneRole.TSG &&
-                    (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT || isLossOfFunction(variant)) -> {
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) -> {
                 "Loss of function"
             }
 
@@ -159,29 +151,35 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        return driverEntry(fusion.driverType.display(), fusion.event, fusion, fusion.proteinEffect)
+        return driverEntry(
+            fusion.driverType.display(),
+            fusion.event,
+            fusion,
+            fusion.proteinEffect,
+            formatDriverLikelihood(fusion.driverLikelihood)
+        )
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
         val name = "${virus.event}, ${virus.integrations} integrations detected"
-        return driverEntry("Virus", name, virus)
+        return driverEntry("Virus", name, virus, null, formatDriverLikelihood(virus.driverLikelihood))
     }
 
     private fun <T> driverEntryForGeneAlteration(
-        driverType: String, name: String, geneAlteration: T, driverLikelihoodDisplay: String? = null
+        driverType: String, name: String, geneAlteration: T
     ): MolecularDriverEntry where T : Driver, T : GeneAlteration {
-        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect, driverLikelihoodDisplay)
+        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect, driverLikelihoodDisplay(geneAlteration))
     }
 
     private fun driverEntry(
-        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null, driverLikelihoodDisplay: String? = null
+        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null, driverLikelihoodDisplay: String
     ): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
             description = name,
             event = driver.event,
             driverLikelihood = driver.driverLikelihood,
-            driverLikelihoodDisplay = driverLikelihoodDisplay ?: formatDriverLikelihood(driver.driverLikelihood),
+            driverLikelihoodDisplay = driverLikelihoodDisplay,
             evidenceTier = driver.evidenceTier(),
             proteinEffect = proteinEffect,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
@@ -189,6 +187,16 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             bestResponsiveEvidence = bestResponsiveEvidence(driver),
             bestResistanceEvidence = bestResistanceEvidence(driver)
         )
+    }
+
+    private fun <T> driverLikelihoodDisplay(geneAlteration: T): String where T : Driver, T : GeneAlteration {
+        return geneAlteration.driverLikelihood?.let { likelihood ->
+            if (geneAlteration is Variant && variantsGroupedByGene[geneAlteration.gene]?.any { it.isCancerAssociatedVariant } == true) {
+                ""
+            } else {
+                formatDriverLikelihood(likelihood)
+            }
+        } ?: Formats.VALUE_UNKNOWN
     }
 
     private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {

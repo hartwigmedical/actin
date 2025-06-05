@@ -10,7 +10,7 @@ class CancerAssociatedVariantFunctionsTest {
     @Test
     fun `Should determine cancer-associated variant from gene alteration`() {
         assertThat(
-            CancerAssociatedVariantFunctions.isCancerAssociatedVariant(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.hotspotBuilder()
                     .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                     .sources(setOf(Knowledgebase.CKB))
@@ -19,7 +19,7 @@ class CancerAssociatedVariantFunctionsTest {
         ).isTrue()
 
         assertThat(
-            CancerAssociatedVariantFunctions.isCancerAssociatedVariant(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.hotspotBuilder()
                     .proteinEffect(ProteinEffect.NO_EFFECT)
                     .sources(setOf(Knowledgebase.CKB))
@@ -28,7 +28,7 @@ class CancerAssociatedVariantFunctionsTest {
         ).isFalse()
 
         assertThat(
-            CancerAssociatedVariantFunctions.isCancerAssociatedVariant(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.codonBuilder()
                     .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
                     .sources(setOf(Knowledgebase.CKB))
@@ -37,7 +37,7 @@ class CancerAssociatedVariantFunctionsTest {
         ).isTrue()
 
         assertThat(
-            CancerAssociatedVariantFunctions.isCancerAssociatedVariant(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.exonBuilder()
                     .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                     .sources(setOf(Knowledgebase.CKB))
@@ -46,12 +46,12 @@ class CancerAssociatedVariantFunctionsTest {
         ).isFalse()
 
         assertThat(
-            CancerAssociatedVariantFunctions.isCancerAssociatedVariant(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.hotspotBuilder()
                     .sources(setOf(Knowledgebase.DOCM))
                     .build()
             )
         ).isTrue
-        assertThat(CancerAssociatedVariantFunctions.isCancerAssociatedVariant(null)).isFalse()
+        assertThat(CancerAssociatedVariantFunctions.isAssociatedWithCancer(null)).isFalse()
     }
 }
