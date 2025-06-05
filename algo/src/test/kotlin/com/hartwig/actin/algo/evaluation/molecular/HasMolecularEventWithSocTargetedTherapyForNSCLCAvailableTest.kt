@@ -35,6 +35,7 @@ private val BASE_VARIANT = TestVariantFactory.createMinimal().copy(
     isReportable = true,
     driverLikelihood = DriverLikelihood.HIGH,
     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+    isCancerAssociatedVariant = true,
     extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
 )
 
@@ -88,7 +89,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     fun `Should warn for mutation in correct gene when uncertain if activating`() {
         evaluateFunctions(
             EvaluationResult.WARN, MolecularTestFactory.withVariant(
-                BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN)
+                BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isCancerAssociatedVariant = false)
             )
         )
     }
@@ -113,11 +114,13 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             BASE_VARIANT.copy(
                 gene = CORRECT_VARIANT_GENE,
                 proteinEffect = ProteinEffect.UNKNOWN,
+                isCancerAssociatedVariant = false,
                 canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)
             ),
             BASE_VARIANT.copy(
                 gene = OTHER_CORRECT_VARIANT_GENE,
                 proteinEffect = ProteinEffect.UNKNOWN,
+                isCancerAssociatedVariant = false,
                 canonicalImpact = proteinImpact(OTHER_CORRECT_PROTEIN_IMPACT)
             )
         )
@@ -141,7 +144,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     @Test
     fun `Should fail for unreported variant`() {
-        val record = MolecularTestFactory.withVariant(BASE_VARIANT.copy(isReportable = false))
+        val record = MolecularTestFactory.withVariant(BASE_VARIANT.copy(isReportable = false, isCancerAssociatedVariant = false))
         evaluateFunctions(EvaluationResult.FAIL, record)
     }
 

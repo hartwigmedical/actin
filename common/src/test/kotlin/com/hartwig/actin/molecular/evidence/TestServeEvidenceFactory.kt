@@ -42,15 +42,15 @@ object TestServeEvidenceFactory {
             )
         )
     }
-    
+
     fun createEvidenceForGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION): EfficacyEvidence {
         return create(molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = gene, geneEvent = geneEvent))
     }
-    
+
     fun createEvidenceForCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
         return create(molecularCriterium = TestServeMolecularFactory.createCharacteristicCriterium(type = type))
     }
-    
+
     fun create(
         source: Knowledgebase = ActionabilityConstants.EVIDENCE_SOURCE,
         treatment: String = "treatment",

@@ -97,7 +97,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 tumorDoids = patient.tumor.doids.orEmpty().toSet(),
                 evidences = serveRecord.evidences(),
                 treatmentDatabase = treatmentDatabase,
-                molecularHistory = patient.molecularHistory, 
+                molecularHistory = patient.molecularHistory,
                 actionabilityMatcher = ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials())
             )
 

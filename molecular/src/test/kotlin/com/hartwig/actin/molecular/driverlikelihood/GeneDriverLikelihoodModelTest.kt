@@ -52,11 +52,11 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should assign driver likelihood of high when variant is already marked as hotspot`() {
+    fun `Should assign driver likelihood of high when variant is already marked as a cancer-associated variant`() {
         val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.ONCO,
-            listOf(TestVariantFactory.createMinimal().copy(isHotspot = true))
+            listOf(TestVariantFactory.createMinimal().copy(isCancerAssociatedVariant = true))
         )
         assertThat(result).isEqualTo(1.0)
     }

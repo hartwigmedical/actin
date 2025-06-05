@@ -545,7 +545,7 @@
               },
               "otherImpacts": [],
               "extendedVariantDetails": null,
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "PIK3CA E545K",
               "driverLikelihood": "HIGH",

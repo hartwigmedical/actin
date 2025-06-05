@@ -365,7 +365,7 @@
                 "phaseGroups": null,
                 "clonalLikelihood": 1.0
               },
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "EGFR L858R",
               "driverLikelihood": "HIGH",
@@ -536,7 +536,7 @@
                 "phaseGroups": null,
                 "clonalLikelihood": 1.0
               },
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "EGFR C797S",
               "driverLikelihood": "HIGH",
@@ -648,7 +648,7 @@
                 "phaseGroups": null,
                 "clonalLikelihood": 0.4
               },
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "KRAS G12D",
               "driverLikelihood": "HIGH",
@@ -688,7 +688,7 @@
                 "phaseGroups": null,
                 "clonalLikelihood": 0.4
               },
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "KRAS G12C",
               "driverLikelihood": "HIGH",

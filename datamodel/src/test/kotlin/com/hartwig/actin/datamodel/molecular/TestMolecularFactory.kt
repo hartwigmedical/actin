@@ -336,7 +336,7 @@ object TestMolecularFactory {
         canonicalImpact = createMinimalTranscriptImpact(),
         otherImpacts = emptySet(),
         extendedVariantDetails = null,
-        isHotspot = false,
+        isCancerAssociatedVariant = false,
         isReportable = false,
         event = "",
         driverLikelihood = null,
@@ -378,7 +378,7 @@ object TestMolecularFactory {
         extendedVariantDetails = ExtendedVariantDetails(
             variantCopyNumber = 4.1, totalCopyNumber = 6.0, isBiallelic = false, phaseGroups = null, clonalLikelihood = 1.0
         ),
-        isHotspot = true,
+        isCancerAssociatedVariant = true,
         isReportable = true,
         event = "BRAF V600E",
         driverLikelihood = DriverLikelihood.HIGH,

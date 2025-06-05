@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
@@ -14,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.Virus
@@ -21,6 +21,8 @@ import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
+
+    private val variantsGroupedByGene = molecularDriversInterpreter.filteredVariants().groupBy { it.gene }
 
     fun create(): List<MolecularDriverEntry> {
         with(molecularDriversInterpreter) {
@@ -54,12 +56,12 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     private fun formatMutationType(variant: Variant): String {
         return when {
-            variant.isHotspot && variant.proteinEffect == ProteinEffect.UNKNOWN -> {
-                "Hotspot with unknown protein effect"
+            variant.isCancerAssociatedVariant && variant.proteinEffect == ProteinEffect.UNKNOWN -> {
+                "Cancer-associated variant with unknown protein effect"
             }
 
-            variant.isHotspot && isNoEffect(variant) -> {
-                "Hotspot with no protein effect"
+            variant.isCancerAssociatedVariant && isNoEffect(variant) -> {
+                "Cancer-associated variant with no protein effect"
             }
 
             isNoEffect(variant) -> {
@@ -70,32 +72,30 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
                 "Gain of function"
             }
 
-            variant.geneRole == GeneRole.TSG && (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT ||
-                    isLossOfFunction(variant)) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
                 "Loss of function, biallelic"
             }
 
-            variant.geneRole == GeneRole.TSG &&
-                    (variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT || isLossOfFunction(variant)) -> {
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) -> {
                 "Loss of function"
             }
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)
-                    && variant.isHotspot && (variant.extendedVariantDetails?.isBiallelic == true) -> {
-                "Hotspot, biallelic"
+                    && variant.isCancerAssociatedVariant && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                "Cancer-associated variant, biallelic"
             }
 
-            variant.isHotspot -> {
-                "Hotspot"
+            variant.isCancerAssociatedVariant -> {
+                "Cancer-associated variant"
             }
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG) &&
                     (variant.extendedVariantDetails?.isBiallelic == true) -> {
-                "No known hotspot, biallelic"
+                "No known cancer-associated variant, biallelic"
             }
 
             else -> {
-                "No known hotspot"
+                "No known cancer-associated variant"
             }
         }
     }
@@ -151,28 +151,35 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        return driverEntry(fusion.driverType.display(), fusion.event, fusion, fusion.proteinEffect)
+        return driverEntry(
+            fusion.driverType.display(),
+            fusion.event,
+            fusion,
+            fusion.proteinEffect,
+            formatDriverLikelihood(fusion.driverLikelihood)
+        )
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
         val name = "${virus.event}, ${virus.integrations} integrations detected"
-        return driverEntry("Virus", name, virus)
+        return driverEntry("Virus", name, virus, null, formatDriverLikelihood(virus.driverLikelihood))
     }
 
     private fun <T> driverEntryForGeneAlteration(
         driverType: String, name: String, geneAlteration: T
     ): MolecularDriverEntry where T : Driver, T : GeneAlteration {
-        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect)
+        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect, driverLikelihoodDisplay(geneAlteration))
     }
 
     private fun driverEntry(
-        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null
+        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null, driverLikelihoodDisplay: String
     ): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
             description = name,
             event = driver.event,
             driverLikelihood = driver.driverLikelihood,
+            driverLikelihoodDisplay = driverLikelihoodDisplay,
             evidenceTier = driver.evidenceTier(),
             proteinEffect = proteinEffect,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
@@ -180,6 +187,20 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             bestResponsiveEvidence = bestResponsiveEvidence(driver),
             bestResistanceEvidence = bestResistanceEvidence(driver)
         )
+    }
+
+    private fun <T> driverLikelihoodDisplay(geneAlteration: T): String where T : Driver, T : GeneAlteration {
+        return geneAlteration.driverLikelihood?.let { likelihood ->
+            if (geneAlteration is Variant && variantsGroupedByGene[geneAlteration.gene]?.any { it.isCancerAssociatedVariant } == true) {
+                ""
+            } else {
+                formatDriverLikelihood(likelihood)
+            }
+        } ?: Formats.VALUE_NOT_AVAILABLE
+    }
+
+    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
+        return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_NOT_AVAILABLE
     }
 
     private fun bestResponsiveEvidence(driver: Driver): String? {

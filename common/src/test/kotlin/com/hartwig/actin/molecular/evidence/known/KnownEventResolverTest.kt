@@ -11,10 +11,13 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -22,10 +25,9 @@ import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableKnownHotspot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val GENE = "gene 1"
-private val HOTSPOT_MATCH = TestMolecularFactory.createMinimalVariant().copy(
+private val CANCER_ASSOCIATED_VARIANT_MATCH = TestMolecularFactory.createMinimalVariant().copy(
     isReportable = true,
     gene = GENE,
     canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
@@ -42,68 +44,69 @@ class KnownEventResolverTest {
     private val knownGene = knownGeneWithName(GENE)
 
     @Test
-    fun `Should resolve variant when variant is hotspot in CKB and in DoCM`() {
+    fun `Should resolve variant when variant is cancer-associated variant in CKB and in DoCM`() {
         val hotspotCkb = createHotspot(Knowledgebase.CKB, proteinEffect = ServeProteinEffect.GAIN_OF_FUNCTION)
         val primaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
         val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDoCM).build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
-        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(
+        val cancerAssociatedVariantAlteration = TestVariantAlterationFactory.createVariantAlteration(
             GENE,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isHotspot = true
+            isCancerAssociatedVariant = true
         )
-        assertEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+        assertEquality(resolver.resolveForVariant(CANCER_ASSOCIATED_VARIANT_MATCH), cancerAssociatedVariantAlteration)
     }
 
     @Test
-    fun `Should resolve variant when variant is hotspot in DoCM and not present in CKB`() {
+    fun `Should resolve variant when variant is cancer-associated variant in DoCM and not present in CKB`() {
         val primaryKnownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
         val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDoCM).build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
-        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = true)
-        assertEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+        val cancerAssociatedVariantAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isCancerAssociatedVariant = true)
+        assertEquality(resolver.resolveForVariant(CANCER_ASSOCIATED_VARIANT_MATCH), cancerAssociatedVariantAlteration)
     }
 
     @Test
-    fun `Should resolve variant when variant is no hotspot in any source`() {
+    fun `Should resolve variant when variant is not a cancer-associated variant in any source`() {
         val hotspotCkb = createHotspot(Knowledgebase.CKB, ServeProteinEffect.NO_EFFECT)
         val primaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
         val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
-        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(
+        val cancerAssociatedVariantAlteration = TestVariantAlterationFactory.createVariantAlteration(
             GENE,
             proteinEffect = ProteinEffect.NO_EFFECT,
-            isHotspot = false
+            isCancerAssociatedVariant = false
         )
-        assertEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+        assertEquality(resolver.resolveForVariant(CANCER_ASSOCIATED_VARIANT_MATCH), cancerAssociatedVariantAlteration)
     }
 
     @Test
-    fun `Should resolve variant when variant is not in CKB and no hotspot in any other source`() {
+    fun `Should resolve variant when variant is not in CKB and not a cancer-associated variant in any other source`() {
         val primaryKnownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
         val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
-        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = false)
-        assertEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+        val cancerAssociatedVariantAlteration =
+            TestVariantAlterationFactory.createVariantAlteration(GENE, isCancerAssociatedVariant = false)
+        assertEquality(resolver.resolveForVariant(CANCER_ASSOCIATED_VARIANT_MATCH), cancerAssociatedVariantAlteration)
     }
 
     @Test
-    fun `Should resolve variant when variant is hotspot in DoCM`() {
+    fun `Should resolve variant when variant is cancer-associated variant in DoCM`() {
         val hotspotCkb = createHotspot(Knowledgebase.CKB, ServeProteinEffect.NO_EFFECT)
         val primaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotCkb).addGenes(knownGene).build()
         val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspotDoCM).build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
-        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(
+        val cancerAssociatedVariantAlteration = TestVariantAlterationFactory.createVariantAlteration(
             GENE,
             proteinEffect = ProteinEffect.NO_EFFECT,
-            isHotspot = true
+            isCancerAssociatedVariant = true
         )
-        assertEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+        assertEquality(resolver.resolveForVariant(CANCER_ASSOCIATED_VARIANT_MATCH), cancerAssociatedVariantAlteration)
     }
 
     @Test
@@ -127,21 +130,22 @@ class KnownEventResolverTest {
         val secondaryKnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot).build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
-        val hotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = true)
-        val noHotspotAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isHotspot = false)
+        val cancerAssociatedVariantAlteration = TestVariantAlterationFactory.createVariantAlteration(GENE, isCancerAssociatedVariant = true)
+        val noCancerAssociatedVariantAlteration =
+            TestVariantAlterationFactory.createVariantAlteration(GENE, isCancerAssociatedVariant = false)
 
-        assertEquality(resolver.resolveForVariant(HOTSPOT_MATCH), hotspotAlteration)
+        assertEquality(resolver.resolveForVariant(CANCER_ASSOCIATED_VARIANT_MATCH), cancerAssociatedVariantAlteration)
 
-        val codonMatch = HOTSPOT_MATCH.copy(position = 9)
-        assertEquality(resolver.resolveForVariant(codonMatch), noHotspotAlteration)
+        val codonMatch = CANCER_ASSOCIATED_VARIANT_MATCH.copy(position = 9)
+        assertEquality(resolver.resolveForVariant(codonMatch), noCancerAssociatedVariantAlteration)
 
-        val exonMatch = HOTSPOT_MATCH.copy(position = 6)
-        assertEquality(resolver.resolveForVariant(exonMatch), noHotspotAlteration)
+        val exonMatch = CANCER_ASSOCIATED_VARIANT_MATCH.copy(position = 6)
+        assertEquality(resolver.resolveForVariant(exonMatch), noCancerAssociatedVariantAlteration)
 
-        val geneMatch = HOTSPOT_MATCH.copy(position = 1)
-        assertEquality(resolver.resolveForVariant(geneMatch), noHotspotAlteration)
+        val geneMatch = CANCER_ASSOCIATED_VARIANT_MATCH.copy(position = 1)
+        assertEquality(resolver.resolveForVariant(geneMatch), noCancerAssociatedVariantAlteration)
 
-        val wrongGene = HOTSPOT_MATCH.copy(gene = "other")
+        val wrongGene = CANCER_ASSOCIATED_VARIANT_MATCH.copy(gene = "other")
         assertEquality(resolver.resolveForVariant(wrongGene), TestVariantAlterationFactory.createVariantAlteration("other"))
     }
 
@@ -200,6 +204,20 @@ class KnownEventResolverTest {
         assertThat(resolver.resolveForFusion(fusionMismatch)).isEqualTo(otherFusion)
     }
 
+    @Test
+    fun `Should annotate protein effect for frameshift in TSG`() {
+        val variant = TestVariantFactory.createMinimal().copy(
+            gene = GENE,
+            canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        )
+        val knownGene =
+            TestServeKnownFactory.geneBuilder().gene(GENE).geneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.TSG).build()
+        val knownEvents = ImmutableKnownEvents.builder().addGenes(knownGene).build()
+        val resolver = KnownEventResolver(knownEvents, knownEvents, knownEvents.genes())
+        val output = resolver.resolveForVariant(variant)
+        assertThat(output.proteinEffect).isEqualTo(ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
+    }
+
     private fun createHotspot(
         source: Knowledgebase = Knowledgebase.CKB,
         proteinEffect: ServeProteinEffect = ServeProteinEffect.UNKNOWN
@@ -218,7 +236,7 @@ class KnownEventResolverTest {
         assertThat(alteration1.proteinEffect).isEqualTo(alteration2.proteinEffect)
         assertThat(alteration1.isAssociatedWithDrugResistance).isEqualTo(alteration2.isAssociatedWithDrugResistance)
         if (alteration1 is VariantAlteration && alteration2 is VariantAlteration) {
-            assertThat(alteration1.isHotspot).isEqualTo(alteration2.isHotspot)
+            assertThat(alteration1.isCancerAssociatedVariant).isEqualTo(alteration2.isCancerAssociatedVariant)
         }
     }
 }

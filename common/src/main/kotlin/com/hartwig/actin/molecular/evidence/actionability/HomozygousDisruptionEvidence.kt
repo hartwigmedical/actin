@@ -1,18 +1,14 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
-import com.hartwig.serve.datamodel.trial.ActionableTrial
-import java.util.function.Predicate
 
-class HomozygousDisruptionEvidence{
+class HomozygousDisruptionEvidence {
 
     companion object {
         private val HOMOZYGOUS_DISRUPTION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
-        
+
         fun isHomozygousDisruptionEvent(geneEvent: GeneEvent): Boolean {
             return HOMOZYGOUS_DISRUPTION_EVENTS.contains(geneEvent)
         }

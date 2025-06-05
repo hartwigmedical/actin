@@ -76,7 +76,7 @@ private val KNOWN_FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_STA
     .proteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN).build()
 
 class PanelFusionAnnotatorTest {
-    
+
     private val knownFusionCache = mockk<KnownFusionCache>()
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
