@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.composite.combineOrEvaluations
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
@@ -79,13 +80,20 @@ private enum class AmplificationEvaluation {
     }
 }
 
-class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
+class AnyGeneIsAmplified(override val genes: Set<String>, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, "Amplification of"),
-        maxTestAge = maxTestAge
+        maxTestAge = maxTestAge,
     ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
+        return combineOrEvaluations(genes.map { evaluation(test, it) })
+    }
+
+    private fun evaluation(
+        test: MolecularTest,
+        gene: String
+    ): Evaluation {
         val evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>> =
             test.drivers.copyNumbers.filter { copyNumber -> copyNumber.gene == gene }
                 .groupBy({ copyNumber ->
@@ -125,12 +133,13 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
                 }
             }
 
-            else -> evaluatePotentialOtherWarns(evaluatedCopyNumbers, test.evidenceSource, requestedCopiesMessage)
+            else -> evaluatePotentialOtherWarns(gene, evaluatedCopyNumbers, test.evidenceSource, requestedCopiesMessage)
                 ?: EvaluationFactory.fail("No amplification of $gene$requestedCopiesMessage")
         }
     }
 
     private fun evaluatePotentialOtherWarns(
+        gene: String,
         evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>>,
         evidenceSource: String,
         requestedCopiesMessage: String

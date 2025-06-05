@@ -23,7 +23,7 @@ private enum class VariantClassification {
 private data class VariantAndProteinImpact(val variant: Variant, val proteinImpact: String)
 
 class GeneHasVariantWithProteinImpact(
-    override val gene: String,
+    val gene: String,
     private val allowedProteinImpacts: Set<String>,
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(
@@ -31,7 +31,8 @@ class GeneHasVariantWithProteinImpact(
         MolecularTestTarget.MUTATION,
         "Mutation with protein impact(s) ${allowedProteinImpacts.joinToString()} in"
     ),
-    maxTestAge = maxTestAge
+    maxTestAge = maxTestAge,
+    genes = setOf(gene)
 ) {
 
     private val logger = LogManager.getLogger(GeneHasVariantWithProteinImpact::class.java)

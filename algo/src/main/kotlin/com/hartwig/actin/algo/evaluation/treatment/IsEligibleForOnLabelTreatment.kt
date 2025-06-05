@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.Not
-import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
+import com.hartwig.actin.algo.evaluation.molecular.AnyGeneHasActivatingMutation
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantInExonRangeOfType
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantWithProteinImpact
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
@@ -103,7 +103,7 @@ class IsEligibleForOnLabelTreatment(
             listOf(
                 And(
                     listOf(
-                        GeneHasActivatingMutation("EGFR", null, maxTestAge),
+                        AnyGeneHasActivatingMutation(setOf("EGFR"), null, maxTestAge),
                         Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT, maxTestAge))
                     )
                 ),

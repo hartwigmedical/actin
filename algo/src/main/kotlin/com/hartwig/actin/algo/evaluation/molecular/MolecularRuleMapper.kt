@@ -36,6 +36,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to
                     hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
+            EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_ANY_GENES_X to anyGeneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
@@ -46,6 +47,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z to geneHasVariantInExonOfTypeCreator(),
             EligibilityRule.UTR_3_LOSS_IN_GENE_X to geneHasUTR3LossCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X to geneIsAmplifiedCreator(),
+            EligibilityRule.AMPLIFICATION_OF_ANY_GENES_X to anyGeneIsAmplifieCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES to geneIsAmplifiedMinCopiesCreator(),
             EligibilityRule.COPY_NUMBER_OF_GENE_X_OF_AT_LEAST_Y to geneHasSufficientCopyNumber(),
             EligibilityRule.FUSION_IN_GENE_X to hasFusionInGeneCreator(),
@@ -121,8 +123,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val gene = functionInputResolver().createOneGeneInput(function).geneName
             Or(
                 listOf(
-                    GeneHasActivatingMutation(gene, codonsToIgnore = null, maxMolecularTestAge()),
-                    GeneIsAmplified(gene, null, maxMolecularTestAge())
+                    AnyGeneHasActivatingMutation(setOf(gene), codonsToIgnore = null, maxMolecularTestAge()),
+                    AnyGeneIsAmplified(setOf(gene), null, maxMolecularTestAge())
+                )
+            )
+        }
+    }
+
+    private fun anyGeneIsActivatedOrAmplifiedCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val gene = functionInputResolver().createManyGenesInput(function).geneNames
+            Or(
+                listOf(
+                    AnyGeneHasActivatingMutation(gene, codonsToIgnore = null, maxMolecularTestAge()),
+                    AnyGeneIsAmplified(gene, null, maxMolecularTestAge())
                 )
             )
         }
@@ -137,14 +151,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun anyGeneHasActivatingMutationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null, maxMolecularTestAge()) })
+            AnyGeneHasActivatingMutation(genes.geneNames, codonsToIgnore = null, maxMolecularTestAge())
         }
     }
 
     private fun geneHasActivatingMutationIgnoringSomeCodonsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons, maxMolecularTestAge())
+            AnyGeneHasActivatingMutation(setOf(input.geneName), codonsToIgnore = input.codons, maxMolecularTestAge())
         }
     }
 
@@ -191,14 +205,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsAmplified(functionInputResolver().createOneGeneInput(function).geneName, null, maxMolecularTestAge())
+            AnyGeneIsAmplified(setOf(functionInputResolver().createOneGeneInput(function).geneName), null, maxMolecularTestAge())
+        }
+    }
+
+    private fun anyGeneIsAmplifieCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            AnyGeneIsAmplified(functionInputResolver().createManyGenesInput(function).geneNames, null, maxMolecularTestAge())
         }
     }
 
     private fun geneIsAmplifiedMinCopiesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneIsAmplified(input.geneName, input.integer, maxMolecularTestAge())
+            AnyGeneIsAmplified(setOf(input.geneName), input.integer, maxMolecularTestAge())
         }
     }
 

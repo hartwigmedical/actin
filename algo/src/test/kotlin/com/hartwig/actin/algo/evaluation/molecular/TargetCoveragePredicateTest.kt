@@ -7,7 +7,7 @@ import org.junit.Test
 
 private const val PREFIX = "Mutation in"
 
-private const val GENE = "GENE"
+private val GENE = listOf("GENE")
 
 class TargetCoveragePredicateTest {
 

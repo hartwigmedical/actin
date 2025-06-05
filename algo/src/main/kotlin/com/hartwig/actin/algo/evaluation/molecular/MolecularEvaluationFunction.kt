@@ -14,7 +14,7 @@ import java.time.LocalDate
 abstract class MolecularEvaluationFunction(
     maxTestAge: LocalDate? = null,
     useInsufficientQualityRecords: Boolean = false,
-    open val gene: String? = null,
+    open val genes: Set<String>? = null,
     val targetCoveragePredicate: TargetCoveragePredicate = any(),
 ) :
     EvaluationFunction {
@@ -31,11 +31,13 @@ abstract class MolecularEvaluationFunction(
             )
         } else {
 
-            if (gene?.let { g -> recentMolecularTests.any { t -> t.testsGene(g, targetCoveragePredicate) } } == false)
+            val untestedGenes =  genes?.filter { g -> !recentMolecularTests.any { t -> t.testsGene(g, targetCoveragePredicate) } } ?: emptyList()
+            if (untestedGenes.isNotEmpty()) {
                 return EvaluationFactory.undetermined(
-                    targetCoveragePredicate.message(gene!!),
+                    targetCoveragePredicate.message(untestedGenes),
                     isMissingMolecularResultForEvaluation = true
                 )
+            }
 
             val testEvaluation =
                 recentMolecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }

@@ -6,8 +6,8 @@ import java.time.LocalDate
 
 object MolecularRuleEvaluator {
 
-    fun geneIsAmplifiedForPatient(gene: String, record: PatientRecord, maxTestAge: LocalDate?): Boolean {
-        return GeneIsAmplified(gene, null, maxTestAge).evaluate(record).result == EvaluationResult.PASS
+    fun geneIsAmplifiedForPatient(genes: Set<String>, record: PatientRecord, maxTestAge: LocalDate?): Boolean {
+        return AnyGeneIsAmplified(genes, null, maxTestAge).evaluate(record).result == EvaluationResult.PASS
     }
 
     fun geneIsInactivatedForPatient(gene: String, record: PatientRecord, maxTestAge: LocalDate?): Boolean {

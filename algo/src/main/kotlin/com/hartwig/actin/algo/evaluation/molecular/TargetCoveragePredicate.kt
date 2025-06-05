@@ -54,7 +54,11 @@ class TargetCoveragePredicate(
 
     override fun test(t: List<MolecularTestTarget>) = predicate.test(t)
 
-    fun message(gene: String): String {
-        return "${if (messagePrefix != null) "$messagePrefix " else ""}gene $gene undetermined (not tested for ${stringify.invoke(targets)})"
+    fun message(genes: List<String>): String {
+        return "${if (messagePrefix != null) "$messagePrefix " else ""}gene ${genes.joinToString()} undetermined (not tested for ${
+            stringify.invoke(
+                targets
+            )
+        })"
     }
 }

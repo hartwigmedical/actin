@@ -12,10 +12,11 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import java.time.LocalDate
 
-class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null) :
+class GeneIsInactivated(val gene: String, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION, messagePrefix = "Inactivation of"),
-        maxTestAge = maxTestAge
+        maxTestAge = maxTestAge,
+        genes = setOf(gene)
     ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {

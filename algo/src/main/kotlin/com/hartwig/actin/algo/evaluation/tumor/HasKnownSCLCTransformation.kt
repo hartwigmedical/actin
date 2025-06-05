@@ -24,7 +24,7 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val m
             doidModel, record.tumor.doids, SMALL_CELL_LUNG_CANCER_DOIDS
         )
         val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
-        val amplifiedGenes = listOf("MYC").filter { MolecularRuleEvaluator.geneIsAmplifiedForPatient(it, record, maxTestAge) }
+        val amplifiedGenes = listOf("MYC").filter { MolecularRuleEvaluator.geneIsAmplifiedForPatient(setOf(it), record, maxTestAge) }
 
         return when {
             !isNSCLC -> {

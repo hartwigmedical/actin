@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.composite.combineOrEvaluations
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
@@ -10,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import java.time.LocalDate
 
@@ -41,8 +41,8 @@ data class ActivationProfile(
 
 private const val CLONAL_CUTOFF = 0.5
 
-class GeneHasActivatingMutation(
-    override val gene: String,
+class AnyGeneHasActivatingMutation(
+    override val genes: Set<String>,
     private val codonsToIgnore: List<String>?,
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(
@@ -50,6 +50,10 @@ class GeneHasActivatingMutation(
     maxTestAge = maxTestAge
 ) {
     override fun evaluate(test: MolecularTest): Evaluation {
+        return combineOrEvaluations(genes.map { evaluateForGene(test, it) })
+    }
+
+    private fun evaluateForGene(test: MolecularTest, gene: String): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         val evidenceSource = test.evidenceSource
         val variantCharacteristics =
@@ -89,6 +93,7 @@ class GeneHasActivatingMutation(
 
             else -> {
                 val potentialWarnEvaluation = evaluatePotentialWarns(
+                    gene,
                     eventsByWarningType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE],
                     eventsByWarningType[ActivationWarningType.NON_ONCOGENE],
                     eventsByWarningType[ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT],
@@ -151,6 +156,7 @@ class GeneHasActivatingMutation(
     }
 
     private fun evaluatePotentialWarns(
+        gene: String,
         activatingVariantsAssociatedWithResistance: Set<String>?,
         activatingVariantsInNonOncogene: Set<String>?,
         activatingVariantsNoCavAndNoGainOfFunction: Set<String>?,

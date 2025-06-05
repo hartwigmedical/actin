@@ -54,14 +54,15 @@ private enum class CopyNumberEvaluation {
     }
 }
 
-class GeneHasSufficientCopyNumber(override val gene: String, private val requestedMinCopyNumber: Int, maxTestAge: LocalDate? = null) :
+class GeneHasSufficientCopyNumber(val gene: String, private val requestedMinCopyNumber: Int, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = or(
             MolecularTestTarget.AMPLIFICATION,
             MolecularTestTarget.MUTATION,
             messagePrefix = "Sufficient copy number in"
         ),
-        maxTestAge = maxTestAge
+        maxTestAge = maxTestAge,
+        genes = setOf(gene)
     ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {

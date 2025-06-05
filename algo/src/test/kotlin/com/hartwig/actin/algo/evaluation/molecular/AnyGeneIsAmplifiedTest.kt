@@ -20,7 +20,7 @@ private const val PASSING_COPY_NR = REQUIRED_COPY_NR + 2
 private const val NON_PASSING_COPY_NR = REQUIRED_COPY_NR - 2
 private const val GENE = "gene A"
 
-class GeneIsAmplifiedTest {
+class AnyGeneIsAmplifiedTest {
 
     private val eligibleImpact =
         TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
@@ -60,8 +60,8 @@ class GeneIsAmplifiedTest {
     private val ampButInsufficientCopies = eligibleAmp.copy(canonicalImpact = impactAmpWithInsufficientCopyNr)
     private val ineligibleNoneCopyNumber = eligibleAmp.copy(canonicalImpact = impactNoneWithLowCopyNr)
 
-    private val functionWithMinCopies = GeneIsAmplified(GENE, REQUIRED_COPY_NR)
-    private val functionWithNoMinCopies = GeneIsAmplified(GENE, null)
+    private val functionWithMinCopies = AnyGeneIsAmplified(setOf(GENE), REQUIRED_COPY_NR)
+    private val functionWithNoMinCopies = AnyGeneIsAmplified(setOf(GENE), null)
 
     @Test
     fun `Should be undetermined when molecular record is empty`() {
@@ -224,7 +224,7 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should warn with copy numbers meeting amplification threshold if not amp but copy nr meets requested copy nr`() {
-        val function = GeneIsAmplified(GENE, 4)
+        val function = AnyGeneIsAmplified(setOf(GENE), 4)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -253,7 +253,7 @@ class GeneIsAmplifiedTest {
     fun `Should warn with full amp if copies are null and copies requested`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            GeneIsAmplified(GENE, 10).evaluate(
+            AnyGeneIsAmplified(setOf(GENE), 10).evaluate(
                 MolecularTestFactory.withCopyNumber(
                     ampOnCanonicalTranscriptWithoutCopies
                 )
@@ -294,7 +294,7 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
-        val result = GeneIsAmplified(GENE, 2).evaluate(
+        val result = AnyGeneIsAmplified(setOf(GENE), 2).evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )

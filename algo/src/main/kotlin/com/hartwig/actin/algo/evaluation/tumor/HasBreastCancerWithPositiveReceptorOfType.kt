@@ -40,7 +40,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             else -> null
         }
         val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
-        val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record, maxTestAge)
+        val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient(setOf("ERBB2"), record, maxTestAge)
 
         return when {
             tumorDoids.isNullOrEmpty() -> {
