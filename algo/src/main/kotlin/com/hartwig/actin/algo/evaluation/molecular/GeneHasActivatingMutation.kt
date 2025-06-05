@@ -115,7 +115,7 @@ class GeneHasActivatingMutation(
     private fun evaluateVariant(variant: Variant, hasHighMutationalLoad: Boolean?): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
         val isNonCodingSpliceRegionVariantInMetExon14 =
-            variant.gene == "MET" && variant.canonicalImpact.affectedExon == 14 && variant.canonicalImpact.codingEffect == CodingEffect.NONE && variant.canonicalImpact.isSpliceRegion == true
+            gene == "MET" && variant.gene == "MET" && variant.canonicalImpact.affectedExon == 14 && variant.canonicalImpact.codingEffect == CodingEffect.NONE && variant.canonicalImpact.isSpliceRegion == true
 
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
