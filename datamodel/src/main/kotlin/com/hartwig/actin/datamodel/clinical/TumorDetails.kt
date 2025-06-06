@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
 data class TumorDetails(
+    val name: String = "",
     val primaryTumorLocation: String? = null,
     val primaryTumorSubLocation: String? = null,
     val primaryTumorType: String? = null,

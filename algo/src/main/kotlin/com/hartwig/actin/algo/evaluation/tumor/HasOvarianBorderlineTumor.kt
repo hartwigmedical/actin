@@ -11,20 +11,25 @@ class HasOvarianBorderlineTumor(private val doidModel: DoidModel) : EvaluationFu
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.tumor.primaryTumorType == null
-                    && record.tumor.primaryTumorSubType == null)
-        ) {
-            return EvaluationFactory.undetermined("Ovarian borderline tumor undetermined (tumor type missing)")
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
+            return EvaluationFactory.undetermined("Ovarian borderline tumor undetermined (no DOIDs)")
         }
         val isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.OVARIAN_CANCER_DOID)
-        val hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.tumor, OVARIAN_BORDERLINE_TYPES)
-        return if (isOvarianCancer && hasBorderlineType) {
-            EvaluationFactory.pass("Has ovarian borderline tumor")
-        } else
-            EvaluationFactory.fail("Has no ovarian borderline tumor")
+        val hasBorderlineType = OVARIAN_BORDERLINE_KEYWORDS.any { record.tumor.name.lowercase().contains(it) }
+        val hasGeneralOvarianCancer =
+            DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.OVARIAN_CANCER_DOID) || DoidEvaluationFunctions.isOfExactDoid(
+                tumorDoids,
+                DoidConstants.OVARIAN_CARCINOMA_DOID
+            )
+
+        return when {
+            isOvarianCancer && hasBorderlineType -> EvaluationFactory.pass("Has ovarian borderline tumor")
+            hasGeneralOvarianCancer -> EvaluationFactory.warn("Has ovarian cancer - undetermined if may be a borderline tumor")
+            else -> EvaluationFactory.fail("Has no ovarian borderline tumor")
+        }
     }
 
     companion object {
-        val OVARIAN_BORDERLINE_TYPES = setOf("Borderline tumor", "Borderline ovarian tumor")
+        val OVARIAN_BORDERLINE_KEYWORDS = setOf("borderline")
     }
 }

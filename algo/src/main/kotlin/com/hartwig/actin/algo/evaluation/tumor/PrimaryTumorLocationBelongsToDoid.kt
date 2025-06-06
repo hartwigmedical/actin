@@ -12,7 +12,7 @@ import com.hartwig.actin.doid.DoidModel
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
     private val doidsToMatch: Set<String>,
-    private val subLocationQuery: String?
+    private val specificQuery: String?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -29,15 +29,13 @@ class PrimaryTumorLocationBelongsToDoid(
             when {
                 !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined("Unknown tumor type")
 
-                doidsTumorBelongsTo.isNotEmpty() && subLocationQuery != null -> {
-                    val subLocation = record.tumor.primaryTumorSubLocation
+                doidsTumorBelongsTo.isNotEmpty() && specificQuery != null -> {
+                    val name = record.tumor.name
                     when {
-                        subLocation != null && subLocation.lowercase().contains(subLocationQuery.lowercase()) ->
-                            EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo with sub-location $subLocation")
+                        name.lowercase().contains(specificQuery.lowercase()) ->
+                            EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo with specific request '$specificQuery'")
 
-                        subLocation == null -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo with unknown sub-location")
-                        else -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo but sub-location $subLocation " +
-                                "does not match '$subLocationQuery'")
+                        else -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo but undetermined if '$specificQuery'")
                     }
                 }
 

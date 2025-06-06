@@ -16,17 +16,15 @@ class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : Evaluation
         } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
             EvaluationFactory.fail("No CRC")
         } else {
-            val subLocation = record.tumor.primaryTumorSubLocation?.lowercase()
+            val name = record.tumor.name
             when {
-                subLocation.isNullOrEmpty() -> EvaluationFactory.undetermined("Unknown sidedness of CRC tumor (sublocation unknown)")
+                LEFT_SUB_LOCATIONS.any(name.lowercase()::contains) ->
+                    EvaluationFactory.pass("Has left-sided CRC tumor ($name)")
 
-                LEFT_SUB_LOCATIONS.any(subLocation::contains) ->
-                    EvaluationFactory.pass("Left-sided CRC tumor ($subLocation)")
+                RIGHT_SUB_LOCATIONS.any(name.lowercase()::contains) ->
+                    EvaluationFactory.fail("Has no left-sided CRC tumor but right-sided tumor ($name)")
 
-                RIGHT_SUB_LOCATIONS.any(subLocation::contains) ->
-                    EvaluationFactory.fail("Right-sided CRC tumor ($subLocation)")
-
-                else -> EvaluationFactory.undetermined("Unknown sidedness of tumor for $subLocation tumor")
+                else -> EvaluationFactory.undetermined("Undetermined if tumor $name is left-sided")
             }
         }
     }

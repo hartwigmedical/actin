@@ -107,6 +107,7 @@ object TestClinicalFactory {
 
     private fun createTestTumorDetails(): TumorDetails {
         return TumorDetails(
+            name = "Skin melanoma",
             primaryTumorLocation = "Skin",
             primaryTumorSubLocation = "",
             primaryTumorType = "Melanoma",

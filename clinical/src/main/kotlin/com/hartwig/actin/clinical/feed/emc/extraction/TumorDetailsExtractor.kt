@@ -79,7 +79,8 @@ class TumorDetailsExtractor(
             LesionLocationCategory.LYMPH_NODE
         )
 
-        val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" || primaryTumorDetails.primaryTumorType == "Glioma"
+        val hasBrainOrGliomaTumor =
+            primaryTumorDetails.name.lowercase().contains("brain") || primaryTumorDetails.name.lowercase().contains("glioma")
 
         val tumorDetails = primaryTumorDetails.copy(
             stage = questionnaire.stage,
@@ -131,6 +132,7 @@ class TumorDetailsExtractor(
 
         val tumor = primaryTumorCuration.config()?.let {
             TumorDetails(
+                name = it.name,
                 primaryTumorLocation = it.primaryTumorLocation,
                 primaryTumorSubLocation = it.primaryTumorSubLocation,
                 primaryTumorType = it.primaryTumorType,

@@ -19,9 +19,9 @@ class HasCancerOfUnknownPrimaryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TumorTestFactory.withDoidAndSubLocation(
+                TumorTestFactory.withDoidAndName(
                     DoidConstants.CANCER_DOID,
-                    HasCancerOfUnknownPrimary.CUP_PRIMARY_TUMOR_SUB_LOCATION
+                    HasCancerOfUnknownPrimary.CUP_STRING
                 )
             )
         )
@@ -30,9 +30,9 @@ class HasCancerOfUnknownPrimaryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TumorTestFactory.withDoidAndSubLocation(
+                TumorTestFactory.withDoidAndName(
                     category.doid(),
-                    HasCancerOfUnknownPrimary.CUP_PRIMARY_TUMOR_SUB_LOCATION
+                    HasCancerOfUnknownPrimary.CUP_STRING
                 )
             )
         )

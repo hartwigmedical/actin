@@ -79,7 +79,7 @@ class IsEligibleForOnLabelTreatment(
     }
 
     private fun tumorIsCUP(tumor: TumorDetails): Boolean {
-        return tumor.primaryTumorLocation == "Unknown" && tumor.primaryTumorSubLocation == "CUP"
+        return tumor.name.contains("(CUP)")
     }
 
     private fun evaluate(record: PatientRecord, evaluationFunctions: EvaluationFunction): Evaluation {

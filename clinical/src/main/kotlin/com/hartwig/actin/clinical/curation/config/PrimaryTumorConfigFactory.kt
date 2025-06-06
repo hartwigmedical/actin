@@ -17,6 +17,7 @@ class PrimaryTumorConfigFactory(private val curationDoidValidator: CurationDoidV
         return ValidatedCurationConfig(
             PrimaryTumorConfig(
                 input = input,
+                name = parts[fields["name"]!!],
                 primaryTumorLocation = parts[fields["primaryTumorLocation"]!!],
                 primaryTumorSubLocation = parts[fields["primaryTumorSubLocation"]!!],
                 primaryTumorType = parts[fields["primaryTumorType"]!!],

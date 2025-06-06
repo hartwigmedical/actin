@@ -93,6 +93,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         context.insertInto(
             Tables.TUMOR,
             Tables.TUMOR.PATIENTID,
+            Tables.TUMOR.NAME,
             Tables.TUMOR.PRIMARYTUMORLOCATION,
             Tables.TUMOR.PRIMARYTUMORSUBLOCATION,
             Tables.TUMOR.PRIMARYTUMORTYPE,
@@ -121,6 +122,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
+                tumor.name,
                 tumor.primaryTumorLocation,
                 tumor.primaryTumorSubLocation,
                 tumor.primaryTumorType,

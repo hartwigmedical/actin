@@ -15,8 +15,7 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined("Undetermined if patient has CUP (unknown tumor location/type)")
         }
-        val tumorSubLocation = record.tumor.primaryTumorSubLocation
-        val isCUP = tumorSubLocation != null && tumorSubLocation == CUP_PRIMARY_TUMOR_SUB_LOCATION
+        val isCUP = record.tumor.name.contains(CUP_STRING)
         val hasCorrectCUPCategory = DoidEvaluationFunctions.isOfExclusiveDoidType(
             doidModel, tumorDoids, categoryOfCUP.doid()
         )
@@ -38,6 +37,6 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
     }
 
     companion object {
-        const val CUP_PRIMARY_TUMOR_SUB_LOCATION: String = "CUP"
+        const val CUP_STRING: String = "(CUP)"
     }
 }

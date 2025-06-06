@@ -43,6 +43,7 @@ class TumorDetailsExtractorTest {
                 PrimaryTumorConfig(
                     input = "$TUMOR_LOCATION_INPUT |",
                     ignore = false,
+                    name = "",
                     primaryTumorType = "",
                     primaryTumorLocation = CURATED_LOCATION,
                     primaryTumorSubType = "",
@@ -66,6 +67,7 @@ class TumorDetailsExtractorTest {
                 PrimaryTumorConfig(
                     input = "| $TUMOR_TYPE_INPUT",
                     ignore = false,
+                    name = "",
                     primaryTumorType = CURATED_TUMOR_TYPE,
                     primaryTumorLocation = "",
                     primaryTumorSubType = "",
@@ -442,7 +444,7 @@ class TumorDetailsExtractorTest {
                 inputTumorType = any(),
                 patientId = any()
             )
-        } returns (baseTumor.copy(primaryTumorLocation = "Brain") to CurationExtractionEvaluation())
+        } returns (baseTumor.copy(name = "Brain") to CurationExtractionEvaluation())
 
         val tumor = baseTumor.copy(
             hasBrainLesions = null,
@@ -454,7 +456,7 @@ class TumorDetailsExtractorTest {
         )
         val questionnaire = emptyQuestionnaire()
         val expected = tumor.copy(
-            primaryTumorLocation = "Brain",
+            name = "Brain",
             hasBrainLesions = false,
             hasActiveBrainLesions = false,
             hasSuspectedBrainLesions = false,
@@ -477,6 +479,7 @@ class TumorDetailsExtractorTest {
                 PrimaryTumorConfig(
                     input = "$TUMOR_LOCATION_INPUT |",
                     ignore = false,
+                    name = "",
                     primaryTumorType = "",
                     primaryTumorLocation = CURATED_LOCATION,
                     primaryTumorSubType = "",
