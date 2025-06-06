@@ -123,14 +123,11 @@
   ],
   "priorPrimaries": [
     {
-      "tumorLocation": "Prostate",
-      "tumorSubLocation": "",
-      "tumorType": "Carcinoma",
-      "tumorSubType": "",
+      "name": "Prostate carcinoma",
       "doids": [
         "10286"
       ],
-      "diagnosedYear": 2019,
+      "diagnosedYear": null,
       "diagnosedMonth": null,
       "treatmentHistory": "",
       "lastTreatmentYear": 2019,

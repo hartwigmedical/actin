@@ -91,11 +91,8 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
 
         private fun priorPrimary(treatmentHistory: String = ""): PriorPrimary {
             return PriorPrimary(
+                name = "",
                 doids = setOf(SUSPICIOUS_CANCER_TYPE),
-                tumorLocation = "",
-                tumorSubLocation = "",
-                tumorType = "",
-                tumorSubType = "",
                 treatmentHistory = treatmentHistory,
                 status = TumorStatus.INACTIVE
             )

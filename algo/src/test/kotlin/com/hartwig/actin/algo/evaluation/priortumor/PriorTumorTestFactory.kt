@@ -17,10 +17,7 @@ internal object PriorTumorTestFactory {
         status: TumorStatus = TumorStatus.INACTIVE
     ): PriorPrimary {
         return PriorPrimary(
-            tumorLocation = "",
-            tumorSubLocation = "",
-            tumorType = "",
-            tumorSubType = "",
+            name = "",
             doids = setOfNotNull(doid),
             diagnosedYear = diagnosedYear,
             diagnosedMonth = diagnosedMonth,

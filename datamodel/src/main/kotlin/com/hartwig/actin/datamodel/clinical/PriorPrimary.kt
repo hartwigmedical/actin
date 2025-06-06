@@ -1,10 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
 data class PriorPrimary(
-    val tumorLocation: String,
-    val tumorSubLocation: String,
-    val tumorType: String,
-    val tumorSubType: String,
+    val name: String,
     val doids: Set<String> = emptySet(),
     val diagnosedYear: Int? = null,
     val diagnosedMonth: Int? = null,

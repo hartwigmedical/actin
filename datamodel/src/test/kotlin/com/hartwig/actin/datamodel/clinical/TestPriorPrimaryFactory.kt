@@ -4,10 +4,7 @@ object TestPriorPrimaryFactory {
 
     fun createMinimal(): PriorPrimary {
         return PriorPrimary(
-            tumorLocation = "",
-            tumorSubLocation = "",
-            tumorType = "",
-            tumorSubType = "",
+            name = "",
             treatmentHistory = "",
             status = TumorStatus.INACTIVE
         )
