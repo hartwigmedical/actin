@@ -83,7 +83,7 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
         assertThat(annotated.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
         assertThat(annotated.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
-        assertThat(annotated.canonicalImpact.isSpliceRegion).isFalse()
+        assertThat(annotated.canonicalImpact.inSpliceRegion).isFalse()
         assertThat(annotated.otherImpacts).isEmpty()
         assertThat(annotated.chromosome).isEqualTo(CHROMOSOME)
         assertThat(annotated.position).isEqualTo(POSITION)
@@ -266,7 +266,7 @@ class PanelVariantAnnotatorTest {
         hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
         affectedCodon = 1,
         affectedExon = 1,
-        isSpliceRegion = false,
+        inSpliceRegion = false,
         effects = effects,
         codingEffect = codingEffect
     )

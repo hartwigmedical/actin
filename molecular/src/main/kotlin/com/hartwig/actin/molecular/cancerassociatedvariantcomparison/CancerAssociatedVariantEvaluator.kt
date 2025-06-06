@@ -58,7 +58,7 @@ object CancerAssociatedVariantEvaluator {
                 hgvsCodingImpact = "",
                 hgvsProteinImpact = "",
                 affectedCodon = 0,
-                isSpliceRegion = false,
+                inSpliceRegion = false,
                 effects = emptySet(),
                 codingEffect = CodingEffect.NONE,
                 affectedExon = null

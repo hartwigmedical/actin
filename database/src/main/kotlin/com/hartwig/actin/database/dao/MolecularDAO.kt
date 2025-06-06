@@ -261,7 +261,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 Tables.VARIANT.CANONICALHGVSPROTEINIMPACT,
                 Tables.VARIANT.CANONICALAFFECTEDCODON,
                 Tables.VARIANT.CANONICALAFFECTEDEXON,
-                Tables.VARIANT.CANONICALISSPLICEREGION,
+                Tables.VARIANT.CANONICALINSPLICEREGION,
                 Tables.VARIANT.CANONICALEFFECTS,
                 Tables.VARIANT.CANONICALCODINGEFFECT
             )
@@ -286,7 +286,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     variant.canonicalImpact.hgvsProteinImpact,
                     variant.canonicalImpact.affectedCodon,
                     variant.canonicalImpact.affectedExon,
-                    variant.canonicalImpact.isSpliceRegion,
+                    variant.canonicalImpact.inSpliceRegion,
                     DataUtil.concat(effectsToStrings(variant.canonicalImpact.effects)),
                     DataUtil.nullableToString(variant.canonicalImpact.codingEffect)
                 )

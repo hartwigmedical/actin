@@ -593,7 +593,7 @@
                 "hgvsProteinImpact": "p.R273H",
                 "affectedCodon": 273,
                 "affectedExon": 7,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -674,7 +674,7 @@
                 "hgvsProteinImpact": "p.T910M",
                 "affectedCodon": 910,
                 "affectedExon": 18,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
