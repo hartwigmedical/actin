@@ -49,9 +49,9 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                             + " Please make sure '${variant.gene()}' is configured as a known gene."
                 )
             }
-            val isCoding = relevantCodingEffects.contains(variant.canonicalImpact().codingEffect())
+            val coding = relevantCodingEffects.contains(variant.canonicalImpact().codingEffect())
             val inSpliceRegion = variant.canonicalImpact().inSpliceRegion()
-            geneIncluded && (reported || isCoding || inSpliceRegion)
+            geneIncluded && (reported || coding || inSpliceRegion)
         }
             .map { variant ->
                 val event = DriverEventFactory.variantEvent(variant)
