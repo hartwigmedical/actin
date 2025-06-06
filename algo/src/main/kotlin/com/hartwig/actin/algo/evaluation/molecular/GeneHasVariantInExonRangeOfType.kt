@@ -13,13 +13,13 @@ import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import java.time.LocalDate
 
 class GeneHasVariantInExonRangeOfType(
-    override val gene: String, private val minExon: Int, private val maxExon: Int, private val requiredVariantType: VariantTypeInput?,
+    val gene: String, private val minExon: Int, private val maxExon: Int, private val requiredVariantType: VariantTypeInput?,
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(
     targetCoveragePredicate = atLeast(
         MolecularTestTarget.MUTATION,
         messagePrefix = "Mutation in ${rangeText(minExon, maxExon)}${generateRequiredVariantTypeMessage(requiredVariantType)} in"
-    ), maxTestAge = maxTestAge
+    ), maxTestAge = maxTestAge, genes = setOf(gene)
 ) {
 
     private enum class VariantClassification {

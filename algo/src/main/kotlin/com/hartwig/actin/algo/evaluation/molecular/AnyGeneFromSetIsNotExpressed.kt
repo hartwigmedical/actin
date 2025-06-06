@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
-class AnyGeneFromSetIsNotExpressed(maxTestAge: LocalDate? = null, private val genes: Set<String>) :
+class AnyGeneFromSetIsNotExpressed(maxTestAge: LocalDate? = null, override val genes: Set<String>) :
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {

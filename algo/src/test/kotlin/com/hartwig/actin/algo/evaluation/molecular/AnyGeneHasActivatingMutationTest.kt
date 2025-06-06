@@ -15,9 +15,9 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class GeneHasActivatingMutationTest {
-    private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
-    private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE)
+class AnyGeneHasActivatingMutationTest {
+    private val functionNotIgnoringCodons = AnyGeneHasActivatingMutation(setOf(GENE), null)
+    private val functionWithCodonsToIgnore = AnyGeneHasActivatingMutation(setOf(GENE), CODONS_TO_IGNORE)
 
     @Test
     fun `Should fail for minimal patient`() {

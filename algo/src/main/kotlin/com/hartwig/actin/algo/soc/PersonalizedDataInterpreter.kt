@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
+import com.hartwig.actin.algo.evaluation.molecular.AnyGeneHasActivatingMutation
 import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -68,7 +68,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
         with(measurement) { Measurement(value, numPatients, min, max, iqr) }
 
     private fun hasActivatingMutationInGene(patient: PatientRecord, gene: String): Boolean {
-        return GeneHasActivatingMutation(gene, null).evaluate(patient).result == EvaluationResult.PASS
+        return AnyGeneHasActivatingMutation(setOf(gene), null).evaluate(patient).result == EvaluationResult.PASS
     }
 
     companion object {

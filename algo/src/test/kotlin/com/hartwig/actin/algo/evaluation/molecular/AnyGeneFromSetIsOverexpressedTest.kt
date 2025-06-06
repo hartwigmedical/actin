@@ -12,19 +12,19 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class AnyGeneFromSetIsOverexpressedTest {
-    private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
+    private val alwaysPassGeneAmplificationEvaluation = mockk<AnyGeneIsAmplified> {
         every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.pass("amplification")
     }
-    private val alwaysWarnGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
+    private val alwaysWarnGeneAmplificationEvaluation = mockk<AnyGeneIsAmplified> {
         every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.warn("possible amplification")
     }
-    private val alwaysFailGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
+    private val alwaysFailGeneAmplificationEvaluation = mockk<AnyGeneIsAmplified> {
         every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.fail("no amplification")
     }
 
     @Test
     fun `Should warn when amplification`() {
-        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { gene, _ ->
+        val geneIsAmplifiedCreator: (String, LocalDate?) -> AnyGeneIsAmplified = { gene, _ ->
             when (gene) {
                 "gene a" -> alwaysPassGeneAmplificationEvaluation
                 "gene b" -> alwaysFailGeneAmplificationEvaluation
@@ -39,7 +39,7 @@ class AnyGeneFromSetIsOverexpressedTest {
 
     @Test
     fun `Should evaluate to undetermined when no amplification`() {
-        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
+        val geneIsAmplifiedCreator: (String, LocalDate?) -> AnyGeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
@@ -47,7 +47,7 @@ class AnyGeneFromSetIsOverexpressedTest {
             .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
     }
 
-    private fun createFunctionWithEvaluations(geneIsAmplified: (String, LocalDate?) -> GeneIsAmplified): AnyGeneFromSetIsOverexpressed {
+    private fun createFunctionWithEvaluations(geneIsAmplified: (String, LocalDate?) -> AnyGeneIsAmplified): AnyGeneFromSetIsOverexpressed {
         return AnyGeneFromSetIsOverexpressed(
             LocalDate.of(2024, 11, 6),
             setOf("gene a", "gene b", "gene c"),

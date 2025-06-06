@@ -18,7 +18,7 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
         val receptorType = ReceptorType.HER2
         val (indeterminateIhcTests, validIhcTests) = IhcTestFilter.allIhcTestsForProtein(record.ihcTests, receptorType.name)
             .partition(IhcTest::impliesPotentialIndeterminateStatus)
-        val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record, maxTestAge)
+        val geneERBB2IsAmplified = geneIsAmplifiedForPatient(setOf("ERBB2"), record, maxTestAge)
 
         val testResults = validIhcTests.map(::classifyHer2Test).toSet()
 

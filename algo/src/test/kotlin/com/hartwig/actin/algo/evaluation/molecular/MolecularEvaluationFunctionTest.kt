@@ -42,10 +42,10 @@ class MolecularEvaluationFunctionTest {
         }
     }
 
-    private val functionWithGene = object : MolecularEvaluationFunction(gene = "GENE", useInsufficientQualityRecords = false) {}
+    private val functionWithGene = object : MolecularEvaluationFunction(genes = setOf("GENE"), useInsufficientQualityRecords = false) {}
 
     private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(
-        gene = "GENE",
+        genes = setOf("GENE"),
         targetCoveragePredicate = specific(MolecularTestTarget.FUSION, messagePrefix = "Test in"),
         useInsufficientQualityRecords = false
     ) {}

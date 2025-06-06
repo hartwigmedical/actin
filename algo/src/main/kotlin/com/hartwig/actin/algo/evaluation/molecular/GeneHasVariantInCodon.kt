@@ -11,10 +11,11 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import java.time.LocalDate
 
-class GeneHasVariantInCodon(override val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
+class GeneHasVariantInCodon(val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, "Mutation in codons ${codons.joinToString()} in"),
-        maxTestAge = maxTestAge
+        maxTestAge = maxTestAge,
+        genes = setOf(gene)
     ) {
 
     private enum class VariantClassification {
