@@ -60,11 +60,11 @@ object WGSSummaryGeneratorFunctions {
             val ploidy = molecular.characteristics.ploidy
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
-                table.addCell(Cells.createKey("Potential trial events, but no high driver:"))
+                table.addCell(Cells.createKey("Potential trial events, considered no high driver"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, ploidy))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Potential trial events, but not a tumor driver:"))
+                table.addCell(Cells.createKey("Potential trial events, considered no tumor driver"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver, ploidy))
             }
 
