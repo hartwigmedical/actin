@@ -35,6 +35,7 @@ class StandardTumorDetailsExtractor(
         val combinedTumorResponse = combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromOtherConditions)
         return combinedTumorResponse.config()?.let {
             val curatedTumorDetails = tumorDetailsFromEhr.copy(
+                name = it.name,
                 primaryTumorLocation = it.primaryTumorLocation,
                 primaryTumorType = it.primaryTumorType,
                 primaryTumorSubLocation = it.primaryTumorSubLocation,
@@ -56,22 +57,22 @@ class StandardTumorDetailsExtractor(
 
     private fun tumorDetails(ehrPatientRecord: FeedPatientRecord): TumorDetails {
         with(ehrPatientRecord.tumorDetails) {
-            val hasBrainOrGliomaTumor = tumorLocation == "Brain" || tumorType == "Glioma"
+            val hasBrainOrGliomaTumor = tumorType?.lowercase()?.contains("glioma")
             return TumorDetails(
                 primaryTumorLocation = tumorLocation,
                 primaryTumorType = tumorType,
                 doids = emptySet(),
                 stage = stage?.let { TumorStage.valueOf(it) },
                 hasMeasurableDisease = measurableDisease,
-                hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions,
-                hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasActiveBrainLesions,
+                hasBrainLesions = if (hasBrainOrGliomaTumor == true) false else hasBrainLesions,
+                hasActiveBrainLesions = if (hasBrainOrGliomaTumor == true) false else hasActiveBrainLesions,
                 hasCnsLesions = when {
-                    hasBrainOrGliomaTumor -> false
+                    hasBrainOrGliomaTumor == true -> false
                     hasBrainLesions == true -> true
                     else -> null
                 },
                 hasActiveCnsLesions = when {
-                    hasBrainOrGliomaTumor -> false
+                    hasBrainOrGliomaTumor == true -> false
                     hasActiveBrainLesions == true -> true
                     else -> null
                 },

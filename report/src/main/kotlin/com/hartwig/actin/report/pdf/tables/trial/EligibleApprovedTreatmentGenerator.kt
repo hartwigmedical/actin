@@ -22,7 +22,7 @@ class EligibleApprovedTreatmentGenerator(private val report: Report) : TableGene
         val table = Tables.createSingleCol()
         table.addHeaderCell(Cells.createHeader("Treatment"))
 
-        val isCUP = TumorDetailsInterpreter.isCUP(report.patientRecord.tumor)
+        val isCUP = TumorDetailsInterpreter.isCUP(report.patientRecord.tumor.name)
         val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val hasConfidentPrediction =
             molecular?.let { TumorOriginInterpreter.create(molecular).hasConfidentPrediction() } ?: false

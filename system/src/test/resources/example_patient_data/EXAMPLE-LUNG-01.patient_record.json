@@ -8,6 +8,7 @@
     "hasHartwigSequencing": true
   },
   "tumor": {
+    "name": "Lung adenocarcinoma",
     "primaryTumorLocation": "Lung",
     "primaryTumorSubLocation": "",
     "primaryTumorType": "Carcinoma",

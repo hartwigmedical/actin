@@ -13,8 +13,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.datamodel.ReportFactory
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_SUB_LOCATION
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_STRING
 import com.hartwig.actin.report.pdf.getCellContents
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +23,7 @@ class EligibleApprovedTreatmentGeneratorTest {
 
     @Test
     fun `Should return Potential SOC if it is a cancer of unknown primary`() {
-        val cupTumor = TumorDetails(primaryTumorLocation = CUP_LOCATION, primaryTumorSubLocation = CUP_SUB_LOCATION)
+        val cupTumor = TumorDetails(name = "Some $CUP_STRING")
         val clinicalRecord = TestClinicalFactory.createProperTestClinicalRecord().copy(tumor = cupTumor)
 
         val molecularHistory = MolecularHistory(

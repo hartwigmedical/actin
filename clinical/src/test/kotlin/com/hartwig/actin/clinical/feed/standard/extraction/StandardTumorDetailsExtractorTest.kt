@@ -25,6 +25,7 @@ private const val DOID = "3910"
 private const val TUMOR_INPUT = "$TUMOR_LOCATION | $TUMOR_TYPE"
 
 private val TUMOR_DETAILS = TumorDetails(
+    name = "name",
     primaryTumorLocation = TUMOR_LOCATION,
     primaryTumorSubLocation = TUMOR_SUB_LOCATION,
     primaryTumorType = TUMOR_TYPE,
@@ -54,6 +55,7 @@ private val TUMOR_DETAILS = TumorDetails(
 private val TUMOR_CURATION_CONFIG = PrimaryTumorConfig(
     input = TUMOR_INPUT,
     ignore = false,
+    name = "name",
     primaryTumorLocation = TUMOR_LOCATION,
     primaryTumorType = TUMOR_TYPE,
     doids = setOf(DOID),
@@ -100,6 +102,7 @@ class StandardTumorDetailsExtractorTest {
         val result = extractor.extract(FEED_PATIENT_RECORD)
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
+                name = "",
                 primaryTumorSubType = null,
                 primaryTumorSubLocation = null,
                 doids = emptySet()
@@ -184,13 +187,14 @@ class StandardTumorDetailsExtractorTest {
     @Test
     fun `Should set (active) brain and (active) CNS lesions to false in case of primary brain tumor`() {
         val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
-            every { find("Brain | tumorType") } returns setOf(
+            every { find("tumorLocation | Glioma") } returns setOf(
                 PrimaryTumorConfig(
-                    input = "Brain | tumorType",
+                    input = "tumorLocation | Glioma",
+                    name = "name",
                     doids = setOf(DOID),
-                    primaryTumorLocation = "Brain",
+                    primaryTumorLocation = TUMOR_LOCATION,
                     primaryTumorSubLocation = TUMOR_SUB_LOCATION,
-                    primaryTumorType = TUMOR_TYPE,
+                    primaryTumorType = "Glioma",
                     primaryTumorSubType = TUMOR_SUB_TYPE,
                     ignore = false,
                     primaryTumorExtraDetails = "tumorExtraDetails"
@@ -199,10 +203,10 @@ class StandardTumorDetailsExtractorTest {
         }
         val extractor = StandardTumorDetailsExtractor(tumorCuration, tumorStageDeriver)
         val result =
-            extractor.extract(FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(tumorLocation = "Brain")))
+            extractor.extract(FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(tumorType = "Glioma")))
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
-                primaryTumorLocation = "Brain",
+                primaryTumorType = "Glioma",
                 hasBrainLesions = false,
                 hasActiveBrainLesions = false,
                 hasCnsLesions = false,

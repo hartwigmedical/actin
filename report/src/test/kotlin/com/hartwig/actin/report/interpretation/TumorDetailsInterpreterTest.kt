@@ -14,18 +14,9 @@ class TumorDetailsInterpreterTest {
 
     @Test
     fun `Should correctly determine if tumor is CUP`() {
-        assertThat(isCUP(TumorDetails())).isFalse
-
-        assertThat(isCUP(TumorDetails(primaryTumorLocation = TumorDetailsInterpreter.CUP_LOCATION))).isFalse
-
-        assertThat(
-            isCUP(
-                TumorDetails(
-                    primaryTumorLocation = TumorDetailsInterpreter.CUP_LOCATION,
-                    primaryTumorSubLocation = TumorDetailsInterpreter.CUP_SUB_LOCATION
-                )
-            )
-        ).isTrue
+        assertThat(isCUP(TumorDetails().name)).isFalse
+        assertThat(isCUP(TumorDetails(name = "Unknown").name)).isFalse
+        assertThat(isCUP(TumorDetails(name = "Something (CUP))").name)).isTrue()
     }
 
     class LesionInterpreterTest {
@@ -89,15 +80,15 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
-        fun `Should map primaryTumorLocation Brain to brainLesions`() {
-            val details = TumorDetails(primaryTumorLocation = "Brain")
+        fun `Should map name Brain to brainLesions`() {
+            val details = TumorDetails(name = "Some brain")
             val expected = "Brain"
             assertThat(lesions(details)).isEqualTo(expected)
         }
 
         @Test
-        fun `Should map primaryTumorType Glioma to brainLesions`() {
-            val details = TumorDetails(primaryTumorType = "Glioma")
+        fun `Should map name Glioma to brainLesions`() {
+            val details = TumorDetails(name = "Some glioma")
             val expected = "Brain"
             assertThat(lesions(details)).isEqualTo(expected)
         }

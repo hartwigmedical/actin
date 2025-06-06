@@ -8,19 +8,19 @@ import org.junit.Test
 
 class HasOvarianBorderlineTumorTest {
     private val function = HasOvarianBorderlineTumor(TestDoidModelFactory.createMinimalTestDoidModel())
-    private val targetedType = HasOvarianBorderlineTumor.OVARIAN_BORDERLINE_TYPES.iterator().next()
+    private val targetedType = HasOvarianBorderlineTumor.OVARIAN_BORDERLINE_KEYWORDS.iterator().next()
 
     @Test
     fun canEvaluate() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
 
-        val missingType = TumorTestFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, "wrong")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingType))
+        val wrongCancerType = TumorTestFactory.withDoidAndName("wrong", targetedType)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(wrongCancerType))
 
-        val missingDoid = TumorTestFactory.withDoidAndType("wrong", targetedType)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingDoid))
+        val genericType = TumorTestFactory.withDoidAndName(DoidConstants.OVARIAN_CANCER_DOID, "wrong")
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(genericType))
 
-        val correct = TumorTestFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, targetedType)
+        val correct = TumorTestFactory.withDoidAndName(DoidConstants.OVARIAN_CANCER_DOID, targetedType)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(correct))
     }
 }

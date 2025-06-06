@@ -20,6 +20,7 @@ object DoidConstants {
     const val STOMACH_CANCER_DOID = "10534"
     const val BREAST_CANCER_DOID = "1612"
     const val OVARIAN_CANCER_DOID = "2394"
+    const val OVARIAN_CARCINOMA_DOID = "4001"
     const val HEAD_AND_NECK_CANCER_DOID = "11934"
     const val COLORECTAL_CANCER_DOID = "9256"
     const val GLIOBLASTOMA_DOID = "3068"

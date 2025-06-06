@@ -29,11 +29,12 @@ class CurationDatabaseReaderTest {
             ) { emptySet() }.find(input)
         ).containsOnly(
             PrimaryTumorConfig(
+                name = "Unknown (CUP) carcinoma",
                 primaryTumorLocation = "Unknown",
-                primaryTumorType = "Carcinoma",
                 primaryTumorSubLocation = "CUP",
-                primaryTumorExtraDetails = "",
+                primaryTumorType = "Carcinoma",
                 primaryTumorSubType = "",
+                primaryTumorExtraDetails = "",
                 doids = setOf("299"),
                 input = input
             )
