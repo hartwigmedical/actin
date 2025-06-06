@@ -43,6 +43,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
         return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
             val reported = variant.reported()
             val coding = relevantCodingEffects.contains(variant.canonicalImpact().codingEffect())
+            val spliceRegion = variant.canonicalImpact().inSpliceRegion()
             val geneIncluded = geneFilter.include(variant.gene())
             if (reported && !geneIncluded) {
                 throw IllegalStateException(
@@ -50,7 +51,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                             + " Please make sure '${variant.gene()}' is configured as a known gene."
                 )
             }
-            geneIncluded && (reported || coding)
+            geneIncluded && (variant.reported() || coding || spliceRegion)
         }
             .map { variant ->
                 val event = DriverEventFactory.variantEvent(variant)
