@@ -60,9 +60,14 @@
       "isTrial": false,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": 2020,
-        "stopMonth": null,
-        "isAssumedMaxStopDate": false,
+        "stopYear": {
+          "value": 2020,
+          "isAssumedMax": false
+        },
+        "stopMonth": {
+          "value": null,
+          "isAssumedMax": false
+        },
         "cycles": null,
         "bestResponse": "PROGRESSIVE_DISEASE",
         "stopReason": "TOXICITY",

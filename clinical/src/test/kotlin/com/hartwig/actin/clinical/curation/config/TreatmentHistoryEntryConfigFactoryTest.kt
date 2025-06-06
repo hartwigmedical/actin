@@ -5,7 +5,9 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -83,9 +85,8 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 treatmentHistoryDetails = TreatmentHistoryDetails(
                     stopReason = null,
                     bestResponse = null,
-                    stopYear = null,
-                    stopMonth = null,
-                    isAssumedMaxStopDate = false,
+                    stopYear = TreatmentYear(null),
+                    stopMonth = TreatmentMonth(null),
                     cycles = null,
                     switchToTreatments = null,
                     maintenanceTreatment = null,

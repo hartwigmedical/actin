@@ -72,9 +72,14 @@
       "isTrial": false,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": null,
-        "stopMonth": null,
-        "isAssumedMaxStopDate": false,
+        "stopYear": {
+          "value": null,
+          "isAssumedMax": false
+        },
+        "stopMonth": {
+          "value": null,
+          "isAssumedMax": false
+        },
         "cycles": null,
         "bestResponse": null,
         "stopReason": null,
@@ -106,9 +111,14 @@
       "isTrial": false,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": null,
-        "stopMonth": null,
-        "isAssumedMaxStopDate": false,
+        "stopYear": {
+          "value": null,
+          "isAssumedMax": false
+        },
+        "stopMonth": {
+          "value": null,
+          "isAssumedMax": false
+        },
         "cycles": null,
         "bestResponse": null,
         "stopReason": null,

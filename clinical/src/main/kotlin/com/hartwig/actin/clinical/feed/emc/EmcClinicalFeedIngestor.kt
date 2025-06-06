@@ -8,7 +8,6 @@ import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
-import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
@@ -45,6 +44,8 @@ import com.hartwig.actin.datamodel.clinical.ingestion.NO_QUESTIONNAIRE_FOUND
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionResult
 import com.hartwig.actin.datamodel.clinical.ingestion.PatientIngestionStatus
 import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 import java.time.LocalDate
@@ -152,19 +153,27 @@ class EmcClinicalFeedIngestor(
         }
     }
 
-    private fun setStopDate(l: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
-        val sorted = l.sortedWith(TreatmentHistoryAscendingDateComparator())
+    private fun setStopDate(treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
+        val sorted = treatmentHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val (systemic, nonSystemic) = sorted.partition { it.categories().all { category -> TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES.contains(category) } }
-        val newList = mutableListOf<TreatmentHistoryEntry>()
+        val systemicWithStopDate = mutableListOf<TreatmentHistoryEntry>()
         for (i in systemic.indices) {
             val current = systemic[i]
-            if (current.treatmentHistoryDetails?.stopYear == null && i < systemic.size - 1) {
+            if (current.treatmentHistoryDetails?.stopYear?.value == null && i < systemic.size - 1) {
                 val next = systemic[i + 1]
-                newList.add(current.copy(treatmentHistoryDetails = current.treatmentHistoryDetails?.copy(stopYear = next.startYear, stopMonth = next.startMonth, isAssumedMaxStopDate = true)))
-            }
-            else newList.add(current)
+                systemicWithStopDate.add(
+                    current.copy(
+                        treatmentHistoryDetails = current.treatmentHistoryDetails?.copy(
+                            stopYear = TreatmentYear(
+                                next.startYear,
+                                true
+                            ), stopMonth = TreatmentMonth(next.startMonth, true)
+                        )
+                    )
+                )
+            } else systemicWithStopDate.add(current)
         }
-        return newList + nonSystemic
+        return systemicWithStopDate + nonSystemic
     }
 
     private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {

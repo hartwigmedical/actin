@@ -19,8 +19,8 @@ object SystemicTreatmentAnalyser {
                     compareBy(
                         TreatmentHistoryEntry::startYear,
                         TreatmentHistoryEntry::startMonth,
-                        { it.treatmentHistoryDetails?.stopYear },
-                        { it.treatmentHistoryDetails?.stopMonth },
+                        { it.treatmentHistoryDetails?.stopYear?.value },
+                        { it.treatmentHistoryDetails?.stopMonth?.value },
                         TreatmentHistoryEntry::treatmentName
                     )
                 )

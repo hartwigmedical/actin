@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 
 object TreatmentHistoryEntryFunctions {
 
@@ -47,7 +49,7 @@ object TreatmentHistoryEntryFunctions {
 
             val matchingStageStopYearAndMonth =
                 startYearAndMonthOfFirstTrailingNonMatchingStage(additionalTreatmentStages, predicate)
-                    ?: NullableYearMonth(details?.stopYear, details?.stopMonth)
+                    ?: NullableYearMonth(details?.stopYear?.value, details?.stopMonth?.value)
 
             createSubEntryWithMatchingTreatmentsAndDatesAndCycles(
                 entry,
@@ -90,14 +92,14 @@ object TreatmentHistoryEntryFunctions {
         details: TreatmentHistoryDetails?, stopYearMonth: NullableYearMonth, cycles: Int?
     ): TreatmentHistoryDetails {
         return details?.copy(
-            stopYear = stopYearMonth.year,
-            stopMonth = stopYearMonth.month,
+            stopYear = TreatmentYear(stopYearMonth.year),
+            stopMonth = TreatmentMonth(stopYearMonth.month),
             maintenanceTreatment = null,
             switchToTreatments = emptyList(),
             cycles = cycles
         ) ?: TreatmentHistoryDetails(
-            stopYear = stopYearMonth.year,
-            stopMonth = stopYearMonth.month,
+            stopYear = TreatmentYear(stopYearMonth.year),
+            stopMonth = TreatmentMonth(stopYearMonth.month),
             cycles = cycles,
             bestResponse = null,
             stopReason = null,

@@ -13,8 +13,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 import com.hartwig.actin.util.ResourceFile
 import com.hartwig.actin.util.json.GsonSerializer
 import java.util.Objects
@@ -99,8 +101,8 @@ class TreatmentHistoryEntryConfigFactory(
         )
 
         val treatmentHistoryDetails = TreatmentHistoryDetails(
-            stopYear = optionalIntegerFromColumn(parts, fields, "stopYear"),
-            stopMonth = optionalIntegerFromColumn(parts, fields, "stopMonth"),
+            stopYear = TreatmentYear(optionalIntegerFromColumn(parts, fields, "stopYear")),
+            stopMonth = TreatmentMonth(optionalIntegerFromColumn(parts, fields, "stopMonth")),
             cycles = optionalIntegerFromColumn(parts, fields, "cycles"),
             bestResponse = bestResponse,
             stopReasonDetail = stopReasonDetail,

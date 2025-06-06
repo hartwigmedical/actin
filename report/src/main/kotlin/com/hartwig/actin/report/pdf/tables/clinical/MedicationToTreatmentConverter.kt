@@ -7,6 +7,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -29,7 +31,10 @@ object MedicationToTreatmentConverter {
                     startYear = start?.year,
                     startMonth = start?.monthValue,
                     treatments = setOf(DrugTreatment(name = name, drugs = setOfNotNull(drug))),
-                    treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
+                    treatmentHistoryDetails = TreatmentHistoryDetails(
+                        stopYear = TreatmentYear(stop?.year),
+                        stopMonth = TreatmentMonth(stop?.monthValue)
+                    )
                 )
             }
     }
@@ -47,8 +52,8 @@ object MedicationToTreatmentConverter {
         val medicationStart = medication.startDate?.plusDays(1)
         val medicationStop = medication.stopDate?.minusDays(1)
         val treatmentStart = treatmentHistory.startYear?.let { LocalDate.of(it, treatmentHistory.startMonth ?: 1, 1) }
-        val treatmentStop = treatmentHistory.treatmentHistoryDetails?.stopYear?.let {
-            YearMonth.of(it, treatmentHistory.treatmentHistoryDetails?.stopMonth ?: 12).atEndOfMonth()
+        val treatmentStop = treatmentHistory.treatmentHistoryDetails?.stopYear?.value?.let {
+            YearMonth.of(it, treatmentHistory.treatmentHistoryDetails?.stopMonth?.value ?: 12).atEndOfMonth()
         }
 
         return (medicationStart?.isAfter(treatmentStart) == true && (treatmentStop == null ||

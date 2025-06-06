@@ -78,9 +78,14 @@
       "isTrial": true,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": 2020,
-        "stopMonth": 1,
-        "isAssumedMaxStopDate": false,
+        "stopYear": {
+          "value": 2020,
+          "isAssumedMax": false
+        },
+        "stopMonth": {
+          "value": 1,
+          "isAssumedMax": false
+        },
         "cycles": 5,
         "bestResponse": null,
         "stopReason": null,

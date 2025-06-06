@@ -43,7 +43,7 @@ class HasHadPDFollowingSomeSystemicTreatments(
             }
 
             lastTreatment?.let {
-                it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || it.treatmentHistoryDetails?.stopYear == null
+                it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || it.treatmentHistoryDetails?.stopYear?.value == null
             } == true -> {
                 EvaluationFactory.undetermined(undeterminedMessage)
             }

@@ -8,6 +8,8 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 import com.hartwig.feed.datamodel.DatedEntry
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
@@ -57,9 +59,12 @@ class StandardOncologicalHistoryExtractor(
                             startMonth = curatedTreatment.startMonth ?: ehrEntry.startDate?.monthValue,
                             intents = curatedTreatment.intents,
                             treatmentHistoryDetails = TreatmentHistoryDetails(
-                                stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrEntry.endDate?.year,
-                                stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth
-                                    ?: ehrEntry.endDate?.monthValue,
+                                stopYear = TreatmentYear(
+                                    curatedTreatment.treatmentHistoryDetails?.stopYear?.value ?: ehrEntry.endDate?.year
+                                ),
+                                stopMonth = TreatmentMonth(
+                                    curatedTreatment.treatmentHistoryDetails?.stopMonth?.value ?: ehrEntry.endDate?.monthValue
+                                ),
                                 stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
                                 bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
                                 switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,

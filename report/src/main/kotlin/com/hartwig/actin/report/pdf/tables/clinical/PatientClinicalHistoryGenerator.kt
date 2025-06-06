@@ -138,7 +138,12 @@ class PatientClinicalHistoryGenerator(
 
     private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
         val startString = toDateString(treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-        val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
+        val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let {
+            toDateString(
+                if (it.stopYear.isAssumedMax) null else it.stopYear.value,
+                if (it.stopMonth.isAssumedMax) null else it.stopMonth.value
+            )
+        }
 
         return when {
             startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString

@@ -31,8 +31,8 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 val durationWeeks: Long? = minWeeksBetweenDates(
                     matchingPortionOfEntry.startYear,
                     matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
+                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear?.value,
+                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth?.value
                 )
                 val meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles)
                 val meetsMinWeeks = minWeeks == null || (durationWeeks != null && durationWeeks >= minWeeks)

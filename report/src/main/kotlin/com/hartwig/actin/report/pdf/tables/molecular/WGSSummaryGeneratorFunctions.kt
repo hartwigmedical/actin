@@ -64,7 +64,7 @@ object WGSSummaryGeneratorFunctions {
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, ploidy))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Trial-relevant events, not considered a tumor driver:"))
+                table.addCell(Cells.createKey("Potential trial events, not considered a tumor driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver, ploidy))
             }
 

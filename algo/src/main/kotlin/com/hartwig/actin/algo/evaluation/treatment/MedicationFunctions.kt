@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 
 object MedicationFunctions {
 
@@ -24,7 +26,10 @@ object MedicationFunctions {
                 startYear = it.startDate?.year,
                 startMonth = it.startDate?.monthValue,
                 isTrial = it.isTrialMedication,
-                treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = it.stopDate?.year, stopMonth = it.stopDate?.monthValue)
+                treatmentHistoryDetails = TreatmentHistoryDetails(
+                    stopYear = TreatmentYear(it.stopDate?.year),
+                    stopMonth = TreatmentMonth(it.stopDate?.monthValue)
+                )
             )
         } ?: emptyList()
     }

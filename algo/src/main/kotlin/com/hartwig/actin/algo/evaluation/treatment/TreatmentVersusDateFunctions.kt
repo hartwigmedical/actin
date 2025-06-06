@@ -34,7 +34,7 @@ object TreatmentVersusDateFunctions {
 
     fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, minDate: LocalDate, includeUnknown: Boolean): Boolean {
         return DateComparison.isAfterDate(
-            minDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
+            minDate, treatment.treatmentHistoryDetails?.stopYear?.value, treatment.treatmentHistoryDetails?.stopMonth?.value
         )
             ?: DateComparison.isAfterDate(minDate, treatment.startYear, treatment.startMonth)
             ?: includeUnknown
@@ -42,7 +42,7 @@ object TreatmentVersusDateFunctions {
 
     fun treatmentBeforeMaxDate(treatment: TreatmentHistoryEntry, maxDate: LocalDate, includeUnknown: Boolean): Boolean {
         return DateComparison.isBeforeDate(
-            maxDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
+            maxDate, treatment.treatmentHistoryDetails?.stopYear?.value, treatment.treatmentHistoryDetails?.stopMonth?.value
         )
             ?: includeUnknown
     }

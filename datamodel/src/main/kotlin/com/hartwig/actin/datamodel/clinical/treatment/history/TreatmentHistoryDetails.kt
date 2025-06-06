@@ -4,9 +4,8 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.ObservedToxicity
 
 data class TreatmentHistoryDetails(
-    val stopYear: Int? = null,
-    val stopMonth: Int? = null,
-    val isAssumedMaxStopDate: Boolean = false,
+    val stopYear: TreatmentYear,
+    val stopMonth: TreatmentMonth,
     val cycles: Int? = null,
     val bestResponse: TreatmentResponse? = null,
     val stopReason: StopReason? = null,

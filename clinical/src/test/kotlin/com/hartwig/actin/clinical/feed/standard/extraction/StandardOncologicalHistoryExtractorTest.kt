@@ -14,8 +14,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 import com.hartwig.feed.datamodel.DatedEntry
 import io.mockk.every
 import io.mockk.mockk
@@ -54,7 +56,9 @@ private val CURATED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntryConfig(
         treatmentHistoryDetails = TreatmentHistoryDetails(
             bodyLocations = setOf("bone"),
             bodyLocationCategories = setOf(BodyLocationCategory.BONE),
-            maintenanceTreatment = CURATED_TREATMENT_STAGE
+            maintenanceTreatment = CURATED_TREATMENT_STAGE,
+            stopYear = TreatmentYear(null),
+            stopMonth = TreatmentMonth(null),
         ),
         trialAcronym = "trialAcronym",
     )
@@ -65,8 +69,8 @@ private val EXPECTED_TREATMENT_HISTORY_FROM_PRIOR_OTHER_CONDITION = TreatmentHis
     startMonth = OTHER_CONDITION_START.monthValue,
     treatments = CURATED_TREATMENT_HISTORY_ENTRY.curated!!.treatments,
     treatmentHistoryDetails = TreatmentHistoryDetails(
-        stopYear = OTHER_CONDITION_END.year,
-        stopMonth = OTHER_CONDITION_END.monthValue,
+        stopYear = TreatmentYear(OTHER_CONDITION_END.year),
+        stopMonth = TreatmentMonth(OTHER_CONDITION_END.monthValue),
         stopReason = null,
         bestResponse = null,
         bodyLocations = setOf("bone"),
@@ -132,8 +136,8 @@ class StandardOncologicalHistoryExtractorTest {
                 treatments = CURATED_TREATMENT_HISTORY_ENTRY.curated!!.treatments,
                 intents = setOf(Intent.PALLIATIVE),
                 treatmentHistoryDetails = TreatmentHistoryDetails(
-                    stopYear = TREATMENT_END.year,
-                    stopMonth = TREATMENT_END.monthValue,
+                    stopYear = TreatmentYear(TREATMENT_END.year, false),
+                    stopMonth = TreatmentMonth(TREATMENT_END.monthValue, false),
                     bodyLocations = setOf("bone"),
                     bodyLocationCategories = setOf(BodyLocationCategory.BONE),
                     switchToTreatments = listOf(modificationTreatmentStage),
@@ -174,9 +178,9 @@ class StandardOncologicalHistoryExtractorTest {
                 curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(
                     startYear = 2019,
                     startMonth = 6,
-                    treatmentHistoryDetails = CURATED_TREATMENT_HISTORY_ENTRY.curated.treatmentHistoryDetails?.copy(
-                        stopYear = 2020,
-                        stopMonth = 7,
+                    treatmentHistoryDetails = CURATED_TREATMENT_HISTORY_ENTRY.curated!!.treatmentHistoryDetails?.copy(
+                        stopYear = TreatmentYear(2020, false),
+                        stopMonth = TreatmentMonth(7, false),
                         stopReason = StopReason.PROGRESSIVE_DISEASE,
                         bestResponse = TreatmentResponse.MIXED
                     )
@@ -189,8 +193,8 @@ class StandardOncologicalHistoryExtractorTest {
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted[0].startYear).isEqualTo(2019)
         assertThat(result.extracted[0].startMonth).isEqualTo(6)
-        assertThat(result.extracted[0].treatmentHistoryDetails?.stopYear).isEqualTo(2020)
-        assertThat(result.extracted[0].treatmentHistoryDetails?.stopMonth).isEqualTo(7)
+        assertThat(result.extracted[0].treatmentHistoryDetails?.stopYear?.value).isEqualTo(2020)
+        assertThat(result.extracted[0].treatmentHistoryDetails?.stopMonth?.value).isEqualTo(7)
         assertThat(result.extracted[0].treatmentHistoryDetails?.stopReason).isEqualTo(StopReason.PROGRESSIVE_DISEASE)
         assertThat(result.extracted[0].treatmentHistoryDetails?.bestResponse).isEqualTo(TreatmentResponse.MIXED)
     }

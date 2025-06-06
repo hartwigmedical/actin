@@ -33,10 +33,10 @@ class TreatmentHistoryAscendingDateComparator : Comparator<TreatmentHistoryEntry
     }
 
     private fun stopYearForHistoryEntry(treatmentHistoryEntry: TreatmentHistoryEntry): Int? {
-        return treatmentHistoryEntry.treatmentHistoryDetails?.stopYear
+        return treatmentHistoryEntry.treatmentHistoryDetails?.stopYear?.value
     }
 
     private fun stopMonthForHistoryEntry(treatmentHistoryEntry: TreatmentHistoryEntry): Int? {
-        return treatmentHistoryEntry.treatmentHistoryDetails?.stopMonth
+        return treatmentHistoryEntry.treatmentHistoryDetails?.stopMonth?.value
     }
 }

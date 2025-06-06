@@ -13,8 +13,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentMonth
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentYear
 
 object TreatmentTestFactory {
 
@@ -73,9 +75,8 @@ object TreatmentTestFactory {
             TreatmentHistoryDetails(
                 stopReason = stopReason,
                 bestResponse = bestResponse,
-                stopYear = stopYear,
-                stopMonth = stopMonth,
-                isAssumedMaxStopDate = false,
+                stopYear = TreatmentYear(stopYear),
+                stopMonth = TreatmentMonth(stopMonth),
                 cycles = numCycles,
                 bodyLocations = bodyLocations,
                 bodyLocationCategories = bodyLocationCategory,

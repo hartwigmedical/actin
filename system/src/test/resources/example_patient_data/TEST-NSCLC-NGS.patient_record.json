@@ -94,9 +94,14 @@
       "isTrial": false,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": 2024,
-        "stopMonth": 6,
-        "isAssumedMaxStopDate": false,
+        "stopYear": {
+          "value": 2024,
+          "isAssumedMax": false
+        },
+        "stopMonth": {
+          "value": 6,
+          "isAssumedMax": false
+        },
         "cycles": null,
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",
@@ -162,7 +167,6 @@
       "treatmentHistoryDetails": {
         "stopYear": 2024,
         "stopMonth": 8,
-        "isAssumedMaxStopDate": false,
         "cycles": null,
         "bestResponse": "STABLE_DISEASE",
         "stopReason": "TOXICITY",

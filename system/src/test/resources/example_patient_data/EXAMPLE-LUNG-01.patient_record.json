@@ -74,9 +74,14 @@
       "isTrial": false,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": 2025,
-        "stopMonth": 1,
-        "isAssumedMaxStopDate": false,
+        "stopYear": {
+          "value": 2025,
+          "isAssumedMax": false
+        },
+        "stopMonth": {
+          "value": 1,
+          "isAssumedMax": false
+        },
         "cycles": null,
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",

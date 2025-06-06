@@ -27,8 +27,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
                 val durationWeeks: Long? = DateComparison.minWeeksBetweenDates(
                     matchingPortionOfEntry.startYear,
                     matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
+                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear?.value,
+                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth?.value
                 )
                 val meetsMaxWeeks = if (maxWeeks != null) durationWeeks != null && durationWeeks <= maxWeeks else true
 
