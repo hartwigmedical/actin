@@ -74,11 +74,16 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
         molecular.drivers.variants.filter { variant ->
             variant.gene == gene && variant.canonicalImpact.affectedExon != null
                     && variant.canonicalImpact.affectedExon == exonToSkip
-                    && isSplice(requireCertainty, variant.isReportable, variant.canonicalImpact.codingEffect, variant.canonicalImpact.isSpliceRegion)
+                    && isSplice(
+                requireCertainty,
+                variant.isReportable,
+                variant.canonicalImpact.codingEffect,
+                variant.canonicalImpact.isSpliceRegion
+            )
         }.map(Variant::event)
             .toSet()
 
     private fun isSplice(requireCertainty: Boolean, isReportable: Boolean, codingEffect: CodingEffect?, isSpliceRegion: Boolean?): Boolean {
-        return if (requireCertainty) isReportable && codingEffect == CodingEffect.SPLICE else isSpliceRegion == true
+        return isSpliceRegion == true && (!requireCertainty) || (isReportable && codingEffect == CodingEffect.SPLICE)
     }
 }
