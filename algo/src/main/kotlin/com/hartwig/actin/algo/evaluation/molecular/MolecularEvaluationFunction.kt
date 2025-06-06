@@ -16,8 +16,7 @@ abstract class MolecularEvaluationFunction(
     useInsufficientQualityRecords: Boolean = false,
     open val gene: String? = null,
     val targetCoveragePredicate: TargetCoveragePredicate = any(),
-) :
-    EvaluationFunction {
+) : EvaluationFunction {
 
     private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
 
