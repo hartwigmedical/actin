@@ -53,5 +53,6 @@ data class SequencingTest(
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
     val isHomologousRecombinationDeficient: Boolean? = null,
-    val knownSpecifications: Boolean = false
+    val knownSpecifications: Boolean = false,
+    val reportHash: String? = null
 )

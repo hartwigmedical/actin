@@ -7,6 +7,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
+private const val DIAGNOSIS = "diagnosis"
+
 class PathologyReportsExtractorTest {
 
     private val extractor = PathologyReportsExtractor()
@@ -20,48 +22,54 @@ class PathologyReportsExtractorTest {
     @Test
     fun `Should extract pathology reports from the tumor details pathology`() {
 
-        val providedPathologyReport = FeedPathology(
-            tissueId = null,
-            reportRequested = false,
-            lab = "NKI-AvL",
-            diagnosis = "diagnosis",
-            tissueDate = defaultDate,
-            authorisationDate = defaultDate,
-            rawPathologyReport = "rawPathologyReport"
-        )
-
         val record = FEED_PATIENT_RECORD.copy(
             tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
                 pathology = listOf(
-                    providedPathologyReport,
-                    providedPathologyReport.copy(
+                    FeedPathology(
+                        reportHash = "ID 1",
+                        tissueId = null,
+                        reportRequested = false,
+                        lab = "NKI-AvL",
+                        diagnosis = DIAGNOSIS,
+                        tissueDate = defaultDate,
+                        authorisationDate = defaultDate,
+                        rawPathologyReport = "rawPathologyReport",
+                    ),
+                    FeedPathology(
+                        reportHash = "ID 2",
                         tissueId = "tissueId",
                         reportRequested = true,
                         lab = "lab",
+                        diagnosis = DIAGNOSIS,
                         reportDate = defaultDate,
+                        tissueDate = defaultDate,
+                        authorisationDate = defaultDate,
                         rawPathologyReport = "raw pathology report"
                     )
                 )
             )
         )
 
-        val expected = PathologyReport(
-            lab = "NKI-AvL",
-            diagnosis = "diagnosis",
-            tissueDate = defaultDate,
-            authorisationDate = defaultDate,
-            report = "rawPathologyReport"
-        )
-
         val extracted = extractor.extract(record).extracted
         assertThat(extracted).isNotEmpty()
         assertThat(extracted).isEqualTo(
             listOf(
-                expected,
-                expected.copy(
+                PathologyReport(
+                    reportHash = "ID 1",
+                    lab = "NKI-AvL",
+                    diagnosis = DIAGNOSIS,
+                    tissueDate = defaultDate,
+                    authorisationDate = defaultDate,
+                    report = "rawPathologyReport"
+                ),
+                PathologyReport(
+                    reportHash = "ID 2",
                     tissueId = "tissueId",
                     lab = "lab",
+                    diagnosis = DIAGNOSIS,
                     reportDate = defaultDate,
+                    tissueDate = defaultDate,
+                    authorisationDate = defaultDate,
                     report = "raw pathology report"
                 )
             )

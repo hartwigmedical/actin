@@ -9,18 +9,13 @@ class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
 
     override fun extract(input: List<IhcTest>): List<IhcExtraction> {
         return input.groupBy { it.measureDate }
-            .map { (date, tests) ->
-                IhcExtraction(
-                    date,
-                    ihcFusionGenes(tests, "Positive"),
-                    ihcFusionGenes(tests, "Negative")
-                )
-            }.filter { it.fusionPositiveGenes.isNotEmpty() || it.fusionNegativeGenes.isNotEmpty() }
+            .map { (date, tests) -> IhcExtraction(date, ihcFusionGenes(tests, "Positive"), ihcFusionGenes(tests, "Negative")) }
+            .filter { it.fusionPositiveGenes.isNotEmpty() || it.fusionNegativeGenes.isNotEmpty() }
     }
 
     private fun ihcFusionGenes(ihcTests: List<IhcTest>, scoreText: String): Set<String> {
         return ihcTests.filter { it.item in IHC_FUSION_GENES && it.scoreText == scoreText }
-            .mapNotNull { it.item }
+            .map { it.item }
             .toSet()
     }
 }

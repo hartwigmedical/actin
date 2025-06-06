@@ -17,16 +17,20 @@ class StandardIhcTestExtractor(
         return feedPatientRecord.ihcTests
             .asSequence()
             .mapNotNull { test ->
-                val curations = listOf(test.name, "${feedPatientRecord.patientDetails.patientId} | ${test.name}").map { curationString ->
-                    curate(curationString, feedPatientRecord.patientDetails.patientId, test.startDate)
-                }
-                if (curations.any { it.config()?.ignore == true }) {
-                    null
-                } else {
-                    curations.firstOrNull { it.config() != null } ?: curations.firstOrNull { it.extractionEvaluation.warnings.isNotEmpty() }
-                }
+                listOf(test.name, "${feedPatientRecord.patientDetails.patientId} | ${test.name}")
+                    .map { curationString -> curate(curationString, feedPatientRecord.patientDetails.patientId, test.startDate) }
+                    .takeUnless { it.any { curation -> curation.config()?.ignore == true } }
+                    ?.let { curations ->
+                        curations.firstOrNull { it.config() != null }
+                            ?: curations.firstOrNull { it.extractionEvaluation.warnings.isNotEmpty() }
+                    }
+                    ?.let { curation ->
+                        ExtractionResult(
+                            curation.configs.mapNotNull { config -> config.curated?.copy(reportHash = test.reportHash) },
+                            curation.extractionEvaluation
+                        )
+                    }
             }
-            .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }

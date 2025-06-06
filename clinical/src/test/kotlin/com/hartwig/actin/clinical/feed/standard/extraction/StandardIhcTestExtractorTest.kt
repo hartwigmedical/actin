@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedIhcResult
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -18,6 +18,7 @@ private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private const val MICROSCOPIE_LINE = "TTF1 negatief"
 
 private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
+private val PALGA_REPORT_HASH = "ID 1"
 private val IHC_TEST = IhcTest(
     item = "HER2",
     measure = "negative",
@@ -34,7 +35,7 @@ private val IHC_TEST_EGFR = IhcTest(
 )
 
 private val EHR_PATIENT_RECORD_WITH_IHC_TEST =
-    FEED_PATIENT_RECORD.copy(ihcTests = listOf(DatedEntry(IHC_LINE, UNUSED_DATE)))
+    FEED_PATIENT_RECORD.copy(ihcTests = listOf(FeedIhcResult(IHC_LINE, UNUSED_DATE)))
 
 class StandardIhcTestExtractorTest {
 
@@ -75,24 +76,24 @@ class StandardIhcTestExtractorTest {
         )
 
         val result = extractor.extract(
-            FEED_PATIENT_RECORD.copy(ihcTests = listOf(DatedEntry(MICROSCOPIE_LINE, UNUSED_DATE)))
+            FEED_PATIENT_RECORD.copy(ihcTests = listOf(FeedIhcResult(MICROSCOPIE_LINE, UNUSED_DATE)))
         )
         assertThat(result.extracted).containsExactly(IHC_TEST_EGFR, anotherMolecularTest)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
-    fun `Should extract and curate IHC lines from ihc result`() {
+    fun `Should extract and curate IHC lines from ihc result and propagate report hash if available`() {
         every { molecularTestCuration.find(IHC_LINE) } returns setOf(IhcTestConfig(input = IHC_LINE, curated = IHC_TEST))
         val uncuratedInput = "uncurated"
         val result = extractor.extract(
             FEED_PATIENT_RECORD.copy(
                 ihcTests = listOf(
-                    DatedEntry(IHC_LINE, UNUSED_DATE), DatedEntry(uncuratedInput, UNUSED_DATE)
+                    FeedIhcResult(IHC_LINE, UNUSED_DATE, reportHash = PALGA_REPORT_HASH), FeedIhcResult(uncuratedInput, UNUSED_DATE)
                 )
             )
         )
-        assertThat(result.extracted).containsExactly(IHC_TEST)
+        assertThat(result.extracted).containsExactly(IHC_TEST.copy(reportHash = PALGA_REPORT_HASH))
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 patientId = HASHED_ID_IN_BASE64,
@@ -108,7 +109,7 @@ class StandardIhcTestExtractorTest {
         val firstIhc = "first IHC"
         val secondIhc = "second IHC"
         val record = FEED_PATIENT_RECORD.copy(
-            ihcTests = listOf(DatedEntry(firstIhc, UNUSED_DATE), DatedEntry(secondIhc, UNUSED_DATE))
+            ihcTests = listOf(FeedIhcResult(firstIhc, UNUSED_DATE), FeedIhcResult(secondIhc, UNUSED_DATE))
         )
 
         val inputWithPatientAndIhc = "$HASHED_ID_IN_BASE64 | $firstIhc"

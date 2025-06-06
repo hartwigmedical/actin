@@ -16,7 +16,8 @@ class PathologyReportsExtractor : StandardDataExtractor<List<PathologyReport>> {
                     tissueDate = it.tissueDate,
                     authorisationDate = it.authorisationDate,
                     reportDate = it.reportDate,
-                    report = it.rawPathologyReport
+                    report = it.rawPathologyReport,
+                    reportHash = it.reportHash
                 )
             } ?: emptyList(), CurationExtractionEvaluation()
         )

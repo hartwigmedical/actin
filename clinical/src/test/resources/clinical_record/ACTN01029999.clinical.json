@@ -240,7 +240,8 @@
       "scoreValuePrefix": null,
       "scoreValue": 3.0,
       "scoreValueUnit": "+",
-      "impliesPotentialIndeterminateStatus": false
+      "impliesPotentialIndeterminateStatus": false,
+      "reportHash": null
     },
     {
       "item": "PD-L1",
@@ -250,7 +251,8 @@
       "scoreValuePrefix": null,
       "scoreValue": null,
       "scoreValueUnit": null,
-      "impliesPotentialIndeterminateStatus": false
+      "impliesPotentialIndeterminateStatus": false,
+      "reportHash": null
     }
   ],
   "sequencingTests": [],

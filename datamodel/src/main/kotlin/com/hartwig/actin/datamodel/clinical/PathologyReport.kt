@@ -9,5 +9,6 @@ data class PathologyReport(
     val tissueDate: LocalDate? = null,
     val authorisationDate: LocalDate? = null,
     val reportDate: LocalDate? = null,
-    val report: String
+    val report: String,
+    val reportHash: String? = null
 )
