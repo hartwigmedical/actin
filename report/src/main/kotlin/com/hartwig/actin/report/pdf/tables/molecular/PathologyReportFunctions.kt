@@ -88,11 +88,13 @@ object PathologyReportFunctions {
                 val firstReportKeys = listOfNotNull(date.toString(), firstReport.reportHash)
                 listOf(firstReport to resultsForKeys(orangeResultsByKey, molecularTestsByKey, ihcTestsByKey, firstReportKeys)) +
                         reports.drop(1).map { report ->
-                            report to (report.reportHash?.let { resultsForKeys(orangeResultsByKey, molecularTestsByKey, ihcTestsByKey, listOf(it)) }
-                                ?: MolecularTestGroup(emptyList(), emptyList(), emptyList()))
+                            Pair(
+                                report,
+                                report.reportHash?.let { reportHash ->
+                                    resultsForKeys(orangeResultsByKey, molecularTestsByKey, ihcTestsByKey, listOf(reportHash))
+                                } ?: MolecularTestGroup(emptyList(), emptyList(), emptyList()))
                         }
-            }
-                .toMap()
+            }.toMap()
 
         val unmatchedEntry = MolecularTestGroup(
             orangeResultsByKey[null].orEmpty(), molecularTestsByKey[null].orEmpty(), ihcTestsByKey[null].orEmpty()
