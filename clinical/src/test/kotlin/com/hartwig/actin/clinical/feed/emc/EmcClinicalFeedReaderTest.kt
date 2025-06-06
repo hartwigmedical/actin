@@ -76,7 +76,7 @@ class EmcClinicalFeedReaderTest {
             assertThat(entry.classDisplay).isEqualTo("surgery")
             assertThat(entry.periodStart).isEqualTo(LocalDate.of(2020, 8, 28))
             assertThat(entry.periodEnd).isEqualTo(LocalDate.of(2020, 8, 28))
-            assertThat(entry.codeCodingDisplayOriginal).isEqualTo("diagnostics stomach")
+            assertThat(entry.codeCodingDisplayOriginal).isEqualTo("debulking stomach")
             assertThat(entry.encounterStatus).isEqualTo("planned")
             assertThat(entry.procedureStatus).isEqualTo("planned")
             assertThat(entries[1].codeCodingDisplayOriginal).isEqualTo("Geen ingreep- operatie uitgesteld")

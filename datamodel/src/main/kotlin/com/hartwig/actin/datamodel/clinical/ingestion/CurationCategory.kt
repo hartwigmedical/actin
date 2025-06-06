@@ -25,5 +25,5 @@ enum class CurationCategory(val categoryName: String) {
     PRIOR_PRIMARY("Prior Primary"),
     TOXICITY("Toxicity"),
     TOXICITY_TRANSLATION("Toxicity Translation"),
-    SURGERY_NAME("Surgery Name")
+    SURGERY("Surgery")
 }
