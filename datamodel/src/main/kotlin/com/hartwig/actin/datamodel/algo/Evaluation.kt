@@ -1,16 +1,37 @@
 package com.hartwig.actin.datamodel.algo
 
+interface EvaluationMessage {
+    fun combineBy(): String
+    fun combine(other: EvaluationMessage): EvaluationMessage
+}
+
+data class StaticMessage(val staticMessage: String) : EvaluationMessage {
+
+    override fun combineBy(): String {
+        return staticMessage
+    }
+
+    override fun combine(other: EvaluationMessage): EvaluationMessage {
+        return this
+    }
+}
+
 data class Evaluation(
     val result: EvaluationResult,
     val recoverable: Boolean,
     val inclusionMolecularEvents: Set<String> = emptySet(),
     val exclusionMolecularEvents: Set<String> = emptySet(),
-    val passMessages: Set<String> = emptySet(),
-    val warnMessages: Set<String> = emptySet(),
-    val undeterminedMessages: Set<String> = emptySet(),
-    val failMessages: Set<String> = emptySet(),
+    val passMessages: Set<EvaluationMessage> = emptySet(),
+    val warnMessages: Set<EvaluationMessage> = emptySet(),
+    val undeterminedMessages: Set<EvaluationMessage> = emptySet(),
+    val failMessages: Set<EvaluationMessage> = emptySet(),
     val isMissingMolecularResultForEvaluation: Boolean = false
 ) {
+
+    fun passMessagesStrings() = passMessages.map { it.toString() }
+    fun warnMessagesStrings() = warnMessages.map { it.toString() }
+    fun undeterminedMessagesStrings() = undeterminedMessages.map { it.toString() }
+    fun failMessagesStrings() = failMessages.map { it.toString() }
 
     fun addMessagesAndEvents(other: Evaluation): Evaluation {
         return Evaluation(

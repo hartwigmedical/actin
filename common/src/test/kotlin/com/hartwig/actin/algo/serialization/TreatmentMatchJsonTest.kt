@@ -5,13 +5,14 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.File
 
 class TreatmentMatchJsonTest {
 
@@ -41,7 +42,7 @@ class TreatmentMatchJsonTest {
                         key to Evaluation(
                             result = EvaluationResult.PASS,
                             recoverable = false,
-                            passMessages = setOf("msg 2", "msg 1", "msg 3"),
+                            passMessages = setOf(StaticMessage("msg 2"), StaticMessage("msg 1"), StaticMessage("msg 3")),
                         )
                     ),
                     cohorts = emptyList(),

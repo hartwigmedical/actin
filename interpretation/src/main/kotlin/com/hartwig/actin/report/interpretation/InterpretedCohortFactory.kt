@@ -3,6 +3,8 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.CohortMetadata
@@ -112,17 +114,22 @@ object InterpretedCohortFactory {
         return evaluationMap.values.flatMap { evaluation ->
             when {
                 evaluation.result == EvaluationResult.FAIL && evaluation.recoverable ->
-                    evaluation.failMessages
+                    combineMessages(evaluation.failMessages)
 
                 evaluation.result == EvaluationResult.WARN ->
-                    evaluation.warnMessages
+                    combineMessages(evaluation.warnMessages)
 
                 evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable ->
-                    evaluation.undeterminedMessages
+                    combineMessages(evaluation.undeterminedMessages)
 
                 else -> emptySet()
             }
-        }.toSet()
+        }.map { it.toString() }.toSet()
+    }
+
+    private fun combineMessages(evaluations: Set<EvaluationMessage>): List<EvaluationMessage> {
+        return evaluations.groupBy { it.combineBy() }
+            .mapValues { it.value.fold(StaticMessage("") as EvaluationMessage) { i, r -> i.combine(r) } }.values.toList()
     }
 
     private fun <T> filteredMatches(
@@ -138,6 +145,7 @@ object InterpretedCohortFactory {
     private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {
         return evaluations.values.filter { it.result == EvaluationResult.FAIL && !it.recoverable }
             .flatMap(Evaluation::failMessages)
+            .map { it.toString() }
             .toSet()
     }
 }
