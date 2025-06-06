@@ -63,23 +63,22 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
         }
     }
 
-    private fun findExonSplicingVariants(molecular: MolecularTest, certainSplice: Boolean) =
-        molecular.drivers.variants.filter { variant ->
-            variant.isReportable && variant.gene == gene && variant.canonicalImpact.affectedExon != null
-                    && variant.canonicalImpact.affectedExon == exonToSkip
-                    && if (certainSplice) {
-                variant.canonicalImpact.codingEffect == CodingEffect.SPLICE
-            } else {
-                variant.canonicalImpact.isSpliceRegion == true
-            }
-        }
-            .map(Variant::event)
-            .toSet()
-
     private fun findExonSkippingFusions(molecular: MolecularTest) = molecular.drivers.fusions.filter { fusion ->
         fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.fusedExonUp == exonToSkip - 1
                 && fusion.fusedExonDown == exonToSkip + 1
     }
         .map(Fusion::event)
         .toSet()
+
+    private fun findExonSplicingVariants(molecular: MolecularTest, requireCertainty: Boolean) =
+        molecular.drivers.variants.filter { variant ->
+            variant.isReportable && variant.gene == gene && variant.canonicalImpact.affectedExon != null
+                    && variant.canonicalImpact.affectedExon == exonToSkip
+                    && isSplice(requireCertainty, variant.canonicalImpact.codingEffect, variant.canonicalImpact.isSpliceRegion)
+        }.map(Variant::event)
+            .toSet()
+
+    private fun isSplice(requireCertainty: Boolean, codingEffect: CodingEffect?, isSpliceRegion: Boolean?): Boolean {
+        return if (requireCertainty) codingEffect == CodingEffect.SPLICE else isSpliceRegion == true
+    }
 }

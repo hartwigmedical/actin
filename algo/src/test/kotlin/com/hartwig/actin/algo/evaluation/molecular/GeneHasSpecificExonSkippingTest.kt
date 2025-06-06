@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene_A"
@@ -88,7 +88,7 @@ class GeneHasSpecificExonSkippingTest {
         val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIAL_SPLICE_VARIANT))
 
         assertMolecularEvaluation(EvaluationResult.WARN, result)
-        Assertions.assertThat(result.warnMessages)
+        assertThat(result.warnMessages)
             .containsExactly("Potential gene_A exon 2 skipping: variant(s) c.potential detected in splice region of exon 2 although unknown relevance (not annotated with splice coding effect)")
     }
 
@@ -133,8 +133,8 @@ class GeneHasSpecificExonSkippingTest {
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )
         )
-        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessages)
             .containsExactly("Skipped exon 2 in gene gene_A undetermined (not tested for mutations or fusions)")
     }
 }
