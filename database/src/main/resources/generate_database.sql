@@ -352,7 +352,7 @@ CREATE TABLE `variant`
     `canonicalHgvsProteinImpact` varchar(50) NOT NULL,
     `canonicalAffectedCodon` int,
     `canonicalAffectedExon` int,
-    `canonicalIsSpliceRegion` BOOLEAN,
+    `canonicalInSpliceRegion` BOOLEAN,
     `canonicalEffects` varchar(250) NOT NULL,
     `canonicalCodingEffect` varchar(50),
     PRIMARY KEY (`id`)
@@ -376,7 +376,7 @@ CREATE TABLE `variantOtherImpact`
     `hgvsProteinImpact` varchar(50) NOT NULL,
     `affectedCodon` int,
     `affectedExon` int,
-    `isSpliceRegion` BOOLEAN NOT NULL,
+    `inSpliceRegion` BOOLEAN NOT NULL,
     `effects` varchar(250) NOT NULL,
     `codingEffect` varchar(50),
     PRIMARY KEY (`id`)

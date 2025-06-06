@@ -34,7 +34,7 @@ private val POTENTIAL_SPLICE_VARIANT =
     SPLICE_VARIANT.copy(
         event = "c.potential",
         canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
-            .copy(affectedExon = EXON_TO_SKIP, isSpliceRegion = true, codingEffect = CodingEffect.NONE)
+            .copy(affectedExon = EXON_TO_SKIP, inSpliceRegion = true, codingEffect = CodingEffect.NONE)
     )
 
 class GeneHasSpecificExonSkippingTest {

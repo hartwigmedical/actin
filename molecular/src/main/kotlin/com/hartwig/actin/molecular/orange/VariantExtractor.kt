@@ -154,7 +154,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
             hgvsProteinImpact = AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()),
             affectedCodon = purpleTranscriptImpact.affectedCodon(),
             affectedExon = purpleTranscriptImpact.affectedExon(),
-            isSpliceRegion = purpleTranscriptImpact.inSpliceRegion(),
+            inSpliceRegion = purpleTranscriptImpact.inSpliceRegion(),
             effects = toEffects(purpleTranscriptImpact.effects()),
             codingEffect = determineCodingEffect(purpleTranscriptImpact.codingEffect())
         )

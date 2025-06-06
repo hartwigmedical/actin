@@ -78,12 +78,12 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
                 requireCertainty,
                 variant.isReportable,
                 variant.canonicalImpact.codingEffect,
-                variant.canonicalImpact.isSpliceRegion
+                variant.canonicalImpact.inSpliceRegion
             )
         }.map(Variant::event)
             .toSet()
 
-    private fun isSplice(requireCertainty: Boolean, isReportable: Boolean, codingEffect: CodingEffect?, isSpliceRegion: Boolean?): Boolean {
-        return isSpliceRegion == true && (!requireCertainty) || (isReportable && codingEffect == CodingEffect.SPLICE)
+    private fun isSplice(requireCertainty: Boolean, isReportable: Boolean, codingEffect: CodingEffect?, inSpliceRegion: Boolean?): Boolean {
+        return inSpliceRegion == true && (!requireCertainty) || (isReportable && codingEffect == CodingEffect.SPLICE)
     }
 }

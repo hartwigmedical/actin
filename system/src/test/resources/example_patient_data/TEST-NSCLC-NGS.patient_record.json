@@ -537,7 +537,7 @@
                 "hgvsProteinImpact": "p.E545K",
                 "affectedCodon": 545,
                 "affectedExon": 9,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
