@@ -84,10 +84,11 @@ object PathologyReportFunctions {
 
         val matchedReports: Map<PathologyReport, MolecularTestGroup> =
             pathologyReports.orEmpty().groupBy { it.date }.entries.flatMap { (date, reports) ->
-                val firstReport = reports.first()
+                val sortedReports = reports.sortedBy(PathologyReport::report)
+                val firstReport = sortedReports.first()
                 val firstReportKeys = listOfNotNull(date.toString(), firstReport.reportHash)
                 listOf(firstReport to resultsForKeys(orangeResultsByKey, molecularTestsByKey, ihcTestsByKey, firstReportKeys)) +
-                        reports.drop(1).map { report ->
+                        sortedReports.drop(1).map { report ->
                             Pair(
                                 report,
                                 report.reportHash?.let { reportHash ->
