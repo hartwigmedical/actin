@@ -72,7 +72,7 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
 
     private fun findExonSplicingVariants(molecular: MolecularTest, requireCertainty: Boolean) =
         molecular.drivers.variants.filter { variant ->
-            variant.isReportable && variant.gene == gene && variant.canonicalImpact.affectedExon != null
+            variant.gene == gene && variant.canonicalImpact.affectedExon != null
                     && variant.canonicalImpact.affectedExon == exonToSkip
                     && isSplice(requireCertainty, variant.isReportable, variant.canonicalImpact.codingEffect, variant.canonicalImpact.isSpliceRegion)
         }.map(Variant::event)
