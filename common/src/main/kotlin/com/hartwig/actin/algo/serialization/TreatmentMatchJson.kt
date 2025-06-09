@@ -40,7 +40,10 @@ object TreatmentMatchJson {
     }
 
     fun toJson(match: TreatmentMatch): String {
-        return GsonSerializer.create().toJson(match)
+        val gsonBuilder = GsonSerializer.createBuilder()
+        val gson =
+            gsonBuilder.registerTypeHierarchyAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create())).create()
+        return gson.toJson(match)
     }
 
     fun fromJson(json: String): TreatmentMatch {
