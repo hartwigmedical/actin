@@ -15,7 +15,6 @@ import com.hartwig.actin.clinical.curation.config.ToxicityCuration
 import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
@@ -38,10 +37,12 @@ class ComorbidityExtractor(
 ) {
 
     fun extract(feedRecord: FeedPatientRecord): ExtractionResult<Pair<List<Comorbidity>, ClinicalStatus>> {
-
         val patientId = feedRecord.patientDetails.patientId
 
-        val infectionStatus = QuestionnaireCuration.toInfectionStatus(feedRecord.infectionStatus).curated
+        val infectionStatus = feedRecord.infectionStatus?.let {
+            InfectionStatus(it.hasActiveInfection, it.description)
+        }
+
         val infectionExtraction = extractInfection(patientId, infectionStatus)
 
         val comorbidityExtraction = listOfNotNull(
@@ -58,7 +59,7 @@ class ComorbidityExtractor(
             },
             extractToxicities(patientId, feedRecord.toxicities),
             extractIntolerances(patientId, feedRecord.allergies),
-            QuestionnaireCuration.toEcg(feedRecord.ecg).curated?.let { extractEcg(patientId, it) },
+            feedRecord.ecg?.let { extractEcg(patientId, it) },
             listOf(infectionExtraction)
         )
             .flatten().fold(
@@ -212,7 +213,8 @@ class ComorbidityExtractor(
         }
     }
 
-    private fun extractEcg(patientId: String, rawEcg: Ecg): List<ExtractionResult<List<Ecg>>> {
+    private fun extractEcg(patientId: String, input: String): List<ExtractionResult<List<Ecg>>> {
+        val rawEcg = Ecg(name = input, jtcMeasure = null, qtcfMeasure = null)
         val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg.copy(name = null), true) }
         val ecg = if (curationResponse?.config() == null) rawEcg else {
             curationResponse.config()?.takeUnless { it.ignore }?.curated?.let { curated ->

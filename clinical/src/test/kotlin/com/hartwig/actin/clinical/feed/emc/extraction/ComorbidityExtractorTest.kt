@@ -22,6 +22,7 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.feed.datamodel.DatedEntry
 import com.hartwig.feed.datamodel.FeedAllergy
+import com.hartwig.feed.datamodel.FeedInfectionStatus
 import com.hartwig.feed.datamodel.FeedPatientDetail
 import com.hartwig.feed.datamodel.FeedPatientRecord
 import com.hartwig.feed.datamodel.FeedToxicity
@@ -420,7 +421,9 @@ class ComorbidityExtractorTest {
             ),
             toxicityTranslationDatabase
         )
-        val (extraction, evaluation) = extractor.extract(feedRecord.copy(infectionStatus = infectionInput))
+        val (extraction, evaluation) = extractor.extract(
+            feedRecord.copy(infectionStatus = FeedInfectionStatus(true, infectionInput))
+        )
         assertThat(extraction.first).containsExactly(OtherCondition(curatedName, icdCodes))
         val expectedClinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(true, curatedName), hasComplications = null)
         assertThat(extraction.second).isEqualTo(expectedClinicalStatus)
