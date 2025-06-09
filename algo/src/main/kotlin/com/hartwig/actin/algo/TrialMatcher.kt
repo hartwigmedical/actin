@@ -50,7 +50,7 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
         }
     }
 
-    private fun combineMessages(evaluation: Evaluation): Evaluation {
+    fun combineMessages(evaluation: Evaluation): Evaluation {
         return evaluation.copy(
             passMessages = combineMessages(evaluation.passMessages),
             warnMessages = combineMessages(evaluation.warnMessages),

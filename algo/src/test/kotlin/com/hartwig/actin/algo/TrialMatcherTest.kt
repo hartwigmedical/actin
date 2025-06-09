@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.trial.Eligibility
@@ -55,6 +56,15 @@ class TrialMatcherTest {
     fun `Should return the same number of cohorts`() {
         val matches = matcher.determineEligibility(patient, listOf(trial))
         assertThat(matches.sumOf { it.cohorts.size + it.nonEvaluableCohorts.size }).isEqualTo(trial.cohorts.size)
+    }
+
+    @Test
+    fun `Should combine messages in evaluation`() {
+        val evaluation = matcher.combineMessages(
+            EvaluationTestFactory.withResult(EvaluationResult.FAIL)
+                .copy(passMessages = setOf(StaticMessage("test1"), StaticMessage("test2")))
+        )
+        assertThat(evaluation.passMessagesStrings()).containsExactlyInAnyOrder("test1", "test2")
     }
 
     companion object {

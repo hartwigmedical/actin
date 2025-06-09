@@ -115,10 +115,10 @@ object InterpretedCohortFactory {
                     evaluation.failMessagesStrings()
 
                 evaluation.result == EvaluationResult.WARN ->
-                    evaluation.failMessagesStrings()
+                    evaluation.warnMessagesStrings()
 
                 evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable ->
-                    evaluation.failMessagesStrings()
+                    evaluation.undeterminedMessagesStrings()
 
                 else -> emptySet()
             }
