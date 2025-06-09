@@ -300,7 +300,7 @@ class GeneIsAmplifiedTest {
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(result.undeterminedMessages).containsExactly("Amplification of gene gene A undetermined (not tested for amplifications)")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Amplification of gene gene A undetermined (not tested for amplifications)")
     }
 
     private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {

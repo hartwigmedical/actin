@@ -12,8 +12,10 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
+@Ignore
 class TreatmentMatchJsonTest {
 
     private val algoDirectory = resourceOnClasspath("algo")

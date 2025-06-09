@@ -33,7 +33,7 @@ class HasHeterozygousDPYDDeficiencyTest {
     fun `Should evaluate to undetermined when molecular record not available`() {
         val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessages).containsExactly("No molecular data to determine heterozygous DPYD deficiency")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No molecular data to determine heterozygous DPYD deficiency")
     }
 
     @Test

@@ -34,7 +34,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).contains("gene a and gene c is amplified therefore possible overexpression in RNA")
+        assertThat(evaluation.warnMessagesStrings()).contains("gene a and gene c is amplified therefore possible overexpression in RNA")
     }
 
     @Test
@@ -43,7 +43,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages)
+        assertThat(evaluation.undeterminedMessagesStrings())
             .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
     }
 

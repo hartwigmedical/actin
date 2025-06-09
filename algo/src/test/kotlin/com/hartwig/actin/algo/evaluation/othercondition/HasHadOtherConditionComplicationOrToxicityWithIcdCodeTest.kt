@@ -40,7 +40,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should fail when no matching ICD code in other conditions, complications or toxicities`() {
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages)
+        assertThat(evaluation.failMessagesStrings())
             .containsOnly("Has no other condition belonging to category $diseaseDescription")
     }
 
@@ -139,6 +139,6 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
 
     private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String) {
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsOnly("Has history of $matchedNames")
+        assertThat(evaluation.passMessagesStrings()).containsOnly("Has history of $matchedNames")
     }
 }

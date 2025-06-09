@@ -66,7 +66,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         )
         val evaluation = functionOnlySystemic.evaluate(priorCancerTreatment)
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly("Has not received systemic anti-cancer therapy within $MONTHS_AGO months")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Has not received systemic anti-cancer therapy within $MONTHS_AGO months")
     }
 
     @Test
@@ -86,7 +86,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             )
         )
         evaluateFunctions(EvaluationResult.UNDETERMINED, priorCancerTreatment)
-        assertThat(function.evaluate(priorCancerTreatment).undeterminedMessages).containsExactly(
+        assertThat(function.evaluate(priorCancerTreatment).undeterminedMessagesStrings()).containsExactly(
             "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
     }
@@ -119,7 +119,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             )
         )
         evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
-        assertThat(function.evaluate(priorCancerTreatment).passMessages).containsExactly(
+        assertThat(function.evaluate(priorCancerTreatment).passMessagesStrings()).containsExactly(
             "Received anti-cancer therapy within the last $MONTHS_AGO months"
         )
     }

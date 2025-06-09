@@ -6,13 +6,17 @@ interface EvaluationMessage {
 }
 
 data class StaticMessage(val staticMessage: String) : EvaluationMessage {
-
+    
     override fun combineBy(): String {
         return staticMessage
     }
 
     override fun combine(other: EvaluationMessage): EvaluationMessage {
         return this
+    }
+
+    override fun toString(): String {
+        return staticMessage
     }
 }
 
@@ -28,10 +32,10 @@ data class Evaluation(
     val isMissingMolecularResultForEvaluation: Boolean = false
 ) {
 
-    fun passMessagesStrings() = passMessages.map { it.toString() }
-    fun warnMessagesStrings() = warnMessages.map { it.toString() }
-    fun undeterminedMessagesStrings() = undeterminedMessages.map { it.toString() }
-    fun failMessagesStrings() = failMessages.map { it.toString() }
+    fun passMessagesStrings() = passMessages.map { it.toString() }.toSet()
+    fun warnMessagesStrings() = warnMessages.map { it.toString() }.toSet()
+    fun undeterminedMessagesStrings() = undeterminedMessages.map { it.toString() }.toSet()
+    fun failMessagesStrings() = failMessages.map { it.toString() }.toSet()
 
     fun addMessagesAndEvents(other: Evaluation): Evaluation {
         return Evaluation(

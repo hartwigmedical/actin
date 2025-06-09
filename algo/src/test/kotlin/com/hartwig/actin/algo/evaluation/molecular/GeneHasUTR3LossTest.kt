@@ -61,7 +61,7 @@ class GeneHasUTR3LossTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages).containsExactly("3' UTR loss in gene gene A undetermined (not tested for mutations)")
+        Assertions.assertThat(result.undeterminedMessagesStrings()).containsExactly("3' UTR loss in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun patientWithThreePrimeUtrEffect(isReportable: Boolean, isCancerAssociatedVariant: Boolean): PatientRecord {

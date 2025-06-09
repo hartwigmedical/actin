@@ -20,6 +20,6 @@ class DerivedTumorStageEvaluationTest {
             ), EvaluationFactory::undetermined
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsOnly("Undetermined message")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsOnly("Undetermined message")
     }
 }

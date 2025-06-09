@@ -12,14 +12,14 @@ class TumorMetastasisEvaluatorTest {
     fun `Should be undetermined when boolean is null`() {
         val undetermined = TumorMetastasisEvaluator.evaluate(null, null, METASTASIS_TYPE)
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
-        assertThat(undetermined.undeterminedMessages).contains("Undetermined if patient has bone metastases (missing lesion data)")
+        assertThat(undetermined.undeterminedMessagesStrings()).contains("Undetermined if patient has bone metastases (missing lesion data)")
     }
 
     @Test
     fun `Should pass when boolean is true`() {
         val pass = TumorMetastasisEvaluator.evaluate(true, false, METASTASIS_TYPE)
         assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passMessages).contains("Has bone metastases")
+        assertThat(pass.passMessagesStrings()).contains("Has bone metastases")
     }
 
     @Test
@@ -28,7 +28,7 @@ class TumorMetastasisEvaluatorTest {
             val warn = TumorMetastasisEvaluator.evaluate(hasKnownLesion, true, METASTASIS_TYPE)
             val message = "Has suspected bone metastases and not yet confirmed"
             assertEvaluation(EvaluationResult.WARN, warn)
-            listOf(warn.warnMessages).forEach {
+            listOf(warn.warnMessagesStrings()).forEach {
                 assertThat(it).contains(message)
             }
         }
@@ -38,6 +38,6 @@ class TumorMetastasisEvaluatorTest {
     fun `Should fail when boolean is false`() {
         val fail = TumorMetastasisEvaluator.evaluate(false, false, METASTASIS_TYPE)
         assertEvaluation(EvaluationResult.FAIL, fail)
-        assertThat(fail.failMessages).contains("No bone metastases")
+        assertThat(fail.failMessagesStrings()).contains("No bone metastases")
     }
 }

@@ -354,7 +354,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(result.undeterminedMessages).containsExactly("Mutation in exon range 1 to 2 of type insertion in gene gene A undetermined (not tested for at least mutations)")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Mutation in exon range 1 to 2 of type insertion in gene gene A undetermined (not tested for at least mutations)")
     }
 
     @Test
@@ -365,7 +365,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(result.undeterminedMessages).containsExactly("Mutation in exon 1 of type insertion in gene gene A undetermined (not tested for at least mutations)")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Mutation in exon 1 of type insertion in gene gene A undetermined (not tested for at least mutations)")
     }
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = affectedExon)

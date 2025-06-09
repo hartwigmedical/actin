@@ -57,7 +57,7 @@ class HasRecentlyReceivedRadiotherapyTest {
         val rightCategoryRecentYear = radiotherapy(YEAR)
         val evaluation = function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYear))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages)
+        assertThat(evaluation.passMessagesStrings())
             .containsExactly("Has recently received radiotherapy - pay attention to washout period")
     }
 
