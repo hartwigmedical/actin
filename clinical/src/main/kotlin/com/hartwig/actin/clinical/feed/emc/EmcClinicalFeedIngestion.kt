@@ -11,19 +11,19 @@ import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.FeedModelJsonUtil.feedModelMapper
 import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
 import com.hartwig.actin.clinical.feed.emc.extraction.BloodTransfusionsExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.BodyWeightExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.ComorbidityExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.IhcTestsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.OncologicalHistoryExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.PatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.PriorPrimaryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.SequencingTestExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.VitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.PathologyReportsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
@@ -52,9 +52,9 @@ class EmcClinicalFeedIngestion(
     private val medicationExtractor: MedicationExtractor,
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
     private val surgeryExtractor: SurgeryExtractor,
-    private val bodyWeightExtractor: BodyWeightExtractor,
+    private val bodyWeightExtractor: StandardBodyWeightExtractor,
     private val vitalFunctionsExtractor: VitalFunctionsExtractor,
-    private val patientDetailsExtractor: PatientDetailsExtractor,
+    private val patientDetailsExtractor: StandardPatientDetailsExtractor,
     private val pathologyReportsExtractor: PathologyReportsExtractor,
 
     ) : ClinicalFeedIngestion {
@@ -206,9 +206,9 @@ class EmcClinicalFeedIngestion(
                 ),
                 bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
                 surgeryExtractor = SurgeryExtractor.create(curationDatabaseContext),
-                bodyWeightExtractor = BodyWeightExtractor(),
+                bodyWeightExtractor = StandardBodyWeightExtractor(),
                 vitalFunctionsExtractor = VitalFunctionsExtractor(),
-                patientDetailsExtractor = PatientDetailsExtractor(),
+                patientDetailsExtractor = StandardPatientDetailsExtractor(),
                 pathologyReportsExtractor = PathologyReportsExtractor(),
             )
         }

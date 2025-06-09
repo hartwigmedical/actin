@@ -2,26 +2,23 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions.parseGender
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.feed.datamodel.FeedPatientRecord
-
-private enum class ProvidedGender {
-    MALE,
-    FEMALE,
-    OTHER
-}
 
 class StandardPatientDetailsExtractor : StandardDataExtractor<PatientDetails> {
     override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<PatientDetails> {
         return ExtractionResult(
-            PatientDetails(
-                gender = Gender.valueOf(enumeratedInput<ProvidedGender>(feedPatientRecord.patientDetails.gender).toString()),
-                birthYear = feedPatientRecord.patientDetails.birthYear,
-                registrationDate = feedPatientRecord.patientDetails.registrationDate,
-                hasHartwigSequencing = feedPatientRecord.patientDetails.hartwigMolecularDataExpected ?: false,
-                sourceId = feedPatientRecord.patientDetails.sourceId
-            ), CurationExtractionEvaluation()
+            with(feedPatientRecord.patientDetails) {
+                PatientDetails(
+                    gender = parseGender(gender),
+                    birthYear = birthYear,
+                    registrationDate = registrationDate,
+                    hasHartwigSequencing = feedPatientRecord.patientDetails.hartwigMolecularDataExpected ?: false,
+                    questionnaireDate = questionnaireDate,
+                    sourceId = sourceId
+                )
+            }, CurationExtractionEvaluation()
         )
     }
 }

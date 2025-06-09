@@ -81,7 +81,7 @@
     "gender": "male",
     "registrationDate": "2020-07-13",
     "patientId": "ACTN01029999",
-    "hartwigMolecularDataExpected": null,
+    "hartwigMolecularDataExpected": true,
     "questionnaireDate": "2021-08-16",
     "sourceId": null,
     "country": null,

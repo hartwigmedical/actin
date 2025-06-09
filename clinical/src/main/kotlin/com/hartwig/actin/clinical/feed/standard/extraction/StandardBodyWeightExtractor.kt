@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.emc.extraction.BodyWeightExtractor.Companion.BODY_WEIGHT_EXPECTED_UNIT
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
@@ -13,20 +12,21 @@ class StandardBodyWeightExtractor : StandardDataExtractor<List<BodyWeight>> {
             feedPatientRecord.measurements
                 .filter {
                     enumeratedInput<MeasurementCategory>(it.category) == MeasurementCategory.BODY_WEIGHT
-                }.map {
+                }.filter { it.value > 0 }.map { meas ->
                     BodyWeight(
-                        value = it.value,
-                        date = it.date,
-                        unit =
-                            if (enumeratedInput<MeasurementUnit>(it.unit) == MeasurementUnit.KILOGRAMS) "Kilograms"
-                            else
-                                throw IllegalArgumentException(
-                                    "Unit of body weight is not Kilograms"
-                                ),
-                        valid = it.value in 20.0..250.0
-                                && BODY_WEIGHT_EXPECTED_UNIT.any { expectedUnit -> expectedUnit.equals(it.unit, ignoreCase = true) }
+                        value = meas.value,
+                        date = meas.date,
+                        unit = "kilograms".takeIf { meas.unit.lowercase() in BODY_WEIGHT_EXPECTED_UNIT }
+                            ?: throw IllegalArgumentException("Unit of body weight is not Kilograms"),
+                        valid = meas.value in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
                     )
                 }, CurationExtractionEvaluation()
         )
+    }
+
+    companion object {
+        internal val BODY_WEIGHT_EXPECTED_UNIT = listOf("kilogram", "kilograms")
+        const val BODY_WEIGHT_MIN = 20.0
+        const val BODY_WEIGHT_MAX = 300.0
     }
 }
