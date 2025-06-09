@@ -3,8 +3,6 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.EvaluationMessage
-import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.CohortMetadata
@@ -114,22 +112,17 @@ object InterpretedCohortFactory {
         return evaluationMap.values.flatMap { evaluation ->
             when {
                 evaluation.result == EvaluationResult.FAIL && evaluation.recoverable ->
-                    combineMessages(evaluation.failMessages)
+                    evaluation.failMessagesStrings()
 
                 evaluation.result == EvaluationResult.WARN ->
-                    combineMessages(evaluation.warnMessages)
+                    evaluation.failMessagesStrings()
 
                 evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable ->
-                    combineMessages(evaluation.undeterminedMessages)
+                    evaluation.failMessagesStrings()
 
                 else -> emptySet()
             }
-        }.map { it.toString() }.toSet()
-    }
-
-    private fun combineMessages(evaluations: Set<EvaluationMessage>): List<EvaluationMessage> {
-        return evaluations.groupBy { it.combineBy() }
-            .mapValues { it.value.fold(StaticMessage("") as EvaluationMessage) { i, r -> i.combine(r) } }.values.toList()
+        }.toSet()
     }
 
     private fun <T> filteredMatches(

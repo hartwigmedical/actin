@@ -40,7 +40,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "staticMessage": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],

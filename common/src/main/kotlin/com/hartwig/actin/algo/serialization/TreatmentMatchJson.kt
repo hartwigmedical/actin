@@ -1,12 +1,8 @@
 package com.hartwig.actin.algo.serialization
 
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
 import com.hartwig.actin.clinical.serialization.TreatmentAdapter
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
-import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.CriterionReference
@@ -14,12 +10,12 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.CriterionReferenceDeserializer
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
+import com.hartwig.actin.util.json.EvaluationMessageAdapter
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonSerializer
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
-import java.lang.reflect.Type
 import java.nio.file.Files
 import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
@@ -48,16 +44,13 @@ object TreatmentMatchJson {
     }
 
     fun fromJson(json: String): TreatmentMatch {
-        val gson = GsonBuilder()
+        val gsonBuilder = GsonBuilder()
+        val gson = gsonBuilder
             .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
             .registerTypeAdapter(CriterionReference::class.java, CriterionReferenceDeserializer())
             .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
-            .registerTypeAdapter(EvaluationMessage::class.java, object : JsonDeserializer<EvaluationMessage> {
-                override fun deserialize(p0: JsonElement, p1: Type?, p2: JsonDeserializationContext?): EvaluationMessage {
-                    return StaticMessage(p0.asString)
-                }
-            })
+            .registerTypeAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
             .create()
         return gson.fromJson(json, TreatmentMatch::class.java)
     }

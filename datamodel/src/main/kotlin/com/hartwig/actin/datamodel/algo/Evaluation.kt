@@ -5,8 +5,18 @@ interface EvaluationMessage {
     fun combine(other: EvaluationMessage): EvaluationMessage
 }
 
+class EmptyMessage() : EvaluationMessage {
+    override fun combineBy(): String {
+        throw UnsupportedOperationException()
+    }
+
+    override fun combine(other: EvaluationMessage): EvaluationMessage {
+        return other
+    }
+}
+
 data class StaticMessage(val staticMessage: String) : EvaluationMessage {
-    
+
     override fun combineBy(): String {
         return staticMessage
     }

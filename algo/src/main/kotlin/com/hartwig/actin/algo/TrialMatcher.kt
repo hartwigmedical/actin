@@ -6,7 +6,9 @@ import com.hartwig.actin.algo.sort.CohortMatchComparator
 import com.hartwig.actin.algo.sort.TrialMatchComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.algo.EmptyMessage
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
@@ -44,8 +46,22 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
 
     private fun evaluateEligibility(patient: PatientRecord, eligibility: List<Eligibility>): Map<Eligibility, Evaluation> {
         return eligibility.sortedWith(EligibilityComparator()).associateWith {
-            evaluationFunctionFactory.create(it.function).evaluate(patient)
+            combineMessages(evaluationFunctionFactory.create(it.function).evaluate(patient))
         }
+    }
+
+    private fun combineMessages(evaluation: Evaluation): Evaluation {
+        return evaluation.copy(
+            passMessages = combineMessages(evaluation.passMessages),
+            warnMessages = combineMessages(evaluation.warnMessages),
+            undeterminedMessages = combineMessages(evaluation.undeterminedMessages),
+            failMessages = combineMessages(evaluation.failMessages)
+        )
+    }
+
+    private fun combineMessages(evaluations: Set<EvaluationMessage>): Set<EvaluationMessage> {
+        return evaluations.groupBy { it.combineBy() }
+            .mapValues { it.value.fold(EmptyMessage() as EvaluationMessage) { i, r -> i.combine(r) } }.values.toSet()
     }
 
     private fun warnIfPreviouslyParticipatedInSameTrial(trial: Trial): Eligibility {
