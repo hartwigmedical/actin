@@ -8,27 +8,23 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class PriorPrimaryExtractor(
     private val priorPrimaryCuration: CurationDatabase<PriorPrimaryConfig>,
     private val treatmentHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>
 ) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorPrimary>> {
-        if (questionnaire == null) {
-            return ExtractionResult(emptyList(), CurationExtractionEvaluation())
-        }
+    fun extract(patientId: String, feedRecord: FeedPatientRecord): ExtractionResult<List<PriorPrimary>> {
         val curation = listOfNotNull(
-            questionnaire.otherOncologicalHistory,
-            questionnaire.secondaryPrimaries
+            feedRecord.treatmentHistory,
+            feedRecord.priorPrimaries
         )
             .asSequence()
             .flatten()
-            .map(CurationUtil::fullTrim)
+            .map { CurationUtil.fullTrim(it.name) }
             .map {
                 CurationResponse.createFromConfigs(
                     priorPrimaryCuration.find(it),

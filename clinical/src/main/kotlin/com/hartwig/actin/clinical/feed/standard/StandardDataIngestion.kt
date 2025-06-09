@@ -1,9 +1,5 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
@@ -11,6 +7,7 @@ import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
+import com.hartwig.actin.clinical.feed.FeedModelJsonUtil.feedModelMapper
 import com.hartwig.actin.clinical.feed.curationResultsFromWarnings
 import com.hartwig.actin.clinical.feed.standard.extraction.PathologyReportsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
@@ -59,11 +56,6 @@ class StandardDataIngestion(
     private val sequencingTestExtractor: StandardSequencingTestExtractor,
     private val pathologyReportsExtractor: PathologyReportsExtractor
 ) : ClinicalFeedIngestion {
-    private val mapper = ObjectMapper().apply {
-        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        registerModule(JavaTimeModule())
-        registerModule(KotlinModule.Builder().build())
-    }
 
     override fun ingest(): List<Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation>> {
         return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }
@@ -86,7 +78,7 @@ class StandardDataIngestion(
     }
 
     private fun recordAndEvaluationFromPath(file: Path): Pair<ClinicalRecord, CurationExtractionEvaluation> {
-        val ehrPatientRecord = mapper.readValue(Files.readString(file), FeedPatientRecord::class.java)
+        val ehrPatientRecord = feedModelMapper.readValue(Files.readString(file), FeedPatientRecord::class.java)
 
         val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
         val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)

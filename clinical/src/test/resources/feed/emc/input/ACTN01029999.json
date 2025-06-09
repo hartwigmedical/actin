@@ -1,0 +1,219 @@
+{
+  "allergies": [
+    {
+      "name": "SIMVASTATINE",
+      "startDate": "2014-04-21",
+      "endDate": null,
+      "severity": "low",
+      "clinicalStatus": "active",
+      "verificationStatus": "confirmed",
+      "type": "allergy"
+    }
+  ],
+  "bloodTransfusions": [
+    {
+      "name": "Thrombocytenconcentraat",
+      "evaluationDate": "2021-12-17"
+    }
+  ],
+  "complications": [
+    {
+      "name": "vomit",
+      "startDate": "2021-08-16",
+      "endDate": null,
+      "evaluationDate": null
+    }
+  ],
+  "labValues": [
+    {
+      "date": "2019-06-27",
+      "measure": "ACTH",
+      "measureCode": "AC",
+      "value": 5.5,
+      "unit": "10^9/L",
+      "refUpperBound": 10.0,
+      "refLowerBound": 3.5,
+      "comparator": ""
+    }
+  ],
+  "medications": [
+    {
+      "name": "19-0716 PEMBROLIZUMAB V/P INFOPL 25MG/ML FL 4ML",
+      "atcCode": "19-0716",
+      "atcCodeDisplay": "",
+      "startDate": "2019-06-07",
+      "endDate": "2019-06-07",
+      "dosage": {
+        "dosageMin": 200.0,
+        "dosageMax": 200.0,
+        "dosageUnit": "MILLIGRAM",
+        "frequency": 0.0,
+        "frequencyUnit": "",
+        "periodBetweenValue": 0.0,
+        "periodBetweenUnit": "",
+        "ifNeeded": false
+      },
+      "dosageInstruction": "200 milligram inlooptijd: 30 minuten, via 0,2 um filter",
+      "administrationRoute": "ORAAL",
+      "isTrial": true,
+      "isSelfCare": false,
+      "status": ""
+    }
+  ],
+  "sequencingTests": [
+  ],
+  "ihcTests": [
+    {
+      "name": "ERBB2 3+",
+      "startDate": "2021-08-16",
+      "endDate": null,
+      "evaluationDate": null
+    },
+    {
+      "name": "PD-L1: Positive",
+      "startDate": "2021-08-16",
+      "endDate": null,
+      "evaluationDate": null
+    }
+  ],
+  "patientDetails": {
+    "birthYear": 1953,
+    "gender": "male",
+    "registrationDate": "2020-07-13",
+    "patientId": "ACTN01029999",
+    "hartwigMolecularDataExpected": null,
+    "questionnaireDate": "2021-08-16",
+    "sourceId": null,
+    "country": null,
+    "deceasedDate": null
+  },
+  "otherConditions": [
+    {
+      "name": "diabetes",
+      "startDate": "2021-08-16",
+      "endDate": null,
+      "evaluationDate": null
+    }
+  ],
+  "surgeries": [
+    {
+      "name": "diagnostics stomach",
+      "endDate": "2020-08-28",
+      "status": "planned"
+    },
+    {
+      "name": "Geen ingreep- operatie uitgesteld",
+      "endDate": "2020-08-30",
+      "status": "planned"
+    }
+  ],
+  "toxicities": [
+    {
+      "name": "Nausea",
+      "evaluatedDate": "2021-06-06",
+      "grade": 0,
+      "endDate": null,
+      "source": "EHR",
+      "startDate": "2021-06-06"
+    },
+    {
+      "name": "Pain",
+      "evaluatedDate": "2021-08-08",
+      "grade": 0,
+      "endDate": null,
+      "source": "EHR",
+      "startDate": "2021-08-08"
+    },
+    {
+      "name": "Nausea",
+      "evaluatedDate": "2021-08-16",
+      "grade": null,
+      "endDate": null,
+      "source": "Questionnaire",
+      "startDate": "2021-08-16"
+    }
+  ],
+  "treatmentHistory": [
+    {
+      "name": "cisplatin",
+      "startDate": "2021-08-16",
+      "endDate": null,
+      "evaluationDate": null
+    },
+    {
+      "name": "ablation",
+      "startDate": "2021-08-16",
+      "endDate": null,
+      "evaluationDate": null
+    }
+  ],
+  "tumorDetails": {
+    "tumorLocation": "ovary",
+    "tumorType": "serous",
+    "tumorGradeDifferentiation": null,
+    "stage": "4",
+    "tumorStageDate": null,
+    "measurableDisease": true,
+    "measurableDiseaseDate": null,
+    "hasBrainLesions": true,
+    "hasActiveBrainLesions": true,
+    "hasCnsLesions": false,
+    "hasActiveCnsLesions": null,
+    "hasBoneLesions": null,
+    "hasLiverLesions": false,
+    "lesions": null,
+    "pathology": [
+    ],
+    "radiology": [
+    ],
+    "biopsyLocation": "lymph node"
+  },
+  "priorPrimaries": [
+    {
+      "name": "Prostate carconoma | last treatment date: 2019",
+      "startDate": "2021-08-16",
+      "endDate": null,
+      "evaluationDate": null
+    }
+  ],
+  "measurements": [
+    {
+      "date": "2019-04-28T13:45:00",
+      "category": "NIBP",
+      "subcategory": "Systolic blood pressure",
+      "value": "NaN",
+      "unit": "mmHg"
+    },
+    {
+      "date": "2019-04-28T13:45:00",
+      "category": "NIBP",
+      "subcategory": "Systolic blood pressure",
+      "value": 108.0,
+      "unit": "mmHg"
+    },
+    {
+      "date": "2020-08-11T00:00:00",
+      "category": "BODY_WEIGHT",
+      "subcategory": null,
+      "value": 61.1,
+      "unit": "kilogram"
+    },
+    {
+      "date": "2020-08-20T08:43:00",
+      "category": "BODY_WEIGHT",
+      "subcategory": null,
+      "value": 58.9,
+      "unit": "kilogram"
+    }
+  ],
+  "whoEvaluations": [
+    {
+      "status": 0,
+      "evaluationDate": "2021-08-16"
+    }
+  ],
+  "asaScores": [
+  ],
+  "infectionStatus": null,
+  "ecg": "Sinus Tachycardia"
+}

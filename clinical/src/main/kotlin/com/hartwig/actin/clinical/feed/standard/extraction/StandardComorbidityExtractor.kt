@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
@@ -12,6 +11,7 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.feed.datamodel.FeedAllergy
 import com.hartwig.feed.datamodel.FeedComorbidity
 import com.hartwig.feed.datamodel.FeedPatientRecord
@@ -25,7 +25,7 @@ class StandardComorbidityExtractor(
             val patientId = patientDetails.patientId
             listOf(
                 extractCategory(otherConditions, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history", patientId),
-                extractCategory(complications, CurationCategory.COMPLICATION, "complication", patientId),
+                extractCategory(complications.orEmpty(), CurationCategory.COMPLICATION, "complication", patientId),
                 extractToxicities(toxicities, patientId),
                 extractIntolerances(allergies, patientId)
             ).flatten()

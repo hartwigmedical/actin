@@ -251,13 +251,13 @@
   ],
   "bodyWeights": [
     {
-      "date": "2020-01-01T00:00:00",
+      "date": "2020-01-01T10:10:00",
       "value": 3.5,
       "unit": "Kilograms",
       "valid": false
     },
     {
-      "date": "2020-02-01T00:00:00",
+      "date": "2020-02-01T10:10:00",
       "value": 53,
       "unit": "Kilograms",
       "valid": true
@@ -265,7 +265,7 @@
   ],
   "bodyHeights": [
     {
-      "date": "2020-01-01T00:00:00",
+      "date": "2020-01-01T10:10:00",
       "value": 185.0,
       "unit": "centimeters",
       "valid": true
@@ -273,7 +273,7 @@
   ],
   "vitalFunctions": [
     {
-      "date": "2020-01-01T00:00:00",
+      "date": "2020-01-01T10:10:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
       "subcategory": "systolic blood pressure",
       "value": 3.5,
@@ -281,7 +281,7 @@
       "valid": true
     },
     {
-      "date": "2020-01-01T00:00:00",
+      "date": "2020-01-01T10:10:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
       "subcategory": "diastolic blood pressure",
       "value": 3.5,
@@ -289,7 +289,7 @@
       "valid": true
     },
     {
-      "date": "2020-01-01T00:00:00",
+      "date": "2020-01-01T10:10:00",
       "category": "HEART_RATE",
       "subcategory": "NA",
       "value": 3.5,

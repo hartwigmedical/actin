@@ -2,100 +2,11 @@ package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toEcg
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toInfectionStatus
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toBoolean
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toSecondaryPrimaries
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toStage
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toWHO
-import com.hartwig.actin.datamodel.clinical.TumorStage
-import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val SUBJECT = "subject"
-
 class QuestionnaireCurationTest {
 
-    @Test
-    fun `Should curate options when curation exists`() {
-        val curated = toBoolean(SUBJECT, "YES")
-        assertThat(curated.curated).isTrue
-        assertThat(curated.errors).isEmpty()
-    }
-
-    @Test
-    fun `Should not curate options and return error when curation does not exist`() {
-        val curated = toBoolean(SUBJECT, "Not an option")
-        assertThat(curated.curated).isNull()
-        assertThat(curated.errors).containsExactly(
-            QuestionnaireCurationError(
-                SUBJECT,
-                "Unrecognized questionnaire option: 'Not an option'"
-            )
-        )
-    }
-
-    @Test
-    fun `Should curate options without taking into account the case`() {
-        assertExpectedExtraction("SusPectEd", null)
-        assertExpectedExtraction("yEs", true)
-        assertExpectedExtraction("botaantasting BIJ weke DELEN massa", false)
-    }
-
-    private fun assertExpectedExtraction(input: String, expected: Boolean?) {
-        val (curated, errors) = toBoolean(SUBJECT, input)
-        assertThat(curated).isEqualTo(expected)
-        assertThat(errors).isEmpty()
-    }
-
-    @Test
-    fun `Should curate tumor stage when curation exists`() {
-        val curated = toStage(SUBJECT, "IIb")
-        assertThat(curated.curated).isEqualTo(TumorStage.IIB)
-        assertThat(curated.errors).isEmpty()
-    }
-
-    @Test
-    fun `Should not curate tumor stage and return error when curation does not exist`() {
-        val curated = toStage(SUBJECT, "Not a stage")
-        assertThat(curated.curated).isNull()
-        assertThat(curated.errors).containsExactly(
-            QuestionnaireCurationError(
-                SUBJECT,
-                "Unrecognized questionnaire tumor stage: 'Not a stage'"
-            )
-        )
-    }
-
-    @Test
-    fun `Should curate WHO status when curation exists`() {
-        val curated = toWHO(SUBJECT, "1")
-        assertThat(curated.curated).isEqualTo(1)
-        assertThat(curated.errors).isEmpty()
-    }
-
-    @Test
-    fun `Should not curate WHO status and return error when not between zero and five`() {
-        val curated = toWHO(SUBJECT, "7")
-        assertThat(curated.curated).isEqualTo(null)
-        assertThat(curated.errors).containsExactly(QuestionnaireCurationError(SUBJECT, "WHO status not between 0 and 5: '7'"))
-    }
-
-    @Test
-    fun `Should not curate WHO status and return error when not a number`() {
-        val curated = toWHO(SUBJECT, "string")
-        assertThat(curated.curated).isEqualTo(null)
-        assertThat(curated.errors).containsExactly(QuestionnaireCurationError(SUBJECT, "WHO status not an integer: 'string'"))
-    }
-
-    @Test
-    fun `Should extract secondary primary and last treatment date when available`() {
-        assertThat(toSecondaryPrimaries("sarcoma", "Feb 2020")).isEqualTo(listOf("sarcoma | last treatment date: Feb 2020"))
-    }
-
-    @Test
-    fun `Should extract secondary primary when last treatment date not available`() {
-        assertThat(toSecondaryPrimaries("sarcoma", "")).isEqualTo(listOf("sarcoma"))
-    }
 
     @Test
     fun `Should return null for empty infection status`() {

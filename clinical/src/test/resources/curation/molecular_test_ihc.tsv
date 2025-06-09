@@ -1,3 +1,5 @@
 input	item	measure	scoreText	scoreValuePrefix	scoreValue	scoreValueUnit	impliesPotentialIndeterminateStatus
 immunohistochemie ERBB2 3+	ERBB2				3	+	0
 ERBB2 3+	ERBB2				3	+	0
+CPS PD L1 > 20	PD-L1	CPS	xxx	>	20		0
+PD-L1: positive	PD-L1		Positive				0

@@ -25,7 +25,6 @@ class CurationDatabaseReader {
         const val COMPLICATION_TSV = "complication.tsv"
         const val TOXICITY_TSV = "toxicity.tsv"
         const val MOLECULAR_TEST_IHC_TSV = "molecular_test_ihc.tsv"
-        const val MOLECULAR_TEST_PDL1_TSV = "molecular_test_pdl1.tsv"
         const val SEQUENCING_TEST_TSV = "sequencing_test.tsv"
         const val SEQUENCING_TEST_RESULT_TSV = "sequencing_test_result.tsv"
         const val MEDICATION_NAME_TSV = "medication_name.tsv"

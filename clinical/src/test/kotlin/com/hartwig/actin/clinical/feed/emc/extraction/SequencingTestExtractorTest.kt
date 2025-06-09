@@ -2,11 +2,11 @@ package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
+import com.hartwig.feed.datamodel.DatedEntry
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -29,11 +29,11 @@ class SequencingTestExtractorTest {
     }
     private val testResultCuration = mockk<CurationDatabase<SequencingTestResultConfig>>()
     private val extractor = SequencingTestExtractor(testCuration, testResultCuration)
-    private val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = listOf(TEST))
+    private val ihcTestResults = listOf(DatedEntry(TEST, null))
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
-        val result = extractor.extract(PATIENT_ID, questionnaire.copy(ihcTestResults = emptyList()))
+        val result = extractor.extract(PATIENT_ID, emptyList())
         assertResultContains(result, null, 0)
     }
 
@@ -44,7 +44,7 @@ class SequencingTestExtractorTest {
             SequencingTestResultConfig(input = TEST, gene = GENE, hgvsCodingImpact = CODING)
         )
 
-        val result = extractor.extract(PATIENT_ID, questionnaire)
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(
             result, null, 1, setOf("Could not find sequencing test config for input '$TEST'")
         )
@@ -54,7 +54,7 @@ class SequencingTestExtractorTest {
     fun `Should return warning if sequence test results is missing for curated test`() {
         every { testResultCuration.find(TEST) } returns emptySet()
 
-        val result = extractor.extract(PATIENT_ID, questionnaire)
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(
             result, null, 1, setOf("Could not find sequencing test result config for input '$TEST'")
         )
@@ -66,7 +66,7 @@ class SequencingTestExtractorTest {
             SequencingTestResultConfig(input = TEST, gene = GENE, hgvsCodingImpact = CODING)
         )
 
-        val result = extractor.extract(PATIENT_ID, questionnaire)
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(
             result = result,
             sequencingTest = SEQUENCING_TEST.copy(variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))),
@@ -79,14 +79,14 @@ class SequencingTestExtractorTest {
         every { testCuration.find(TEST) } returns emptySet()
         every { testResultCuration.find(TEST) } returns emptySet()
 
-        val result = extractor.extract(PATIENT_ID, questionnaire)
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(result, null, 0)
     }
 
     @Test
     fun `Should respect ignore flag when curating free text`() {
         every { testResultCuration.find(TEST) } returns setOf(SequencingTestResultConfig(input = TEST, ignore = true))
-        val result = extractor.extract(PATIENT_ID, questionnaire)
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(result, null, 1)
     }
 
@@ -97,7 +97,7 @@ class SequencingTestExtractorTest {
             SequencingTestResultConfig(input = TEST, ignore = true, gene = GENE, hgvsCodingImpact = CODING)
         )
 
-        val result = extractor.extract(PATIENT_ID, questionnaire)
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(result, null, 1)
     }
 
@@ -108,7 +108,7 @@ class SequencingTestExtractorTest {
             SequencingTestResultConfig(input = TEST, ignore = true, gene = GENE2, hgvsProteinImpact = PROTEIN)
         )
 
-        val result = extractor.extract(PATIENT_ID, questionnaire.copy(ihcTestResults = listOf(TEST)))
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(
             result = result,
             sequencingTest = SEQUENCING_TEST.copy(variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))),
@@ -123,7 +123,7 @@ class SequencingTestExtractorTest {
             SequencingTestResultConfig(input = TEST, ignore = false, gene = GENE2, hgvsProteinImpact = PROTEIN)
         )
 
-        val result = extractor.extract(PATIENT_ID, questionnaire.copy(ihcTestResults = listOf(TEST)))
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
         assertResultContains(
             result = result,
             sequencingTest = SEQUENCING_TEST.copy(
