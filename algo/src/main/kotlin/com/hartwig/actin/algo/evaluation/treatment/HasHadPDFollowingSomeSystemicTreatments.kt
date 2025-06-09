@@ -42,9 +42,7 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
             }
 
-            lastTreatment?.let {
-                it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || it.treatmentHistoryDetails?.stopYear == null
-            } == true -> {
+            lastTreatment?.let { it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || it.stopYear() == null } == true -> {
                 EvaluationFactory.undetermined(undeterminedMessage)
             }
 

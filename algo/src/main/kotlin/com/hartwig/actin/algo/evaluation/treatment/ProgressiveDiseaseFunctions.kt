@@ -18,8 +18,8 @@ object ProgressiveDiseaseFunctions {
         val treatmentDuration = DateComparison.minWeeksBetweenDates(
             treatment.startYear,
             treatment.startMonth,
-            treatment.treatmentHistoryDetails?.stopYear,
-            treatment.treatmentHistoryDetails?.stopMonth
+            treatment.stopYear(),
+            treatment.stopMonth()
         )
 
         return when {

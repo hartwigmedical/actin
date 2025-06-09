@@ -48,7 +48,8 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
         val treatmentHistoryDetails = treatmentHistoryEntry.treatmentHistoryDetails
         return treatmentHistoryDetails?.cycles?.let { cycles ->
             val appearsOngoing = with(treatmentHistoryDetails) {
-                val treatmentNotStopped = DateComparison.isAfterDate(referenceDate, stopYear, stopMonth)
+                val treatmentNotStopped =
+                    DateComparison.isAfterDate(referenceDate, treatmentHistoryEntry.stopYear(), treatmentHistoryEntry.stopMonth())
                 treatmentNotStopped == true ||
                     (treatmentNotStopped == null && latestStart?.let {
                         DateComparison.isAfterDate(latestStart, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)

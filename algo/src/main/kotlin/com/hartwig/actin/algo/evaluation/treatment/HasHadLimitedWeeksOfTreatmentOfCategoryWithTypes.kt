@@ -26,8 +26,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
                 val durationWeeks: Long? = DateComparison.minWeeksBetweenDates(
                     matchingPortionOfEntry.startYear,
                     matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
+                    matchingPortionOfEntry.stopYear(), //checken
+                    matchingPortionOfEntry.stopMonth() //checken
                 )
 
                 TreatmentEvaluation.create(

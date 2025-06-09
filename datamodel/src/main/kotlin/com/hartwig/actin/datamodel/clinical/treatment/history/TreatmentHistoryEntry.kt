@@ -16,6 +16,14 @@ data class TreatmentHistoryEntry(
     val treatmentHistoryDetails: TreatmentHistoryDetails? = null
 ) {
 
+    fun stopYear(): Int? {
+        return treatmentHistoryDetails?.stopYear ?: treatmentHistoryDetails?.maxStopYear
+    }
+
+    fun stopMonth(): Int? {
+        return treatmentHistoryDetails?.stopMonth ?: treatmentHistoryDetails?.maxStopMonth
+    }
+
     fun allTreatments(): Set<Treatment> {
         val switchToTreatments = treatmentHistoryDetails?.switchToTreatments?.map(TreatmentStage::treatment)?.toSet() ?: emptySet()
         return treatments + setOfNotNull(treatmentHistoryDetails?.maintenanceTreatment?.treatment) + switchToTreatments
