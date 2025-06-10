@@ -63,7 +63,7 @@ class TargetCoveragePredicate(
 data class TargetCoverageMessage(private val messagePrefix: String?, private val targetString: String, val genes: Set<String>) :
     EvaluationMessage {
     override fun combineBy(): String {
-        return messagePrefix + targetString
+        return listOf(messagePrefix, targetString).joinToString { ":" }
     }
 
     override fun combine(other: EvaluationMessage): EvaluationMessage {
@@ -74,6 +74,7 @@ data class TargetCoverageMessage(private val messagePrefix: String?, private val
     }
 
     override fun toString(): String {
-        return "${if (messagePrefix != null) "$messagePrefix " else ""}gene${if (genes.size > 1) "s" else ""} ${genes.joinToString()} undetermined (not tested for ${targetString})"
+        return "${if (messagePrefix != null) "$messagePrefix " else ""}gene${if (genes.size > 1) "s" else ""} " +
+                "${genes.joinToString()} undetermined (not tested for ${targetString})"
     }
 }

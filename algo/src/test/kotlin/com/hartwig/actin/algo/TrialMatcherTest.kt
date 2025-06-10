@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
-import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.trial.Eligibility
@@ -15,6 +15,22 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TestTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+
+data class CombinableMessage(val combineKey: String, val message: String) : EvaluationMessage {
+    override fun combineBy(): String {
+        return combineKey
+    }
+
+    override fun combine(other: EvaluationMessage): EvaluationMessage {
+        if (other is CombinableMessage)
+            return CombinableMessage(combineKey, listOf(message, other.message).joinToString())
+        throw IllegalArgumentException()
+    }
+
+    override fun toString(): String {
+        return message
+    }
+}
 
 class TrialMatcherTest {
     private val patient = TestPatientFactory.createProperTestPatientRecord()
@@ -56,6 +72,32 @@ class TrialMatcherTest {
     fun `Should return the same number of cohorts`() {
         val matches = matcher.determineEligibility(patient, listOf(trial))
         assertThat(matches.sumOf { it.cohorts.size + it.nonEvaluableCohorts.size }).isEqualTo(trial.cohorts.size)
+    }
+
+    @Test
+    fun `Should combine messages in evaluation when keys match`() {
+        val messageSet = setOf(CombinableMessage("key", "test1"), CombinableMessage("key", "test2"))
+        val evaluation = EvaluationTestFactory.withResult(EvaluationResult.PASS)
+            .copy(passMessages = messageSet, warnMessages = messageSet, undeterminedMessages = messageSet, failMessages = messageSet)
+            .combineMessages()
+        val expectedMessage = "test1, test2"
+        assertThat(evaluation.passMessagesStrings()).containsOnly(expectedMessage)
+        assertThat(evaluation.warnMessagesStrings()).containsOnly(expectedMessage)
+        assertThat(evaluation.failMessagesStrings()).containsOnly(expectedMessage)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsOnly(expectedMessage)
+    }
+
+    @Test
+    fun `Should not combine messages in evaluation when keys don't match`() {
+        val messageSet = setOf(CombinableMessage("key1", "test1"), CombinableMessage("key2", "test2"))
+        val evaluation = EvaluationTestFactory.withResult(EvaluationResult.PASS)
+            .copy(passMessages = messageSet, warnMessages = messageSet, undeterminedMessages = messageSet, failMessages = messageSet)
+            .combineMessages()
+        val expectedMessage = setOf("test1", "test2")
+        assertThat(evaluation.passMessagesStrings()).isEqualTo(expectedMessage)
+        assertThat(evaluation.warnMessagesStrings()).isEqualTo(expectedMessage)
+        assertThat(evaluation.failMessagesStrings()).isEqualTo(expectedMessage)
+        assertThat(evaluation.undeterminedMessagesStrings()).isEqualTo(expectedMessage)
     }
 
     companion object {
