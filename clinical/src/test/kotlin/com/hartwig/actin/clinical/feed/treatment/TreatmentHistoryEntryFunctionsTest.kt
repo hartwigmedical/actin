@@ -6,6 +6,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
+
+private val CURRENT_DATE = LocalDate.now()
 
 class TreatmentHistoryEntryFunctionsTest {
 
@@ -15,8 +18,8 @@ class TreatmentHistoryEntryFunctionsTest {
         val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries)
         assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(2020)
         assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(9)
-        assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isNull()
-        assertThat(output[1].treatmentHistoryDetails?.maxStopMonth).isNull()
+        assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isEqualTo(CURRENT_DATE.year)
+        assertThat(output[1].treatmentHistoryDetails?.maxStopMonth).isEqualTo(CURRENT_DATE.monthValue)
     }
 
     @Test
@@ -34,14 +37,14 @@ class TreatmentHistoryEntryFunctionsTest {
             )
         )
         val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries)
-        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isNull()
-        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isNull()
+        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(CURRENT_DATE.year)
+        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(CURRENT_DATE.monthValue)
     }
 
     @Test
     fun `Should not set stop date for systemic treatment followed by systemic treatment combined with non-systemic treatment`() {
         val treatmentHistoryEntries = listOf(
-            createChemotherapy(2020, 6),
+            createChemotherapy(2021, 6),
             treatmentHistoryEntry(
                 treatments = setOf(
                     TreatmentTestFactory.treatment(
@@ -54,12 +57,12 @@ class TreatmentHistoryEntryFunctionsTest {
                         true,
                         setOf(TreatmentCategory.CHEMOTHERAPY)
                     )
-                ), startYear = 2020, startMonth = 7
+                ), startYear = 2021, startMonth = 7
             )
         )
         val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries)
-        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isNull()
-        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isNull()
+        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(CURRENT_DATE.year)
+        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(CURRENT_DATE.monthValue)
     }
 
     private fun createChemotherapy(startYear: Int, startMonth: Int): TreatmentHistoryEntry {
