@@ -55,7 +55,7 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
     }
 
     @Test
-    fun `Should be undetermined if tumor type is NSCLC cancer but gene is requested that cannot be evaluated`() {
+    fun `Should be undetermined if tumor type is NSCLC but requested gene cannot be evaluated`() {
         val record = MolecularTestFactory.withVariant(INCORRECT_VARIANT)
             .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
 
