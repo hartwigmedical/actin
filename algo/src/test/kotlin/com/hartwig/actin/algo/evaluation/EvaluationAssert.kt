@@ -20,6 +20,7 @@ object EvaluationAssert {
         when (actual.result) {
             EvaluationResult.PASS -> {
                 assertThat(actual.passMessagesStrings()).isNotEmpty()
+                assertThat(actual.warnMessagesStrings()).isEmpty()
                 assertThat(actual.undeterminedMessagesStrings()).isEmpty()
                 assertThat(actual.failMessagesStrings()).isEmpty()
             }
