@@ -1,11 +1,11 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -17,12 +17,19 @@ private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(Curat
 
 class ECGConfigFactoryTest {
     private val icdModel = TestIcdFactory.createTestModel()
+    private val factory = EcgConfigFactory(icdModel)
 
     @Test
     fun `Should return ECG config from valid inputs`() {
         val icdMainCode = icdModel.codeToNodeMap.keys.first()
         val icdCodesCheck = setOf(IcdCode(icdMainCode, null))
-        val config = createConfig(interpretation = "interpretation", icd = icdModel.titleToCodeMap.keys.first(), isQTCF = "1", qtcfValue = "1", qtcfUnit = "ms")
+        val config = createConfig(
+            interpretation = "interpretation",
+            icd = icdModel.titleToCodeMap.keys.first(),
+            isQTCF = "1",
+            qtcfValue = "1",
+            qtcfUnit = "ms"
+        )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo(INPUT)
         assertThat(config.config.curated).isNotNull
@@ -37,28 +44,21 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return ignore config when input evaluates to false`() {
-        val config = createConfig(input = "nvt")
+        val config = createConfig(input = "nvt", interpretation = "<ignore>")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("nvt", ignore = true, curated = null))
     }
 
     @Test
     fun `Should return ignore config when input evaluates to null`() {
-        val config = createConfig(input = "possible")
+        val config = createConfig(input = "possible", interpretation = "<ignore>")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("possible", ignore = true, curated = null))
     }
 
     @Test
-    fun `Should return ignore config when interpretation is NULL`() {
-        val config = createConfig(interpretation = "NULL")
-        assertThat(config.errors).isEmpty()
-        assertThat(config.config).isEqualTo(ComorbidityConfig(INPUT, ignore = true, curated = null))
-    }
-
-    @Test
     fun `Should return empty config when input evaluates to true`() {
-        val config = createConfig(input = "Ja")
+        val config = createConfig(input = "Ja", interpretation = "")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("Ja", ignore = false, curated = Ecg(null, null, null)))
     }
@@ -117,7 +117,7 @@ class ECGConfigFactoryTest {
         jtcValue: String = "",
         jtcUnit: String = ""
     ): ValidatedCurationConfig<ComorbidityConfig> {
-        return EcgConfigFactory(icdModel).create(
+        return factory.create(
             fields, arrayOf(input, interpretation, icd, isQTCF, isJTC, qtcfValue, qtcfUnit, jtcValue, jtcUnit)
         )
     }
