@@ -187,7 +187,6 @@ class ComorbidityExtractor(
     private fun curatedQuestionnaireToxicities(patientId: String, input: String, rawToxicity: Toxicity): ExtractionResult<List<Toxicity>>? {
         val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = null), false)
         val toxicities = curationResponse.configs.filterNot { it.ignore }
-            .filter { it.curated != null && it.curated::class == rawToxicity::class }
             .mapNotNull { config ->
                 config.curated?.let { curated ->
                     rawToxicity.copy(
