@@ -102,10 +102,7 @@ DROP TABLE IF EXISTS `priorPrimary`;
 CREATE TABLE `priorPrimary`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `tumorLocation` varchar(50) NOT NULL,
-    `tumorSubLocation` varchar(50) NOT NULL,
-    `tumorType` varchar(50) NOT NULL,
-    `tumorSubType` varchar(50) NOT NULL,
+    `name` varchar(100) NOT NULL,
     `doids` varchar(50) NOT NULL,
     `diagnosedYear` int,
     `diagnosedMonth` int,

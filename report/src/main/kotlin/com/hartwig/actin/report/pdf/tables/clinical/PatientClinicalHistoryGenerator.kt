@@ -197,19 +197,6 @@ class PatientClinicalHistoryGenerator(
     }
 
     private fun toPriorPrimaryString(priorPrimary: PriorPrimary): String {
-        val tumorSubLocation = priorPrimary.tumorSubLocation
-        val tumorLocation = priorPrimary.tumorLocation + if (tumorSubLocation.isNotEmpty()) " ($tumorSubLocation)" else ""
-        val tumorDetails = when {
-            priorPrimary.tumorSubType.isNotEmpty() -> {
-                tumorLocation + " " + priorPrimary.tumorSubType.lowercase()
-            }
-
-            priorPrimary.tumorType.isNotEmpty() -> {
-                tumorLocation + " " + priorPrimary.tumorType.lowercase()
-            }
-
-            else -> tumorLocation
-        }
         val dateAdditionDiagnosis: String = toDateString(priorPrimary.diagnosedYear, priorPrimary.diagnosedMonth)
             ?.let { "diagnosed $it, " } ?: ""
 
@@ -222,7 +209,7 @@ class PatientClinicalHistoryGenerator(
             TumorStatus.EXPECTATIVE -> "considered expectative"
             TumorStatus.UNKNOWN -> "unknown if active"
         }
-        return "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$status)"
+        return "${priorPrimary.name} ($dateAdditionDiagnosis$dateAdditionLastTreatment$status)"
     }
 
     private fun toOtherConditionString(otherCondition: OtherCondition): String {
