@@ -558,7 +558,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             And(
                 listOf(
                     HasHadSomeSystemicTreatments(minSystemicTreatments),
-                    HasRadiologicalProgressionFollowingLatestTreatmentLine(canAssumePDIsRadiological=false)
+                    HasRadiologicalProgressionFollowingLatestTreatmentLine(mustBeRadiological=false)
                 )
             )
         }
@@ -590,7 +590,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             And(
                 listOf(
                     HasHadSomeSystemicTreatments(minSystemicTreatments),
-                    HasRadiologicalProgressionFollowingLatestTreatmentLine(canAssumePDIsRadiological=true)
+                    HasRadiologicalProgressionFollowingLatestTreatmentLine(mustBeRadiological=true)
                 )
             )
         }
