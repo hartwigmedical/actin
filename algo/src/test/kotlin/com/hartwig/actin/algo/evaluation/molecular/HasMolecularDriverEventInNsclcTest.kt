@@ -59,14 +59,18 @@ private val BASE_EXON_SKIPPING_FUSION = BASE_FUSION.copy(
     fusedExonDown = CORRECT_EXON_SKIPPING_EXON.plus(1)
 )
 
-class HasMolecularDriverEventInNSCLCTest {
+class HasMolecularDriverEventInNsclcTest {
 
-    private val functionIncludingAllGenes = createFunction(null, emptySet())
+    private val functionIncludingAllGenes = createFunction(genesToInclude = null, genesToExclude = emptySet())
     private val functionIncludingSpecificGenes =
-        createFunction(setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE), emptySet())
-    private val functionIncludingAtLeastGenes =
-        createFunction(setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE), emptySet(), includeGenesAtLeast = true)
-    private val functionExcludingSpecificGenes = createFunction(null, setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE))
+        createFunction(genesToInclude = setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE), genesToExclude = emptySet())
+    private val functionIncludingAtLeastGenes = createFunction(
+        genesToInclude = setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE),
+        genesToExclude = emptySet(),
+        warnForMatchesOutsideGenesToInclude = true
+    )
+    private val functionExcludingSpecificGenes =
+        createFunction(genesToInclude = null, genesToExclude = setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE))
 
     @Test
     fun `Should fail when molecular record is empty`() {
@@ -74,7 +78,7 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     @Test
-    fun `Should pass for activating mutation in correct gene`() {
+    fun `Should pass for activating mutation in correct gene with correct message`() {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
 
         evaluateIncludeFunctions(EvaluationResult.PASS, record)
@@ -82,7 +86,7 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     @Test
-    fun `Should set correct message is withAvailableSOC is set`() {
+    fun `Should set correct message if withAvailableSoc is true`() {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
         val function = createFunction(
             setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE),
@@ -95,20 +99,21 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     @Test
-    fun `Should fail for activating mutation in gene if gene not in include list`() {
+    fun `Should fail with activating mutation in gene if gene not in include list and warnForMatchesOutsideGenesToInclude is false`() {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
-        val function = createFunction(setOf("ALK"), emptySet())
+        val function = createFunction(genesToInclude = setOf("ALK"), genesToExclude = emptySet())
+
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
     @Test
-    fun `Should fail if activating mutation in gene if gene is in ignore list`() {
+    fun `Should fail with activating mutation in gene if gene is in exclude list`() {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
         evaluateExcludeFunction(EvaluationResult.FAIL, record)
     }
 
     @Test
-    fun `Should fail for activating mutation in some other gene`() {
+    fun `Should fail for activating mutation in gene that is never relevant as driver in NSCLC`() {
         val record = MolecularTestFactory.withVariant(BASE_SPECIFIC_VARIANT.copy(gene = "Wrong"))
         evaluateAllFunctions(EvaluationResult.FAIL, record)
     }
@@ -116,7 +121,12 @@ class HasMolecularDriverEventInNSCLCTest {
     @Test
     fun `Should warn for mutation in correct gene when this is outcome of evaluation`() {
         val record =
-            MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION.copy(isCancerAssociatedVariant = false, proteinEffect = ProteinEffect.UNKNOWN))
+            MolecularTestFactory.withVariant(
+                BASE_ACTIVATING_MUTATION.copy(
+                    isCancerAssociatedVariant = false,
+                    proteinEffect = ProteinEffect.UNKNOWN
+                )
+            )
         evaluateIncludeFunctions(EvaluationResult.WARN, record)
     }
 
@@ -134,7 +144,7 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     @Test
-    fun `Should fail for correct variant with correct protein impact but gene in ignore list`() {
+    fun `Should fail for correct variant with correct protein impact but gene in exclude list`() {
         val record = MolecularTestFactory.withVariant(BASE_SPECIFIC_VARIANT.copy(canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)))
         evaluateExcludeFunction(EvaluationResult.FAIL, record)
     }
@@ -174,7 +184,7 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     @Test
-    fun `Should fail for multiple correct drivers if both are on ignore list`() {
+    fun `Should fail for multiple correct drivers if both are on exclude list`() {
         val variants = listOf(BASE_SPECIFIC_VARIANT.copy(canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)), BASE_ACTIVATING_MUTATION)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             molecularHistory = MolecularHistory(
@@ -213,16 +223,16 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     @Test
-    fun `Should fail for incorrect fusion`() {
+    fun `Should fail for incorrect fusion and display correct message`() {
         val record = MolecularTestFactory.withFusion(BASE_FUSION.copy(geneEnd = "Fusion partner"))
         assertEvaluation(EvaluationResult.FAIL, functionIncludingAllGenes.evaluate(record))
         evaluateMessages(functionIncludingAllGenes.evaluate(record).failMessages, setOf("No (applicable) NSCLC driver event(s) detected"))
     }
 
     @Test
-    fun `Should warn for activating mutation in another gene if at-least is true and gene is in include-at-least list`() {
+    fun `Should warn for activating mutation in another gene if warnForMatchesOutsideGenesToInclude is true and gene is not in include list with correct message`() {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
-        val function = createFunction(setOf("ALK"), emptySet(), includeGenesAtLeast = true)
+        val function = createFunction(setOf("ALK"), emptySet(), warnForMatchesOutsideGenesToInclude = true)
 
         assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
         evaluateMessages(
@@ -232,19 +242,16 @@ class HasMolecularDriverEventInNSCLCTest {
     }
 
     @Test
-    fun `Should pass for activating mutation in correct gene if at-least is true and event in that gene is not in include-at-least list`() {
+    fun `Should pass for activating mutation in correct gene if warnForMatchesOutsideGenesToInclude is true but gene is actually in include list`() {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
 
         assertEvaluation(EvaluationResult.PASS, functionIncludingAtLeastGenes.evaluate(record))
-        evaluateMessages(
-            functionIncludingAtLeastGenes.evaluate(record).passMessages,
-            setOf("NSCLC driver event(s) detected: EGFR L858R")
-        )
+        evaluateMessages(functionIncludingAtLeastGenes.evaluate(record).passMessages, setOf("NSCLC driver event(s) detected: EGFR L858R"))
     }
 
     @Test
-    fun `Should pass for activating mutation in correct gene if at-least is true and event one gene is and one gene is not in include-at-least list`() {
-        val variants = listOf(BASE_SPECIFIC_VARIANT.copy(canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)), BASE_ACTIVATING_MUTATION)
+    fun `Should pass for activating mutation in correct gene if warnForMatchesOutsideGenesToInclude is true and there is one event in include list and one for which would be warned`() {
+        val variants = listOf(BASE_SPECIFIC_VARIANT.copy(gene = "KRAS"), BASE_ACTIVATING_MUTATION)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             molecularHistory = MolecularHistory(
                 listOf(
@@ -256,6 +263,7 @@ class HasMolecularDriverEventInNSCLCTest {
         )
 
         assertEvaluation(EvaluationResult.PASS, functionIncludingAtLeastGenes.evaluate(record))
+        evaluateMessages(functionIncludingAtLeastGenes.evaluate(record).passMessages, setOf("NSCLC driver event(s) detected: EGFR L858R"))
     }
 
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptVariantImpact {
@@ -289,11 +297,17 @@ class HasMolecularDriverEventInNSCLCTest {
 
     private fun createFunction(
         genesToInclude: Set<String>?,
-        genesToIgnore: Set<String>,
+        genesToExclude: Set<String>,
         maxTestAge: LocalDate? = null,
-        includeGenesAtLeast: Boolean = false,
+        warnForMatchesOutsideGenesToInclude: Boolean = false,
         withAvailableSOC: Boolean = false
-    ): HasMolecularDriverEventInNSCLC {
-        return HasMolecularDriverEventInNSCLC(genesToInclude, genesToIgnore, maxTestAge, includeGenesAtLeast, withAvailableSOC)
+    ): HasMolecularDriverEventInNsclc {
+        return HasMolecularDriverEventInNsclc(
+            genesToInclude,
+            genesToExclude,
+            maxTestAge,
+            warnForMatchesOutsideGenesToInclude,
+            withAvailableSOC
+        )
     }
 }

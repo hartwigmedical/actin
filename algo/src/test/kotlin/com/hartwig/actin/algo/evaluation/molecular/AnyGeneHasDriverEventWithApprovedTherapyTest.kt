@@ -60,7 +60,7 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
             .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
 
         assertEvaluation(EvaluationResult.UNDETERMINED, functionRequestingInvalidGenes.evaluate(record))
-        assertThat(functionRequestingInvalidGenes.evaluate(record).undeterminedMessages).containsExactly("Genes with driver event for gene(s) INCORRECT and Other could not be determined")
+        assertThat(functionRequestingInvalidGenes.evaluate(record).undeterminedMessages).containsExactly("Possible presence of driver events for gene(s) INCORRECT and Other could not be determined")
     }
 
     @Test

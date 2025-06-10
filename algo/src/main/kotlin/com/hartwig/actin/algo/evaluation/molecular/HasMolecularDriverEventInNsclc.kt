@@ -15,17 +15,17 @@ private val EXON_SKIPPING_LIST = listOf("MET" to 14)
 private val ALL_GENES =
     ACTIVATING_MUTATION_LIST + PROTEIN_IMPACT_LIST.map { it.first } + FUSION_LIST + EXON_SKIPPING_LIST.map { it.first }.distinct()
 
-class HasMolecularDriverEventInNSCLC(
+class HasMolecularDriverEventInNsclc(
     private val genesToInclude: Set<String>?,
-    private val genesToIgnore: Set<String>,
+    private val genesToExclude: Set<String>,
     private val maxTestAge: LocalDate? = null,
-    private val includeGenesAtLeast: Boolean,
-    private val withAvailableSOC: Boolean,
+    private val warnForMatchesOutsideGenesToInclude: Boolean,
+    private val withAvailableSoc: Boolean,
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (includeGenesAtLeast && genesToInclude != null) {
-            val evaluation = Or(createEvaluationFunctions(null, genesToIgnore)).evaluate(record)
+        return if (warnForMatchesOutsideGenesToInclude && genesToInclude != null) {
+            val evaluation = Or(createEvaluationFunctions(null, genesToExclude)).evaluate(record)
             if (hasPositiveEvaluationEventInGenes(evaluation, ALL_GENES - genesToInclude) && !hasPositiveEvaluationEventInGenes(
                     evaluation,
                     genesToInclude.toList()
@@ -36,7 +36,7 @@ class HasMolecularDriverEventInNSCLC(
                 clearMolecularEventsAndConfigureMessages(evaluation, false)
             }
         } else {
-            val evaluation = Or(createEvaluationFunctions(genesToInclude, genesToIgnore)).evaluate(record)
+            val evaluation = Or(createEvaluationFunctions(genesToInclude, genesToExclude)).evaluate(record)
             clearMolecularEventsAndConfigureMessages(evaluation, false)
         }
     }
@@ -58,7 +58,7 @@ class HasMolecularDriverEventInNSCLC(
     }
 
     private fun clearMolecularEventsAndConfigureMessages(evaluation: Evaluation, mustWarn: Boolean = false): Evaluation {
-        val soc = if (withAvailableSOC) " with available SOC" else ""
+        val soc = if (withAvailableSoc) " with available SOC" else ""
         val message = "NSCLC driver event(s)$soc detected: ${Format.concat(evaluation.inclusionMolecularEvents)}"
         return evaluation.copy(
             result = if (mustWarn) EvaluationResult.WARN else evaluation.result,

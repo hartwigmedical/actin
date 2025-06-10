@@ -28,7 +28,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
 ) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val isNSCLC = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+        val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
         val tumorDoids = createFullExpandedDoidTree(doidModel, record.tumor.doids)
         val isColorectalCancer =
             DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_CRC_TUMOR_DOIDS intersect tumorDoids).isEmpty()
@@ -36,13 +36,13 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
         return when {
             record.molecularHistory.molecularTests.isEmpty() -> EvaluationFactory.fail("No molecular data")
 
-            isNSCLC -> {
-                val evaluation = HasMolecularDriverEventInNSCLC(
-                    genes.toSet(),
-                    emptySet(),
-                    maxTestAge,
-                    includeGenesAtLeast = false,
-                    withAvailableSOC = true
+            isNsclc -> {
+                val evaluation = HasMolecularDriverEventInNsclc(
+                    genesToInclude = genes.toSet(),
+                    genesToExclude = emptySet(),
+                    maxTestAge = maxTestAge,
+                    warnForMatchesOutsideGenesToInclude = false,
+                    withAvailableSoc = true
                 ).evaluate(record)
 
                 if (evaluation.result in setOf(
@@ -51,7 +51,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
                     ) && !NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE.containsAll(genes)
                 ) {
                     val unevaluatedGenes = genes.subtract(NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE)
-                    EvaluationFactory.undetermined("Genes with driver event for gene(s) ${Format.concat(unevaluatedGenes)} could not be determined")
+                    EvaluationFactory.undetermined("Possible presence of driver events for gene(s) ${Format.concat(unevaluatedGenes)} could not be determined")
                 } else {
                     evaluation
                 }
