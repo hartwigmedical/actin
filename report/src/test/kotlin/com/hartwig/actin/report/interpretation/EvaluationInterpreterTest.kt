@@ -2,6 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -87,7 +88,7 @@ class EvaluationInterpreterTest {
             Pair(
                 FIRST_CRITERION, createBaseEvaluation(result = EvaluationResult.WARN).copy(
                     failMessages = setOf(),
-                    warnMessages = setOf("warn+me+now"),
+                    warnMessages = setOf(StaticMessage("warn+me+now")),
                     undeterminedMessages = setOf(),
                     passMessages = setOf(),
                 )
@@ -137,10 +138,10 @@ class EvaluationInterpreterTest {
         return Evaluation(
             result = result,
             recoverable = false,
-            passMessages = setOf("pass"),
-            undeterminedMessages = setOf("undetermined"),
-            warnMessages = setOf("warn 1", "warn 2"),
-            failMessages = setOf("fail 1", "fail 2")
+            passMessages = setOf(StaticMessage("pass")),
+            undeterminedMessages = setOf(StaticMessage("undetermined")),
+            warnMessages = setOf(StaticMessage("warn 1"), StaticMessage("warn 2")),
+            failMessages = setOf(StaticMessage("fail 1"), StaticMessage("fail 2"))
         )
     }
 }

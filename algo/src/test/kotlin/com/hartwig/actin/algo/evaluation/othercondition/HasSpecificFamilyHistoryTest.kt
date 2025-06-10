@@ -35,7 +35,7 @@ class HasSpecificFamilyHistoryTest {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = passConditions.icdCodes.first().mainCode)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsExactly("Has family history of idiopathic sudden death")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Has family history of idiopathic sudden death")
     }
 
     @Test
@@ -47,7 +47,7 @@ class HasSpecificFamilyHistoryTest {
             )
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly(
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Has family history of cardiovascular disease (acute myocard infarct) - undetermined if idiopathic sudden death"
         )
     }

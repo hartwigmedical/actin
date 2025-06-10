@@ -136,10 +136,10 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                     evaluation.recoverable,
                     DataUtil.concat(evaluation.inclusionMolecularEvents),
                     DataUtil.concat(evaluation.exclusionMolecularEvents),
-                    DataUtil.concat(evaluation.passMessages),
-                    DataUtil.concat(evaluation.warnMessages),
-                    DataUtil.concat(evaluation.undeterminedMessages),
-                    DataUtil.concat(evaluation.failMessages)
+                    DataUtil.concat(evaluation.passMessages.map { it.toString() }),
+                    DataUtil.concat(evaluation.warnMessages.map { it.toString() }),
+                    DataUtil.concat(evaluation.undeterminedMessages.map { it.toString() }),
+                    DataUtil.concat(evaluation.failMessages.map { it.toString() })
                 )
                 .execute()
         }
@@ -244,7 +244,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                 Tables.EVALUATION.WARNMESSAGES to evaluation.warnMessages,
                 Tables.EVALUATION.UNDETERMINEDMESSAGES to evaluation.undeterminedMessages,
                 Tables.EVALUATION.FAILMESSAGES to evaluation.failMessages
-            ).forEach { (column, collection) -> dbRecord.set(column, DataUtil.concat(collection)) }
+            ).forEach { (column, collection) -> dbRecord.set(column, DataUtil.concat(collection.map { it.toString() })) }
 
             dbRecord
         }

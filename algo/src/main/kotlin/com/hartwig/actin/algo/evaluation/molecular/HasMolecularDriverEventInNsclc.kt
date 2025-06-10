@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import java.time.LocalDate
 
 private val ACTIVATING_MUTATION_LIST = listOf("EGFR", "ERBB2")
@@ -62,29 +63,29 @@ class HasMolecularDriverEventInNsclc(
         val message = "NSCLC driver event(s)$soc detected: ${Format.concat(evaluation.inclusionMolecularEvents)}"
         return evaluation.copy(
             result = if (mustWarn) EvaluationResult.WARN else evaluation.result,
-            passMessages = writePassMessage(evaluation.passMessages, mustWarn, message),
-            warnMessages = writeWarnMessage(evaluation.passMessages, evaluation.warnMessages, mustWarn, message),
-            failMessages = writeFailMessage(evaluation.failMessages),
+            passMessages = writePassMessage(evaluation.passMessagesStrings(), mustWarn, message),
+            warnMessages = writeWarnMessage(evaluation.passMessagesStrings(), evaluation.warnMessagesStrings(), mustWarn, message),
+            failMessages = writeFailMessage(evaluation.failMessagesStrings()),
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
         )
     }
 
-    private fun writePassMessage(passInput: Set<String>, mustWarn: Boolean, message: String): Set<String> {
-        return if (mustWarn || passInput.isEmpty()) emptySet() else setOf(message)
+    private fun writePassMessage(passInput: Set<String>, mustWarn: Boolean, message: String): Set<StaticMessage> {
+        return if (mustWarn || passInput.isEmpty()) emptySet() else setOf(StaticMessage(message))
     }
 
-    private fun writeWarnMessage(passInput: Set<String>, warnInput: Set<String>, mustWarn: Boolean, message: String): Set<String> {
+    private fun writeWarnMessage(passInput: Set<String>, warnInput: Set<String>, mustWarn: Boolean, message: String): Set<StaticMessage> {
         return when {
-            mustWarn && passInput.isNotEmpty() -> setOf("Potential $message (but undetermined if applicable)")
+            mustWarn && passInput.isNotEmpty() -> setOf(StaticMessage("Potential $message (but undetermined if applicable)"))
 
-            warnInput.isNotEmpty() -> setOf("Potential $message")
+            warnInput.isNotEmpty() -> setOf(StaticMessage("Potential $message"))
 
             else -> emptySet()
         }
     }
 
-    private fun writeFailMessage(failInput: Set<String>): Set<String> {
-        return if (failInput.isEmpty()) emptySet() else setOf("No (applicable) NSCLC driver event(s) detected")
+    private fun writeFailMessage(failInput: Set<String>): Set<StaticMessage> {
+        return if (failInput.isEmpty()) emptySet() else setOf(StaticMessage("No (applicable) NSCLC driver event(s) detected"))
     }
 }

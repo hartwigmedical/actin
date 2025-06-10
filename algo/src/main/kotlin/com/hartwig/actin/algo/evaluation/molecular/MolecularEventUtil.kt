@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 
 data class EventsWithMessages(val events: Collection<String>?, val message: String)
 
@@ -20,7 +21,7 @@ object MolecularEventUtil {
             Evaluation(
                 result = EvaluationResult.WARN,
                 recoverable = false,
-                warnMessages = warnMessages,
+                warnMessages = warnMessages.map { StaticMessage(it) }.toSet(),
                 inclusionMolecularEvents = warnEvents
             )
         } else null

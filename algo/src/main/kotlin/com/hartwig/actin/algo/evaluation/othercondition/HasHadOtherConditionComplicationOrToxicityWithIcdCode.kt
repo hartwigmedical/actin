@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
@@ -34,7 +35,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
-                    passMessages = messages
+                    passMessages = messages.map { StaticMessage(it) }.toSet()
                 )
             }
 
