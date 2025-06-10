@@ -82,14 +82,9 @@ class ComorbidityExtractor(
         feedRecord: FeedPatientRecord, getInput: (FeedPatientRecord) -> List<DatedEntry>?, patientId: String, category: CurationCategory
     ): List<ExtractionResult<List<Comorbidity>>>? {
         return getInput(feedRecord).let { entries ->
-            val default = if (category == CurationCategory.COMPLICATION) {
-                Complication(null, icdCodes = emptySet())
-            } else {
-                OtherCondition(null, icdCodes = emptySet())
-            }
             entries?.map {
                 val curatedComorbidity =
-                    curate(CurationUtil.fullTrim(it.name), patientId, category, category.categoryName.lowercase(), default)
+                    curate(CurationUtil.fullTrim(it.name), patientId, category, category.categoryName.lowercase())
                 ExtractionResult(
                     extracted = curatedComorbidity.configs
                         .filterNot(CurationConfig::ignore)
@@ -125,7 +120,7 @@ class ComorbidityExtractor(
                 )
             }
             val curationResponse =
-                curate(entry.name, patientId, CurationCategory.INTOLERANCE, "intolerance", rawIntolerance.copy(name = null), true)
+                curate(entry.name, patientId, CurationCategory.INTOLERANCE, "intolerance", true)
 
             val curatedIntolerance = curationResponse.config()
                 ?.takeUnless { it.ignore }?.curated?.let { curated ->
@@ -166,7 +161,7 @@ class ComorbidityExtractor(
         return if (input.isEmpty()) {
             ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation())
         } else {
-            val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = null), true)
+            val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", true)
             curationResponse.config()?.takeUnless { it.ignore }?.let { config ->
                 config.curated?.let { curated ->
                     ExtractionResult(
@@ -187,7 +182,7 @@ class ComorbidityExtractor(
         return if (input.isEmpty()) {
             ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation())
         } else {
-            val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = null), false)
+            val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", false)
             val toxicities = curationResponse.configs.filterNot { it.ignore }
                 .mapNotNull { config ->
                     config.curated?.let { curated ->
@@ -215,7 +210,7 @@ class ComorbidityExtractor(
 
     private fun extractEcg(patientId: String, input: String): List<ExtractionResult<List<Ecg>>> {
         val rawEcg = Ecg(name = input, jtcMeasure = null, qtcfMeasure = null)
-        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg.copy(name = null), true) }
+        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", true) }
         val ecg = if (curationResponse?.config() == null) rawEcg else {
             curationResponse.config()?.takeUnless { it.ignore }?.curated?.let { curated ->
                 rawEcg.copy(
@@ -237,7 +232,7 @@ class ComorbidityExtractor(
     private fun extractInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<List<OtherCondition>> {
         val defaultInfection = OtherCondition(null, setOf(IcdCode(UNSPECIFIED_INFECTION_CODE)))
         val curationResponse = rawInfectionStatus?.description?.let {
-            curate(it, patientId, CurationCategory.INFECTION, "infection", defaultInfection, true)
+            curate(it, patientId, CurationCategory.INFECTION, "infection", true)
         }
         val infectionStatus = when (curationResponse?.configs?.size) {
             0 -> defaultInfection
@@ -281,26 +276,15 @@ class ComorbidityExtractor(
         patientId: String,
         category: CurationCategory,
         configType: String,
-        defaultForYesInput: Comorbidity,
         requireUniqueness: Boolean = false
-    ): CurationResponse<ComorbidityConfig> {
-        val trimmed = input.trim()
-        return if (BooleanValueParser.isTrue(trimmed)) {
-            CurationResponse(
-                setOf(ComorbidityConfig(input, false, curated = defaultForYesInput)),
-                CurationExtractionEvaluation(comorbidityEvaluatedInputs = setOf(trimmed.lowercase()))
-            )
-        } else {
-            CurationResponse.createFromConfigs(
-                comorbidityCuration.find(trimmed),
-                patientId,
-                category,
-                input,
-                configType,
-                requireUniqueness
-            )
-        }
-    }
+    ): CurationResponse<ComorbidityConfig> = CurationResponse.createFromConfigs(
+        comorbidityCuration.find(input.trim()),
+        patientId,
+        category,
+        input,
+        configType,
+        requireUniqueness
+    )
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
