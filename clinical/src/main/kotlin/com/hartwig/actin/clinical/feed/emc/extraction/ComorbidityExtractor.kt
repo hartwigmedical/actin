@@ -147,12 +147,12 @@ class ComorbidityExtractor(
         }.mapNotNull { (entry, raw) ->
             when (raw.source) {
                 ToxicitySource.QUESTIONNAIRE -> {
-                    curatedMultipleToxicities(patientId, entry.name, raw)
+                    curatedQuestionnaireToxicities(patientId, entry.name, raw)
                 }
 
                 ToxicitySource.EHR -> {
                     entry.grade?.let {
-                        curatedSingleToxicity(patientId, entry.name, raw) ?: translatedToxicity(patientId, entry.name, raw)
+                        curatedEHRToxicity(patientId, entry.name, raw) ?: translatedToxicity(patientId, entry.name, raw)
                     }
                 }
             }
@@ -162,7 +162,8 @@ class ComorbidityExtractor(
     fun resolveToxicitySource(source: String?) = ToxicitySource.entries.firstOrNull { it.display().equals(source, ignoreCase = true) }
         ?: throw IllegalStateException("Could not resolved Toxicity Source lab unit: '$source'")
 
-    private fun curatedSingleToxicity(patientId: String, input: String, rawToxicity: Toxicity): ExtractionResult<List<Toxicity>>? {
+
+    private fun curatedEHRToxicity(patientId: String, input: String, rawToxicity: Toxicity): ExtractionResult<List<Toxicity>>? {
         return if (input.isEmpty()) {
             ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation())
         } else {
@@ -183,23 +184,20 @@ class ComorbidityExtractor(
         }
     }
 
-    private fun curatedMultipleToxicities(patientId: String, input: String, rawToxicity: Toxicity): ExtractionResult<List<Toxicity>>? {
-        return if (input.isEmpty()) {
-            ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation())
-        } else {
-            val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = null), false)
-            val toxicities = curationResponse.configs.filterNot { it.ignore }
-                .mapNotNull { config ->
-                    config.curated?.let { curated ->
-                        rawToxicity.copy(
-                            name = curated.name,
-                            icdCodes = curated.icdCodes,
-                            grade = (curated as? ToxicityCuration)?.grade ?: rawToxicity.grade
-                        )
-                    }
+    private fun curatedQuestionnaireToxicities(patientId: String, input: String, rawToxicity: Toxicity): ExtractionResult<List<Toxicity>>? {
+        val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = null), false)
+        val toxicities = curationResponse.configs.filterNot { it.ignore }
+            .filter { it.curated != null && it.curated::class == rawToxicity::class }
+            .mapNotNull { config ->
+                config.curated?.let { curated ->
+                    rawToxicity.copy(
+                        name = curated.name,
+                        icdCodes = curated.icdCodes,
+                        grade = (curated as? ToxicityCuration)?.grade ?: rawToxicity.grade
+                    )
                 }
-            ExtractionResult(toxicities, curationResponse.extractionEvaluation)
-        }
+            }
+        return ExtractionResult(toxicities, curationResponse.extractionEvaluation)
     }
 
     private fun translatedToxicity(patientId: String, input: String, rawToxicity: Toxicity): ExtractionResult<List<Toxicity>> {
@@ -237,7 +235,7 @@ class ComorbidityExtractor(
     private fun extractInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<List<OtherCondition>> {
         val defaultInfection = OtherCondition(null, setOf(IcdCode(UNSPECIFIED_INFECTION_CODE)))
         val curationResponse = rawInfectionStatus?.description?.let {
-            curate(it, patientId, CurationCategory.INFECTION, "infection", defaultInfection, true)
+            curate(it, patientId, CurationCategory.INFECTION, "infection", defaultInfection)
         }
         val infectionStatus = when (curationResponse?.configs?.size) {
             0 -> defaultInfection
