@@ -1,7 +1,7 @@
 {
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
-  "referenceDate": "2025-04-16",
+  "referenceDate": "2025-06-10",
   "referenceDateIsLive": true,
   "trialMatches": [
     {
@@ -41,7 +41,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "staticMessage": "Patient is at least 18 years old"
+                "message": "Patient is at least 18 years old"
               }
             ],
             "warnMessages": [],
@@ -87,8 +87,12 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has solid primary tumor",
-              "Stage IV is considered metastatic"
+              {
+                "message": "Has solid primary tumor"
+              },
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -126,7 +130,9 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Has not exhausted SOC (at least platinum doublet remaining)"
+              {
+                "message": "Has not exhausted SOC (at least platinum doublet remaining)"
+              }
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -157,7 +163,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has no other condition belonging to category autoimmune disease"
+              {
+                "message": "Has no other condition belonging to category autoimmune disease"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -188,7 +196,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "No measurement found for hemoglobin"
+              {
+                "message": "No measurement found for hemoglobin"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -217,7 +227,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "No measurement found for absolute neutrophil count"
+              {
+                "message": "No measurement found for absolute neutrophil count"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -244,7 +256,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial IEMOEN"
+              {
+                "message": "Has not participated in trial IEMOEN"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -319,7 +333,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -355,7 +371,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic"
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -387,7 +405,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "ASAT and ALAT are not present or cannot be evaluated"
+              {
+                "message": "ASAT and ALAT are not present or cannot be evaluated"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -418,7 +438,9 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Variant(s) G12D in KRAS but subclonal likelihood of \u003e 50%"
+              {
+                "message": "Variant(s) G12D in KRAS but subclonal likelihood of \u003e 50%"
+              }
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -446,7 +468,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial KAYRAS"
+              {
+                "message": "Has not participated in trial KAYRAS"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -488,7 +512,9 @@
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
                 "passMessages": [
-                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
                 ],
                 "warnMessages": [],
                 "undeterminedMessages": [],
@@ -533,7 +559,9 @@
                 "warnMessages": [],
                 "undeterminedMessages": [],
                 "failMessages": [
-                  "No colorectal cancer"
+                  {
+                    "message": "No colorectal cancer"
+                  }
                 ],
                 "isMissingMolecularResultForEvaluation": false
               }
@@ -579,7 +607,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -615,7 +645,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic"
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -669,7 +701,9 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [
-              "C797S in EGFR in canonical transcript"
+              {
+                "message": "C797S in EGFR in canonical transcript"
+              }
             ],
             "isMissingMolecularResultForEvaluation": false
           }
@@ -695,7 +729,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial NO-SEE797ES"
+              {
+                "message": "Has not participated in trial NO-SEE797ES"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -758,7 +794,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -805,8 +843,12 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic",
-              "Tumor belongs to DOID term(s) lung cancer"
+              {
+                "message": "Stage IV is considered metastatic"
+              },
+              {
+                "message": "Tumor belongs to DOID term(s) lung cancer"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -838,7 +880,9 @@
             ],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "C797S in EGFR in canonical transcript"
+              {
+                "message": "C797S in EGFR in canonical transcript"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -867,7 +911,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial TEDR1"
+              {
+                "message": "Has not participated in trial TEDR1"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -928,7 +974,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -964,7 +1012,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic"
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -996,7 +1046,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "ASAT and ALAT are not present or cannot be evaluated"
+              {
+                "message": "ASAT and ALAT are not present or cannot be evaluated"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -1026,7 +1078,9 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [
-              "No PIK3CA activating mutation(s)"
+              {
+                "message": "No PIK3CA activating mutation(s)"
+              }
             ],
             "isMissingMolecularResultForEvaluation": false
           }
@@ -1055,7 +1109,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has no other condition belonging to category cardiac disease"
+              {
+                "message": "Has no other condition belonging to category cardiac disease"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -1084,7 +1140,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial PICKME3CA"
+              {
+                "message": "Has not participated in trial PICKME3CA"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -1126,7 +1184,9 @@
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
                 "passMessages": [
-                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
                 ],
                 "warnMessages": [],
                 "undeterminedMessages": [],
@@ -1185,7 +1245,9 @@
                 "warnMessages": [],
                 "undeterminedMessages": [],
                 "failMessages": [
-                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
                 ],
                 "isMissingMolecularResultForEvaluation": false
               }

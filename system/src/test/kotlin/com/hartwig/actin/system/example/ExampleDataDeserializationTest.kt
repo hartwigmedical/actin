@@ -7,7 +7,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Ignore
 import org.junit.Test
 
-@Ignore
 class ExampleDataDeserializationTest {
 
     private val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE)

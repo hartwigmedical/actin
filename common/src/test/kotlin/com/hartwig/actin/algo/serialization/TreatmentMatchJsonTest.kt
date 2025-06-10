@@ -15,7 +15,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Ignore
 import org.junit.Test
 
-@Ignore
 class TreatmentMatchJsonTest {
 
     private val algoDirectory = resourceOnClasspath("algo")
@@ -71,7 +70,7 @@ class TreatmentMatchJsonTest {
                         [{"references":[{"id":"I-01","text":"Patient must be an adult"}],
                         "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
-                        "passMessages":["msg 1","msg 2","msg 3"],"warnMessages":[],"undeterminedMessages":[],
+                        "passMessages":[{"message":"msg 1"},{"message":"msg 2"},{"message":"msg 3"}],"warnMessages":[],"undeterminedMessages":[],
                         "failMessages":[],"isMissingMolecularResultForEvaluation":false}]],
                     "cohorts":[],
                     "nonEvaluableCohorts":[]
@@ -84,7 +83,7 @@ class TreatmentMatchJsonTest {
                         {"rule":"HAS_KNOWN_ACTIVE_CNS_METASTASES","parameters":[]}],"additionalCriteriaForRequirement":[]},
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
-                        "exclusionMolecularEvents":[],"passMessages":["Has active CNS metastases"],"warnMessages":[],
+                        "exclusionMolecularEvents":[],"passMessages":[{"message":"Has active CNS metastases"}],"warnMessages":[],
                         "undeterminedMessages":[],"failMessages":[],"isMissingMolecularResultForEvaluation":false}],
                     "annotations":[
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",

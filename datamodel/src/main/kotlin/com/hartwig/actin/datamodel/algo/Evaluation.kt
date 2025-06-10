@@ -15,10 +15,10 @@ class EmptyMessage() : EvaluationMessage {
     }
 }
 
-data class StaticMessage(val staticMessage: String) : EvaluationMessage {
+data class StaticMessage(val message: String) : EvaluationMessage {
 
     override fun combineBy(): String {
-        return staticMessage
+        return message
     }
 
     override fun combine(other: EvaluationMessage): EvaluationMessage {
@@ -26,7 +26,7 @@ data class StaticMessage(val staticMessage: String) : EvaluationMessage {
     }
 
     override fun toString(): String {
-        return staticMessage
+        return message
     }
 }
 
