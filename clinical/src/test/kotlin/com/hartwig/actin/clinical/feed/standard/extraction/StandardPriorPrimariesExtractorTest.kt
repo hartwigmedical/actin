@@ -19,14 +19,11 @@ private const val BRAIN_LOCATION = "brain"
 private const val TYPE = "type"
 
 private val BRAIN_PRIOR_SECOND_PRIMARY = PriorPrimary(
-    tumorLocation = BRAIN_LOCATION,
-    tumorType = TYPE,
-    status = TumorStatus.ACTIVE,
+    name = "$BRAIN_LOCATION $TYPE",
     diagnosedYear = null,
     diagnosedMonth = null,
-    tumorSubLocation = "",
-    tumorSubType = "",
-    treatmentHistory = ""
+    treatmentHistory = "",
+    status = TumorStatus.ACTIVE,
 )
 
 private val DIAGNOSIS_DATE = LocalDate.of(2024, 2, 23)
@@ -70,8 +67,8 @@ class StandardPriorPrimariesExtractorTest {
     @Test
     fun `Should curate and extract multiple prior primaries for one input when defined`() {
         val input = "brain | type | prior primaries in kidney and liver"
-        val kidneyPrior = PriorPrimary("kidney", "", "Carcinoma", "", treatmentHistory = "", status = TumorStatus.INACTIVE)
-        val liverPrior = kidneyPrior.copy(tumorLocation = "liver")
+        val kidneyPrior = PriorPrimary(name = "kidney", doids = setOf("1000"), treatmentHistory = "", status = TumorStatus.INACTIVE)
+        val liverPrior = kidneyPrior.copy(name = "liver")
 
         every { priorPrimaryConfigCurationDatabase.find(input) } returns setOf(
             PriorPrimaryConfig(ignore = false, input = input, curated = kidneyPrior),
@@ -88,7 +85,7 @@ class StandardPriorPrimariesExtractorTest {
             lastTreatmentYear = LAST_TREATMENT_DATE.year,
             lastTreatmentMonth = LAST_TREATMENT_DATE.monthValue
         )
-        val expectedLiverPrior = expectedKidneyPrior.copy(tumorLocation = "liver")
+        val expectedLiverPrior = expectedKidneyPrior.copy(name = "liver")
         assertThat(result.extracted).containsExactly(expectedKidneyPrior, expectedLiverPrior)
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(priorPrimaryEvaluatedInputs = setOf(input)))
         assertThat(result.evaluation.warnings).isEmpty()

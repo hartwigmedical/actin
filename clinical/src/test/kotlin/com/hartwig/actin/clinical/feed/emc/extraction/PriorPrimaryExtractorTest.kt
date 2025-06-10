@@ -20,7 +20,7 @@ private const val CANNOT_CURATE = "cannot curate"
 
 private const val SECOND_PRIMARY_INPUT = "Second primary input"
 
-private const val TUMOR_LOCATION_INTERPRETATION = "Tumor location interpretation"
+private const val NAME_INTERPRETATION = "Name interpretation"
 
 private const val TREATMENT_HISTORY_INPUT = "Treatment history input"
 
@@ -31,12 +31,9 @@ class PriorPrimaryExtractorTest {
                 input = SECOND_PRIMARY_INPUT,
                 ignore = false,
                 curated = PriorPrimary(
-                    status = TumorStatus.ACTIVE,
-                    tumorType = "tumorType",
-                    tumorSubType = "tumorSubType",
+                    name = NAME_INTERPRETATION,
                     treatmentHistory = "treatmentHistory",
-                    tumorLocation = TUMOR_LOCATION_INTERPRETATION,
-                    tumorSubLocation = "tumorSubLocation"
+                    status = TumorStatus.ACTIVE,
                 )
             )
         ),
@@ -57,7 +54,7 @@ class PriorPrimaryExtractorTest {
         val inputs = listOf(SECOND_PRIMARY_INPUT, CANNOT_CURATE).map { DatedEntry(it, null) }
         val (priorPrimaries, evaluation) = extractor.extract(PATIENT_ID, feedRecord.copy(priorPrimaries = inputs))
         assertThat(priorPrimaries).hasSize(1)
-        assertThat(priorPrimaries[0].tumorLocation).isEqualTo(TUMOR_LOCATION_INTERPRETATION)
+        assertThat(priorPrimaries[0].name).isEqualTo(NAME_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
