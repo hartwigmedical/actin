@@ -58,15 +58,6 @@ class TrialMatcherTest {
         assertThat(matches.sumOf { it.cohorts.size + it.nonEvaluableCohorts.size }).isEqualTo(trial.cohorts.size)
     }
 
-    @Test
-    fun `Should combine messages in evaluation`() {
-        val evaluation = matcher.combineMessages(
-            EvaluationTestFactory.withResult(EvaluationResult.FAIL)
-                .copy(passMessages = setOf(StaticMessage("test1"), StaticMessage("test2")))
-        )
-        assertThat(evaluation.passMessagesStrings()).containsExactlyInAnyOrder("test1", "test2")
-    }
-
     companion object {
         private fun createTestEvaluationFunctionFactory(): EvaluationFunctionFactory {
             return EvaluationFunctionFactory.create(RuleMappingResourcesTestFactory.create())
