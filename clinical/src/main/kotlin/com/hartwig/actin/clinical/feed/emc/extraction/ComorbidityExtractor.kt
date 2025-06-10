@@ -257,7 +257,7 @@ class ComorbidityExtractor(
             lvef = determineLvef(feedRecord.otherConditions.map { it.name }),
             hasComplications = when {
                 curatedComplications.isNotEmpty() -> true
-                // TODO Ideally BooleanValueParser should be removed from this project and actin-feed should return null complication and/or the unknown indication
+                // AE: Ideally BooleanValueParser should be removed from this project and actin-feed should return null complications and/or the unknown indication
                 feedRecord.complications?.any { BooleanValueParser.isUnknown(it.name) } != false -> null
                 else -> false
             }
