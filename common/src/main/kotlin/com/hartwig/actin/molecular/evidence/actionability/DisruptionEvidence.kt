@@ -2,12 +2,8 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
-import com.hartwig.serve.datamodel.trial.ActionableTrial
-import java.util.function.Predicate
 
 class DisruptionEvidence {
     

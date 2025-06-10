@@ -5,12 +5,12 @@ import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class HotspotFunctionsTest {
+class CancerAssociatedVariantFunctionsTest {
 
     @Test
-    fun `Should determine hotspot from gene alteration`() {
+    fun `Should determine cancer-associated variant from gene alteration`() {
         assertThat(
-            HotspotFunctions.isHotspot(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.hotspotBuilder()
                     .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                     .sources(setOf(Knowledgebase.CKB))
@@ -19,7 +19,7 @@ class HotspotFunctionsTest {
         ).isTrue()
 
         assertThat(
-            HotspotFunctions.isHotspot(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.hotspotBuilder()
                     .proteinEffect(ProteinEffect.NO_EFFECT)
                     .sources(setOf(Knowledgebase.CKB))
@@ -28,7 +28,7 @@ class HotspotFunctionsTest {
         ).isFalse()
 
         assertThat(
-            HotspotFunctions.isHotspot(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.codonBuilder()
                     .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
                     .sources(setOf(Knowledgebase.CKB))
@@ -37,7 +37,7 @@ class HotspotFunctionsTest {
         ).isTrue()
 
         assertThat(
-            HotspotFunctions.isHotspot(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.exonBuilder()
                     .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                     .sources(setOf(Knowledgebase.CKB))
@@ -46,12 +46,12 @@ class HotspotFunctionsTest {
         ).isFalse()
 
         assertThat(
-            HotspotFunctions.isHotspot(
+            CancerAssociatedVariantFunctions.isAssociatedWithCancer(
                 TestServeKnownFactory.hotspotBuilder()
                     .sources(setOf(Knowledgebase.DOCM))
                     .build()
             )
         ).isTrue
-        assertThat(HotspotFunctions.isHotspot(null)).isFalse()
+        assertThat(CancerAssociatedVariantFunctions.isAssociatedWithCancer(null)).isFalse()
     }
 }

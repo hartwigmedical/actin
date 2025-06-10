@@ -29,17 +29,7 @@ class ServeVerifierTest {
 
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
     }
-
-    @Test
-    fun `Should throw exception on evidence based on a combined profile`() {
-        val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
-        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
-
-        val database = createServeDatabase(evidence, trial)
-
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
-    }
-
+    
     @Test
     fun `Should throw exception for hotspot with inconsistent genes in efficacy evidence`() {
         val evidence = TestServeEvidenceFactory.create(

@@ -9,7 +9,7 @@ object TestTranscriptVariantImpactFactory {
             hgvsProteinImpact = "",
             affectedCodon = null,
             affectedExon = null,
-            isSpliceRegion = false,
+            inSpliceRegion = false,
             effects = emptySet(),
             codingEffect = null
         )

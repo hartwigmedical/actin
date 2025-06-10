@@ -21,44 +21,44 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
                 hrdVariant(
                     gene = "BRCA1",
                     isBiallelic = true,
-                    isHotspot = true,
+                    isCancerAssociatedVariant = true,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "BRCA2",
                     isBiallelic = false,
-                    isHotspot = true,
+                    isCancerAssociatedVariant = true,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "PALB2",
                     isBiallelic = true,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "BRCA1",
                     isBiallelic = false,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.HIGH
                 ),
                 hrdVariant(
                     gene = "BRCA2",
                     isBiallelic = true,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.MEDIUM
                 ),
                 hrdVariant(
                     gene = "RAD51C",
                     isBiallelic = false,
-                    isHotspot = false,
+                    isCancerAssociatedVariant = false,
                     driverLikelihood = DriverLikelihood.LOW
                 ),
                 hrdVariant(
                     gene = "PALB2",
                     isReportable = false,
                     isBiallelic = true,
-                    isHotspot = true,
+                    isCancerAssociatedVariant = true,
                     driverLikelihood = DriverLikelihood.HIGH
                 )
             ),
@@ -88,12 +88,12 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
         )
 
         val summary = HomologousRecombinationDeficiencyGeneSummary.createForDrivers(drivers)
-        assertThat(summary.hrdGenesWithNonBiallelicHotspot).containsExactlyInAnyOrder("BRCA2")
-        assertThat(summary.hrdGenesWithBiallelicHotspot).containsExactlyInAnyOrder("BRCA1")
-        assertThat(summary.hrdGenesWithNonBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("BRCA1")
-        assertThat(summary.hrdGenesWithNonBiallelicNonHotspotNonHighDriver).containsExactlyInAnyOrder("RAD51C")
-        assertThat(summary.hrdGenesWithBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("PALB2")
-        assertThat(summary.hrdGenesWithBiallelicNonHotspotNonHighDriver).containsExactlyInAnyOrder("BRCA2")
+        assertThat(summary.hrdGenesWithNonBiallelicCav).containsExactlyInAnyOrder("BRCA2")
+        assertThat(summary.hrdGenesWithBiallelicCav).containsExactlyInAnyOrder("BRCA1")
+        assertThat(summary.hrdGenesWithNonBiallelicNonCavHighDriver).containsExactlyInAnyOrder("BRCA1")
+        assertThat(summary.hrdGenesWithNonBiallelicNonCavNonHighDriver).containsExactlyInAnyOrder("RAD51C")
+        assertThat(summary.hrdGenesWithBiallelicNonCavHighDriver).containsExactlyInAnyOrder("PALB2")
+        assertThat(summary.hrdGenesWithBiallelicNonCavNonHighDriver).containsExactlyInAnyOrder("BRCA2")
         assertThat(summary.hrdGenesWithDeletionOrPartialDel).containsExactlyInAnyOrder("BRCA2")
         assertThat(summary.hrdGenesWithHomozygousDisruption).containsExactlyInAnyOrder("PALB2")
         assertThat(summary.hrdGenesWithNonHomozygousDisruption).containsExactlyInAnyOrder("RAD51C")
@@ -102,14 +102,14 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
     private fun hrdVariant(
         gene: String,
         isBiallelic: Boolean,
-        isHotspot: Boolean,
+        isCancerAssociatedVariant: Boolean,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean = true
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = gene,
             isReportable = isReportable,
-            isHotspot = isHotspot,
+            isCancerAssociatedVariant = isCancerAssociatedVariant,
             driverLikelihood = driverLikelihood,
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )

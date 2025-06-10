@@ -64,7 +64,8 @@ class IsEligibleForOnLabelTreatmentTest {
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 19),
                 extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
                 driverLikelihood = DriverLikelihood.HIGH,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                isCancerAssociatedVariant = true
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))

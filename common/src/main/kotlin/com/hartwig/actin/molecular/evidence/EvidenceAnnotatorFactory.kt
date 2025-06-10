@@ -13,7 +13,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactor
 import com.hartwig.serve.datamodel.ServeRecord
 
 object EvidenceAnnotatorFactory {
-    
+
     fun createPanelRecordAnnotator(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,

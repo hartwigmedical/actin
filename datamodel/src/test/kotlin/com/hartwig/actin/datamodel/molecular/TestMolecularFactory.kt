@@ -336,7 +336,7 @@ object TestMolecularFactory {
         canonicalImpact = createMinimalTranscriptImpact(),
         otherImpacts = emptySet(),
         extendedVariantDetails = null,
-        isHotspot = false,
+        isCancerAssociatedVariant = false,
         isReportable = false,
         event = "",
         driverLikelihood = null,
@@ -353,7 +353,7 @@ object TestMolecularFactory {
         hgvsProteinImpact = "",
         affectedCodon = 0,
         affectedExon = null,
-        isSpliceRegion = null,
+        inSpliceRegion = null,
         effects = emptySet(),
         codingEffect = CodingEffect.NONE,
     )
@@ -369,7 +369,7 @@ object TestMolecularFactory {
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
             affectedCodon = 600,
-            isSpliceRegion = false,
+            inSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
             codingEffect = CodingEffect.MISSENSE,
             affectedExon = null
@@ -378,7 +378,7 @@ object TestMolecularFactory {
         extendedVariantDetails = ExtendedVariantDetails(
             variantCopyNumber = 4.1, totalCopyNumber = 6.0, isBiallelic = false, phaseGroups = null, clonalLikelihood = 1.0
         ),
-        isHotspot = true,
+        isCancerAssociatedVariant = true,
         isReportable = true,
         event = "BRAF V600E",
         driverLikelihood = DriverLikelihood.HIGH,

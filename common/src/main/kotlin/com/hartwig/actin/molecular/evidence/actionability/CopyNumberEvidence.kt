@@ -9,12 +9,12 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
 
-class CopyNumberEvidence{
+class CopyNumberEvidence {
     
     companion object {
         private val AMPLIFICATION_EVENTS = setOf(GeneEvent.AMPLIFICATION)
         private val DELETION_EVENTS = setOf(GeneEvent.DELETION)
-        
+
         fun isAmplificationEvent(geneEvent: GeneEvent): Boolean {
             return AMPLIFICATION_EVENTS.contains(geneEvent)
         }

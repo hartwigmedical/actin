@@ -253,7 +253,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 Tables.VARIANT.VARIANTCOPYNUMBER,
                 Tables.VARIANT.TOTALCOPYNUMBER,
                 Tables.VARIANT.ISBIALLELIC,
-                Tables.VARIANT.ISHOTSPOT,
+                Tables.VARIANT.ISCANCERASSOCIATEDVARIANT,
                 Tables.VARIANT.CLONALLIKELIHOOD,
                 Tables.VARIANT.PHASEGROUPS,
                 Tables.VARIANT.CANONICALTRANSCRIPTID,
@@ -261,7 +261,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 Tables.VARIANT.CANONICALHGVSPROTEINIMPACT,
                 Tables.VARIANT.CANONICALAFFECTEDCODON,
                 Tables.VARIANT.CANONICALAFFECTEDEXON,
-                Tables.VARIANT.CANONICALISSPLICEREGION,
+                Tables.VARIANT.CANONICALINSPLICEREGION,
                 Tables.VARIANT.CANONICALEFFECTS,
                 Tables.VARIANT.CANONICALCODINGEFFECT
             )
@@ -278,7 +278,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     variant.extendedVariantDetails?.variantCopyNumber,
                     variant.extendedVariantDetails?.totalCopyNumber,
                     variant.extendedVariantDetails?.isBiallelic,
-                    variant.isHotspot,
+                    variant.isCancerAssociatedVariant,
                     variant.extendedVariantDetails?.clonalLikelihood,
                     DataUtil.concat(integersToStrings(variant.extendedVariantDetails?.phaseGroups)),
                     variant.canonicalImpact.transcriptId,
@@ -286,7 +286,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     variant.canonicalImpact.hgvsProteinImpact,
                     variant.canonicalImpact.affectedCodon,
                     variant.canonicalImpact.affectedExon,
-                    variant.canonicalImpact.isSpliceRegion,
+                    variant.canonicalImpact.inSpliceRegion,
                     DataUtil.concat(effectsToStrings(variant.canonicalImpact.effects)),
                     DataUtil.nullableToString(variant.canonicalImpact.codingEffect)
                 )

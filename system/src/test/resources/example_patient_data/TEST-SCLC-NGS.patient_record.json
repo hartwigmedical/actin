@@ -593,7 +593,7 @@
                 "hgvsProteinImpact": "p.R273H",
                 "affectedCodon": 273,
                 "affectedExon": 7,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -601,7 +601,7 @@
               },
               "otherImpacts": [],
               "extendedVariantDetails": null,
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "TP53 R273H",
               "driverLikelihood": "HIGH",
@@ -674,7 +674,7 @@
                 "hgvsProteinImpact": "p.T910M",
                 "affectedCodon": 910,
                 "affectedExon": 18,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -682,7 +682,7 @@
               },
               "otherImpacts": [],
               "extendedVariantDetails": null,
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "SMARCA4 T910M",
               "driverLikelihood": "HIGH",

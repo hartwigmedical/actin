@@ -42,12 +42,12 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD with BRCA1 hotspot`() {
+    fun `Should fail when HRD with BRCA1 cancer-associated variant`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHomologousRecombinationAndVariant(
-                    true, hrdVariant(isReportable = true, isHotspot = true, driverLikelihood = DriverLikelihood.HIGH)
+                    true, hrdVariant(isReportable = true, isCancerAssociatedVariant = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
             )
         )
@@ -78,7 +78,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot biallelic high driver in BRCA1`() {
+    fun `Should fail when HRD and non-cancer-associated variant biallelic high driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -91,7 +91,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot biallelic low driver in BRCA1`() {
+    fun `Should fail when HRD and non-cancer-associated variant biallelic low driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -104,7 +104,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot non-biallelic high driver in BRCA1`() {
+    fun `Should fail when HRD and non-cancer-associated variant non-biallelic high driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -117,7 +117,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot non-biallelic low driver in BRCA1`() {
+    fun `Should fail when HRD and non-cancer-associated variant non-biallelic low driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -134,7 +134,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         val result = function.evaluate(
             MolecularTestFactory.withHomologousRecombinationAndVariant(
                 true,
-                TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isHotspot = true)
+                TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isCancerAssociatedVariant = true)
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
@@ -192,7 +192,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and biallelic RAD51C hotspot and non-homozygous disruption of BRCA1`() {
+    fun `Should fail when HRD and biallelic RAD51C cancer-associated variant and non-homozygous disruption of BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -219,7 +219,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should pass when HRD and biallelic RAD51C hotspot and no BRCA1 variant`() {
+    fun `Should pass when HRD and biallelic RAD51C cancer-associated variant and no BRCA1 variant`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -234,13 +234,13 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
         gene: String = "BRCA1",
         isReportable: Boolean = false,
         isBiallelic: Boolean = false,
-        isHotspot: Boolean = false,
+        isCancerAssociatedVariant: Boolean = false,
         driverLikelihood: DriverLikelihood = DriverLikelihood.LOW,
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = gene,
             isReportable = isReportable,
-            isHotspot = isHotspot,
+            isCancerAssociatedVariant = isCancerAssociatedVariant,
             driverLikelihood = driverLikelihood,
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )

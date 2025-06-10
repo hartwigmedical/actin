@@ -7,17 +7,9 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.TestGeneAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
-import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import io.mockk.every

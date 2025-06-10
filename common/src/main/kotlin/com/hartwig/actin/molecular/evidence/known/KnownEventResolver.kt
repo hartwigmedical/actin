@@ -1,10 +1,13 @@
 package com.hartwig.actin.molecular.evidence.known
 
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
@@ -32,15 +35,21 @@ class KnownEventResolver(
         val secondaryAlteration = findHotspot(secondaryKnownEvents.hotspots(), variant)
 
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, primaryAlteration)
-        val isHotspot = HotspotFunctions.isHotspot(primaryAlteration) || HotspotFunctions.isHotspot(secondaryAlteration)
+        val nonsenseOrFrameShiftInTsg = nonsenseOrFrameShiftInTsg(variant, geneAlteration)
+        val isCancerAssociatedVariant = CancerAssociatedVariantFunctions.isAssociatedWithCancer(primaryAlteration) ||
+                CancerAssociatedVariantFunctions.isAssociatedWithCancer(secondaryAlteration) || nonsenseOrFrameShiftInTsg
 
         return VariantAlteration(
             gene = geneAlteration.gene,
             geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
+            proteinEffect = if (nonsenseOrFrameShiftInTsg) ProteinEffect.LOSS_OF_FUNCTION_PREDICTED else geneAlteration.proteinEffect,
             isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-            isHotspot = isHotspot
+            isCancerAssociatedVariant = isCancerAssociatedVariant
         )
+    }
+
+    private fun nonsenseOrFrameShiftInTsg(variant: Variant, alteration: GeneAlteration): Boolean {
+        return variant.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT && alteration.geneRole == GeneRole.TSG && alteration.proteinEffect == ProteinEffect.UNKNOWN
     }
 
     fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration {
