@@ -796,6 +796,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE_EXCLUDING_GENES_X",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "ACTIVATION_OR_AMPLIFICATION_OF_GENE_X",
     "usedStatus": "UNUSED"
   },
