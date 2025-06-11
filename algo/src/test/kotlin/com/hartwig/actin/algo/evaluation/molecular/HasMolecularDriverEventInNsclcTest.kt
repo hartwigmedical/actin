@@ -12,9 +12,9 @@ import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val CORRECT_PROTEIN_IMPACT_GENE = "BRAF"
 private const val CORRECT_PROTEIN_IMPACT = "V600E"
@@ -95,7 +95,10 @@ class HasMolecularDriverEventInNsclcTest {
         )
 
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
-        evaluateMessages(function.evaluate(record).passMessages, setOf("NSCLC driver event(s) with available SOC detected: EGFR L858R"))
+        evaluateMessages(
+            function.evaluate(record).passMessagesStrings(),
+            setOf("NSCLC driver event(s) with available SOC detected: EGFR L858R")
+        )
     }
 
     @Test
@@ -226,7 +229,10 @@ class HasMolecularDriverEventInNsclcTest {
     fun `Should fail for incorrect fusion and display correct message`() {
         val record = MolecularTestFactory.withFusion(BASE_FUSION.copy(geneEnd = "Fusion partner"))
         assertEvaluation(EvaluationResult.FAIL, functionIncludingAllGenes.evaluate(record))
-        evaluateMessages(functionIncludingAllGenes.evaluate(record).failMessages, setOf("No (applicable) NSCLC driver event(s) detected"))
+        evaluateMessages(
+            functionIncludingAllGenes.evaluate(record).failMessagesStrings(),
+            setOf("No (applicable) NSCLC driver event(s) detected")
+        )
     }
 
     @Test
@@ -236,7 +242,7 @@ class HasMolecularDriverEventInNsclcTest {
 
         assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
         evaluateMessages(
-            function.evaluate(record).warnMessages,
+            function.evaluate(record).warnMessagesStrings(),
             setOf("Potential NSCLC driver event(s) detected: EGFR L858R (but undetermined if applicable)")
         )
     }
@@ -246,7 +252,10 @@ class HasMolecularDriverEventInNsclcTest {
         val record = MolecularTestFactory.withVariant(BASE_ACTIVATING_MUTATION)
 
         assertEvaluation(EvaluationResult.PASS, functionIncludingAtLeastGenes.evaluate(record))
-        evaluateMessages(functionIncludingAtLeastGenes.evaluate(record).passMessages, setOf("NSCLC driver event(s) detected: EGFR L858R"))
+        evaluateMessages(
+            functionIncludingAtLeastGenes.evaluate(record).passMessagesStrings(),
+            setOf("NSCLC driver event(s) detected: EGFR L858R")
+        )
     }
 
     @Test
@@ -263,7 +272,10 @@ class HasMolecularDriverEventInNsclcTest {
         )
 
         assertEvaluation(EvaluationResult.PASS, functionIncludingAtLeastGenes.evaluate(record))
-        evaluateMessages(functionIncludingAtLeastGenes.evaluate(record).passMessages, setOf("NSCLC driver event(s) detected: EGFR L858R"))
+        evaluateMessages(
+            functionIncludingAtLeastGenes.evaluate(record).passMessagesStrings(),
+            setOf("NSCLC driver event(s) detected: EGFR L858R")
+        )
     }
 
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptVariantImpact {
@@ -277,9 +289,9 @@ class HasMolecularDriverEventInNsclcTest {
     }
 
     private fun evaluateIncludePassMessages(expected: Set<String>, record: PatientRecord) {
-        evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expected)
-        evaluateMessages(functionIncludingSpecificGenes.evaluate(record).passMessages, expected)
-        evaluateMessages(functionIncludingAtLeastGenes.evaluate(record).passMessages, expected)
+        evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessagesStrings(), expected)
+        evaluateMessages(functionIncludingSpecificGenes.evaluate(record).passMessagesStrings(), expected)
+        evaluateMessages(functionIncludingAtLeastGenes.evaluate(record).passMessagesStrings(), expected)
     }
 
     private fun evaluateExcludeFunction(expected: EvaluationResult, record: PatientRecord) {

@@ -34,37 +34,37 @@ class EcgMeasureEvaluationFunctionTest {
     @Test
     fun `Should pass when value below max threshold`() {
         val evaluation = assertResultForCriteriaAndValueIgnoringNoise(ThresholdCriteria.MAXIMUM, 300, EvaluationResult.PASS)
-        assertThat(evaluation.passMessages).containsExactly("QTCF of 300 ms does not exceed max threshold of 450.0")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("QTCF of 300 ms does not exceed max threshold of 450.0")
     }
 
     @Test
     fun `Should pass when value equals max threshold`() {
         val evaluation = assertResultForCriteriaAndValueIgnoringNoise(ThresholdCriteria.MAXIMUM, 450, EvaluationResult.PASS)
-        assertThat(evaluation.passMessages).containsExactly("QTCF of 450 ms does not exceed max threshold of 450.0")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("QTCF of 450 ms does not exceed max threshold of 450.0")
     }
 
     @Test
     fun `Should fail when value above max threshold`() {
         val evaluation = assertResultForCriteriaAndValueIgnoringNoise(ThresholdCriteria.MAXIMUM, 500, EvaluationResult.FAIL)
-        assertThat(evaluation.failMessages).containsExactly("QTCF of 500 ms is above or equal to max threshold of 450.0")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("QTCF of 500 ms is above or equal to max threshold of 450.0")
     }
 
     @Test
     fun `Should pass when value above min threshold`() {
         val evaluation = assertResultForCriteriaAndValueIgnoringNoise(ThresholdCriteria.MINIMUM, 500, EvaluationResult.PASS)
-        assertThat(evaluation.passMessages).containsExactly("QTCF of 500 ms exceeds min threshold of 450.0")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("QTCF of 500 ms exceeds min threshold of 450.0")
     }
 
     @Test
     fun `Should pass when value equals min threshold`() {
         val evaluation = assertResultForCriteriaAndValueIgnoringNoise(ThresholdCriteria.MINIMUM, 450, EvaluationResult.PASS)
-        assertThat(evaluation.passMessages).containsExactly("QTCF of 450 ms exceeds min threshold of 450.0")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("QTCF of 450 ms exceeds min threshold of 450.0")
     }
 
     @Test
     fun `Should fail when value below min threshold`() {
         val evaluation = assertResultForCriteriaAndValueIgnoringNoise(ThresholdCriteria.MINIMUM, 300, EvaluationResult.FAIL)
-        assertThat(evaluation.failMessages).containsExactly("QTCF of 300 ms is below or equal to min threshold of 450.0")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("QTCF of 300 ms is below or equal to min threshold of 450.0")
     }
 
     @Test

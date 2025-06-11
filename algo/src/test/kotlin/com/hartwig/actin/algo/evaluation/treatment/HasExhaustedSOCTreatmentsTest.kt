@@ -97,7 +97,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatment(treatment)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
     }
 
     @Test
@@ -106,7 +106,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatment(null)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
     }
 
     @Test
@@ -140,7 +140,7 @@ class HasExhaustedSOCTreatmentsTest {
         setStandardOfCareCanBeEvaluatedForPatient(true)
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(nonEmptyTreatmentList)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
-        assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessages)
+        assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessagesStrings())
             .containsExactly("Has not exhausted SOC (remaining options: pembrolizumab)")
     }
 
@@ -160,7 +160,7 @@ class HasExhaustedSOCTreatmentsTest {
 
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages)
+        assertThat(evaluation.warnMessagesStrings())
             .containsExactly("Has potentially not exhausted SOC (pembrolizumab) but some corresponding molecular results are missing")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }

@@ -138,7 +138,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages).containsExactly("Tumor is HRD but without drivers in HR genes")
+        assertThat(result.warnMessagesStrings()).containsExactly("Tumor is HRD but without drivers in HR genes")
     }
 
     @Test
@@ -241,7 +241,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages).containsExactly("Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 and non-homozygous disruption in BRCA1 which could be pathogenic")
+        assertThat(result.warnMessagesStrings()).containsExactly("Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 and non-homozygous disruption in BRCA1 which could be pathogenic")
     }
 
     private fun hrdVariant(

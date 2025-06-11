@@ -24,7 +24,6 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.ImmutableServeRecord
 import java.io.File
 import java.time.Period
 import kotlin.system.exitProcess
@@ -129,7 +128,7 @@ class LocalExampleTreatmentMatchApplication {
                 treatmentsByName = emptyMap()
             ),
             molecularHistory = MolecularHistory(molecularTests = emptyList()),
-            ActionabilityMatcher(ImmutableServeRecord.builder().build().evidences(), ImmutableServeRecord.builder().build().trials())
+            ActionabilityMatcher(emptyList(), emptyList())
         )
     }
 

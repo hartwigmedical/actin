@@ -138,7 +138,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages).containsExactly("Tumor is HRD but without drivers in HR genes")
+        assertThat(result.warnMessagesStrings()).containsExactly("Tumor is HRD but without drivers in HR genes")
     }
 
     @Test

@@ -19,31 +19,31 @@ object EvaluationAssert {
         assertThat(actual.result).isEqualTo(expected)
         when (actual.result) {
             EvaluationResult.PASS -> {
-                assertThat(actual.passMessages).isNotEmpty()
-                assertThat(actual.warnMessages).isEmpty()
-                assertThat(actual.undeterminedMessages).isEmpty()
-                assertThat(actual.failMessages).isEmpty()
+                assertThat(actual.passMessagesStrings()).isNotEmpty()
+                assertThat(actual.warnMessagesStrings()).isEmpty()
+                assertThat(actual.undeterminedMessagesStrings()).isEmpty()
+                assertThat(actual.failMessagesStrings()).isEmpty()
             }
 
             EvaluationResult.WARN -> {
-                assertThat(actual.passMessages).isEmpty()
-                assertThat(actual.warnMessages).isNotEmpty()
-                assertThat(actual.undeterminedMessages).isEmpty()
-                assertThat(actual.failMessages).isEmpty()
+                assertThat(actual.passMessagesStrings()).isEmpty()
+                assertThat(actual.warnMessagesStrings()).isNotEmpty()
+                assertThat(actual.undeterminedMessagesStrings()).isEmpty()
+                assertThat(actual.failMessagesStrings()).isEmpty()
             }
 
             EvaluationResult.UNDETERMINED -> {
-                assertThat(actual.passMessages).isEmpty()
-                assertThat(actual.warnMessages).isEmpty()
-                assertThat(actual.undeterminedMessages).isNotEmpty()
-                assertThat(actual.failMessages).isEmpty()
+                assertThat(actual.passMessagesStrings()).isEmpty()
+                assertThat(actual.warnMessagesStrings()).isEmpty()
+                assertThat(actual.undeterminedMessagesStrings()).isNotEmpty()
+                assertThat(actual.failMessagesStrings()).isEmpty()
             }
 
             EvaluationResult.FAIL -> {
-                assertThat(actual.passMessages).isEmpty()
-                assertThat(actual.warnMessages).isEmpty()
-                assertThat(actual.undeterminedMessages).isEmpty()
-                assertThat(actual.failMessages).isNotEmpty()
+                assertThat(actual.passMessagesStrings()).isEmpty()
+                assertThat(actual.warnMessagesStrings()).isEmpty()
+                assertThat(actual.undeterminedMessagesStrings()).isEmpty()
+                assertThat(actual.failMessagesStrings()).isNotEmpty()
             }
 
             else -> {}

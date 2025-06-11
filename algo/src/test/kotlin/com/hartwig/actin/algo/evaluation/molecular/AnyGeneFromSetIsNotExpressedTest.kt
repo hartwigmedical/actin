@@ -14,7 +14,7 @@ class AnyGeneFromSetIsNotExpressedTest {
     fun `Should evaluate to undetermined with correct message`() {
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages)
+        assertThat(evaluation.undeterminedMessagesStrings())
             .contains("Non-expression of gene a, gene b and gene c in RNA undetermined")
     }
 }

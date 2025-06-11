@@ -75,18 +75,18 @@ class NotTest {
 
     private fun assertMessagesAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {
         assertThat(evaluation.recoverable).isEqualTo(negatedEvaluation.recoverable)
-        assertThat(negatedEvaluation.passMessages).isEqualTo(evaluation.failMessages)
-        assertThat(negatedEvaluation.failMessages).isEqualTo(evaluation.passMessages)
-        assertThat(negatedEvaluation.undeterminedMessages).isEqualTo(evaluation.undeterminedMessages)
-        assertThat(negatedEvaluation.warnMessages).isEqualTo(evaluation.warnMessages)
+        assertThat(negatedEvaluation.passMessagesStrings()).isEqualTo(evaluation.failMessagesStrings())
+        assertThat(negatedEvaluation.failMessagesStrings()).isEqualTo(evaluation.passMessagesStrings())
+        assertThat(negatedEvaluation.undeterminedMessagesStrings()).isEqualTo(evaluation.undeterminedMessagesStrings())
+        assertThat(negatedEvaluation.warnMessagesStrings()).isEqualTo(evaluation.warnMessagesStrings())
     }
 
     private fun assertMessagesAreRetained(evaluation: Evaluation, negatedEvaluation: Evaluation) {
         assertThat(evaluation.recoverable).isEqualTo(negatedEvaluation.recoverable)
-        assertThat(negatedEvaluation.passMessages).isEqualTo(evaluation.passMessages)
-        assertThat(negatedEvaluation.failMessages).isEqualTo(evaluation.failMessages)
-        assertThat(negatedEvaluation.undeterminedMessages).isEqualTo(evaluation.undeterminedMessages)
-        assertThat(negatedEvaluation.warnMessages).isEqualTo(evaluation.warnMessages)
+        assertThat(negatedEvaluation.passMessagesStrings()).isEqualTo(evaluation.passMessagesStrings())
+        assertThat(negatedEvaluation.failMessagesStrings()).isEqualTo(evaluation.failMessagesStrings())
+        assertThat(negatedEvaluation.undeterminedMessagesStrings()).isEqualTo(evaluation.undeterminedMessagesStrings())
+        assertThat(negatedEvaluation.warnMessagesStrings()).isEqualTo(evaluation.warnMessagesStrings())
     }
 
     private fun assertEventsAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {

@@ -86,7 +86,8 @@ class PanelAnnotator(
             ),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             hasSufficientPurity = true,
-            hasSufficientQuality = true
+            hasSufficientQuality = true,
+            reportHash = input.reportHash
         )
     }
 }

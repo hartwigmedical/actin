@@ -43,7 +43,7 @@ class HasEcgAberrationTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsExactly("ECG abnormalities (ecg abnormality) and cardiac arrhythmia (cardiac arrhythmia) in history")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("ECG abnormalities (ecg abnormality) and cardiac arrhythmia (cardiac arrhythmia) in history")
     }
 
     @Test

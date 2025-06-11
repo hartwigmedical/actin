@@ -93,7 +93,7 @@ object TestTreatmentMatchFactory {
                     Evaluation(
                         result = EvaluationResult.PASS,
                         recoverable = false,
-                        passMessages = setOf("Has active CNS metastases")
+                        passMessages = setOf(StaticMessage("Has active CNS metastases"))
                     )
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
@@ -251,25 +251,25 @@ object TestTreatmentMatchFactory {
         val base = Evaluation(result = result, recoverable = false, inclusionMolecularEvents = setOfNotNull(inclusionMolecularEvent))
         return when (result) {
             EvaluationResult.PASS -> {
-                base.copy(passMessages = setOfNotNull(message))
+                base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
             }
 
             EvaluationResult.NOT_EVALUATED -> {
-                base.copy(passMessages = setOfNotNull(message))
+                base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
             }
 
             EvaluationResult.WARN -> {
-                base.copy(warnMessages = setOfNotNull(message))
+                base.copy(warnMessages = setOfNotNull(message?.let { StaticMessage(it) }))
             }
 
             EvaluationResult.UNDETERMINED -> {
                 base.copy(
-                    undeterminedMessages = setOfNotNull(message)
+                    undeterminedMessages = setOfNotNull(message?.let { StaticMessage(it) })
                 )
             }
 
             EvaluationResult.FAIL -> {
-                base.copy(failMessages = setOfNotNull(message))
+                base.copy(failMessages = setOfNotNull(message?.let { StaticMessage(it) }))
             }
         }
     }

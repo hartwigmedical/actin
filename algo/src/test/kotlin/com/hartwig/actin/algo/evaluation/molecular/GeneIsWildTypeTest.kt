@@ -342,7 +342,7 @@ class GeneIsWildTypeTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
+        Assertions.assertThat(result.undeterminedMessagesStrings())
             .containsExactly("Wildtype of gene gene A undetermined (not tested for at least mutations)")
     }
 }

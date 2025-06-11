@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 
 object EvaluationFactory {
 
@@ -9,7 +10,7 @@ object EvaluationFactory {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.PASS,
-            passMessages = setOf(message),
+            passMessages = messages(message),
             inclusionMolecularEvents = inclusionEvents
         )
     }
@@ -22,7 +23,7 @@ object EvaluationFactory {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.FAIL,
-            failMessages = setOf(message),
+            failMessages = messages(message),
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
@@ -39,7 +40,7 @@ object EvaluationFactory {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.UNDETERMINED,
-            undeterminedMessages = setOf(message),
+            undeterminedMessages = messages(message),
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
@@ -56,7 +57,7 @@ object EvaluationFactory {
         return Evaluation(
             recoverable = false,
             result = EvaluationResult.WARN,
-            warnMessages = setOf(message),
+            warnMessages = messages(message),
             inclusionMolecularEvents = inclusionEvents,
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
@@ -66,8 +67,10 @@ object EvaluationFactory {
         return Evaluation(
             recoverable = false,
             result = EvaluationResult.NOT_EVALUATED,
-            passMessages = setOf(message)
+            passMessages = messages(message)
         )
     }
+
+    private fun messages(message: String) = setOf(StaticMessage(message))
 }
 
