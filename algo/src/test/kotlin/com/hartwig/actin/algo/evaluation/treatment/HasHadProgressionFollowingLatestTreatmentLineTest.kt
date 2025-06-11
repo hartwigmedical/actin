@@ -191,4 +191,19 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Unable to determine radiological progression following latest treatment line due to treatments without start date.")
     }
+
+    @Test
+    fun `Should be undetermined when last treatment has no stop reason and not long enough to assume PD`(){
+        val treatments = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
+                startYear = 2025,
+                startMonth = 10,
+                stopYear = 2025,
+                stopMonth = 11
+            )
+        )
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Radiological progression following latest treatment line undetermined.")
+    }
 }
