@@ -23,24 +23,6 @@ class TumorEvaluationFunctionsTest {
     private val otherName = "name"
 
     @Test
-    fun canDetermineIfTumorHasType() {
-        val validTypes = setOf("Valid")
-        assertThat(TumorEvaluationFunctions.hasTumorWithType(TumorDetails(), validTypes)).isFalse
-        assertThat(TumorEvaluationFunctions.hasTumorWithType(TumorDetails(primaryTumorType = "wrong"), validTypes)).isFalse
-        assertThat(TumorEvaluationFunctions.hasTumorWithType(TumorDetails(primaryTumorType = "valid type"), validTypes)).isTrue
-        assertThat(TumorEvaluationFunctions.hasTumorWithType(TumorDetails(primaryTumorSubType = "valid sub-type"), validTypes)).isTrue
-    }
-
-    @Test
-    fun canDetermineIfTumorHasDetails() {
-        val validDetails = setOf("Valid")
-        assertThat(TumorEvaluationFunctions.hasTumorWithDetails(TumorDetails(), validDetails)).isFalse
-        assertThat(TumorEvaluationFunctions.hasTumorWithDetails(TumorDetails(primaryTumorExtraDetails = "wrong"), validDetails)).isFalse
-        assertThat(TumorEvaluationFunctions.hasTumorWithDetails(TumorDetails(primaryTumorExtraDetails = "valid details"), validDetails))
-            .isTrue
-    }
-
-    @Test
     fun `Should pass if tumor has small cell doid`() {
         assertThat(TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, smallCellDoids, otherName)).isTrue()
     }

@@ -3,19 +3,10 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidTerm
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.doid.DoidModel
 
 object TumorEvaluationFunctions {
-
-    fun hasTumorWithType(tumor: TumorDetails, validTypes: Set<String>): Boolean {
-        return listOf(tumor.primaryTumorType, tumor.primaryTumorSubType).any { stringNotNullAndMatchesCollection(it, validTypes) }
-    }
-
-    fun hasTumorWithDetails(tumor: TumorDetails, validDetails: Set<String>): Boolean {
-        return stringNotNullAndMatchesCollection(tumor.primaryTumorExtraDetails, validDetails)
-    }
 
     fun hasTumorWithNeuroendocrineComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
         val hasNeuroendocrineDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.NEUROENDOCRINE_DOIDS)
@@ -50,9 +41,5 @@ object TumorEvaluationFunctions {
             val lowercaseLesion = lesion.lowercase()
             targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
         }
-    }
-
-    private fun stringNotNullAndMatchesCollection(nullableString: String?, collection: Collection<String>): Boolean {
-        return nullableString != null && stringCaseInsensitivelyMatchesQueryCollection(nullableString, collection)
     }
 }
