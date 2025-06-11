@@ -6,18 +6,16 @@ import com.hartwig.feed.datamodel.FeedMeasurement
 class VitalFunctionValidator {
     fun validate(patientId: String, feed: FeedMeasurement): FeedValidation {
 
-        val emptyCodeDisplayValidation = feed.category.takeIf { it.isEmpty() }
-            ?.let { listOf(FeedValidationWarning(patientId, "Empty vital function category")) }
+        val emptyCodeDisplayValidation =
+            FeedValidationWarning(patientId, "Empty vital function category").takeIf { feed.category.isEmpty() }
 
-        val emptyQuantityValidation = feed.value.takeIf { it.isNaN() }
-            ?.let { listOf(FeedValidationWarning(patientId, "Empty vital function value")) }
+        val emptyQuantityValidation =
+            FeedValidationWarning(patientId, "Empty vital function value").takeIf { feed.value.isNaN() }
 
         val noCategoryValidation = feed.category.takeIf { it.isNotEmpty() && VitalFunctionCategoryResolver.toCategory(it) == null }
-            ?.let {
-                listOf(FeedValidationWarning(patientId, "Invalid vital function category: $it"))
-            }
+            ?.let { FeedValidationWarning(patientId, "Invalid vital function category: $it") }
 
-        val warnings = listOfNotNull(emptyCodeDisplayValidation, emptyQuantityValidation, noCategoryValidation).flatten()
+        val warnings = listOfNotNull(emptyCodeDisplayValidation, emptyQuantityValidation, noCategoryValidation)
         return FeedValidation(warnings.isEmpty(), warnings)
     }
 }

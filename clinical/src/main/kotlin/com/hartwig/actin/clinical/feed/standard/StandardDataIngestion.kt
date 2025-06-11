@@ -34,7 +34,7 @@ import com.hartwig.feed.datamodel.FeedPatientRecord
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.stream.Collectors
+import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
 class StandardDataIngestion(
@@ -58,7 +58,8 @@ class StandardDataIngestion(
 ) : ClinicalFeedIngestion {
 
     override fun ingest(): List<Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation>> {
-        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }
+        return Paths.get(directory).listDirectoryEntries()
+            .filter { it.name.endsWith("json") }
             .map(::recordAndEvaluationFromPath)
             .map { (record, evaluation) ->
                 Triple(
@@ -74,7 +75,6 @@ class StandardDataIngestion(
                     evaluation
                 )
             }
-            .collect(Collectors.toList())
     }
 
     private fun recordAndEvaluationFromPath(file: Path): Pair<ClinicalRecord, CurationExtractionEvaluation> {

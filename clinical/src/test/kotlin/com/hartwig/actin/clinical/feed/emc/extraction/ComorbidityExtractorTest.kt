@@ -91,7 +91,7 @@ class ComorbidityExtractorTest {
     )
 
     @Test
-    fun `Should extract empty list empty input`() {
+    fun `Should extract empty list for empty input`() {
         assertEmptyExtractionWithoutWarnings(emptyList())
     }
 
@@ -258,9 +258,7 @@ class ComorbidityExtractorTest {
             toxicityTranslationDatabase
         )
         val inputs = listOf(input, cannotCurate).map { entry.copy(name = it) }
-        val (extraction, evaluation) = extractor.extract(
-            feedRecord.copy(allergies = inputs)
-        )
+        val (extraction, evaluation) = extractor.extract(feedRecord.copy(allergies = inputs))
         val intolerances = extraction.first
         assertThat(intolerances).hasSize(2)
         val curated = intolerances.first()

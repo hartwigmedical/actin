@@ -1,20 +1,20 @@
 package com.hartwig.actin.clinical.feed.emc
 
 import com.hartwig.actin.datamodel.clinical.LabUnit
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class LabUnitResolverTest {
-    
+
     @Test
-    fun canResolveLabUnits() {
+    fun `Should resolve lab units`() {
         val unit = LabUnit.CELLS_PER_CUBIC_MILLIMETER
-        Assertions.assertThat(LabUnitResolver.resolve(unit.display().lowercase())).isEqualTo(unit)
+        assertThat(LabUnitResolver.resolve(unit.display().lowercase())).isEqualTo(unit)
     }
 
     @Test
-    fun canCurateLabUnits() {
+    fun `Should curate lab units`() {
         val firstCurated = LabUnitResolver.CURATION_MAP.keys.iterator().next()
-        Assertions.assertThat(LabUnitResolver.resolve(firstCurated)).isEqualTo(LabUnitResolver.CURATION_MAP[firstCurated])
+        assertThat(LabUnitResolver.resolve(firstCurated)).isEqualTo(LabUnitResolver.CURATION_MAP[firstCurated])
     }
 }

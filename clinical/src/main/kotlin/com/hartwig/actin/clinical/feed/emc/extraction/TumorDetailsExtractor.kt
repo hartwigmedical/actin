@@ -165,8 +165,7 @@ class TumorDetailsExtractor(
             ?.map(LesionLocationConfig::location)
     }
 
-    fun curateOtherLesions(patientId: String, lesions: List<FeedLesion>?):
-            CurationResponse<LesionLocationConfig> {
+    fun curateOtherLesions(patientId: String, lesions: List<FeedLesion>?): CurationResponse<LesionLocationConfig> {
         if (lesions == null) {
             return CurationResponse()
         }

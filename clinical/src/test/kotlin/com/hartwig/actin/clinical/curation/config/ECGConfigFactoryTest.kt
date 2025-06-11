@@ -11,7 +11,6 @@ import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-
 private const val INPUT = "input"
 private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
 

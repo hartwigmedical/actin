@@ -37,7 +37,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.LocalDate
-import java.util.stream.Collectors
+import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
 class EmcClinicalFeedIngestion(
@@ -61,10 +61,9 @@ class EmcClinicalFeedIngestion(
 
     override fun ingest(): List<Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation>> {
         LOGGER.info("Creating clinical model")
-        return Files.list(Paths.get(feedDirectory))
+        return Paths.get(feedDirectory).listDirectoryEntries()
             .filter { it.name.endsWith("json") }
             .map(::recordAndEvaluationFromPath)
-            .collect(Collectors.toList())
     }
 
     private fun recordAndEvaluationFromPath(file: Path): Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation> {
@@ -72,21 +71,19 @@ class EmcClinicalFeedIngestion(
         val patientId = feedRecord.patientDetails.patientId
         LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-        val validationWarnings = setOfNotNull(
-            feedRecord.measurements
-                .filterNot { it.category == "BODY_WEIGHT" }
-                .map { VitalFunctionValidator().validate(patientId, it) }
-                .map { it.warnings }.flatten(),
-            feedRecord.patientDetails.questionnaireDate?.let { emptySet() }
-                ?: setOf(
-                    FeedValidationWarning(patientId, "No Questionnaire Found")
-                )
-        ).flatten().toSet()
+        val vitalFunctionWarnings = feedRecord.measurements
+            .filterNot { it.category == "BODY_WEIGHT" }
+            .flatMap { VitalFunctionValidator().validate(patientId, it).warnings }
+            .toSet()
+        val questionnaireWarnings = setOfNotNull(
+            FeedValidationWarning(patientId, "No Questionnaire Found").takeIf { feedRecord.patientDetails.questionnaireDate == null }
+        )
+        val validationWarnings = vitalFunctionWarnings + questionnaireWarnings
+
         val questionnaireCurationErrors = TumorStageValidator.validate(patientId, feedRecord.tumorDetails.stage).errors
 
         val tumorExtraction = tumorDetailsExtractor.extract(patientId, feedRecord.tumorDetails)
-        val comorbidityExtraction =
-            comorbidityExtractor.extract(feedRecord)
+        val comorbidityExtraction = comorbidityExtractor.extract(feedRecord)
         val (comorbidities, clinicalStatus) = comorbidityExtraction.extracted
         val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, feedRecord.treatmentHistory)
         val priorPrimaryExtraction = priorPrimaryExtractor.extract(patientId, feedRecord)
@@ -96,7 +93,7 @@ class EmcClinicalFeedIngestion(
         val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusions)
         val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medications)
         val surgeryExtraction = surgeryExtractor.extract(patientId, feedRecord.surgeries)
-        val bodyHeightExtraction = bodyWeightExtractor.extract(feedRecord)
+        val bodyWeightExtraction = bodyWeightExtractor.extract(feedRecord)
         val vitalFunctionsExtraction = vitalFunctionsExtractor.extract(feedRecord)
         val patientDetailsExtraction = patientDetailsExtractor.extract(feedRecord)
         val pathologyReportsExtraction = pathologyReportsExtractor.extract(feedRecord)
@@ -113,7 +110,7 @@ class EmcClinicalFeedIngestion(
             sequencingTests = sequencingTestExtraction.extracted,
             labValues = labValuesExtraction.extracted,
             surgeries = surgeryExtraction.extracted,
-            bodyWeights = bodyHeightExtraction.extracted,
+            bodyWeights = bodyWeightExtraction.extracted,
             bodyHeights = emptyList(),
             vitalFunctions = vitalFunctionsExtraction.extracted,
             bloodTransfusions = bloodTransfusionsExtraction.extracted,
@@ -132,7 +129,7 @@ class EmcClinicalFeedIngestion(
             bloodTransfusionsExtraction,
             medicationExtraction,
             surgeryExtraction,
-            bodyHeightExtraction,
+            bodyWeightExtraction,
             vitalFunctionsExtraction,
             patientDetailsExtraction,
             pathologyReportsExtraction

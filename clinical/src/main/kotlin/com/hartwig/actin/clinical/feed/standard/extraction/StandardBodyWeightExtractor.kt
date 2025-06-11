@@ -9,10 +9,10 @@ import com.hartwig.feed.datamodel.FeedPatientRecord
 class StandardBodyWeightExtractor : StandardDataExtractor<List<BodyWeight>> {
     override fun extract(feedPatientRecord: FeedPatientRecord): ExtractionResult<List<BodyWeight>> {
         return ExtractionResult(
-            feedPatientRecord.measurements
-                .filter {
-                    enumeratedInput<MeasurementCategory>(it.category) == MeasurementCategory.BODY_WEIGHT
-                }.filter { it.value > 0 }.map { meas ->
+            extracted = feedPatientRecord.measurements
+                .filter { enumeratedInput<MeasurementCategory>(it.category) == MeasurementCategory.BODY_WEIGHT }
+                .filter { it.value > 0 }
+                .map { meas ->
                     BodyWeight(
                         value = meas.value,
                         date = meas.date,
@@ -20,7 +20,8 @@ class StandardBodyWeightExtractor : StandardDataExtractor<List<BodyWeight>> {
                             ?: throw IllegalArgumentException("Unit of body weight is not Kilograms"),
                         valid = meas.value in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
                     )
-                }, CurationExtractionEvaluation()
+                },
+            evaluation = CurationExtractionEvaluation()
         )
     }
 
