@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 
 
 class HasHadProgressionFollowingLatestTreatmentLine(
@@ -46,7 +45,7 @@ class HasHadProgressionFollowingLatestTreatmentLine(
             }
 
             else -> {
-                EvaluationFactory.undetermined("Radiological progression following latest treatment line undetermined.");
+                EvaluationFactory.undetermined("Radiological progression following latest treatment line undetermined.")
             }
         }
     }
