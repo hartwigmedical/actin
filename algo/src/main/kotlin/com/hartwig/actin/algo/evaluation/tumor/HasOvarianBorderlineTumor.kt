@@ -15,7 +15,7 @@ class HasOvarianBorderlineTumor(private val doidModel: DoidModel) : EvaluationFu
             return EvaluationFactory.undetermined("Ovarian borderline tumor undetermined (no DOIDs)")
         }
         val isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.OVARIAN_CANCER_DOID)
-        val hasBorderlineType = OVARIAN_BORDERLINE_KEYWORDS.any { record.tumor.name.lowercase().contains(it) }
+        val hasBorderlineType = BORDERLINE_TERMS.any { record.tumor.name.lowercase().contains(it) }
         val hasGeneralOvarianCancer =
             DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.OVARIAN_CANCER_DOID) || DoidEvaluationFunctions.isOfExactDoid(
                 tumorDoids,
@@ -30,6 +30,6 @@ class HasOvarianBorderlineTumor(private val doidModel: DoidModel) : EvaluationFu
     }
 
     companion object {
-        val OVARIAN_BORDERLINE_KEYWORDS = setOf("borderline")
+        val BORDERLINE_TERMS = setOf("borderline")
     }
 }

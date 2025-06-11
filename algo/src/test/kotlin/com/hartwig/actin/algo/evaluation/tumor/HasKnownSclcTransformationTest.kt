@@ -21,28 +21,6 @@ class HasKnownSclcTransformationTest {
     private val function = HasKnownSclcTransformation(doidModel)
 
     @Test
-    fun `Should fail if tumor type not lung cancer`() {
-        assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LIVER_CANCER_DOID))
-        )
-    }
-
-    @Test
-    fun `Should fail if tumor doids and molecular profile do not indicate a possible small cell transformation`() {
-        assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
-        )
-    }
-
-    @Test
-    fun `Should fail if tumor has small cell doid but no NSCLC doid`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withDoids(SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next()))
-        )
-    }
-
-    @Test
     fun `Should be undetermined if tumor is NSCLC and has also small cell doid`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -64,8 +42,31 @@ class HasKnownSclcTransformationTest {
     }
 
     @Test
-    fun `Should be undetermined if tumor if uncertain lung cancer doid`() {
+    fun `Should be undetermined if tumor if exact lung carcinoma doid`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_CARCINOMA_DOID)))
+    }
+
+    @Test
+    fun `Should fail if tumor type not lung cancer`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LIVER_CANCER_DOID))
+        )
+    }
+
+    @Test
+    fun `Should fail if tumor has small cell doid but no NSCLC doid`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withDoids(SMALL_CELL_LUNG_CANCER_DOIDS.first()))
+        )
+    }
+
+    @Test
+    fun `Should fail if tumor doids and molecular profile do not indicate a possible small cell transformation`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
+        )
     }
 
     @Test

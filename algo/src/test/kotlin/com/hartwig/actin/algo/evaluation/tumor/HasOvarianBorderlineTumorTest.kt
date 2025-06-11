@@ -8,7 +8,7 @@ import org.junit.Test
 
 class HasOvarianBorderlineTumorTest {
     private val function = HasOvarianBorderlineTumor(TestDoidModelFactory.createMinimalTestDoidModel())
-    private val targetedType = HasOvarianBorderlineTumor.OVARIAN_BORDERLINE_KEYWORDS.iterator().next()
+    private val targetedType = HasOvarianBorderlineTumor.BORDERLINE_TERMS.first()
 
     @Test
     fun canEvaluate() {
