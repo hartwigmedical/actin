@@ -10,7 +10,7 @@ class HasStomachUndifferentiatedTumorTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function = HasStomachUndifferentiatedTumor(doidModel)
-    val targetType = TumorConstants.UNDIFFERENTIATED_TERMS.iterator().next()
+    val targetType = TumorTermConstants.UNDIFFERENTIATED_TERMS.iterator().next()
 
     @Test
     fun `Should evaluate to undetermined if there are no tumor doids configured`() {
@@ -35,7 +35,7 @@ class HasStomachUndifferentiatedTumorTest {
         val tumor =
             TumorTestFactory.withDoidAndType(
                 DoidConstants.BRAIN_CANCER_DOID,
-                TumorConstants.UNDIFFERENTIATED_TERMS.iterator().next(),
+                TumorTermConstants.UNDIFFERENTIATED_TERMS.iterator().next(),
             )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumor))
     }

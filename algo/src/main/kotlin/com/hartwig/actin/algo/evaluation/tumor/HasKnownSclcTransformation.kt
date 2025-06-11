@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
-class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+class HasKnownSclcTransformation(private val doidModel: DoidModel, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)

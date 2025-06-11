@@ -15,10 +15,10 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class HasKnownSCLCTransformationTest {
+class HasKnownSclcTransformationTest {
 
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    private val function = HasKnownSCLCTransformation(doidModel)
+    private val function = HasKnownSclcTransformation(doidModel)
 
     @Test
     fun `Should fail if tumor type not lung cancer`() {

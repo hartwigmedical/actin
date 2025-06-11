@@ -19,16 +19,16 @@ internal object TumorEvaluationFunctions {
 
     fun hasTumorWithNeuroendocrineComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
         val hasNeuroendocrineDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.NEUROENDOCRINE_DOIDS)
-        val hasNeuroendocrineDoidTerm = isOfAtLeastOneDoidTerm(doidModel, tumorDoids, TumorConstants.NEUROENDOCRINE_TERMS)
-        val hasNeuroendocrineName = TumorConstants.NEUROENDOCRINE_TERMS.any { tumorName.lowercase().contains(it) }
+        val hasNeuroendocrineDoidTerm = isOfAtLeastOneDoidTerm(doidModel, tumorDoids, TumorTermConstants.NEUROENDOCRINE_TERMS)
+        val hasNeuroendocrineName = TumorTermConstants.NEUROENDOCRINE_TERMS.any { tumorName.lowercase().contains(it) }
         return hasNeuroendocrineDoid || hasNeuroendocrineDoidTerm || hasNeuroendocrineName
     }
 
     fun hasTumorWithSmallCellComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
         val hasSmallCellDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.SMALL_CELL_CANCER_DOIDS)
-        val hasSmallCellName = TumorConstants.SMALL_CELL_TERMS.any {
+        val hasSmallCellName = TumorTermConstants.SMALL_CELL_TERMS.any {
             tumorName.lowercase().contains(it)
-        } && !TumorConstants.NON_SMALL_CELL_TERMS.any { tumorName.lowercase().contains(it) }
+        } && !TumorTermConstants.NON_SMALL_CELL_TERMS.any { tumorName.lowercase().contains(it) }
         return hasSmallCellDoid || hasSmallCellName
     }
 

@@ -51,7 +51,7 @@ class TumorEvaluationFunctionsTest {
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(
                 doidModel,
                 otherDoids,
-                "name ${TumorConstants.SMALL_CELL_TERMS.first()}"
+                "name ${TumorTermConstants.SMALL_CELL_TERMS.first()}"
             )
         ).isTrue()
     }
@@ -62,7 +62,7 @@ class TumorEvaluationFunctionsTest {
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(
                 doidModel,
                 otherDoids,
-                "name ${TumorConstants.NON_SMALL_CELL_TERMS.first()}"
+                "name ${TumorTermConstants.NON_SMALL_CELL_TERMS.first()}"
             )
         ).isFalse()
     }
@@ -101,7 +101,7 @@ class TumorEvaluationFunctionsTest {
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(
                 doidModel,
                 otherDoids,
-                "name ${TumorConstants.NEUROENDOCRINE_TERMS.first()}"
+                "name ${TumorTermConstants.NEUROENDOCRINE_TERMS.first()}"
             )
         ).isTrue()
     }
