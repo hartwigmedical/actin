@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasUnresectablePeritonealMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val certainPeritonealMetastasesEvaluation = TumorTypeEvaluationFunctions.hasPeritonealMetastases(record.tumor)
-        val suspectedPeritonealMetastasesEvaluation = TumorTypeEvaluationFunctions.hasSuspectedPeritonealMetastases(record.tumor)
+        val certainPeritonealMetastasesEvaluation = TumorEvaluationFunctions.hasPeritonealMetastases(record.tumor)
+        val suspectedPeritonealMetastasesEvaluation = TumorEvaluationFunctions.hasSuspectedPeritonealMetastases(record.tumor)
 
         return when {
             certainPeritonealMetastasesEvaluation == null && suspectedPeritonealMetastasesEvaluation != true -> {

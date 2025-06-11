@@ -1,9 +1,13 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidTerm
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.doid.DoidModel
 
-internal object TumorTypeEvaluationFunctions {
+internal object TumorEvaluationFunctions {
 
     fun hasTumorWithType(tumor: TumorDetails, validTypes: Set<String>): Boolean {
         return listOf(tumor.primaryTumorType, tumor.primaryTumorSubType).any { stringNotNullAndMatchesCollection(it, validTypes) }
@@ -11,6 +15,21 @@ internal object TumorTypeEvaluationFunctions {
 
     fun hasTumorWithDetails(tumor: TumorDetails, validDetails: Set<String>): Boolean {
         return stringNotNullAndMatchesCollection(tumor.primaryTumorExtraDetails, validDetails)
+    }
+
+    fun hasTumorWithNeuroendocrineComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
+        val hasNeuroendocrineDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.NEUROENDOCRINE_DOIDS)
+        val hasNeuroendocrineDoidTerm = isOfAtLeastOneDoidTerm(doidModel, tumorDoids, TumorConstants.NEUROENDOCRINE_TERMS)
+        val hasNeuroendocrineName = TumorConstants.NEUROENDOCRINE_TERMS.any { tumorName.lowercase().contains(it) }
+        return hasNeuroendocrineDoid || hasNeuroendocrineDoidTerm || hasNeuroendocrineName
+    }
+
+    fun hasTumorWithSmallCellComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
+        val hasSmallCellDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.SMALL_CELL_CANCER_DOIDS)
+        val hasSmallCellName = TumorConstants.SMALL_CELL_TERMS.any {
+            tumorName.lowercase().contains(it)
+        } && !TumorConstants.NON_SMALL_CELL_TERMS.any { tumorName.lowercase().contains(it) }
+        return hasSmallCellDoid || hasSmallCellName
     }
 
     fun hasPeritonealMetastases(tumor: TumorDetails): Boolean? {

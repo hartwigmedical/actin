@@ -25,7 +25,7 @@ class HasLeftSidedColorectalTumorTest {
     fun `Should pass when name does contain a left string`() {
         listOf("Rectum", "Descending Colon", "COLON sigmoid", "colon descendens", "rectosigmoid", "Colon sigmoideum")
             .forEach { name: String? ->
-                assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName(name)))
+                assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName("text" + name + "other text")))
             }
     }
 
@@ -42,7 +42,7 @@ class HasLeftSidedColorectalTumorTest {
             "hepatic flexure"
         )
             .forEach { name: String? ->
-                assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(name)))
+                assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("text" + name + "other text"))))
             }
     }
 

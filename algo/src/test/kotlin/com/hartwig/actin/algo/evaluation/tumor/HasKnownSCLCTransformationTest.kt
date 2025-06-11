@@ -21,8 +21,7 @@ class HasKnownSCLCTransformationTest {
     private val function = HasKnownSCLCTransformation(doidModel)
 
     @Test
-
-    fun `Should fail if tumor type not NSCLC`() {
+    fun `Should fail if tumor type not lung cancer`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LIVER_CANCER_DOID))
         )
@@ -44,30 +43,29 @@ class HasKnownSCLCTransformationTest {
     }
 
     @Test
-    fun `Should resolve to undetermined if tumor has both NSCLC and small cell doid configured`() {
+    fun `Should be undetermined if tumor is NSCLC and has also small cell doid`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoids(
-                SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next(),
-                DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+            function.evaluate(
+                TumorTestFactory.withDoids(
+                    SMALL_CELL_LUNG_CANCER_DOIDS.first(),
+                    DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
+                )
             )
         )
     }
 
     @Test
-    fun `Should resolve to undetermined if tumor is NSCLC and small cell or mixed in tumor extra details`() {
+    fun `Should be undetermined if tumor is NSCLC and has small cell component`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoidAndDetails(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "small cell"))
+            function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "small cell name"))
         )
     }
 
     @Test
-    fun `Should fail if tumor is NSCLC and non-small cell in tumor extra details`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withDoidAndDetails(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "non-small cell"))
-        )
+    fun `Should be undetermined if tumor if uncertain lung cancer doid`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_CARCINOMA_DOID)))
     }
 
     @Test

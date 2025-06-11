@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
@@ -77,7 +78,7 @@ class PrimaryTumorLocationBelongsToDoid(
     }
 
     private fun hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids: Set<String>, fullDoidToMatchTree: Set<String>): Boolean {
-        return tumorDoids.intersect(NEUROENDOCRINE_DOIDS).isNotEmpty() && fullDoidToMatchTree.intersect(NEUROENDOCRINE_DOIDS).isEmpty()
+        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isNotEmpty() && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
     }
 
     private fun doidsToTerms(doids: Set<String>): Set<String> {
