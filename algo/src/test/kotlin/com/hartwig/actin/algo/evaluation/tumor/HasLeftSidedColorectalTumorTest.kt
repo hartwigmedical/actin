@@ -23,39 +23,30 @@ class HasLeftSidedColorectalTumorTest {
 
     @Test
     fun `Should pass when name does contain a left string`() {
-        listOf("Rectum", "Descending Colon", "COLON sigmoid", "colon descendens", "rectosigmoid", "Colon sigmoideum")
-            .forEach { name: String? ->
-                assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName("text" + name + "other text")))
-            }
+        HasLeftSidedColorectalTumor.LEFT_SUB_LOCATIONS.forEach { name: String ->
+            assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName("text" + name + "other text")))
+        }
     }
 
     @Test
     fun `Should fail when name contains a right string`() {
-        listOf(
-            "Ascending colon",
-            "Colon ascendens",
-            "caecum",
-            "cecum",
-            "transverse COLON",
-            "colon transversum",
-            "flexura hepatica",
-            "hepatic flexure"
-        )
-            .forEach { name: String? ->
-                assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("text" + name + "other text"))))
-            }
+        HasLeftSidedColorectalTumor.RIGHT_SUB_LOCATIONS.forEach { name: String? ->
+            assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("text" + name + "other text"))))
+        }
     }
 
     @Test
     fun `Should be undetermined when name does not contain a known left or right string`() {
-        listOf("", "unknown", "some string")
-            .forEach { name: String? ->
-                assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(patientWithTumorName(name)))
-            }
+        listOf("", "unknown", "some string").forEach { name: String ->
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function().evaluate(patientWithTumorName(name))
+            )
+        }
     }
 
     companion object {
-        private fun patientWithTumorName(name: String?): PatientRecord {
+        private fun patientWithTumorName(name: String): PatientRecord {
             return TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, name)
         }
 

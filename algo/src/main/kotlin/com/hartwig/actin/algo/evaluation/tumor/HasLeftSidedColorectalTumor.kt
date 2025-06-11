@@ -11,10 +11,11 @@ class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : Evaluation
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
+
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            EvaluationFactory.undetermined("Undetermined if left sided CRC (unknown tumor type)")
+            EvaluationFactory.undetermined("Undetermined if left-sided colorectal cancer")
         } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
-            EvaluationFactory.fail("No CRC")
+            EvaluationFactory.fail("Has no left-sided colorectal cancer")
         } else {
             val name = record.tumor.name
             when {
@@ -30,9 +31,8 @@ class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : Evaluation
     }
 
     companion object {
-        private val LEFT_SUB_LOCATIONS = setOf("rectum", "descending", "sigmoid", "descendens", "rectosigmoid")
-        private val RIGHT_SUB_LOCATIONS = setOf(
-            "ascending", "ascendens", "caecum", "cecum", "transverse", "transversum", "flexura hepatica", "hepatic flexure"
-        )
+        val LEFT_SUB_LOCATIONS = setOf("rectum", "descending", "sigmoid", "descendens", "rectosigmoid")
+        val RIGHT_SUB_LOCATIONS =
+            setOf("ascending", "ascendens", "caecum", "cecum", "transverse", "transversum", "flexura hepatica", "hepatic flexure")
     }
 }

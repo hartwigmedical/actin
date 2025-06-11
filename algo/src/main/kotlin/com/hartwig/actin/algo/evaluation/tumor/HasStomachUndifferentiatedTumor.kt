@@ -15,12 +15,16 @@ class HasStomachUndifferentiatedTumor(private val doidModel: DoidModel) : Evalua
             return EvaluationFactory.undetermined("Undifferentiated stomach tumor undetermined (DOIDs missing)")
         }
         val isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.STOMACH_CANCER_DOID)
-        val isUndifferentiatedType = TumorTermConstants.UNDIFFERENTIATED_TERMS.any { record.tumor.name.lowercase().contains(it) }
+        val isUndifferentiatedType = UNDIFFERENTIATED_TERMS.any { record.tumor.name.lowercase().contains(it) }
 
         return when {
             isStomachCancer && isUndifferentiatedType -> EvaluationFactory.pass("Has undifferentiated stomach tumor")
             isStomachCancer -> EvaluationFactory.warn("Has stomach tumor but undetermined if undifferentiated")
             else -> EvaluationFactory.fail("No undifferentiated stomach tumor")
         }
+    }
+
+    companion object {
+        val UNDIFFERENTIATED_TERMS = setOf("undifferentiated")
     }
 }

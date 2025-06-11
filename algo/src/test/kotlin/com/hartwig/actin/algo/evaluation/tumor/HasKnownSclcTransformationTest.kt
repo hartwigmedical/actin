@@ -84,6 +84,6 @@ class HasKnownSclcTransformationTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Small cell transformation undetermined (RB1 loss detected)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if small cell transformation may have occurred (RB1 inactivation detected)")
     }
 }

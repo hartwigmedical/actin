@@ -13,25 +13,24 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val treatmentEvaluation = evaluateTreatmentHistory(record, drugsToMatch)
-        val toxicityMessage =
-            if (treatmentEvaluation.matchesWithToxicity) "(stop reason toxicity) " else ""
+        val toxicityMessage = if (treatmentEvaluation.matchesWithToxicity) "(stop reason toxicity) " else ""
 
         return when {
             treatmentEvaluation.matchingDrugsWithPD.isNotEmpty() -> {
                 EvaluationFactory.pass("Has potential acquired resistance to ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}")
             }
 
-            (treatmentEvaluation.possibleTrialMatch) -> {
+            treatmentEvaluation.possibleTrialMatch -> {
                 EvaluationFactory.undetermined(
                     "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} since unknown if drug was included in previous trial"
                 )
             }
 
-            (treatmentEvaluation.matchesWithUnclearPD || treatmentEvaluation.matchesWithToxicity) -> {
+            treatmentEvaluation.matchesWithUnclearPD || treatmentEvaluation.matchesWithToxicity -> {
                 EvaluationFactory.undetermined("Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage")
             }
 
-            (treatmentEvaluation.matchingDrugs.isNotEmpty()) -> {
+            treatmentEvaluation.matchingDrugs.isNotEmpty() -> {
                 EvaluationFactory.fail(
                     "Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but " +
                             "no progressive disease"

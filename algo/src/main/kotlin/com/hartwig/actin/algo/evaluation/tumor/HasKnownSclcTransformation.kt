@@ -18,35 +18,29 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
             DoidConstants.LUNG_CANCER_DOID
         ) || DoidEvaluationFunctions.isOfExactDoid(record.tumor.doids, DoidConstants.LUNG_CARCINOMA_DOID)
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-        val isSclc = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, record.tumor.doids, DoidConstants.SMALL_CELL_LUNG_CANCER_DOIDS)
+        val isSclc =
+            DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, record.tumor.doids, DoidConstants.SMALL_CELL_LUNG_CANCER_DOIDS)
         val hasSmallCellComponent =
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, record.tumor.doids, record.tumor.name)
 
         val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
-        val amplifiedGenes = listOf("MYC").filter { MolecularRuleEvaluator.geneIsAmplifiedForPatient(it, record, maxTestAge) }
 
         return when {
             isNsclc && (isSclc || hasSmallCellComponent) -> {
-                EvaluationFactory.undetermined("NSCLC with potential small cell component - undetermined if considered small cell transformation")
+                EvaluationFactory.undetermined("NSCLC with small cell component detected - undetermined if considered small cell transformation")
             }
 
-            isNsclc && (inactivatedGenes.isNotEmpty() || amplifiedGenes.isNotEmpty()) -> {
-                val eventMessage = sequenceOf(
-                    inactivatedGenes.joinToString(", ") { "$it loss" },
-                    amplifiedGenes.joinToString(", ") { "$it amp" }
-                )
-                    .filterNot(String::isEmpty)
-                    .joinToString(", ")
-
-                EvaluationFactory.undetermined("Small cell transformation undetermined ($eventMessage detected)")
+            isNsclc && inactivatedGenes.isNotEmpty() -> {
+                val genes = inactivatedGenes.joinToString(" and ")
+                EvaluationFactory.undetermined("Undetermined if small cell transformation may have occurred ($genes inactivation detected)")
             }
 
             isOfUncertainLungCancerType -> {
-                EvaluationFactory.undetermined("Undetermined if NSCLC and hence if there may be SCLC transformation")
+                EvaluationFactory.undetermined("Undetermined if NSCLC and hence if there may be small cell transformation")
             }
 
             !isLungCancer -> {
-                EvaluationFactory.fail("No lung cancer thus no SCLC transformation")
+                EvaluationFactory.fail("No lung cancer thus no small cell transformation")
             }
 
             else -> {

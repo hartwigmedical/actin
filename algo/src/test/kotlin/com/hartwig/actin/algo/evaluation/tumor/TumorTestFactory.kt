@@ -23,6 +23,14 @@ internal object TumorTestFactory {
         return withDoids(setOf(*doids))
     }
 
+    fun withDoids(doids: Set<String>?): PatientRecord {
+        return withTumorDetails(TumorDetails(doids = doids))
+    }
+
+    fun withDoidAndName(doid: String, name: String): PatientRecord {
+        return withTumorDetails(TumorDetails(doids = setOf(doid), name = name))
+    }
+
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
@@ -82,22 +90,6 @@ internal object TumorTestFactory {
                 )
             )
         )
-    }
-
-    fun withDoidAndType(doid: String, primaryTumorType: String?): PatientRecord {
-        return withTumorDetails(TumorDetails(doids = setOf(doid), primaryTumorType = primaryTumorType))
-    }
-
-    fun withDoidAndName(doid: String, name: String?): PatientRecord {
-        return withTumorDetails(TumorDetails(doids = setOf(doid), name = name ?: ""))
-    }
-
-    fun withDoidAndDetails(doid: String, extraDetails: String): PatientRecord {
-        return withTumorDetails(TumorDetails(doids = setOf(doid), primaryTumorExtraDetails = extraDetails))
-    }
-
-    fun withDoids(doids: Set<String>?): PatientRecord {
-        return withTumorDetails(TumorDetails(doids = doids))
     }
 
     fun withTumorStage(stage: TumorStage?): PatientRecord {

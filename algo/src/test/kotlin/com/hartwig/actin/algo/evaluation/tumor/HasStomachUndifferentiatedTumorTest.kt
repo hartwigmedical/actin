@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.tumor.HasStomachUndifferentiatedTumor.Companion.UNDIFFERENTIATED_TERMS
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
@@ -10,7 +11,7 @@ class HasStomachUndifferentiatedTumorTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function = HasStomachUndifferentiatedTumor(doidModel)
-    val targetType = TumorTermConstants.UNDIFFERENTIATED_TERMS.iterator().next()
+    val targetType = UNDIFFERENTIATED_TERMS.first()
 
     @Test
     fun `Should evaluate to undetermined if there are no tumor doids configured`() {
@@ -32,11 +33,7 @@ class HasStomachUndifferentiatedTumorTest {
 
     @Test
     fun `Should fail if tumor type is not stomach cancer`() {
-        val tumor =
-            TumorTestFactory.withDoidAndType(
-                DoidConstants.BRAIN_CANCER_DOID,
-                TumorTermConstants.UNDIFFERENTIATED_TERMS.iterator().next(),
-            )
+        val tumor = TumorTestFactory.withDoids(DoidConstants.BRAIN_CANCER_DOID)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumor))
     }
 }
