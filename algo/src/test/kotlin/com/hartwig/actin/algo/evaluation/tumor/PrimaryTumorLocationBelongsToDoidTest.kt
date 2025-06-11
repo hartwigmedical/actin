@@ -116,7 +116,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should show correct fail message`() {
         val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), null)
         assertThat(
-            function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failMessages
+            function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failMessagesStrings()
         ).contains("No child term 1 or child term 2")
     }
 
@@ -145,7 +145,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should pass when sub query and doid match`() {
         val pass = specificQueryFunction.evaluate(TumorTestFactory.withDoidAndName(CHILD_DOID_1, NAME_WITH_SPECIFIC_QUERY))
         assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passMessages).contains("Tumor belongs to child term 1 with specific request 'specific'")
+        assertThat(pass.passMessagesStrings()).contains("Tumor belongs to child term 1 with specific request 'specific'")
     }
 
     companion object {
