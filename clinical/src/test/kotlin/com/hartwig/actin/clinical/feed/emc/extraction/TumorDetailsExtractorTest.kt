@@ -26,10 +26,6 @@ private const val TUMOR_LOCATION_INPUT = "Tumor location input"
 private const val TUMOR_TYPE_INPUT = "Tumor type input"
 private const val BIOPSY_LOCATION_INPUT = "Biopsy location input"
 
-private const val CURATED_LOCATION = "Curated location"
-private const val CURATED_TUMOR_TYPE = "Curated tumor type"
-
-
 class TumorDetailsExtractorTest {
 
     private val tumorStageDeriver = mockk<TumorStageDeriver> {
@@ -44,19 +40,12 @@ class TumorDetailsExtractorTest {
                     input = "$TUMOR_LOCATION_INPUT |",
                     ignore = false,
                     name = "",
-                    primaryTumorType = "",
-                    primaryTumorLocation = CURATED_LOCATION,
-                    primaryTumorSubType = "",
-                    primaryTumorSubLocation = "",
-                    primaryTumorExtraDetails = "",
                     doids = emptySet()
                 )
             ),
             tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
-        assertThat(curatedWithoutType.primaryTumorLocation).isEqualTo(CURATED_LOCATION)
-        assertThat(curatedWithoutType.primaryTumorType).isEmpty()
-
+        assertThat(curatedWithoutType.name).isEqualTo("")
         assertThat(evaluation.warnings).isEmpty()
     }
 
@@ -67,20 +56,13 @@ class TumorDetailsExtractorTest {
                 PrimaryTumorConfig(
                     input = "| $TUMOR_TYPE_INPUT",
                     ignore = false,
-                    name = "",
-                    primaryTumorType = CURATED_TUMOR_TYPE,
-                    primaryTumorLocation = "",
-                    primaryTumorSubType = "",
-                    primaryTumorSubLocation = "",
-                    primaryTumorExtraDetails = "",
+                    name = "name",
                     doids = emptySet()
                 )
             ),
             tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, null, TUMOR_TYPE_INPUT)
-        assertThat(curatedWithoutLocation.primaryTumorLocation).isEmpty()
-        assertThat(curatedWithoutLocation.primaryTumorType).isEqualTo(CURATED_TUMOR_TYPE)
-
+        assertThat(curatedWithoutLocation.name).isEqualTo("name")
         assertThat(evaluation.warnings).isEmpty()
     }
 
@@ -89,9 +71,8 @@ class TumorDetailsExtractorTest {
         val (missing, evaluation) = TumorDetailsExtractor(
             TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(), tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, CANNOT_CURATE, CANNOT_CURATE)
-        assertThat(missing.primaryTumorLocation).isNull()
-        assertThat(missing.primaryTumorType).isNull()
 
+        assertThat(missing.name).isEqualTo("")
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
                 PATIENT_ID,
@@ -480,11 +461,6 @@ class TumorDetailsExtractorTest {
                     input = "$TUMOR_LOCATION_INPUT |",
                     ignore = false,
                     name = "",
-                    primaryTumorType = "",
-                    primaryTumorLocation = CURATED_LOCATION,
-                    primaryTumorSubType = "",
-                    primaryTumorSubLocation = "",
-                    primaryTumorExtraDetails = "",
                     doids = emptySet()
                 )
             ),

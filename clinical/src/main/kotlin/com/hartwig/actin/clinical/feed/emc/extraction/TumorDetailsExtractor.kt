@@ -118,9 +118,8 @@ class TumorDetailsExtractor(
         inputTumorLocation: String?,
         inputTumorType: String?
     ): Pair<TumorDetails, CurationExtractionEvaluation> {
-        val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType)?.lowercase()
-            ?: return Pair(TumorDetails(), CurationExtractionEvaluation())
-
+        val inputPrimaryTumor =
+            tumorInput(inputTumorLocation, inputTumorType)?.lowercase() ?: return Pair(TumorDetails(), CurationExtractionEvaluation())
         val primaryTumorCuration = CurationResponse.createFromConfigs(
             primaryTumorCuration.find(inputPrimaryTumor),
             patientId,
@@ -129,18 +128,8 @@ class TumorDetailsExtractor(
             "primary tumor",
             true
         )
+        val tumor = primaryTumorCuration.config()?.let { TumorDetails(name = it.name, doids = it.doids) } ?: TumorDetails()
 
-        val tumor = primaryTumorCuration.config()?.let {
-            TumorDetails(
-                name = it.name,
-                primaryTumorLocation = it.primaryTumorLocation,
-                primaryTumorSubLocation = it.primaryTumorSubLocation,
-                primaryTumorType = it.primaryTumorType,
-                primaryTumorSubType = it.primaryTumorSubType,
-                primaryTumorExtraDetails = it.primaryTumorExtraDetails,
-                doids = it.doids
-            )
-        } ?: TumorDetails()
         return Pair(tumor, primaryTumorCuration.extractionEvaluation)
     }
 

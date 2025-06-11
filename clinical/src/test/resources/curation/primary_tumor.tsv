@@ -1,4 +1,4 @@
-input	name	primaryTumorLocation	primaryTumorSubLocation	primaryTumorType	primaryTumorSubType	primaryTumorExtraDetails	doids
-Carcinoma | Unknown	Unknown (CUP) carcinoma	Unknown	CUP	Carcinoma			299
-long | metastase adenocarcinoom		Lung		Adenocarcinoma			3908
-ovary | serous		Ovary					0050933
+input	name	doids
+Carcinoma | Unknown	Carcinoma (CUP)	299
+long | metastase adenocarcinoom	Lung adenocarcinoma	3908
+ovary | serous	Ovary serous	0050933

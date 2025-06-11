@@ -8,11 +8,7 @@
     "sourceId": "PT-1001"
   },
   "tumor": {
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Adenocarcinoma",
-    "primaryTumorSubType": "",
-    "primaryTumorExtraDetails": null,
+    "name": "Lung adenocarcinoma",
     "doids": [
       "3908"
     ],
