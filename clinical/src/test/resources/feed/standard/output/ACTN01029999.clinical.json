@@ -244,9 +244,10 @@
   ],
   "surgeries": [
     {
-      "name": "diagnostics stomach translated",
+      "name": "debulking stomach translated",
       "endDate": "2021-01-01",
-      "status": "CANCELLED"
+      "status": "CANCELLED",
+      "type": "DEBULKING_SURGERY"
     }
   ],
   "bodyWeights": [
