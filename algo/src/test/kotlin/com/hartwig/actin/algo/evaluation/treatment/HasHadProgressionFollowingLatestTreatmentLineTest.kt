@@ -10,26 +10,30 @@ import org.assertj.core.api.Assertions.assertThat
 
 import org.junit.Test
 
-class HasRadiologicalProgressionFollowingLatestTreatmentLineTest {
+class HasHadProgressionFollowingLatestTreatmentLineTest {
+
+    private val function = HasHadProgressionFollowingLatestTreatmentLine()
+    private val functionCannotAssumePDIfStopYearProvided = HasHadProgressionFollowingLatestTreatmentLine(canAssumePDIfStopYearProvided = false)
+    private val functionPDMustBeRadiological = HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological = false)
 
     @Test
-    fun shouldFailWhenTreatmentHistoryEmpty() {
+    fun `Should fail when treatment history empty`() {
         val treatments = TreatmentTestFactory.withTreatmentHistory(emptyList())
-        val evaluation = FUNCTION.evaluate(treatments)
+        val evaluation = function.evaluate(treatments)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessages).containsExactly("No systemic treatments found in treatment history.")
     }
 
     @Test
-    fun shouldFailWhenOnlyNonSystemicTreatments() {
+    fun `Should fail when no systemic treatments`() {
         val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", false))))
-        val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessages).containsExactly("No systemic treatments found in treatment history.")
     }
 
     @Test
-    fun shouldPassWhenAllSystemicTreatmentResultedInPD() {
+    fun `Should pass when all systemic treatments with PD response`() {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
@@ -44,13 +48,13 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLineTest {
                 stopMonth = null
             )
         )
-        val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertThat(evaluation.passMessages).containsExactly("All systemic treatments resulted in progressive disease.")
         assertEvaluation(EvaluationResult.PASS, evaluation)
     }
 
     @Test
-    fun shouldPassWhenLastSystemicTreatmentResultedInPD() {
+    fun `Should pass when last systemic treatment resulted in PD`() {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
                 stopReason = StopReason.TOXICITY,
@@ -69,13 +73,13 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLineTest {
                 stopMonth = null
             )
         )
-        val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessages).containsExactly("Last systemic treatment resulted in PD (assumed PD is radiological)")
     }
 
     @Test
-    fun shouldFailLastTreatmentDidNotResultInPD() {
+    fun `Should fail when last treatment stopped but no PD response`() {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
                 stopReason = StopReason.TOXICITY,
@@ -94,13 +98,13 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLineTest {
                 stopMonth = null
             )
         )
-        val evaluation = FUNCTION_CANNOT_ASSUME_PD_IF_STOP_YEAR_PROVIDED.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = functionCannotAssumePDIfStopYearProvided.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessages).containsExactly("Last systemic treament did not result in progressive disease.")
     }
 
     @Test
-    fun shouldPassWhenLastTreatmentStoppedAndRadiologicalProgressionAssumed() {
+    fun `Should pass when last treatment stopped but no PD response and radiological pd assumed`() {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
                 stopReason = StopReason.TOXICITY,
@@ -117,13 +121,13 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLineTest {
                 stopMonth = 11
             )
         )
-        val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessages).containsExactly("Last systemic treatment stopped and radiological progression is assumed.")
     }
 
     @Test
-    fun shouldPassWithMustBeRadiological() {
+    fun `Should pass with must be radiological` () {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
                 stopReason = StopReason.TOXICITY,
@@ -142,13 +146,13 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLineTest {
                 stopMonth = null
             )
         )
-        val evaluation = FUNCTION_PD_MUST_BE_RADIOLOGICAL.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = functionPDMustBeRadiological.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessages).containsExactly("Last systemic treatment resulted in PD")
     }
 
     @Test
-    fun unableToDetermineRadiologicalProgressionWhenTreatmentsWithoutStartDate() {
+    fun `Should be undetermined when last treatment has PD but treatment without date does not`() {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
                 stopReason = StopReason.TOXICITY,
@@ -163,15 +167,29 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLineTest {
                 startMonth = null
             )
         )
-        val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly("Unable to determine radiological progression following latest treatment line due to treatments without start date.")
     }
 
-
-    companion object {
-        private val FUNCTION = HasRadiologicalProgressionFollowingLatestTreatmentLine()
-        private val FUNCTION_CANNOT_ASSUME_PD_IF_STOP_YEAR_PROVIDED = HasRadiologicalProgressionFollowingLatestTreatmentLine(canAssumePDIfStopYearProvided = false)
-        private val FUNCTION_PD_MUST_BE_RADIOLOGICAL = HasRadiologicalProgressionFollowingLatestTreatmentLine(mustBeRadiological = false)
+    @Test
+    fun `Should be undetermined when treatment without date has PD but last treatment does not`() {
+        val treatments = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true)),
+                stopReason = StopReason.TOXICITY,
+                bestResponse = TreatmentResponse.STABLE_DISEASE,
+                startYear = 2024,
+                startMonth = 10
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("2", true)),
+                stopReason = StopReason.PROGRESSIVE_DISEASE,
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                startYear = null,
+                startMonth = null
+            )
+        )
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages).containsExactly("Unable to determine radiological progression following latest treatment line due to treatments without start date.")
     }
 }

@@ -7,8 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 
 
-
-class HasRadiologicalProgressionFollowingLatestTreatmentLine(
+class HasHadProgressionFollowingLatestTreatmentLine(
     private val canAssumePDIfStopYearProvided: Boolean = true,
     private val mustBeRadiological: Boolean = true
 ) :
@@ -22,6 +21,9 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLine(
         val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(systemicTreatmentsWithStartDate)
         val lastTreatmentResultedInPD =
             lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } == true
+        val treatmentWithoutDateDiffersInPDStatusFromLastTreatment = systemicTreatmentsWithoutStartDate.any {
+            (ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true) != lastTreatmentResultedInPD
+        }
 
         return when {
             systemicTreatments.isEmpty() -> {
@@ -32,18 +34,15 @@ class HasRadiologicalProgressionFollowingLatestTreatmentLine(
                 EvaluationFactory.pass("All systemic treatments resulted in progressive disease.")
             }
 
-            // check if all treatments without start date agree on PD status.
-            systemicTreatmentsWithoutStartDate.any { it -> (ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true) != lastTreatmentResultedInPD } -> {
+            treatmentWithoutDateDiffersInPDStatusFromLastTreatment -> {
                 EvaluationFactory.undetermined("Unable to determine radiological progression following latest treatment line due to treatments without start date.")
             }
 
-            // treatments without start date agree with last treatment in terms of PD status past last condition.
             lastTreatmentResultedInPD -> {
                 val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
                 EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
             }
 
-            // or stop year is provided, and PD assumed to be radiological
             lastTreatment?.treatmentHistoryDetails?.stopYear != null && canAssumePDIfStopYearProvided -> {
                 EvaluationFactory.pass("Last systemic treatment stopped and radiological progression is assumed.")
             }
