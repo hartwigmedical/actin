@@ -89,7 +89,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         val treatments = listOf(IMMUNOTHERAPY_TOX_ENTRY)
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly(
+        assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "Possible immunotherapy related adverse events in history (prior immunotherapy with stop reason toxicity)"
         )
     }
@@ -102,7 +102,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly(
+        assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "Possible immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
         )
     }
@@ -115,7 +115,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly(
+        assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "Possible immunotherapy related adverse events in history (Nivolumab intolerance)"
         )
     }
@@ -136,7 +136,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly(
+        assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "Possible immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
         )
     }

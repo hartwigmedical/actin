@@ -279,7 +279,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord))
 
         listOf(evaluationWithWeeksAgoDate, evaluationWithoutDate).forEach {
-            assertThat(it.undeterminedMessages).containsExactly(
+            assertThat(it.undeterminedMessagesStrings()).containsExactly(
                 "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant"
             )
         }

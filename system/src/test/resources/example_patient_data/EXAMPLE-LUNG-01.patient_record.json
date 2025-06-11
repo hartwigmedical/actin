@@ -25,6 +25,7 @@
     "hasCnsLesions": false,
     "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
+    "hasBoneLesions": false,
     "hasLiverLesions": true,
     "hasLungLesions": true,
     "hasLymphNodeLesions": false,

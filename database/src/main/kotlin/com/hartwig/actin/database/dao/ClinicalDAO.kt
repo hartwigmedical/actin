@@ -273,10 +273,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
             context.insertInto(
                 Tables.PRIORPRIMARY,
                 Tables.PRIORPRIMARY.PATIENTID,
-                Tables.PRIORPRIMARY.TUMORLOCATION,
-                Tables.PRIORPRIMARY.TUMORSUBLOCATION,
-                Tables.PRIORPRIMARY.TUMORTYPE,
-                Tables.PRIORPRIMARY.TUMORSUBTYPE,
+                Tables.PRIORPRIMARY.NAME,
                 Tables.PRIORPRIMARY.DOIDS,
                 Tables.PRIORPRIMARY.DIAGNOSEDYEAR,
                 Tables.PRIORPRIMARY.DIAGNOSEDMONTH,
@@ -287,10 +284,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    priorPrimary.tumorLocation,
-                    priorPrimary.tumorSubLocation,
-                    priorPrimary.tumorType,
-                    priorPrimary.tumorSubType,
+                    priorPrimary.name,
                     DataUtil.concat(priorPrimary.doids),
                     priorPrimary.diagnosedYear,
                     priorPrimary.diagnosedMonth,

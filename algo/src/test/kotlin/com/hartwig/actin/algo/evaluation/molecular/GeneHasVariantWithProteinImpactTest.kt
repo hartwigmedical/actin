@@ -145,7 +145,7 @@ class GeneHasVariantWithProteinImpactTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages).containsExactly("Mutation with protein impact(s) V600E, V600K in gene gene A undetermined (not tested for mutations)")
+        Assertions.assertThat(result.undeterminedMessagesStrings()).containsExactly("Mutation with protein impact(s) V600E, V600K in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptVariantImpact {

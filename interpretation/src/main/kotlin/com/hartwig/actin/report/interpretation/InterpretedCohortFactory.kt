@@ -112,13 +112,13 @@ object InterpretedCohortFactory {
         return evaluationMap.values.flatMap { evaluation ->
             when {
                 evaluation.result == EvaluationResult.FAIL && evaluation.recoverable ->
-                    evaluation.failMessages
+                    evaluation.failMessagesStrings()
 
                 evaluation.result == EvaluationResult.WARN ->
-                    evaluation.warnMessages
+                    evaluation.warnMessagesStrings()
 
                 evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable ->
-                    evaluation.undeterminedMessages
+                    evaluation.undeterminedMessagesStrings()
 
                 else -> emptySet()
             }
@@ -138,6 +138,7 @@ object InterpretedCohortFactory {
     private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {
         return evaluations.values.filter { it.result == EvaluationResult.FAIL && !it.recoverable }
             .flatMap(Evaluation::failMessages)
+            .map { it.toString() }
             .toSet()
     }
 }

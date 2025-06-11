@@ -1,7 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 
@@ -81,11 +83,11 @@ object EvaluationInterpreter {
         }
     }
 
-    private fun generateEntry(evaluation: Evaluation, messages: Set<String>): EvaluationEntry {
+    private fun generateEntry(evaluation: Evaluation, messages: Set<EvaluationMessage>): EvaluationEntry {
         return createEntry(generateHeader(evaluation.result, evaluation.recoverable), messages)
     }
 
-    private fun generateEntry(result: EvaluationResult, messages: Set<String>): EvaluationEntry {
+    private fun generateEntry(result: EvaluationResult, messages: Set<EvaluationMessage>): EvaluationEntry {
         return createEntry(generateHeader(result), messages)
     }
 
@@ -94,10 +96,10 @@ object EvaluationInterpreter {
         return result.toString() + addon
     }
 
-    private fun createEntry(header: String, messages: Set<String>): EvaluationEntry {
+    private fun createEntry(header: String, messages: Set<EvaluationMessage>): EvaluationEntry {
         return EvaluationEntry(
             header = header,
-            messages = messages.map(::insertSpacesAroundPlus).toSet()
+            messages = messages.map { it.toString() }.map(::insertSpacesAroundPlus).toSet()
         )
     }
 

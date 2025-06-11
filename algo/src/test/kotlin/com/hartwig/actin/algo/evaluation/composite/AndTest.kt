@@ -48,18 +48,18 @@ class AndTest {
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, index = 3)
         val function4: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, index = 4)
         val result: Evaluation = And(listOf(function1, function2, function3, function4)).evaluate(TEST_PATIENT)
-        assertThat(result.passMessages).hasSize(2)
-        assertThat(result.passMessages).contains("pass 1")
-        assertThat(result.passMessages).contains("pass 2")
-        assertThat(result.warnMessages).hasSize(2)
-        assertThat(result.warnMessages).contains("warn 1")
-        assertThat(result.warnMessages).contains("warn 2")
-        assertThat(result.failMessages).hasSize(2)
-        assertThat(result.failMessages).contains("fail 1")
-        assertThat(result.failMessages).contains("fail 2")
-        assertThat(result.undeterminedMessages).hasSize(2)
-        assertThat(result.undeterminedMessages).contains("undetermined 1")
-        assertThat(result.undeterminedMessages).contains("undetermined 2")
+        assertThat(result.passMessagesStrings()).hasSize(2)
+        assertThat(result.passMessagesStrings()).contains("pass 1")
+        assertThat(result.passMessagesStrings()).contains("pass 2")
+        assertThat(result.warnMessagesStrings()).hasSize(2)
+        assertThat(result.warnMessagesStrings()).contains("warn 1")
+        assertThat(result.warnMessagesStrings()).contains("warn 2")
+        assertThat(result.failMessagesStrings()).hasSize(2)
+        assertThat(result.failMessagesStrings()).contains("fail 1")
+        assertThat(result.failMessagesStrings()).contains("fail 2")
+        assertThat(result.undeterminedMessagesStrings()).hasSize(2)
+        assertThat(result.undeterminedMessagesStrings()).contains("undetermined 1")
+        assertThat(result.undeterminedMessagesStrings()).contains("undetermined 2")
     }
 
     @Test
@@ -92,8 +92,8 @@ class AndTest {
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = false, index = 2)
         val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
         assertThat(result.recoverable).isFalse
-        assertThat(result.undeterminedMessages).hasSize(1)
-        assertThat(result.undeterminedMessages).containsExactly("undetermined 2")
+        assertThat(result.undeterminedMessagesStrings()).hasSize(1)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("undetermined 2")
     }
 
     @Test(expected = IllegalStateException::class)

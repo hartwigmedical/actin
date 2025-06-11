@@ -88,7 +88,7 @@ class GeneHasSpecificExonSkippingTest {
         val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIAL_SPLICE_VARIANT))
 
         assertMolecularEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages)
+        assertThat(result.warnMessagesStrings())
             .containsExactly("Potential gene_A exon 2 skipping: variant(s) c.potential detected in splice region of exon 2 although unknown relevance (not annotated with splice coding effect)")
     }
 
@@ -134,7 +134,7 @@ class GeneHasSpecificExonSkippingTest {
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(result.undeterminedMessages)
+        assertThat(result.undeterminedMessagesStrings())
             .containsExactly("Skipped exon 2 in gene gene_A undetermined (not tested for mutations or fusions)")
     }
 }

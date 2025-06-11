@@ -130,7 +130,7 @@ class HasFusionInGeneTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
+        Assertions.assertThat(result.undeterminedMessagesStrings())
             .containsExactly("Fusion in gene gene A undetermined (not tested for fusions)")
     }
 }

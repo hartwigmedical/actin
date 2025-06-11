@@ -138,7 +138,7 @@ class IsMicrosatelliteUnstableTest {
             )
         )
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessages).containsExactly("No MSI test result but driver event(s) in MMR gene(s) (MLH1) detected")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No MSI test result but driver event(s) in MMR gene(s) (MLH1) detected")
     }
 
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {

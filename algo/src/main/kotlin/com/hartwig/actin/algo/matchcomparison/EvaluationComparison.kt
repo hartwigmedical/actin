@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.matchcomparison
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.extractDifferences
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.mapKeyDifferences
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
@@ -39,7 +40,8 @@ object EvaluationComparison {
                     LOGGER.warn("  Old function: $oldFunction")
                     LOGGER.warn("  New function: $newFunction")
                 }
-                val recoverableDifferences = extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
+                val recoverableDifferences =
+                    extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
                 val messageDifferences = extractMessageDifferences(oldEvaluation, newEvaluation)
                 val functionDifferences = EligibilityFunctionComparison.determineEligibilityFunctionDifferences(oldFunction, newFunction)
 
@@ -69,14 +71,15 @@ object EvaluationComparison {
         val newMessages = getMessagesForEvaluation(new)
         val removedMessages = oldMessages - newMessages
         val addedMessages = newMessages - oldMessages
-        return if (removedMessages.map(String::lowercase) == addedMessages.map(String::lowercase)) {
+        return if (removedMessages.map { it.toString() }.map(String::lowercase) == addedMessages.map { it.toString() }
+                .map(String::lowercase)) {
             emptyList()
         } else {
             removedMessages.map { "- $it" } + addedMessages.map { "+ $it" }
         }
     }
 
-    private fun getMessagesForEvaluation(evaluation: Evaluation): Set<String> {
+    private fun getMessagesForEvaluation(evaluation: Evaluation): Set<EvaluationMessage> {
         return when (evaluation.result) {
             EvaluationResult.PASS -> evaluation.passMessages
             EvaluationResult.NOT_EVALUATED -> evaluation.passMessages
