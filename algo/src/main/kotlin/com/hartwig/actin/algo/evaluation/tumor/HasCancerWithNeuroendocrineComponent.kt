@@ -16,6 +16,7 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, pri
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined("Neuroendocrine component undetermined (tumor type missing)")
         }
+        val (hasNeuroendocrineProfile, inactivatedGenes) = hasNeuroendocrineMolecularProfile(record)
 
         return when {
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, tumorDoids, record.tumor.name) -> {
@@ -26,10 +27,9 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, pri
                 EvaluationFactory.undetermined("Neuroendocrine component undetermined (small cell component present)")
             }
 
-            hasNeuroendocrineMolecularProfile(record).first -> {
-                val genes = hasNeuroendocrineMolecularProfile(record).second.joinToString(", ")
+            hasNeuroendocrineProfile -> {
                 EvaluationFactory.undetermined(
-                    "Neuroendocrine molecular profile (inactivated genes: $genes) -" +
+                    "Neuroendocrine molecular profile (inactivated genes: ${inactivatedGenes.joinToString(", ")}) -" +
                             " undetermined if may be considered cancer with neuroendocrine component"
                 )
             }

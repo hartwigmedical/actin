@@ -50,22 +50,23 @@ class StandardTumorDetailsExtractor(
 
     private fun tumorDetails(ehrPatientRecord: FeedPatientRecord): TumorDetails {
         with(ehrPatientRecord.tumorDetails) {
-            val hasBrainOrGliomaTumor =
-                tumorType?.lowercase()?.contains("glioma") == true || tumorLocation?.lowercase()?.contains("brain") == true
+            val hasGliomaTumor =
+                listOf("glioma").any { tumorType?.lowercase()?.contains(it) == true || tumorLocation?.lowercase()?.contains(it) == true }
+
             return TumorDetails(
                 name = "",
                 doids = emptySet(),
                 stage = stage?.let { TumorStage.valueOf(it) },
                 hasMeasurableDisease = measurableDisease,
-                hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions,
-                hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasActiveBrainLesions,
+                hasBrainLesions = if (hasGliomaTumor) false else hasBrainLesions,
+                hasActiveBrainLesions = if (hasGliomaTumor) false else hasActiveBrainLesions,
                 hasCnsLesions = when {
-                    hasBrainOrGliomaTumor -> false
+                    hasGliomaTumor -> false
                     hasBrainLesions == true -> true
                     else -> null
                 },
                 hasActiveCnsLesions = when {
-                    hasBrainOrGliomaTumor -> false
+                    hasGliomaTumor -> false
                     hasActiveBrainLesions == true -> true
                     else -> null
                 },

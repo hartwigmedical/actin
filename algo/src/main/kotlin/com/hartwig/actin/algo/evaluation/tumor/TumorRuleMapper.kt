@@ -185,9 +185,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
-        return {
-            DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()))
-        }
+        return { DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {
@@ -301,7 +299,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasOnlyLungAndOrLungLymphNodeMetastasesCreator(): FunctionCreator {
-        return { HasOnlyLungAndOrLungLymphNodeMetastases()}
+        return { HasOnlyLungAndOrLungLymphNodeMetastases() }
     }
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {

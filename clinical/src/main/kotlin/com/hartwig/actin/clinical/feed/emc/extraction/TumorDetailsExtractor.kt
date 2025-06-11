@@ -78,9 +78,7 @@ class TumorDetailsExtractor(
             lesionLocationConfigMap,
             LesionLocationCategory.LYMPH_NODE
         )
-
-        val hasBrainOrGliomaTumor =
-            primaryTumorDetails.name.lowercase().contains("brain") || primaryTumorDetails.name.lowercase().contains("glioma")
+        val hasBrainOrGliomaTumor = listOf("brain", "glioma").any { primaryTumorDetails.name.lowercase().contains(it) }
 
         val tumorDetails = primaryTumorDetails.copy(
             stage = questionnaire.stage,

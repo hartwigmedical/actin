@@ -23,12 +23,12 @@ class TumorEvaluationFunctionsTest {
     private val otherName = "name"
 
     @Test
-    fun `Should pass if tumor has small cell doid`() {
+    fun `Should return true if tumor has small cell doid`() {
         assertThat(TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, smallCellDoids, otherName)).isTrue()
     }
 
     @Test
-    fun `Should pass if tumor has small cell name`() {
+    fun `Should return true if tumor has small cell name`() {
         assertThat(
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(
                 doidModel,
@@ -39,7 +39,7 @@ class TumorEvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail if tumor has non-small cell name`() {
+    fun `Should return false if tumor has non-small cell name`() {
         assertThat(
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(
                 doidModel,
@@ -50,7 +50,7 @@ class TumorEvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail if no small cell DOID or name`() {
+    fun `Should return false if no small cell DOID or name`() {
         assertThat(
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(
                 doidModel,
@@ -61,24 +61,18 @@ class TumorEvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should pass if tumor has neuroendocrine doid`() {
+    fun `Should return true if tumor has neuroendocrine doid`() {
         assertThat(TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, neuroendocrineDoids, otherName)).isTrue()
     }
 
     @Test
-    fun `Should pass if tumor has neuroendocrine doid term`() {
+    fun `Should return true if tumor has neuroendocrine doid term`() {
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(OTHER_DOID, "NeuroendOcrine carcinoma")
-        assertThat(
-            TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(
-                doidModel,
-                setOf(OTHER_DOID),
-                otherName
-            )
-        ).isTrue
+        assertThat(TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, setOf(OTHER_DOID), otherName)).isTrue
     }
 
     @Test
-    fun `Should pass if tumor has neuroendocrine name`() {
+    fun `Should return true if tumor has neuroendocrine name`() {
         assertThat(
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(
                 doidModel,
@@ -89,7 +83,7 @@ class TumorEvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail if no neuroendocrine DOID or name`() {
+    fun `Should return false if no neuroendocrine DOID or name`() {
         assertThat(
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(
                 doidModel,
@@ -100,12 +94,12 @@ class TumorEvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should pass if tumor is CUP`() {
+    fun `Should return true if tumor is CUP`() {
         assertThat(TumorEvaluationFunctions.hasCancerOfUnknownPrimary("some ${TumorTermConstants.CUP_TERM} tumor")).isTrue()
     }
 
     @Test
-    fun `Should fail if tumor is no CUP`() {
+    fun `Should return false if tumor is no CUP`() {
         assertThat(TumorEvaluationFunctions.hasCancerOfUnknownPrimary("some other tumor")).isFalse()
     }
 

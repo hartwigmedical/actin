@@ -16,7 +16,7 @@ import org.junit.Test
 
 class HasCancerWithNeuroendocrineComponentTest {
 
-    val function = HasCancerWithNeuroendocrineComponent(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasCancerWithNeuroendocrineComponent(TestDoidModelFactory.createMinimalTestDoidModel())
 
     @Test
     fun `Should evaluate to undetermined if no tumor doids configured`() {

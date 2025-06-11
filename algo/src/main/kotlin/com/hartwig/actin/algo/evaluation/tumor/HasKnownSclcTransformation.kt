@@ -13,10 +13,10 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)
-        val isOfUncertainLungCancerType = DoidEvaluationFunctions.isOfExactDoid(
-            record.tumor.doids,
-            DoidConstants.LUNG_CANCER_DOID
-        ) || DoidEvaluationFunctions.isOfExactDoid(record.tumor.doids, DoidConstants.LUNG_CARCINOMA_DOID)
+        val isOfUncertainLungCancerType = listOf(
+            DoidConstants.LUNG_CANCER_DOID,
+            DoidConstants.LUNG_CARCINOMA_DOID
+        ).any { DoidEvaluationFunctions.isOfExactDoid(record.tumor.doids, it) }
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
         val isSclc =
             DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, record.tumor.doids, DoidConstants.SMALL_CELL_LUNG_CANCER_DOIDS)

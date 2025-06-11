@@ -12,16 +12,11 @@ class HasLocallyAdvancedCancerTest {
     @Test
     fun `Should be undetermined without stage information`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, null)))
     }
 
     @Test
     fun `Should pass with stage III`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIIB)))
-        )
     }
 
     @Test

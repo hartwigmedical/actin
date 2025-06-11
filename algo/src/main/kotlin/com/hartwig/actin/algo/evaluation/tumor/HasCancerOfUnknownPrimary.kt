@@ -16,11 +16,11 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val tu
             return EvaluationFactory.undetermined("Undetermined if patient has CUP")
         }
         val isCUP = TumorEvaluationFunctions.hasCancerOfUnknownPrimary(record.tumor.name)
-        val hasExpectedTumorType = DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, tumorDoids, tumorType.doid())
+        val hasTargetTumorType = DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, tumorDoids, tumorType.doid())
         val hasOrganSystemCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ORGAN_SYSTEM_CANCER_DOID)
 
         return when {
-            (hasExpectedTumorType && !hasOrganSystemCancer) -> {
+            hasTargetTumorType && !hasOrganSystemCancer -> {
                 if (isCUP) {
                     EvaluationFactory.pass("Has cancer of unknown primary")
                 } else {
@@ -36,7 +36,7 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val tu
                 }
             }
 
-            else -> EvaluationFactory.fail("Has no cancer of unknown primary")
+            else -> EvaluationFactory.fail("Does not have cancer of unknown primary")
         }
     }
 }

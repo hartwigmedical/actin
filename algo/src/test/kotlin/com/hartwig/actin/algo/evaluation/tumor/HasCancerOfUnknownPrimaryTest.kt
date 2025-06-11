@@ -9,10 +9,10 @@ import org.junit.Test
 
 class HasCancerOfUnknownPrimaryTest {
 
-    val tumorType = TumorTypeInput.ADENOCARCINOMA
-    val childDoid = "child"
-    val doidModel = TestDoidModelFactory.createWithOneParentChild(tumorType.doid(), childDoid)
-    val function = HasCancerOfUnknownPrimary(doidModel, tumorType)
+    private val tumorType = TumorTypeInput.ADENOCARCINOMA
+    private val childDoid = "child"
+    private val doidModel = TestDoidModelFactory.createWithOneParentChild(tumorType.doid(), childDoid)
+    private val function = HasCancerOfUnknownPrimary(doidModel, tumorType)
 
     @Test
     fun `Should be undetermined if no doids configured`() {
