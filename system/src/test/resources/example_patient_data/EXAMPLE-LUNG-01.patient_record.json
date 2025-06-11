@@ -9,11 +9,6 @@
   },
   "tumor": {
     "name": "Lung adenocarcinoma",
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Carcinoma",
-    "primaryTumorSubType": "Adenocarcinoma",
-    "primaryTumorExtraDetails": "",
     "doids": [
       "3910"
     ],
@@ -24,7 +19,6 @@
     "hasActiveBrainLesions": false,
     "hasCnsLesions": false,
     "hasActiveCnsLesions": false,
-    "hasBoneLesions": false,
     "hasBoneLesions": false,
     "hasLiverLesions": true,
     "hasLungLesions": true,
