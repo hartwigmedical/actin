@@ -34,7 +34,7 @@ class HasSpecificComplicationTest {
         val otherTarget = targetComplication.copy(name = "other", icdCodes = setOf(IcdCode("otherTargetCode")))
         val evaluation = function.evaluate(ComplicationTestFactory.withComplications(listOf(targetComplication, otherTarget)))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsExactly("Has complication(s) other and random name")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Has complication(s) other and random name")
     }
 
     @Test

@@ -30,7 +30,7 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
 
         assertEvaluation(EvaluationResult.WARN, resultPlanned)
         assertEvaluation(EvaluationResult.WARN, resultActive)
-        assertThat(resultActive.warnMessages).containsExactly(
+        assertThat(resultActive.warnMessagesStrings()).containsExactly(
             "Undetermined if patient uses TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
         )
     }

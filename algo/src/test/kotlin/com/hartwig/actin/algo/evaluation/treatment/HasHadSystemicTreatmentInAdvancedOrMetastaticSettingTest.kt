@@ -83,7 +83,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting (Treatment name)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting (Treatment name)")
     }
 
     @Test
@@ -107,7 +107,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting (Treatment name)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting (Treatment name)")
     }
 
     @Test
@@ -126,7 +126,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Has had prior systemic treatment but undetermined if in metastatic or advanced setting (Treatment name)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Has had prior systemic treatment but undetermined if in metastatic or advanced setting (Treatment name)")
     }
 
     private fun createTreatment(

@@ -18,14 +18,14 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTes
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.variants
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedIhcResult
 
 class SequencingTestExtractor(
     private val testCuration: CurationDatabase<SequencingTestConfig>,
     private val testResultCuration: CurationDatabase<SequencingTestResultConfig>
 ) {
 
-    fun extract(patientId: String, entries: List<DatedEntry>): ExtractionResult<List<SequencingTest>> {
+    fun extract(patientId: String, entries: List<FeedIhcResult>): ExtractionResult<List<SequencingTest>> {
         if (entries.isEmpty()) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }

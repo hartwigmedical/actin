@@ -35,7 +35,7 @@ class HasPositiveHER2ExpressionByIhcTest {
             MolecularTestFactory.withIhcTests(listOf(ihcTest(scoreText = "positive"), ihcTest(scoreText = "negative")))
         )
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly("Conflicting IHC HER2 expression test results")
+        assertThat(evaluation.warnMessagesStrings()).containsExactly("Conflicting IHC HER2 expression test results")
     }
 
     @Test
@@ -86,7 +86,7 @@ class HasPositiveHER2ExpressionByIhcTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected)")
     }
 
     @Test
@@ -99,7 +99,7 @@ class HasPositiveHER2ExpressionByIhcTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Undetermined if IHC HER2 score value(s) '2.0' is considered positive")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if IHC HER2 score value(s) '2.0' is considered positive")
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 
 internal object CompositeTestFactory {
 
@@ -17,10 +18,10 @@ internal object CompositeTestFactory {
         val evaluation = Evaluation(
             result = result,
             recoverable = recoverable,
-            passMessages = setOf("pass $index"),
-            warnMessages = setOf("warn $index"),
-            undeterminedMessages = setOf("undetermined $index"),
-            failMessages = setOf("fail $index"),
+            passMessages = setOf(StaticMessage("pass $index")),
+            warnMessages = setOf(StaticMessage("warn $index")),
+            undeterminedMessages = setOf(StaticMessage("undetermined $index")),
+            failMessages = setOf(StaticMessage("fail $index")),
             inclusionMolecularEvents = if (includeMolecular) setOf("inclusion event $index") else emptySet(),
             exclusionMolecularEvents = if (includeMolecular) setOf("exclusion event $index") else emptySet(),
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation

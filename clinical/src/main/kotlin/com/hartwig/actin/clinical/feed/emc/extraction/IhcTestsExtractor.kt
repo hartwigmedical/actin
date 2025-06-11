@@ -9,13 +9,13 @@ import com.hartwig.actin.clinical.curation.config.IhcTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedIhcResult
 
 class IhcTestsExtractor(
     private val molecularTestIhcCuration: CurationDatabase<IhcTestConfig>
 ) {
 
-    fun extract(patientId: String, entries: List<DatedEntry>): ExtractionResult<List<IhcTest>> {
+    fun extract(patientId: String, entries: List<FeedIhcResult>): ExtractionResult<List<IhcTest>> {
         if (entries.isEmpty()) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }

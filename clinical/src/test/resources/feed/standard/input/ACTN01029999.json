@@ -209,6 +209,7 @@
     "measurableDiseaseDate": "2020-01-01",
     "pathology": [
       {
+        "reportHash": "be9420c1596a781119c53a9933a8234f",
         "tissueId": "T-1000090",
         "reportRequested": false,
         "lab": "NKI-AvL",

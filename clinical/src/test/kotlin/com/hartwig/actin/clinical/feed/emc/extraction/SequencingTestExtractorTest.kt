@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
-import com.hartwig.feed.datamodel.DatedEntry
+import com.hartwig.feed.datamodel.FeedIhcResult
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -29,7 +29,7 @@ class SequencingTestExtractorTest {
     }
     private val testResultCuration = mockk<CurationDatabase<SequencingTestResultConfig>>()
     private val extractor = SequencingTestExtractor(testCuration, testResultCuration)
-    private val ihcTestResults = listOf(DatedEntry(TEST, null))
+    private val ihcTestResults = listOf(FeedIhcResult(TEST, null))
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {

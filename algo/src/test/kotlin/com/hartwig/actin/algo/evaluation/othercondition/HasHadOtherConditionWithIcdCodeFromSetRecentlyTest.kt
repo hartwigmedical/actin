@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
 import org.assertj.core.api.Assertions.assertThat
-import java.time.LocalDate
 import org.junit.Test
+import java.time.LocalDate
 
 class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
 
@@ -34,7 +34,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly(
+        assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "History of stroke within last $maxMonthsAgo months (cerebral bleeding (${conditionDate.year}-${conditionDate.monthValue}))"
         )
     }
@@ -50,7 +50,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         val infarction = bleeding.copy(name = "cerebral infarction")
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherConditions(listOf(bleeding, infarction)))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsExactly("Recent stroke (cerebral bleeding, cerebral infarction)")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Recent stroke (cerebral bleeding, cerebral infarction)")
     }
 
     @Test
@@ -83,7 +83,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly(
+        assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "History of stroke within last $maxMonthsAgo months (cerebral bleeding (${minDate.year}-${minDate.monthValue}))"
         )
     }

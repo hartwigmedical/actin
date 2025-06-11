@@ -39,7 +39,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsExactly(
+        assertThat(evaluation.passMessagesStrings()).containsExactly(
             "Has had targeted therapy interfering with RAS/MEK/MAPK pathway (Test)"
         )
     }
@@ -49,12 +49,16 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
-                    TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TARGETED_THERAPY, RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET)
+                    TreatmentTestFactory.drugTreatment(
+                        "test",
+                        TreatmentCategory.TARGETED_THERAPY,
+                        RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET
+                    )
                 )
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).containsExactly(
+        assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "Has had targeted therapy (Test) indirectly interfering with RAS/MEK/MAPK pathway"
         )
     }
@@ -67,7 +71,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly(
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Has had trial drug - undetermined interference with RAS/MEK/MAPK pathway"
         )
     }
@@ -75,12 +79,14 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
     @Test
     fun `Should fail for wrong drug type`() {
         val treatmentHistoryEntry =
-            TreatmentTestFactory.treatmentHistoryEntry(setOf(
-                TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR)))
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(
+                    TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
+                )
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly(
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
             "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
         )
     }

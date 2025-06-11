@@ -6,9 +6,9 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
-import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -130,7 +130,7 @@ class HasFusionInGeneTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
+        Assertions.assertThat(result.undeterminedMessagesStrings())
             .containsExactly("Fusion in gene gene A undetermined (not tested for fusions)")
     }
 }
