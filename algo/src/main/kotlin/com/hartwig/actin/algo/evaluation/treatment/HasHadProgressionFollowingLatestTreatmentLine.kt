@@ -24,28 +24,28 @@ class HasHadProgressionFollowingLatestTreatmentLine(
 
         return when {
             systemicTreatments.isEmpty() -> {
-                EvaluationFactory.fail("No systemic treatments found in treatment history.")
+                EvaluationFactory.fail("No systemic treatments found in treatment history")
             }
 
             systemicTreatments.all { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
-                EvaluationFactory.pass("All systemic treatments resulted in progressive disease.")
+                EvaluationFactory.pass("All systemic treatments resulted in progressive disease")
             }
 
             treatmentWithoutDateDiffersInPDStatusFromLastTreatment -> {
-                EvaluationFactory.undetermined("Unable to determine radiological progression following latest treatment line due to treatments without start date.")
+                EvaluationFactory.undetermined("Unable to determine radiological progression following latest treatment line due to treatments without start date")
             }
 
             lastTreatmentResultedInPD == true -> {
                 val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
-                EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote.")
+                EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
             }
 
             lastTreatmentResultedInPD == false -> {
-                EvaluationFactory.fail("Last systemic treatment did not result in progressive disease.")
+                EvaluationFactory.fail("Last systemic treatment did not result in progressive disease")
             }
 
             else -> {
-                EvaluationFactory.undetermined("Radiological progression following latest treatment line undetermined.")
+                EvaluationFactory.undetermined("Radiological progression following latest treatment line undetermined")
             }
         }
     }
