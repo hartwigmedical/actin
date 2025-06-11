@@ -13,7 +13,6 @@ import org.junit.Test
 class HasHadProgressionFollowingLatestTreatmentLineTest {
 
     private val function = HasHadProgressionFollowingLatestTreatmentLine()
-    private val functionCannotAssumePDIfStopYearProvided = HasHadProgressionFollowingLatestTreatmentLine(canAssumePDIfStopYearProvided = false)
     private val functionPDMustBeRadiological = HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological = false)
 
     @Test
@@ -75,7 +74,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD (assumed PD is radiological)")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD (assumed PD is radiological).")
     }
 
     @Test
@@ -98,9 +97,9 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
                 stopMonth = null
             )
         )
-        val evaluation = functionCannotAssumePDIfStopYearProvided.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Last systemic treament did not result in progressive disease.")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Last systemic treatment did not result in progressive disease.")
     }
 
     @Test
@@ -117,13 +116,13 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("2", true)),
                 startYear = 2025,
                 startMonth = 10,
-                stopYear = 2025,
+                stopYear = 2026,
                 stopMonth = 11
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment stopped and radiological progression is assumed.")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD (assumed PD is radiological).")
     }
 
     @Test
@@ -148,7 +147,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
         )
         val evaluation = functionPDMustBeRadiological.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD.")
     }
 
     @Test

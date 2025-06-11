@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 
 
 class HasHadProgressionFollowingLatestTreatmentLine(
-    private val canAssumePDIfStopYearProvided: Boolean = true,
     private val mustBeRadiological: Boolean = true
 ) :
     EvaluationFunction {
@@ -19,8 +18,7 @@ class HasHadProgressionFollowingLatestTreatmentLine(
             treatmentHistory.filter { SystemicTreatmentAnalyser.treatmentHistoryEntryIsSystemic(it) }
         val (systemicTreatmentsWithStartDate, systemicTreatmentsWithoutStartDate) = systemicTreatments.partition { it.startYear != null }
         val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(systemicTreatmentsWithStartDate)
-        val lastTreatmentResultedInPD =
-            lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } == true
+        val lastTreatmentResultedInPD = lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) }
         val treatmentWithoutDateDiffersInPDStatusFromLastTreatment = systemicTreatmentsWithoutStartDate.any {
             (ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true) != lastTreatmentResultedInPD
         }
@@ -38,17 +36,13 @@ class HasHadProgressionFollowingLatestTreatmentLine(
                 EvaluationFactory.undetermined("Unable to determine radiological progression following latest treatment line due to treatments without start date.")
             }
 
-            lastTreatmentResultedInPD -> {
+            lastTreatmentResultedInPD == true -> {
                 val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
-                EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
+                EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote.")
             }
 
-            lastTreatment?.treatmentHistoryDetails?.stopYear != null && canAssumePDIfStopYearProvided -> {
-                EvaluationFactory.pass("Last systemic treatment stopped and radiological progression is assumed.")
-            }
-
-            lastTreatment?.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || lastTreatment?.treatmentHistoryDetails?.stopYear == null -> {
-                EvaluationFactory.fail("Last systemic treament did not result in progressive disease.")
+            lastTreatmentResultedInPD == false -> {
+                EvaluationFactory.fail("Last systemic treatment did not result in progressive disease.")
             }
 
             else -> {
