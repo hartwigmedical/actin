@@ -118,16 +118,24 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasMeasurableDisease = hasMeasurableDisease, doids = setOf(doid)))
     }
 
-    fun withNoConfirmedLesions(): PatientRecord {
+    fun withConfirmedLesions(
+        hasBoneLesions: Boolean? = null,
+        hasBrainLesions: Boolean? = null,
+        hasCnsLesions: Boolean? = null,
+        hasLiverLesions: Boolean? = null,
+        hasLungLesions: Boolean? = null,
+        hasLymphNodeLesions: Boolean? = null,
+        otherLesions: List<String>? = null
+    ): PatientRecord {
         return withTumorDetails(
             TumorDetails(
-                hasBoneLesions = false,
-                hasBrainLesions = false,
-                hasCnsLesions = false,
-                hasLiverLesions = false,
-                hasLungLesions = false,
-                hasLymphNodeLesions = false,
-                otherLesions = emptyList()
+                hasBoneLesions = hasBoneLesions,
+                hasBrainLesions = hasBrainLesions,
+                hasCnsLesions = hasCnsLesions,
+                hasLiverLesions = hasLiverLesions,
+                hasLungLesions = hasLungLesions,
+                hasLymphNodeLesions = hasLymphNodeLesions,
+                otherLesions = otherLesions
             )
         )
     }
