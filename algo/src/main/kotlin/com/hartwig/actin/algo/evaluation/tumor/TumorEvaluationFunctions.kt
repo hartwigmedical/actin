@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.doid.DoidModel
 
-internal object TumorEvaluationFunctions {
+object TumorEvaluationFunctions {
 
     fun hasTumorWithType(tumor: TumorDetails, validTypes: Set<String>): Boolean {
         return listOf(tumor.primaryTumorType, tumor.primaryTumorSubType).any { stringNotNullAndMatchesCollection(it, validTypes) }
@@ -30,6 +30,10 @@ internal object TumorEvaluationFunctions {
             tumorName.lowercase().contains(it)
         } && !TumorTermConstants.NON_SMALL_CELL_TERMS.any { tumorName.lowercase().contains(it) }
         return hasSmallCellDoid || hasSmallCellName
+    }
+
+    fun hasCancerOfUnknownPrimary(tumorName: String): Boolean {
+        return tumorName.contains(TumorTermConstants.CUP_TERM)
     }
 
     fun hasPeritonealMetastases(tumor: TumorDetails): Boolean? {

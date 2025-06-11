@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.isCUP
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.hasCancerOfUnknownPrimary
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.lesions
 import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
@@ -14,9 +14,9 @@ class TumorDetailsInterpreterTest {
 
     @Test
     fun `Should correctly determine if tumor is CUP`() {
-        assertThat(isCUP(TumorDetails().name)).isFalse
-        assertThat(isCUP(TumorDetails(name = "Unknown").name)).isFalse
-        assertThat(isCUP(TumorDetails(name = "Something (CUP))").name)).isTrue()
+        assertThat(hasCancerOfUnknownPrimary(TumorDetails().name)).isFalse
+        assertThat(hasCancerOfUnknownPrimary(TumorDetails(name = "Unknown").name)).isFalse
+        assertThat(hasCancerOfUnknownPrimary(TumorDetails(name = "Something (CUP))").name)).isTrue()
     }
 
     class LesionInterpreterTest {

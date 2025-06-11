@@ -7,7 +7,7 @@ object TumorDetailsInterpreter {
 
     const val CUP_STRING = "(CUP)"
 
-    fun isCUP(name: String): Boolean {
+    fun hasCancerOfUnknownPrimary(name: String): Boolean {
         return name.contains(CUP_STRING)
     }
 

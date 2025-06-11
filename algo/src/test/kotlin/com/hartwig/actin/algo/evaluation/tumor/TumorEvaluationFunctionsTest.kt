@@ -118,6 +118,16 @@ class TumorEvaluationFunctionsTest {
     }
 
     @Test
+    fun `Should pass if tumor is CUP`() {
+        assertThat(TumorEvaluationFunctions.hasCancerOfUnknownPrimary("some ${TumorTermConstants.CUP_TERM} tumor")).isTrue()
+    }
+
+    @Test
+    fun `Should fail if tumor is no CUP`() {
+        assertThat(TumorEvaluationFunctions.hasCancerOfUnknownPrimary("some other tumor")).isFalse()
+    }
+
+    @Test
     fun `Should return false if patient does not have peritoneal metastases`() {
         listOf("retroperitoneal lesions", "metastases in subperitoneal region", "Lymph node").forEach { lesion ->
             val tumor = TumorTestFactory.withOtherLesions(listOf(lesion)).tumor
