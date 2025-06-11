@@ -42,21 +42,14 @@ class ECGConfigFactoryTest {
     }
 
     @Test
-    fun `Should return ignore config when input evaluates to false`() {
+    fun `Should return ignore config when interpretation is ignore string`() {
         val config = createConfig(input = "nvt", interpretation = "<ignore>")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("nvt", ignore = true, curated = null))
     }
 
     @Test
-    fun `Should return ignore config when input evaluates to null`() {
-        val config = createConfig(input = "possible", interpretation = "<ignore>")
-        assertThat(config.errors).isEmpty()
-        assertThat(config.config).isEqualTo(ComorbidityConfig("possible", ignore = true, curated = null))
-    }
-
-    @Test
-    fun `Should return empty config when input evaluates to true`() {
+    fun `Should return empty config when interpretation is empty`() {
         val config = createConfig(input = "Ja", interpretation = "")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("Ja", ignore = false, curated = Ecg(null, null, null)))
