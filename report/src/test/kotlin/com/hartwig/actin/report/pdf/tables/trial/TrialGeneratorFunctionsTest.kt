@@ -103,6 +103,42 @@ class TrialGeneratorFunctionsTest {
     }
 
     @Test
+    fun `Should add (no slots) or (closed) when all cohorts are unavailable`() {
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeCohortConfig = false,
+                includeSites = true,
+                indicateNoSlotsOrClosed = true
+            ).map { text -> text.any { it.endsWith("(no slots)") } }
+        ).isEqualTo(listOf(false, true, false))
+
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2.copy(isOpen = false)),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeCohortConfig = false,
+                includeSites = true,
+                indicateNoSlotsOrClosed = true
+            ).map { text -> text.any { it.endsWith("(closed)") || it.endsWith("(no slots)") } }
+        ).isEqualTo(listOf(false, true, true))
+
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)),
+                true,
+                InterpretedCohort::warnings,
+                includeCohortConfig = false,
+                includeSites = true,
+                indicateNoSlotsOrClosed = true
+            ).map { text -> text.any { it.endsWith("(closed)") || it.endsWith("(no slots)") } }
+        ).isEqualTo(listOf(false, true, true))
+    }
+
+    @Test
     fun `Should group common molecular events for multiple cohorts in trial`() {
         val cohort3 = cohort1.copy(name = "cohort3")
         assertThat(
