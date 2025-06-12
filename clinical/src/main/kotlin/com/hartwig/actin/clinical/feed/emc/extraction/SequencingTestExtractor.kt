@@ -51,7 +51,7 @@ class SequencingTestExtractor(
             )
 
             if (testCurationConfig.configs.isEmpty() && sequencingResults.configs.isEmpty()) {
-                return ExtractionResult(emptyList(), CurationExtractionEvaluation())
+                ExtractionResult(emptyList<List<SequencingTest>>(), CurationExtractionEvaluation())
             }
 
             val sequencingTestConfig = testCurationConfig.config()?.takeUnless { it.ignore }

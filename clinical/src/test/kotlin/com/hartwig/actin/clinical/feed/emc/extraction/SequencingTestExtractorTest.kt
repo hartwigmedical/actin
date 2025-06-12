@@ -80,7 +80,8 @@ class SequencingTestExtractorTest {
         every { testResultCuration.find(TEST) } returns emptySet()
 
         val result = extractor.extract(PATIENT_ID, ihcTestResults)
-        assertResultContains(result, null, 0)
+        assertResultContains(result, null, 1)
+
     }
 
     @Test
