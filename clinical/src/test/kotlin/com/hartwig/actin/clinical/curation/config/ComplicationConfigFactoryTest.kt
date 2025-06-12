@@ -91,7 +91,7 @@ class ComplicationConfigFactoryTest {
     }
 
     @Test
-    fun `Should return null for curated complication when ignore is true`() {
+    fun `Should return null for curated complication with validation error when ignore is true and other fields are present`() {
         val configFactory = ComplicationConfigFactory(icdModel)
         val data = arrayOf("input", "1", "<ignore>", "$icdMainTitle&$icdExtensionTitle", "2023", "12")
         val config = configFactory.create(fields, data)
