@@ -16,7 +16,7 @@ class StandardBodyWeightExtractor : StandardDataExtractor<List<BodyWeight>> {
                     BodyWeight(
                         value = meas.value,
                         date = meas.date,
-                        unit = "kilograms".takeIf { meas.unit.lowercase() in BODY_WEIGHT_EXPECTED_UNIT }
+                        unit = meas.unit.takeIf { meas.unit.lowercase() in BODY_WEIGHT_EXPECTED_UNIT }
                             ?: throw IllegalArgumentException("Unit of body weight is not Kilograms"),
                         valid = meas.value in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
                     )

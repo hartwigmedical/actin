@@ -276,13 +276,13 @@
     {
       "date": "2020-08-11T00:00:00",
       "value": 61.1,
-      "unit": "kilograms",
+      "unit": "kilogram",
       "valid": true
     },
     {
       "date": "2020-08-20T08:43:00",
       "value": 58.9,
-      "unit": "kilograms",
+      "unit": "kilogram",
       "valid": true
     }
   ],
