@@ -28,8 +28,8 @@ fun eventString(paveResponse: PaveResponse): String {
         paveResponse.impact.hgvsProteinImpact,
         paveResponse.impact.hgvsCodingImpact,
         paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
-        paveResponse.impact.canonicalEffect.contains("upstream_gene_variant"),
-        paveResponse.impact.canonicalEffect
+        paveResponse.impact.canonicalEffects.contains(PaveVariantEffect.UPSTREAM_GENE),
+        paveResponse.impact.canonicalEffects.joinToString("&") { it.toString() }
     )
 }
 
@@ -138,24 +138,25 @@ class PanelVariantAnnotator(
     private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
             paveImpact.gene,
-            paveImpact.transcript,
+            paveImpact.canonicalTranscript,
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
-
+        
         return TranscriptVariantImpact(
-            transcriptId = paveImpact.transcript,
+            transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
             hgvsProteinImpact = forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
-            inSpliceRegion = paveImpact.spliceRegion,
-            affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
+            affectedExon = paveLiteAnnotation.affectedExon(),
+            inSpliceRegion = paveImpact.spliceRegion,
+            effects = paveImpact.canonicalEffects.map { variantEffect(it) }.toSet(),
             codingEffect = codingEffect(paveImpact.canonicalCodingEffect),
         )
     }
 
     fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptVariantImpact> {
-        return paveResponse.transcriptImpact
-            .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.transcript }
+        return paveResponse.transcriptImpacts
+            .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.canonicalTranscript }
             .map { transcriptImpact(it, transvarVariant) }
             .toSet()
     }
@@ -171,9 +172,9 @@ class PanelVariantAnnotator(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
             hgvsProteinImpact = forceSingleLetterAminoAcids(paveTranscriptImpact.hgvsProteinImpact),
-            inSpliceRegion = paveTranscriptImpact.spliceRegion,
-            affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
+            affectedExon = paveLiteAnnotation.affectedExon(),
+            inSpliceRegion = paveTranscriptImpact.spliceRegion,
             effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
             codingEffect = codingEffect(
                 paveTranscriptImpact.effects
