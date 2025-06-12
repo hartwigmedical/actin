@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
@@ -57,11 +56,11 @@ object CancerAssociatedVariantEvaluator {
                 transcriptId = "",
                 hgvsCodingImpact = "",
                 hgvsProteinImpact = "",
-                affectedCodon = 0,
+                affectedCodon = null,
+                affectedExon = null,
                 inSpliceRegion = false,
                 effects = emptySet(),
-                codingEffect = CodingEffect.NONE,
-                affectedExon = null
+                codingEffect = null
             ),
             otherImpacts = emptySet(),
             extendedVariantDetails = null,

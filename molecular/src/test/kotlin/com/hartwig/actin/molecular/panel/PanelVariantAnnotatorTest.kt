@@ -63,7 +63,7 @@ private val PAVE_ANNOTATION = PaveResponse(
 )
 
 class PanelVariantAnnotatorTest {
-    
+
     private val transvarAnnotator = mockk<VariantAnnotator> {
         every { resolve(any(), null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
     }
@@ -258,17 +258,15 @@ class PanelVariantAnnotatorTest {
         hgvsProteinImpact = HGVS_PROTEIN_3LETTER
     )
 
-    private fun transcriptVariantImpact(
-        effects: Set<VariantEffect>,
-        codingEffect: CodingEffect
-    ): TranscriptVariantImpact = TranscriptVariantImpact(
-        transcriptId = OTHER_TRANSCRIPT,
-        hgvsCodingImpact = HGVS_CODING,
-        hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
-        affectedCodon = 1,
-        affectedExon = 1,
-        inSpliceRegion = false,
-        effects = effects,
-        codingEffect = codingEffect
-    )
+    private fun transcriptVariantImpact(effects: Set<VariantEffect>, codingEffect: CodingEffect): TranscriptVariantImpact =
+        TranscriptVariantImpact(
+            transcriptId = OTHER_TRANSCRIPT,
+            hgvsCodingImpact = HGVS_CODING,
+            hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
+            affectedCodon = 1,
+            affectedExon = 1,
+            inSpliceRegion = false,
+            effects = effects,
+            codingEffect = codingEffect
+        )
 }

@@ -351,11 +351,11 @@ object TestMolecularFactory {
         transcriptId = "",
         hgvsCodingImpact = "",
         hgvsProteinImpact = "",
-        affectedCodon = 0,
+        affectedCodon = null,
         affectedExon = null,
         inSpliceRegion = null,
         effects = emptySet(),
-        codingEffect = CodingEffect.NONE,
+        codingEffect = null,
     )
 
     fun createProperVariant() = Variant(

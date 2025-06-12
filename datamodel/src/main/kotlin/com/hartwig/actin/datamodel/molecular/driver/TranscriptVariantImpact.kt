@@ -4,8 +4,8 @@ data class TranscriptVariantImpact(
     val transcriptId: String,
     val hgvsCodingImpact: String,
     val hgvsProteinImpact: String,
-    val affectedCodon: Int? = null,
-    val affectedExon: Int? = null,
+    val affectedCodon: Int?,
+    val affectedExon: Int?,
     val inSpliceRegion: Boolean?,
     val effects: Set<VariantEffect>,
     val codingEffect: CodingEffect?
