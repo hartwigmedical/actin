@@ -51,10 +51,9 @@ object TrialGeneratorFunctions {
         externalTrials.forEach { trial ->
             val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
             val contentFunction = when {
-                useSmallerSize && indicateNoSlotsOrClosed -> Cells::createContentSmallItalic
                 useSmallerSize -> Cells::createContentSmall
-                indicateNoSlotsOrClosed -> Cells::createContentMediumItalic
-                else -> Cells::createContent
+                cohorts.isEmpty() -> Cells::createContent
+                else -> Cells::createContentMediumItalic
             }
             table.addCell(contentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
             table.addCell(contentFunction(trial.sourceMolecularEvents.joinToString(", ")))
@@ -84,7 +83,7 @@ object TrialGeneratorFunctions {
         requestingSource: TrialSource?,
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        allowDeEmphasis: Boolean,
+        indicateNoSlotsOrClosed: Boolean,
         useSmallerSize: Boolean,
         includeCohortConfig: Boolean,
         includeSites: Boolean
@@ -98,7 +97,7 @@ object TrialGeneratorFunctions {
             requestingSource = requestingSource,
             includeCohortConfig = includeCohortConfig,
             includeSites = includeSites,
-            allowDeEmphasis = allowDeEmphasis
+            indicateNoSlotsOrClosed = indicateNoSlotsOrClosed
         ).forEachIndexed { index, content ->
             addContentListToTable(
                 table,
@@ -173,7 +172,7 @@ object TrialGeneratorFunctions {
         includeCohortConfig: Boolean,
         requestingSource: TrialSource? = null,
         includeSites: Boolean,
-        allowDeEmphasis: Boolean
+        indicateNoSlotsOrClosed: Boolean
     ): List<List<String>> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohortsForTrial, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::molecularEvents)
@@ -200,8 +199,8 @@ object TrialGeneratorFunctions {
 
         return prefix + cohortsForTrial.map { cohort: InterpretedCohort ->
             val cohortString = when {
-                !cohort.isOpen && allowDeEmphasis -> cohort.name?.plus(" (closed)") ?: ""
-                !cohort.hasSlotsAvailable && allowDeEmphasis -> cohort.name?.plus(" (no slots)") ?: ""
+                !cohort.isOpen && indicateNoSlotsOrClosed -> cohort.name?.plus(" (closed)") ?: ""
+                !cohort.hasSlotsAvailable && indicateNoSlotsOrClosed -> cohort.name?.plus(" (no slots)") ?: ""
                 else -> cohort.name ?: ""
             }
 

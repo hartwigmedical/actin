@@ -52,7 +52,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -72,7 +72,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(listOf(listOf("cohort1 (no slots)", "MSI", "", "warning1")))
     }
@@ -91,7 +91,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::fails,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -112,7 +112,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -134,7 +134,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -154,7 +154,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(listOf(listOf("cohort1 (no slots)", "MSI", "", "warning1")))
     }
@@ -168,7 +168,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -188,7 +188,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -208,7 +208,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -227,7 +227,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(listOf(listOf("cohort1 (no slots)", "MSI", "site1", "None")))
     }
@@ -247,7 +247,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = true,
                 includeSites = true,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
@@ -269,7 +269,7 @@ class TrialGeneratorFunctionsTest {
                 InterpretedCohort::warnings,
                 includeCohortConfig = false,
                 includeSites = false,
-                allowDeEmphasis = true
+                indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(
             listOf(
