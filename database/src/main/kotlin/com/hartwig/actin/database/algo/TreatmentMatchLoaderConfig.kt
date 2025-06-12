@@ -9,7 +9,10 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
 
 data class TreatmentMatchLoaderConfig(
-    val treatmentMatchJson: String, override val dbUser: String, override val dbPass: String, override val dbUrl: String
+    val treatmentMatchJson: String, 
+    override val dbUser: String, 
+    override val dbPass: String, 
+    override val dbUrl: String
 ) : DatabaseLoaderConfig {
 
     companion object {
