@@ -124,6 +124,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             requestingSource = TrialSource.fromDescription(report.requestingHospital)
         ).filterNotNull()
 
+        val eligibleApprovedTreatmentsGenerator = EligibleApprovedTreatmentGenerator(report)
+
         return listOfNotNull(
             clinicalHistoryGenerator,
             MolecularSummaryGenerator(
@@ -138,7 +140,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                         report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
             },
             SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.config.includeEligibleSOCTreatmentSummary },
-            EligibleApprovedTreatmentGenerator(report).takeIf { report.config.includeApprovedTreatmentsInSummary }
+            eligibleApprovedTreatmentsGenerator.takeIf { report.config.includeApprovedTreatmentsInSummary && eligibleApprovedTreatmentsGenerator.showTable() }
         ) + trialTableGenerators
     }
 
