@@ -7,8 +7,8 @@ data class TranscriptVariantImpact(
     val affectedCodon: Int? = null,
     val affectedExon: Int? = null,
     val inSpliceRegion: Boolean?,
-    val effects: Set<VariantEffect> = emptySet(),
-    val codingEffect: CodingEffect? = null
+    val effects: Set<VariantEffect>,
+    val codingEffect: CodingEffect?
 ) : Comparable<TranscriptVariantImpact> {
 
     override fun compareTo(other: TranscriptVariantImpact): Int {

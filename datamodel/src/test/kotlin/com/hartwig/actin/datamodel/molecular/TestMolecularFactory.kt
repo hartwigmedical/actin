@@ -369,10 +369,10 @@ object TestMolecularFactory {
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
             affectedCodon = 600,
+            affectedExon = 15,
             inSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
-            codingEffect = CodingEffect.MISSENSE,
-            affectedExon = null
+            codingEffect = CodingEffect.MISSENSE
         ),
         otherImpacts = emptySet(),
         extendedVariantDetails = ExtendedVariantDetails(
