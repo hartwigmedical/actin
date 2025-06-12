@@ -23,19 +23,17 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
 
     override fun contents(): Table {
         val table = Tables.createSingleCol()
-        val patientPopulations = annotation.trialReferences.first().patientPopulations
-        if (patientPopulations.size == 2) {
-            val subTables = listOf(
-                createTrialInformation(),
-                createPatientCharacteristics(patientPopulations),
-                createEndPointTable(patientPopulations, "Primary endpoints: ", EndPointType.PRIMARY),
-                createEndPointTable(patientPopulations, "Secondary endpoints: ", EndPointType.SECONDARY)
-            )
-            subTables.forEachIndexed { i, subTable ->
-                table.addCell(Cells.create(subTable))
-                if (i < subTables.size - 1) {
-                    table.addCell(Cells.createEmpty())
-                }
+        val patientPopulations = annotation.trialReferences.first().patientPopulations //currently always 1
+        val subTables = listOf(
+            createTrialInformation(),
+            createPatientCharacteristics(patientPopulations),
+            createEndPointTable(patientPopulations, "Primary endpoints: ", EndPointType.PRIMARY),
+            createEndPointTable(patientPopulations, "Secondary endpoints: ", EndPointType.SECONDARY)
+        )
+        subTables.forEachIndexed { i, subTable ->
+            table.addCell(Cells.create(subTable))
+            if (i < subTables.size - 1) {
+                table.addCell(Cells.createEmpty())
             }
         }
 
@@ -71,6 +69,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
 
     private fun createPatientCharacteristics(patientPopulations: List<PatientPopulation>): Table {
         val table = Tables.createFixedWidthCols(200f, 200f, 200f).setWidth(600f)
+        // Assuming max 2 treatments per trial
         table.addCell(Cells.createHeader(""))
         table.addCell(Cells.createHeader(patientPopulations[0].name + " (n=" + patientPopulations[0].numberOfPatients + ")"))
         table.addCell(Cells.createHeader(patientPopulations[1].name + " (n=" + patientPopulations[1].numberOfPatients + ")"))
@@ -88,13 +87,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
             "Previous systemic therapy" to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
             "Prior therapies" to PatientPopulation::priorTherapies
         )
-            .flatMap { (characteristic, extractAsString) ->
-                contentForCharacteristic(
-                    characteristic,
-                    extractAsString,
-                    patientPopulations
-                )
-            }
+            .flatMap { (characteristic, extractAsString) -> contentForCharacteristic(characteristic, extractAsString, patientPopulations) }
             .forEach { table.addCell(Cells.createContent(it)) }
 
         return table

@@ -14,7 +14,10 @@
   "generalEligibility": [
     {
       "references": [
-        "I-1"
+        {
+          "id": "I-1",
+          "text": "Patient is ≥18 years of age."
+        }
       ],
       "function": {
         "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -25,7 +28,10 @@
     },
     {
       "references": [
-        "I-2"
+        {
+          "id": "I-2",
+          "text": "Drug 1 as monotherapy is indicated for the treatment of adults with advanced lung cancer."
+        }
       ],
       "function": {
         "rule": "AND",
@@ -54,7 +60,10 @@
     },
     {
       "references": [
-        "I-3"
+        {
+          "id": "I-3",
+          "text": "Patient has a confirmed EGFR C797S mutation"
+        }
       ],
       "function": {
         "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",

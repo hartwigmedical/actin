@@ -7,10 +7,13 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.io.File
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
+import org.junit.Test
 
 class TreatmentMatchJsonTest {
 
@@ -31,9 +34,9 @@ class TreatmentMatchJsonTest {
     @Test
     fun `Should sort messages prior to serialization`() {
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
-        val trialMatch = proper.trialMatches[0]
+        val trialMatch: TrialMatch = proper.trialMatches[0]
         val key = trialMatch.evaluations.keys.first()
-        val match = proper.copy(
+        val match: TreatmentMatch = proper.copy(
             trialMatches = listOf(
                 trialMatch.copy(
                     evaluations = mapOf(
@@ -64,7 +67,7 @@ class TreatmentMatchJsonTest {
                         "phase":"PHASE_1","source":"NKI","sourceId":"Source ID 1","locations":["Antoni van Leeuwenhoek"],"url":null},
                     "isPotentiallyEligible":true,
                     "evaluations":[
-                        [{"references":["I-01"],
+                        [{"references":[{"id":"I-01","text":"Patient must be an adult"}],
                         "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
                         "passMessages":[{"message":"msg 1"},{"message":"msg 2"},{"message":"msg 3"}],"warnMessages":[],"undeterminedMessages":[],
@@ -132,7 +135,6 @@ class TreatmentMatchJsonTest {
         val match = read(treatmentMatchJson)
         assertThat(match.patientId).isEqualTo("ACTN01029999")
         assertThat(match.trialMatches).hasSize(1)
-        
         val trialMatch = match.trialMatches[0]
         assertThat(trialMatch.evaluations).hasSize(1)
         assertThat(trialMatch.cohorts).hasSize(3)

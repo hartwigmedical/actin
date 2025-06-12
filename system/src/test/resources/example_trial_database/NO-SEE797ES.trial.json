@@ -11,7 +11,10 @@
   "generalEligibility": [
     {
       "references": [
-        "I-01"
+        {
+          "id": "I-01",
+          "text": "Patient is ≥18 years of age."
+        }
       ],
       "function": {
         "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -22,7 +25,10 @@
     },
     {
       "references": [
-        "I-02"
+        {
+          "id": "I-02",
+          "text": "Monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
+        }
       ],
       "function": {
         "rule": "OR",
@@ -40,7 +46,10 @@
     },
     {
       "references": [
-        "I-03"
+        {
+          "id": "I-03",
+          "text": "Tumors should contain EGFR C797 but not EGFR C797S mutation."
+        }
       ],
       "function": {
         "rule": "AND",

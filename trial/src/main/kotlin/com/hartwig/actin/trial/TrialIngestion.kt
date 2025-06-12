@@ -2,6 +2,7 @@ package com.hartwig.actin.trial
 
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortMetadata
+import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.EligibilityRuleState
@@ -102,7 +103,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =
         try {
             Eligibility(
-                inclusionCriterion.references?.toSet() ?: emptySet(),
+                inclusionCriterion.references?.map { CriterionReference(it.id, it.text) }?.toSet() ?: emptySet(),
                 eligibilityFactory.generateEligibilityFunction(inclusionCriterion.inclusionRule)
             ).right()
         } catch (e: Exception) {

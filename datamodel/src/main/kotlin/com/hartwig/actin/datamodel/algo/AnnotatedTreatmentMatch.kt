@@ -15,4 +15,5 @@ data class AnnotatedTreatmentMatch(
     fun eligible(): Boolean {
         return evaluations.none { it.result == EvaluationResult.FAIL }
     }
+
 }

@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.personalization.Population
 import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
 import com.hartwig.actin.datamodel.personalization.TreatmentGroup
 import com.hartwig.actin.datamodel.trial.CohortMetadata
+import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -115,21 +116,35 @@ object TestTreatmentMatchFactory {
     private fun createTestGeneralEvaluationsTrial1(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList())
+                function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList()),
+                references = setOf(
+                    CriterionReference(
+                        id = "I-01",
+                        text = "Patient must be an adult"
+                    )
+                )
             ) to unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", null),
             Eligibility(
-                references = setOf("I-02"),
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT, parameters = listOf(
                         EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES, parameters = emptyList())
                     )
+                ),
+                references = setOf(
+                    CriterionReference(
+                        id = "I-02",
+                        text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has exhausted SOC"
+                    )
                 )
             ) to unrecoverable(EvaluationResult.PASS, "No known brain metastases present"),
             Eligibility(
-                references = setOf("I-02"),
-                function = EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList())
-
+                function = EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList()),
+                references = setOf(
+                    CriterionReference(
+                        id = "I-02",
+                        text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC."
+                    )
+                )
             ) to unrecoverable(EvaluationResult.FAIL, "Has not exhausted SOC (remaining options capecitabine)")
         )
     }
@@ -174,8 +189,8 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortEvaluationsTrial1CohortA(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList())
+                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
+                references = setOf(CriterionReference(id = "I-01", text = "MSI")),
             ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
         )
     }
@@ -183,11 +198,11 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortEvaluationsTrial1CohortC(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                references = setOf("E-01"),
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT,
                     parameters = listOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)),
-                )
+                ),
+                references = setOf(CriterionReference(id = "E-01", text = "Active CNS metastases"))
             ) to unrecoverable(EvaluationResult.FAIL, "Has active CNS metastases", null)
         )
     }
@@ -195,12 +210,12 @@ object TestTreatmentMatchFactory {
     private fun createTestGeneralEvaluationsTrial2(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.HAS_MEASURABLE_DISEASE)
+                function = EligibilityFunction(rule = EligibilityRule.HAS_MEASURABLE_DISEASE),
+                references = setOf(CriterionReference(id = "I-01", text = "Patient should have measurable disease")),
             ) to unrecoverable(EvaluationResult.PASS, "Has measurable disease"),
             Eligibility(
-                references = setOf("I-02"),
                 function = EligibilityFunction(rule = EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT),
+                references = setOf(CriterionReference(id = "I-02", text = "Patient should be able to give adequate informed consent"))
             ) to unrecoverable(EvaluationResult.NOT_EVALUATED, "Assumed that patient can give adequate informed consent")
         )
     }
@@ -222,8 +237,8 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortEvaluationsTrial2CohortA(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                references = setOf("I-01"),
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
+                references = setOf(CriterionReference(id = "I-01", text = "MSI")),
             ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI with biallelic drivers in MMR genes", "MSI")
         )
     }
