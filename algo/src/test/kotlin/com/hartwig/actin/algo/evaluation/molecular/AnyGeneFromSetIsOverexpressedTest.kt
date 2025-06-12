@@ -7,9 +7,9 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class AnyGeneFromSetIsOverexpressedTest {
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
@@ -34,7 +34,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).contains("gene a and gene c is amplified therefore possible overexpression in RNA")
+        assertThat(evaluation.warnMessagesStrings()).contains("gene a and gene c is amplified therefore possible overexpression in RNA")
     }
 
     @Test
@@ -43,7 +43,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages)
+        assertThat(evaluation.undeterminedMessagesStrings())
             .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
     }
 

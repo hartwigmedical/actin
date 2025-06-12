@@ -209,6 +209,7 @@
     "measurableDiseaseDate": "2020-01-01",
     "pathology": [
       {
+        "reportHash": "be9420c1596a781119c53a9933a8234f",
         "tissueId": "T-1000090",
         "reportRequested": false,
         "lab": "NKI-AvL",
@@ -254,14 +255,14 @@
       "category": "Body Weight",
       "subcategory": null,
       "value": 3.5,
-      "unit": "kilograms"
+      "unit": "kilogram"
     },
     {
       "date": "2020-02-01T10:10:00",
       "category": "Body Weight",
       "subcategory": null,
       "value": 53,
-      "unit": "kilograms"
+      "unit": "kilogram"
     }
   ],
   "whoEvaluations": [

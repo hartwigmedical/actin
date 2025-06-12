@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import java.util.function.Predicate
 
@@ -54,7 +55,26 @@ class TargetCoveragePredicate(
 
     override fun test(t: List<MolecularTestTarget>) = predicate.test(t)
 
-    fun message(gene: String): String {
-        return "${if (messagePrefix != null) "$messagePrefix " else ""}gene $gene undetermined (not tested for ${stringify.invoke(targets)})"
+    fun message(gene: String): TargetCoverageMessage {
+        return TargetCoverageMessage(messagePrefix, stringify.invoke(targets), setOf(gene))
+    }
+}
+
+data class TargetCoverageMessage(private val messagePrefix: String?, private val targetString: String, val genes: Set<String>) :
+    EvaluationMessage {
+    override fun combineBy(): String {
+        return listOf(messagePrefix, targetString).joinToString { ":" }
+    }
+
+    override fun combine(other: EvaluationMessage): EvaluationMessage {
+        if (other is TargetCoverageMessage) {
+            return TargetCoverageMessage(messagePrefix, targetString, genes + other.genes)
+        }
+        throw IllegalArgumentException("Cannot combine a ${other.javaClass} with a TargetCoverageMessage")
+    }
+
+    override fun toString(): String {
+        return "${if (messagePrefix != null) "$messagePrefix " else ""}gene${if (genes.size > 1) "s" else ""} " +
+                "${genes.joinToString()} undetermined (not tested for ${targetString})"
     }
 }

@@ -22,10 +22,6 @@ class PriorPrimaryConfigFactoryTest {
             arrayOf(
                 "input",
                 "name",
-                "tumorLocation",
-                "tumorSubLocation",
-                "tumorType",
-                "tumorSubType",
                 "123",
                 "2023",
                 "12",
@@ -39,10 +35,7 @@ class PriorPrimaryConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isFalse()
         val priorPrimary = config.config.curated!!
-        assertThat(priorPrimary.tumorLocation).isEqualTo("tumorLocation")
-        assertThat(priorPrimary.tumorSubLocation).isEqualTo("tumorSubLocation")
-        assertThat(priorPrimary.tumorType).isEqualTo("tumorType")
-        assertThat(priorPrimary.tumorSubType).isEqualTo("tumorSubType")
+        assertThat(priorPrimary.name).isEqualTo("name")
         assertThat(priorPrimary.doids).containsExactly("123")
         assertThat(priorPrimary.diagnosedYear).isEqualTo(2023)
         assertThat(priorPrimary.diagnosedMonth).isEqualTo(12)
@@ -60,10 +53,6 @@ class PriorPrimaryConfigFactoryTest {
             arrayOf(
                 "input",
                 "name",
-                "tumorLocation",
-                "tumorSubLocation",
-                "tumorType",
-                "tumorSubType",
                 "123",
                 "2023",
                 "12",
@@ -94,10 +83,6 @@ class PriorPrimaryConfigFactoryTest {
             arrayOf(
                 "input",
                 "name",
-                "tumorLocation",
-                "tumorSubLocation",
-                "tumorType",
-                "tumorSubType",
                 "123",
                 "2023",
                 "12",
@@ -128,10 +113,6 @@ class PriorPrimaryConfigFactoryTest {
             arrayOf(
                 "input",
                 "<ignore>",
-                "",
-                "",
-                "",
-                "",
                 "",
                 "",
                 "",

@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -53,13 +53,13 @@ class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisea
     fun `Should fail when evaluating required measure but exceeding ULN in case of no Gilbert disease`() {
         val evaluation = function.evaluate(recordWithoutGilbertDisease.copy(labValues = listOf(TBIL_4_ULN)))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly("Total bilirubin 400.0 umol/L exceeds max of 3.0*ULN (300.0 umol/L)")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Total bilirubin 400.0 umol/L exceeds max of 3.0*ULN (300.0 umol/L)")
     }
 
     @Test
     fun `Should fail when evaluating required measure but exceeding ULN in case of Gilbert disease`() {
         val evaluation = function.evaluate(recordWithGilbertDisease.copy(labValues = listOf(DBIL_6_ULN)))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly("Direct bilirubin 600.0 umol/L exceeds max of 5.0*ULN (500.0 umol/L)")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Direct bilirubin 600.0 umol/L exceeds max of 5.0*ULN (500.0 umol/L)")
     }
 }

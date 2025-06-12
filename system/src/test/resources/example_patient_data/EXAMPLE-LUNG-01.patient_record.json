@@ -351,7 +351,7 @@
                 "hgvsProteinImpact": "p.L858R",
                 "affectedCodon": 858,
                 "affectedExon": 21,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -522,7 +522,7 @@
                 "hgvsProteinImpact": "p.C797S",
                 "affectedCodon": 797,
                 "affectedExon": 20,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -634,7 +634,7 @@
                 "hgvsProteinImpact": "p.G12D",
                 "affectedCodon": 12,
                 "affectedExon": 2,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -674,7 +674,7 @@
                 "hgvsProteinImpact": "p.G12C",
                 "affectedCodon": 12,
                 "affectedExon": 2,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],

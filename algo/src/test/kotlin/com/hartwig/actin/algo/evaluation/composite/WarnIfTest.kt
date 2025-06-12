@@ -25,8 +25,8 @@ class WarnIfTest {
     fun `Should move messages to warn on pass`() {
         val result: Evaluation =
             WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        assertThat(result.passMessages).isEmpty()
-        assertThat(result.warnMessages).isNotEmpty()
+        assertThat(result.passMessagesStrings()).isEmpty()
+        assertThat(result.warnMessagesStrings()).isNotEmpty()
     }
 
     @Test

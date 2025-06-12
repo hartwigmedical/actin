@@ -353,7 +353,7 @@ object TestMolecularFactory {
         hgvsProteinImpact = "",
         affectedCodon = 0,
         affectedExon = null,
-        isSpliceRegion = null,
+        inSpliceRegion = null,
         effects = emptySet(),
         codingEffect = CodingEffect.NONE,
     )
@@ -369,7 +369,7 @@ object TestMolecularFactory {
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
             affectedCodon = 600,
-            isSpliceRegion = false,
+            inSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
             codingEffect = CodingEffect.MISSENSE,
             affectedExon = null

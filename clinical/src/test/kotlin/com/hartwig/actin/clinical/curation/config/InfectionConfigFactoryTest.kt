@@ -10,13 +10,11 @@ import org.junit.Test
 
 class InfectionConfigFactoryTest {
     private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.INFECTION_TSV)
+    private val factory = InfectionConfigFactory(TestIcdFactory.createTestModel())
 
     @Test
     fun `Should return InfectionConfig from valid inputs`() {
-        val (config, errors) = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(
-            fields,
-            arrayOf("input", "interpretation", "node 1")
-        )
+        val (config, errors) = factory.create(fields, arrayOf("input", "interpretation", "node 1"))
         assertThat(errors).isEmpty()
         assertThat(config.input).isEqualTo("input")
         assertThat(config.ignore).isFalse()
@@ -25,8 +23,17 @@ class InfectionConfigFactoryTest {
     }
 
     @Test
+    fun `Should return InfectionConfig from valid inputs with ignore`() {
+        val (config, errors) = factory.create(fields, arrayOf("input", "<ignore>", "node 1"))
+        assertThat(errors).isEmpty()
+        assertThat(config.input).isEqualTo("input")
+        assertThat(config.ignore).isTrue
+        assertThat(config.curated).isNull()
+    }
+
+    @Test
     fun `Should return validation error when ICD code is invalid`() {
-        val config = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("input", "interpretation", "invalid"))
+        val config = factory.create(fields, arrayOf("input", "interpretation", "invalid"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.INFECTION,

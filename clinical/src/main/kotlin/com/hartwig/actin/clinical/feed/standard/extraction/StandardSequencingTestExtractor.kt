@@ -67,7 +67,8 @@ class StandardSequencingTestExtractor(
                         isMicrosatelliteUnstable = msi(allResults),
                         isHomologousRecombinationDeficient = hrd(allResults),
                         negativeResults = negativeResults(allResults),
-                        knownSpecifications = test.knownSpecifications
+                        knownSpecifications = test.knownSpecifications,
+                        reportHash = test.reportHash
                     )
                 }
             ),

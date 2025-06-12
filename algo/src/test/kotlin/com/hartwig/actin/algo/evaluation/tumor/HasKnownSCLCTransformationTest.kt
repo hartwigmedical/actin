@@ -6,11 +6,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -47,9 +47,11 @@ class HasKnownSCLCTransformationTest {
     fun `Should resolve to undetermined if tumor has both NSCLC and small cell doid configured`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoids(
-                SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next(),
-                DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+            function.evaluate(
+                TumorTestFactory.withDoids(
+                    SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next(),
+                    DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
+                )
             )
         )
     }
@@ -86,6 +88,6 @@ class HasKnownSCLCTransformationTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Small cell transformation undetermined (RB1 loss detected)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Small cell transformation undetermined (RB1 loss detected)")
     }
 }

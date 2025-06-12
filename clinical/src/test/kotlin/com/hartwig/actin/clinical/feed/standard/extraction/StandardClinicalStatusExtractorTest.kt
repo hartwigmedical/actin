@@ -4,9 +4,9 @@ import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.feed.datamodel.DatedEntry
 import com.hartwig.feed.datamodel.FeedWhoEvaluation
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val SOME_DATE = LocalDate.of(2024, 10, 4)
 
@@ -15,7 +15,7 @@ class StandardClinicalStatusExtractorTest {
 
     @Test
     fun `Should support all clinical status fields unknown in provided data`() {
-        assertThat(extractor.extract(FEED_PATIENT_RECORD).extracted).isEqualTo(ClinicalStatus(hasComplications = false))
+        assertThat(extractor.extract(FEED_PATIENT_RECORD).extracted).isEqualTo(ClinicalStatus())
     }
 
     @Test

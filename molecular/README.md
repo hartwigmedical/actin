@@ -156,7 +156,7 @@ The following data is captured as impact of a variant on a specific transcript:
 | hgvsProteinImpact | p.V41E                    | The HGVS protein impact on the transcript                                    |
 | affectedCodon     | 41                        | If applicable, the codon that is affected by the variant                     |
 | affectedExon      | 2                         | If applicable, the exon that is affected by the variant                      |
-| isSpliceRegion    | false                     | Indicates whether this variant lies within a splice region of the transcript |
+| inSpliceRegion    | false                     | Indicates whether this variant lies within a splice region of the transcript |
 | effects           | MISSENSE, PHASED_MISSENSE | A set of effects that this variant has on the transcript                     |
 | codingEffect      | MISSENSE                  | A single, summarized coding effect this variant has on the transcript        |
 

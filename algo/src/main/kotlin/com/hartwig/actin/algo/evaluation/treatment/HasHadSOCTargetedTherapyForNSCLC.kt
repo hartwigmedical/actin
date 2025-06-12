@@ -32,8 +32,4 @@ class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: Set<String>) :
     private fun returnDrugTypeSet(genesToIgnore: Set<String>): Set<TreatmentType> {
         return NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.filterNot { it.key in genesToIgnore }.values.flatten().toSet()
     }
-
-    companion object {
-
-    }
 }

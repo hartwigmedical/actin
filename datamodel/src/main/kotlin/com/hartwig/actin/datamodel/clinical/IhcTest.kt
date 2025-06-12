@@ -10,5 +10,6 @@ data class IhcTest(
     val scoreValuePrefix: String? = null,
     val scoreValue: Double? = null,
     val scoreValueUnit: String? = null,
-    val impliesPotentialIndeterminateStatus: Boolean = false
+    val impliesPotentialIndeterminateStatus: Boolean = false,
+    val reportHash: String? = null
 )

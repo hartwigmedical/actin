@@ -17,7 +17,7 @@ private const val UNIT = "centimeters"
 private val EHR_PATIENT_RECORD = FeedTestData.FEED_PATIENT_RECORD.copy(
     measurements = listOf(
         FeedMeasurement(
-            date = DATE.toLocalDate(),
+            date = DATE,
             category = CATEGORY,
             subcategory = SUB_CATEGORY,
             value = VALUE,

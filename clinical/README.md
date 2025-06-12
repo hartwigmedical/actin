@@ -19,11 +19,6 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
 
-## ACTIN clinical model for providers
-
-Data providers can provide clinical data in JSON adhering to
-the [following format](src/main/resources/json_schema/provided_clinical_data.schema.json)
-
 ## ACTIN clinical datamodel used internally
 
 In ACTIN, the clinical feed as described above, is mapped onto the ACTIN clinical data model.
@@ -140,10 +135,7 @@ The details may include multiple treatment stages representing switches from the
 
 | Field            | Origin                                     |
 |------------------|--------------------------------------------|
-| tumorLocation    | Previous primary tumors: Tumor location    |
-| tumorSubLocation | Previous primary tumors: Tumor location    |
-| tumorType        | Previous primary tumors: Tumor type        |
-| tumorSubType     | Previous primary tumors: Tumor type        |
+| name             | Added in curation                          |
 | doids            | Added in curation                          |
 | diagnosedYear    | Previous primary tumors: Diagnosis date    |
 | diagnosedMonth   | Previous primary tumors: Diagnosis date    |

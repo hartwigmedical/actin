@@ -42,7 +42,6 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
 
         return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
             val reported = variant.reported()
-            val coding = relevantCodingEffects.contains(variant.canonicalImpact().codingEffect())
             val geneIncluded = geneFilter.include(variant.gene())
             if (reported && !geneIncluded) {
                 throw IllegalStateException(
@@ -50,7 +49,9 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                             + " Please make sure '${variant.gene()}' is configured as a known gene."
                 )
             }
-            geneIncluded && (reported || coding)
+            val coding = relevantCodingEffects.contains(variant.canonicalImpact().codingEffect())
+            val inSpliceRegion = variant.canonicalImpact().inSpliceRegion()
+            geneIncluded && (reported || coding || inSpliceRegion)
         }
             .map { variant ->
                 val event = DriverEventFactory.variantEvent(variant)
@@ -153,7 +154,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
             hgvsProteinImpact = AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()),
             affectedCodon = purpleTranscriptImpact.affectedCodon(),
             affectedExon = purpleTranscriptImpact.affectedExon(),
-            isSpliceRegion = purpleTranscriptImpact.inSpliceRegion(),
+            inSpliceRegion = purpleTranscriptImpact.inSpliceRegion(),
             effects = toEffects(purpleTranscriptImpact.effects()),
             codingEffect = determineCodingEffect(purpleTranscriptImpact.codingEffect())
         )

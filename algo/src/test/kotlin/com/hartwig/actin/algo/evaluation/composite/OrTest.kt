@@ -42,24 +42,24 @@ class OrTest {
     }
 
     @Test
-    fun `Should retain messages`() {
+    fun `Should retain MessagesStrings()`() {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, index = 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, index = 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, index = 3)
         val function4: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, index = 4)
         val result: Evaluation = Or(listOf(function1, function2, function3, function4)).evaluate(TEST_PATIENT)
-        assertThat(result.passMessages).hasSize(2)
-        assertThat(result.passMessages).contains("pass 3")
-        assertThat(result.passMessages).contains("pass 4")
-        assertThat(result.warnMessages).hasSize(2)
-        assertThat(result.warnMessages).contains("warn 3")
-        assertThat(result.warnMessages).contains("warn 4")
-        assertThat(result.failMessages).hasSize(2)
-        assertThat(result.failMessages).contains("fail 3")
-        assertThat(result.failMessages).contains("fail 4")
-        assertThat(result.undeterminedMessages).hasSize(2)
-        assertThat(result.undeterminedMessages).contains("undetermined 3")
-        assertThat(result.undeterminedMessages).contains("undetermined 4")
+        assertThat(result.passMessagesStrings()).hasSize(2)
+        assertThat(result.passMessagesStrings()).contains("pass 3")
+        assertThat(result.passMessagesStrings()).contains("pass 4")
+        assertThat(result.warnMessagesStrings()).hasSize(2)
+        assertThat(result.warnMessagesStrings()).contains("warn 3")
+        assertThat(result.warnMessagesStrings()).contains("warn 4")
+        assertThat(result.failMessagesStrings()).hasSize(2)
+        assertThat(result.failMessagesStrings()).contains("fail 3")
+        assertThat(result.failMessagesStrings()).contains("fail 4")
+        assertThat(result.undeterminedMessagesStrings()).hasSize(2)
+        assertThat(result.undeterminedMessagesStrings()).contains("undetermined 3")
+        assertThat(result.undeterminedMessagesStrings()).contains("undetermined 4")
     }
 
     @Test
@@ -98,9 +98,9 @@ class OrTest {
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = false, index = 2)
         val result: Evaluation = Or(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
         assertThat(result.recoverable).isTrue
-        assertThat(result.undeterminedMessages).hasSize(2)
-        assertThat(result.undeterminedMessages).contains("undetermined 1")
-        assertThat(result.undeterminedMessages).contains("undetermined 2")
+        assertThat(result.undeterminedMessagesStrings()).hasSize(2)
+        assertThat(result.undeterminedMessagesStrings()).contains("undetermined 1")
+        assertThat(result.undeterminedMessagesStrings()).contains("undetermined 2")
     }
 
     @Test
@@ -108,7 +108,7 @@ class OrTest {
         val function1 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = true, index = 1)
         val function2 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = false, index = 2)
         val result = Or(listOf(function1, function2)).evaluate(TEST_PATIENT)
-        assertThat(result.failMessages).containsExactly("fail 1")
+        assertThat(result.failMessagesStrings()).containsExactly("fail 1")
     }
 
     @Test(expected = IllegalStateException::class)

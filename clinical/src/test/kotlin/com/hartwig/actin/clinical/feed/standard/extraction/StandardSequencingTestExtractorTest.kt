@@ -17,9 +17,9 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.feed.datamodel.FeedSequencingTest
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val TEST = "test"
 private const val CURATED_TEST = "test"
@@ -90,6 +90,19 @@ class StandardSequencingTestExtractorTest {
     }
 
     @Test
+    fun `Should propagate report hash with extracted test`() {
+        setUpSequencingTestResultCuration()
+        val palgaReportHash = "ID 1"
+        val feedPatientRecord = PATIENT_WITH_TEST_RESULT.copy(
+            sequencingTests = PATIENT_WITH_TEST_RESULT.sequencingTests.map { it.copy(reportHash = palgaReportHash) }
+        )
+        val extracted = extractor.extract(feedPatientRecord).extracted
+        assertThat(extracted).containsExactly(
+            SequencingTest(CURATED_TEST, TEST_DATE, knownSpecifications = true, reportHash = palgaReportHash)
+        )
+    }
+
+    @Test
     fun `Should extract sequencing with variants`() {
         setUpSequencingTestResultCuration(
             SequencingTestResultConfig(input = FREE_TEXT, gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN)
@@ -129,7 +142,13 @@ class StandardSequencingTestExtractorTest {
     @Test
     fun `Should extract sequencing with TMB and MSI and HRD`() {
         setUpSequencingTestResultCuration(SequencingTestResultConfig(input = FREE_TEXT, tmb = 1.0, msi = true, hrd = true))
-        assertResultContains(BASE_SEQUENCING_TEST.copy(tumorMutationalBurden = 1.0, isMicrosatelliteUnstable = true, isHomologousRecombinationDeficient = true))
+        assertResultContains(
+            BASE_SEQUENCING_TEST.copy(
+                tumorMutationalBurden = 1.0,
+                isMicrosatelliteUnstable = true,
+                isHomologousRecombinationDeficient = true
+            )
+        )
     }
 
     @Test
