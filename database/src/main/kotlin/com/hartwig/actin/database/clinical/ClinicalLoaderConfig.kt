@@ -9,7 +9,10 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
 
 data class ClinicalLoaderConfig(
-    val clinicalDirectory: String, override val dbUser: String, override val dbPass: String, override val dbUrl: String
+    val clinicalDirectory: String,
+    override val dbUser: String,
+    override val dbPass: String,
+    override val dbUrl: String
 ) : DatabaseLoaderConfig {
 
     companion object {
