@@ -5,7 +5,7 @@ object CurationUtil {
     private const val IGNORE = "<ignore>"
     private const val DELIMITER = ";"
 
-    fun isIgnoreString(input: String) = input == IGNORE
+    fun isIgnoreString(input: String) = input.trim() == IGNORE
     
     fun capitalizeFirstLetterOnly(string: String?): String =
         string?.takeIf { it.isNotEmpty() }
