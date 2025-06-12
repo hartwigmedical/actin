@@ -51,22 +51,14 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
     fun provideChapters(): List<ReportChapter> {
-        val (includeEfficacyEvidenceDetailsChapter, includeTrialMatchingDetailsChapter) = when {
-            !enableExtendedMode -> {
-                Pair(false, false)
-            }
-
-            report.config.includeSOCLiteratureEfficacyEvidence -> {
-                logger.info("Including SOC literature details")
-                Pair(true, false)
-            }
-
-            else -> {
-                logger.info("Including trial matching details")
-                Pair(false, true)
-            }
+        if (enableExtendedMode) {
+            logger.info("Including trial matching details")
         }
-
+        
+        if (report.config.includeSOCLiteratureEfficacyEvidence) {
+            logger.info("Including SOC literature details")
+        }
+        
         val externalTrials = trialsProvider.externalTrials()
 
         return listOf(
@@ -89,7 +81,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             ),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
-            EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
+            EfficacyEvidenceDetailsChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             MolecularEvidenceChapter(
                 report,
                 treatmentRankingModel.rank(report.patientRecord),
@@ -102,7 +94,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 trialsProvider,
                 include = report.config.includeTrialMatchingChapter
             ),
-            TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
+            TrialMatchingDetailsChapter(report, include = enableExtendedMode)
         ).filter(ReportChapter::include)
     }
 

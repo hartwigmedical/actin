@@ -570,19 +570,11 @@ CREATE TABLE `eligibility`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `reference`;
-CREATE TABLE `reference`
-(   `id` int NOT NULL AUTO_INCREMENT,
-    `code` varchar(50) NOT NULL,
-    `text` varchar(15000) NOT NULL,
-    PRIMARY KEY (`id`)
-);
-
 DROP TABLE IF EXISTS `eligibilityReference`;
 CREATE TABLE `eligibilityReference`
 (   `eligibilityId` int NOT NULL,
-    `referenceId` int NOT NULL,
-    PRIMARY KEY (`eligibilityId`, `referenceId`)
+    `reference` varchar(50) NOT NULL,
+    PRIMARY KEY (`eligibilityId`, `reference`)
 );
 
 
