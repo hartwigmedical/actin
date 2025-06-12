@@ -13,13 +13,14 @@ class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfig
         val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.COMPLICATION, input, "icd", fields, parts, icdModel)
         val (year, yearValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "year", fields, parts)
         val (month, monthValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "month", fields, parts)
+        val ignoreValidationError = validateIgnore(CurationCategory.COMPLICATION, input, "name", ignore, icdCodes, year, month)
         val curated = toCuratedComplication(icdCodes, fields, parts, year, month)
         return ValidatedCurationConfig(
             ComorbidityConfig(
                 input = input,
                 ignore = ignore,
                 curated = if (!ignore) curated else null
-            ), icdValidationErrors + yearValidationErrors + monthValidationErrors
+            ), icdValidationErrors + yearValidationErrors + monthValidationErrors + ignoreValidationError
         )
     }
 

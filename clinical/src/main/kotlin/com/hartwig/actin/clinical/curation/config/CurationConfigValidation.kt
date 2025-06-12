@@ -137,6 +137,36 @@ inline fun <reified T : Enum<T>> validateEnum(
     }
 }
 
+fun validateIgnore(
+    curationCategory: CurationCategory,
+    input: String,
+    fieldName: String,
+    ignore: Boolean,
+    icdCodes: Set<IcdCode>,
+    year: Int?,
+    month: Int?,
+): List<CurationConfigValidationError> {
+    return if (ignore) {
+        if (icdCodes.isNotEmpty() || year != null || month != null) {
+            listOf(
+                CurationConfigValidationError(
+                    curationCategory,
+                    input,
+                    fieldName,
+                    "<ignore>",
+                    "not <ignore>",
+                    "Cannot specify ICD codes, year, or month when ignore is true"
+                )
+            )
+        } else {
+            emptyList()
+        }
+    } else {
+        emptyList()
+    }
+}
+
+
 private fun String.toValidatedBoolean(): Boolean? {
     return if (this == "1") {
         true

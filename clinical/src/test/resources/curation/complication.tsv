@@ -1,3 +1,4 @@
 input	impliesUnknownComplicationState	name	icd	year	month
 Overige	0	Other	node 1	2023	1
 Vomit	0	Vomit	node 2	2024	3
+ToBeIgnored	0	<ignore>	node	3	2025	5

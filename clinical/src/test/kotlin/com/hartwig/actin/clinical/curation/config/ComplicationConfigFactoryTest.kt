@@ -89,4 +89,24 @@ class ComplicationConfigFactoryTest {
             )
         )
     }
+
+    @Test
+    fun `Should return null for curated complication when ignore is true`() {
+        val configFactory = ComplicationConfigFactory(icdModel)
+        val data = arrayOf("input", "1", "<ignore>", "$icdMainTitle&$icdExtensionTitle", "2023", "12")
+        val config = configFactory.create(fields, data)
+
+        assertThat(config.config.ignore).isTrue()
+        assertThat(config.config.curated).isNull()
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.COMPLICATION,
+                "input",
+                "name",
+                "<ignore>",
+                "not <ignore>",
+                "Cannot specify ICD codes, year, or month when ignore is true"
+            )
+        )
+    }
 }
