@@ -7,7 +7,6 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.amplifications
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.deletions
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.fusions
@@ -19,33 +18,34 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTes
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.variants
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.feed.datamodel.FeedIhcResult
 
 class SequencingTestExtractor(
     private val testCuration: CurationDatabase<SequencingTestConfig>,
     private val testResultCuration: CurationDatabase<SequencingTestResultConfig>
 ) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<SequencingTest>> {
-        if (questionnaire == null || questionnaire.ihcTestResults.isNullOrEmpty()) {
+    fun extract(patientId: String, entries: List<FeedIhcResult>): ExtractionResult<List<SequencingTest>> {
+        if (entries.isEmpty()) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
 
-        val extracted = questionnaire.ihcTestResults.map { result ->
+        val extracted = entries.map { result ->
             val testCurationConfig =
                 CurationResponse.createFromConfigs(
-                    testCuration.find(result),
+                    testCuration.find(result.name),
                     patientId,
                     CurationCategory.SEQUENCING_TEST,
-                    result,
+                    result.name,
                     "sequencing test",
                     true
                 )
 
             val sequencingResults = CurationResponse.createFromConfigs(
-                testResultCuration.find(result),
+                testResultCuration.find(result.name),
                 patientId,
                 CurationCategory.SEQUENCING_TEST_RESULT,
-                result,
+                result.name,
                 "sequencing test result",
                 false
             )

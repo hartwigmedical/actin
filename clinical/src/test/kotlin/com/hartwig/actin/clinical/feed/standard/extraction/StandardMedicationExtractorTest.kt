@@ -37,6 +37,7 @@ class StandardMedicationExtractorTest {
     private val providedMedication = FeedMedication(
         name = MEDICATION_NAME,
         atcCode = "atc",
+        atcCodeDisplay = "atc display",
         administrationRoute = "route",
         dosage = FeedDosage(
             1.0,

@@ -13,12 +13,12 @@ import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.EvaluationMessageAdapter
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonSerializer
+import org.apache.logging.log4j.LogManager
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
 import java.time.LocalDate
-import org.apache.logging.log4j.LogManager
 
 object TreatmentMatchJson {
 

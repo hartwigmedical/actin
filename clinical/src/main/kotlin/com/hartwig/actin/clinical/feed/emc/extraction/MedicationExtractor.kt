@@ -5,24 +5,24 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.QtProlongatingDatabase
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.feed.datamodel.FeedMedication
 import org.apache.logging.log4j.LogManager
 
 class MedicationExtractor(
@@ -37,26 +37,22 @@ class MedicationExtractor(
     private val treatmentDatabase: TreatmentDatabase
 ) {
 
-    fun extract(patientId: String, entries: List<MedicationEntry>): ExtractionResult<List<Medication>> {
-        return entries.map { entry ->
+    fun extract(patientId: String, entries: List<FeedMedication>?): ExtractionResult<List<Medication>?> {
+
+        return entries?.map { entry ->
             val nameCuration = curateName(entry, patientId)
             val name = nameCuration.extracted
             if (name.isNullOrEmpty()) ExtractionResult(emptyList(), nameCuration.evaluation) else {
-                val administrationRouteCuration = translateAdministrationRoute(patientId, entry.dosageInstructionRouteDisplay)
+                val administrationRouteCuration = translateAdministrationRoute(patientId, entry.administrationRoute)
                 val dosage = curateDosage(administrationRouteCuration.extracted, entry, patientId)
 
-                val atcCode = entry.code5ATCCode
-                val atc = atcModel.resolveByCode(atcCode, entry.code5ATCDisplay)
+                val atcCode = entry.atcCode
+                val atc = atcModel.resolveByCode(entry.atcCode.orEmpty(), entry.atcCodeDisplay.orEmpty())
                 val drug = treatmentDatabase.findDrugByAtcName(name)
-                val isSelfCare = entry.code5ATCDisplay.isEmpty() && atcCode.isEmpty()
-                val isTrialMedication =
-                    entry.code5ATCDisplay.isEmpty() && atcCode.isNotEmpty() && atcCode[0].lowercaseChar() !in 'a'..'z'
                 val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
 
-                if (atc == null && !isSelfCare && !isTrialMedication) {
-                    LOGGER.error(
-                        "Medication $name has no ATC code and is not self-care or a trial"
-                    )
+                if (atc == null && !entry.isSelfCare && !entry.isTrial) {
+                    LOGGER.error("Medication $name has no ATC code and is not self-care or a trial")
                 }
 
                 val atcWarning = if (isAntiCancerMedication && drug == null) {
@@ -79,16 +75,16 @@ class MedicationExtractor(
                 val medication = Medication(
                     dosage = dosage.extracted,
                     name = name,
-                    status = curateMedicationStatus(patientId, entry.status),
+                    status = curateMedicationStatus(patientId, entry.status.orEmpty()),
                     administrationRoute = administrationRouteCuration.extracted,
-                    startDate = entry.periodOfUseValuePeriodStart,
-                    stopDate = entry.periodOfUseValuePeriodEnd,
+                    startDate = entry.startDate,
+                    stopDate = entry.endDate,
                     cypInteractions = drugInteractionsDatabase.annotateWithCypInteractions(name),
                     transporterInteractions = drugInteractionsDatabase.annotateWithTransporterInteractions(name),
                     qtProlongatingRisk = qtProlongatingDatabase.annotateWithQTProlongating(name),
                     atc = atc,
-                    isSelfCare = isSelfCare,
-                    isTrialMedication = isTrialMedication,
+                    isSelfCare = entry.isSelfCare,
+                    isTrialMedication = entry.isTrial,
                     drug = drug
                 )
 
@@ -96,17 +92,17 @@ class MedicationExtractor(
                     .fold(CurationExtractionEvaluation()) { acc, result -> acc + result.evaluation }
                 ExtractionResult(listOf(medication), evaluation)
             }
-        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
-            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
-        }
+        }?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+            ExtractionResult(acc.extracted.orEmpty() + result.extracted, acc.evaluation + result.evaluation)
+        } ?: ExtractionResult(null, CurationExtractionEvaluation())
     }
 
-    private fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {
-        val atcName = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay)
+    private fun curateName(entry: FeedMedication, patientId: String): ExtractionResult<String?> {
+        val atcName = CurationUtil.capitalizeFirstLetterOnly(entry.atcCodeDisplay)
         return if (atcName.isNotEmpty()) {
             ExtractionResult(atcName, CurationExtractionEvaluation())
         } else {
-            val input = fullTrim(entry.codeText)
+            val input = fullTrim(entry.name)
             val curation = CurationResponse.createFromConfigs(
                 medicationNameCuration.find(input),
                 patientId,
@@ -126,10 +122,10 @@ class MedicationExtractor(
         )
 
     private fun curateDosage(
-        administrationRoute: String?, entry: MedicationEntry, patientId: String
+        administrationRoute: String?, entry: FeedMedication, patientId: String
     ): ExtractionResult<Dosage> {
         return if (dosageRequiresCuration(administrationRoute, entry)) {
-            val input = entry.dosageInstructionText.trim { it <= ' ' }
+            val input = entry.dosageInstruction.orEmpty().trim { it <= ' ' }
             val curationResponse = CurationResponse.createFromConfigs(
                 medicationDosageCuration.find(input),
                 patientId,
@@ -138,22 +134,20 @@ class MedicationExtractor(
                 "medication dosage",
                 true
             )
-            val dosage = curationResponse.config()?.curated ?: Dosage()
-
-            ExtractionResult(dosage, curationResponse.extractionEvaluation)
+            ExtractionResult(curationResponse.config()?.curated ?: Dosage(), curationResponse.extractionEvaluation)
         } else {
-            val dosageUnitTranslation = translateDosageUnit(patientId, entry.dosageInstructionDoseQuantityUnit)
-            val periodBetweenUnitCuration = curatePeriodBetweenUnit(patientId, entry.dosageInstructionPeriodBetweenDosagesUnit)
+            val dosageUnitTranslation = translateDosageUnit(patientId, entry.dosage?.dosageUnit)
+            val periodBetweenUnitCuration = curatePeriodBetweenUnit(patientId, entry.dosage?.periodBetweenUnit)
             ExtractionResult(
                 Dosage(
-                    dosageMin = entry.dosageInstructionDoseQuantityValue,
-                    dosageMax = correctDosageMax(entry),
+                    dosageMin = entry.dosage?.dosageMin,
+                    dosageMax = entry.dosage?.dosageMax,
                     dosageUnit = dosageUnitTranslation.extracted,
-                    frequency = entry.dosageInstructionFrequencyValue,
-                    frequencyUnit = entry.dosageInstructionFrequencyUnit,
-                    periodBetweenValue = entry.dosageInstructionPeriodBetweenDosagesValue,
-                    periodBetweenUnit = periodBetweenUnitCuration.extracted,
-                    ifNeeded = extractIfNeeded(entry)
+                    frequency = entry.dosage?.frequency,
+                    frequencyUnit = entry.dosage?.frequencyUnit,
+                    periodBetweenValue = entry.dosage?.periodBetweenValue,
+                    periodBetweenUnit = entry.dosage?.periodBetweenUnit,
+                    ifNeeded = entry.dosage?.ifNeeded,
                 ),
                 dosageUnitTranslation.evaluation + periodBetweenUnitCuration.evaluation
             )
@@ -206,22 +200,14 @@ class MedicationExtractor(
             }
         }
 
-    private fun extractIfNeeded(entry: MedicationEntry) =
-        entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
+    private fun dosageRequiresCuration(administrationRoute: String?, entry: FeedMedication) =
+        entry.dosage?.let { dosage ->
+            administrationRoute?.lowercase() == "oral" && (dosage.dosageMin == 0.0 ||
+                    dosage.dosageUnit.isNullOrEmpty() ||
+                    dosage.frequency == 0.0 ||
+                    dosage.frequencyUnit.isNullOrEmpty())
+        } ?: throw IllegalStateException("Dosage information missing for medication '${entry.name}'")
 
-    private fun correctDosageMax(entry: MedicationEntry): Double? {
-        return if (entry.dosageInstructionMaxDosePerAdministration == 0.0) {
-            entry.dosageInstructionDoseQuantityValue
-        } else {
-            entry.dosageInstructionMaxDosePerAdministration
-        }
-    }
-
-    private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
-        administrationRoute?.lowercase() == "oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
-                entry.dosageInstructionDoseQuantityUnit.isEmpty() ||
-                entry.dosageInstructionFrequencyValue == 0.0 ||
-                entry.dosageInstructionFrequencyUnit.isEmpty())
 
     private fun translateString(
         patientId: String,

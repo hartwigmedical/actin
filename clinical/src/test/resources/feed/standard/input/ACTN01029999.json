@@ -255,14 +255,14 @@
       "category": "Body Weight",
       "subcategory": null,
       "value": 3.5,
-      "unit": "kilograms"
+      "unit": "kilogram"
     },
     {
       "date": "2020-02-01T10:10:00",
       "category": "Body Weight",
       "subcategory": null,
       "value": 53,
-      "unit": "kilograms"
+      "unit": "kilogram"
     }
   ],
   "whoEvaluations": [

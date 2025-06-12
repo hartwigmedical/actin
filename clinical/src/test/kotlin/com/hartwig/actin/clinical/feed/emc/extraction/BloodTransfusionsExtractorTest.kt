@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
+import com.hartwig.feed.datamodel.FeedBloodTransfusion
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -27,14 +27,11 @@ class BloodTransfusionsExtractorTest {
             ) { emptySet() }
         )
         val inputs = listOf(BLOOD_TRANSFUSION_INPUT, CANNOT_TRANSLATE)
-        val entry = DigitalFileEntry(
-            subject = PATIENT_ID,
-            authored = LocalDate.of(2019, 9, 9),
-            description = "Aanvraag bloedproducten_test",
-            itemText = "",
-            itemAnswerValueValueString = ""
+        val entry = FeedBloodTransfusion(
+            evaluationDate = LocalDate.of(2019, 9, 9),
+            name = "",
         )
-        val (extracted, evaluation) = extractor.extract(PATIENT_ID, inputs.map { entry.copy(itemAnswerValueValueString = it) })
+        val (extracted, evaluation) = extractor.extract(PATIENT_ID, inputs.map { entry.copy(name = it) })
         assertThat(extracted).hasSize(2)
         assertThat(extracted[0].product).isEqualTo(TRANSLATED_BLOOD_TRANSFUSION)
         assertThat(extracted[1].product).isEqualTo(CANNOT_TRANSLATE)

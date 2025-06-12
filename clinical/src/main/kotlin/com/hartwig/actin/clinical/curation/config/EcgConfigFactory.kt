@@ -1,13 +1,12 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
+import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.icd.IcdModel
-import com.hartwig.actin.util.Either
 
 class EcgConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
@@ -17,10 +16,7 @@ class EcgConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<C
         val isJtc = parts[fields["isJTC"]!!] == "1"
         val (jtcMeasure, jtcValidationErrors) = extractMeasurement(input, "jtc", isJtc, parts, fields)
         val interpretation = parts[fields["interpretation"]!!].trim().ifEmpty { null }
-        val ignore = when (val parsed = BooleanValueParser.parseBoolean(input)) {
-            is Either.Right -> parsed.value != true
-            else -> interpretation == "NULL"
-        }
+        val ignore = interpretation?.let { CurationUtil.isIgnoreString(it) } ?: false
         val (icdCodes, icdValidationErrors) = if ("icd" in fields) {
             validateIcd(CurationCategory.ECG, input, "icd", fields, parts, icdModel)
         } else {

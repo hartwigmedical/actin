@@ -3,7 +3,6 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 
