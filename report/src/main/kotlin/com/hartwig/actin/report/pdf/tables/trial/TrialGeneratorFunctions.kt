@@ -99,7 +99,8 @@ object TrialGeneratorFunctions {
             feedbackFunction = feedbackFunction,
             requestingSource = requestingSource,
             includeCohortConfig = includeCohortConfig,
-            includeSites = includeSites
+            includeSites = includeSites,
+            allowDeEmphasis = allowDeEmphasis
         ).forEachIndexed { index, content ->
             addContentListToTable(
                 table,
@@ -188,7 +189,8 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<String>,
         includeCohortConfig: Boolean,
         requestingSource: TrialSource? = null,
-        includeSites: Boolean
+        includeSites: Boolean,
+        allowDeEmphasis: Boolean
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohortsForTrial, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::molecularEvents)
@@ -219,8 +221,8 @@ object TrialGeneratorFunctions {
 
         return prefix + cohortsForTrial.map { cohort: InterpretedCohort ->
             val cohortString = when {
-                !cohort.isOpen -> cohort.name?.plus(" (closed)") ?: ""
-                !cohort.hasSlotsAvailable -> cohort.name?.plus(" (no slots)") ?: ""
+                !cohort.isOpen && allowDeEmphasis -> cohort.name?.plus(" (closed)") ?: ""
+                !cohort.hasSlotsAvailable && allowDeEmphasis -> cohort.name?.plus(" (no slots)") ?: ""
                 else -> cohort.name ?: ""
             }
 
