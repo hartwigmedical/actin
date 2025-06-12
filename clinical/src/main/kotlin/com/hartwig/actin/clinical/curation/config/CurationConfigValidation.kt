@@ -6,7 +6,10 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.icd.IcdModel
 
-data class ValidatedCurationConfig<T : CurationConfig>(val config: T, val errors: List<CurationConfigValidationError> = emptyList())
+data class ValidatedCurationConfig<T : CurationConfig>(
+    val config: T,
+    val errors: List<CurationConfigValidationError> = emptyList()
+)
 
 fun validateDoids(
     curationCategory: CurationCategory,
@@ -62,7 +65,14 @@ fun validateBoolean(
     fields: Map<String, Int>,
     parts: Array<String>
 ): Pair<Boolean?, List<CurationConfigValidationError>> {
-    return validate(curationCategory, input, fieldName, Boolean::class.java.simpleName, fields, parts) { it.toValidatedBoolean() }
+    return validate(
+        curationCategory,
+        input,
+        fieldName,
+        Boolean::class.java.simpleName,
+        fields,
+        parts
+    ) { it.toValidatedBoolean() }
 }
 
 fun validateInteger(
@@ -72,7 +82,14 @@ fun validateInteger(
     fields: Map<String, Int>,
     parts: Array<String>
 ): Pair<Int?, List<CurationConfigValidationError>> {
-    return validate(curationCategory, input, fieldName, Integer::class.java.simpleName, fields, parts) { it.toIntOrNull() }
+    return validate(
+        curationCategory,
+        input,
+        fieldName,
+        Integer::class.java.simpleName,
+        fields,
+        parts
+    ) { it.toIntOrNull() }
 }
 
 fun validateDouble(
@@ -82,7 +99,14 @@ fun validateDouble(
     fields: Map<String, Int>,
     parts: Array<String>
 ): Pair<Double?, List<CurationConfigValidationError>> {
-    return validate(curationCategory, input, fieldName, Double::class.java.simpleName, fields, parts) { it.toDoubleOrNull() }
+    return validate(
+        curationCategory,
+        input,
+        fieldName,
+        Double::class.java.simpleName,
+        fields,
+        parts
+    ) { it.toDoubleOrNull() }
 }
 
 inline fun <reified T : Enum<T>> validateOptionalEnum(
@@ -146,21 +170,18 @@ fun validateIgnore(
     year: Int?,
     month: Int?,
 ): List<CurationConfigValidationError> {
-    return if (ignore) {
-        if (icdCodes.isNotEmpty() || year != null || month != null) {
-            listOf(
-                CurationConfigValidationError(
-                    curationCategory,
-                    input,
-                    fieldName,
-                    "<ignore>",
-                    "not <ignore>",
-                    "Cannot specify ICD codes, year, or month when ignore is true"
-                )
+    val anyFieldNotEmpty = icdCodes.isNotEmpty() || year != null || month != null
+    return if (ignore && anyFieldNotEmpty) {
+        listOf(
+            CurationConfigValidationError(
+                curationCategory,
+                input,
+                fieldName,
+                "<ignore>",
+                "not <ignore>",
+                "Cannot specify ICD codes, year, or month when ignore is true"
             )
-        } else {
-            emptyList()
-        }
+        )
     } else {
         emptyList()
     }
