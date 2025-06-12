@@ -30,6 +30,10 @@ object TumorStageResolver {
         "na" to null
     )
 
+    fun isValid(stage: String): Boolean {
+        return STAGE_MAPPING.containsKey(stage)
+    }
+
     fun resolve(stage: String?): TumorStage? {
         return stage?.let { STAGE_MAPPING[stage] }
     }

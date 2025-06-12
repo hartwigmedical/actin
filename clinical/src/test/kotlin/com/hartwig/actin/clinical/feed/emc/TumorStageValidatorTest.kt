@@ -11,7 +11,7 @@ class TumorStageValidatorTest {
 
     @Test
     fun `Should curate tumor stage when curation exists`() {
-        val curated = TumorStageValidator.validate(PATIENTID, "IIb")
+        val curated = TumorStageValidator.validate(PATIENTID, "IIB")
         assertThat(curated.curated).isEqualTo(TumorStage.IIB)
         assertThat(curated.errors).isEmpty()
     }

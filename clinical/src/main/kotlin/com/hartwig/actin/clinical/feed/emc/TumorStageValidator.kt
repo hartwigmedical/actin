@@ -7,15 +7,15 @@ import com.hartwig.actin.datamodel.clinical.ingestion.QuestionnaireCurationError
 object TumorStageValidator {
 
     fun validate(patientId: String, input: String?): ValidatedQuestionnaireCuration<TumorStage> {
-        val stage = input?.let { TumorStageResolver.resolve(it) }
-
-        val errors = if (input.isNullOrEmpty() || stage != null) {
-            emptyList()
-        } else {
-            listOf(QuestionnaireCurationError(patientId, "Unrecognized questionnaire tumor stage: '$input'"))
+        if (input.isNullOrEmpty()) {
+            return ValidatedQuestionnaireCuration(null)
         }
-
-        return ValidatedQuestionnaireCuration(stage, errors)
+        if (!TumorStageResolver.isValid(input)) {
+            return ValidatedQuestionnaireCuration(
+                null,
+                listOf(QuestionnaireCurationError(patientId, "Unrecognized questionnaire tumor stage: '$input'"))
+            )
+        }
+        return ValidatedQuestionnaireCuration(TumorStageResolver.resolve(input))
     }
-
 }
