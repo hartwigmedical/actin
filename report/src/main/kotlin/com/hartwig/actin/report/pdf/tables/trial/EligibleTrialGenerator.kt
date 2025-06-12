@@ -133,8 +133,6 @@ class EligibleTrialGenerator(
             val title = "$locationString that are open and potentially eligible $cohortFromTrialsText"
             val footNote = if (forLocalTrials) {
                 listOfNotNull(
-                    "Open cohorts with no slots available are shown in grey."
-                        .takeIf { recruitingAndEligibleCohorts.any { !it.hasSlotsAvailable } },
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { externalTrials.isNotEmpty() },
                     ("${formatCountWithLabel(externalFilteredCount, "trial")} filtered due to eligible local trials for the same molecular " +
@@ -178,8 +176,6 @@ class EligibleTrialGenerator(
             } else "(0)"
 
             val title = "Trials in NL that are open but additional molecular tests needed to evaluate eligibility $cohortFromTrialsText"
-            val footNote = "Open cohorts with no slots available are shown in grey."
-                .takeUnless { recruitingAndEligibleCohorts.all(InterpretedCohort::hasSlotsAvailable) }
 
             return if (recruitingAndEligibleCohorts.isNotEmpty()) {
                 EligibleTrialGenerator(
@@ -188,7 +184,7 @@ class EligibleTrialGenerator(
                     requestingSource = requestingSource,
                     countryOfReference = null,
                     title = title,
-                    footNote = footNote,
+                    footNote = null,
                     allowDeEmphasis = true,
                     useSmallerSize = false,
                     includeWarningsColumn = true

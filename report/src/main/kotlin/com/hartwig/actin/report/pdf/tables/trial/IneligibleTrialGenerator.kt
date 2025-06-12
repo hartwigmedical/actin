@@ -85,15 +85,12 @@ class IneligibleTrialGenerator(
         ): TrialTableGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
             val title = "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
-            val footNote = if (!openOnly) {
-                "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
-            } else null
 
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
                 requestingSource = requestingSource,
                 title = title,
-                footNote = footNote,
+                footNote = null,
                 allowDeEmphasis = true,
                 useIneligibilityInsteadOfSiteAndConfig = true
             )

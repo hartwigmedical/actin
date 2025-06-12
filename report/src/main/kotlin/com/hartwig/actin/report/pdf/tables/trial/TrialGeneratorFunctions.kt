@@ -161,7 +161,12 @@ object TrialGeneratorFunctions {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
                     .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(1.6f).setFontSize(fontSize)
             } else {
-                Paragraph(it).setFontSize(fontSize)
+                val suffixes = listOf("(no slots)", "(closed)")
+                val text = suffixes.find { suffix -> it.endsWith(suffix) }?.let { suffix ->
+                    val mainText = it.removeSuffix(suffix)
+                    Paragraph().add(Text(mainText)).add(Text(suffix).setUnderline())
+                } ?: Paragraph(Text(it))
+                text.setFontSize(fontSize)
             }
 
             val cell = when {
@@ -213,9 +218,15 @@ object TrialGeneratorFunctions {
         }
 
         return prefix + cohortsForTrial.map { cohort: InterpretedCohort ->
+            val cohortString = when {
+                !cohort.isOpen -> cohort.name?.plus(" (closed)") ?: ""
+                !cohort.hasSlotsAvailable -> cohort.name?.plus(" (no slots)") ?: ""
+                else -> cohort.name ?: ""
+            }
+
             ContentDefinition(
                 listOfNotNull(
-                    cohort.name ?: "",
+                    cohortString,
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
                     if (includeSites) TrialLocations.actinTrialLocation(
                         cohort.source,
