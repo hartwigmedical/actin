@@ -19,6 +19,8 @@ import com.itextpdf.layout.element.Text
 
 object TrialGeneratorFunctions {
 
+    private const val NO_SLOTS = "(no slots)"
+    private const val CLOSED = "(closed)"
     private const val SMALL_LINE_DISTANCE = 0.9f
 
     fun addTrialsToTable(
@@ -108,10 +110,7 @@ object TrialGeneratorFunctions {
         }
     }
 
-    private fun generateTrialTitleCell(
-        cohortsForTrial: List<InterpretedCohort>,
-        useSmallerSize: Boolean
-    ): Cell {
+    private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, useSmallerSize: Boolean): Cell {
         val anyCohort = cohortsForTrial.first()
         val trialIdIsNotAcronym = anyCohort.trialId.trimIndent() != anyCohort.acronym
         val trialLabelText = listOfNotNull(
@@ -125,9 +124,9 @@ object TrialGeneratorFunctions {
         val fontSize = if (useSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
         val trialLabels = trialLabelText.map { it.setFontSize(fontSize) }
         return anyCohort.url?.let {
-                Cells.createContent(paragraph.addAll(trialLabels.map { label -> label.addStyle(Styles.urlStyle()) }))
-                    .setAction(PdfAction.createURI(it))
-            } ?: Cells.createContent(paragraph.addAll(trialLabels))
+            Cells.createContent(paragraph.addAll(trialLabels.map { label -> label.addStyle(Styles.urlStyle()) }))
+                .setAction(PdfAction.createURI(it))
+        } ?: Cells.createContent(paragraph.addAll(trialLabels))
     }
 
     private fun addContentListToTable(
@@ -146,10 +145,10 @@ object TrialGeneratorFunctions {
                 Paragraph(it.removeSurrounding(Formats.ITALIC_TEXT_MARKER))
                     .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_OBLIQUE)).setMultipliedLeading(1.6f).setFontSize(fontSize)
             } else {
-                val suffixes = listOf("(no slots)", "(closed)")
+                val suffixes = listOf(NO_SLOTS, CLOSED)
                 val text = suffixes.find { suffix -> it.endsWith(suffix) }?.let { suffix ->
                     val mainText = it.removeSuffix(suffix)
-                    Paragraph().add(Text(mainText)).add(Text(suffix).setUnderline())
+                    Paragraph().add(Text(mainText)).add(Text(suffix).simulateItalic())
                 } ?: Paragraph(Text(it))
                 text.setFontSize(fontSize)
             }
@@ -183,43 +182,43 @@ object TrialGeneratorFunctions {
 
         val prefix = if (hidePrefix) emptyList() else {
             listOf(
-                    listOfNotNull(
-                        "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
-                        concat(commonEvents, allEventsEmpty && includeFeedback),
-                        if (includeSites) TrialLocations.actinTrialLocation(
-                            cohortsForTrial.first().source,
-                            requestingSource,
-                            commonLocations,
-                            true
-                        ) else null,
-                        concat(commonFeedback).takeIf { includeFeedback }
-                    )
+                listOfNotNull(
+                    "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
+                    concat(commonEvents, allEventsEmpty && includeFeedback),
+                    if (includeSites) TrialLocations.actinTrialLocation(
+                        cohortsForTrial.first().source,
+                        requestingSource,
+                        commonLocations,
+                        true
+                    ) else null,
+                    concat(commonFeedback).takeIf { includeFeedback }
+                )
             )
         }
 
         return prefix + cohortsForTrial.map { cohort: InterpretedCohort ->
             val cohortString = when {
-                !cohort.isOpen && indicateNoSlotsOrClosed -> cohort.name?.plus(" (closed)") ?: ""
-                !cohort.hasSlotsAvailable && indicateNoSlotsOrClosed -> cohort.name?.plus(" (no slots)") ?: ""
+                !cohort.isOpen && indicateNoSlotsOrClosed -> cohort.name?.plus(" $CLOSED") ?: ""
+                !cohort.hasSlotsAvailable && indicateNoSlotsOrClosed -> cohort.name?.plus(" $NO_SLOTS") ?: ""
                 else -> cohort.name ?: ""
             }
 
-                listOfNotNull(
-                    cohortString,
-                    concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
-                    if (includeSites) TrialLocations.actinTrialLocation(
-                        cohort.source,
-                        requestingSource,
-                        cohort.locations - commonLocations,
-                        true
-                    ) else null,
-                    if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null,
-                    if (includeCohortConfig) concat(
-                        setOfNotNull(
-                            "Ignored".takeIf { cohort.ignore },
-                            "Non-evaluable".takeIf { !cohort.isEvaluable }), separator = " and "
-                    ) else null,
-                )
+            listOfNotNull(
+                cohortString,
+                concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
+                if (includeSites) TrialLocations.actinTrialLocation(
+                    cohort.source,
+                    requestingSource,
+                    cohort.locations - commonLocations,
+                    true
+                ) else null,
+                if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null,
+                if (includeCohortConfig) concat(
+                    setOfNotNull(
+                        "Ignored".takeIf { cohort.ignore },
+                        "Non-evaluable".takeIf { !cohort.isEvaluable }), separator = " and "
+                ) else null,
+            )
         }
     }
 

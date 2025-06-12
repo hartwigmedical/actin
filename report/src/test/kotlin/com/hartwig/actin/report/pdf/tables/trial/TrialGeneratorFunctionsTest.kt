@@ -117,6 +117,17 @@ class TrialGeneratorFunctionsTest {
 
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeCohortConfig = false,
+                includeSites = true,
+                indicateNoSlotsOrClosed = false
+            ).map { text -> text.any { it.endsWith("(no slots)") } }
+        ).isEqualTo(listOf(false, false, false))
+
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(cohort1, cohort2.copy(isOpen = false)),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
