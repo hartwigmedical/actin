@@ -56,9 +56,9 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
+                listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"),
+                listOf("cohort1 (no slots)", "MSI", "", ""),
+                listOf("cohort2", "None", "", "warning2")
             )
         )
     }
@@ -74,11 +74,7 @@ class TrialGeneratorFunctionsTest {
                 includeSites = true,
                 allowDeEmphasis = true
             )
-        ).isEqualTo(
-            listOf(
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "", "warning1"), true),
-            )
-        )
+        ).isEqualTo(listOf(listOf("cohort1 (no slots)", "MSI", "", "warning1")))
     }
 
     @Test
@@ -99,49 +95,11 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "failure1"), false),
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "", "failure2"), false)
+                listOf(APPLIES_TO_ALL_COHORTS, "", "", "failure1"),
+                listOf("cohort1 (no slots)", "MSI", "", ""),
+                listOf("cohort2", "None", "", "failure2")
             )
         )
-    }
-
-    @Test
-    fun `Should de-emphasize content for common messages when all cohorts are unavailable`() {
-        assertThat(
-            TrialGeneratorFunctions.contentForTrialCohortList(
-                listOf(cohort1, cohort2),
-                includeFeedback = true,
-                InterpretedCohort::warnings,
-                includeCohortConfig = false,
-                includeSites = true,
-                allowDeEmphasis = true
-            )
-                .map(ContentDefinition::deEmphasizeContent)
-        ).isEqualTo(listOf(false, true, false))
-
-        assertThat(
-            TrialGeneratorFunctions.contentForTrialCohortList(
-                listOf(cohort1, cohort2.copy(isOpen = false)),
-                includeFeedback = true,
-                InterpretedCohort::warnings,
-                includeCohortConfig = false,
-                includeSites = true,
-                allowDeEmphasis = true
-            )
-                .map(ContentDefinition::deEmphasizeContent)
-        ).isEqualTo(listOf(true, true, true))
-
-        assertThat(
-            TrialGeneratorFunctions.contentForTrialCohortList(
-                listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)),
-                true,
-                InterpretedCohort::warnings,
-                includeCohortConfig = false,
-                includeSites = true,
-                allowDeEmphasis = true
-            ).map(ContentDefinition::deEmphasizeContent)
-        ).isEqualTo(listOf(true, true, true))
     }
 
     @Test
@@ -158,9 +116,9 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "MSI", "", "warning1"), true),
-                ContentDefinition(listOf("cohort1 (no slots)", "", "", ""), true),
-                ContentDefinition(listOf("cohort3 (no slots)", "", "", ""), true)
+                listOf(APPLIES_TO_ALL_COHORTS, "MSI", "", "warning1"),
+                listOf("cohort1 (no slots)", "", "", ""),
+                listOf("cohort3 (no slots)", "", "", "")
             )
         )
     }
@@ -180,9 +138,9 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "None", "", "warning1"), true),
-                ContentDefinition(listOf("cohort1 (no slots)", "", "", ""), true),
-                ContentDefinition(listOf("cohort3 (no slots)", "", "", ""), true)
+                listOf(APPLIES_TO_ALL_COHORTS, "None", "", "warning1"),
+                listOf("cohort1 (no slots)", "", "", ""),
+                listOf("cohort3 (no slots)", "", "", "")
             )
         )
     }
@@ -198,11 +156,7 @@ class TrialGeneratorFunctionsTest {
                 includeSites = true,
                 allowDeEmphasis = true
             )
-        ).isEqualTo(
-            listOf(
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "", "warning1"), true),
-            )
-        )
+        ).isEqualTo(listOf(listOf("cohort1 (no slots)", "MSI", "", "warning1")))
     }
 
     @Test
@@ -218,9 +172,9 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"), false),
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
+                listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"),
+                listOf("cohort1 (no slots)", "MSI", "", ""),
+                listOf("cohort2", "None", "", "warning2")
             )
         )
     }
@@ -238,9 +192,9 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "site1", "warning1"), false),
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "", "warning2"), false)
+                listOf(APPLIES_TO_ALL_COHORTS, "", "site1", "warning1"),
+                listOf("cohort1 (no slots)", "MSI", "", ""),
+                listOf("cohort2", "None", "", "warning2")
             )
         )
     }
@@ -258,8 +212,8 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "site1", "warning1"), true),
-                ContentDefinition(listOf("cohort2", "None", "site2", "None"), false)
+                listOf("cohort1 (no slots)", "MSI", "site1", "warning1"),
+                listOf("cohort2", "None", "site2", "None")
             )
         )
     }
@@ -275,11 +229,7 @@ class TrialGeneratorFunctionsTest {
                 includeSites = true,
                 allowDeEmphasis = true
             )
-        ).isEqualTo(
-            listOf(
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "site1", "None"), true)
-            )
-        )
+        ).isEqualTo(listOf(listOf("cohort1 (no slots)", "MSI", "site1", "None")))
     }
 
     @Test
@@ -301,11 +251,11 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "site1", "Non-evaluable"), true),
-                ContentDefinition(listOf("cohort2", "None", "site2", "Ignored and Non-evaluable"), false),
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "site3", "Ignored and Non-evaluable"), true),
-                ContentDefinition(listOf("cohort2", "None", "site4", "Ignored"), false),
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", "site5", "Non-evaluable"), true),
+                listOf("cohort1 (no slots)", "MSI", "site1", "Non-evaluable"),
+                listOf("cohort2", "None", "site2", "Ignored and Non-evaluable"),
+                listOf("cohort1 (no slots)", "MSI", "site3", "Ignored and Non-evaluable"),
+                listOf("cohort2", "None", "site4", "Ignored"),
+                listOf("cohort1 (no slots)", "MSI", "site5", "Non-evaluable"),
             )
         )
     }
@@ -323,9 +273,9 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                ContentDefinition(listOf(APPLIES_TO_ALL_COHORTS, "", "warning1"), false),
-                ContentDefinition(listOf("cohort1 (no slots)", "MSI", ""), true),
-                ContentDefinition(listOf("cohort2", "None", "warning2"), false),
+                listOf(APPLIES_TO_ALL_COHORTS, "", "warning1"),
+                listOf("cohort1 (no slots)", "MSI", ""),
+                listOf("cohort2", "None", "warning2"),
             )
         )
     }

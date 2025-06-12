@@ -13,7 +13,7 @@ class IneligibleTrialGenerator(
     private val requestingSource: TrialSource?,
     private val title: String,
     private val footNote: String?,
-    private val allowDeEmphasis: Boolean,
+    private val indicateNoSlotsOrClosed: Boolean,
     private val useIneligibilityInsteadOfSiteAndConfig: Boolean
 ) : TrialTableGenerator {
 
@@ -61,7 +61,7 @@ class IneligibleTrialGenerator(
             countryOfReference = null,
             includeFeedback = useIneligibilityInsteadOfSiteAndConfig,
             feedbackFunction = InterpretedCohort::fails,
-            allowDeEmphasis = allowDeEmphasis,
+            indicateNoSlotsOrClosed = indicateNoSlotsOrClosed,
             useSmallerSize = true,
             includeCohortConfig = !useIneligibilityInsteadOfSiteAndConfig,
             includeSites = !useIneligibilityInsteadOfSiteAndConfig
@@ -91,7 +91,7 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = null,
-                allowDeEmphasis = true,
+                indicateNoSlotsOrClosed = true,
                 useIneligibilityInsteadOfSiteAndConfig = true
             )
         }
@@ -109,7 +109,7 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 footNote = null,
-                allowDeEmphasis = false,
+                indicateNoSlotsOrClosed = false,
                 useIneligibilityInsteadOfSiteAndConfig = false
             )
         }
