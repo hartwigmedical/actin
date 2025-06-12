@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.icd.IcdModel
 
 class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
@@ -31,4 +32,31 @@ class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfig
             year = year,
             month = month
         )
+
+    private fun validateIgnore(
+        curationCategory: CurationCategory,
+        input: String,
+        fieldName: String,
+        ignore: Boolean,
+        icdCodes: Set<IcdCode>,
+        year: Int?,
+        month: Int?,
+    ): List<CurationConfigValidationError> {
+        val anyFieldNotEmpty = icdCodes.isNotEmpty() || year != null || month != null
+        return if (ignore && anyFieldNotEmpty) {
+            listOf(
+                CurationConfigValidationError(
+                    curationCategory,
+                    input,
+                    fieldName,
+                    "<ignore>",
+                    "not <ignore>",
+                    "Cannot specify ICD codes, year, or month when ignore is true"
+                )
+            )
+        } else {
+            emptyList()
+        }
+    }
+
 }
