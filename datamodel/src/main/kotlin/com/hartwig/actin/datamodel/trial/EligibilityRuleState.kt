@@ -4,8 +4,8 @@ data class EligibilityRuleState(
     val eligibilityRule: EligibilityRule,
     val usedStatus: EligibilityRuleUsedStatus
 ) {
+    
     companion object {
-
         fun used(eligibilityRule: EligibilityRule) =
             EligibilityRuleState(eligibilityRule, EligibilityRuleUsedStatus.USED)
 
