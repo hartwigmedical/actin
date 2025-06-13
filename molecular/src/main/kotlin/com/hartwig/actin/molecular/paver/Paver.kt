@@ -138,8 +138,8 @@ fun parsePaveImpact(impact: List<String>?): PaveImpact {
 
     return PaveImpact(
         gene = impact[0],
-        transcript = impact[1],
-        canonicalEffect = impact[2],
+        canonicalTranscript = impact[1],
+        canonicalEffects = interpretVariantEffects(impact[2]),
         canonicalCodingEffect = PaveCodingEffect.valueOf(impact[3]),
         spliceRegion = interpretSpliceRegion(impact[4]),
         hgvsCodingImpact = impact[5],

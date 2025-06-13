@@ -1,17 +1,11 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+
 object TestTranscriptVariantImpactFactory {
 
     fun createMinimal(): TranscriptVariantImpact {
-        return TranscriptVariantImpact(
-            transcriptId = "",
-            hgvsCodingImpact = "",
-            hgvsProteinImpact = "",
-            affectedCodon = null,
-            affectedExon = null,
-            inSpliceRegion = false,
-            effects = emptySet(),
-            codingEffect = null
-        )
+        // TODO (KD): Simplify test factories for molecular objects
+        return TestMolecularFactory.createMinimalTranscriptImpact()
     }
 }

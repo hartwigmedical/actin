@@ -14,7 +14,6 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -121,7 +120,9 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val variant = brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
+        val variant = brafMolecularTestVariant.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+        )
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(
@@ -146,7 +147,8 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
 
         val variantOnInapplicableGene = TestVariantFactory.createMinimal().copy(
-            gene = inapplicableGene, canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+            gene = inapplicableGene,
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
         )
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
@@ -482,7 +484,9 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val variant = brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
+        val variant = brafMolecularTestVariant.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+        )
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(variant)
@@ -502,7 +506,11 @@ class ActionabilityMatcherTest {
 
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
-                variants = listOf(brafMolecularTestVariant.copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)))
+                variants = listOf(
+                    brafMolecularTestVariant.copy(
+                        canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+                    )
+                )
             )
         )
 
@@ -687,19 +695,6 @@ class ActionabilityMatcherTest {
                     microsatelliteIndelsPerMb = 0.0, isUnstable = isUnstable, evidence = TestClinicalEvidenceFactory.createEmpty()
                 )
             )
-        )
-    }
-
-    private fun minimalTranscriptImpact(): TranscriptVariantImpact {
-        return TranscriptVariantImpact(
-            transcriptId = "",
-            hgvsCodingImpact = "",
-            hgvsProteinImpact = "",
-            affectedCodon = 0,
-            inSpliceRegion = false,
-            effects = emptySet(),
-            codingEffect = CodingEffect.NONE,
-            affectedExon = null
         )
     }
 
