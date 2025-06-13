@@ -30,11 +30,18 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
                     matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
                 )
 
+                val durationWeeksMax: Long? = DateComparison.minWeeksBetweenDates(
+                    matchingPortionOfEntry.startYear,
+                    matchingPortionOfEntry.startMonth,
+                    matchingPortionOfEntry.stopYear(),
+                    matchingPortionOfEntry.stopMonth()
+                )
+
                 TreatmentEvaluation.create(
                     hadTreatment = true,
                     hadTrial = mayMatchAsTrial,
-                    lessThanMaxWeeks = durationWeeks != null && durationWeeks <= maxWeeks,
-                    hadUnclearWeeks = durationWeeks == null
+                    lessThanMaxWeeks = durationWeeksMax != null && durationWeeksMax <= maxWeeks,
+                    hadUnclearWeeks = durationWeeks == null && ((durationWeeksMax != null && durationWeeksMax > maxWeeks) || durationWeeksMax == null)
                 )
             } ?: TreatmentEvaluation.create(
                 hadTreatment = if (categoryMatches && !treatmentHistoryEntry.hasTypeConfigured()) null else false,
@@ -55,6 +62,10 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
                 EvaluationFactory.undetermined("Unclear if received " + category.display())
             }
 
+            TreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
+                EvaluationFactory.fail("Has had ${treatment()} treatment but for more than $maxWeeks weeks")
+            }
+
             else -> {
                 EvaluationFactory.fail("No ${treatment()} treatment")
             }
@@ -69,6 +80,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
         HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS,
         HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS,
         HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
+        HAS_HAD_TREATMENT,
         NO_MATCH;
 
         companion object {
@@ -81,6 +93,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
                 hadTreatment == true && lessThanMaxWeeks -> HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS
                 hadTreatment == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS
                 hadTreatment == null || hadTrial -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
+                hadTreatment == true -> HAS_HAD_TREATMENT
                 else -> NO_MATCH
             }
         }

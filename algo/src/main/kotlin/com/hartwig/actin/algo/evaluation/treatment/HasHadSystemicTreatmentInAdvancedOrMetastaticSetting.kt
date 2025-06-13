@@ -19,7 +19,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
         val (curativeTreatments, nonCurativeTreatments) = priorSystemicTreatments.partition { it.intents?.contains(Intent.CURATIVE) == true }
         val (recentNonCurativeTreatments, nonRecentNonCurativeTreatments) = partitionRecentTreatments(nonCurativeTreatments, false)
         val (recentNonCurativeTreatmentsIncludingUnknown, _) = partitionRecentTreatments(nonCurativeTreatments, true)
-        val nonCurativeTreatmentsWithUnknownStopDate = nonCurativeTreatments.filter { it.treatmentHistoryDetails?.stopYear == null }
+        val nonCurativeTreatmentsWithUnknownStopDate = nonCurativeTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
 
         return when {

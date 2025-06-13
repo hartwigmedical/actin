@@ -30,14 +30,22 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
                     matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
                     matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
                 )
-                val meetsMaxWeeks = if (maxWeeks != null) durationWeeks != null && durationWeeks <= maxWeeks else true
+                val durationWeeksMax: Long? = DateComparison.minWeeksBetweenDates(
+                    matchingPortionOfEntry.startYear,
+                    matchingPortionOfEntry.startMonth,
+                    matchingPortionOfEntry.stopYear(),
+                    matchingPortionOfEntry.stopMonth()
+                )
+
+                val meetsMaxWeeks = if (maxWeeks != null) durationWeeksMax != null && durationWeeksMax <= maxWeeks else true
+                val meetsUnclearWeeks = maxWeeks != null && durationWeeks == null && durationWeeksMax?.let { it > maxWeeks } != false
 
                 PDFollowingTreatmentEvaluation.create(
                     hadTreatment = true,
                     hadTrial = mayMatchAsTrial,
                     hadPD = treatmentResultedInPD,
                     lessThanMaxWeeks = meetsMaxWeeks,
-                    hadUnclearWeeks = if (maxWeeks != null) durationWeeks == null else false
+                    hadUnclearWeeks = meetsUnclearWeeks
                 )
             } ?: PDFollowingTreatmentEvaluation.create(
                 hadTreatment = if (categoryMatches && !treatmentHistoryEntry.hasTypeConfigured()) null else false,

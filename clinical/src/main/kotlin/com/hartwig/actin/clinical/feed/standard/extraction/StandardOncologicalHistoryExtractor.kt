@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
+import com.hartwig.actin.clinical.feed.treatment.TreatmentHistoryEntryFunctions
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -22,7 +23,12 @@ class StandardOncologicalHistoryExtractor(
         val oncologicalTreatmentHistory = convertFeedEntriesToOncologicalHistory(feedPatientRecord.treatmentHistory, patientId)
 
         return ExtractionResult(
-            merge(oncologicalTreatmentHistory.extracted, oncologicalPreviousConditions.extracted),
+            TreatmentHistoryEntryFunctions.setMaxStopDate(
+                merge(
+                    oncologicalTreatmentHistory.extracted,
+                    oncologicalPreviousConditions.extracted
+                )
+            ),
             oncologicalTreatmentHistory.evaluation
         )
     }
@@ -58,8 +64,7 @@ class StandardOncologicalHistoryExtractor(
                             intents = curatedTreatment.intents,
                             treatmentHistoryDetails = TreatmentHistoryDetails(
                                 stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrEntry.endDate?.year,
-                                stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth
-                                    ?: ehrEntry.endDate?.monthValue,
+                                stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth ?: ehrEntry.endDate?.monthValue,
                                 stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
                                 bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
                                 switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,
