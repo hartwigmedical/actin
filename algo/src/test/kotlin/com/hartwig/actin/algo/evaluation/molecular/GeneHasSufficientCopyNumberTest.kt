@@ -213,7 +213,7 @@ class GeneHasSufficientCopyNumberTest {
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(result.undeterminedMessages)
+        assertThat(result.undeterminedMessagesStrings())
             .containsExactly("Sufficient copy number in gene gene A undetermined (not tested for amplifications or mutations)")
     }
 }

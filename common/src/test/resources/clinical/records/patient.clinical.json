@@ -77,10 +77,7 @@
   ],
   "priorPrimaries": [
     {
-      "tumorLocation": "Skin",
-      "tumorSubLocation": "",
-      "tumorType": "Melanoma",
-      "tumorSubType": "",
+      "name": "Skin melanoma",
       "doids": [
         "162"
       ],

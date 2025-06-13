@@ -41,7 +41,7 @@ object FeedParseFunctions {
         return try {
             LocalDateTime.parse(date, format)
             true
-        } catch (exception: DateTimeParseException) {
+        } catch (_: DateTimeParseException) {
             false
         }
     }

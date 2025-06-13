@@ -86,7 +86,7 @@ object SOCGeneratorFunctions {
 
                 val warningMessages = treatment.evaluations.flatMap {
                     it.undeterminedMessages + it.warnMessages + if (it.recoverable) it.failMessages else emptyList()
-                }
+                }.map { it.toString() }
                 val warningsCell = Cells.createContent(
                     warningMessages.sorted().distinct().joinToString(Formats.COMMA_SEPARATOR)
                 )

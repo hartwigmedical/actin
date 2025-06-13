@@ -12,7 +12,7 @@ import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
-internal class TrialDAO(private val context: DSLContext) {
+class TrialDAO(private val context: DSLContext) {
 
     fun clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;")

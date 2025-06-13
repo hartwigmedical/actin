@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
+import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.standard.StandardDataIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ingestion.IngestionResult
@@ -13,15 +13,15 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
 
@@ -64,9 +64,8 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Creating clinical feed model from directory {} of format {}", config.feedDirectory, config.feedFormat)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val clinicalIngestion = if (config.feedFormat == FeedFormat.EMC_TSV)
-            EmcClinicalFeedIngestor.create(
+            EmcClinicalFeedIngestion.create(
                 config.feedDirectory,
-                config.curationDirectory,
                 curationDatabaseContext,
                 atcModel,
                 drugInteractionsDatabase,

@@ -100,7 +100,6 @@ data class CurationResponse<T>(
                 CurationCategory.COMPLICATION -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.TOXICITY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MOLECULAR_TEST_IHC -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
-                CurationCategory.MOLECULAR_TEST_PDL1 -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.SEQUENCING_TEST -> CurationExtractionEvaluation(sequencingTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.SEQUENCING_TEST_RESULT -> CurationExtractionEvaluation(sequencingTestResultEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_NAME -> CurationExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)

@@ -127,14 +127,11 @@
   ],
   "priorPrimaries": [
     {
-      "tumorLocation": "Prostate",
-      "tumorSubLocation": "",
-      "tumorType": "Carcinoma",
-      "tumorSubType": "",
+      "name": "Prostate carcinoma",
       "doids": [
         "10286"
       ],
-      "diagnosedYear": 2019,
+      "diagnosedYear": null,
       "diagnosedMonth": null,
       "treatmentHistory": "",
       "lastTreatmentYear": 2019,
@@ -244,7 +241,8 @@
       "scoreValuePrefix": null,
       "scoreValue": 3.0,
       "scoreValueUnit": "+",
-      "impliesPotentialIndeterminateStatus": false
+      "impliesPotentialIndeterminateStatus": false,
+      "reportHash": null
     },
     {
       "item": "PD-L1",
@@ -254,7 +252,8 @@
       "scoreValuePrefix": null,
       "scoreValue": null,
       "scoreValueUnit": null,
-      "impliesPotentialIndeterminateStatus": false
+      "impliesPotentialIndeterminateStatus": false,
+      "reportHash": null
     }
   ],
   "sequencingTests": [],

@@ -81,5 +81,3 @@ data class FeedValidationWarning(val subject: String, val message: String) : Com
     }
 }
 
-const val NO_QUESTIONNAIRE_FOUND = "No Questionnaire Found"
-

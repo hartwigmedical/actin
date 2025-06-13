@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
 import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -9,16 +8,14 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.feed.datamodel.DatedEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
-
 private const val SECOND_PRIMARY_INPUT = "Second primary input"
-
 private const val TREATMENT_HISTORY_INPUT = "Treatment history input"
-
 private const val CURATED_TREATMENT_NAME = "Curated treatment name"
 
 class OncologicalHistoryExtractorTest {
@@ -41,18 +38,12 @@ class OncologicalHistoryExtractorTest {
 
     @Test
     fun `Should extract and curate treatment history`() {
-        val questionnaire = emptyQuestionnaire().copy(
-            treatmentHistoryCurrentTumor = listOf(TREATMENT_HISTORY_INPUT),
-            otherOncologicalHistory = listOf(CANNOT_CURATE)
-        )
 
-        val (treatmentHistory, evaluation) = extractor.extract(
-            PATIENT_ID,
-            questionnaire
-        )
+        val entries = listOf(TREATMENT_HISTORY_INPUT, CANNOT_CURATE).map { DatedEntry(it, null) }
+
+        val (treatmentHistory, evaluation) = extractor.extract(PATIENT_ID, entries)
         assertThat(treatmentHistory).hasSize(1)
         assertThat(treatmentHistory[0].treatmentName()).isEqualTo(CURATED_TREATMENT_NAME)
-
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(
                 PATIENT_ID,
@@ -68,9 +59,8 @@ class OncologicalHistoryExtractorTest {
 
     @Test
     fun `Should suppress warnings when prior second primaries from treatment history`() {
-        val inputs = listOf(SECOND_PRIMARY_INPUT)
-        val questionnaire = emptyQuestionnaire().copy(secondaryPrimaries = inputs)
-        val (_, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        val entries = listOf(SECOND_PRIMARY_INPUT).map { DatedEntry(it, null) }
+        val (_, evaluation) = extractor.extract(PATIENT_ID, entries)
         assertThat(evaluation.warnings).isEmpty()
     }
 }

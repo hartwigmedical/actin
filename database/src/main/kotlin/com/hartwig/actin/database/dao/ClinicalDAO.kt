@@ -26,7 +26,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import org.jooq.DSLContext
 import kotlin.math.roundToInt
 
-internal class ClinicalDAO(private val context: DSLContext) {
+class ClinicalDAO(private val context: DSLContext) {
 
     fun clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;")
@@ -271,10 +271,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
             context.insertInto(
                 Tables.PRIORPRIMARY,
                 Tables.PRIORPRIMARY.PATIENTID,
-                Tables.PRIORPRIMARY.TUMORLOCATION,
-                Tables.PRIORPRIMARY.TUMORSUBLOCATION,
-                Tables.PRIORPRIMARY.TUMORTYPE,
-                Tables.PRIORPRIMARY.TUMORSUBTYPE,
+                Tables.PRIORPRIMARY.NAME,
                 Tables.PRIORPRIMARY.DOIDS,
                 Tables.PRIORPRIMARY.DIAGNOSEDYEAR,
                 Tables.PRIORPRIMARY.DIAGNOSEDMONTH,
@@ -285,10 +282,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    priorPrimary.tumorLocation,
-                    priorPrimary.tumorSubLocation,
-                    priorPrimary.tumorType,
-                    priorPrimary.tumorSubType,
+                    priorPrimary.name,
                     DataUtil.concat(priorPrimary.doids),
                     priorPrimary.diagnosedYear,
                     priorPrimary.diagnosedMonth,
