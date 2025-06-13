@@ -24,6 +24,7 @@ import com.hartwig.actin.clinical.feed.emc.extraction.VitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.PathologyReportsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
+import com.hartwig.actin.clinical.feed.treatment.TreatmentHistoryEntryFunctions
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
@@ -104,7 +105,12 @@ class EmcClinicalFeedIngestion(
             tumor = tumorExtraction.extracted,
             comorbidities = comorbidities,
             clinicalStatus = clinicalStatus,
-            oncologicalHistory = oncologicalHistoryExtraction.extracted,
+            oncologicalHistory = TreatmentHistoryEntryFunctions.setMaxStopDate(
+                oncologicalHistoryExtractor.extract(
+                    patientId,
+                    feedRecord.treatmentHistory
+                ).extracted
+            ),
             priorPrimaries = priorPrimaryExtraction.extracted,
             ihcTests = ihcTestsExtraction.extracted,
             sequencingTests = sequencingTestExtraction.extracted,
