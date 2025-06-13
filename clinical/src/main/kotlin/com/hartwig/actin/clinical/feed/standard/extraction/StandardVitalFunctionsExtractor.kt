@@ -17,7 +17,7 @@ class StandardVitalFunctionsExtractor : StandardDataExtractor<List<VitalFunction
             ).contains(enumeratedInput<MeasurementCategory>(it.category))
         }.map {
             VitalFunction(
-                date = it.date.atStartOfDay(),
+                date = it.date,
                 category = mapCategory(it),
                 subcategory = mapSubcategory(it),
                 value = it.value,

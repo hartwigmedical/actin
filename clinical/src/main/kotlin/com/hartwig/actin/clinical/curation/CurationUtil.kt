@@ -5,15 +5,12 @@ object CurationUtil {
     private const val IGNORE = "<ignore>"
     private const val DELIMITER = ";"
 
-    fun isIgnoreString(input: String): Boolean {
-        return input == IGNORE
-    }
-
-    fun capitalizeFirstLetterOnly(string: String): String {
-        return if (string.isEmpty()) {
-            string
-        } else string.substring(0, 1).uppercase() + string.substring(1).lowercase()
-    }
+    fun isIgnoreString(input: String) = input.trim() == IGNORE
+    
+    fun capitalizeFirstLetterOnly(string: String?): String =
+        string?.takeIf { it.isNotEmpty() }
+            ?.let { it.substring(0, 1).uppercase() + it.substring(1).lowercase() }
+            ?: ""
 
     fun fullTrim(input: String): String {
         var reformatted = input.trim { it <= ' ' }

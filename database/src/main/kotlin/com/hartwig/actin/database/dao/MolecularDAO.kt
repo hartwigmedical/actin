@@ -23,7 +23,7 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import org.jooq.DSLContext
 import org.jooq.Record
 
-internal class MolecularDAO(private val context: DSLContext) {
+class MolecularDAO(private val context: DSLContext) {
 
     fun clear(record: MolecularRecord) {
         val sampleId = record.sampleId

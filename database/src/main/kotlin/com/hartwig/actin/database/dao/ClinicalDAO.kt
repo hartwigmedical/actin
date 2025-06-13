@@ -26,7 +26,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import org.jooq.DSLContext
 import kotlin.math.roundToInt
 
-internal class ClinicalDAO(private val context: DSLContext) {
+class ClinicalDAO(private val context: DSLContext) {
 
     fun clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;")

@@ -5,9 +5,9 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val REQUESTED_INTENT = setOf(Intent.ADJUVANT)
 private val WRONG_INTENT = setOf(Intent.PALLIATIVE)
@@ -19,8 +19,8 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     private val evaluationDate = LocalDate.of(2024, 1, 25)
     private val weeksAgo = 20
     private val refDate = evaluationDate.minusWeeks(weeksAgo.toLong())
-    private val recentDate = evaluationDate.minusWeeks((weeksAgo-6).toLong())
-    private val olderDate = evaluationDate.minusWeeks((weeksAgo+6).toLong())
+    private val recentDate = evaluationDate.minusWeeks((weeksAgo - 6).toLong())
+    private val olderDate = evaluationDate.minusWeeks((weeksAgo + 6).toLong())
     private val functionEvaluatingWithinWeeks =
         HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, weeksAgo, true)
     private val functionEvaluatingBeforeWeeks =

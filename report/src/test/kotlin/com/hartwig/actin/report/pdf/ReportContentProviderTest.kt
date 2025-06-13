@@ -2,11 +2,15 @@ package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_SUB_LOCATION
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
@@ -165,9 +169,38 @@ class ReportContentProviderTest {
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
             MolecularSummaryGenerator::class,
-            EligibleApprovedTreatmentGenerator::class,
             EligibleTrialGenerator::class,
             EligibleTrialGenerator::class
+        )
+    }
+
+    @Test
+    fun `Should show eligible approved treatments options for CUP with high prediction`() {
+        val cupTumor = TumorDetails(primaryTumorLocation = CUP_LOCATION, primaryTumorSubLocation = CUP_SUB_LOCATION)
+        val molecularHistory = MolecularHistory(
+            listOf(
+                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                    characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
+                        .copy(predictedTumorOrigin = TestMolecularFactory.createHighConfidenceCupPrediction())
+                )
+            )
+        )
+        val report = TestReportFactory.createExhaustiveTestReport()
+        val tables = ReportContentProvider(
+            report.copy(
+                patientRecord = report.patientRecord.copy(
+                    tumor = cupTumor,
+                    molecularHistory = molecularHistory
+                )
+            )
+        )
+            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, emptyList())
+
+        assertThat(tables.map { it::class }).containsExactly(
+            PatientClinicalHistoryGenerator::class,
+            MolecularSummaryGenerator::class,
+            EligibleApprovedTreatmentGenerator::class,
+            EligibleTrialGenerator::class,
         )
     }
 
@@ -180,7 +213,6 @@ class ReportContentProviderTest {
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
-            EligibleApprovedTreatmentGenerator::class,
             EligibleTrialGenerator::class
         )
     }

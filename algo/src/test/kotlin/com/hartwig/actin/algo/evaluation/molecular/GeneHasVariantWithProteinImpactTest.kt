@@ -5,9 +5,9 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -30,7 +30,11 @@ class GeneHasVariantWithProteinImpactTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal()
-                        .copy(gene = MATCHING_GENE, isReportable = true, extendedVariantDetails = TestVariantFactory.createMinimalExtended())
+                        .copy(
+                            gene = MATCHING_GENE,
+                            isReportable = true,
+                            extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        )
                 )
             )
         )
@@ -145,7 +149,8 @@ class GeneHasVariantWithProteinImpactTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessagesStrings()).containsExactly("Mutation with protein impact(s) V600E, V600K in gene gene A undetermined (not tested for mutations)")
+        Assertions.assertThat(result.undeterminedMessagesStrings())
+            .containsExactly("Mutation with protein impact(s) V600E, V600K in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptVariantImpact {
