@@ -22,10 +22,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patients must be ≥18 years old."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -53,10 +50,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "IEMOEN monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "AND",
@@ -103,10 +97,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "Patient should have exhausted applicable available standard-of-care treatments."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "WARN_IF",
@@ -142,10 +133,7 @@
         [
           {
             "references": [
-              {
-                "id": "E-01",
-                "text": "Has an active autoimmune disease that requires systemic treatment and poses a risk according to the investigator."
-              }
+              "E-01"
             ],
             "function": {
               "rule": "WARN_IF",
@@ -176,10 +164,7 @@
         [
           {
             "references": [
-              {
-                "id": "E-02",
-                "text": "Has hemoglobin below 6 mmol/l"
-              }
+              "E-02"
             ],
             "function": {
               "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
@@ -207,10 +192,7 @@
         [
           {
             "references": [
-              {
-                "id": "E-03",
-                "text": "Has absolute neutrophil count below 1.5 x 10^9/l"
-              }
+              "E-03"
             ],
             "function": {
               "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
@@ -315,10 +297,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patient is ≥18 years old."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -346,10 +325,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "KAYRAS monotherapy is indicated for the treatment of NSCLC or colorectal patients with metastatic cancer."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "OR",
@@ -384,10 +360,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "ALAT and ASAT should be at most 3*ULN, or at most 5*ULN in case of liver metastases."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
@@ -416,10 +389,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-04",
-                "text": "Patient has confirmed KRAS G12D mutation"
-              }
+              "I-04"
             ],
             "function": {
               "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
@@ -494,10 +464,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-02",
-                    "text": "KAYRAS monotherapy is indicated for the treatment of NSCLC or colorectal patients with metastatic cancer."
-                  }
+                  "I-02"
                 ],
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
@@ -538,10 +505,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-02",
-                    "text": "KAYRAS monotherapy is indicated for the treatment of NSCLC or colorectal patients with metastatic cancer."
-                  }
+                  "I-02"
                 ],
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
@@ -589,10 +553,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patient is ≥18 years of age."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -620,10 +581,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "Monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "OR",
@@ -658,10 +616,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "Tumors should contain EGFR C797 but not EGFR C797S mutation."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "AND",
@@ -776,10 +731,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-1",
-                "text": "Patient is ≥18 years of age."
-              }
+              "I-1"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -807,10 +759,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-2",
-                "text": "Drug 1 as monotherapy is indicated for the treatment of adults with advanced lung cancer."
-              }
+              "I-2"
             ],
             "function": {
               "rule": "AND",
@@ -859,10 +808,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-3",
-                "text": "Patient has a confirmed EGFR C797S mutation"
-              }
+              "I-3"
             ],
             "function": {
               "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
@@ -956,10 +902,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patient is ≥18 years old."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -987,10 +930,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "Has locally advanced or metastatic cancer."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "OR",
@@ -1025,10 +965,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "ALAT and ASAT should be at most 3*ULN, or at most 5*ULN in case of liver metastases."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
@@ -1057,10 +994,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-04",
-                "text": "Patient has confirmed activating PIK3CA mutation"
-              }
+              "I-04"
             ],
             "function": {
               "rule": "ACTIVATING_MUTATION_IN_ANY_GENES_X",
@@ -1088,10 +1022,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-05",
-                "text": "Patient can not have a severe cardiac condition."
-              }
+              "I-05"
             ],
             "function": {
               "rule": "WARN_IF",
@@ -1166,10 +1097,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-03",
-                    "text": "Has non small cell lung cancer."
-                  }
+                  "I-03"
                 ],
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
@@ -1210,10 +1138,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-03",
-                    "text": "Has solid cancer, other than non small cell lung cancer."
-                  }
+                  "I-03"
                 ],
                 "function": {
                   "rule": "AND",

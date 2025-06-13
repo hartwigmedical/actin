@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial
 
-import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -36,19 +35,19 @@ class EligibilityRuleUsageEvaluatorTest {
                 ),
                 generalEligibility = listOf(
                     Eligibility(
-                        function = EligibilityFunction(rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC, parameters = listOf("ABC")),
-                        references = setOf(CriterionReference(id = "I-01", text = "ref 01"))
+                        references = setOf("I-01"),
+                        function = EligibilityFunction(rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC, parameters = listOf("ABC"))
                     ),
                     Eligibility(
+                        references = setOf("I-02"),
                         function = EligibilityFunction(
                             rule = EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y,
                             parameters = listOf("DEF", "1")
-                        ),
-                        references = setOf(CriterionReference(id = "I-02", text = "ref 02"))
+                        )
                     ),
                     Eligibility(
-                        function = EligibilityFunction(rule = EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, parameters = listOf("1")),
-                        references = setOf(CriterionReference(id = "I-03", text = "ref 03"))
+                        references = setOf("I-03"),
+                        function = EligibilityFunction(rule = EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, parameters = listOf("1"))
                     )
                 )
             )
