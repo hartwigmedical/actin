@@ -9,28 +9,23 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 class HasUnresectableCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.tumor.stage ?: return EvaluationFactory.undetermined(
-            "Undetermined if cancer is unresectable (tumor stage missing)"
-        )
+        val stage =
+            record.tumor.stage ?: return EvaluationFactory.undetermined("Undetermined if cancer is unresectable (tumor stage missing)")
+        val stageMessage =
+            record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString(" or ") { it.display() }})"
 
         return when {
-            isStageMatch(stage, TumorStage.IV) -> {
-                EvaluationFactory.pass("Has unresectable cancer")
+            (stage.category ?: stage) == TumorStage.IV -> {
+                EvaluationFactory.pass("Has unresectable cancer (stage $stageMessage)")
             }
 
-            isStageMatch(stage, TumorStage.III) -> {
-                EvaluationFactory.undetermined("Undetermined if cancer is unresectable")
+            (stage.category ?: stage) == TumorStage.III -> {
+                EvaluationFactory.undetermined("Undetermined if cancer is unresectable (stage $stageMessage)")
             }
 
             else -> {
-                EvaluationFactory.fail("No unresectable cancer")
+                EvaluationFactory.fail("No unresectable cancer (stage $stageMessage)")
             }
-        }
-    }
-
-    companion object {
-        private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
-            return stage == stageToMatch || stage.category == stageToMatch
         }
     }
 }

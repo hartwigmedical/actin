@@ -12,16 +12,10 @@ class HasUnresectableStageIIICancer : EvaluationFunction {
         val stage =
             record.tumor.stage ?: return EvaluationFactory.undetermined("Unresectable stage III cancer undetermined (tumor stage missing)")
 
-        return if (isStageMatch(stage, TumorStage.III)) {
-            EvaluationFactory.undetermined("Undetermined if stage III cancer is unresectable")
+        return if ((stage.category ?: stage) == TumorStage.III) {
+            EvaluationFactory.undetermined("Undetermined if stage III cancer is considered unresectable")
         } else {
             EvaluationFactory.fail("No unresectable stage III cancer")
-        }
-    }
-
-    companion object {
-        private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
-            return stage == stageToMatch || stage.category == stageToMatch
         }
     }
 }

@@ -169,7 +169,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasAnyTumorStageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val stagesToMatch = functionInputResolver().createManyTumorStagesInput(function)
-            HasTumorStage(stagesToMatch)
+            DerivedTumorStageEvaluationFunction(HasTumorStage(stagesToMatch))
         }
     }
 
