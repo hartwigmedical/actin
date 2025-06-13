@@ -1,15 +1,9 @@
 package com.hartwig.actin.trial.serialization
 
 import com.google.gson.GsonBuilder
-import com.hartwig.actin.datamodel.trial.CriterionReference
-import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
-import com.hartwig.actin.trial.sort.CriterionReferenceComparator
-import com.hartwig.actin.trial.sort.EligibilityComparator
 import com.hartwig.actin.util.Paths
-import com.hartwig.actin.util.json.CriterionReferenceDeserializer
-import com.hartwig.actin.util.json.CriterionReferenceDeserializer.Companion.toJsonReferenceText
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.logging.log4j.LogManager
@@ -28,10 +22,10 @@ object TrialJson {
     fun write(trials: List<Trial>, directory: String) {
         val path: String = Paths.forceTrailingFileSeparator(directory)
         for (trial: Trial in trials) {
-            val jsonFile: String = path + trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION
+            val jsonFile = path + trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION
             LOGGER.info(" Writing '{} ({})' to {}", trial.identification.trialId, trial.identification.acronym, jsonFile)
             val writer = BufferedWriter(FileWriter(jsonFile))
-            writer.write(toJson(reformatTrial(trial)))
+            writer.write(toJson(trial))
             writer.close()
         }
     }
@@ -39,23 +33,7 @@ object TrialJson {
     fun trialFileId(trialId: String): String {
         return trialId.replace("[ /]".toRegex(), "_")
     }
-
-    private fun reformatTrial(trial: Trial): Trial {
-        val reformattedCohorts = trial.cohorts.map { it.copy(eligibility = reformatEligibilities(it.eligibility)) }
-        return trial.copy(
-            cohorts = reformattedCohorts,
-            generalEligibility = reformatEligibilities(trial.generalEligibility)
-        )
-    }
-
-    private fun reformatEligibilities(eligibilities: List<Eligibility>): List<Eligibility> {
-        return eligibilities.map { eligibility ->
-            eligibility.copy(references = eligibility.references.map { reference ->
-                reference.copy(text = toJsonReferenceText(reference.text))
-            }.toSortedSet(CriterionReferenceComparator()))
-        }.toSortedSet(EligibilityComparator()).toList()
-    }
-
+    
     fun readFromDir(directory: String): List<Trial> {
         val files = File(directory).listFiles() ?: throw IllegalArgumentException("Could not retrieve files from $directory")
         return files.filter { it.getName().endsWith(TRIAL_JSON_EXTENSION) }.map(::fromJsonFile)
@@ -66,10 +44,8 @@ object TrialJson {
     }
 
     fun fromJson(json: String): Trial {
-        val gson = GsonBuilder()
-            .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
-            .registerTypeAdapter(CriterionReference::class.java, CriterionReferenceDeserializer())
-            .create()
+        val gson = GsonBuilder().registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer()).create()
+        
         return gson.fromJson(json, Trial::class.java)
     }
 

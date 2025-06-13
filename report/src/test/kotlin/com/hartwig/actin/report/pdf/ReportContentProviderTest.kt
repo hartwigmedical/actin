@@ -111,6 +111,7 @@ class ReportContentProviderTest {
             ResistanceEvidenceChapter::class,
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
+            EfficacyEvidenceDetailsChapter::class,
             TrialMatchingOtherResultsChapter::class
         )
     }
@@ -129,7 +130,8 @@ class ReportContentProviderTest {
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
             EfficacyEvidenceDetailsChapter::class,
-            TrialMatchingOtherResultsChapter::class
+            TrialMatchingOtherResultsChapter::class,
+            TrialMatchingDetailsChapter::class
         )
     }
 

@@ -16,10 +16,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Is adult"
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -64,10 +61,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-02",
-                    "text": "Has no active CNS metastases"
-                  }
+                  "I-02"
                 ],
                 "function": {
                   "rule": "NOT",
