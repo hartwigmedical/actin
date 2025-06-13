@@ -38,8 +38,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
                 )
 
                 val meetsMaxWeeks = if (maxWeeks != null) durationWeeksMax != null && durationWeeksMax <= maxWeeks else true
-                val meetsUnclearWeeks =
-                    if (maxWeeks != null) durationWeeks == null && ((durationWeeksMax != null && durationWeeksMax > maxWeeks) || durationWeeksMax == null) else false
+                val meetsUnclearWeeks = maxWeeks != null && durationWeeks == null && durationWeeksMax?.let { it > maxWeeks } != false
 
                 PDFollowingTreatmentEvaluation.create(
                     hadTreatment = true,

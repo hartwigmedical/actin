@@ -39,8 +39,8 @@ object TreatmentVersusDateFunctions {
     }
 
     fun treatmentBeforeMaxDate(treatment: TreatmentHistoryEntry, maxDate: LocalDate, includeUnknown: Boolean): Boolean {
-        // will remove this comment, but to explain: I don't use treatment.stopYear() here because it could be that this maxStopDate
-        // is too high, and the real stopDate is actually earlier on. This would lead to false evaluation although it is true.
+        // The maxStopDate might be more recent than the actual stopDate. Using stopYear() and stopMonth() here could result
+        // in incorrect evaluation to 'false'
         return DateComparison.isBeforeDate(
             maxDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
         )
