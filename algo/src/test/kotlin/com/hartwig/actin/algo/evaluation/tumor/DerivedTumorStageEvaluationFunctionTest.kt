@@ -16,7 +16,7 @@ class DerivedTumorStageEvaluationFunctionTest {
     private val properTestPatientRecord = TestPatientFactory.createProperTestPatientRecord()
     private val minimalTestPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val evaluationFunction: EvaluationFunction = mockk()
-    private val derivedFunction = DerivedTumorStageEvaluationFunction(evaluationFunction)
+    private val derivedFunction = DerivedTumorStageEvaluationFunction(evaluationFunction, "something")
 
     @Test
     fun `Should return original function when tumor details not null`() {
@@ -34,13 +34,13 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     @Test
     fun `Should follow evaluation when any single inferred stage`() {
-        for (evaluationResult in EvaluationResult.values()) {
+        for (evaluationResult in EvaluationResult.entries) {
             assertSingleStageWithResult(evaluationResult)
         }
     }
 
     @Test
-    fun `Should evaluate pass when multiple derived stages all evaluate pass`() {
+    fun `Should pass when multiple derived stages all evaluate pass`() {
         every { evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I)) } returns EvaluationTestFactory.withResult(
             EvaluationResult.PASS
         )
@@ -51,40 +51,7 @@ class DerivedTumorStageEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should evaluate undetermined when multiple derived and at least one passes`() {
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.PASS)
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
-        assertEvaluation(EvaluationResult.UNDETERMINED, derivedFunction.evaluate(withStageAndDerivedStages()))
-    }
-
-    @Test
-    fun `Should evaluate fail when multiple derived and no pass or warn`() {
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
-        assertEvaluation(EvaluationResult.FAIL, derivedFunction.evaluate(withStageAndDerivedStages()))
-    }
-
-    @Test
-    fun `Should evaluate warn when multiple derived and at least one warn and no pass`() {
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.WARN)
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
-        assertEvaluation(EvaluationResult.WARN, derivedFunction.evaluate(withStageAndDerivedStages()))
-    }
-
-    @Test
-    fun `Should evaluate not evaluated when multiple derived and all are not evaluated`() {
+    fun `Should be not evaluated when multiple derived stages all evaluate not evaluated`() {
         every {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
         } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
@@ -92,6 +59,53 @@ class DerivedTumorStageEvaluationFunctionTest {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
         } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
         assertEvaluation(EvaluationResult.NOT_EVALUATED, derivedFunction.evaluate(withStageAndDerivedStages()))
+    }
+
+    @Test
+    fun `Should be undetermined when multiple derived stages all evaluate undetermined`() {
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
+        assertEvaluation(EvaluationResult.UNDETERMINED, derivedFunction.evaluate(withStageAndDerivedStages()))
+    }
+
+    @Test
+    fun `Should warn when multiple derived stages all evaluate warn`() {
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.WARN)
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.WARN)
+        assertEvaluation(EvaluationResult.WARN, derivedFunction.evaluate(withStageAndDerivedStages()))
+    }
+
+    @Test
+    fun `Should fail when multiple derived stages all evaluate fail`() {
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
+        assertEvaluation(EvaluationResult.FAIL, derivedFunction.evaluate(withStageAndDerivedStages()))
+    }
+
+    @Test
+    fun `Should be undetermined when multiple derived with fixed message prefix`() {
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.PASS)
+        every {
+            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
+        } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
+
+        val result = derivedFunction.evaluate(withStageAndDerivedStages())
+        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has something")
     }
 
     private fun assertSingleStageWithResult(expectedResult: EvaluationResult) {
