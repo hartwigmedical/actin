@@ -102,7 +102,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun treatment(): String {
-        return "${Format.concatItemsWithAnd(types)} ${category.display()} treatment"
+        return "${Format.concatWithCommaAndOr(types.map { it.display() })} ${category.display()} treatment"
     }
 
     private enum class PDFollowingTreatmentEvaluation {
