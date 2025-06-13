@@ -91,12 +91,6 @@ object Cells {
     fun createContentSmall(text: String): Cell {
         return createContent(Paragraph(text)).setFontSize(SMALL_FONT)
     }
-
-    fun createContentDeEmphasize(element: IBlockElement): Cell {
-        val cell = createContent(element)
-        cell.setFontColor(Styles.PALETTE_MID_GREY)
-        return cell
-    }
     
     fun createContentBold(text: String): Cell {
         return createContent(Paragraph(text), Styles.tableHighlightStyle())
