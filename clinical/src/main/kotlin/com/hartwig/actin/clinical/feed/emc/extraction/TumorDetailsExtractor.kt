@@ -9,10 +9,12 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.TumorStageResolver
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.feed.datamodel.FeedLesion
+import com.hartwig.feed.datamodel.FeedTumorDetail
 import org.apache.logging.log4j.LogManager
 
 class TumorDetailsExtractor(
@@ -23,15 +25,12 @@ class TumorDetailsExtractor(
 
     private val logger = LogManager.getLogger(TumorDetailsExtractor::class.java)
 
-    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<TumorDetails> {
-        if (questionnaire == null) {
-            return ExtractionResult(TumorDetails(), CurationExtractionEvaluation())
-        }
+    fun extract(patientId: String, feedTumorDetail: FeedTumorDetail): ExtractionResult<TumorDetails> {
 
-        val curatedOtherLesions = questionnaire.otherLesions?.let {
+        val curatedOtherLesions = feedTumorDetail.lesions?.let {
             curateOtherLesions(patientId, it)
         }
-        val curatedBiopsyLocation = questionnaire.biopsyLocation?.let {
+        val curatedBiopsyLocation = feedTumorDetail.biopsyLocation?.let {
             CurationResponse.createFromConfigs(
                 lesionLocationCuration.find(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
             )
@@ -43,8 +42,8 @@ class TumorDetailsExtractor(
 
         val (primaryTumorDetails, tumorExtractionResult) = curateTumorDetails(
             patientId,
-            questionnaire.tumorLocation,
-            questionnaire.tumorType
+            feedTumorDetail.tumorLocation,
+            feedTumorDetail.tumorType
         )
 
         val otherLesions = filterCurateOtherLesions(curatedOtherLesions?.configs)
@@ -53,22 +52,22 @@ class TumorDetailsExtractor(
         val (hasBrainLesions, hasSuspectedBrainLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.BRAIN,
-            questionnaire.hasBrainLesions
+            feedTumorDetail.hasBrainLesions
         )
         val (hasCnsLesions, hasSuspectedCnsLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.CNS,
-            questionnaire.hasCnsLesions
+            feedTumorDetail.hasCnsLesions
         )
         val (hasBoneLesions, hasSuspectedBoneLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.BONE,
-            questionnaire.hasBoneLesions
+            feedTumorDetail.hasBoneLesions
         )
         val (hasLiverLesions, hasSuspectedLiverLesions) = determineLesionPresence(
             lesionLocationConfigMap,
             LesionLocationCategory.LIVER,
-            questionnaire.hasLiverLesions
+            feedTumorDetail.hasLiverLesions
         )
         val (hasLungLesions, hasSuspectedLungLesions) = determineLesionPresence(
             lesionLocationConfigMap,
@@ -81,14 +80,14 @@ class TumorDetailsExtractor(
         val hasBrainOrGliomaTumor = listOf("brain", "glioma").any { primaryTumorDetails.name.lowercase().contains(it) }
 
         val tumorDetails = primaryTumorDetails.copy(
-            stage = questionnaire.stage,
-            hasMeasurableDisease = questionnaire.hasMeasurableDisease,
+            stage = TumorStageResolver.resolve(feedTumorDetail.stage),
+            hasMeasurableDisease = feedTumorDetail.measurableDisease,
             hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions,
             hasSuspectedBrainLesions = if (hasBrainOrGliomaTumor) false else hasSuspectedBrainLesions,
-            hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveBrainLesions,
+            hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else feedTumorDetail.hasActiveBrainLesions,
             hasCnsLesions = if (hasBrainOrGliomaTumor) false else hasCnsLesions,
             hasSuspectedCnsLesions = if (hasBrainOrGliomaTumor) false else hasSuspectedCnsLesions,
-            hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveCnsLesions,
+            hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else feedTumorDetail.hasActiveCnsLesions,
             hasBoneLesions = hasBoneLesions,
             hasSuspectedBoneLesions = hasSuspectedBoneLesions,
             hasLiverLesions = hasLiverLesions,
@@ -155,13 +154,12 @@ class TumorDetailsExtractor(
             ?.map(LesionLocationConfig::location)
     }
 
-    fun curateOtherLesions(patientId: String, otherLesions: List<String>?):
-            CurationResponse<LesionLocationConfig> {
-        if (otherLesions == null) {
+    fun curateOtherLesions(patientId: String, lesions: List<FeedLesion>?): CurationResponse<LesionLocationConfig> {
+        if (lesions == null) {
             return CurationResponse()
         }
-        return otherLesions.asSequence()
-            .map(CurationUtil::fullTrim)
+        return lesions.asSequence()
+            .map { CurationUtil.fullTrim(it.location) }
             .map { Pair(it, lesionLocationCuration.find(it)) }
             .map { (input, configs) ->
                 CurationResponse.createFromConfigs(

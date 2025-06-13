@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvali
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import java.time.LocalDate

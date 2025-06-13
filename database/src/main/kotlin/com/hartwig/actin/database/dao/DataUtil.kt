@@ -2,7 +2,7 @@ package com.hartwig.actin.database.dao
 
 import java.util.Objects
 
-internal object DataUtil {
+object DataUtil {
 
     private const val SEPARATOR = ";"
 

@@ -86,7 +86,6 @@ object EvaluationComparison {
             EvaluationResult.WARN -> evaluation.warnMessages
             EvaluationResult.UNDETERMINED -> evaluation.undeterminedMessages
             EvaluationResult.FAIL -> evaluation.failMessages
-            else -> emptySet()
         }
     }
 
