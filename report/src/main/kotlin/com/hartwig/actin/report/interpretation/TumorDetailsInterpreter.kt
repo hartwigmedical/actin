@@ -5,13 +5,10 @@ import com.hartwig.actin.report.pdf.util.Formats
 
 object TumorDetailsInterpreter {
 
-    const val CUP_LOCATION = "Unknown"
-    const val CUP_SUB_LOCATION = "CUP"
+    const val CUP_STRING = "(CUP)"
 
-    fun isCUP(tumor: TumorDetails): Boolean {
-        val location = tumor.primaryTumorLocation
-        val subLocation = tumor.primaryTumorSubLocation
-        return location != null && subLocation != null && location == CUP_LOCATION && subLocation == CUP_SUB_LOCATION
+    fun hasCancerOfUnknownPrimary(name: String): Boolean {
+        return name.contains(CUP_STRING)
     }
 
     fun lesions(tumor: TumorDetails): String {
@@ -24,7 +21,7 @@ object TumorDetailsInterpreter {
                 ),
                 Triple(
                     TumorDetails.BRAIN + if (hasBrainLesions == true && hasActiveBrainLesions == true) " (active)" else "",
-                    (primaryTumorLocation == "Brain" || primaryTumorType == "Glioma" || hasBrainLesions == true),
+                    (name.lowercase().contains("brain") || (name.lowercase().contains("glioma") || hasBrainLesions == true)),
                     hasSuspectedBrainLesions
                 ),
                 Triple(TumorDetails.LIVER, hasLiverLesions, hasSuspectedLiverLesions),

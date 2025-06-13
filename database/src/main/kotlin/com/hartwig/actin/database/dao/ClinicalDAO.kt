@@ -93,11 +93,7 @@ class ClinicalDAO(private val context: DSLContext) {
         context.insertInto(
             Tables.TUMOR,
             Tables.TUMOR.PATIENTID,
-            Tables.TUMOR.PRIMARYTUMORLOCATION,
-            Tables.TUMOR.PRIMARYTUMORSUBLOCATION,
-            Tables.TUMOR.PRIMARYTUMORTYPE,
-            Tables.TUMOR.PRIMARYTUMORSUBTYPE,
-            Tables.TUMOR.PRIMARYTUMOREXTRADETAILS,
+            Tables.TUMOR.NAME,
             Tables.TUMOR.DOIDS,
             Tables.TUMOR.STAGE,
             Tables.TUMOR.HASMEASURABLEDISEASE,
@@ -121,11 +117,7 @@ class ClinicalDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
-                tumor.primaryTumorLocation,
-                tumor.primaryTumorSubLocation,
-                tumor.primaryTumorType,
-                tumor.primaryTumorSubType,
-                tumor.primaryTumorExtraDetails,
+                tumor.name,
                 DataUtil.concat(tumor.doids),
                 stage?.display(),
                 tumor.hasMeasurableDisease,

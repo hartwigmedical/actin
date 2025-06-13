@@ -13,7 +13,6 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
         if (record.tumor.stage != null) {
             return originalFunction.evaluate(record)
         }
-
         val derivedResults = record.tumor.derivedStages?.associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
 
         if (derivedResults.isNullOrEmpty()) {
@@ -22,16 +21,25 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
         if (derivedResults.size == 1) {
             return followResultOfSingleDerivation(derivedResults)
         }
-        return if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
-            createEvaluationForDerivedResult(derivedResults, EvaluationResult.PASS)
-        } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.PASS)) {
-            createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED)
-        } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.WARN)) {
-            createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN)
-        } else if (allDerivedResultsMatch(derivedResults, EvaluationResult.NOT_EVALUATED)) {
-            createEvaluationForDerivedResult(derivedResults, EvaluationResult.NOT_EVALUATED)
-        } else {
-            createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL)
+
+        return when {
+            allDerivedResultsMatch(derivedResults, EvaluationResult.PASS) -> {
+                createEvaluationForDerivedResult(derivedResults, EvaluationResult.PASS)
+            }
+
+            anyDerivedResultMatches(derivedResults, EvaluationResult.PASS) -> {
+                createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED)
+            }
+
+            anyDerivedResultMatches(derivedResults, EvaluationResult.WARN) -> {
+                createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN)
+            }
+
+            allDerivedResultsMatch(derivedResults, EvaluationResult.NOT_EVALUATED) -> {
+                createEvaluationForDerivedResult(derivedResults, EvaluationResult.NOT_EVALUATED)
+            }
+
+            else -> createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL)
         }
     }
 

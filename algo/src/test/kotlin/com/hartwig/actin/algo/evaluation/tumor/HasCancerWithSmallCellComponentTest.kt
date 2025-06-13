@@ -8,11 +8,7 @@ import org.junit.Test
 
 class HasCancerWithSmallCellComponentTest {
 
-    val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(
-        MATCHING_DOID,
-        DoidConstants.SMALL_CELL_DOID_SET.iterator().next()
-    )
-    val function = HasCancerWithSmallCellComponent(doidModel)
+    private val function = HasCancerWithSmallCellComponent(TestDoidModelFactory.createMinimalTestDoidModel())
 
     @Test
     fun `Should evaluate to undetermined if no tumor doids configured`() {
@@ -21,49 +17,20 @@ class HasCancerWithSmallCellComponentTest {
     }
 
     @Test
-    fun `Should pass if tumor is of small cell doid type`() {
-        val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.SMALL_CELL_CARCINOMA_DOID))
+    fun `Should pass if tumor has small cell component`() {
+        val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.SMALL_CELL_CANCER_DOIDS.first()))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
     }
 
     @Test
-    fun `Should pass if small cell term in tumor type`() {
-        val tumorDetails = TumorTestFactory.withDoidAndType(SOME_OTHER_DOID, "small cell lung cancer")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
-    }
-
-    @Test
-    fun `Should fail if non-small cell term in tumor type`() {
-        val tumorDetails = TumorTestFactory.withDoidAndType(SOME_OTHER_DOID, "non-small cell lung cancer")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
-    }
-
-    @Test
-    fun `Should pass if small cell term in tumor extra details`() {
-        val tumorDetails = TumorTestFactory.withDoidAndDetails(SOME_OTHER_DOID, "small cell")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
-    }
-
-    @Test
-    fun `Should fail if non-small cell term in tumor extra details`() {
-        val tumorDetails = TumorTestFactory.withDoidAndType(SOME_OTHER_DOID, "non-small cell")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
-    }
-
-    @Test
-    fun `Should warn if tumor doid is neuroendocrine type but not small cell type`() {
-        val tumorDetails = TumorTestFactory.withDoids(DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID)
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(tumorDetails))
+    fun `Should be undetermined if tumor has neuroendocrine component`() {
+        val tumorDetails = TumorTestFactory.withDoids(DoidConstants.NEUROENDOCRINE_DOIDS.first())
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumorDetails))
     }
 
     @Test
     fun `Should fail if tumor is of other type than small cell`() {
-        val tumorDetails = TumorTestFactory.withDoidAndType("wrong doid", "wrong type")
+        val tumorDetails = TumorTestFactory.withDoidAndName("wrong doid", "wrong name")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
-    }
-
-    companion object {
-        const val MATCHING_DOID = "matching doid"
-        const val SOME_OTHER_DOID = "some doid"
     }
 }

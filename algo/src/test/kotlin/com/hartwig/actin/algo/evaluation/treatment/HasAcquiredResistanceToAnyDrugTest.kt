@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.tumor
+package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.algo.EvaluationResult

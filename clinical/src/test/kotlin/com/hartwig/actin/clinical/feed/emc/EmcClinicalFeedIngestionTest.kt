@@ -73,7 +73,6 @@ class EmcClinicalFeedIngestionTest {
 
     @Test
     fun `Should load feed data from json and convert to clinical record`() {
-
         val validationErrors = curationDatabase.validate()
         assertThat(validationErrors).isEmpty()
 

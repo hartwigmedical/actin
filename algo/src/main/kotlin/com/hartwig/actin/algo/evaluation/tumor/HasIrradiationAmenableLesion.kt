@@ -6,8 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 
-class HasIrradiationAmenableLesion(private val hasMetastaticCancer: HasMetastaticCancer) :
-    EvaluationFunction {
+class HasIrradiationAmenableLesion(private val hasMetastaticCancer: HasMetastaticCancer) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (hasMetastaticCancer.evaluate(record).result) {

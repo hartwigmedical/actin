@@ -8,36 +8,35 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
-class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val categoryOfCUP: TumorTypeInput) : EvaluationFunction {
+class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val tumorType: TumorTypeInput) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined if patient has CUP (unknown tumor location/type)")
+            return EvaluationFactory.undetermined("Undetermined if patient has CUP")
         }
-        val tumorSubLocation = record.tumor.primaryTumorSubLocation
-        val isCUP = tumorSubLocation != null && tumorSubLocation == CUP_PRIMARY_TUMOR_SUB_LOCATION
-        val hasCorrectCUPCategory = DoidEvaluationFunctions.isOfExclusiveDoidType(
-            doidModel, tumorDoids, categoryOfCUP.doid()
-        )
+        val isCUP = TumorEvaluationFunctions.hasCancerOfUnknownPrimary(record.tumor.name)
+        val hasTargetTumorType = DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, tumorDoids, tumorType.doid())
         val hasOrganSystemCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ORGAN_SYSTEM_CANCER_DOID)
-        if (hasCorrectCUPCategory && !hasOrganSystemCancer) {
-            return if (isCUP) {
-                EvaluationFactory.pass("Has CUP")
-            } else {
-                EvaluationFactory.warn("Uncertain if tumor type " + categoryOfCUP.display() + " is actually CUP")
-            }
-        }
-        return if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.CANCER_DOID)) {
-            if (isCUP) {
-                EvaluationFactory.undetermined("Cancer type is CUP but exact tumor type is unknown")
-            } else {
-                EvaluationFactory.undetermined("Undetermined if unknown tumor type can be considered CUP")
-            }
-        } else EvaluationFactory.fail("Has no CUP")
-    }
 
-    companion object {
-        const val CUP_PRIMARY_TUMOR_SUB_LOCATION: String = "CUP"
+        return when {
+            hasTargetTumorType && !hasOrganSystemCancer -> {
+                if (isCUP) {
+                    EvaluationFactory.pass("Has cancer of unknown primary")
+                } else {
+                    EvaluationFactory.warn("Undetermined if tumor ${record.tumor.name} may be cancer of unknown primary")
+                }
+            }
+
+            DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.CANCER_DOID) -> {
+                if (isCUP) {
+                    EvaluationFactory.undetermined("Has cancer of unknown primary but undetermined if ${tumorType.display()}")
+                } else {
+                    EvaluationFactory.undetermined("Undetermined if tumor ${record.tumor.name} may be cancer of unknown primary")
+                }
+            }
+
+            else -> EvaluationFactory.fail("Does not have cancer of unknown primary")
+        }
     }
 }

@@ -27,7 +27,7 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
 
     @Test
     fun shouldWarnForWarnSolidCancerDoids() {
-        val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.iterator().next()
+        val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.first()
         assertEvaluation(
             EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid))
         )
@@ -35,8 +35,8 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
 
     @Test
     fun shouldFailForNonSolidCancerDoids() {
-        val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.iterator().next()
-        val firstNonSolidDoid: String = HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS.iterator().next()
+        val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.first()
+        val firstNonSolidDoid: String = DoidConstants.NON_SOLID_CANCER_DOIDS.first()
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid, firstNonSolidDoid))
@@ -51,7 +51,7 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
     companion object {
         private fun createTestDoidModel(): DoidModel {
             val childParentMap: Map<String, String> = listOf(
-                HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS,
+                DoidConstants.NON_SOLID_CANCER_DOIDS,
                 HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS
             ).flatten().associateWith { DoidConstants.CANCER_DOID }
 

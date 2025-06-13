@@ -9,20 +9,18 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 class HasLocallyAdvancedCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage =
-            record.tumor.stage ?: return EvaluationFactory.undetermined("Locally advanced cancer undetermined (tumor stage missing)")
-        return if (isStageMatch(stage, TumorStage.III)) {
-            EvaluationFactory.pass("Stage $stage is considered locally advanced")
-        } else if (isStageMatch(stage, TumorStage.II)) {
-            EvaluationFactory.warn("Unclear if stage $stage is considered locally advanced")
-        } else {
-            EvaluationFactory.fail("Stage $stage is not considered locally advanced")
-        }
-    }
+        val stage = record.tumor.stage ?: return EvaluationFactory.undetermined("Undetermined if locally advanced cancer (tumor stage missing)")
 
-    companion object {
-        private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
-            return stage == stageToMatch || stage.category == stageToMatch
+        return when {
+            (stage.category ?: stage) == TumorStage.III -> {
+                EvaluationFactory.pass("Stage ${stage.display()} is considered locally advanced")
+            }
+
+            (stage.category ?: stage) == TumorStage.II -> {
+                EvaluationFactory.undetermined("Undetermined if stage ${stage.display()} is considered locally advanced")
+            }
+
+            else -> EvaluationFactory.fail("Stage ${stage.display()} is not considered locally advanced")
         }
     }
 }

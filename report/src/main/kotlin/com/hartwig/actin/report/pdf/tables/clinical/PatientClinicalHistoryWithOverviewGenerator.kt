@@ -42,7 +42,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
             "Gender" to record.patient.gender.display(),
             "Birth year" to record.patient.birthYear.toString(),
             "WHO" to whoStatus(record.clinicalStatus.who),
-            "Tumor" to tumor(record.tumor),
+            "Tumor" to record.tumor.name,
             "Lesions" to TumorDetailsInterpreter.lesions(record.tumor),
             "Stage" to stage(record.tumor),
             "Measurable disease (RECIST)" to measurableDisease(record.tumor),
@@ -67,30 +67,6 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     private fun whoStatus(who: Int?): String {
         return who?.toString() ?: Formats.VALUE_UNKNOWN
-    }
-
-    private fun tumor(tumor: TumorDetails): String {
-        val location = tumorLocation(tumor)
-        val type = tumorType(tumor)
-        return if (location == null || type == null) {
-            Formats.VALUE_UNKNOWN
-        } else {
-            location + if (type.isNotEmpty()) " - $type" else ""
-        }
-    }
-
-    private fun tumorLocation(tumor: TumorDetails): String? {
-        return tumor.primaryTumorLocation?.let { tumorLocation ->
-            val tumorSubLocation = tumor.primaryTumorSubLocation
-            return if (!tumorSubLocation.isNullOrEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
-        }
-    }
-
-    private fun tumorType(tumor: TumorDetails): String? {
-        return tumor.primaryTumorType?.let { tumorType ->
-            val tumorSubType = tumor.primaryTumorSubType
-            if (!tumorSubType.isNullOrEmpty()) tumorSubType else tumorType
-        }
     }
 
     private fun stage(tumor: TumorDetails): String {

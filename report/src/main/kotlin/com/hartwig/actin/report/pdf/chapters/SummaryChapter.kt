@@ -47,7 +47,7 @@ class SummaryChapter(
 
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOf(
-            "Tumor: " to tumor(report.patientRecord.tumor),
+            "Tumor: " to report.patientRecord.tumor.name,
             " | Lesions: " to TumorDetailsInterpreter.lesions(report.patientRecord.tumor),
             " | $stageTitle: " to stages
         )
@@ -77,30 +77,6 @@ class SummaryChapter(
 
     private fun whoStatus(who: Int?): String {
         return who?.toString() ?: Formats.VALUE_UNKNOWN
-    }
-
-    private fun tumor(tumor: TumorDetails): String {
-        val location = tumorLocation(tumor)
-        val type = tumorType(tumor)
-        return if (location == null || type == null) {
-            Formats.VALUE_UNKNOWN
-        } else {
-            location + if (type.isNotEmpty()) " - $type" else ""
-        }
-    }
-
-    private fun tumorLocation(tumor: TumorDetails): String? {
-        return tumor.primaryTumorLocation?.let { tumorLocation ->
-            val tumorSubLocation = tumor.primaryTumorSubLocation
-            return if (!tumorSubLocation.isNullOrEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
-        }
-    }
-
-    private fun tumorType(tumor: TumorDetails): String? {
-        return tumor.primaryTumorType?.let { tumorType ->
-            val tumorSubType = tumor.primaryTumorSubType
-            if (!tumorSubType.isNullOrEmpty()) tumorSubType else tumorType
-        }
     }
 
     private fun stageSummary(tumor: TumorDetails): Pair<String, String> {

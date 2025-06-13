@@ -16,11 +16,7 @@
     "hasHartwigSequencing": true
   },
   "tumor": {
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Carcinoma",
-    "primaryTumorSubType": "Adenocarcinoma",
-    "primaryTumorExtraDetails": "",
+    "name": "Lung adenocarcinoma",
     "doids": [
       "3910"
     ],
@@ -104,10 +100,7 @@
   ],
   "priorPrimaries": [
     {
-      "tumorLocation": "Skin",
-      "tumorSubLocation": "neck",
-      "tumorType": "Carcinoma",
-      "tumorSubType": "Squamous cell carcinoma",
+      "name": "Skin squamous cell caricnoma",
       "doids": [
         "3151"
       ],

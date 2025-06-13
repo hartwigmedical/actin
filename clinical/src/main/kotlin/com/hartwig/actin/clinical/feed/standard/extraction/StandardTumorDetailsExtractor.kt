@@ -34,13 +34,7 @@ class StandardTumorDetailsExtractor(
         val tumorDetailsFromEhr = tumorDetails(feedPatientRecord)
         val combinedTumorResponse = combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromOtherConditions)
         return combinedTumorResponse.config()?.let {
-            val curatedTumorDetails = tumorDetailsFromEhr.copy(
-                primaryTumorLocation = it.primaryTumorLocation,
-                primaryTumorType = it.primaryTumorType,
-                primaryTumorSubLocation = it.primaryTumorSubLocation,
-                primaryTumorSubType = it.primaryTumorSubType,
-                doids = it.doids
-            )
+            val curatedTumorDetails = tumorDetailsFromEhr.copy(name = it.name, doids = it.doids)
             ExtractionResult(
                 curatedTumorDetails.copy(derivedStages = tumorStageDeriver.derive(curatedTumorDetails)),
                 combinedTumorResponse.extractionEvaluation
@@ -56,22 +50,21 @@ class StandardTumorDetailsExtractor(
 
     private fun tumorDetails(ehrPatientRecord: FeedPatientRecord): TumorDetails {
         with(ehrPatientRecord.tumorDetails) {
-            val hasBrainOrGliomaTumor = tumorLocation == "Brain" || tumorType == "Glioma"
+            val hasGliomaTumor = listOfNotNull(tumorType, tumorLocation).any { it.lowercase().contains("glioma") }
             return TumorDetails(
-                primaryTumorLocation = tumorLocation,
-                primaryTumorType = tumorType,
+                name = "",
                 doids = emptySet(),
                 stage = stage?.let { TumorStage.valueOf(it) },
                 hasMeasurableDisease = measurableDisease,
-                hasBrainLesions = if (hasBrainOrGliomaTumor) false else hasBrainLesions,
-                hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else hasActiveBrainLesions,
+                hasBrainLesions = if (hasGliomaTumor) false else hasBrainLesions,
+                hasActiveBrainLesions = if (hasGliomaTumor) false else hasActiveBrainLesions,
                 hasCnsLesions = when {
-                    hasBrainOrGliomaTumor -> false
+                    hasGliomaTumor -> false
                     hasBrainLesions == true -> true
                     else -> null
                 },
                 hasActiveCnsLesions = when {
-                    hasBrainOrGliomaTumor -> false
+                    hasGliomaTumor -> false
                     hasActiveBrainLesions == true -> true
                     else -> null
                 },

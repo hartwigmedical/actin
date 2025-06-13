@@ -12,51 +12,42 @@ import org.junit.Test
 
 class HasLeftSidedColorectalTumorTest {
     @Test
-    fun shouldReturnUndeterminedWhenNoTumorDoidsConfigured() {
+    fun `Should return undetermined when no tumor DOIDs configured`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 
     @Test
-    fun shouldFailWhenTumorIsNotColorectal() {
+    fun `Should fail when tumor is not colorectal`() {
         assertEvaluation(EvaluationResult.FAIL, function().evaluate(withDoids(DoidConstants.PROSTATE_CANCER_DOID)))
     }
 
     @Test
-    fun shouldReturnUndeterminedWhenTumorSubLocationIsUnknownOrMissing() {
-        listOf(null, "", "unknown")
-            .forEach { subLocation: String? ->
-                assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(patientWithTumorSubLocation(subLocation)))
-            }
+    fun `Should pass when name does contain a left string`() {
+        HasLeftSidedColorectalTumor.LEFT_SUB_LOCATIONS.forEach { name: String ->
+            assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName("text" + name + "other text")))
+        }
     }
 
     @Test
-    fun shouldPassWhenLeftTumorSubLocationProvided() {
-        listOf("Rectum", "Descending Colon", "COLON sigmoid", "colon descendens", "rectosigmoid", "Colon sigmoideum")
-            .forEach { subLocation: String? ->
-                assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorSubLocation(subLocation)))
-            }
+    fun `Should fail when name contains a right string`() {
+        HasLeftSidedColorectalTumor.RIGHT_SUB_LOCATIONS.forEach { name: String? ->
+            assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("text" + name + "other text"))))
+        }
     }
 
     @Test
-    fun shouldFailWhenRightTumorSubLocationProvided() {
-        listOf(
-            "Ascending colon",
-            "Colon ascendens",
-            "caecum",
-            "cecum",
-            "transverse COLON",
-            "colon transversum",
-            "flexura hepatica",
-            "hepatic flexure"
-        )
-            .forEach { subLocation: String? ->
-                assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorSubLocation(subLocation)))
-            }
+    fun `Should be undetermined when name does not contain a known left or right string`() {
+        listOf("", "unknown", "some string").forEach { name: String ->
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function().evaluate(patientWithTumorName(name))
+            )
+        }
     }
 
     companion object {
-        private fun patientWithTumorSubLocation(subLocation: String?): PatientRecord {
-            return TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, subLocation)
+        private fun patientWithTumorName(name: String): PatientRecord {
+            return TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, name)
         }
 
         private fun function(): HasLeftSidedColorectalTumor {

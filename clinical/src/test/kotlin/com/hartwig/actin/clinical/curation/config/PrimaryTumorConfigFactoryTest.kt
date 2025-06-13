@@ -21,21 +21,13 @@ class PrimaryTumorConfigFactoryTest {
             fields,
             arrayOf(
                 "input",
-                "primaryTumorLocation",
-                "primaryTumorSubLocation",
-                "primaryTumorType",
-                "primaryTumorSubType",
-                "primaryTumorExtraDetails",
+                "name",
                 "123"
             )
         )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
-        assertThat(config.config.primaryTumorLocation).isEqualTo("primaryTumorLocation")
-        assertThat(config.config.primaryTumorSubLocation).isEqualTo("primaryTumorSubLocation")
-        assertThat(config.config.primaryTumorType).isEqualTo("primaryTumorType")
-        assertThat(config.config.primaryTumorSubType).isEqualTo("primaryTumorSubType")
-        assertThat(config.config.primaryTumorExtraDetails).isEqualTo("primaryTumorExtraDetails")
+        assertThat(config.config.name).isEqualTo("name")
         assertThat(config.config.doids).containsExactly("123")
     }
 
@@ -47,11 +39,7 @@ class PrimaryTumorConfigFactoryTest {
             fields,
             arrayOf(
                 "input",
-                "primaryTumorLocation",
-                "primaryTumorSubLocation",
-                "primaryTumorType",
-                "primaryTumorSubType",
-                "primaryTumorExtraDetails",
+                "name",
                 "123"
             )
         )

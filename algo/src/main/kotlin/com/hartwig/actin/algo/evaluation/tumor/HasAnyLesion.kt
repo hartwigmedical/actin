@@ -5,28 +5,21 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasAnyLesion : EvaluationFunction {
+class HasAnyLesion: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.tumor
-        with(tumorDetails) {
-            if (confirmedCategoricalLesionList().all { it == null } && otherLesions == null && !hasSuspectedLesions()) {
-                return EvaluationFactory.undetermined("Undetermined if lesions are present (lesions data missing)")
-            }
-        }
+        val tumor = record.tumor
 
         return when {
-            tumorDetails.hasConfirmedLesions() -> {
-                EvaluationFactory.pass("Has at least one lesion")
+            tumor.hasConfirmedLesions() -> EvaluationFactory.pass("Has at least one lesion")
+
+            tumor.hasSuspectedLesions() -> EvaluationFactory.warn("Has only suspected lesions - undetermined if has lesions")
+
+            with(tumor) { (confirmedCategoricalLesionList().any { it == null } || otherLesions == null) } -> {
+                EvaluationFactory.undetermined("Undetermined if lesions are present (some lesion data missing)")
             }
 
-            tumorDetails.hasSuspectedLesions() -> {
-                EvaluationFactory.warn("Lesions present but suspected lesions only")
-            }
-
-            else -> {
-                EvaluationFactory.fail("No lesions present")
-            }
+            else -> EvaluationFactory.fail("Has no lesions")
         }
     }
 }

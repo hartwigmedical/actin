@@ -9,11 +9,7 @@
     "sourceId": null
   },
   "tumor": {
-    "primaryTumorLocation": "Ovary",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "",
-    "primaryTumorSubType": "",
-    "primaryTumorExtraDetails": "",
+    "name": "Ovary serous",
     "doids": [
       "0050933"
     ],

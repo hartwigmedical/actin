@@ -12,24 +12,24 @@ import com.hartwig.actin.doid.DoidModel
 class HasMetastaticCancer(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stageEvaluation = HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(record)
+        val metastaticStageEvaluation = HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(record)
         val tumorDoids = record.tumor.doids
-        val stage = record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString(" or ")})"
+        val stageMessage = record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString(" or ")})"
         val potentiallyMetastaticAtStageII =
             DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)
         val isNotStageI = (record.tumor.stage != TumorStage.I) && (record.tumor.derivedStages?.contains(TumorStage.I) != true)
 
         return when {
-            stageEvaluation.result == EvaluationResult.PASS -> {
-                EvaluationFactory.pass("Stage $stage is considered metastatic")
+            metastaticStageEvaluation.result == EvaluationResult.PASS -> {
+                EvaluationFactory.pass("Stage $stageMessage is considered metastatic")
             }
 
-            (isNotStageI && potentiallyMetastaticAtStageII) || stageEvaluation.result == EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.undetermined("Undetermined if stage $stage is considered metastatic")
+            (isNotStageI && potentiallyMetastaticAtStageII) || metastaticStageEvaluation.result == EvaluationResult.UNDETERMINED -> {
+                EvaluationFactory.undetermined("Undetermined if stage $stageMessage is considered metastatic")
             }
 
             else -> {
-                EvaluationFactory.fail("Stage $stage is not considered metastatic")
+                EvaluationFactory.fail("Stage $stageMessage is not considered metastatic")
             }
         }
     }

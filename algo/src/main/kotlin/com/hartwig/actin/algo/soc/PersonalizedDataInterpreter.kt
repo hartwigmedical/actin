@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
-import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions
+import com.hartwig.actin.algo.evaluation.tumor.TumorEvaluationFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.personalization.Measurement
@@ -27,7 +27,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
                 hasLungLesions to LocationGroup.BRONCHUS_AND_LUNG,
                 hasLymphNodeLesions to LocationGroup.LYMPH_NODES,
                 hasLiverLesions to LocationGroup.LIVER_AND_INTRAHEPATIC_BILE_DUCTS,
-                TumorTypeEvaluationFunctions.hasPeritonealMetastases(this) to LocationGroup.PERITONEUM,
+                TumorEvaluationFunctions.hasPeritonealMetastases(this) to LocationGroup.PERITONEUM,
             ).filter { it.first == true }.map { it.second }.toSet()
         }
 
