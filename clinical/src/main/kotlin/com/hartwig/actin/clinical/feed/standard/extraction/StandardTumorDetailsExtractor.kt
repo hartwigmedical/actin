@@ -50,9 +50,7 @@ class StandardTumorDetailsExtractor(
 
     private fun tumorDetails(ehrPatientRecord: FeedPatientRecord): TumorDetails {
         with(ehrPatientRecord.tumorDetails) {
-            val hasGliomaTumor =
-                listOf("glioma").any { tumorType?.lowercase()?.contains(it) == true || tumorLocation?.lowercase()?.contains(it) == true }
-
+            val hasGliomaTumor = listOfNotNull(tumorType, tumorLocation).any { it.lowercase().contains("glioma") }
             return TumorDetails(
                 name = "",
                 doids = emptySet(),

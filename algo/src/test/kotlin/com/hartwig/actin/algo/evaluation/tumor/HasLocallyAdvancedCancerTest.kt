@@ -16,7 +16,7 @@ class HasLocallyAdvancedCancerTest {
 
     @Test
     fun `Should pass with stage III`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)))
     }
 
     @Test
@@ -26,7 +26,7 @@ class HasLocallyAdvancedCancerTest {
 
     @Test
     fun `Should fail with stage I or IV`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.I)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IB)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
     }
 }
