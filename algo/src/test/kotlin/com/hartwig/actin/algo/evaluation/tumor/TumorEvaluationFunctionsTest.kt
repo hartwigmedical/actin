@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -114,7 +115,9 @@ class TumorEvaluationFunctionsTest {
     @Test
     fun `Should return true if patient does have peritoneal metastases`() {
         listOf(
-            "Abdominal lesion located in Peritoneum", "Multiple depositions abdominal and peritoneal", "intraperitoneal"
+            "Abdominal lesion located in Peritoneum",
+            "Multiple depositions abdominal and peritoneal",
+            "intraperitoneal"
         ).forEach { lesion ->
             val tumor = TumorTestFactory.withOtherLesions(listOf(lesion)).tumor
             assertThat(TumorEvaluationFunctions.hasPeritonealMetastases(tumor)).isTrue
@@ -124,5 +127,43 @@ class TumorEvaluationFunctionsTest {
     @Test
     fun `Should return null if patient tumor details are unknown`() {
         assertThat(TumorEvaluationFunctions.hasPeritonealMetastases(TumorDetails())).isNull()
+    }
+
+    @Test
+    fun `Should return true for adequate categorical stage`() {
+        assertThat(TumorEvaluationFunctions.isStageMatch(TumorStage.I, setOf(TumorStage.I, TumorStage.II))).isTrue()
+    }
+
+    @Test
+    fun `Should return true for adequate non-categorical stage`() {
+        assertThat(TumorEvaluationFunctions.isStageMatch(TumorStage.IA, setOf(TumorStage.I, TumorStage.II))).isTrue()
+    }
+
+    @Test
+    fun `Should return false for wrong stage`() {
+        assertThat(TumorEvaluationFunctions.isStageMatch(TumorStage.III, setOf(TumorStage.I, TumorStage.II))).isFalse()
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception when using this rule to look for a non-categorical stage`() {
+        TumorEvaluationFunctions.isStageMatch(TumorStage.IA, setOf(TumorStage.IA, TumorStage.II))
+    }
+
+    @Test
+    fun `Should return true for first boolean in case of adequate stage`() {
+        assertThat(TumorEvaluationFunctions.isSpecificStageMatch(TumorStage.IA, setOf(TumorStage.IA, TumorStage.II)).first).isTrue()
+        assertThat(TumorEvaluationFunctions.isSpecificStageMatch(TumorStage.IIA, setOf(TumorStage.IA, TumorStage.II)).first).isTrue()
+    }
+
+    @Test
+    fun `Should return false for first boolean and true for second boolean in case of possible match`() {
+        assertThat(TumorEvaluationFunctions.isSpecificStageMatch(TumorStage.I, setOf(TumorStage.IA, TumorStage.II)).first).isFalse()
+        assertThat(TumorEvaluationFunctions.isSpecificStageMatch(TumorStage.I, setOf(TumorStage.IA, TumorStage.II)).second).isTrue()
+    }
+
+    @Test
+    fun `Should return false for both booleans for wrong stage in sub-stage evaluation`() {
+        assertThat(TumorEvaluationFunctions.isSpecificStageMatch(TumorStage.III, setOf(TumorStage.IA, TumorStage.II)).first).isFalse()
+        assertThat(TumorEvaluationFunctions.isSpecificStageMatch(TumorStage.III, setOf(TumorStage.IA, TumorStage.II)).second).isFalse()
     }
 }

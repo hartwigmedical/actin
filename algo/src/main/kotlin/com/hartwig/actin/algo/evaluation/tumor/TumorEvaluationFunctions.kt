@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidTerm
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.DoidModel
 
 object TumorEvaluationFunctions {
@@ -33,6 +34,17 @@ object TumorEvaluationFunctions {
 
     fun hasSuspectedPeritonealMetastases(tumor: TumorDetails): Boolean? {
         return evaluatePeritonealMetastases(tumor.otherSuspectedLesions)
+    }
+
+    fun isStageMatch(stage: TumorStage, stagesToMatch: Set<TumorStage>): Boolean {
+        if (stagesToMatch.any { it.category != null }) throw IllegalArgumentException("This function cannot be used to evaluate specific (non-categorical) stages. Use isSpecificStageMatch instead.")
+        return stage in stagesToMatch || stage.category in stagesToMatch
+    }
+
+    fun isSpecificStageMatch(stage: TumorStage, stagesToMatch: Set<TumorStage>): Pair<Boolean, Boolean> {
+        val isCertainMatch = stage in stagesToMatch || stage.category in stagesToMatch
+        val isPotentialMatch = stagesToMatch.any { it.category == stage }
+        return Pair(isCertainMatch, isPotentialMatch)
     }
 
     private fun evaluatePeritonealMetastases(lesions: List<String>?): Boolean? {

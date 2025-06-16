@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.tumor.TumorEvaluationFunctions.isSpecificStageMatch
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
@@ -10,17 +11,16 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.tumor.stage ?: return EvaluationFactory.undetermined("Exact tumor stage undetermined (tumor stage missing)")
-        val stageMessage =
-            record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString(" or ") { it.display() }})"
+        val stageMessage = stage.display()
         val allStagesToMatch = stagesToMatch + additionalStagesToMatch(stagesToMatch)
         val stagesToMatchMessage = stagesToMatch.joinToString(" or ") { it.display() }
 
         return when {
-            stage in allStagesToMatch || stage.category in allStagesToMatch -> {
+            isSpecificStageMatch(stage, allStagesToMatch).first -> {
                 EvaluationFactory.pass("Tumor stage $stageMessage meets requested stage(s) $stagesToMatchMessage")
             }
 
-            allStagesToMatch.any { it.category == stage } -> {
+            isSpecificStageMatch(stage, allStagesToMatch).second -> {
                 EvaluationFactory.undetermined("Undetermined if tumor stage $stageMessage meets requested stage(s) $stagesToMatchMessage")
             }
 
