@@ -181,17 +181,17 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasLocallyAdvancedCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer(), "locally advanced cancer") }
     }
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
         return {
-            DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()))
+            DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()), "metastatic cancer")
         }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer(), "unresectable cancer") }
     }
 
     private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
@@ -210,11 +210,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer(), "unresectable stage III cancer") }
     }
 
     private fun hasRecurrentCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer(), "recurrent cancer") }
     }
 
     private fun meetsSpecificCriteriaRegardingRecurrentCancerCreator(): FunctionCreator {
@@ -222,7 +222,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasIncurableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer(), "incurable cancer") }
     }
 
     private fun hasAnyLesionCreator(): FunctionCreator {
