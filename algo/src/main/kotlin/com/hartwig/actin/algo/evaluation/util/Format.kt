@@ -80,7 +80,7 @@ object Format {
     }
 
     private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =
-        concatStrings(items.map(Displayable::display), separator)
+        concatWithCommaAndSeparator(items.map(Displayable::display), separator, false)
 
     private fun concatStrings(strings: Iterable<String>, separator: String) =
         strings.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER).joinToString(separator)

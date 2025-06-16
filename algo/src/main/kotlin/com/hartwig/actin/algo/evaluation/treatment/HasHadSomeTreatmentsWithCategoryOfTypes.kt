@@ -20,7 +20,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
             effectiveTreatmentHistory, category, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
         )
 
-        val typesList = Format.concatWithCommaAndOr(types.map { it.display() })
+        val typesList = Format.concatItemsWithOr(types)
         return when {
             treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
                 EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
