@@ -27,6 +27,4 @@ data class CohortConfig(
     val inclusionCriterion: List<InclusionCriterionConfig>,
 )
 
-data class InclusionCriterionConfig(val inclusionRule: String, val references: List<InclusionCriterionReferenceConfig>?)
-
-data class InclusionCriterionReferenceConfig(val id: String, val text: String)
+data class InclusionCriterionConfig(val inclusionRule: String, val references: List<String>?)

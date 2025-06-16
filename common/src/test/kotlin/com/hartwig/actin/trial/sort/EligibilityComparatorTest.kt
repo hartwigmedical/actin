@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -13,23 +12,23 @@ class EligibilityComparatorTest {
     fun `Should sort eligibilities`() {
         val eligibilities = listOf(
             createWithoutReferences(),
-            createWithReferenceId("Else"),
-            createWithReferenceId("I-01"),
-            createWithReferenceId("I-01"),
-            createWithReferenceId("AAA"),
+            createWithReference("Else"),
+            createWithReference("I-01"),
+            createWithReference("I-01"),
+            createWithReference("AAA"),
             createWithoutReferences()
         ).sortedWith(EligibilityComparator())
 
-        assertThat(eligibilities[0].references.first().id).isEqualTo("I-01")
-        assertThat(eligibilities[1].references.first().id).isEqualTo("I-01")
-        assertThat(eligibilities[2].references.first().id).isEqualTo("AAA")
-        assertThat(eligibilities[3].references.first().id).isEqualTo("Else")
+        assertThat(eligibilities[0].references.first()).isEqualTo("I-01")
+        assertThat(eligibilities[1].references.first()).isEqualTo("I-01")
+        assertThat(eligibilities[2].references.first()).isEqualTo("AAA")
+        assertThat(eligibilities[3].references.first()).isEqualTo("Else")
         assertThat(eligibilities[4].references).isEmpty()
         assertThat(eligibilities[5].references).isEmpty()
     }
 
-    private fun createWithReferenceId(id: String): Eligibility {
-        return createWithoutReferences().copy(references = setOf(CriterionReference(id = id, text = "")))
+    private fun createWithReference(reference: String): Eligibility {
+        return createWithoutReferences().copy(references = setOf(reference))
     }
 
     private fun createWithoutReferences(): Eligibility {

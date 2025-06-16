@@ -46,8 +46,8 @@ class PaverTest {
                 id = "1",
                 impact = PaveImpact(
                     gene = "gene1",
-                    transcript = "trans1",
-                    canonicalEffect = "missense_variant",
+                    canonicalTranscript = "trans1",
+                    canonicalEffects = listOf(PaveVariantEffect.MISSENSE),
                     canonicalCodingEffect = PaveCodingEffect.MISSENSE,
                     spliceRegion = false,
                     hgvsCodingImpact = "c.6A>C",
@@ -56,7 +56,7 @@ class PaverTest {
                     worstCodingEffect = PaveCodingEffect.MISSENSE,
                     genesAffected = 1
                 ),
-                transcriptImpact = listOf(PaveTranscriptImpact(
+                transcriptImpacts = listOf(PaveTranscriptImpact(
                     geneId = "gene_id1",
                     gene = "gene1",
                     transcript = "trans1",
@@ -74,8 +74,8 @@ class PaverTest {
                 id = "2",
                 impact = PaveImpact(
                     gene = "gene1",
-                    transcript = "trans1",
-                    canonicalEffect = "splice_donor_variant&synonymous_variant",
+                    canonicalTranscript = "trans1",
+                    canonicalEffects = listOf(PaveVariantEffect.SPLICE_DONOR, PaveVariantEffect.SYNONYMOUS),
                     canonicalCodingEffect = PaveCodingEffect.SPLICE,
                     spliceRegion = true,
                     hgvsCodingImpact = "c.18A>G",
@@ -84,7 +84,7 @@ class PaverTest {
                     worstCodingEffect = PaveCodingEffect.SPLICE,
                     genesAffected = 1
                 ),
-                transcriptImpact = listOf(PaveTranscriptImpact(
+                transcriptImpacts = listOf(PaveTranscriptImpact(
                     geneId = "gene_id1",
                     gene = "gene1",
                     transcript = "trans1",
@@ -98,7 +98,7 @@ class PaverTest {
     }
 
     @Test
-    fun `Should error if missing PAVE Impact field`() {
+    fun `Should error if missing PAVE impact field`() {
         assertThatThrownBy { parsePaveImpact(emptyList()) }
             .isInstanceOf(RuntimeException::class.java)
             .hasMessage("Missing PAVE impact field")
@@ -111,15 +111,15 @@ class PaverTest {
     @Test
     fun `Should parse PAVE impact field`() {
         val parsed = parsePaveImpact(listOf(
-            "gene_id", "transcript", "canonical_effect", "MISSENSE", "false", "c.coding", "p.protein",
+            "gene_id", "transcript", "missense_variant&inframe_deletion", "MISSENSE", "false", "c.coding", "p.protein",
             "other_reportable_effects", "MISSENSE", "1",
         ))
 
         assertThat(parsed).isEqualTo(
             PaveImpact(
                 gene = "gene_id",
-                transcript = "transcript",
-                canonicalEffect = "canonical_effect",
+                canonicalTranscript = "transcript",
+                canonicalEffects = listOf(PaveVariantEffect.MISSENSE, PaveVariantEffect.INFRAME_DELETION),
                 canonicalCodingEffect = PaveCodingEffect.MISSENSE,
                 spliceRegion = false,
                 hgvsCodingImpact = "c.coding",
@@ -131,7 +131,7 @@ class PaverTest {
     }
 
     @Test
-    fun `Should error if missing PAVE Transcript Impact field`() {
+    fun `Should error if missing PAVE transcript impact field`() {
         assertThatThrownBy { parsePaveTranscriptImpact(emptyList()) }
             .isInstanceOf(RuntimeException::class.java)
             .hasMessage("Missing PAVE_TI field")
