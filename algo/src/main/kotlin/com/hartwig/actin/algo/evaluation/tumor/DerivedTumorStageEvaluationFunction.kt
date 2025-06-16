@@ -7,12 +7,14 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
-internal class DerivedTumorStageEvaluationFunction(private val originalFunction: EvaluationFunction) : EvaluationFunction {
+internal class DerivedTumorStageEvaluationFunction(private val originalFunction: EvaluationFunction, private val messageEnd: String) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.tumor.stage != null) {
             return originalFunction.evaluate(record)
         }
+
         val derivedResults = record.tumor.derivedStages?.associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
 
         if (derivedResults.isNullOrEmpty()) {
@@ -22,24 +24,12 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
             return followResultOfSingleDerivation(derivedResults)
         }
 
-        return when {
-            allDerivedResultsMatch(derivedResults, EvaluationResult.PASS) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.PASS)
-            }
+        val uniqueResults = derivedResults.values.toSet()
 
-            anyDerivedResultMatches(derivedResults, EvaluationResult.PASS) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED)
-            }
-
-            anyDerivedResultMatches(derivedResults, EvaluationResult.WARN) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN)
-            }
-
-            allDerivedResultsMatch(derivedResults, EvaluationResult.NOT_EVALUATED) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.NOT_EVALUATED)
-            }
-
-            else -> createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL)
+        return if (uniqueResults.size == 1) {
+            createEvaluationForDerivedResult(derivedResults, uniqueResults.first().result)
+        } else {
+            EvaluationFactory.undetermined("Undetermined if patient has $messageEnd")
         }
     }
 
@@ -77,14 +67,6 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
 
                 else -> throw IllegalArgumentException()
             }
-        }
-
-        private fun anyDerivedResultMatches(derivedResults: Map<TumorStage, Evaluation>, result: EvaluationResult): Boolean {
-            return derivedResults.values.any { it.result == result }
-        }
-
-        private fun allDerivedResultsMatch(derivedResults: Map<TumorStage, Evaluation>, result: EvaluationResult): Boolean {
-            return derivedResults.values.all { it.result == result }
         }
     }
 }
