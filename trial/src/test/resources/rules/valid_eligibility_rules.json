@@ -896,7 +896,7 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_HLA_TYPE_X",
+    "eligibilityRule": "HAS_ANY_HLA_TYPE_X",
     "usedStatus": "UNUSED"
   },
   {
@@ -953,6 +953,10 @@
   },
   {
     "eligibilityRule": "PROTEIN_X_IS_WILD_TYPE_BY_IHC",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "EXPRESSION_OF_PROTEIN_X_BY_IHC_MUST_BE_AVAILABLE",
     "usedStatus": "UNUSED"
   },
   {
