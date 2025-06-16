@@ -24,28 +24,12 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
             return followResultOfSingleDerivation(derivedResults)
         }
 
-        return when {
-            allDerivedResultsMatch(derivedResults, EvaluationResult.PASS) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.PASS)
-            }
+        val uniqueResults = derivedResults.values.toSet()
 
-            allDerivedResultsMatch(derivedResults, EvaluationResult.NOT_EVALUATED) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.NOT_EVALUATED)
-            }
-
-            allDerivedResultsMatch(derivedResults, EvaluationResult.WARN) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN)
-            }
-
-            allDerivedResultsMatch(derivedResults, EvaluationResult.UNDETERMINED) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED)
-            }
-
-            allDerivedResultsMatch(derivedResults, EvaluationResult.FAIL) -> {
-                createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL)
-            }
-
-            else -> EvaluationFactory.undetermined("Undetermined if patient has $messageEnd")
+        return if (uniqueResults.size == 1) {
+            createEvaluationForDerivedResult(derivedResults, uniqueResults.first().result)
+        } else {
+            EvaluationFactory.undetermined("Undetermined if patient has $messageEnd")
         }
     }
 
@@ -83,10 +67,6 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
 
                 else -> throw IllegalArgumentException()
             }
-        }
-
-        private fun allDerivedResultsMatch(derivedResults: Map<TumorStage, Evaluation>, result: EvaluationResult): Boolean {
-            return derivedResults.values.all { it.result == result }
         }
     }
 }
