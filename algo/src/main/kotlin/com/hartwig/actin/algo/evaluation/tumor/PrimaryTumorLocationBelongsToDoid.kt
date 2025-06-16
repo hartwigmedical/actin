@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
@@ -12,7 +13,7 @@ import com.hartwig.actin.doid.DoidModel
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
     private val doidsToMatch: Set<String>,
-    private val subLocationQuery: String?
+    private val specificQuery: String?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -29,15 +30,13 @@ class PrimaryTumorLocationBelongsToDoid(
             when {
                 !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined("Unknown tumor type")
 
-                doidsTumorBelongsTo.isNotEmpty() && subLocationQuery != null -> {
-                    val subLocation = record.tumor.primaryTumorSubLocation
+                doidsTumorBelongsTo.isNotEmpty() && specificQuery != null -> {
+                    val name = record.tumor.name
                     when {
-                        subLocation != null && subLocation.lowercase().contains(subLocationQuery.lowercase()) ->
-                            EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo with sub-location $subLocation")
+                        name.lowercase().contains(specificQuery.lowercase()) ->
+                            EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo with specific request '$specificQuery'")
 
-                        subLocation == null -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo with unknown sub-location")
-                        else -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo but sub-location $subLocation " +
-                                "does not match '$subLocationQuery'")
+                        else -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo but undetermined if '$specificQuery'")
                     }
                 }
 
@@ -79,7 +78,7 @@ class PrimaryTumorLocationBelongsToDoid(
     }
 
     private fun hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids: Set<String>, fullDoidToMatchTree: Set<String>): Boolean {
-        return tumorDoids.intersect(NEUROENDOCRINE_DOIDS).isNotEmpty() && fullDoidToMatchTree.intersect(NEUROENDOCRINE_DOIDS).isEmpty()
+        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isNotEmpty() && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
     }
 
     private fun doidsToTerms(doids: Set<String>): Set<String> {

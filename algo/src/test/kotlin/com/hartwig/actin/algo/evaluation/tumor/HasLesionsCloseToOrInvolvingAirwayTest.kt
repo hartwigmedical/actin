@@ -10,7 +10,7 @@ import org.junit.Test
 class HasLesionsCloseToOrInvolvingAirwayTest {
 
     private val function = HasLesionsCloseToOrInvolvingAirway(
-        TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.TRACHEAL_CANCER, "tracheal cancer")
+        TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.TRACHEAL_CANCER_DOID, "tracheal cancer")
     )
 
     @Test
@@ -39,7 +39,7 @@ class HasLesionsCloseToOrInvolvingAirwayTest {
     fun `Should pass if patient has tracheal cancer`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withDoids(DoidConstants.TRACHEAL_CANCER))
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.TRACHEAL_CANCER_DOID))
         )
     }
 
