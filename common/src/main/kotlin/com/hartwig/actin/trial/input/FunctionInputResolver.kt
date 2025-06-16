@@ -31,6 +31,7 @@ import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
 import com.hartwig.actin.trial.input.single.ManyDrugsTwoIntegers
 import com.hartwig.actin.trial.input.single.ManyGenes
+import com.hartwig.actin.trial.input.single.ManyHlaAlleles
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
@@ -44,7 +45,6 @@ import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
-import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneHlaGroup
 import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
@@ -302,8 +302,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_HLA_ALLELE -> {
-                    createOneHlaAlleleInput(function)
+                FunctionInput.MANY_HLA_ALLELES -> {
+                    createManyHlaAllelesInput(function)
                     return true
                 }
 
@@ -756,13 +756,15 @@ class FunctionInputResolver(
         return toStringList(function.parameters.first()).map(TumorStage::valueOf).toSet()
     }
 
-    fun createOneHlaAlleleInput(function: EligibilityFunction): OneHlaAllele {
-        assertParamConfig(function, FunctionInput.ONE_HLA_ALLELE, 1)
-        val allele = function.parameters.first() as String
-        if (!MolecularInputChecker.isHlaAllele(allele)) {
-            throw IllegalArgumentException("Not a proper HLA allele: $allele")
+    fun createManyHlaAllelesInput(function: EligibilityFunction): ManyHlaAlleles {
+        assertParamConfig(function, FunctionInput.MANY_HLA_ALLELES, 1)
+        val alleles = toStringList(function.parameters.first()).toSet()
+        for (allele in alleles) {
+            if (!MolecularInputChecker.isHlaAllele(allele)) {
+                throw IllegalArgumentException("Not a proper HLA allele: $allele")
+            }
         }
-        return OneHlaAllele(allele)
+        return ManyHlaAlleles(alleles = alleles)
     }
 
     fun createOneHlaGroupInput(function: EligibilityFunction): OneHlaGroup {

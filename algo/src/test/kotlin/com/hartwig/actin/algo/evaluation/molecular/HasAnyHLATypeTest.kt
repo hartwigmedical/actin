@@ -9,10 +9,10 @@ import org.junit.Test
 private const val CORRECT_HLA_GROUP = "A*02"
 private val CORRECT_HLA = HlaAllele(name = "$CORRECT_HLA_GROUP:01", tumorCopyNumber = 1.0, hasSomaticMutations = false)
 
-class HasSpecificHLATypeTest {
+class HasAnyHLATypeTest {
 
-    private val functionWithSpecificMatch = HasSpecificHLAType(CORRECT_HLA.name)
-    private val functionWithGroupMatch = HasSpecificHLAType(CORRECT_HLA_GROUP, matchOnHlaGroup = true)
+    private val functionWithSpecificMatch = HasAnyHLAType(setOf(CORRECT_HLA.name, "A*02:07"))
+    private val functionWithGroupMatch = HasAnyHLAType(setOf(CORRECT_HLA_GROUP), matchOnHlaGroup = true)
 
     @Test
     fun `Should pass if correct HLA allele present`() {

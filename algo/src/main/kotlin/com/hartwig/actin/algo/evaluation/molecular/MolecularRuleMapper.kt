@@ -75,7 +75,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
-            EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
+            EligibilityRule.HAS_ANY_HLA_TYPE_X to hasAnyHLATypeCreator(),
             EligibilityRule.HAS_HLA_GROUP_X to hasSpecificHLAGroupCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
@@ -90,6 +90,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIhcCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIhcCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIhcCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_MUST_BE_AVAILABLE to hasAvailableProteinExpressionCreator(),
             EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(),
@@ -340,14 +341,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasSpecificHLAGroupCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val hlaGroupToFind = functionInputResolver().createOneHlaGroupInput(function)
-            HasSpecificHLAType(hlaGroupToFind.group, matchOnHlaGroup = true)
+            HasAnyHLAType(setOf(hlaGroupToFind.group), matchOnHlaGroup = true)
         }
     }
 
-    private fun hasSpecificHLATypeCreator(): FunctionCreator {
+    private fun hasAnyHLATypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)
-            HasSpecificHLAType(hlaAlleleToFind.allele)
+            val hlaAllelesToFind = functionInputResolver().createManyHlaAllelesInput(function)
+            HasAnyHLAType(hlaAllelesToFind.alleles)
         }
     }
 
@@ -401,6 +402,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun proteinIsWildTypeByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             ProteinIsWildTypeByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
+        }
+    }
+
+    private fun hasAvailableProteinExpressionCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasAvailableProteinExpression(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 

@@ -23,6 +23,7 @@ import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
 import com.hartwig.actin.trial.input.single.ManyDrugsTwoIntegers
 import com.hartwig.actin.trial.input.single.ManyGenes
+import com.hartwig.actin.trial.input.single.ManyHlaAlleles
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
@@ -35,7 +36,6 @@ import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
-import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneHlaGroup
 import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
@@ -691,14 +691,13 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one hla allele input`() {
-        val rule: EligibilityRule = firstOfType(FunctionInput.ONE_HLA_ALLELE)
-        val allele = "A*02:01"
-        val valid: EligibilityFunction = create(rule, listOf(allele))
+    fun `Should resolve functions with many hla alleles input`() {
+        val rule: EligibilityRule = firstOfType(FunctionInput.MANY_HLA_ALLELES)
+        val valid: EligibilityFunction = create(rule, listOf("A*02:01;A*02:02"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = OneHlaAllele(allele)
-        assertThat(resolver.createOneHlaAlleleInput(valid)).isEqualTo(expected)
+        val expected = ManyHlaAlleles(setOf("A*02:01", "A*02:02"))
+        assertThat(resolver.createManyHlaAllelesInput(valid)).isEqualTo(expected)
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an HLA allele")))!!).isFalse
