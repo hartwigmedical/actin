@@ -11,7 +11,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val type = parts[fields["type"]!!]
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        val curationConfig = when (type) {
+        return when (type) {
             "complication" -> ComplicationConfigFactory(icdModel).create(fields, parts)
             "other_condition" -> OtherConditionConfigFactory(icdModel).create(fields, parts)
             "infection" -> InfectionConfigFactory(icdModel).create(fields, parts)
@@ -20,7 +20,6 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
             "toxicity" -> ToxicityConfigFactory(icdModel).create(fields, parts)
             else -> generateNoTypeError(type, input, ignore)
         }
-        return curationConfig
     }
 
 
