@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
-import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 
 
