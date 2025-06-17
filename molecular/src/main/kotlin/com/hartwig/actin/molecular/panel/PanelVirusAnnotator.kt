@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 class PanelVirusAnnotator {
 
     fun annotate(viruses: Set<SequencedVirus>): List<Virus> {
-        return (viruses.map { createVirus(it) })
+        return viruses.map { createVirus(it) }
     }
 
     private fun createVirus(sequencedVirus: SequencedVirus): Virus {
