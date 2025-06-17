@@ -66,7 +66,7 @@ class HasNonSquamousNSCLCTest {
     fun `Should return fail when lung cancer that is not potentially non-squamous NSCLC`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function().evaluate(
-                TumorTestFactory.withDoids(DoidConstants.LUNG_SARCOMA)
+                TumorTestFactory.withDoids(DoidConstants.LUNG_SARCOMA_DOID)
             )
         )
     }

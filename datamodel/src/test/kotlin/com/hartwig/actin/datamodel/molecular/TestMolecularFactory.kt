@@ -351,11 +351,11 @@ object TestMolecularFactory {
         transcriptId = "",
         hgvsCodingImpact = "",
         hgvsProteinImpact = "",
-        affectedCodon = 0,
+        affectedCodon = null,
         affectedExon = null,
         inSpliceRegion = null,
         effects = emptySet(),
-        codingEffect = CodingEffect.NONE,
+        codingEffect = null,
     )
 
     fun createProperVariant() = Variant(
@@ -369,10 +369,10 @@ object TestMolecularFactory {
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
             affectedCodon = 600,
+            affectedExon = 15,
             inSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
-            codingEffect = CodingEffect.MISSENSE,
-            affectedExon = null
+            codingEffect = CodingEffect.MISSENSE
         ),
         otherImpacts = emptySet(),
         extendedVariantDetails = ExtendedVariantDetails(

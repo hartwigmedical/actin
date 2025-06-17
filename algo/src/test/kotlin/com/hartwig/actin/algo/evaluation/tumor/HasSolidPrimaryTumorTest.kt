@@ -27,7 +27,7 @@ class HasSolidPrimaryTumorTest {
 
     @Test
     fun shouldWarnForWarnSolidCancerDoids() {
-        val firstWarnDoid: String = HasSolidPrimaryTumor.WARN_SOLID_CANCER_DOIDS.iterator().next()
+        val firstWarnDoid = HasSolidPrimaryTumor.WARN_SOLID_CANCER_DOIDS.first()
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid))
@@ -36,8 +36,8 @@ class HasSolidPrimaryTumorTest {
 
     @Test
     fun shouldFailForNonSolidCancerDoids() {
-        val firstWarnDoid: String = HasSolidPrimaryTumor.WARN_SOLID_CANCER_DOIDS.iterator().next()
-        val firstNonSolidDoid: String = HasSolidPrimaryTumor.NON_SOLID_CANCER_DOIDS.iterator().next()
+        val firstWarnDoid = HasSolidPrimaryTumor.WARN_SOLID_CANCER_DOIDS.first()
+        val firstNonSolidDoid = DoidConstants.NON_SOLID_CANCER_DOIDS.first()
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid, firstNonSolidDoid))
@@ -52,7 +52,7 @@ class HasSolidPrimaryTumorTest {
     companion object {
         private fun createTestDoidModel(): DoidModel {
             val childParentMap: Map<String, String> = listOf(
-                HasSolidPrimaryTumor.NON_SOLID_CANCER_DOIDS,
+                DoidConstants.NON_SOLID_CANCER_DOIDS,
                 HasSolidPrimaryTumor.WARN_SOLID_CANCER_DOIDS
             ).flatten().associateWith { DoidConstants.CANCER_DOID }
 

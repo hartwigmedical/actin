@@ -15,15 +15,8 @@ class PrimaryTumorConfigFactory(private val curationDoidValidator: CurationDoidV
         ) { curationDoidValidator.isValidCancerDoidSet(it) }
 
         return ValidatedCurationConfig(
-            PrimaryTumorConfig(
-                input = input,
-                primaryTumorLocation = parts[fields["primaryTumorLocation"]!!],
-                primaryTumorSubLocation = parts[fields["primaryTumorSubLocation"]!!],
-                primaryTumorType = parts[fields["primaryTumorType"]!!],
-                primaryTumorSubType = parts[fields["primaryTumorSubType"]!!],
-                primaryTumorExtraDetails = parts[fields["primaryTumorExtraDetails"]!!],
-                doids = doids ?: emptySet()
-            ), doidValidationErrors
+            PrimaryTumorConfig(input = input, name = parts[fields["name"]!!], doids = doids ?: emptySet()),
+            doidValidationErrors
         )
     }
 }

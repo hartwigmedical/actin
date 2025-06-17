@@ -19,7 +19,7 @@ class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : 
             doidModel,
             tumorDoids,
             setOf(DoidConstants.CANCER_DOID, DoidConstants.BENIGN_NEOPLASM_DOID),
-            NON_SOLID_CANCER_DOIDS,
+            DoidConstants.NON_SOLID_CANCER_DOIDS,
             WARN_SOLID_CANCER_DOIDS
         )
         return when (result) {
@@ -42,8 +42,6 @@ class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : 
     }
 
     companion object {
-        val NON_SOLID_CANCER_DOIDS =
-            setOf(DoidConstants.LEUKEMIA_DOID, DoidConstants.REFRACTORY_HEMATOLOGIC_CANCER_DOID, DoidConstants.BONE_MARROW_CANCER_DOID)
         val WARN_SOLID_CANCER_DOIDS = setOf(
             DoidConstants.CENTRAL_NERVOUS_SYSTEM_HEMATOLOGIC_CANCER_DOID,
             DoidConstants.DENDRITIC_CELL_THYMOMA_DOID,

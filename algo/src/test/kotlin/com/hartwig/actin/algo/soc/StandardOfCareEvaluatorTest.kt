@@ -513,9 +513,9 @@ class StandardOfCareEvaluatorTest {
     }
 
     private fun resultsForPatientWithHistoryAndMolecular(
-        pastTreatmentNames: List<String>, molecularRecord: MolecularRecord, tumorSubLocation: String? = null
+        pastTreatmentNames: List<String>, molecularRecord: MolecularRecord, name: String = ""
     ): List<TreatmentCandidate> {
-        return resultsForPatient(patientRecordWithHistoryAndMolecular(pastTreatmentNames, molecularRecord, tumorSubLocation))
+        return resultsForPatient(patientRecordWithHistoryAndMolecular(pastTreatmentNames, molecularRecord, name))
     }
 
     private fun patientRecordWithTreatmentHistory(pastTreatmentNames: List<String>): PatientRecord {
@@ -523,11 +523,11 @@ class StandardOfCareEvaluatorTest {
     }
 
     private fun patientRecordWithHistoryAndMolecular(
-        pastTreatmentNames: List<String>, molecularRecord: MolecularRecord, tumorSubLocation: String? = null
+        pastTreatmentNames: List<String>, molecularRecord: MolecularRecord, name: String = ""
     ): PatientRecord {
         val tumorDetails = TumorDetails(
             doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID),
-            primaryTumorSubLocation = tumorSubLocation
+            name = name
         )
 
         return minimalPatientRecord.copy(

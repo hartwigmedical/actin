@@ -210,8 +210,8 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("I;II")
             }
 
-            FunctionInput.ONE_HLA_ALLELE -> {
-                listOf("A*02:01")
+            FunctionInput.MANY_HLA_ALLELES -> {
+                listOf("A*02:01;A*02:02")
             }
 
             FunctionInput.ONE_HLA_GROUP -> {
