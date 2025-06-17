@@ -66,7 +66,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
         assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)", VAF)
         assertRow(result, 1, "KRAS G12C\n(Tier I)", "Mutation (Gain of function)", VAF)
         assertRow(result, 2, "KRAS G12D\n(Tier I)", "Mutation (Gain of function)", VAF)
-        assertRow(result, 3, "BRAF - KRAS fusion\n(Tier I)", "Known fusion (low driver)\nGain of function", DETECTED)
+        assertRow(result, 3, "BRAF - KRAS fusion\n(Tier I)", "Known fusion\nGain of function", DETECTED)
         assertRow(result, 4, "BRAF V600E\n(Tier II)", "Mutation (Gain of function)", VAF)
     }
 
@@ -115,7 +115,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             result,
             0,
             "EML4(exon6)::ALK(exon20) fusion\n(Tier I)",
-            "Known fusion (high driver)\nGain of function",
+            "Known fusion\nGain of function",
             DETECTED,
             NOT_DETECTED
         )
