@@ -24,12 +24,9 @@ class IhcResultGeneratorTest {
     }
 
     @Test
-    fun `Should return none when there are no IHC tests`() {
+    fun `Should return no table when there are no IHC tests`() {
         val table = ihcResultGenerator.contents()
-        assertThat(table.numberOfRows).isEqualTo(1)
-        val cell = table.getCell(0, 0)
-        assertThat(cell.colspan).isEqualTo(2)
-        assertThat(extractTextFromCell(cell)).isEqualTo("None")
+        assertThat(table.numberOfRows).isEqualTo(0)
     }
 
     @Test
