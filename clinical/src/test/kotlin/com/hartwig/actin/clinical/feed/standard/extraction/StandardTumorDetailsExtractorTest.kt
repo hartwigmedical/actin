@@ -17,18 +17,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private const val TUMOR_LOCATION = "tumorLocation"
-private const val TUMOR_SUB_LOCATION = "tumorSubLocation"
-private const val TUMOR_TYPE = "tumorType"
-private const val TUMOR_SUB_TYPE = "tumorSubType"
 private const val DOID = "3910"
-private const val TUMOR_INPUT = "$TUMOR_LOCATION | $TUMOR_TYPE"
+private const val TUMOR_INPUT = "tumorLocation | tumorType"
 
 private val TUMOR_DETAILS = TumorDetails(
-    primaryTumorLocation = TUMOR_LOCATION,
-    primaryTumorSubLocation = TUMOR_SUB_LOCATION,
-    primaryTumorType = TUMOR_TYPE,
-    primaryTumorSubType = TUMOR_SUB_TYPE,
+    name = "name",
     doids = setOf(DOID),
     stage = TumorStage.IV,
     derivedStages = null,
@@ -54,12 +47,8 @@ private val TUMOR_DETAILS = TumorDetails(
 private val TUMOR_CURATION_CONFIG = PrimaryTumorConfig(
     input = TUMOR_INPUT,
     ignore = false,
-    primaryTumorLocation = TUMOR_LOCATION,
-    primaryTumorType = TUMOR_TYPE,
+    name = "name",
     doids = setOf(DOID),
-    primaryTumorExtraDetails = "tumorExtraDetails",
-    primaryTumorSubType = TUMOR_SUB_TYPE,
-    primaryTumorSubLocation = TUMOR_SUB_LOCATION,
 )
 
 private val UNUSED_DATE = LocalDate.of(2024, 4, 10)
@@ -98,13 +87,7 @@ class StandardTumorDetailsExtractorTest {
     fun `Should extract tumor details from only the EHR when no curation found`() {
         setupTumorCuration(TUMOR_INPUT)
         val result = extractor.extract(FEED_PATIENT_RECORD)
-        assertThat(result.extracted).isEqualTo(
-            TUMOR_DETAILS.copy(
-                primaryTumorSubType = null,
-                primaryTumorSubLocation = null,
-                doids = emptySet()
-            )
-        )
+        assertThat(result.extracted).isEqualTo(TUMOR_DETAILS.copy(name = "", doids = emptySet()))
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 FEED_PATIENT_RECORD.patientDetails.patientId,
@@ -184,25 +167,29 @@ class StandardTumorDetailsExtractorTest {
     @Test
     fun `Should set (active) brain and (active) CNS lesions to false in case of primary brain tumor`() {
         val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
-            every { find("Brain | tumorType") } returns setOf(
+            every { find("tumorLocation | Glioma") } returns setOf(
                 PrimaryTumorConfig(
-                    input = "Brain | tumorType",
+                    input = "tumorLocation | Glioma",
+                    name = "Glioma",
                     doids = setOf(DOID),
-                    primaryTumorLocation = "Brain",
-                    primaryTumorSubLocation = TUMOR_SUB_LOCATION,
-                    primaryTumorType = TUMOR_TYPE,
-                    primaryTumorSubType = TUMOR_SUB_TYPE,
                     ignore = false,
-                    primaryTumorExtraDetails = "tumorExtraDetails"
                 )
             )
         }
         val extractor = StandardTumorDetailsExtractor(tumorCuration, tumorStageDeriver)
         val result =
-            extractor.extract(FEED_PATIENT_RECORD.copy(tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(tumorLocation = "Brain")))
+            extractor.extract(
+                FEED_PATIENT_RECORD.copy(
+                    tumorDetails = FEED_PATIENT_RECORD.tumorDetails.copy(
+                        tumorType = "Glioma",
+                        hasBrainLesions = true,
+                        hasActiveBrainLesions = true
+                    )
+                )
+            )
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
-                primaryTumorLocation = "Brain",
+                name = "Glioma",
                 hasBrainLesions = false,
                 hasActiveBrainLesions = false,
                 hasCnsLesions = false,
