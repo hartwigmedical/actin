@@ -29,16 +29,11 @@ class PanelVirusAnnotator {
 
     private fun resolveVirusNameAndType(sequencedVirusInput: SequencedVirusInput): Pair<String, VirusType> {
         return when (sequencedVirusInput) {
-            SequencedVirusInput.EBV -> Pair("Epstein-Barr virus", VirusType.EPSTEIN_BARR_VIRUS)
-            SequencedVirusInput.HBV -> Pair("Hepatitis B virus", VirusType.HEPATITIS_B_VIRUS)
-            SequencedVirusInput.HHV_8 -> Pair("Human herpesvirus 8", VirusType.HUMAN_HERPES_VIRUS_8)
-            SequencedVirusInput.HPV_HIGH_RISK, SequencedVirusInput.HPV_LOW_RISK -> Pair(
-                "Human papillomavirus",
-                VirusType.HUMAN_PAPILLOMA_VIRUS
-            )
-
-            SequencedVirusInput.MCV -> Pair("Merkel cell polyomavirus", VirusType.MERKEL_CELL_VIRUS)
-            else -> throw IllegalStateException()
+            SequencedVirusInput.EBV -> "Epstein-Barr virus" to VirusType.EPSTEIN_BARR_VIRUS
+            SequencedVirusInput.HBV -> "Hepatitis B virus" to VirusType.HEPATITIS_B_VIRUS
+            SequencedVirusInput.HHV_8 -> "Human herpesvirus 8" to VirusType.HUMAN_HERPES_VIRUS_8
+            SequencedVirusInput.HPV_HIGH_RISK, SequencedVirusInput.HPV_LOW_RISK -> "Human papillomavirus" to VirusType.HUMAN_PAPILLOMA_VIRUS
+            SequencedVirusInput.MCV -> "Merkel cell polyomavirus" to VirusType.MERKEL_CELL_VIRUS
         }
     }
 }
