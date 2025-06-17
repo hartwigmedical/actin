@@ -26,9 +26,7 @@ class IhcResultGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        if (ihcTests.isNotEmpty()) {
-            interpreter.interpret(ihcTests).forEach { ihcTestInterpretation -> ihcTestInterpretationContents(ihcTestInterpretation, table) }
-        }
+        interpreter.interpret(ihcTests).forEach { ihcTestInterpretation -> ihcTestInterpretationContents(ihcTestInterpretation, table) }
         return table
     }
 

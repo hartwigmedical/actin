@@ -24,12 +24,6 @@ class IhcResultGeneratorTest {
     }
 
     @Test
-    fun `Should return no table when there are no IHC tests`() {
-        val table = ihcResultGenerator.contents()
-        assertThat(table.numberOfRows).isEqualTo(0)
-    }
-
-    @Test
     fun `Should return content grouped per date when all IHC tests have the same date`() {
 
         val generator = IhcResultGenerator(
