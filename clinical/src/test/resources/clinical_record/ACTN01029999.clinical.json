@@ -74,8 +74,8 @@
       "treatmentHistoryDetails": {
         "stopYear": null,
         "stopMonth": null,
-        "maxStopYear": 2025,
-        "maxStopMonth": 6,
+        "maxStopYear": 2021,
+        "maxStopMonth": 9,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": null,

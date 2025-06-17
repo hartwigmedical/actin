@@ -9,10 +9,12 @@ object TreatmentHistoryEntryFunctions {
 
     private const val LAST_MONTH = 12
 
-    fun setMaxStopDate(treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
+    fun setMaxStopDate(treatmentHistory: List<TreatmentHistoryEntry>, date: LocalDate): List<TreatmentHistoryEntry> {
         val (systemic, nonSystemic) = treatmentHistory.sortedWith(TreatmentHistoryAscendingDateComparator()).partition {
             it.treatments.any { treatment -> treatment.isSystemic }
         }
+
+        val maxDate = date.plusMonths(1)
 
         val systemicWithStopDate = systemic.mapIndexed { index, current ->
             val details = current.treatmentHistoryDetails
@@ -33,7 +35,7 @@ object TreatmentHistoryEntryFunctions {
                         val next = systemic[index + 1]
                         next.startYear to next.startMonth
                     } else {
-                        LocalDate.now().year to LocalDate.now().monthValue
+                        maxDate.year to maxDate.monthValue
                     }
                     details?.copy(maxStopYear = maxStopYear, maxStopMonth = maxStopMonth)
                         ?: TreatmentHistoryDetails(maxStopYear = maxStopYear, maxStopMonth = maxStopMonth)
