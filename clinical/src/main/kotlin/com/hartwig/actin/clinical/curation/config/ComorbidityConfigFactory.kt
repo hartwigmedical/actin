@@ -37,7 +37,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
                     "type",
                     type,
                     String::class.java.simpleName,
-                    "Unknown comorbidity type: $type. Expected one of: complication, other_condition, infection."
+                    "Unknown comorbidity type: $type. Expected one of: complication, other_condition, infection, intolerance, ecg, toxicity."
                 )
             )
         )
