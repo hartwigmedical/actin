@@ -95,8 +95,10 @@ class MolecularSummaryGenerator(
             }
         }
 
-        val molecularResultGenerator = IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter())
-        table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
-        table.addCell(Cells.create(molecularResultGenerator.contents()))
+        if (ihcTests.isNotEmpty()) {
+            val molecularResultGenerator = IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter())
+            table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
+            table.addCell(Cells.create(molecularResultGenerator.contents()))
+        }
     }
 }
