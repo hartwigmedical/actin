@@ -50,25 +50,21 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 
 #### 1 tumor details
 
-| Field                    | Origin                                               |
-|--------------------------|------------------------------------------------------|
-| primaryTumorLocation     | Primary tumor details: Tumor localization            |
-| primaryTumorSubLocation  | Primary tumor details: Tumor localization            |
-| primaryTumorType         | Primary tumor details: Tumor type                    |
-| primaryTumorSubType      | Primary tumor details: Tumor type                    |
-| primaryTumorExtraDetails | Primary tumor details: Grade/differentiation details |
-| doids                    | Added in curation                                    |
-| stage                    | Primary tumor details: Stage                         |
-| hasMeasurableDisease     | Primary tumor details: Measurable disease?           |
-| hasBrainLesions          | Primary tumor details: Lesion sites                  |
-| hasActiveBrainLesions    | Primary tumor details: Lesion sites                  |
-| hasCnsLesions            | Primary tumor details: Lesion sites                  |
-| hasActiveCnsLesions      | Primary tumor details: Lesion sites                  |
-| hasBoneLesions           | Primary tumor details: Lesion sites                  |
-| hasLiverLesions          | Primary tumor details: Lesion sites                  |
-| hasLungLesions           | Primary tumor details: Lesion sites                  |
-| otherLesions             | Primary tumor details: Lesion sites                  |
-| biopsyLocation           | Molecular test details: Biopsy location              |
+| Field                    | Origin                                     |
+|--------------------------|--------------------------------------------|
+| name                     | Description of tumor, added in curation    |
+| doids                    | Added in curation                          |
+| stage                    | Primary tumor details: Stage               |
+| hasMeasurableDisease     | Primary tumor details: Measurable disease? |
+| hasBrainLesions          | Primary tumor details: Lesion sites        |
+| hasActiveBrainLesions    | Primary tumor details: Lesion sites        |
+| hasCnsLesions            | Primary tumor details: Lesion sites        |
+| hasActiveCnsLesions      | Primary tumor details: Lesion sites        |
+| hasBoneLesions           | Primary tumor details: Lesion sites        |
+| hasLiverLesions          | Primary tumor details: Lesion sites        |
+| hasLungLesions           | Primary tumor details: Lesion sites        |
+| otherLesions             | Primary tumor details: Lesion sites        |
+| biopsyLocation           | Molecular test details: Biopsy location    |
 
 #### 1 clinical status
 

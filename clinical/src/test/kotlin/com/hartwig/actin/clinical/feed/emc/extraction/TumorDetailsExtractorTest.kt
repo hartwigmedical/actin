@@ -26,10 +26,6 @@ private const val TUMOR_LOCATION_INPUT = "Tumor location input"
 private const val TUMOR_TYPE_INPUT = "Tumor type input"
 private const val BIOPSY_LOCATION_INPUT = "Biopsy location input"
 
-private const val CURATED_LOCATION = "Curated location"
-private const val CURATED_TUMOR_TYPE = "Curated tumor type"
-
-
 class TumorDetailsExtractorTest {
 
     private val baseTumor = TumorDetails()
@@ -45,19 +41,13 @@ class TumorDetailsExtractorTest {
                 PrimaryTumorConfig(
                     input = "$TUMOR_LOCATION_INPUT |",
                     ignore = false,
-                    primaryTumorType = "",
-                    primaryTumorLocation = CURATED_LOCATION,
-                    primaryTumorSubType = "",
-                    primaryTumorSubLocation = "",
-                    primaryTumorExtraDetails = "",
+                    name = "",
                     doids = emptySet()
                 )
             ),
             tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
-        assertThat(curatedWithoutType.primaryTumorLocation).isEqualTo(CURATED_LOCATION)
-        assertThat(curatedWithoutType.primaryTumorType).isEmpty()
-
+        assertThat(curatedWithoutType.name).isEqualTo("")
         assertThat(evaluation.warnings).isEmpty()
     }
 
@@ -68,19 +58,13 @@ class TumorDetailsExtractorTest {
                 PrimaryTumorConfig(
                     input = "| $TUMOR_TYPE_INPUT",
                     ignore = false,
-                    primaryTumorType = CURATED_TUMOR_TYPE,
-                    primaryTumorLocation = "",
-                    primaryTumorSubType = "",
-                    primaryTumorSubLocation = "",
-                    primaryTumorExtraDetails = "",
+                    name = "name",
                     doids = emptySet()
                 )
             ),
             tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, null, TUMOR_TYPE_INPUT)
-        assertThat(curatedWithoutLocation.primaryTumorLocation).isEmpty()
-        assertThat(curatedWithoutLocation.primaryTumorType).isEqualTo(CURATED_TUMOR_TYPE)
-
+        assertThat(curatedWithoutLocation.name).isEqualTo("name")
         assertThat(evaluation.warnings).isEmpty()
     }
 
@@ -89,9 +73,8 @@ class TumorDetailsExtractorTest {
         val (missing, evaluation) = TumorDetailsExtractor(
             TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(), tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, CANNOT_CURATE, CANNOT_CURATE)
-        assertThat(missing.primaryTumorLocation).isNull()
-        assertThat(missing.primaryTumorType).isNull()
 
+        assertThat(missing.name).isEqualTo("")
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
                 PATIENT_ID,
@@ -136,9 +119,7 @@ class TumorDetailsExtractorTest {
     @Test
     fun `Should override has liver lesions when listed in other lesions`() {
         val tumor = baseTumor.copy(hasLiverLesions = null)
-        val feedTumorDetails = FeedTumorDetail(
-            lesions = listOf(locationLesionInput(LesionLocationCategory.LIVER))
-        )
+        val feedTumorDetails = FeedTumorDetail(lesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
         val expected = tumor.copy(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasLiverLesions = true)
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -153,9 +134,7 @@ class TumorDetailsExtractorTest {
     @Test
     fun `Should override has suspected liver lesions when listed in other lesions`() {
         val tumor = baseTumor.copy(hasSuspectedLiverLesions = null)
-        val feedTumorDetails = FeedTumorDetail(
-            lesions = listOf(locationLesionInput(LesionLocationCategory.LIVER))
-        )
+        val feedTumorDetails = FeedTumorDetail(lesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
         val expected = tumor.copy(otherLesions = emptyList(), otherSuspectedLesions = emptyList(), hasSuspectedLiverLesions = true)
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -170,9 +149,7 @@ class TumorDetailsExtractorTest {
     @Test
     fun `Should override has liver lesions when listed as biopsy`() {
         val expected = TumorDetails(biopsyLocation = curatedLocationLesionInput(LesionLocationCategory.LIVER), hasLiverLesions = true)
-        val feedTumorDetails = FeedTumorDetail(
-            biopsyLocation = locationLesionInput(LesionLocationCategory.LIVER).location
-        )
+        val feedTumorDetails = FeedTumorDetail(biopsyLocation = locationLesionInput(LesionLocationCategory.LIVER).location)
 
         assertTumorExtraction(
             TumorDetailsExtractor(
@@ -456,9 +433,9 @@ class TumorDetailsExtractorTest {
                 inputTumorType = any(),
                 patientId = any()
             )
-        } returns (baseTumor.copy(primaryTumorLocation = "Brain") to CurationExtractionEvaluation())
+        } returns (baseTumor.copy(name = "Brain") to CurationExtractionEvaluation())
         val expected = baseTumor.copy(
-            primaryTumorLocation = "Brain",
+            name = "Brain",
             hasBrainLesions = false,
             hasActiveBrainLesions = false,
             hasSuspectedBrainLesions = false,
@@ -480,11 +457,7 @@ class TumorDetailsExtractorTest {
                 PrimaryTumorConfig(
                     input = "$TUMOR_LOCATION_INPUT |",
                     ignore = false,
-                    primaryTumorType = "",
-                    primaryTumorLocation = CURATED_LOCATION,
-                    primaryTumorSubType = "",
-                    primaryTumorSubLocation = "",
-                    primaryTumorExtraDetails = "",
+                    name = "",
                     doids = emptySet()
                 )
             ),
@@ -516,6 +489,4 @@ class TumorDetailsExtractorTest {
     private fun curatedLocationLesionInput(category: LesionLocationCategory, extra: String? = ""): String {
         return "Curated ${category.name.lowercase()}" + extra
     }
-
-
 }
