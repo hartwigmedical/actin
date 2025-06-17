@@ -22,7 +22,6 @@ data class SequencingTestResultConfig(
     val exonSkipStart: Int? = null,
     val exonSkipEnd: Int? = null,
     val virus: String? = null,
-    val virusIntegrated: Boolean? = null,
     val msi: Boolean? = null,
     val tmb: Double? = null,
     val hrd: Boolean? = null,

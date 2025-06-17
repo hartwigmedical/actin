@@ -16,14 +16,14 @@ class VirusExtractor() {
     fun extract(virusInterpreter: VirusInterpreterData): List<Virus> {
         return virusInterpreter.allViruses().map { virus ->
             Virus(
+                name = virus.name(),
+                type = determineType(virus.interpretation()),
+                isReliable = virus.qcStatus() == QC_PASS_STATUS,
+                integrations = virus.integrations(),
                 isReportable = virus.reported(),
                 event = DriverEventFactory.virusEvent(virus),
                 driverLikelihood = determineDriverLikelihood(virus.driverLikelihood()),
                 evidence = ExtractionUtil.noEvidence(),
-                name = virus.name(),
-                isReliable = virus.qcStatus() == QC_PASS_STATUS,
-                type = determineType(virus.interpretation()),
-                integrations = virus.integrations()
             )
         }.sorted()
     }

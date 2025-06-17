@@ -95,10 +95,11 @@ object StandardSequencingTestExtractorFunctions {
     fun viruses(results: Set<SequencingTestResultConfig>) =
         results.mapNotNull { result ->
             result.virus?.let { virus ->
-                if (virus !in setOf("EBV", "HBV", "HHV8", "HPV", "MCV")) {
-                    throw IllegalArgumentException("Only EBV, HBV, HHV8, HPV or MCV virus can be input for 'virus'")
+                val allowedInputs = setOf("EBV", "HBV", "HHV8", "HPV high risk", "HPV low risk", "MCV")
+                if (virus !in allowedInputs) {
+                    throw IllegalArgumentException("Only ${allowedInputs.joinToString(", ")} can be input for 'virus'")
                 }
-                SequencedVirus(virus = virus, integratedVirus = result.virusIntegrated)
+                SequencedVirus(virus = virus)
             }
         }.toSet()
 

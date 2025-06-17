@@ -22,7 +22,7 @@ private const val OTHER_GENE = "other_gene"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
-private val PANEL_VIRUS = SequencedVirus("HPV", true)
+private val PANEL_VIRUS = SequencedVirus("HPV low risk")
 
 private const val TEST_NAME = "test"
 

@@ -157,29 +157,13 @@ class StandardSequencingTestExtractorFunctionsTest {
     }
 
     @Test
-    fun `Should extract virus when integrations is not set`() {
-        val test = setOf(SequencingTestResultConfig(input = "HPV", virus = "HPV"))
-        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
-            SequencedVirus(
-                virus = "HPV",
-                integratedVirus = null
-            )
-        )
-    }
-
-    @Test
-    fun `Should extract virus with integrations when integrations is set`() {
-        val test = setOf(SequencingTestResultConfig(input = "HPV integrated", virus = "HPV", virusIntegrated = true))
-        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
-            SequencedVirus(
-                virus = "HPV",
-                integratedVirus = true
-            )
-        )
+    fun `Should extract virus`() {
+        val test = setOf(SequencingTestResultConfig(input = "", virus = "HPV high risk"))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(SequencedVirus(virus = "HPV high risk"))
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `Should throw exception when interpreting non-ingestable virus`() {
+    fun `Should throw exception when interpreting non-allowed virus`() {
         val test = setOf(SequencingTestResultConfig(input = "", virus = "HPPV"))
         StandardSequencingTestExtractorFunctions.viruses(test)
     }

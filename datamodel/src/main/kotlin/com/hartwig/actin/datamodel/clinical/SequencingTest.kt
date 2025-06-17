@@ -39,7 +39,7 @@ data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonE
     }
 }
 
-data class SequencedVirus(val virus: String, val integratedVirus: Boolean? = null)
+data class SequencedVirus(val virus: String)
 
 data class SequencedNegativeResult(val gene: String)
 
