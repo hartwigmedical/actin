@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
@@ -111,14 +112,10 @@ class MolecularDriverEntryFactoryTest {
         assertVariantType(oncoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function)")
         assertVariantType(
             oncoNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
-            "Mutation (No known cancer-associated variant, high driver)"
+            "Mutation (No known cancer-associated variant, not biallelic, high driver)"
         )
         assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect, high driver)")
         assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect, high driver)")
-        assertVariantType(
-            oncoNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, high driver)"
-        )
         assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function, high driver)")
     }
 
@@ -147,7 +144,7 @@ class MolecularDriverEntryFactoryTest {
         assertVariantType(tsgCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
         assertVariantType(
             tsgNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
-            "Mutation (No known cancer-associated variant, high driver)"
+            "Mutation (No known cancer-associated variant, not biallelic, high driver)"
         )
         assertVariantType(
             tsgNoCavBi.copy(proteinEffect = ProteinEffect.UNKNOWN),
@@ -159,14 +156,6 @@ class MolecularDriverEntryFactoryTest {
         assertVariantType(
             tsgNoCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
             "Mutation (Loss of function, biallelic, high driver)"
-        )
-        assertVariantType(
-            tsgNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, high driver)"
-        )
-        assertVariantType(
-            tsgNoCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, biallelic, high driver)"
         )
     }
 
@@ -196,7 +185,7 @@ class MolecularDriverEntryFactoryTest {
         assertVariantType(bothCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
         assertVariantType(
             bothNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
-            "Mutation (No known cancer-associated variant, high driver)"
+            "Mutation (No known cancer-associated variant, not biallelic, high driver)"
         )
         assertVariantType(
             bothNoCavBi.copy(proteinEffect = ProteinEffect.UNKNOWN),
@@ -204,22 +193,6 @@ class MolecularDriverEntryFactoryTest {
         )
         assertVariantType(bothNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect, high driver)")
         assertVariantType(bothNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect, high driver)")
-        assertVariantType(
-            bothNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, high driver)"
-        )
-        assertVariantType(
-            bothNoCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, biallelic, high driver)"
-        )
-        assertVariantType(
-            bothNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, high driver)"
-        )
-        assertVariantType(
-            bothNoCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, biallelic, high driver)"
-        )
     }
 
     @Test
@@ -248,7 +221,7 @@ class MolecularDriverEntryFactoryTest {
         assertVariantType(unknownBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
         assertVariantType(
             unknownNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
-            "Mutation (No known cancer-associated variant, high driver)"
+            "Mutation (No known cancer-associated variant, not biallelic, high driver)"
         )
         assertVariantType(
             unknownNoCavBi.copy(proteinEffect = ProteinEffect.UNKNOWN),
@@ -256,22 +229,6 @@ class MolecularDriverEntryFactoryTest {
         )
         assertVariantType(unknownNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect, high driver)")
         assertVariantType(unknownNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect, high driver)")
-        assertVariantType(
-            unknownNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, high driver)"
-        )
-        assertVariantType(
-            unknownNoCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, biallelic, high driver)"
-        )
-        assertVariantType(
-            unknownNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, high driver)"
-        )
-        assertVariantType(
-            unknownNoCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
-            "Mutation (No known cancer-associated variant, biallelic, high driver)"
-        )
     }
 
     @Test
@@ -310,26 +267,38 @@ class MolecularDriverEntryFactoryTest {
     fun `Should not show driver likelihood for copy numbers and disruptions`() {
         val copyNumbers = listOf(TestMolecularFactory.createProperCopyNumber())
         val disruptions = listOf(TestDisruptionFactory.createMinimal().copy(isReportable = true))
+        val homozygousDisruptions = listOf(TestMolecularFactory.minimalHomozygousDisruption().copy(isReportable = true))
         val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
-                .copy(variants = emptyList(), copyNumbers = copyNumbers, disruptions = disruptions)
+                .copy(
+                    variants = emptyList(),
+                    copyNumbers = copyNumbers,
+                    disruptions = disruptions,
+                    homozygousDisruptions = homozygousDisruptions
+                )
         )
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo("Deletion")
-        assertThat(result[1].driverType).isEqualTo("Disruption (not biallelic)")
+        assertThat(result[1].driverType).isEqualTo("Disruption (homozygous)")
+        assertThat(result[2].driverType).isEqualTo("Disruption (not biallelic)")
     }
 
     @Test
-    fun `Should show driver likelihood for fusions and viruses`() {
-        val fusions = listOf(TestMolecularFactory.createProperFusion().copy(driverLikelihood = DriverLikelihood.LOW))
+    fun `Should show driver likelihood for fusions and viruses except when known fusion`() {
+        val fusions = listOf(
+            TestMolecularFactory.createProperFusion(),
+            TestMolecularFactory.createProperFusion()
+                .copy(driverLikelihood = DriverLikelihood.LOW, driverType = FusionDriverType.PROMISCUOUS_3)
+        )
         val viruses = listOf(TestVirusFactory.createMinimal().copy(isReportable = true, driverLikelihood = DriverLikelihood.MEDIUM))
         val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(variants = emptyList(), copyNumbers = emptyList(), viruses = viruses, fusions = fusions)
         )
         val result = createFactoryForMolecularRecord(record).create()
-        assertThat(result[0].driverType).isEqualTo("Virus (medium driver)")
-        assertThat(result[1].driverType).isEqualTo("Known fusion (low driver)")
+        assertThat(result[0].driverType).isEqualTo("Known fusion")
+        assertThat(result[1].driverType).isEqualTo("Virus (medium driver)")
+        assertThat(result[2].driverType).isEqualTo("3' promiscuous fusion (low driver)")
     }
 
     private fun assertVariantType(variant: Variant, expectedDriverType: String) {

@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.Virus
@@ -101,7 +102,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             }
 
             else -> {
-                "No known cancer-associated variant"
+                "No known cancer-associated variant, not biallelic"
             }
         }
     }
@@ -157,8 +158,13 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        val driverType = fusion.driverType.display() + (fusion.driverLikelihood?.let { " (${formatDriverLikelihood(it)})" } ?: "")
-        return driverEntry(driverType, fusion.event, fusion, fusion.proteinEffect)
+        val driverType = fusion.driverType.display()
+        val driverlikelihood = (fusion.driverLikelihood?.let { " (${formatDriverLikelihood(it)})" } ?: "")
+
+        val knownList = listOf(FusionDriverType.KNOWN_PAIR, FusionDriverType.KNOWN_PAIR_IG, FusionDriverType.KNOWN_PAIR_DEL_DUP)
+        val combined = if (fusion.driverType in knownList) driverType else driverType + driverlikelihood
+
+        return driverEntry(combined, fusion.event, fusion, fusion.proteinEffect)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
@@ -188,8 +194,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         )
     }
 
-    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String? {
-        return driverLikelihood?.let { it.toString().lowercase() + " driver" }
+    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
+        return driverLikelihood?.let { it.toString().lowercase() + " driver" } ?: ""
     }
 
     private fun bestResponsiveEvidence(driver: Driver): String? {
