@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.datamodel.clinical.SequencedVirusInput
 import com.hartwig.actin.util.ResourceFile
 
 class SequencingTestResultConfigFactory : CurationConfigFactory<SequencingTestResultConfig> {
@@ -30,7 +31,7 @@ class SequencingTestResultConfigFactory : CurationConfigFactory<SequencingTestRe
                     deletedGene = ResourceFile.optionalString(parts[fields["deletedGene"]!!]),
                     exonSkipStart = ResourceFile.optionalInteger(parts[fields["exonSkipStart"]!!]),
                     exonSkipEnd = ResourceFile.optionalInteger(parts[fields["exonSkipEnd"]!!]),
-                    virus = ResourceFile.optionalString(parts[fields["virus"]!!]),
+                    virus = convertToSequencedVirusInput(ResourceFile.optionalString(parts[fields["virus"]!!])),
                     msi = ResourceFile.optionalBool(parts[fields["msi"]!!]),
                     tmb = ResourceFile.optionalNumber(parts[fields["tmb"]!!]),
                     hrd = ResourceFile.optionalBool(parts[fields["hrd"]!!]),
@@ -39,4 +40,7 @@ class SequencingTestResultConfigFactory : CurationConfigFactory<SequencingTestRe
             }
         )
     }
+
+    private fun convertToSequencedVirusInput(input: String?): SequencedVirusInput? =
+        input?.let { SequencedVirusInput.valueOf(it) }
 }

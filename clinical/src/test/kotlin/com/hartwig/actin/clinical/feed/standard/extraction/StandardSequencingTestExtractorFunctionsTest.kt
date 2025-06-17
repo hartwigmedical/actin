@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencedVirus
+import com.hartwig.actin.datamodel.clinical.SequencedVirusInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -158,14 +159,8 @@ class StandardSequencingTestExtractorFunctionsTest {
 
     @Test
     fun `Should extract virus`() {
-        val test = setOf(SequencingTestResultConfig(input = "", virus = "HPV high risk"))
-        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(SequencedVirus(virus = "HPV high risk"))
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `Should throw exception when interpreting non-allowed virus`() {
-        val test = setOf(SequencingTestResultConfig(input = "", virus = "HPPV"))
-        StandardSequencingTestExtractorFunctions.viruses(test)
+        val test = setOf(SequencingTestResultConfig(input = "", virus = SequencedVirusInput.HPV_HIGH_RISK))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(SequencedVirus(virus = SequencedVirusInput.HPV_HIGH_RISK))
     }
 
     @Test

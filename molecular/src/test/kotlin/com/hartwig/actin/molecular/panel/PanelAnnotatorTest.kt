@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencedVirus
+import com.hartwig.actin.datamodel.clinical.SequencedVirusInput
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
@@ -22,7 +23,7 @@ private const val OTHER_GENE = "other_gene"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
-private val PANEL_VIRUS = SequencedVirus("HPV low risk")
+private val PANEL_VIRUS = SequencedVirus(SequencedVirusInput.HPV_HIGH_RISK)
 
 private const val TEST_NAME = "test"
 

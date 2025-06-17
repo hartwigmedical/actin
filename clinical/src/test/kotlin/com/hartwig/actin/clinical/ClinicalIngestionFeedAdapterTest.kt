@@ -86,7 +86,6 @@ class ClinicalIngestionFeedAdapterTest {
 
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
-
         val validationErrors = curationDatabase.validate()
         assertThat(validationErrors).isEmpty()
 

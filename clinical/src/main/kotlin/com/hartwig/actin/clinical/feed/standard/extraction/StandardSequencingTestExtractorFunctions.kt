@@ -93,15 +93,7 @@ object StandardSequencingTestExtractorFunctions {
     }.toSet()
 
     fun viruses(results: Set<SequencingTestResultConfig>) =
-        results.mapNotNull { result ->
-            result.virus?.let { virus ->
-                val allowedInputs = setOf("EBV", "HBV", "HHV8", "HPV high risk", "HPV low risk", "MCV")
-                if (virus !in allowedInputs) {
-                    throw IllegalArgumentException("Only ${allowedInputs.joinToString(", ")} can be input for 'virus'")
-                }
-                SequencedVirus(virus = virus)
-            }
-        }.toSet()
+        results.mapNotNull { result -> result.virus?.let { virus -> SequencedVirus(virus = virus) } }.toSet()
 
     private fun configuredGenesAreNotEqual(gene1: String?, gene2: String?): Boolean {
         return (gene1 != null && gene2 != null && gene1 != gene2)
