@@ -110,8 +110,10 @@ class MolecularDetailsChapter(
         val wgsSummaryGenerators = externalPanelResults.map {
             WGSSummaryGenerator(true, report.patientRecord, it, pathologyReport, cohorts, keyWidth, valueWidth)
         }
-        val ihcGenerator =
+
+        val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
+        } else null
 
         TableGeneratorFunctions.addGenerators(
             orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
