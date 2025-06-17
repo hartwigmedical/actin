@@ -30,11 +30,10 @@ class MolecularDriversGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createRelativeWidthCols(21f, 20f, 10f, 10f, 10f, 11f, 10f)
+        val table = Tables.createRelativeWidthCols(31f, 21f, 10f, 10f, 11f, 10f)
 
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
-        table.addHeaderCell(Cells.createHeader("Driver likelihood"))
         table.addHeaderCell(Cells.createHeader("Trials (Locations)"))
         table.addHeaderCell(Cells.createHeader("Trials in ${molecular.externalTrialSource}"))
         table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
@@ -46,7 +45,6 @@ class MolecularDriversGenerator(
         factory.create().forEach { entry ->
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.display()))
-            table.addCell(Cells.createContent(entry.driverLikelihoodDisplay))
             table.addCell(Cells.createContent(formatActinTrials(entry.actinTrials)))
             table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.event] ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))

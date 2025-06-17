@@ -41,7 +41,13 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     private fun fromVariant(variant: Variant): MolecularDriverEntry {
         val mutationTypeString = formatMutationType(variant)
-        val driverType = "Mutation ($mutationTypeString)"
+        val driverLikelihood = if (variantsGroupedByGene[variant.gene]?.any { it.isCancerAssociatedVariant } == true) {
+            ""
+        } else {
+            variant.driverLikelihood?.let { ", " + formatDriverLikelihood(it) } ?: ""
+        }
+
+        val driverType = "Mutation ($mutationTypeString$driverLikelihood)"
 
         val variantAndTotalCopies = variant.extendedVariantDetails?.let { details ->
             listOf(min(details.variantCopyNumber, details.totalCopyNumber), details.totalCopyNumber)
@@ -147,39 +153,32 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val undisruptedCopyNumber = Formats.singleDigitNumber(disruption.undisruptedCopyNumber)
         val name = "${disruption.gene}, ${disruption.type} ($disruptionCopyNumber disr. / $undisruptedCopyNumber undisr. copies)"
 
-        return driverEntryForGeneAlteration("Disruption", name, disruption)
+        return driverEntryForGeneAlteration("Disruption (not biallelic)", name, disruption)
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        return driverEntry(
-            fusion.driverType.display(),
-            fusion.event,
-            fusion,
-            fusion.proteinEffect,
-            formatDriverLikelihood(fusion.driverLikelihood)
-        )
+        val driverType = fusion.driverType.display() + (fusion.driverLikelihood?.let { " (${formatDriverLikelihood(it)})" } ?: "")
+        return driverEntry(driverType, fusion.event, fusion, fusion.proteinEffect)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
         val name = "${virus.event}, ${virus.integrations} integrations detected"
-        return driverEntry("Virus", name, virus, null, formatDriverLikelihood(virus.driverLikelihood))
+        val driverType = "Virus" + (virus.driverLikelihood?.let { " (${formatDriverLikelihood(it)})" } ?: "")
+        return driverEntry(driverType, name, virus)
     }
 
     private fun <T> driverEntryForGeneAlteration(
         driverType: String, name: String, geneAlteration: T
     ): MolecularDriverEntry where T : Driver, T : GeneAlteration {
-        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect, driverLikelihoodDisplay(geneAlteration))
+        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect)
     }
 
-    private fun driverEntry(
-        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null, driverLikelihoodDisplay: String
-    ): MolecularDriverEntry {
+    private fun driverEntry(driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
             description = name,
             event = driver.event,
             driverLikelihood = driver.driverLikelihood,
-            driverLikelihoodDisplay = driverLikelihoodDisplay,
             evidenceTier = driver.evidenceTier(),
             proteinEffect = proteinEffect,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
@@ -189,18 +188,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         )
     }
 
-    private fun <T> driverLikelihoodDisplay(geneAlteration: T): String where T : Driver, T : GeneAlteration {
-        return geneAlteration.driverLikelihood?.let { likelihood ->
-            if (geneAlteration is Variant && variantsGroupedByGene[geneAlteration.gene]?.any { it.isCancerAssociatedVariant } == true) {
-                ""
-            } else {
-                formatDriverLikelihood(likelihood)
-            }
-        } ?: Formats.VALUE_NOT_AVAILABLE
-    }
-
-    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
-        return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_NOT_AVAILABLE
+    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String? {
+        return driverLikelihood?.let { it.toString().lowercase() + " driver" }
     }
 
     private fun bestResponsiveEvidence(driver: Driver): String? {
