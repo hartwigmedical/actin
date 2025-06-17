@@ -1,2 +1,2 @@
 input	gene	hgvsProteinImpact	hgvsCodingImpact	vaf	exon	codon	transcript	amplifiedGene	amplifiedGeneCopyNr	deletedGene	fusionGeneUp	fusionGeneDown	fusionTranscriptUp	fusionTranscriptDown	fusionExonUp	fusionExonDown	exonSkipStart	exonSkipEnd	virus	tmb	msi	hrd	noMutationsFound
-KRAS G12F	KRAS	p.G12F	c.34G>T
+KRAS G12F	KRAS	p.G12F	c.34G>T																				0
