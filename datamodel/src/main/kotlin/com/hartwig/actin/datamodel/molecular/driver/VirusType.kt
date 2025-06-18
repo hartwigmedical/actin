@@ -1,21 +1,14 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
-enum class VirusType {
-    EPSTEIN_BARR_VIRUS,
-    HEPATITIS_B_VIRUS,
-    HUMAN_HERPES_VIRUS_8,
-    HUMAN_PAPILLOMA_VIRUS,
-    MERKEL_CELL_VIRUS,
-    OTHER;
+import com.hartwig.actin.datamodel.Displayable
 
-    override fun toString(): String {
-        return when (this) {
-            EPSTEIN_BARR_VIRUS -> "EBV"
-            HEPATITIS_B_VIRUS -> "HBV"
-            HUMAN_HERPES_VIRUS_8 -> "HHV8"
-            HUMAN_PAPILLOMA_VIRUS -> "HPV"
-            MERKEL_CELL_VIRUS -> "MCV"
-            else -> "Other"
-        }
-    }
+enum class VirusType(private val display: String) : Displayable {
+    EBV("Epstein-Barr virus"),
+    HBV("Hepatitis B virus"),
+    HHV8("Human herpesvirus 8"),
+    HPV("Human papillomavirus"),
+    MCV("Merkel cell polyomavirus"),
+    OTHER("Other");
+
+    override fun display(): String = display
 }

@@ -586,7 +586,7 @@ object TestMolecularFactory {
                 fusedExonDown = 20,
             ), viruses = proper.viruses + Virus(
                 name = "Human papillomavirus type 16",
-                type = VirusType.HUMAN_PAPILLOMA_VIRUS,
+                type = VirusType.HPV,
                 integrations = null,
                 isReliable = true,
                 isReportable = true,
@@ -595,7 +595,7 @@ object TestMolecularFactory {
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
             ) + Virus(
                 name = "Epstein-Barr virus",
-                type = VirusType.EPSTEIN_BARR_VIRUS,
+                type = VirusType.EBV,
                 integrations = 4,
                 isReliable = true,
                 isReportable = true,

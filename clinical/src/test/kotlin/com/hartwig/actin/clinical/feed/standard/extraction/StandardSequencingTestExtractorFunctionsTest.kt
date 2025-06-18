@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencedVirus
-import com.hartwig.actin.datamodel.clinical.SequencedVirusInput
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -158,9 +158,36 @@ class StandardSequencingTestExtractorFunctionsTest {
     }
 
     @Test
-    fun `Should extract virus`() {
-        val test = setOf(SequencingTestResultConfig(input = "", virus = SequencedVirusInput.HPV_HIGH_RISK))
-        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(SequencedVirus(virus = SequencedVirusInput.HPV_HIGH_RISK))
+    fun `Should extract virus when virusIsLowRisk is null`() {
+        val test = setOf(SequencingTestResultConfig(input = "", virus = VirusType.HPV))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
+            SequencedVirus(
+                type = VirusType.HPV,
+                isLowRisk = false
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract virus when virusIsLowRisk is true`() {
+        val test = setOf(SequencingTestResultConfig(input = "", virus = VirusType.HBV, virusIsLowRisk = true))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
+            SequencedVirus(
+                type = VirusType.HBV,
+                isLowRisk = true
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract virus when virusIsLowRisk is false`() {
+        val test = setOf(SequencingTestResultConfig(input = "", virus = VirusType.EBV, virusIsLowRisk = false))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
+            SequencedVirus(
+                type = VirusType.EBV,
+                isLowRisk = false
+            )
+        )
     }
 
     @Test

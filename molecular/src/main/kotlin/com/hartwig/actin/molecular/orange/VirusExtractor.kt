@@ -55,27 +55,23 @@ class VirusExtractor() {
             VirusType.OTHER
         } else when (interpretation) {
             VirusInterpretation.MCV -> {
-                VirusType.MERKEL_CELL_VIRUS
+                VirusType.MCV
             }
 
             VirusInterpretation.EBV -> {
-                VirusType.EPSTEIN_BARR_VIRUS
+                VirusType.EBV
             }
 
             VirusInterpretation.HPV -> {
-                VirusType.HUMAN_PAPILLOMA_VIRUS
+                VirusType.HPV
             }
 
             VirusInterpretation.HBV -> {
-                VirusType.HEPATITIS_B_VIRUS
+                VirusType.HBV
             }
 
             VirusInterpretation.HHV8 -> {
-                VirusType.HUMAN_HERPES_VIRUS_8
-            }
-
-            else -> {
-                throw IllegalStateException("Cannot determine virus type for interpretation: $interpretation")
+                VirusType.HHV8
             }
         }
     }

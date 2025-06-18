@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import java.time.LocalDate
 
 data class SequencedVariant(
@@ -39,16 +40,7 @@ data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonE
     }
 }
 
-data class SequencedVirus(val virus: SequencedVirusInput)
-
-enum class SequencedVirusInput {
-    EBV,
-    HBV,
-    HHV_8,
-    HPV_HIGH_RISK,
-    HPV_LOW_RISK,
-    MCV
-}
+data class SequencedVirus(val type: VirusType, val isLowRisk: Boolean = false)
 
 data class SequencedNegativeResult(val gene: String)
 

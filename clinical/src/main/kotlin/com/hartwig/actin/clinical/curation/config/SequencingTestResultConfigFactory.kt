@@ -1,7 +1,8 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.datamodel.clinical.SequencedVirusInput
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.util.ResourceFile
 
 class SequencingTestResultConfigFactory : CurationConfigFactory<SequencingTestResultConfig> {
@@ -9,6 +10,15 @@ class SequencingTestResultConfigFactory : CurationConfigFactory<SequencingTestRe
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SequencingTestResultConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["gene"]!!])
         val input = parts[fields["input"]!!]
+        val (validatedVirus, sequencingTestResultValidationErrors) = validateOptionalEnum<VirusType>(
+            CurationCategory.SEQUENCING_TEST_RESULT,
+            input,
+            "virus",
+            fields,
+            parts,
+            setOf(VirusType.OTHER)
+        ) { VirusType.valueOf(it) }
+
         return ValidatedCurationConfig(
             if (ignore) SequencingTestResultConfig(input = input, ignore = true) else {
                 SequencingTestResultConfig(
@@ -31,16 +41,15 @@ class SequencingTestResultConfigFactory : CurationConfigFactory<SequencingTestRe
                     deletedGene = ResourceFile.optionalString(parts[fields["deletedGene"]!!]),
                     exonSkipStart = ResourceFile.optionalInteger(parts[fields["exonSkipStart"]!!]),
                     exonSkipEnd = ResourceFile.optionalInteger(parts[fields["exonSkipEnd"]!!]),
-                    virus = convertToSequencedVirusInput(ResourceFile.optionalString(parts[fields["virus"]!!])),
+                    virus = validatedVirus,
+                    virusIsLowRisk = ResourceFile.optionalBool(parts[fields["virusIsLowRisk"]!!]),
                     msi = ResourceFile.optionalBool(parts[fields["msi"]!!]),
                     tmb = ResourceFile.optionalNumber(parts[fields["tmb"]!!]),
                     hrd = ResourceFile.optionalBool(parts[fields["hrd"]!!]),
                     noMutationsFound = ResourceFile.optionalBool(parts[fields["noMutationsFound"]!!])
                 )
-            }
+            },
+            sequencingTestResultValidationErrors
         )
     }
-
-    private fun convertToSequencedVirusInput(input: String?): SequencedVirusInput? =
-        input?.let { SequencedVirusInput.valueOf(it) }
 }

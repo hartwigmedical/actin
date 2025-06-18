@@ -91,13 +91,14 @@ inline fun <reified T : Enum<T>> validateOptionalEnum(
     fieldName: String,
     fields: Map<String, Int>,
     parts: Array<String>,
+    disallowed: Set<T>? = null,
     enumCreator: (String) -> T
 ): Pair<T?, List<CurationConfigValidationError>> {
     val fieldValue = parts[fields[fieldName]!!]
     return if (fieldValue.trim().isEmpty()) {
         null to emptyList()
     } else {
-        return validateEnum<T>(curationCategory, input, fieldName, fieldValue, enumCreator)
+        return validateEnum<T>(curationCategory, input, fieldName, fieldValue, disallowed, enumCreator)
     }
 }
 
@@ -107,10 +108,11 @@ inline fun <reified T : Enum<T>> validateMandatoryEnum(
     fieldName: String,
     fields: Map<String, Int>,
     parts: Array<String>,
+    disallowed: Set<T>? = null,
     enumCreator: (String) -> T,
 ): Pair<T?, List<CurationConfigValidationError>> {
     val fieldValue = parts[fields[fieldName]!!]
-    return validateEnum<T>(curationCategory, input, fieldName, fieldValue, enumCreator)
+    return validateEnum<T>(curationCategory, input, fieldName, fieldValue, disallowed, enumCreator)
 }
 
 inline fun <reified T : Enum<T>> validateEnum(
@@ -118,10 +120,11 @@ inline fun <reified T : Enum<T>> validateEnum(
     input: String,
     fieldName: String,
     fieldValue: String,
-    enumCreator: (String) -> T,
+    disallowed: Set<T>?,
+    enumCreator: (String) -> T
 ): Pair<T?, List<CurationConfigValidationError>> {
     val trimmedUppercase = fieldValue.trim().replace(" ".toRegex(), "_").uppercase()
-    return if (enumContains<T>(trimmedUppercase)) {
+    return if (enumContains<T>(trimmedUppercase) && disallowed?.any { it.name == trimmedUppercase } != true) {
         enumCreator.invoke(trimmedUppercase) to emptyList()
     } else {
         return null to listOf(
@@ -131,7 +134,7 @@ inline fun <reified T : Enum<T>> validateEnum(
                 fieldName,
                 fieldValue,
                 T::class.java.simpleName,
-                "Accepted values are ${enumValues<T>().map { it.name }}"
+                "Accepted values are ${enumValues<T>().filterNot { disallowed?.contains(it) == true }}"
             )
         )
     }

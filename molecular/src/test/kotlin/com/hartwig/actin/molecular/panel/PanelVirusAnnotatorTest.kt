@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedVirus
-import com.hartwig.actin.datamodel.clinical.SequencedVirusInput
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
@@ -15,12 +14,12 @@ class PanelVirusAnnotatorTest {
 
     @Test
     fun `Should annotate HPV low risk sequenced virus correctly`() {
-        val annotatedPanel = annotator.annotate(setOf(SequencedVirus(SequencedVirusInput.HPV_LOW_RISK)))
+        val annotatedPanel = annotator.annotate(setOf(SequencedVirus(VirusType.HPV, isLowRisk = true)))
         assertThat(annotatedPanel).isEqualTo(
             listOf(
                 Virus(
                     name = "Human papillomavirus",
-                    type = VirusType.HUMAN_PAPILLOMA_VIRUS,
+                    type = VirusType.HPV,
                     isReliable = true,
                     integrations = null,
                     isReportable = true,
@@ -34,12 +33,12 @@ class PanelVirusAnnotatorTest {
 
     @Test
     fun `Should annotate other sequenced virus correctly`() {
-        val annotatedPanel = annotator.annotate(setOf(SequencedVirus(SequencedVirusInput.EBV)))
+        val annotatedPanel = annotator.annotate(setOf(SequencedVirus(VirusType.EBV, isLowRisk = false)))
         assertThat(annotatedPanel).isEqualTo(
             listOf(
                 Virus(
                     name = "Epstein-Barr virus",
-                    type = VirusType.EPSTEIN_BARR_VIRUS,
+                    type = VirusType.EBV,
                     isReliable = true,
                     integrations = null,
                     isReportable = true,
