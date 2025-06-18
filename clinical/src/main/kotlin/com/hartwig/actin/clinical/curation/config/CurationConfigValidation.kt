@@ -124,8 +124,9 @@ inline fun <reified T : Enum<T>> validateEnum(
     enumCreator: (String) -> T
 ): Pair<T?, List<CurationConfigValidationError>> {
     val trimmedUppercase = fieldValue.trim().replace(" ".toRegex(), "_").uppercase()
-    return if (enumContains<T>(trimmedUppercase) && disallowed?.any { it.name == trimmedUppercase } != true) {
-        enumCreator.invoke(trimmedUppercase) to emptyList()
+    val resolved = if (enumContains<T>(trimmedUppercase)) enumCreator.invoke(trimmedUppercase) else null
+    return if (resolved != null && disallowed?.contains(resolved) != true) {
+        resolved to emptyList()
     } else {
         return null to listOf(
             CurationConfigValidationError(
@@ -134,7 +135,8 @@ inline fun <reified T : Enum<T>> validateEnum(
                 fieldName,
                 fieldValue,
                 T::class.java.simpleName,
-                "Accepted values are ${enumValues<T>().filterNot { disallowed?.contains(it) == true }}"
+                "Accepted values are ${enumValues<T>().map { it.name }}" + (disallowed?.let { " excluding values [${it.joinToString(", ")}]" }
+                    ?: "")
             )
         )
     }
