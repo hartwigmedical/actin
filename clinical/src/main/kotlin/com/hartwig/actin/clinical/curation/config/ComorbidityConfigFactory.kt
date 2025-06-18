@@ -77,7 +77,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         var curated: Comorbidity? = when (type) {
             "complication" ->
                 Complication(
-                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    name = retval["name"]!!.first as String?,
                     icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
                     year = retval["year"]!!.first as Int?,
                     month = retval["month"]!!.first as Int?
@@ -85,13 +85,13 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
 
             "intolerance" ->
                 Intolerance(
-                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    name = retval["name"]!!.first as String?,
                     icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
                 )
 
             "other_condition" ->
                 OtherCondition(
-                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    name = retval["name"]!!.first as String?,
                     icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
                     year = retval["year"]!!.first as Int?,
                     month = retval["month"]!!.first as Int?,
@@ -99,24 +99,23 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
 
             "toxicity" ->
                 ToxicityCuration(
-                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    name = retval["name"]!!.first as String?,
                     grade = retval["grade"]!!.first as Int?,
                     icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
                 )
 
-            // TODO: fix qtcf and jtc
             "ecg" -> Ecg(
-                name = parts[fields["interpretation"]!!].trim().ifEmpty { null },
+                name = retval["interpretation"]!!.first as String?,
                 icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
                 qtcfMeasure = if (retval["isQTCF"]!!.first as Boolean? == true) {
                     EcgMeasure(
-                        value = retval["qtcfValue"]!!.first as Double?,
+                        value = retval["qtcfValue"]!!.first as Int,
                         unit = parts[fields["qtcfUnit"]!!]
                     )
                 } else null,
                 jtcMeasure = if (retval["isJTC"]!!.first as Boolean? == true) {
                     EcgMeasure(
-                        value = retval["jtcValue"]!!.first as Double?,
+                        value = retval["jtcValue"]!!.first as Int,
                         unit = parts[fields["jtcUnit"]!!]
                     )
                 } else null
@@ -124,7 +123,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
 
             "infection" ->
                 OtherCondition(
-                    name = parts[fields["interpretation"]!!].trim().ifEmpty { null },
+                    name = retval["interpretation"]!!.first as String?,
                     icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
                 )
 
