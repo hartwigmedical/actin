@@ -74,48 +74,53 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val retval = requiredFields[type]!!.map { it ->
             it to fieldProcessingFunction[it]!!.call(it, fields, parts)
         }.toMap()
+        val fieldValues = retval.mapValues { it.value.first }
+        val validationErrors = retval.flatMap { it.value.second }
+        val allErrors = validationErrors.fold(emptyList<CurationConfigValidationError>()) { acc, current ->
+            acc + current
+        }
         var curated: Comorbidity? = when (type) {
             "complication" ->
                 Complication(
-                    name = retval["name"]!!.first as String?,
-                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
-                    year = retval["year"]!!.first as Int?,
-                    month = retval["month"]!!.first as Int?
+                    name = fieldValues["name"]!! as String?,
+                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet(),
+                    year = fieldValues["year"]!! as Int?,
+                    month = fieldValues["month"]!! as Int?
                 )
 
             "intolerance" ->
                 Intolerance(
-                    name = retval["name"]!!.first as String?,
-                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
+                    name = fieldValues["name"]!! as String?,
+                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet()
                 )
 
             "other_condition" ->
                 OtherCondition(
-                    name = retval["name"]!!.first as String?,
-                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
-                    year = retval["year"]!!.first as Int?,
-                    month = retval["month"]!!.first as Int?,
+                    name = fieldValues["name"]!! as String?,
+                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet(),
+                    year = fieldValues["year"]!! as Int?,
+                    month = fieldValues["month"]!! as Int?,
                 )
 
             "toxicity" ->
                 ToxicityCuration(
-                    name = retval["name"]!!.first as String?,
-                    grade = retval["grade"]!!.first as Int?,
-                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
+                    name = fieldValues["name"]!! as String?,
+                    grade = fieldValues["grade"]!! as Int?,
+                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet()
                 )
 
             "ecg" -> Ecg(
-                name = retval["interpretation"]!!.first as String?,
-                icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
-                qtcfMeasure = if (retval["isQTCF"]!!.first as Boolean? == true) {
+                name = fieldValues["interpretation"]!! as String?,
+                icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet(),
+                qtcfMeasure = if (fieldValues["isQTCF"]!! as Boolean? == true) {
                     EcgMeasure(
-                        value = retval["qtcfValue"]!!.first as Int,
+                        value = fieldValues["qtcfValue"]!! as Int,
                         unit = parts[fields["qtcfUnit"]!!]
                     )
                 } else null,
-                jtcMeasure = if (retval["isJTC"]!!.first as Boolean? == true) {
+                jtcMeasure = if (fieldValues["isJTC"]!! as Boolean? == true) {
                     EcgMeasure(
-                        value = retval["jtcValue"]!!.first as Int,
+                        value = fieldValues["jtcValue"]!! as Int,
                         unit = parts[fields["jtcUnit"]!!]
                     )
                 } else null
@@ -123,15 +128,11 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
 
             "infection" ->
                 OtherCondition(
-                    name = retval["interpretation"]!!.first as String?,
-                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
+                    name = fieldValues["interpretation"]!! as String?,
+                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet()
                 )
 
             else -> null
-        }
-
-        val allErrors = retval.values.fold(emptyList<CurationConfigValidationError>()) { acc, pair ->
-            acc + pair.second
         }
 
         return ValidatedCurationConfig(
