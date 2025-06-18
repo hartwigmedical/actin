@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
+import SurgeryConfig
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
-import com.hartwig.actin.clinical.curation.config.SurgeryConfig
 import com.hartwig.actin.clinical.feed.standard.FeedTestData
 import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64

@@ -1,5 +1,4 @@
-package com.hartwig.actin.clinical.curation.config
-
+import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 
 data class SurgeryConfig(

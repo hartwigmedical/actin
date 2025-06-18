@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
+import SurgeryConfig
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
@@ -12,15 +12,15 @@ import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.feed.datamodel.FeedSurgery
 import org.apache.logging.log4j.LogManager
 
-class SurgeryExtractor(private val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>) {
+class SurgeryExtractor(private val surgeryCuration: CurationDatabase<SurgeryConfig>) {
 
     fun extract(patientId: String, entries: List<FeedSurgery>): ExtractionResult<List<Surgery>> {
         return entries.map { entry ->
             val name = entry.name ?: throw IllegalArgumentException("Surgery name missing for patient $patientId")
             val curationResponse = CurationResponse.createFromConfigs(
-                surgeryNameCuration.find(name),
+                surgeryCuration.find(name),
                 patientId,
-                CurationCategory.SURGERY_NAME,
+                CurationCategory.SURGERY,
                 name,
                 "surgery"
             )
@@ -51,6 +51,6 @@ class SurgeryExtractor(private val surgeryNameCuration: CurationDatabase<Surgery
 
     companion object {
         private val LOGGER = LogManager.getLogger(SurgeryExtractor::class.java)
-        fun create(curationDatabaseContext: CurationDatabaseContext) = SurgeryExtractor(curationDatabaseContext.surgeryNameCuration)
+        fun create(curationDatabaseContext: CurationDatabaseContext) = SurgeryExtractor(curationDatabaseContext.surgeryCuration)
     }
 }

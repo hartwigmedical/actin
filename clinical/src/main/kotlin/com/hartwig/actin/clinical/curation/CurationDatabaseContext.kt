@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import SurgeryConfig
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
@@ -27,7 +28,6 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfigFactory
-import com.hartwig.actin.clinical.curation.config.SurgeryConfig
 import com.hartwig.actin.clinical.curation.config.SurgeryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig

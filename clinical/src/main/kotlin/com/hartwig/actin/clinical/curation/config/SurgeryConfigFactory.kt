@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import SurgeryConfig
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
