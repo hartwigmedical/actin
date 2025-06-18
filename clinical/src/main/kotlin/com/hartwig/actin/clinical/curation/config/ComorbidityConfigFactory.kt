@@ -2,28 +2,162 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.datamodel.clinical.*
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationConfigValidationError
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import kotlin.reflect.full.memberProperties
 
 
 class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
+    private val requiredFields = mapOf(
+        "toxicity" to setOf("name", "grade", "icd"),
+        "complication" to setOf("impliesUnknownComplicationState", "name", "icd", "year", "month"),
+        "other_condition" to setOf("name", "year", "month", "icd", "isLVEF", "lvefValue"),
+        "intolerance" to setOf("name", "icd"),
+        "ecg" to setOf("interpretation", "icd", "isQTCF", "isJTC", "qtcfValue", "qtcfUnit", "jtcValue", "jtcUnit"),
+        "infection" to setOf("interpretation", "icd")
+    )
+
+    private val fieldProcessingFunction = mapOf(
+        "name" to ::validateString,
+        "interpretation" to ::validateString,
+        "icd" to ::partialValidateIcd,
+        "year" to ::partialValidateInteger,
+        "month" to ::partialValidateInteger,
+        "grade" to ::partialValidateInteger,
+        "impliesUnknownComplicationState" to ::partialValidateBoolean,
+        "isLVEF" to ::partialValidateBoolean,
+        "lvefValue" to ::partialValidateDouble,
+    )
+
+    internal fun <T> partialValidate(
+        fieldName: String,
+        fields: Map<String, Int>,
+        parts: Array<String>,
+        validateFn: (CurationCategory, String, String, Map<String, Int>, Array<String>) -> Pair<T, List<CurationConfigValidationError>>
+    ): Pair<T, List<CurationConfigValidationError>> {
+        return validateFn(CurationCategory.COMORBIDITY, parts[fields["input"]!!], fieldName, fields, parts)
+    }
+
+    internal fun partialValidateBoolean(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
+        partialValidate(fieldName, fields, parts, ::validateBoolean)
+
+    internal fun partialValidateInteger(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
+        partialValidate(fieldName, fields, parts, ::validateInteger)
+
+    internal fun partialValidateDouble(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
+        partialValidate(fieldName, fields, parts, ::validateDouble)
+
+    internal fun partialValidateIcd(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
+        partialValidate(fieldName, fields, parts) { category, inputValue, fName, flds, prts ->
+            validateIcd(category, inputValue, fName, flds, prts, icdModel)
+        }
+
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
         val type = parts[fields["type"]!!]
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        return when (type) {
-            "complication" -> ComplicationConfigFactory(icdModel).create(fields, parts)
-            "other_condition" -> OtherConditionConfigFactory(icdModel).create(fields, parts)
-            "infection" -> InfectionConfigFactory(icdModel).create(fields, parts)
-            "intolerance" -> IntoleranceConfigFactory(icdModel).create(fields, parts)
-            "ecg" -> EcgConfigFactory(icdModel).create(fields, parts)
-            "toxicity" -> ToxicityConfigFactory(icdModel).create(fields, parts)
-            else -> generateNoTypeError(type, input, ignore)
+        if (type !in requiredFields.keys) {
+            return generateNoTypeError(type, input, ignore)
         }
+        return generateConfig(input, ignore, type, fields, parts)
     }
 
 
-    fun generateNoTypeError(type: String, input: String, ignore: Boolean): ValidatedCurationConfig<ComorbidityConfig> {
+    private fun generateConfig(
+        input: String,
+        ignore: Boolean,
+        type: String,
+        fields: Map<String, Int>,
+        parts: Array<String>
+    ): ValidatedCurationConfig<ComorbidityConfig> {
+        val retval = requiredFields[type]!!.map { it ->
+            it to fieldProcessingFunction[it]!!.call(it, fields, parts)
+        }.toMap()
+        var curated: Comorbidity? = when (type) {
+            "complication" ->
+                Complication(
+                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
+                    year = retval["year"]!!.first as Int?,
+                    month = retval["month"]!!.first as Int?
+                )
+
+            "intolerance" ->
+                Intolerance(
+                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
+                )
+
+            "other_condition" ->
+                OtherCondition(
+                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
+                    year = retval["year"]!!.first as Int?,
+                    month = retval["month"]!!.first as Int?,
+                )
+
+            "toxicity" ->
+                ToxicityCuration(
+                    name = parts[fields["name"]!!].trim().ifEmpty { null },
+                    grade = retval["grade"]!!.first as Int?,
+                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
+                )
+
+            // TODO: fix qtcf and jtc
+            "ecg" -> Ecg(
+                name = parts[fields["interpretation"]!!].trim().ifEmpty { null },
+                icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet(),
+                qtcfMeasure = if (retval["isQTCF"]!!.first as Boolean? == true) {
+                    EcgMeasure(
+                        value = retval["qtcfValue"]!!.first as Double?,
+                        unit = parts[fields["qtcfUnit"]!!]
+                    )
+                } else null,
+                jtcMeasure = if (retval["isJTC"]!!.first as Boolean? == true) {
+                    EcgMeasure(
+                        value = retval["jtcValue"]!!.first as Double?,
+                        unit = parts[fields["jtcUnit"]!!]
+                    )
+                } else null
+            )
+
+            "infection" ->
+                OtherCondition(
+                    name = parts[fields["interpretation"]!!].trim().ifEmpty { null },
+                    icdCodes = retval["icd"]!!.first as? Set<IcdCode> ?: emptySet()
+                )
+
+            else -> null
+        }
+
+        val allErrors = retval.values.fold(emptyList<CurationConfigValidationError>()) { acc, pair ->
+            acc + pair.second
+        }
+
+        return ValidatedCurationConfig(
+            ComorbidityConfig(
+                input = input,
+                ignore = ignore,
+//                lvef = if (retval["isLVEF"]!!.first as Boolean? == true) retval["lvefValue"]!!.first as Double? else null,
+                curated = if (!ignore) curated else null
+            ), allErrors
+        )
+    }
+
+    fun validateString(
+        fieldName: String,
+        fields: Map<String, Int>,
+        parts: Array<String>,
+    ): Pair<String?, List<CurationConfigValidationError>> {
+        return Pair(parts[fields[fieldName]!!].trim().ifEmpty { null }, emptyList())
+    }
+
+    fun generateNoTypeError(
+        type: String,
+        input: String,
+        ignore: Boolean
+    ): ValidatedCurationConfig<ComorbidityConfig> {
         return ValidatedCurationConfig(
             ComorbidityConfig(
                 input = input,

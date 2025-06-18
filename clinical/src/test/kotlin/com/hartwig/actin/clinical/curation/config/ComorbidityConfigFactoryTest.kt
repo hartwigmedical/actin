@@ -59,7 +59,7 @@ class ComorbidityConfigFactoryTest {
     }
 
     @Test
-    fun `Should return intorance config from valid data`() {
+    fun `Should return intolerance config from valid data`() {
         val configFactory = ComorbidityConfigFactory(icdModel)
         val data = arrayOf("intolerance", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle")
         val config = configFactory.create(fields, data)
