@@ -15,10 +15,12 @@ private const val CHILD_DOID_1 = "200"
 private const val PARENT_DOID_2 = "300"
 private const val CHILD_DOID_2 = "400"
 
-private const val SUB_LOCATION = "specific"
+private const val SPECIFIC_QUERY = "specific"
+private const val NAME_WITH_SPECIFIC_QUERY = "name with $SPECIFIC_QUERY term"
 
 class PrimaryTumorLocationBelongsToDoidTest {
-    private val subLocationFunction = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), SUB_LOCATION)
+    private val specificQueryFunction =
+        PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), SPECIFIC_QUERY)
 
     @Test
     fun `Should evaluate whether tumor doid matches target`() {
@@ -114,38 +116,36 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should show correct fail message`() {
         val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), null)
         assertThat(
-            function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failMessages
+            function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failMessagesStrings()
         ).contains("No child term 1 or child term 2")
     }
 
     @Test
     fun `Should fail when sub location matches and tumor doid does not match`() {
-        assertEvaluation(EvaluationResult.FAIL, subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation("10", SUB_LOCATION)))
-    }
-
-    @Test
-    fun `Should be undetermined when sub location query provided and tumor doids not provided`() {
-        assertResultForDoids(EvaluationResult.UNDETERMINED, subLocationFunction, null)
-    }
-
-    @Test
-    fun `Should warn when sub location query provided and doid match and tumor sub location is null`() {
-        assertResultForDoid(EvaluationResult.WARN, subLocationFunction, CHILD_DOID_1)
-    }
-
-    @Test
-    fun `Should warn when sub location query provided and doid match and tumor sub location does not match`() {
         assertEvaluation(
-            EvaluationResult.WARN,
-            subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID_1, "another"))
+            EvaluationResult.FAIL,
+            specificQueryFunction.evaluate(TumorTestFactory.withDoidAndName("10", NAME_WITH_SPECIFIC_QUERY))
         )
     }
 
     @Test
-    fun `Should pass when sub location and doid match`() {
-        val pass = subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID_1, SUB_LOCATION))
+    fun `Should be undetermined when sub location query provided and tumor doids not provided`() {
+        assertResultForDoids(EvaluationResult.UNDETERMINED, specificQueryFunction, null)
+    }
+
+    @Test
+    fun `Should warn when sub query provided and doid match and tumor sub query does not match`() {
+        assertEvaluation(
+            EvaluationResult.WARN,
+            specificQueryFunction.evaluate(TumorTestFactory.withDoidAndName(CHILD_DOID_1, "another"))
+        )
+    }
+
+    @Test
+    fun `Should pass when sub query and doid match`() {
+        val pass = specificQueryFunction.evaluate(TumorTestFactory.withDoidAndName(CHILD_DOID_1, NAME_WITH_SPECIFIC_QUERY))
         assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passMessages).contains("Tumor belongs to child term 1 with sub-location specific")
+        assertThat(pass.passMessagesStrings()).contains("Tumor belongs to child term 1 with specific request 'specific'")
     }
 
     companion object {

@@ -19,11 +19,6 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
 
-## ACTIN clinical model for providers
-
-Data providers can provide clinical data in JSON adhering to
-the [following format](src/main/resources/json_schema/provided_clinical_data.schema.json)
-
 ## ACTIN clinical datamodel used internally
 
 In ACTIN, the clinical feed as described above, is mapped onto the ACTIN clinical data model.
@@ -55,25 +50,21 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 
 #### 1 tumor details
 
-| Field                    | Origin                                               |
-|--------------------------|------------------------------------------------------|
-| primaryTumorLocation     | Primary tumor details: Tumor localization            |
-| primaryTumorSubLocation  | Primary tumor details: Tumor localization            |
-| primaryTumorType         | Primary tumor details: Tumor type                    |
-| primaryTumorSubType      | Primary tumor details: Tumor type                    |
-| primaryTumorExtraDetails | Primary tumor details: Grade/differentiation details |
-| doids                    | Added in curation                                    |
-| stage                    | Primary tumor details: Stage                         |
-| hasMeasurableDisease     | Primary tumor details: Measurable disease?           |
-| hasBrainLesions          | Primary tumor details: Lesion sites                  |
-| hasActiveBrainLesions    | Primary tumor details: Lesion sites                  |
-| hasCnsLesions            | Primary tumor details: Lesion sites                  |
-| hasActiveCnsLesions      | Primary tumor details: Lesion sites                  |
-| hasBoneLesions           | Primary tumor details: Lesion sites                  |
-| hasLiverLesions          | Primary tumor details: Lesion sites                  |
-| hasLungLesions           | Primary tumor details: Lesion sites                  |
-| otherLesions             | Primary tumor details: Lesion sites                  |
-| biopsyLocation           | Molecular test details: Biopsy location              |
+| Field                    | Origin                                     |
+|--------------------------|--------------------------------------------|
+| name                     | Description of tumor, added in curation    |
+| doids                    | Added in curation                          |
+| stage                    | Primary tumor details: Stage               |
+| hasMeasurableDisease     | Primary tumor details: Measurable disease? |
+| hasBrainLesions          | Primary tumor details: Lesion sites        |
+| hasActiveBrainLesions    | Primary tumor details: Lesion sites        |
+| hasCnsLesions            | Primary tumor details: Lesion sites        |
+| hasActiveCnsLesions      | Primary tumor details: Lesion sites        |
+| hasBoneLesions           | Primary tumor details: Lesion sites        |
+| hasLiverLesions          | Primary tumor details: Lesion sites        |
+| hasLungLesions           | Primary tumor details: Lesion sites        |
+| otherLesions             | Primary tumor details: Lesion sites        |
+| biopsyLocation           | Molecular test details: Biopsy location    |
 
 #### 1 clinical status
 
@@ -140,10 +131,7 @@ The details may include multiple treatment stages representing switches from the
 
 | Field            | Origin                                     |
 |------------------|--------------------------------------------|
-| tumorLocation    | Previous primary tumors: Tumor location    |
-| tumorSubLocation | Previous primary tumors: Tumor location    |
-| tumorType        | Previous primary tumors: Tumor type        |
-| tumorSubType     | Previous primary tumors: Tumor type        |
+| name             | Added in curation                          |
 | doids            | Added in curation                          |
 | diagnosedYear    | Previous primary tumors: Diagnosis date    |
 | diagnosedMonth   | Previous primary tumors: Diagnosis date    |

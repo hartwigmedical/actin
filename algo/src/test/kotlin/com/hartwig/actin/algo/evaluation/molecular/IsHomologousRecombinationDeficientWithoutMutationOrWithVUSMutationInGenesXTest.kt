@@ -42,12 +42,12 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should fail when HRD with BRCA1 hotspot`() {
+    fun `Should fail when HRD with BRCA1 cancer-associated variant`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHomologousRecombinationAndVariant(
-                    true, hrdVariant(isReportable = true, isHotspot = true, driverLikelihood = DriverLikelihood.HIGH)
+                    true, hrdVariant(isReportable = true, isCancerAssociatedVariant = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
             )
         )
@@ -78,7 +78,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should warn when HRD and non-hotspot biallelic high driver in BRCA1`() {
+    fun `Should warn when HRD and non-cancer-associated variant biallelic high driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -91,7 +91,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should warn when HRD and non-hotspot biallelic low driver in BRCA1`() {
+    fun `Should warn when HRD and non-cancer-associated variant biallelic low driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -104,7 +104,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should warn when HRD and non-hotspot non-biallelic high driver in BRCA1`() {
+    fun `Should warn when HRD and non-cancer-associated variant non-biallelic high driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -117,7 +117,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should warn when HRD and non-hotspot non-biallelic low driver in BRCA1`() {
+    fun `Should warn when HRD and non-cancer-associated variant non-biallelic low driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -134,11 +134,11 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
         val result = function.evaluate(
             MolecularTestFactory.withHomologousRecombinationAndVariant(
                 true,
-                TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isHotspot = true)
+                TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isCancerAssociatedVariant = true)
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages).containsExactly("Tumor is HRD but without drivers in HR genes")
+        assertThat(result.warnMessagesStrings()).containsExactly("Tumor is HRD but without drivers in HR genes")
     }
 
     @Test
@@ -192,7 +192,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should warn when HRD and biallelic RAD51C hotspot and non-homozygous disruption of BRCA1`() {
+    fun `Should warn when HRD and biallelic RAD51C cancer-associated variant and non-homozygous disruption of BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -219,7 +219,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should pass when HRD and biallelic RAD51C hotspot and no BRCA1 variant`() {
+    fun `Should pass when HRD and biallelic RAD51C cancer-associated variant and no BRCA1 variant`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -231,7 +231,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     }
 
     @Test
-    fun `Should warn when HRD and biallelic non-hotspot BRCA1 and non-homozygous disruption of BRCA1`() {
+    fun `Should warn when HRD and biallelic non-cancer-associated variant BRCA1 and non-homozygous disruption of BRCA1`() {
         val result = function.evaluate(
             MolecularTestFactory.withHomologousRecombinationAndVariantAndDisruption(
                 true,
@@ -241,20 +241,20 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessages).containsExactly("Tumor is HRD with non-homozygous disruption in BRCA1 and non-hotspot biallelic non-high driver(s) in BRCA1 which could be pathogenic")
+        assertThat(result.warnMessagesStrings()).containsExactly("Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 and non-homozygous disruption in BRCA1 which could be pathogenic")
     }
 
     private fun hrdVariant(
         gene: String = "BRCA1",
         isReportable: Boolean = false,
         isBiallelic: Boolean = false,
-        isHotspot: Boolean = false,
+        isCancerAssociatedVariant: Boolean = false,
         driverLikelihood: DriverLikelihood = DriverLikelihood.LOW,
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = gene,
             isReportable = isReportable,
-            isHotspot = isHotspot,
+            isCancerAssociatedVariant = isCancerAssociatedVariant,
             driverLikelihood = driverLikelihood,
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )

@@ -2,13 +2,11 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -23,60 +21,16 @@ private const val GENE_START = "gene_start"
 private const val GENE_END = "gene_end"
 private const val FUSED_EXON_UP = 2
 private const val FUSED_EXON_DOWN = 4
+private const val EXON_SKIPPED_UP = 6
+private const val EXON_SKIPPED_DOWN = 8
 private const val TRANSCRIPT_START = "transcript_start"
 private const val TRANSCRIPT_END = "transcript_end"
 private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
 private val FULLY_SPECIFIED_SEQUENCED_FUSION =
     SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
 
-private val FUSION = TestMolecularFactory.createMinimalFusion().copy(
-    isReportable = true,
-    geneStart = GENE_START,
-    geneEnd = GENE_END,
-    fusedExonUp = null,
-    fusedExonDown = null,
-    driverType = FusionDriverType.KNOWN_PAIR,
-    driverLikelihood = DriverLikelihood.HIGH,
-    event = "$GENE_START::$GENE_END fusion"
-)
-
-private val FULLY_SPECIFIED_FUSION = TestMolecularFactory.createMinimalFusion().copy(
-    isReportable = true,
-    geneStart = GENE_START,
-    geneEnd = GENE_END,
-    fusedExonUp = FUSED_EXON_UP,
-    fusedExonDown = FUSED_EXON_DOWN,
-    driverType = FusionDriverType.KNOWN_PAIR,
-    geneTranscriptStart = TRANSCRIPT_START,
-    geneTranscriptEnd = TRANSCRIPT_END,
-    driverLikelihood = DriverLikelihood.HIGH,
-    event = "$GENE_START::$GENE_END fusion"
-
-)
-
-private val EXON_SKIP_FUSION = TestMolecularFactory.createMinimalFusion().copy(
-    isReportable = true,
-    geneStart = GENE,
-    geneEnd = GENE,
-    fusedExonUp = FUSED_EXON_UP,
-    fusedExonDown = FUSED_EXON_DOWN,
-    geneTranscriptStart = TRANSCRIPT,
-    geneTranscriptEnd = TRANSCRIPT,
-    driverLikelihood = DriverLikelihood.HIGH,
-    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
-    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
-)
-
-private val EXON_SKIP_FUSION_CANONICAL_TRANSCRIPT = EXON_SKIP_FUSION.copy(
-    geneTranscriptStart = CANONICAL_TRANSCRIPT,
-    geneTranscriptEnd = CANONICAL_TRANSCRIPT
-)
-
-private val KNOWN_FUSION = TestServeKnownFactory.fusionBuilder().geneUp(GENE_START).geneDown(GENE_END)
-    .proteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN).build()
-
 class PanelFusionAnnotatorTest {
-    
+
     private val knownFusionCache = mockk<KnownFusionCache>()
 
     private val ensembleDataCache = mockk<EnsemblDataCache>()
@@ -209,7 +163,7 @@ class PanelFusionAnnotatorTest {
             every { geneId() } returns "geneId"
         }
 
-        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, 2, 4, null))
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, EXON_SKIPPED_UP, EXON_SKIPPED_DOWN, null))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             listOf(
@@ -221,9 +175,9 @@ class PanelFusionAnnotatorTest {
                     isAssociatedWithDrugResistance = null,
                     geneTranscriptStart = CANONICAL_TRANSCRIPT,
                     geneTranscriptEnd = CANONICAL_TRANSCRIPT,
-                    fusedExonUp = FUSED_EXON_UP,
-                    fusedExonDown = FUSED_EXON_DOWN,
-                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
+                    fusedExonUp = EXON_SKIPPED_UP - 1,
+                    fusedExonDown = EXON_SKIPPED_DOWN + 1,
+                    event = "$GENE exons $EXON_SKIPPED_UP-$EXON_SKIPPED_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty()
@@ -236,7 +190,7 @@ class PanelFusionAnnotatorTest {
     fun `Should annotate with provided transcript when available`() {
         setupKnownFusionCacheForExonDeletion()
 
-        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, FUSED_EXON_UP, FUSED_EXON_DOWN, TRANSCRIPT))
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, EXON_SKIPPED_UP, EXON_SKIPPED_DOWN, TRANSCRIPT))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             listOf(
@@ -248,9 +202,9 @@ class PanelFusionAnnotatorTest {
                     isAssociatedWithDrugResistance = null,
                     geneTranscriptStart = TRANSCRIPT,
                     geneTranscriptEnd = TRANSCRIPT,
-                    fusedExonUp = FUSED_EXON_UP,
-                    fusedExonDown = FUSED_EXON_DOWN,
-                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
+                    fusedExonUp = EXON_SKIPPED_UP - 1,
+                    fusedExonDown = EXON_SKIPPED_DOWN + 1,
+                    event = "$GENE exons $EXON_SKIPPED_UP-$EXON_SKIPPED_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty()

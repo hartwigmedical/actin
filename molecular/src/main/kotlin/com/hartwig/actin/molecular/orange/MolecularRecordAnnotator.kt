@@ -38,13 +38,13 @@ class MolecularRecordAnnotator(private val knownEventResolver: KnownEventResolve
     fun annotateVariant(variant: Variant): Variant {
         val alteration = knownEventResolver.resolveForVariant(variant)
 
-        if (!variant.isHotspot && alteration.isHotspot) {
-            logger.info("Overwriting isHotspot to true and setting driverLikelihood to HIGH for ${variant.event}")
+        if (!variant.isCancerAssociatedVariant && alteration.isCancerAssociatedVariant) {
+            logger.info("Overwriting isCancerAssociatedVariant to true and setting driverLikelihood to HIGH for ${variant.event}")
         }
 
         return variant.copy(
-            isHotspot = alteration.isHotspot,
-            driverLikelihood = if (alteration.isHotspot) DriverLikelihood.HIGH else variant.driverLikelihood,
+            isCancerAssociatedVariant = alteration.isCancerAssociatedVariant,
+            driverLikelihood = if (alteration.isCancerAssociatedVariant) DriverLikelihood.HIGH else variant.driverLikelihood,
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance

@@ -153,7 +153,7 @@ class ResistanceEvidenceMatcher(
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
-            
+
             return ResistanceEvidenceMatcher(
                 onLabelNonPositiveEvidence,
                 treatmentDatabase,

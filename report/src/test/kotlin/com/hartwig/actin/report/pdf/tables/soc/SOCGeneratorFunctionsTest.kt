@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.soc
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
@@ -118,18 +119,26 @@ class SOCGeneratorFunctionsTest {
                     val newText = listOfNotNull(element.children.filterIsInstance<Text>().firstOrNull()?.text)
                     extractAllTextFromCell(elements.drop(1), textList + newText)
                 }
+
                 is Table -> {
                     extractAllTextFromCell(element.children.filterIsInstance<Cell>() + elements.drop(1), textList)
                 }
+
                 is Cell -> {
                     extractAllTextFromCell(element.children + elements.drop(1), textList)
                 }
+
                 else -> extractAllTextFromCell(elements.drop(1), textList)
             }
         }
     }
 
-    private fun annotatedTreatmentMatch(name: String, evaluations: List<Evaluation>, pfs: Measurement? = null, os: Measurement? = null): AnnotatedTreatmentMatch {
+    private fun annotatedTreatmentMatch(
+        name: String,
+        evaluations: List<Evaluation>,
+        pfs: Measurement? = null,
+        os: Measurement? = null
+    ): AnnotatedTreatmentMatch {
         return AnnotatedTreatmentMatch(
             TreatmentCandidate(treatment(name, true), false, emptySet()), evaluations, emptyList(), pfs, os, emptyList()
         )
@@ -137,11 +146,13 @@ class SOCGeneratorFunctionsTest {
 
     private fun evaluation(evaluationResult: EvaluationResult, messages: Set<String>, recoverable: Boolean = false): Evaluation {
         return when (evaluationResult) {
-            EvaluationResult.PASS -> Evaluation(evaluationResult, recoverable, passMessages = messages)
-            EvaluationResult.WARN -> Evaluation(evaluationResult, recoverable, warnMessages = messages)
-            else -> Evaluation(evaluationResult, recoverable, undeterminedMessages = messages)
+            EvaluationResult.PASS -> Evaluation(evaluationResult, recoverable, passMessages = staticMessages(messages))
+            EvaluationResult.WARN -> Evaluation(evaluationResult, recoverable, warnMessages = staticMessages(messages))
+            else -> Evaluation(evaluationResult, recoverable, undeterminedMessages = staticMessages(messages))
         }
     }
+
+    private fun staticMessages(messages: Set<String>) = messages.map { StaticMessage(it) }.toSet()
 
     private fun patientPopulation(analysisGroups: List<AnalysisGroup>) =
         PatientPopulation("test", false, 20, 80, 50.0, TOTAL_POPULATION, analysisGroups = analysisGroups)

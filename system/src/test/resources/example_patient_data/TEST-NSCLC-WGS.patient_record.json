@@ -16,11 +16,7 @@
     "hasHartwigSequencing": true
   },
   "tumor": {
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Carcinoma",
-    "primaryTumorSubType": "Adenocarcinoma",
-    "primaryTumorExtraDetails": "",
+    "name": "Lung adenocarcinoma",
     "doids": [
       "3910"
     ],
@@ -104,10 +100,7 @@
   ],
   "priorPrimaries": [
     {
-      "tumorLocation": "Skin",
-      "tumorSubLocation": "neck",
-      "tumorType": "Carcinoma",
-      "tumorSubType": "Squamous cell carcinoma",
+      "name": "Skin squamous cell caricnoma",
       "doids": [
         "3151"
       ],
@@ -552,7 +545,7 @@
                 "hgvsProteinImpact": "p.L858R",
                 "affectedCodon": 858,
                 "affectedExon": 21,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -566,7 +559,7 @@
                 "phaseGroups": null,
                 "clonalLikelihood": 1.0
               },
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "EGFR L858R",
               "driverLikelihood": "HIGH",
@@ -695,7 +688,7 @@
                 "hgvsProteinImpact": "p.C797S",
                 "affectedCodon": 797,
                 "affectedExon": 20,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -709,7 +702,7 @@
                 "phaseGroups": null,
                 "clonalLikelihood": 1.0
               },
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "EGFR C797S",
               "driverLikelihood": "HIGH",
@@ -810,7 +803,7 @@
                 "hgvsProteinImpact": "p.G12D",
                 "affectedCodon": 12,
                 "affectedExon": 2,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -824,7 +817,7 @@
                 "phaseGroups": null,
                 "clonalLikelihood": 0.4
               },
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "KRAS G12D",
               "driverLikelihood": "HIGH",

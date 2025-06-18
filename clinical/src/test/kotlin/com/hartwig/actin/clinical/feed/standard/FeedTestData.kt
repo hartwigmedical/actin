@@ -11,7 +11,6 @@ const val HASHED_ID_IN_BASE64 = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0="
 const val TREATMENT_NAME = "treatmentName"
 const val SURGERY = "surgery"
 const val OTHER_CONDITION_INPUT = "prior condition"
-const val TREATMENT_HISTORY_INPUT = "treatment name"
 private val DATE_Y2023_M02_D23 = LocalDate.of(2024, 2, 23)
 
 object FeedTestData {
@@ -22,6 +21,7 @@ object FeedTestData {
             birthYear = 2024,
             gender = "FEMALE",
             registrationDate = DATE_Y2023_M02_D23,
+            questionnaireDate = DATE_Y2023_M02_D23,
             hartwigMolecularDataExpected = false
         ),
         tumorDetails = createFeedTumorDetail()

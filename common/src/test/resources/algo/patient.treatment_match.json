@@ -16,10 +16,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Is adult"
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -36,7 +33,9 @@
             "exclusionMolecularEvents": [
             ],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [
             ],
@@ -62,10 +61,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-02",
-                    "text": "Has no active CNS metastases"
-                  }
+                  "I-02"
                 ],
                 "function": {
                   "rule": "NOT",
@@ -91,7 +87,9 @@
                 "undeterminedMessages": [
                 ],
                 "failMessages": [
-                  "No known active CNS metastases present"
+                  {
+                    "message": "No known active CNS metastases present"
+                  }
                 ]
               }
             ]
@@ -170,7 +168,9 @@
           "result": "FAIL",
           "recoverable": false,
           "failMessages": [
-            "Patient determined to be eligible for line 4"
+            {
+              "message": "Patient determined to be eligible for line 4"
+            }
           ]
         }
       ]

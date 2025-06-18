@@ -3,13 +3,14 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
+import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
+
 
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -106,7 +107,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_ANY_DRUG_X to hasAcquiredResistanceToSomeDrugCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_AFTER_LATEST_TREATMENT_LINE to
-                    { HasRadiologicalProgressionFollowingLatestTreatmentLine() },
+                    { HasHadProgressionFollowingLatestTreatmentLine() },
             EligibilityRule.HAS_HAD_DEFINITIVE_LOCOREGIONAL_THERAPY_WITH_CURATIVE_INTENT to { HasHadDefinitiveLocoregionalTherapyWithCurativeIntent() },
             EligibilityRule.HAS_HAD_COMPLETE_RESECTION to { HasHadCompleteResection() },
             EligibilityRule.HAS_HAD_PARTIAL_RESECTION to { HasHadPartialResection() },
@@ -553,7 +554,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minSystemicTreatments = functionInputResolver().createOneIntegerInput(function)
-            HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments, false)
+            And(
+                listOf(
+                    HasHadSomeSystemicTreatments(minSystemicTreatments),
+                    HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological=false)
+                )
+            )
         }
     }
 
@@ -580,7 +586,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minSystemicTreatments = functionInputResolver().createOneIntegerInput(function)
-            HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments, true)
+            And(
+                listOf(
+                    HasHadSomeSystemicTreatments(minSystemicTreatments),
+                    HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological=true)
+                )
+            )
         }
     }
 

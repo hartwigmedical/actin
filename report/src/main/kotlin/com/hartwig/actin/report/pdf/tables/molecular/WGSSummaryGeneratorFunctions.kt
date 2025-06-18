@@ -60,11 +60,11 @@ object WGSSummaryGeneratorFunctions {
             val ploidy = molecular.characteristics.ploidy
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
-                table.addCell(Cells.createKey("Trial-relevant events, considered medium/low driver:"))
+                table.addCell(Cells.createKey("Potential trial events, considered no high driver"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, ploidy))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Trial-relevant events, not considered a tumor driver:"))
+                table.addCell(Cells.createKey("Potential trial events, considered no tumor driver"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver, ploidy))
             }
 
@@ -158,7 +158,7 @@ object WGSSummaryGeneratorFunctions {
                     if (driver is CopyNumber) {
                         val ploidyString = ploidy?.let { " - with tumor ploidy $it)" } ?: ")"
                         " (${driver.canonicalImpact.minCopies} copies$ploidyString"
-                    } else " (dubious quality)"
+                    } else " (annotated as not a driver)"
                 }
             }
             listOf(

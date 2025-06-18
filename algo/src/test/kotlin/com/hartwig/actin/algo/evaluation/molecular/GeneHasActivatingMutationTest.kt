@@ -38,6 +38,15 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
+    fun `Should warn with activating mutation for gene if kinase domain requirement is true`() {
+        val function = GeneHasActivatingMutation(GENE, null, inKinaseDomain = true)
+        val result = function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
+
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessagesStrings()).containsExactly("gene A activating mutation(s): event but undetermined if in kinase domain")
+    }
+
+    @Test
     fun `Should fail with activating mutation for other gene`() {
         assertResultForVariant(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
         assertResultForVariantIgnoringCodons(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
@@ -83,8 +92,11 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should warn with activating mutation for gene with no protein effect or hotspot`() {
-        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isHotspot = false))
+    fun `Should warn with activating mutation for gene with no protein effect or cancer-associated variant`() {
+        assertResultForVariant(
+            EvaluationResult.WARN,
+            ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isCancerAssociatedVariant = false)
+        )
     }
 
     @Test
@@ -103,16 +115,17 @@ class GeneHasActivatingMutationTest {
             TestVariantFactory.createMinimal().copy(
                 gene = GENE,
                 isReportable = false,
-                isHotspot = false,
+                isCancerAssociatedVariant = false,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         )
     }
 
     @Test
-    fun `Should warn with non reportable hotspot mutation for gene`() {
+    fun `Should warn with non reportable cancer-associated variant for gene`() {
         assertResultForVariant(
-            EvaluationResult.WARN, TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isHotspot = true)
+            EvaluationResult.WARN,
+            TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isCancerAssociatedVariant = true)
         )
     }
 
@@ -198,7 +211,7 @@ class GeneHasActivatingMutationTest {
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(result.undeterminedMessages).containsExactly("Activating mutation in gene gene A undetermined (not tested for mutations)")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Activating mutation in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
@@ -243,11 +256,12 @@ class GeneHasActivatingMutationTest {
         private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
         private val ACTIVATING_VARIANT = TestVariantFactory.createMinimal().copy(
             gene = GENE,
+            event = "event",
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isHotspot = true,
+            isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(300),
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
@@ -259,7 +273,7 @@ class GeneHasActivatingMutationTest {
             driverLikelihood = DriverLikelihood.HIGH,
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isHotspot = true,
+            isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(100),
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
@@ -267,6 +281,5 @@ class GeneHasActivatingMutationTest {
 
         private fun impactWithCodon(affectedCodon: Int) =
             TestTranscriptVariantImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
-
     }
 }

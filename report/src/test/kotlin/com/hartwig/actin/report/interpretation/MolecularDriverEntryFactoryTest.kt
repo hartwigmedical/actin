@@ -2,13 +2,12 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
@@ -92,112 +91,191 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should assign correct driver type to variant drivers with gene role ONCO`() {
-        val oncoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.ONCO, isHotspot = true)
-        val oncoNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.ONCO, isHotspot = false)
+        val oncoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.ONCO, isCancerAssociatedVariant = true)
+        val oncoNoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.ONCO, isCancerAssociatedVariant = false)
 
-        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
-        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
-        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (Hotspot with no protein effect)")
-        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot)")
-        assertVariantType(oncoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function)")
-        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
-        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
-        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
-        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot)")
-        assertVariantType(oncoNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function)")
+        assertVariantType(
+            oncoCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
+            "Mutation (Cancer-associated variant with unknown protein effect)"
+        )
+        assertVariantType(
+            oncoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT),
+            "Mutation (Cancer-associated variant with no protein effect)"
+        )
+        assertVariantType(
+            oncoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED),
+            "Mutation (Cancer-associated variant with no protein effect)"
+        )
+        assertVariantType(oncoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Cancer-associated variant)")
+        assertVariantType(oncoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function)")
+        assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known cancer-associated variant)")
+        assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known cancer-associated variant)")
+        assertVariantType(oncoNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Gain of function)")
     }
 
     @Test
     fun `Should assign correct driver type to variant drivers with gene role TSG`() {
-        val tsgHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isHotspot = true)
-        val tsgHotspotBi = tsgHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
-        val tsgNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isHotspot = false)
-        val tsgNoHotspotBi = tsgNoHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val tsgCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isCancerAssociatedVariant = true)
+        val tsgCavBi = tsgCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val tsgNoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isCancerAssociatedVariant = false)
+        val tsgNoCavBi = tsgNoCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
 
-        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
-        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
-        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (Hotspot with no protein effect)")
-        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function)")
-        assertVariantType(tsgHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function, biallelic)")
-        assertVariantType(tsgHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot)")
-        assertVariantType(tsgHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
-        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
-        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot, biallelic)")
-        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
-        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
-        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function)")
-        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function, biallelic)")
         assertVariantType(
-            tsgNoHotspot.copy(
-                proteinEffect = ProteinEffect.UNKNOWN,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
-                    .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            ), "Mutation (Loss of function)"
+            tsgCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
+            "Mutation (Cancer-associated variant with unknown protein effect)"
         )
         assertVariantType(
-            tsgNoHotspotBi.copy(
-                proteinEffect = ProteinEffect.UNKNOWN,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
-                    .copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            ), "Mutation (Loss of function, biallelic)"
+            tsgCav.copy(proteinEffect = ProteinEffect.NO_EFFECT),
+            "Mutation (Cancer-associated variant with no protein effect)"
         )
-        assertVariantType(tsgNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot)")
-        assertVariantType(tsgNoHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(
+            tsgCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED),
+            "Mutation (Cancer-associated variant with no protein effect)"
+        )
+        assertVariantType(tsgCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function)")
+        assertVariantType(tsgCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function, biallelic)")
+        assertVariantType(tsgCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant)")
+        assertVariantType(tsgCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
+        assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known cancer-associated variant)")
+        assertVariantType(
+            tsgNoCavBi.copy(proteinEffect = ProteinEffect.UNKNOWN),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
+        assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function)")
+        assertVariantType(tsgNoCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Loss of function, biallelic)")
+        assertVariantType(tsgNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known cancer-associated variant)")
+        assertVariantType(
+            tsgNoCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
     }
 
     @Test
     fun `Should assign correct driver type to variant drivers with gene role BOTH`() {
-        val bothHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isHotspot = true)
-        val bothHotspotBi = bothHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val bothCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isCancerAssociatedVariant = true)
+        val bothCavBi = bothCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
 
-        val bothNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isHotspot = false)
-        val bothNoHotspotBi =
-            bothNoHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val bothNoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isCancerAssociatedVariant = false)
+        val bothNoCavBi = bothNoCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
 
-        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
-        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
-        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (Hotspot with no protein effect)")
-        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot)")
-        assertVariantType(bothHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
-        assertVariantType(bothHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot)")
-        assertVariantType(bothHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
-        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
-        assertVariantType(bothNoHotspotBi.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot, biallelic)")
-        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
-        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
-        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot)")
-        assertVariantType(bothNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
-        assertVariantType(bothNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot)")
-        assertVariantType(bothNoHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(
+            bothCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
+            "Mutation (Cancer-associated variant with unknown protein effect)"
+        )
+        assertVariantType(
+            bothCav.copy(proteinEffect = ProteinEffect.NO_EFFECT),
+            "Mutation (Cancer-associated variant with no protein effect)"
+        )
+        assertVariantType(
+            bothCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED),
+            "Mutation (Cancer-associated variant with no protein effect)"
+        )
+        assertVariantType(bothCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Cancer-associated variant)")
+        assertVariantType(bothCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
+        assertVariantType(bothCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant)")
+        assertVariantType(bothCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
+        assertVariantType(bothNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known cancer-associated variant)")
+        assertVariantType(
+            bothNoCavBi.copy(proteinEffect = ProteinEffect.UNKNOWN),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
+        assertVariantType(bothNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(bothNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(bothNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known cancer-associated variant)")
+        assertVariantType(
+            bothNoCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
+        assertVariantType(bothNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known cancer-associated variant)")
+        assertVariantType(
+            bothNoCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
     }
 
     @Test
     fun `Should assign correct driver type to variant drivers with unknown gene role`() {
-        val unknownHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isHotspot = true)
-        val unknownBi = unknownHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val unknownCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isCancerAssociatedVariant = true)
+        val unknownBi = unknownCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
 
-        val unknownNoHotspot = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isHotspot = false)
-        val unknownNoHotspotBi =
-            unknownNoHotspot.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val unknownNoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isCancerAssociatedVariant = false)
+        val unknownNoCavBi = unknownNoCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
 
-        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (Hotspot with unknown protein effect)")
-        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (Hotspot with no protein effect)")
         assertVariantType(
-            unknownHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED),
-            "Mutation (Hotspot with no protein effect)"
+            unknownCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
+            "Mutation (Cancer-associated variant with unknown protein effect)"
         )
-        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot)")
-        assertVariantType(unknownBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
-        assertVariantType(unknownHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot)")
-        assertVariantType(unknownBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Hotspot, biallelic)")
-        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot)")
-        assertVariantType(unknownNoHotspotBi.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known hotspot, biallelic)")
-        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
-        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
-        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot)")
-        assertVariantType(unknownNoHotspotBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
-        assertVariantType(unknownNoHotspot.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot)")
-        assertVariantType(unknownNoHotspotBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (No known hotspot, biallelic)")
+        assertVariantType(
+            unknownCav.copy(proteinEffect = ProteinEffect.NO_EFFECT),
+            "Mutation (Cancer-associated variant with no protein effect)"
+        )
+        assertVariantType(
+            unknownCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED),
+            "Mutation (Cancer-associated variant with no protein effect)"
+        )
+        assertVariantType(unknownCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Cancer-associated variant)")
+        assertVariantType(unknownBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
+        assertVariantType(unknownCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant)")
+        assertVariantType(unknownBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION), "Mutation (Cancer-associated variant, biallelic)")
+        assertVariantType(unknownNoCav.copy(proteinEffect = ProteinEffect.UNKNOWN), "Mutation (No known cancer-associated variant)")
+        assertVariantType(
+            unknownNoCavBi.copy(proteinEffect = ProteinEffect.UNKNOWN),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
+        assertVariantType(unknownNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT), "Mutation (No protein effect)")
+        assertVariantType(unknownNoCav.copy(proteinEffect = ProteinEffect.NO_EFFECT_PREDICTED), "Mutation (No protein effect)")
+        assertVariantType(
+            unknownNoCav.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
+            "Mutation (No known cancer-associated variant)"
+        )
+        assertVariantType(
+            unknownNoCavBi.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
+        assertVariantType(
+            unknownNoCav.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
+            "Mutation (No known cancer-associated variant)"
+        )
+        assertVariantType(
+            unknownNoCavBi.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
+            "Mutation (No known cancer-associated variant, biallelic)"
+        )
+    }
+
+    @Test
+    fun `Should set driver likelihood display for variants on same gene`() {
+        val variants = listOf(
+            TestMolecularFactory.createProperVariant()
+                .copy(gene = "GENE1", driverLikelihood = DriverLikelihood.HIGH, isCancerAssociatedVariant = true),
+            TestMolecularFactory.createProperVariant()
+                .copy(gene = "GENE1", driverLikelihood = DriverLikelihood.MEDIUM, isCancerAssociatedVariant = false)
+        )
+        val record = TestMolecularFactory.createProperTestMolecularRecord()
+            .copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = variants, copyNumbers = emptyList()))
+        val result = createFactoryForMolecularRecord(record).create()
+        assertThat(result[0].driverLikelihoodDisplay).isEqualTo("")
+        assertThat(result[1].driverLikelihoodDisplay).isEqualTo("")
+    }
+
+    @Test
+    fun `Should set driver likelihood display for variants on different genes`() {
+        val variants = listOf(
+            TestMolecularFactory.createProperVariant()
+                .copy(gene = "GENE1", driverLikelihood = DriverLikelihood.HIGH, isCancerAssociatedVariant = true),
+            TestMolecularFactory.createProperVariant()
+                .copy(gene = "GENE2", driverLikelihood = DriverLikelihood.MEDIUM, isCancerAssociatedVariant = false),
+            TestMolecularFactory.createProperVariant().copy(gene = "GENE3", driverLikelihood = null, isCancerAssociatedVariant = false)
+        )
+        val record = TestMolecularFactory.createProperTestMolecularRecord()
+            .copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = variants, copyNumbers = emptyList()))
+        val result = createFactoryForMolecularRecord(record).create()
+        assertThat(result[0].driverLikelihoodDisplay).isEqualTo("")
+        assertThat(result[1].driverLikelihoodDisplay).isEqualTo("Medium")
+        assertThat(result[2].driverLikelihoodDisplay).isEqualTo("N/A")
     }
 
     private fun assertVariantType(variant: Variant, expectedDriverType: String) {

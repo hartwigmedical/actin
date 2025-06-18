@@ -51,7 +51,7 @@ class IsEligibleForOnLabelTreatmentTest {
             doidModel,
             MIN_DATE
         )
-    private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
+    private val colorectalCancerPatient = TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
     fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion`() {
@@ -64,7 +64,8 @@ class IsEligibleForOnLabelTreatmentTest {
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 19),
                 extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
                 driverLikelihood = DriverLikelihood.HIGH,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                isCancerAssociatedVariant = true
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
@@ -174,7 +175,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TumorTestFactory.withTumorDetails(TumorDetails(primaryTumorLocation = "unknown", primaryTumorSubLocation = "CUP"))
+                TumorTestFactory.withTumorDetails(TumorDetails(name = "Unknown (CUP)"))
             )
         )
     }

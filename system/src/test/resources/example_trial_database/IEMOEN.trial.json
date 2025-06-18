@@ -11,10 +11,7 @@
   "generalEligibility": [
     {
       "references": [
-        {
-          "id": "I-01",
-          "text": "Patients must be ≥18 years old."
-        }
+        "I-01"
       ],
       "function": {
         "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -25,10 +22,7 @@
     },
     {
       "references": [
-        {
-          "id": "I-02",
-          "text": "IEMOEN monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
-        }
+        "I-02"
       ],
       "function": {
         "rule": "AND",
@@ -55,10 +49,7 @@
     },
     {
       "references": [
-        {
-          "id": "I-03",
-          "text": "Patient should have exhausted applicable available standard-of-care treatments."
-        }
+        "I-03"
       ],
       "function": {
         "rule": "WARN_IF",
@@ -77,10 +68,7 @@
     },
     {
       "references": [
-        {
-          "id": "E-01",
-          "text": "Has an active autoimmune disease that requires systemic treatment and poses a risk according to the investigator."
-        }
+        "E-01"
       ],
       "function": {
         "rule": "WARN_IF",
@@ -94,10 +82,7 @@
     },
     {
       "references": [
-        {
-          "id": "E-02",
-          "text": "Has hemoglobin below 6 mmol/l"
-        }
+        "E-02"
       ],
       "function": {
         "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
@@ -108,10 +93,7 @@
     },
     {
       "references": [
-        {
-          "id": "E-03",
-          "text": "Has absolute neutrophil count below 1.5 x 10^9/l"
-        }
+        "E-03"
       ],
       "function": {
         "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",

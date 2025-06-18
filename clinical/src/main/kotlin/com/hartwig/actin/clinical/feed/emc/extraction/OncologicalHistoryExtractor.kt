@@ -9,26 +9,21 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.feed.datamodel.DatedEntry
 
 class OncologicalHistoryExtractor(
     private val treatmentHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
     private val priorPrimaryCuration: CurationDatabase<PriorPrimaryConfig>
 ) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<TreatmentHistoryEntry>> {
-        if (questionnaire == null) {
+    fun extract(patientId: String, entries: List<DatedEntry>): ExtractionResult<List<TreatmentHistoryEntry>> {
+        if (entries.isEmpty()) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
-        val treatmentHistoryCuration = listOfNotNull(
-            questionnaire.treatmentHistoryCurrentTumor,
-            questionnaire.otherOncologicalHistory
-        )
-            .asSequence()
-            .flatten()
-            .map(CurationUtil::fullTrim)
+        val treatmentHistoryCuration = entries
+            .map { CurationUtil.fullTrim(it.name) }
             .map {
                 CurationResponse.createFromConfigs(
                     treatmentHistoryCuration.find(it),

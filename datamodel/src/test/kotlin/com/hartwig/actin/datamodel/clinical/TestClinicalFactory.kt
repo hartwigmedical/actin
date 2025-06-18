@@ -108,11 +108,7 @@ object TestClinicalFactory {
 
     private fun createTestTumorDetails(): TumorDetails {
         return TumorDetails(
-            primaryTumorLocation = "Skin",
-            primaryTumorSubLocation = "",
-            primaryTumorType = "Melanoma",
-            primaryTumorSubType = "",
-            primaryTumorExtraDetails = "",
+            name = "Skin melanoma",
             doids = setOf("8923"),
             stage = TumorStage.IV,
             hasMeasurableDisease = true,
@@ -272,17 +268,14 @@ object TestClinicalFactory {
     private fun createTestPriorPrimaries(): List<PriorPrimary> {
         return listOf(
             PriorPrimary(
-                tumorLocation = "Lung",
-                tumorSubLocation = "",
-                tumorType = "Carcinoma",
-                tumorSubType = "Adenocarcinoma",
+                name = "Lung adenocarcinoma",
                 doids = setOf("3905"),
                 diagnosedYear = FIXED_DATE.year - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS,
                 diagnosedMonth = FIXED_DATE.monthValue,
                 treatmentHistory = "Surgery",
-                status = TumorStatus.INACTIVE,
                 lastTreatmentYear = null,
-                lastTreatmentMonth = null
+                lastTreatmentMonth = null,
+                status = TumorStatus.INACTIVE
             )
         )
     }

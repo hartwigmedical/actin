@@ -18,7 +18,7 @@ object ActionabilityMatcherFactory {
             .filter { it.source() == ActionabilityConstants.EVIDENCE_SOURCE }
             .filter { isMolecularCriteriumApplicable(it.molecularCriterium()) }
     }
-    
+
     private fun filterTrials(trials: List<ActionableTrial>): List<ActionableTrial> {
         return trials
             .filter { it.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE }

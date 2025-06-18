@@ -107,7 +107,7 @@ class VariantExtractorTest {
         assertThat(variant.extendedVariantDetails?.variantCopyNumber).isEqualTo(0.4, Offset.offset(EPSILON))
         assertThat(variant.extendedVariantDetails?.totalCopyNumber).isEqualTo(0.8, Offset.offset(EPSILON))
         assertThat(variant.extendedVariantDetails?.isBiallelic).isFalse
-        assertThat(variant.isHotspot).isFalse
+        assertThat(variant.isCancerAssociatedVariant).isFalse
         assertThat(variant.extendedVariantDetails?.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
         assertThat(variant.extendedVariantDetails?.phaseGroups).isEqualTo(setOf(1))
 
@@ -117,7 +117,7 @@ class VariantExtractorTest {
         assertThat(canonical.hgvsProteinImpact).isEqualTo("canonical hgvs protein")
         assertThat(canonical.affectedCodon).isEqualTo(2)
         assertThat(canonical.affectedExon).isEqualTo(3)
-        assertThat(canonical.isSpliceRegion).isFalse
+        assertThat(canonical.inSpliceRegion).isFalse
         assertThat(canonical.effects.contains(VariantEffect.MISSENSE)).isTrue
         assertThat(canonical.codingEffect).isEqualTo(CodingEffect.MISSENSE)
         assertThat(variant.otherImpacts).hasSize(1)
@@ -128,7 +128,7 @@ class VariantExtractorTest {
         assertThat(other.hgvsProteinImpact).isEqualTo("other hgvs protein")
         assertThat(other.affectedCodon).isNull()
         assertThat(other.affectedExon).isNull()
-        assertThat(other.isSpliceRegion).isTrue
+        assertThat(other.inSpliceRegion).isTrue
         assertThat(other.effects.contains(VariantEffect.SPLICE_DONOR)).isTrue
         assertThat(other.effects.contains(VariantEffect.SYNONYMOUS)).isTrue
         assertThat(other.codingEffect).isEqualTo(CodingEffect.SPLICE)

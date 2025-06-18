@@ -16,11 +16,7 @@ DROP TABLE IF EXISTS `tumor`;
 CREATE TABLE `tumor`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) UNIQUE,
-    `primaryTumorLocation` varchar(100),
-    `primaryTumorSubLocation` varchar(50),
-    `primaryTumorType` varchar(50),
-    `primaryTumorSubType` varchar(100),
-    `primaryTumorExtraDetails` varchar(100),
+    `name` varchar(300),
     `doids` varchar(50),
     `stage` varchar(50),
     `hasMeasurableDisease` BOOLEAN,
@@ -102,10 +98,7 @@ DROP TABLE IF EXISTS `priorPrimary`;
 CREATE TABLE `priorPrimary`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `tumorLocation` varchar(50) NOT NULL,
-    `tumorSubLocation` varchar(50) NOT NULL,
-    `tumorType` varchar(50) NOT NULL,
-    `tumorSubType` varchar(50) NOT NULL,
+    `name` varchar(100) NOT NULL,
     `doids` varchar(50) NOT NULL,
     `diagnosedYear` int,
     `diagnosedMonth` int,
@@ -344,7 +337,7 @@ CREATE TABLE `variant`
     `variantCopyNumber` double precision,
     `totalCopyNumber` double precision,
     `isBiallelic` BOOLEAN,
-    `isHotspot` BOOLEAN NOT NULL,
+    `isCancerAssociatedVariant` BOOLEAN NOT NULL,
     `clonalLikelihood` double precision,
     `phaseGroups` varchar(50),
     `canonicalTranscriptId` varchar(50) NOT NULL,
@@ -352,7 +345,7 @@ CREATE TABLE `variant`
     `canonicalHgvsProteinImpact` varchar(50) NOT NULL,
     `canonicalAffectedCodon` int,
     `canonicalAffectedExon` int,
-    `canonicalIsSpliceRegion` BOOLEAN,
+    `canonicalInSpliceRegion` BOOLEAN,
     `canonicalEffects` varchar(250) NOT NULL,
     `canonicalCodingEffect` varchar(50),
     PRIMARY KEY (`id`)
@@ -376,7 +369,7 @@ CREATE TABLE `variantOtherImpact`
     `hgvsProteinImpact` varchar(50) NOT NULL,
     `affectedCodon` int,
     `affectedExon` int,
-    `isSpliceRegion` BOOLEAN NOT NULL,
+    `inSpliceRegion` BOOLEAN NOT NULL,
     `effects` varchar(250) NOT NULL,
     `codingEffect` varchar(50),
     PRIMARY KEY (`id`)
@@ -573,19 +566,11 @@ CREATE TABLE `eligibility`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `reference`;
-CREATE TABLE `reference`
-(   `id` int NOT NULL AUTO_INCREMENT,
-    `code` varchar(50) NOT NULL,
-    `text` varchar(15000) NOT NULL,
-    PRIMARY KEY (`id`)
-);
-
 DROP TABLE IF EXISTS `eligibilityReference`;
 CREATE TABLE `eligibilityReference`
 (   `eligibilityId` int NOT NULL,
-    `referenceId` int NOT NULL,
-    PRIMARY KEY (`eligibilityId`, `referenceId`)
+    `reference` varchar(50) NOT NULL,
+    PRIMARY KEY (`eligibilityId`, `reference`)
 );
 
 

@@ -57,7 +57,7 @@ class TrialsProvider(
     }
 
     private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
-        return filterCohortsAvailable(cohorts.filter { !it.ignore })
+        return filterCohortsAvailable(cohorts.filter { !it.ignore && it.hasSlotsAvailable })
     }
 
     private fun externalEligibleTrials(): Set<EventWithExternalTrial> {

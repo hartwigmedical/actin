@@ -10,7 +10,7 @@ class StandardClinicalStatusExtractor() : StandardDataExtractor<ClinicalStatus> 
         val mostRecentWho = feedPatientRecord.whoEvaluations.maxByOrNull { who -> who.evaluationDate }
         val clinicalStatus = ClinicalStatus(
             who = mostRecentWho?.status,
-            hasComplications = feedPatientRecord.complications.isNotEmpty()
+            hasComplications = feedPatientRecord.complications?.isNotEmpty()
         )
         return ExtractionResult(clinicalStatus, CurationExtractionEvaluation())
     }

@@ -35,7 +35,7 @@ data class SequencedFusion(
 
 data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int, val transcript: String? = null) : Displayable {
     override fun display(): String {
-        return "$gene skipped exons $exonStart-$exonEnd"
+        return if (exonEnd != exonStart) "$gene exons $exonStart-$exonEnd skipping" else "$gene exon $exonStart skipping"
     }
 }
 
@@ -53,5 +53,6 @@ data class SequencingTest(
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
     val isHomologousRecombinationDeficient: Boolean? = null,
-    val knownSpecifications: Boolean = false
+    val knownSpecifications: Boolean = false,
+    val reportHash: String? = null
 )

@@ -17,13 +17,13 @@ class GeneHasUTR3Loss(override val gene: String, maxTestAge: LocalDate? = null) 
 ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = test.drivers.variants.filter { variant ->
+        val (cavsIn3UTR, cavsIn3UTRUnreportable, vusIn3UTR) = test.drivers.variants.filter { variant ->
             variant.gene == gene && variant.canonicalImpact.effects.contains(VariantEffect.THREE_PRIME_UTR)
         }
             .fold(Triple(emptySet<String>(), emptySet<String>(), emptySet<String>())) { acc, variant ->
-                if (variant.isHotspot && variant.isReportable) {
+                if (variant.isCancerAssociatedVariant && variant.isReportable) {
                     acc.copy(first = acc.first + variant.event)
-                } else if (variant.isHotspot) {
+                } else if (variant.isCancerAssociatedVariant) {
                     acc.copy(second = acc.second + variant.event)
                 } else {
                     acc.copy(third = acc.third + variant.event)
@@ -36,24 +36,24 @@ class GeneHasUTR3Loss(override val gene: String, maxTestAge: LocalDate? = null) 
             .map(Disruption::event)
             .toSet()
 
-        if (hotspotsIn3UTR.isNotEmpty()) {
+        if (cavsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "3' UTR hotspot mutation(s) ${concatVariants(hotspotsIn3UTR, gene)} in " + gene + " should lead to 3' UTR loss",
-                inclusionEvents = hotspotsIn3UTR
+                "3' UTR cancer-associated variant(s) ${concatVariants(cavsIn3UTR, gene)} in " + gene + " should lead to 3' UTR loss",
+                inclusionEvents = cavsIn3UTR
             )
         }
-        val potentialWarnEvaluation = evaluatePotentialWarns(hotspotsIn3UTRUnreportable, vusIn3UTR, disruptionsIn3UTR)
+        val potentialWarnEvaluation = evaluatePotentialWarns(cavsIn3UTRUnreportable, vusIn3UTR, disruptionsIn3UTR)
         return potentialWarnEvaluation ?: EvaluationFactory.fail("No 3' UTR loss of $gene")
     }
 
     private fun evaluatePotentialWarns(
-        vusIn3UTR: Set<String>, hotspotsIn3UTRUnreportable: Set<String>, disruptionsIn3UTR: Set<String>
+        vusIn3UTR: Set<String>, cavsIn3UTRUnreportable: Set<String>, disruptionsIn3UTR: Set<String>
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOf(
                 EventsWithMessages(
-                    hotspotsIn3UTRUnreportable,
-                    "Hotspot mutation(s) ${concatVariants(hotspotsIn3UTRUnreportable, gene)} in 3' UTR region of $gene which may " +
+                    cavsIn3UTRUnreportable,
+                    "Cancer-associated variant(s) ${concatVariants(cavsIn3UTRUnreportable, gene)} in 3' UTR region of $gene which may " +
                             "lead to 3' UTR loss but mutation is not considered reportable"
                 ),
                 EventsWithMessages(

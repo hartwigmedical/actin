@@ -18,7 +18,6 @@ val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(da
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
 val VARIANT = TestMolecularFactory.createProperVariant().copy(variantAlleleFrequency = 10.0)
 val FUSION = TestMolecularFactory.createProperFusion()
-private const val HIGH = "High"
 private const val VAF = "VAF 10.0%"
 private const val NOT_DETECTED = ""
 private const val DETECTED = "Detected"
@@ -42,7 +41,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             )
         )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
-        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF, NOT_DETECTED)
+        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)", "", VAF, NOT_DETECTED)
     }
 
     @Test
@@ -64,11 +63,11 @@ class LongitudinalMolecularHistoryGeneratorTest {
             )
         )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
-        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF)
-        assertRow(result, 1, "KRAS G12C\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF)
-        assertRow(result, 2, "KRAS G12D\n(Tier I)", "Mutation (Gain of function)", HIGH, VAF)
+        assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (Gain of function)", "", VAF)
+        assertRow(result, 1, "KRAS G12C\n(Tier I)", "Mutation (Gain of function)", "", VAF)
+        assertRow(result, 2, "KRAS G12D\n(Tier I)", "Mutation (Gain of function)", "", VAF)
         assertRow(result, 3, "BRAF - KRAS fusion\n(Tier I)", "Known fusion\nGain of function", "Low", DETECTED)
-        assertRow(result, 4, "BRAF V600E\n(Tier II)", "Mutation (Gain of function)", HIGH, VAF)
+        assertRow(result, 4, "BRAF V600E\n(Tier II)", "Mutation (Gain of function)", "", VAF)
     }
 
     @Test
@@ -112,7 +111,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             )
         )
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList())
-        assertRow(result, 0, "EML4(exon6)::ALK(exon20) fusion\n(Tier I)", "Known fusion\nGain of function", HIGH, DETECTED, NOT_DETECTED)
+        assertRow(result, 0, "EML4(exon6)::ALK(exon20) fusion\n(Tier I)", "Known fusion\nGain of function", "High", DETECTED, NOT_DETECTED)
     }
 
     private fun withTumorMutationalBurden(test: MolecularRecord, score: Double): MolecularCharacteristics {

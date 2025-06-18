@@ -24,21 +24,38 @@ private val EGFR_PACC_CODON_VARIANTS = listOf(
     "L718",
     "G719",
 )
+private val NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE =
+    setOf("ALK", "EGFR", "NTRK1", "NTRK2", "NTRK3", "RET", "ROS1")
+val NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE =
+    NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE + setOf("BRAF", "ERBB2", "KRAS", "MET")
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
-                    hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(),
-            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to
-                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, emptySet(), maxMolecularTestAge()) },
-            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to
-                    hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
+                    hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC to
+                    { HasMolecularDriverEventInNsclc(null, emptySet(), maxMolecularTestAge(), false, false) },
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_ANY_GENES_X to
+                    hasMolecularDriverEventInNSCLCInSpecificGenesCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_AT_LEAST_GENES_X to
+                    hasMolecularDriverEventInNSCLCInAtLeastSpecificGenesCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_EXCLUDING_GENES_X to
+                    hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE to
+                    hasMolecularEventInNSCLCWithAvailableSocAnyLineCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_ANY_LINE_EXCLUDING_GENES_X to
+                    hasMolecularEventInNSCLCWithAvailableSocAnyLineExcludingSomeGenesCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE to
+                    hasMolecularEventInNSCLCWithAvailableSocFirstLineCreator(),
+            EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE_EXCLUDING_GENES_X to
+                    hasMolecularEventInNSCLCWithAvailableSocFirstLineExcludingSomeGenesCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
+            EligibilityRule.ACTIVATING_MUTATION_IN_KINASE_DOMAIN_IN_ANY_GENES_X to anyGeneHasActivatingMutationInKinaseDomainCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y to geneHasVariantWithAnyProteinImpactsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_ANY_CODONS_Y to geneHasVariantInAnyCodonsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y to geneHasVariantInExonCreator(),
@@ -58,7 +75,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
-            EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
+            EligibilityRule.HAS_ANY_HLA_TYPE_X to hasAnyHLATypeCreator(),
             EligibilityRule.HAS_HLA_GROUP_X to hasSpecificHLAGroupCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
@@ -73,6 +90,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIhcCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIhcCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIhcCreator(),
+            EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_MUST_BE_AVAILABLE to hasAvailableProteinExpressionCreator(),
             EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(),
@@ -97,7 +115,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         )
     }
 
-    private fun hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
+    private fun hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createManyGenesInput(function)
             AnyGeneHasDriverEventWithApprovedTherapy(
@@ -109,10 +127,74 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
+    private fun hasMolecularDriverEventInNSCLCInSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames, maxMolecularTestAge())
+            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), maxMolecularTestAge(), false, false)
+        }
+    }
+
+    private fun hasMolecularDriverEventInNSCLCInAtLeastSpecificGenesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function)
+            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), maxMolecularTestAge(), true, false)
+        }
+    }
+
+    private fun hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function)
+            HasMolecularDriverEventInNsclc(null, genes.geneNames, maxMolecularTestAge(), false, false)
+        }
+    }
+
+    private fun hasMolecularEventInNSCLCWithAvailableSocAnyLineCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasMolecularDriverEventInNsclc(
+                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE,
+                emptySet(),
+                maxMolecularTestAge(),
+                false,
+                true
+            )
+        }
+    }
+
+    private fun hasMolecularEventInNSCLCWithAvailableSocAnyLineExcludingSomeGenesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genes = setOf(functionInputResolver().createManyGenesInput(function).toString())
+            HasMolecularDriverEventInNsclc(
+                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE - genes,
+                emptySet(),
+                maxMolecularTestAge(),
+                false,
+                true
+            )
+        }
+    }
+
+    private fun hasMolecularEventInNSCLCWithAvailableSocFirstLineCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasMolecularDriverEventInNsclc(
+                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE,
+                emptySet(),
+                maxMolecularTestAge(),
+                false,
+                true
+            )
+        }
+    }
+
+    private fun hasMolecularEventInNSCLCWithAvailableSocFirstLineExcludingSomeGenesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genes = setOf(functionInputResolver().createManyGenesInput(function).toString())
+            HasMolecularDriverEventInNsclc(
+                NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE - genes,
+                emptySet(),
+                maxMolecularTestAge(),
+                false,
+                true
+            )
         }
     }
 
@@ -145,6 +227,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
             GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons, maxMolecularTestAge())
+        }
+    }
+
+    private fun anyGeneHasActivatingMutationInKinaseDomainCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function)
+            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null, maxMolecularTestAge(), inKinaseDomain = true) })
         }
     }
 
@@ -252,14 +341,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasSpecificHLAGroupCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val hlaGroupToFind = functionInputResolver().createOneHlaGroupInput(function)
-            HasSpecificHLAType(hlaGroupToFind.group, matchOnHlaGroup = true)
+            HasAnyHLAType(setOf(hlaGroupToFind.group), matchOnHlaGroup = true)
         }
     }
 
-    private fun hasSpecificHLATypeCreator(): FunctionCreator {
+    private fun hasAnyHLATypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)
-            HasSpecificHLAType(hlaAlleleToFind.allele)
+            val hlaAllelesToFind = functionInputResolver().createManyHlaAllelesInput(function)
+            HasAnyHLAType(hlaAllelesToFind.alleles)
         }
     }
 
@@ -313,6 +402,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun proteinIsWildTypeByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             ProteinIsWildTypeByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
+        }
+    }
+
+    private fun hasAvailableProteinExpressionCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasAvailableProteinExpression(functionInputResolver().createOneProteinInput(function).proteinName)
         }
     }
 

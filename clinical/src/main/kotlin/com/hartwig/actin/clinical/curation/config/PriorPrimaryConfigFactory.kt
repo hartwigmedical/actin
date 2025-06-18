@@ -44,10 +44,7 @@ class PriorPrimaryConfigFactory(private val curationDoidValidator: CurationDoidV
         tumorStatus: TumorStatus, fields: Map<String, Int>, parts: Array<String>, doids: Set<String>
     ): PriorPrimary {
         return PriorPrimary(
-            tumorLocation = parts[fields["tumorLocation"]!!],
-            tumorSubLocation = parts[fields["tumorSubLocation"]!!],
-            tumorType = parts[fields["tumorType"]!!],
-            tumorSubType = parts[fields["tumorSubType"]!!],
+            name = parts[fields["name"]!!],
             doids = doids,
             diagnosedYear = ResourceFile.optionalInteger(parts[fields["diagnosedYear"]!!]),
             diagnosedMonth = ResourceFile.optionalInteger(parts[fields["diagnosedMonth"]!!]),

@@ -16,11 +16,7 @@
     "hasHartwigSequencing": false
   },
   "tumor": {
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Carcinoma",
-    "primaryTumorSubType": "Squamous cell carcinoma",
-    "primaryTumorExtraDetails": "",
+    "name": "Lung squamous cell carcinoma",
     "doids": [
       "3907"
     ],
@@ -537,7 +533,7 @@
                 "hgvsProteinImpact": "p.E545K",
                 "affectedCodon": 545,
                 "affectedExon": 9,
-                "isSpliceRegion": false,
+                "inSpliceRegion": false,
                 "effects": [
                   "MISSENSE"
                 ],
@@ -545,7 +541,7 @@
               },
               "otherImpacts": [],
               "extendedVariantDetails": null,
-              "isHotspot": true,
+              "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "PIK3CA E545K",
               "driverLikelihood": "HIGH",

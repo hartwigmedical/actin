@@ -124,18 +124,18 @@ Furthermore, every driver event affecting a single gene is assigned the followin
 
 In addition to the (gene) driver fields, the following data is captured for variants:
 
-| Field                  | Example Value | Details                                                                 |
-|------------------------|---------------|-------------------------------------------------------------------------|
-| chromosome             | 1             | The chromosome in which the event was detected                          |
-| position               | 41206120      | Genomic position in respect to chromosome and ref genome                |
-| ref                    | A             | The base(s) as found in the reference genome at this position           |
-| alt                    | G             | The base(s) as found in the sample analyzed                             |
-| type                   | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)           |
-| variantAlleleFrequency | 0.63          | The percentage of genomic reads containing this variant                 |
-| canonicalImpact        | See impact    | The impact of this variant on the canonical transcript of the gene      |
-| otherImpacts           | See impact    | The impact of this variant on other transcripts of the gene             |
-| extendedVariantDetails | See below     | Optional field with extended details on the variant                     |
-| isHotspot              | true          | Indicates whether this specific variant is a known (pathogenic) hotspot |
+| Field                     | Example Value | Details                                                                      |
+|---------------------------|---------------|------------------------------------------------------------------------------|
+| chromosome                | 1             | The chromosome in which the event was detected                               |
+| position                  | 41206120      | Genomic position in respect to chromosome and ref genome                     |
+| ref                       | A             | The base(s) as found in the reference genome at this position                |
+| alt                       | G             | The base(s) as found in the sample analyzed                                  |
+| type                      | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                |
+| variantAlleleFrequency    | 0.63          | The percentage of genomic reads containing this variant                      |
+| canonicalImpact           | See impact    | The impact of this variant on the canonical transcript of the gene           |
+| otherImpacts              | See impact    | The impact of this variant on other transcripts of the gene                  |
+| extendedVariantDetails    | See below     | Optional field with extended details on the variant                          |
+| isCancerAssociatedVariant | true          | Indicates whether this specific variant is a known cancer-associated variant |
 
 Depending on the type of molecular test, more details may be available for a variant as follows:
 
@@ -156,7 +156,7 @@ The following data is captured as impact of a variant on a specific transcript:
 | hgvsProteinImpact | p.V41E                    | The HGVS protein impact on the transcript                                    |
 | affectedCodon     | 41                        | If applicable, the codon that is affected by the variant                     |
 | affectedExon      | 2                         | If applicable, the exon that is affected by the variant                      |
-| isSpliceRegion    | false                     | Indicates whether this variant lies within a splice region of the transcript |
+| inSpliceRegion    | false                     | Indicates whether this variant lies within a splice region of the transcript |
 | effects           | MISSENSE, PHASED_MISSENSE | A set of effects that this variant has on the transcript                     |
 | codingEffect      | MISSENSE                  | A single, summarized coding effect this variant has on the transcript        |
 

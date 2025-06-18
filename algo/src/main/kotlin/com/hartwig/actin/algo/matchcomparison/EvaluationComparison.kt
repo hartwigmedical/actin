@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.matchcomparison
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.extractDifferences
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.mapKeyDifferences
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import org.apache.logging.log4j.LogManager
@@ -29,7 +29,7 @@ object EvaluationComparison {
                 EvaluationDifferences.create()
             } else {
                 val (newFunction, newEvaluation) = newFunctionAndEvaluation
-                val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it.id }}"
+                val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it }}"
 
                 val resultDifferences = extractDifferences(
                     oldEvaluation, newEvaluation, mapOf("result for $criteriaId" to Evaluation::result)
@@ -39,7 +39,8 @@ object EvaluationComparison {
                     LOGGER.warn("  Old function: $oldFunction")
                     LOGGER.warn("  New function: $newFunction")
                 }
-                val recoverableDifferences = extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
+                val recoverableDifferences =
+                    extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
                 val messageDifferences = extractMessageDifferences(oldEvaluation, newEvaluation)
                 val functionDifferences = EligibilityFunctionComparison.determineEligibilityFunctionDifferences(oldFunction, newFunction)
 
@@ -60,7 +61,7 @@ object EvaluationComparison {
         }.fold(EvaluationDifferences.create(mapKeyDifferences = modifiedKeys)) { acc, other -> acc + other }
     }
 
-    private fun evaluationsByCriteria(evaluations: Map<Eligibility, Evaluation>): Map<Set<CriterionReference>, Pair<EligibilityFunction, Evaluation>> {
+    private fun evaluationsByCriteria(evaluations: Map<Eligibility, Evaluation>): Map<Set<String>, Pair<EligibilityFunction, Evaluation>> {
         return evaluations.map { (eligibility, evaluation) -> eligibility.references to Pair(eligibility.function, evaluation) }.toMap()
     }
 
@@ -69,21 +70,21 @@ object EvaluationComparison {
         val newMessages = getMessagesForEvaluation(new)
         val removedMessages = oldMessages - newMessages
         val addedMessages = newMessages - oldMessages
-        return if (removedMessages.map(String::lowercase) == addedMessages.map(String::lowercase)) {
+        return if (removedMessages.map { it.toString() }.map(String::lowercase) == addedMessages.map { it.toString() }
+                .map(String::lowercase)) {
             emptyList()
         } else {
             removedMessages.map { "- $it" } + addedMessages.map { "+ $it" }
         }
     }
 
-    private fun getMessagesForEvaluation(evaluation: Evaluation): Set<String> {
+    private fun getMessagesForEvaluation(evaluation: Evaluation): Set<EvaluationMessage> {
         return when (evaluation.result) {
             EvaluationResult.PASS -> evaluation.passMessages
             EvaluationResult.NOT_EVALUATED -> evaluation.passMessages
             EvaluationResult.WARN -> evaluation.warnMessages
             EvaluationResult.UNDETERMINED -> evaluation.undeterminedMessages
             EvaluationResult.FAIL -> evaluation.failMessages
-            else -> emptySet()
         }
     }
 

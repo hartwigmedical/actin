@@ -9,24 +9,33 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene_A"
+private const val EXON_TO_SKIP = 2
 
 private val EXON_SKIPPING_FUSION = TestFusionFactory.createMinimal().copy(
     isReportable = true,
     geneStart = MATCHING_GENE,
     geneEnd = MATCHING_GENE,
-    fusedExonUp = 1,
-    fusedExonDown = 3
+    fusedExonUp = EXON_TO_SKIP - 1,
+    fusedExonDown = EXON_TO_SKIP + 1
 )
 
 private val SPLICE_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = MATCHING_GENE,
     isReportable = true,
-    canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 2, isSpliceRegion = true)
+    canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
+        .copy(affectedExon = EXON_TO_SKIP, codingEffect = CodingEffect.SPLICE)
 )
+
+private val POTENTIAL_SPLICE_VARIANT =
+    SPLICE_VARIANT.copy(
+        event = "c.potential",
+        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
+            .copy(affectedExon = EXON_TO_SKIP, inSpliceRegion = true, codingEffect = CodingEffect.NONE)
+    )
 
 class GeneHasSpecificExonSkippingTest {
 
@@ -75,6 +84,15 @@ class GeneHasSpecificExonSkippingTest {
     }
 
     @Test
+    fun `Should warn on splice variant in specific exon that is not a splice effect variant but is in splice region`() {
+        val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIAL_SPLICE_VARIANT))
+
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessagesStrings())
+            .containsExactly("Potential gene_A exon 2 skipping: variant(s) c.potential detected in splice region of exon 2 although unknown relevance (not annotated with splice coding effect)")
+    }
+
+    @Test
     fun `Should pass on fusion skipping specific exon`() {
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION)))
     }
@@ -115,7 +133,8 @@ class GeneHasSpecificExonSkippingTest {
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )
         )
-        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages).containsExactly("Skipped exon 2 in gene gene_A undetermined (not tested for mutations or fusions)")
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessagesStrings())
+            .containsExactly("Skipped exon 2 in gene gene_A undetermined (not tested for mutations or fusions)")
     }
 }

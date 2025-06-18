@@ -4,8 +4,6 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.ANATOMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
-import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
 import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
@@ -18,7 +16,6 @@ import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Dosage
@@ -26,9 +23,13 @@ import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
-import java.time.LocalDate
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
+import com.hartwig.actin.datamodel.clinical.ingestion.CurationWarning
+import com.hartwig.feed.datamodel.FeedDosage
+import com.hartwig.feed.datamodel.FeedMedication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
@@ -129,19 +130,18 @@ class MedicationExtractorTest {
             TestTreatmentDatabaseFactory.createProper()
         )
 
-
     @Test
     fun `Should extract all medication fields`() {
-        val entry = TestFeedFactory.medicationEntry(
+        val entry = feedMedication(
             status = "active",
             dosageInstruction = DOSAGE_INPUT,
             start = LocalDate.of(2023, 12, 12),
             end = LocalDate.of(2023, 12, 13),
-            active = true,
             code5ATCCode = FULL_ATC_CODE,
             code5ATCDisplay = MEDICATION_NAME_INPUT,
             administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL
         )
+
 
         assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted).containsExactly(
             Medication(
@@ -169,43 +169,40 @@ class MedicationExtractorTest {
 
     @Test
     fun `Should not return medications for entries with no ATC display or code text`() {
-        val entry = TestFeedFactory.medicationEntry(
+        val entry = feedMedication(
             status = "",
             dosageInstruction = "Irrelevant",
             start = LocalDate.of(2019, 2, 2),
-            end = LocalDate.of(2019, 4, 4),
-            active = false,
+            end = LocalDate.of(2019, 4, 4)
         )
         assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted).isEmpty()
     }
 
     @Test
     fun `Should interpret as self-care when ATC code and display are empty`() {
-        val entry = TestFeedFactory.medicationEntry(
+        val entry = feedMedication(
             status = "",
             dosageInstruction = "",
             start = LocalDate.of(2019, 2, 2),
             end = LocalDate.of(2019, 4, 4),
-            active = false,
-            codeText = MEDICATION_NAME_INPUT
+            codeText = MEDICATION_NAME_INPUT,
+            isSelfCare = true
         )
-
-        assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted.first().isSelfCare).isTrue
+        assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted?.first()?.isSelfCare).isTrue
     }
 
     @Test
     fun `Should interpret as trial medication when ATC display is empty and ATC code does not start with letter`() {
-        val entry = TestFeedFactory.medicationEntry(
+        val entry = feedMedication(
             status = "",
             dosageInstruction = "",
             start = LocalDate.of(2019, 2, 2),
             end = LocalDate.of(2019, 4, 4),
-            active = false,
             code5ATCCode = "123",
-            codeText = MEDICATION_NAME_INPUT
+            codeText = MEDICATION_NAME_INPUT,
+            isTrial = true
         )
-
-        assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted.first().isTrialMedication).isTrue
+        assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted?.first()?.isTrialMedication).isTrue
     }
 
     @Test
@@ -226,7 +223,7 @@ class MedicationExtractorTest {
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.medicationDosageEvaluatedInputs).containsExactly(DOSAGE_INPUT.lowercase())
         assertThat(medications).hasSize(1)
-        assertThat(medications.first().dosage).isEqualTo(DOSAGE)
+        assertThat(medications?.first()?.dosage).isEqualTo(DOSAGE)
     }
 
     @Test
@@ -277,7 +274,7 @@ class MedicationExtractorTest {
         inputText: String, expectedNames: List<String> = emptyList(), expectedWarnings: List<CurationWarning> = emptyList()
     ) {
         val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithName(inputText)))
-        assertThat(medications.map(Medication::name)).isEqualTo(expectedNames)
+        assertThat(medications?.map(Medication::name)).isEqualTo(expectedNames)
         assertThat(evaluation.warnings).containsExactlyElementsOf(expectedWarnings)
         assertThat(evaluation.medicationNameEvaluatedInputs).containsExactly(inputText.lowercase())
     }
@@ -312,19 +309,26 @@ class MedicationExtractorTest {
         )
     }
 
-    private fun medicationEntryWithDosage(dosageInstruction: String) = TestFeedFactory.medicationEntry(
+    private fun medicationEntryWithDosage(dosageInstruction: String) = feedMedication(
         "active",
         dosageInstruction,
         LocalDate.now(),
         LocalDate.now(),
-        true,
         administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL,
         codeText = MEDICATION_NAME_INPUT
     )
 
-    private fun medicationEntryWithName(name: String) = TestFeedFactory.medicationEntry(
-        "active", "", LocalDate.now(), LocalDate.now(), true, administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL, codeText = name
-    ).copy(dosageInstructionDoseQuantityUnit = DOSAGE_TRANSLATION_INPUT_MILLIGRAM)
+    private fun medicationEntryWithName(name: String): FeedMedication {
+        val medication = feedMedication(
+            "active",
+            "",
+            LocalDate.now(),
+            LocalDate.now(),
+            administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL,
+            codeText = name
+        )
+        return medication.copy(dosage = medication.dosage?.copy(dosageUnit = DOSAGE_TRANSLATION_INPUT_MILLIGRAM))
+    }
 
     @Test
     fun `Should translate dosage unit`() {
@@ -345,5 +349,42 @@ class MedicationExtractorTest {
         val (emptyTranslation, evaluation) = extractor.translateDosageUnit(PATIENT_ID, "")
         assertThat(emptyTranslation).isNull()
         assertThat(evaluation.warnings).isEmpty()
+    }
+
+
+    private fun feedMedication(
+        status: String,
+        dosageInstruction: String,
+        start: LocalDate,
+        end: LocalDate,
+        codeText: String = "",
+        administrationRoute: String = "",
+        code5ATCCode: String = "",
+        code5ATCDisplay: String = "",
+        isSelfCare: Boolean = false,
+        isTrial: Boolean = false
+    ): FeedMedication {
+        return FeedMedication(
+            name = codeText,
+            atcCode = code5ATCCode,
+            atcCodeDisplay = code5ATCDisplay,
+            startDate = start,
+            endDate = end,
+            dosageInstruction = dosageInstruction,
+            administrationRoute = administrationRoute,
+            isSelfCare = isSelfCare,
+            isTrial = isTrial,
+            status = status,
+            dosage = FeedDosage(
+                dosageMin = 0.0,
+                dosageMax = 0.0,
+                dosageUnit = "",
+                frequency = 0.0,
+                frequencyUnit = "",
+                periodBetweenValue = 0.0,
+                periodBetweenUnit = "",
+                ifNeeded = false
+            )
+        )
     }
 }

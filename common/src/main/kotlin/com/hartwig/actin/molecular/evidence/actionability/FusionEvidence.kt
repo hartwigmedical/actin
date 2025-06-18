@@ -3,13 +3,9 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
-import com.hartwig.serve.datamodel.trial.ActionableTrial
-import java.util.function.Predicate
 
 class FusionEvidence {
 

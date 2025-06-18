@@ -328,7 +328,7 @@ class GeneIsInactivatedTest {
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessages)
+        Assertions.assertThat(result.undeterminedMessagesStrings())
             .containsExactly("Inactivation of gene gene A undetermined (not tested for mutations or deletions)")
     }
 

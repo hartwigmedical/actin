@@ -6,9 +6,13 @@ import com.itextpdf.layout.element.Text
 
 object CellTestUtil {
 
-    fun extractTextFromCell(cell: Cell): String? {
-        val paragraph = cell.children.firstOrNull() as? Paragraph
-        val textElements = paragraph?.children?.filterIsInstance<Text>()
-        return textElements?.joinToString("") { it.text }
+    fun extractTextFromCell(cell: Cell): String {
+        return cell.children
+            .filterIsInstance<Paragraph>()
+            .joinToString("\n") { paragraph ->
+                paragraph.children
+                    .filterIsInstance<Text>()
+                    .joinToString("") { it.text }
+            }
     }
 }

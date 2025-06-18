@@ -36,7 +36,7 @@ class PanelDriverAttributeAnnotator(
         val alteration = knownEventResolver.resolveForVariant(variant)
 
         return variant.copy(
-            isHotspot = alteration.isHotspot,
+            isCancerAssociatedVariant = alteration.isCancerAssociatedVariant,
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance

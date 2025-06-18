@@ -16,8 +16,7 @@ abstract class MolecularEvaluationFunction(
     useInsufficientQualityRecords: Boolean = false,
     open val gene: String? = null,
     val targetCoveragePredicate: TargetCoveragePredicate = any(),
-) :
-    EvaluationFunction {
+) : EvaluationFunction {
 
     private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
 
@@ -32,8 +31,10 @@ abstract class MolecularEvaluationFunction(
         } else {
 
             if (gene?.let { g -> recentMolecularTests.any { t -> t.testsGene(g, targetCoveragePredicate) } } == false)
-                return EvaluationFactory.undetermined(
-                    targetCoveragePredicate.message(gene!!),
+                return Evaluation(
+                    recoverable = false,
+                    result = EvaluationResult.UNDETERMINED,
+                    undeterminedMessages = setOf(targetCoveragePredicate.message(gene!!)),
                     isMissingMolecularResultForEvaluation = true
                 )
 

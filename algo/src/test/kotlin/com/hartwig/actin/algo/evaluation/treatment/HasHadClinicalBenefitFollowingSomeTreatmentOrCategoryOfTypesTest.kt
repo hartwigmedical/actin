@@ -157,7 +157,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                 )
             )
             assertForAllFunctions(EvaluationResult.UNDETERMINED, record)
-            assertThat(functionWithSpecificTreatments.evaluate(record).undeterminedMessages)
+            assertThat(functionWithSpecificTreatments.evaluate(record).undeterminedMessagesStrings())
                 .containsExactly("Undetermined objective benefit from treatment with ${it.display()}")
         }
     }
@@ -170,13 +170,13 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
             )
         }
         val messageEnding = "objective benefit from treatment with ${OTHER_CORRECT_TREATMENT.display()}"
-        assertThat(functionWithSpecificTreatments.evaluate(pass).passMessages).containsExactly("Has had $messageEnding")
-        assertThat(functionWithSpecificTreatments.evaluate(undetermined).undeterminedMessages).containsExactly("Undetermined $messageEnding")
+        assertThat(functionWithSpecificTreatments.evaluate(pass).passMessagesStrings()).containsExactly("Has had $messageEnding")
+        assertThat(functionWithSpecificTreatments.evaluate(undetermined).undeterminedMessagesStrings()).containsExactly("Undetermined $messageEnding")
     }
 
     @Test
     fun `Should include all target treatments in message if none are present in history`() {
-        assertThat(functionWithSpecificTreatments.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessages)
+        assertThat(functionWithSpecificTreatments.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessagesStrings())
             .containsExactly("Has not received treatment with ${CORRECT_TREATMENT.display()} or ${OTHER_CORRECT_TREATMENT.display()}")
     }
 
@@ -188,7 +188,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                 TreatmentTestFactory.treatmentHistoryEntry(setOf(CORRECT_TREATMENT), bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
             )
         )
-        assertThat(functionWithSpecificTreatments.evaluate(record).undeterminedMessages)
+        assertThat(functionWithSpecificTreatments.evaluate(record).undeterminedMessagesStrings())
             .containsExactly("Undetermined objective benefit from treatment with ${OTHER_CORRECT_TREATMENT.display()}")
     }
 

@@ -1,16 +1,15 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.trial.CriterionReference
-import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 
 private val PLUS_WITHOUT_SURROUNDING_SPACES_REGEX = "(\\S)\\+(\\S)".toRegex()
 
 object EvaluationInterpreter {
 
     fun interpretForDetailedTrialMatching(
-        evaluations: Map<CriterionReference, Evaluation>,
+        evaluations: Map<String, Evaluation>,
         interpretFailOnly: Boolean
     ): List<EvaluationInterpretation> {
         return if (interpretFailOnly) {
@@ -27,16 +26,15 @@ object EvaluationInterpreter {
     }
 
     private fun createInterpretationsOfType(
-        evaluations: Map<CriterionReference, Evaluation>,
+        evaluations: Map<String, Evaluation>,
         resultToRender: EvaluationResult
     ): List<EvaluationInterpretation> {
-        return evaluations.keys.asSequence().sortedWith(CriterionReferenceComparator()).mapNotNull { key ->
+        return evaluations.keys.asSequence().sorted().mapNotNull { key ->
             evaluations.entries.find { it.key == key }
         }.filter { it.value.result == resultToRender }
             .map {
                 EvaluationInterpretation(
-                    rule = it.key.id,
-                    reference = it.key.text,
+                    reference = it.key,
                     entriesPerResult = createEvaluationInterpretationMap(it.value)
                 )
             }.toList()
@@ -81,11 +79,11 @@ object EvaluationInterpreter {
         }
     }
 
-    private fun generateEntry(evaluation: Evaluation, messages: Set<String>): EvaluationEntry {
+    private fun generateEntry(evaluation: Evaluation, messages: Set<EvaluationMessage>): EvaluationEntry {
         return createEntry(generateHeader(evaluation.result, evaluation.recoverable), messages)
     }
 
-    private fun generateEntry(result: EvaluationResult, messages: Set<String>): EvaluationEntry {
+    private fun generateEntry(result: EvaluationResult, messages: Set<EvaluationMessage>): EvaluationEntry {
         return createEntry(generateHeader(result), messages)
     }
 
@@ -94,10 +92,10 @@ object EvaluationInterpreter {
         return result.toString() + addon
     }
 
-    private fun createEntry(header: String, messages: Set<String>): EvaluationEntry {
+    private fun createEntry(header: String, messages: Set<EvaluationMessage>): EvaluationEntry {
         return EvaluationEntry(
             header = header,
-            messages = messages.map(::insertSpacesAroundPlus).toSet()
+            messages = messages.map { it.toString() }.map(::insertSpacesAroundPlus).toSet()
         )
     }
 

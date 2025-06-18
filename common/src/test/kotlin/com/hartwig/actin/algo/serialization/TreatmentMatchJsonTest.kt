@@ -5,9 +5,8 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
-import com.hartwig.actin.datamodel.algo.TreatmentMatch
-import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -32,16 +31,16 @@ class TreatmentMatchJsonTest {
     @Test
     fun `Should sort messages prior to serialization`() {
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
-        val trialMatch: TrialMatch = proper.trialMatches[0]
+        val trialMatch = proper.trialMatches[0]
         val key = trialMatch.evaluations.keys.first()
-        val match: TreatmentMatch = proper.copy(
+        val match = proper.copy(
             trialMatches = listOf(
                 trialMatch.copy(
                     evaluations = mapOf(
                         key to Evaluation(
                             result = EvaluationResult.PASS,
                             recoverable = false,
-                            passMessages = setOf("msg 2", "msg 1", "msg 3"),
+                            passMessages = setOf(StaticMessage("msg 2"), StaticMessage("msg 1"), StaticMessage("msg 3")),
                         )
                     ),
                     cohorts = emptyList(),
@@ -65,10 +64,10 @@ class TreatmentMatchJsonTest {
                         "phase":"PHASE_1","source":"NKI","sourceId":"Source ID 1","locations":["Antoni van Leeuwenhoek"],"url":null},
                     "isPotentiallyEligible":true,
                     "evaluations":[
-                        [{"references":[{"id":"I-01","text":"Patient must be an adult"}],
+                        [{"references":["I-01"],
                         "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
-                        "passMessages":["msg 1","msg 2","msg 3"],"warnMessages":[],"undeterminedMessages":[],
+                        "passMessages":[{"message":"msg 1"},{"message":"msg 2"},{"message":"msg 3"}],"warnMessages":[],"undeterminedMessages":[],
                         "failMessages":[],"isMissingMolecularResultForEvaluation":false}]],
                     "cohorts":[],
                     "nonEvaluableCohorts":[]
@@ -81,7 +80,7 @@ class TreatmentMatchJsonTest {
                         {"rule":"HAS_KNOWN_ACTIVE_CNS_METASTASES","parameters":[]}],"additionalCriteriaForRequirement":[]},
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
-                        "exclusionMolecularEvents":[],"passMessages":["Has active CNS metastases"],"warnMessages":[],
+                        "exclusionMolecularEvents":[],"passMessages":[{"message":"Has active CNS metastases"}],"warnMessages":[],
                         "undeterminedMessages":[],"failMessages":[],"isMissingMolecularResultForEvaluation":false}],
                     "annotations":[
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",
@@ -133,6 +132,7 @@ class TreatmentMatchJsonTest {
         val match = read(treatmentMatchJson)
         assertThat(match.patientId).isEqualTo("ACTN01029999")
         assertThat(match.trialMatches).hasSize(1)
+        
         val trialMatch = match.trialMatches[0]
         assertThat(trialMatch.evaluations).hasSize(1)
         assertThat(trialMatch.cohorts).hasSize(3)

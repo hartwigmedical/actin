@@ -336,7 +336,7 @@ object TestMolecularFactory {
         canonicalImpact = createMinimalTranscriptImpact(),
         otherImpacts = emptySet(),
         extendedVariantDetails = null,
-        isHotspot = false,
+        isCancerAssociatedVariant = false,
         isReportable = false,
         event = "",
         driverLikelihood = null,
@@ -351,11 +351,11 @@ object TestMolecularFactory {
         transcriptId = "",
         hgvsCodingImpact = "",
         hgvsProteinImpact = "",
-        affectedCodon = 0,
+        affectedCodon = null,
         affectedExon = null,
-        isSpliceRegion = null,
+        inSpliceRegion = null,
         effects = emptySet(),
-        codingEffect = CodingEffect.NONE,
+        codingEffect = null,
     )
 
     fun createProperVariant() = Variant(
@@ -369,16 +369,16 @@ object TestMolecularFactory {
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
             affectedCodon = 600,
-            isSpliceRegion = false,
+            affectedExon = 15,
+            inSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
-            codingEffect = CodingEffect.MISSENSE,
-            affectedExon = null
+            codingEffect = CodingEffect.MISSENSE
         ),
         otherImpacts = emptySet(),
         extendedVariantDetails = ExtendedVariantDetails(
             variantCopyNumber = 4.1, totalCopyNumber = 6.0, isBiallelic = false, phaseGroups = null, clonalLikelihood = 1.0
         ),
-        isHotspot = true,
+        isCancerAssociatedVariant = true,
         isReportable = true,
         event = "BRAF V600E",
         driverLikelihood = DriverLikelihood.HIGH,
@@ -654,6 +654,35 @@ object TestMolecularFactory {
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
             evidence = TestClinicalEvidenceFactory.createEmpty()
+        )
+    }
+
+    fun createHighConfidenceCupPrediction(): PredictedTumorOrigin {
+        return PredictedTumorOrigin(
+            predictions = listOf(
+                CupPrediction(
+                    cancerType = "Melanoma",
+                    likelihood = 0.996,
+                    snvPairwiseClassifier = 0.979,
+                    genomicPositionClassifier = 0.99,
+                    featureClassifier = 0.972,
+                    cuppaMode = CuppaMode.WGS
+                ), CupPrediction(
+                    cancerType = "Lung",
+                    likelihood = 0.001,
+                    snvPairwiseClassifier = 0.0009,
+                    genomicPositionClassifier = 0.011,
+                    featureClassifier = 0.0102,
+                    cuppaMode = CuppaMode.WGS
+                ), CupPrediction(
+                    cancerType = "Esophagus/Stomach",
+                    likelihood = 0.0016,
+                    snvPairwiseClassifier = 0.0004,
+                    genomicPositionClassifier = 0.006,
+                    featureClassifier = 0.0002,
+                    cuppaMode = CuppaMode.WGS
+                )
+            )
         )
     }
 }

@@ -1,7 +1,7 @@
 {
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
-  "referenceDate": "2025-04-16",
+  "referenceDate": "2025-06-10",
   "referenceDateIsLive": true,
   "trialMatches": [
     {
@@ -22,10 +22,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patients must be ≥18 years old."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -40,7 +37,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -51,10 +50,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "IEMOEN monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "AND",
@@ -85,8 +81,12 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has solid primary tumor",
-              "Stage IV is considered metastatic"
+              {
+                "message": "Has solid primary tumor"
+              },
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -97,10 +97,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "Patient should have exhausted applicable available standard-of-care treatments."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "WARN_IF",
@@ -124,7 +121,9 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Has not exhausted SOC (at least platinum doublet remaining)"
+              {
+                "message": "Has not exhausted SOC (at least platinum doublet remaining)"
+              }
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -134,10 +133,7 @@
         [
           {
             "references": [
-              {
-                "id": "E-01",
-                "text": "Has an active autoimmune disease that requires systemic treatment and poses a risk according to the investigator."
-              }
+              "E-01"
             ],
             "function": {
               "rule": "WARN_IF",
@@ -155,7 +151,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has no other condition belonging to category autoimmune disease"
+              {
+                "message": "Has no other condition belonging to category autoimmune disease"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -166,10 +164,7 @@
         [
           {
             "references": [
-              {
-                "id": "E-02",
-                "text": "Has hemoglobin below 6 mmol/l"
-              }
+              "E-02"
             ],
             "function": {
               "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
@@ -186,7 +181,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "No measurement found for hemoglobin"
+              {
+                "message": "No measurement found for hemoglobin"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -195,10 +192,7 @@
         [
           {
             "references": [
-              {
-                "id": "E-03",
-                "text": "Has absolute neutrophil count below 1.5 x 10^9/l"
-              }
+              "E-03"
             ],
             "function": {
               "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
@@ -215,7 +209,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "No measurement found for absolute neutrophil count"
+              {
+                "message": "No measurement found for absolute neutrophil count"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -242,7 +238,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial IEMOEN"
+              {
+                "message": "Has not participated in trial IEMOEN"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -299,10 +297,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patient is ≥18 years old."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -317,7 +312,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -328,10 +325,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "KAYRAS monotherapy is indicated for the treatment of NSCLC or colorectal patients with metastatic cancer."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "OR",
@@ -353,7 +347,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic"
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -364,10 +360,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "ALAT and ASAT should be at most 3*ULN, or at most 5*ULN in case of liver metastases."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
@@ -385,7 +378,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "ASAT and ALAT are not present or cannot be evaluated"
+              {
+                "message": "ASAT and ALAT are not present or cannot be evaluated"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -394,10 +389,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-04",
-                "text": "Patient has confirmed KRAS G12D mutation"
-              }
+              "I-04"
             ],
             "function": {
               "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
@@ -416,7 +408,9 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "Variant(s) G12D in KRAS but subclonal likelihood of \u003e 50%"
+              {
+                "message": "Variant(s) G12D in KRAS but subclonal likelihood of \u003e 50%"
+              }
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -444,7 +438,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial KAYRAS"
+              {
+                "message": "Has not participated in trial KAYRAS"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -468,10 +464,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-02",
-                    "text": "KAYRAS monotherapy is indicated for the treatment of NSCLC or colorectal patients with metastatic cancer."
-                  }
+                  "I-02"
                 ],
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
@@ -486,7 +479,9 @@
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
                 "passMessages": [
-                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
                 ],
                 "warnMessages": [],
                 "undeterminedMessages": [],
@@ -510,10 +505,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-02",
-                    "text": "KAYRAS monotherapy is indicated for the treatment of NSCLC or colorectal patients with metastatic cancer."
-                  }
+                  "I-02"
                 ],
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
@@ -531,7 +523,9 @@
                 "warnMessages": [],
                 "undeterminedMessages": [],
                 "failMessages": [
-                  "No colorectal cancer"
+                  {
+                    "message": "No colorectal cancer"
+                  }
                 ],
                 "isMissingMolecularResultForEvaluation": false
               }
@@ -559,10 +553,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patient is ≥18 years of age."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -577,7 +568,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -588,10 +581,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "Monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "OR",
@@ -613,7 +603,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic"
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -624,10 +616,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "Tumors should contain EGFR C797 but not EGFR C797S mutation."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "AND",
@@ -667,7 +656,9 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [
-              "C797S in EGFR in canonical transcript"
+              {
+                "message": "C797S in EGFR in canonical transcript"
+              }
             ],
             "isMissingMolecularResultForEvaluation": false
           }
@@ -693,7 +684,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial NO-SEE797ES"
+              {
+                "message": "Has not participated in trial NO-SEE797ES"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -738,10 +731,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-1",
-                "text": "Patient is ≥18 years of age."
-              }
+              "I-1"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -756,7 +746,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -767,10 +759,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-2",
-                "text": "Drug 1 as monotherapy is indicated for the treatment of adults with advanced lung cancer."
-              }
+              "I-2"
             ],
             "function": {
               "rule": "AND",
@@ -803,8 +792,12 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic",
-              "Tumor belongs to DOID term(s) lung cancer"
+              {
+                "message": "Stage IV is considered metastatic"
+              },
+              {
+                "message": "Tumor belongs to DOID term(s) lung cancer"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -815,10 +808,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-3",
-                "text": "Patient has a confirmed EGFR C797S mutation"
-              }
+              "I-3"
             ],
             "function": {
               "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
@@ -836,7 +826,9 @@
             ],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "C797S in EGFR in canonical transcript"
+              {
+                "message": "C797S in EGFR in canonical transcript"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -865,7 +857,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial TEDR1"
+              {
+                "message": "Has not participated in trial TEDR1"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -908,10 +902,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-01",
-                "text": "Patient is ≥18 years old."
-              }
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -926,7 +917,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Patient is at least 18 years old"
+              {
+                "message": "Patient is at least 18 years old"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -937,10 +930,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-02",
-                "text": "Has locally advanced or metastatic cancer."
-              }
+              "I-02"
             ],
             "function": {
               "rule": "OR",
@@ -962,7 +952,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Stage IV is considered metastatic"
+              {
+                "message": "Stage IV is considered metastatic"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -973,10 +965,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-03",
-                "text": "ALAT and ASAT should be at most 3*ULN, or at most 5*ULN in case of liver metastases."
-              }
+              "I-03"
             ],
             "function": {
               "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
@@ -994,7 +983,9 @@
             "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [
-              "ASAT and ALAT are not present or cannot be evaluated"
+              {
+                "message": "ASAT and ALAT are not present or cannot be evaluated"
+              }
             ],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -1003,10 +994,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-04",
-                "text": "Patient has confirmed activating PIK3CA mutation"
-              }
+              "I-04"
             ],
             "function": {
               "rule": "ACTIVATING_MUTATION_IN_ANY_GENES_X",
@@ -1024,7 +1012,9 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [
-              "No PIK3CA activating mutation(s)"
+              {
+                "message": "No PIK3CA activating mutation(s)"
+              }
             ],
             "isMissingMolecularResultForEvaluation": false
           }
@@ -1032,10 +1022,7 @@
         [
           {
             "references": [
-              {
-                "id": "I-05",
-                "text": "Patient can not have a severe cardiac condition."
-              }
+              "I-05"
             ],
             "function": {
               "rule": "WARN_IF",
@@ -1053,7 +1040,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has no other condition belonging to category cardiac disease"
+              {
+                "message": "Has no other condition belonging to category cardiac disease"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -1082,7 +1071,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has not participated in trial PICKME3CA"
+              {
+                "message": "Has not participated in trial PICKME3CA"
+              }
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -1106,10 +1097,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-03",
-                    "text": "Has non small cell lung cancer."
-                  }
+                  "I-03"
                 ],
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
@@ -1124,7 +1112,9 @@
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
                 "passMessages": [
-                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
                 ],
                 "warnMessages": [],
                 "undeterminedMessages": [],
@@ -1148,10 +1138,7 @@
             [
               {
                 "references": [
-                  {
-                    "id": "I-03",
-                    "text": "Has solid cancer, other than non small cell lung cancer."
-                  }
+                  "I-03"
                 ],
                 "function": {
                   "rule": "AND",
@@ -1183,7 +1170,9 @@
                 "warnMessages": [],
                 "undeterminedMessages": [],
                 "failMessages": [
-                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
                 ],
                 "isMissingMolecularResultForEvaluation": false
               }

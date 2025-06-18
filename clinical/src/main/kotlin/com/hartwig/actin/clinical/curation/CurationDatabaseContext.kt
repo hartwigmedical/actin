@@ -51,7 +51,6 @@ data class CurationDatabaseContext(
     val comorbidityCuration: CurationDatabase<ComorbidityConfig>,
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
     val molecularTestIhcCuration: CurationDatabase<IhcTestConfig>,
-    val molecularTestPdl1Curation: CurationDatabase<IhcTestConfig>,
     val sequencingTestCuration: CurationDatabase<SequencingTestConfig>,
     val sequencingTestResultCuration: CurationDatabase<SequencingTestResultConfig>,
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
@@ -73,7 +72,6 @@ data class CurationDatabaseContext(
             comorbidityCuration,
             periodBetweenUnitCuration,
             molecularTestIhcCuration,
-            molecularTestPdl1Curation,
             sequencingTestCuration,
             sequencingTestResultCuration,
             medicationNameCuration,
@@ -99,7 +97,6 @@ data class CurationDatabaseContext(
         comorbidityCuration.validationErrors,
         periodBetweenUnitCuration.validationErrors,
         molecularTestIhcCuration.validationErrors,
-        molecularTestPdl1Curation.validationErrors,
         sequencingTestCuration.validationErrors,
         sequencingTestResultCuration.validationErrors,
         medicationNameCuration.validationErrors,
@@ -151,12 +148,6 @@ data class CurationDatabaseContext(
                 CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV,
                 IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
                 CurationCategory.MOLECULAR_TEST_IHC
-            ) { it.molecularTestEvaluatedInputs },
-            molecularTestPdl1Curation = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.MOLECULAR_TEST_PDL1_TSV,
-                IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
-                CurationCategory.MOLECULAR_TEST_PDL1
             ) { it.molecularTestEvaluatedInputs },
             sequencingTestCuration = CurationDatabaseReader.read(
                 curationDir,

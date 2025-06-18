@@ -7,11 +7,7 @@
     "questionnaireDate": "2021-08-01"
   },
   "tumor": {
-    "primaryTumorLocation": null,
-    "primaryTumorSubLocation": null,
-    "primaryTumorType": null,
-    "primaryTumorSubType": null,
-    "primaryTumorExtraDetails": null,
+    "name": "",
     "doids": null,
     "stage": "III",
     "hasMeasurableDisease": true,
@@ -75,10 +71,7 @@
   ],
   "priorPrimaries": [
     {
-      "tumorLocation": "Skin",
-      "tumorSubLocation": "",
-      "tumorType": "Melanoma",
-      "tumorSubType": "",
+      "name": "Skin melanoma",
       "doids": [
         "162"
       ],
