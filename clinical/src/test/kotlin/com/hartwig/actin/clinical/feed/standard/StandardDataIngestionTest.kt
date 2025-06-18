@@ -76,7 +76,7 @@ class StandardDataIngestionTest {
                 qtProlongatingDatabase = TestQtProlongatingFactory.createProper(),
                 treatmentDatabase = treatmentDatabase
             ),
-            surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
+            surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
             bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
             labValuesExtractor = StandardLabValuesExtractor(curationDatabase.labMeasurementCuration),
@@ -144,7 +144,7 @@ class StandardDataIngestionTest {
                 ),
             ),
             CurationResult(
-                category = CurationCategory.SURGERY_NAME,
+                category = CurationCategory.SURGERY,
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "<CRYO Skelet door Radioloog",

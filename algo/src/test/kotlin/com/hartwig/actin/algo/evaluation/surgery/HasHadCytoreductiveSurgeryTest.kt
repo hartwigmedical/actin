@@ -2,8 +2,11 @@ package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withOncologicalHistory
+import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgeries
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Surgery
+import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
@@ -16,7 +19,7 @@ class HasHadCytoreductiveSurgeryTest {
     private val function = HasHadCytoreductiveSurgery()
 
     @Test
-    fun `Should fail with no surgeries`() {
+    fun `Should fail with no surgeries in history`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(createPatientRecord("Hormone therapy", setOf(TreatmentCategory.HORMONE_THERAPY)))
@@ -24,7 +27,7 @@ class HasHadCytoreductiveSurgeryTest {
     }
 
     @Test
-    fun `Should fail with non cytoreductive surgery`() {
+    fun `Should fail with non cytoreductive surgery in history`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(createPatientRecord("Nephrectomy", setOf(TreatmentCategory.SURGERY))))
     }
 
@@ -55,22 +58,19 @@ class HasHadCytoreductiveSurgeryTest {
     }
 
     @Test
-    fun `Should return undetermined if surgery name not specified`() {
+    fun `Should return undetermined if surgery not specified in history`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(createPatientRecord("Surgery", setOf(TreatmentCategory.SURGERY))))
     }
 
     @Test
-    fun `Should return undetermined if debulking surgery is performed`() {
+    fun `Should return undetermined if debulking surgery is performed in oncological history and no any surgeries in record`() {
+        val record = createPatientRecord("Debulking", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.DEBULKING_SURGERY))
+            .copy(surgeries = createPatientRecord("surgery").surgeries)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                createPatientRecord(
-                    "Debulking",
-                    setOf(TreatmentCategory.SURGERY),
-                    setOf(OtherTreatmentType.DEBULKING_SURGERY)
-                )
-            )
+            function.evaluate(record)
         )
+
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
@@ -80,6 +80,36 @@ class HasHadCytoreductiveSurgeryTest {
                     setOf(OtherTreatmentType.DEBULKING_SURGERY)
                 )
             )
+        )
+    }
+
+    @Test
+    fun `Should fail with no any surgeries in records and no oncological history`() {
+        val record = createPatientRecord("surgery")
+            .copy(oncologicalHistory = createPatientRecord("Hormone therapy", setOf(TreatmentCategory.HORMONE_THERAPY)).oncologicalHistory)
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record)
+        )
+    }
+
+    @Test
+    fun `Should pass with cytoreductive surgery in record even if no oncological history`() {
+        val record = createPatientRecord("surgery", treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
+            .copy(oncologicalHistory = createPatientRecord("Hormone therapy", setOf(TreatmentCategory.HORMONE_THERAPY)).oncologicalHistory)
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record)
+        )
+    }
+
+    @Test
+    fun `Should return undetermined with debulking surgery in record`() {
+        val record = createPatientRecord("surgery", treatmentType =  OtherTreatmentType.DEBULKING_SURGERY)
+            .copy(oncologicalHistory = createPatientRecord("Hormone therapy", setOf(TreatmentCategory.HORMONE_THERAPY)).oncologicalHistory)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record)
         )
     }
 
@@ -94,6 +124,18 @@ class HasHadCytoreductiveSurgeryTest {
                     treatments = setOf(treatment(name = name, isSystemic = false, categories = categories, types = types))
                 )
             )
+        )
+    }
+
+    private fun createPatientRecord(
+        surgeryName: String,
+        surgeryStatus: SurgeryStatus = SurgeryStatus.FINISHED,
+        treatmentType: OtherTreatmentType = OtherTreatmentType.OTHER_SURGERY,
+    ): PatientRecord {
+        return withSurgeries(
+            surgeries = listOf(
+                Surgery(name = surgeryName, status = surgeryStatus, endDate = null, treatmentType = treatmentType),
+            ),
         )
     }
 }

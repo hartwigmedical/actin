@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 const val HASHED_ID_IN_BASE64 = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0="
 const val TREATMENT_NAME = "treatmentName"
-const val SURGERY_NAME = "surgeryName"
+const val SURGERY = "surgery"
 const val OTHER_CONDITION_INPUT = "prior condition"
 private val DATE_Y2023_M02_D23 = LocalDate.of(2024, 2, 23)
 
@@ -33,7 +33,7 @@ object FeedTestData {
         endDate = LocalDate.of(2024, 2, 27),
     )
 
-    fun createFeedSurgery(surgeryName: String? = SURGERY_NAME) = FeedSurgery(
+    fun createFeedSurgery(surgeryName: String? = SURGERY) = FeedSurgery(
         name = surgeryName,
         endDate = LocalDate.of(2024, 2, 23),
         status = "FINISHED"

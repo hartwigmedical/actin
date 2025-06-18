@@ -8,7 +8,8 @@ enum class OtherTreatmentType(override val category: TreatmentCategory) : Treatm
     RADIOFREQUENCY(TreatmentCategory.ABLATION),
     HYPERTHERMIA(TreatmentCategory.ABLATION),
     CYTOREDUCTIVE_SURGERY(TreatmentCategory.SURGERY),
-    DEBULKING_SURGERY(TreatmentCategory.SURGERY);
+    DEBULKING_SURGERY(TreatmentCategory.SURGERY),
+    OTHER_SURGERY(TreatmentCategory.SURGERY);
 
     override fun display(): String {
         return toString().replace("_", " ").lowercase()

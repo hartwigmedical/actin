@@ -97,9 +97,10 @@
   ],
   "surgeries": [
     {
-      "name": "diagnostics stomach",
+      "name": "debulking stomach",
       "endDate": "2020-08-28",
-      "status": "planned"
+      "status": "planned",
+      "treatmentType": "DEBULKING_SURGERY"
     },
     {
       "name": "Geen ingreep- operatie uitgesteld",
