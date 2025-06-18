@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.feed.standard.FeedTestData.FEED_PATIENT_RECORD
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
-import com.hartwig.actin.datamodel.clinical.SurgeryType
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -47,10 +47,10 @@ class StandardSurgeryExtractorTest {
         val ignoredName = "Geen ingreep- operatie uitgesteld"
 
         every { surgeryCuration.find(PROVIDED_SURGERY_NAME) } returns setOf(
-            SurgeryConfig(input = PROVIDED_SURGERY_NAME, ignore = false, name = CURATED_SURGERY_NAME, type = SurgeryType.CYTOREDUCTIVE_SURGERY)
+            SurgeryConfig(input = PROVIDED_SURGERY_NAME, ignore = false, name = CURATED_SURGERY_NAME, treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
         )
         every { surgeryCuration.find(ignoredName) } returns setOf(
-            SurgeryConfig(input = ignoredName, ignore = true, name = "<ignore>", type = SurgeryType.UNKNOWN)
+            SurgeryConfig(input = ignoredName, ignore = true, name = "<ignore>", treatmentType = OtherTreatmentType.OTHER_SURGERY)
         )
 
         val result = extractor.extract(
@@ -65,7 +65,7 @@ class StandardSurgeryExtractorTest {
                 name = CURATED_SURGERY_NAME,
                 endDate = PROVIDED_SURGERY_WITH_NAME.endDate,
                 status = SurgeryStatus.FINISHED,
-                type = SurgeryType.CYTOREDUCTIVE_SURGERY,
+                treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY,
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
@@ -77,7 +77,7 @@ class StandardSurgeryExtractorTest {
         val result = extractor.extract(FEED_PATIENT_RECORD.copy(surgeries = listOf(surgery)))
 
         assertThat(result.extracted).containsExactly(
-            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED, type = SurgeryType.UNKNOWN),
+            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.OTHER_SURGERY),
         )
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -88,7 +88,7 @@ class StandardSurgeryExtractorTest {
         val result = extractor.extract(FEED_PATIENT_RECORD.copy(surgeries = listOf(surgery)))
 
         assertThat(result.extracted).containsExactly(
-            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED, type = SurgeryType.UNKNOWN),
+            Surgery(name = surgery.name, endDate = surgery.endDate, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.OTHER_SURGERY),
         )
         assertThat(result.evaluation.warnings).isEmpty()
     }

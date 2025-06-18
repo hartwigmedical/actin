@@ -271,7 +271,7 @@
       "name": "debulking stomach translated",
       "endDate": "2020-08-28",
       "status": "PLANNED",
-      "type": "DEBULKING_SURGERY"
+      "treatmentType": "DEBULKING_SURGERY"
     }
   ],
   "bodyWeights": [

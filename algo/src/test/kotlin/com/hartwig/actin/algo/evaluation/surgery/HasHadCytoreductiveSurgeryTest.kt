@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
-import com.hartwig.actin.datamodel.clinical.SurgeryType
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
@@ -96,7 +95,7 @@ class HasHadCytoreductiveSurgeryTest {
 
     @Test
     fun `Should pass with cytoreductive surgery in record even if no oncological history`() {
-        val record = createPatientRecord("surgery", surgeryType = SurgeryType.CYTOREDUCTIVE_SURGERY)
+        val record = createPatientRecord("surgery", treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
             .copy(oncologicalHistory = createPatientRecord("Hormone therapy", setOf(TreatmentCategory.HORMONE_THERAPY)).oncologicalHistory)
         assertEvaluation(
             EvaluationResult.PASS,
@@ -106,7 +105,7 @@ class HasHadCytoreductiveSurgeryTest {
 
     @Test
     fun `Should return undetermined with debulking surgery in record`() {
-        val record = createPatientRecord("surgery", surgeryType =  SurgeryType.DEBULKING_SURGERY)
+        val record = createPatientRecord("surgery", treatmentType =  OtherTreatmentType.DEBULKING_SURGERY)
             .copy(oncologicalHistory = createPatientRecord("Hormone therapy", setOf(TreatmentCategory.HORMONE_THERAPY)).oncologicalHistory)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -131,11 +130,11 @@ class HasHadCytoreductiveSurgeryTest {
     private fun createPatientRecord(
         surgeryName: String,
         surgeryStatus: SurgeryStatus = SurgeryStatus.FINISHED,
-        surgeryType: SurgeryType = SurgeryType.UNKNOWN,
+        treatmentType: OtherTreatmentType = OtherTreatmentType.OTHER_SURGERY,
     ): PatientRecord {
         return withSurgeries(
             surgeries = listOf(
-                Surgery(name = surgeryName, status = surgeryStatus, endDate = null, type = surgeryType),
+                Surgery(name = surgeryName, status = surgeryStatus, endDate = null, treatmentType = treatmentType),
             ),
         )
     }

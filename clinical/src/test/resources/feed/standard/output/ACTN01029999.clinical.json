@@ -247,7 +247,7 @@
       "name": "debulking stomach translated",
       "endDate": "2021-01-01",
       "status": "CANCELLED",
-      "type": "DEBULKING_SURGERY"
+      "treatmentType": "DEBULKING_SURGERY"
     }
   ],
   "bodyWeights": [

@@ -28,7 +28,7 @@ class SurgeryExtractor(private val surgeryCuration: CurationDatabase<SurgeryConf
                     name = it.name,
                     endDate = entry.periodEnd,
                     status = resolveSurgeryStatus(entry.encounterStatus),
-                    type = it.type,
+                    treatmentType = it.treatmentType,
                 )
             }
             ExtractionResult(listOfNotNull(curatedSurgery), curationResponse.extractionEvaluation)

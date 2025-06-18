@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.curation.config.SurgeryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
-import com.hartwig.actin.datamodel.clinical.SurgeryType
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.feed.datamodel.FeedPatientRecord
 
 class StandardSurgeryExtractor(
@@ -32,11 +32,11 @@ class StandardSurgeryExtractor(
                         name = it.name,
                         endDate = providedSurgery.endDate,
                         status = status,
-                        type = it.type,
+                        treatmentType = it.treatmentType,
                     )
                 }
                 ExtractionResult(listOfNotNull(surgery), curationResponse.extractionEvaluation)
-            } ?: ExtractionResult(listOf(Surgery(null, providedSurgery.endDate, status, SurgeryType.UNKNOWN)), CurationExtractionEvaluation())
+            } ?: ExtractionResult(listOf(Surgery(null, providedSurgery.endDate, status, OtherTreatmentType.OTHER_SURGERY)), CurationExtractionEvaluation())
         }
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)

@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.sort
 
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
-import com.hartwig.actin.datamodel.clinical.SurgeryType
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime
@@ -15,10 +15,10 @@ class SurgeryDescendingDateComparatorTest {
     fun `Should sort by descending based on end date`() {
 
         val surgeries = listOf(
-            Surgery(name = "Surgery 2", endDate = endDate.minusDays(6), status = SurgeryStatus.FINISHED, type = SurgeryType.DEBULKING_SURGERY),
-            Surgery(name = null, endDate = endDate.minusDays(4), status = SurgeryStatus.FINISHED, type = SurgeryType.CYTOREDUCTIVE_SURGERY),
-            Surgery(name = "Surgery 1", endDate = endDate.minusDays(2), status = SurgeryStatus.FINISHED, type = SurgeryType.DEBULKING_SURGERY),
-            Surgery(name = "Surgery 4", endDate = null, status = SurgeryStatus.FINISHED, type = SurgeryType.UNKNOWN),
+            Surgery(name = "Surgery 2", endDate = endDate.minusDays(6), status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.DEBULKING_SURGERY),
+            Surgery(name = null, endDate = endDate.minusDays(4), status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY),
+            Surgery(name = "Surgery 1", endDate = endDate.minusDays(2), status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.DEBULKING_SURGERY),
+            Surgery(name = "Surgery 4", endDate = null, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.OTHER_SURGERY),
         )
 
         val sortedSurgeries = surgeries.sortedWith(SurgeryDescendingDateComparator())

@@ -216,7 +216,7 @@
     {
       "endDate": "2012-10-10",
       "status": "PLANNED",
-      "type": "UNKNOWN"
+      "treatmentType": "DEBULKING_SURGERY"
     }
   ],
   "bodyWeights": [
