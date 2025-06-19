@@ -32,9 +32,7 @@ private val FULLY_SPECIFIED_SEQUENCED_FUSION =
 class PanelFusionAnnotatorTest {
 
     private val knownFusionCache = mockk<KnownFusionCache>()
-
     private val ensembleDataCache = mockk<EnsemblDataCache>()
-
     private val annotator = PanelFusionAnnotator(knownFusionCache, ensembleDataCache)
 
     @Test

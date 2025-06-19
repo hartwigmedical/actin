@@ -197,7 +197,7 @@ object WGSSummaryGeneratorFunctions {
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
             "Gene fusions" to formatList(summarizer.keyFusionEvents()),
-            "Virus detection" to formatList(summarizer.keyVirusEvents()),
+            "Virus" to formatList(summarizer.keyVirusEvents()),
         )
         return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
     }
@@ -211,7 +211,8 @@ object WGSSummaryGeneratorFunctions {
                 "Deleted genes",
                 "Homozygously disrupted genes",
                 "Microsatellite (in)stability",
-                "",
+                "HR status",
+                "Virus",
             )
         } else {
             listOf(
@@ -223,7 +224,7 @@ object WGSSummaryGeneratorFunctions {
                 "Deleted genes",
                 "Homozygously disrupted genes",
                 "Gene fusions",
-                "Virus detection",
+                "Virus",
                 "",
             )
         }

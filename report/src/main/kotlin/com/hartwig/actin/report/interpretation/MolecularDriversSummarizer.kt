@@ -49,7 +49,7 @@ class MolecularDriversSummarizer private constructor(
     fun keyVirusEvents(): List<String> {
         return drivers.viruses
             .filter(::isReportableHighDriver)
-            .map { String.format("%s (%s int. detected)", it.event, it.integrations) }
+            .map { it -> it.event + (it.integrations?.let { " ($it int. detected)" } ?: "") }
             .distinct()
     }
 

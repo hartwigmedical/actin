@@ -193,7 +193,8 @@
       "deletions": [],
       "fusions": [],
       "skippedExons": [],
-      "negativeResults": []
+      "negativeResults": [],
+      "viruses": []
     }
   ],
   "labValues": [

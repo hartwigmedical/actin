@@ -168,7 +168,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
-        val name = "${virus.event}, ${virus.integrations} integrations detected"
+        val name = virus.event + (virus.integrations?.let { ", ${virus.integrations} integrations detected" } ?: "")
         val driverType = "Virus" + (virus.driverLikelihood?.let { " (${formatDriverLikelihood(it)})" } ?: "")
         return driverEntry(driverType, name, virus)
     }
