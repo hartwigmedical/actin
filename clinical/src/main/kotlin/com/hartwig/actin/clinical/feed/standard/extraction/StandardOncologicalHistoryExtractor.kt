@@ -28,7 +28,8 @@ class StandardOncologicalHistoryExtractor(
                     oncologicalTreatmentHistory.extracted,
                     oncologicalPreviousConditions.extracted
                 ),
-                feedPatientRecord.patientDetails.questionnaireDate ?: feedPatientRecord.patientDetails.registrationDate
+                feedPatientRecord.patientDetails.questionnaireDate,
+                feedPatientRecord.patientDetails.registrationDate
             ),
             oncologicalTreatmentHistory.evaluation
         )

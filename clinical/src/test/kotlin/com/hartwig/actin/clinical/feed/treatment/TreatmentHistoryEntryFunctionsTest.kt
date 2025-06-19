@@ -8,9 +8,36 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private val MAX_DATE = LocalDate.of(2026, 1, 1)
+private val QUESTIONNAIRE_DATE = LocalDate.of(2026, 1, 1)
+private val REGISTRATION_DATE = LocalDate.of(2026, 1, 15)
 
 class TreatmentHistoryEntryFunctionsTest {
+
+    @Test
+    fun `Should use registration date as reference date if questionnaire date is null`() {
+        val treatmentHistoryEntries = listOf(
+            createChemotherapy(2020, 6, null),
+            createChemotherapy(2020, 9, null)
+        )
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, null, REGISTRATION_DATE)
+        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(2020)
+        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(9)
+        assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isEqualTo(REGISTRATION_DATE.year)
+        assertThat(output[1].treatmentHistoryDetails?.maxStopMonth).isEqualTo(REGISTRATION_DATE.monthValue + 1)
+    }
+
+    @Test
+    fun `Should use max date of all treatments as reference date if this is after registration date and questionnaire date is null`() {
+        val treatmentHistoryEntries = listOf(
+            createChemotherapy(2020, 6, null),
+            createChemotherapy(2020, 9, null)
+        )
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, null, LocalDate.of(2019, 12, 15))
+        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(2020)
+        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(9)
+        assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isEqualTo(2020)
+        assertThat(output[1].treatmentHistoryDetails?.maxStopMonth).isEqualTo(10)
+    }
 
     @Test
     fun `Should set stop date for systemic treatment with no stop year and month followed by systemic treatment`() {
@@ -18,11 +45,11 @@ class TreatmentHistoryEntryFunctionsTest {
             createChemotherapy(2020, 6, null),
             createChemotherapy(2020, 9, null)
         )
-        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, MAX_DATE)
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, QUESTIONNAIRE_DATE, REGISTRATION_DATE)
         assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(2020)
         assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(9)
-        assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isEqualTo(MAX_DATE.year)
-        assertThat(output[1].treatmentHistoryDetails?.maxStopMonth).isEqualTo(MAX_DATE.monthValue + 1)
+        assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isEqualTo(QUESTIONNAIRE_DATE.year)
+        assertThat(output[1].treatmentHistoryDetails?.maxStopMonth).isEqualTo(QUESTIONNAIRE_DATE.monthValue + 1)
     }
 
     @Test
@@ -39,9 +66,9 @@ class TreatmentHistoryEntryFunctionsTest {
                 ), startYear = 2020, startMonth = 7
             )
         )
-        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, MAX_DATE)
-        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(MAX_DATE.year)
-        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(MAX_DATE.monthValue + 1)
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, QUESTIONNAIRE_DATE, REGISTRATION_DATE)
+        assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(QUESTIONNAIRE_DATE.year)
+        assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(QUESTIONNAIRE_DATE.monthValue + 1)
     }
 
     @Test
@@ -63,7 +90,7 @@ class TreatmentHistoryEntryFunctionsTest {
                 ), startYear = 2021, startMonth = 7
             )
         )
-        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, MAX_DATE)
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, QUESTIONNAIRE_DATE, REGISTRATION_DATE)
         assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isEqualTo(2021)
         assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(7)
     }
@@ -74,7 +101,7 @@ class TreatmentHistoryEntryFunctionsTest {
             createChemotherapy(2020, null, 2021),
             createChemotherapy(2022, null, 2023)
         )
-        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, MAX_DATE)
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, QUESTIONNAIRE_DATE, REGISTRATION_DATE)
         assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isNull()
         assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(12)
         assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isNull()
@@ -95,7 +122,7 @@ class TreatmentHistoryEntryFunctionsTest {
                 ), startYear = 2020, startMonth = 7
             )
         )
-        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, MAX_DATE)
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, QUESTIONNAIRE_DATE, REGISTRATION_DATE)
         assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isNull()
         assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(12)
         assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isNull()
@@ -108,7 +135,7 @@ class TreatmentHistoryEntryFunctionsTest {
             createChemotherapy(2020, null, 2021),
             createChemotherapy(2021, null, 2022)
         )
-        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, MAX_DATE)
+        val output = TreatmentHistoryEntryFunctions.setMaxStopDate(treatmentHistoryEntries, QUESTIONNAIRE_DATE, REGISTRATION_DATE)
         assertThat(output[0].treatmentHistoryDetails?.maxStopYear).isNull()
         assertThat(output[0].treatmentHistoryDetails?.maxStopMonth).isEqualTo(12)
         assertThat(output[1].treatmentHistoryDetails?.maxStopYear).isNull()

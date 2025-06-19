@@ -110,7 +110,8 @@ class EmcClinicalFeedIngestion(
                     patientId,
                     feedRecord.treatmentHistory
                 ).extracted,
-                patientDetailsExtraction.extracted.questionnaireDate ?: patientDetailsExtraction.extracted.registrationDate
+                patientDetailsExtraction.extracted.questionnaireDate,
+                patientDetailsExtraction.extracted.registrationDate
             ),
             priorPrimaries = priorPrimaryExtraction.extracted,
             ihcTests = ihcTestsExtraction.extracted,
