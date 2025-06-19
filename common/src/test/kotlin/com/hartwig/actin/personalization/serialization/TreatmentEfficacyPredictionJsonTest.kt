@@ -20,6 +20,7 @@ class TreatmentEfficacyPredictionJsonTest {
                 "Treatment 1" to listOf(0.93, 0.87, 0.54),
                 "Treatment 2" to listOf(0.96, 0.88, 0.75),
             )
+                .mapValues { TreatmentEfficacyPrediction(it.value) }
         )
     }
 }
