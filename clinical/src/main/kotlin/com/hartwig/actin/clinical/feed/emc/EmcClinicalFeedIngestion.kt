@@ -75,10 +75,6 @@ class EmcClinicalFeedIngestion(
             .filterNot { it.category == "BODY_WEIGHT" }
             .flatMap { VitalFunctionValidator().validate(patientId, it).warnings }
             .toSet()
-        val questionnaireWarnings = setOfNotNull(
-            FeedValidationWarning(patientId, "No Questionnaire Found").takeIf { feedRecord.patientDetails.questionnaireDate == null }
-        )
-        val validationWarnings = vitalFunctionWarnings + questionnaireWarnings
 
         val questionnaireCurationErrors = TumorStageValidator.validate(patientId, feedRecord.tumorDetails.stage).errors
 
@@ -144,7 +140,7 @@ class EmcClinicalFeedIngestion(
                 record.patient.questionnaireDate,
                 patientEvaluation,
                 questionnaireCurationErrors,
-                validationWarnings,
+                vitalFunctionWarnings,
             ),
             patientEvaluation
         )
