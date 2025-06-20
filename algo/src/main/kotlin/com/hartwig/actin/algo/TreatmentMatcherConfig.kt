@@ -37,7 +37,7 @@ data class TreatmentMatcherConfig(
         private const val ATC_TSV = "atc_tsv"
         private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
         private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
-        private const val TREATMENT_EFFICACY_PREDICTION_JSON = "treatment_efficacy_prediction_path"
+        private const val TREATMENT_EFFICACY_PREDICTION_JSON = "treatment_efficacy_prediction_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
