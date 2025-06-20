@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
+import com.hartwig.actin.personalization.serialization.TreatmentEfficacyPredictionJson
 import java.time.LocalDate
 
 class TreatmentMatcher(
@@ -20,22 +21,27 @@ class TreatmentMatcher(
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
     private val personalizationDataPath: String? = null,
+    private val treatmentEfficacyPredictionPath: String? = null,
     private val maxMolecularTestAge: LocalDate?
 ) {
 
-    fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
+    fun run(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
-        val (standardOfCareMatches, personalizedDataAnalysis) = if (standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient)) {
-            val evaluatedTreatments = standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient).evaluatedTreatments
-            val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
-            Pair(
-                evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
-                personalizedDataAnalysis
-            )
-        } else {
-            Pair(null, null)
-        }
+        val (standardOfCareMatches, personalizedDataAnalysis, survivalPredictionsPerTreatment) =
+            if (standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient)) {
+                val evaluatedTreatments = standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient).evaluatedTreatments
+                val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
+                val survivalPredictionsPerTreatment =
+                    treatmentEfficacyPredictionPath?.let { TreatmentEfficacyPredictionJson.read(treatmentEfficacyPredictionPath) }
+                Triple(
+                    evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
+                    personalizedDataAnalysis,
+                    survivalPredictionsPerTreatment
+                )
+            } else {
+                Triple(null, null, null)
+            }
 
         return TreatmentMatch(
             patientId = patient.patientId,
@@ -45,6 +51,7 @@ class TreatmentMatcher(
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
             personalizedDataAnalysis = personalizedDataAnalysis,
+            survivalPredictionsPerTreatment = survivalPredictionsPerTreatment,
             maxMolecularTestAge = maxMolecularTestAge
         )
     }
@@ -58,13 +65,14 @@ class TreatmentMatcher(
             maxMolecularTestAge: LocalDate?
         ): TreatmentMatcher {
             return TreatmentMatcher(
-                TrialMatcher.create(resources),
-                StandardOfCareEvaluatorFactory(resources).create(),
-                trials,
-                resources.referenceDateProvider,
-                EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
-                resources.personalizationDataPath,
-                maxMolecularTestAge
+                trialMatcher = TrialMatcher.create(resources),
+                standardOfCareEvaluator = StandardOfCareEvaluatorFactory(resources).create(),
+                trials = trials,
+                referenceDateProvider = resources.referenceDateProvider,
+                evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
+                personalizationDataPath = resources.personalizationDataPath,
+                treatmentEfficacyPredictionPath = resources.treatmentEfficacyPredictionJson,
+                maxMolecularTestAge = maxMolecularTestAge
             )
         }
     }
