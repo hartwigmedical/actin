@@ -44,12 +44,12 @@ object Format {
         }
     }
 
-    fun concatItemsWithAnd(items: Iterable<Displayable>): String {
-        return concatDisplayables(items, SEPARATOR_AND)
+    fun concatItemsWithAnd(items: Iterable<Displayable>, toLowerCase: Boolean = false): String {
+        return concatDisplayables(items, SEPARATOR_AND, toLowerCase)
     }
 
-    fun concatItemsWithOr(items: Iterable<Displayable>): String {
-        return concatDisplayables(items, SEPARATOR_OR)
+    fun concatItemsWithOr(items: Iterable<Displayable>, toLowerCase: Boolean = false): String {
+        return concatDisplayables(items, SEPARATOR_OR, toLowerCase)
     }
 
     fun date(date: LocalDate): String {
@@ -79,8 +79,8 @@ object Format {
         return concat(variants.map { it.removePrefix("$gene ") })
     }
 
-    private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =
-        concatWithCommaAndSeparator(items.map(Displayable::display), separator, false)
+    private fun concatDisplayables(items: Iterable<Displayable>, separator: String, toLowercase: Boolean) =
+        concatWithCommaAndSeparator(items.map(Displayable::display), separator, toLowercase)
 
     private fun concatStrings(strings: Iterable<String>, separator: String) =
         strings.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER).joinToString(separator)
