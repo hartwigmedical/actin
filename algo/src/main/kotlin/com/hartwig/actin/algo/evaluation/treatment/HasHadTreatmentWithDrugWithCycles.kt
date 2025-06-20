@@ -43,7 +43,10 @@ class HasHadTreatmentWithDrugWithCycles(private val drugsToFind: Set<Drug>, priv
 
             drugsByEvaluationResult[EvaluationResult.UNDETERMINED]?.isNotEmpty() == true -> {
                 val matchingDrugs = drugsByEvaluationResult[EvaluationResult.UNDETERMINED]!!
-                EvaluationFactory.undetermined("Has received treatments with ${concatItemsWithAnd(matchingDrugs)} but undetermined if at least $minCycles cycles")
+                EvaluationFactory.undetermined(
+                    "Has received treatments with ${concatItemsWithAnd(matchingDrugs)} " +
+                            "but undetermined if at least $minCycles cycles"
+                )
             }
 
             effectiveTreatmentHistory.any {
@@ -56,7 +59,10 @@ class HasHadTreatmentWithDrugWithCycles(private val drugsToFind: Set<Drug>, priv
 
             drugsByEvaluationResult[EvaluationResult.FAIL]?.isNotEmpty() == true -> {
                 val matchingDrugs = drugsByEvaluationResult[EvaluationResult.FAIL]!!
-                EvaluationFactory.fail("Has received treatments with ${concatItemsWithAnd(matchingDrugs)} but not at least $minCycles cycles")
+                EvaluationFactory.fail(
+                    "Has received treatments with ${concatItemsWithAnd(matchingDrugs)} " +
+                            "but not at least $minCycles cycles"
+                )
             }
 
             else -> {

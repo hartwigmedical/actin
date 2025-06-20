@@ -19,11 +19,10 @@ private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 
 class HasHadTreatmentWithDrugWithCyclesTest {
 
-    private val functionWithoutCycles =
-        HasHadTreatmentWithDrugWithCycles(
-            setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
-            null
-        )
+    private val functionWithoutCycles = HasHadTreatmentWithDrugWithCycles(
+        setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
+        null
+    )
     private val functionWithCycles =
         HasHadTreatmentWithDrugWithCycles(setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 2)
 
