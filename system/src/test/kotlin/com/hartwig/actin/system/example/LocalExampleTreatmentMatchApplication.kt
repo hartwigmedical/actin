@@ -53,7 +53,7 @@ class LocalExampleTreatmentMatchApplication {
                 resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher(),
                 maxMolecularTestAge = null
             )
-            .evaluateAndAnnotateMatchesForPatient(patient)
+            .run(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, outputDirectory)
@@ -106,6 +106,7 @@ class LocalExampleTreatmentMatchApplication {
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             personalizationDataPath = null,
+            treatmentEfficacyPredictionJson = null,
             algoConfiguration = environmentConfiguration.algo,
             maxMolecularTestAge = environmentConfiguration.algo.maxMolecularTestAgeInDays?.let {
                 referenceDateProvider.date().minus(Period.ofDays(it))

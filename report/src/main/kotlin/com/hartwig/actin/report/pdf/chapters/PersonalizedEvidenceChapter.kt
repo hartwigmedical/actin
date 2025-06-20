@@ -1,10 +1,12 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
-import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.datamodel.personalization.MeasurementType
+import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldSurvivalOutcomesGenerator
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldTreatmentDecisionsGenerator
+import com.hartwig.actin.report.pdf.tables.soc.SurvivalPredictionPerTreatmentGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
@@ -22,21 +24,36 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
     }
 
     override fun render(document: Document) {
+        addChapterTitle(document)
+        
+        addPersonalizationTable(document)
+        addSurvivalTable(document)
+    }
+    
+    private fun addPersonalizationTable(document : Document) {
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        
         val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches
             ?.filter(AnnotatedTreatmentMatch::eligible)
             ?.map { it.treatmentCandidate.treatment.name.lowercase() }
             ?.toSet() ?: emptySet()
 
-        addChapterTitle(document)
-
-        val table = Tables.createSingleColWithWidth(contentWidth())
-
         val personalizedDataAnalysis = report.treatmentMatch.personalizedDataAnalysis!!
 
-        val generators = listOf(
+        val generators = listOfNotNull(
             RealWorldTreatmentDecisionsGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth()),
-            RealWorldSurvivalOutcomesGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth(), MeasurementType.OVERALL_SURVIVAL),
-            RealWorldSurvivalOutcomesGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth(), MeasurementType.PROGRESSION_FREE_SURVIVAL),
+            RealWorldSurvivalOutcomesGenerator(
+                personalizedDataAnalysis,
+                eligibleSocTreatments,
+                contentWidth(),
+                MeasurementType.OVERALL_SURVIVAL
+            ),
+            RealWorldSurvivalOutcomesGenerator(
+                personalizedDataAnalysis,
+                eligibleSocTreatments,
+                contentWidth(),
+                MeasurementType.PROGRESSION_FREE_SURVIVAL
+            ),
         )
 
         generators.forEach { generator ->
@@ -63,6 +80,15 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
             .forEach(table::addCell)
 
         document.add(table)
+    }
+
+    private fun addSurvivalTable(document: Document) {
+        report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
+            val table = Tables.createSingleColWithWidth(contentWidth())
+            val generator = SurvivalPredictionPerTreatmentGenerator(survivalPredictions)
+            TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
+            document.add(table)    
+        }
     }
 }
 

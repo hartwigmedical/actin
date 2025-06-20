@@ -15,6 +15,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeParseException
 
 class FlexibleLocalDateTimeDeserializer : JsonDeserializer<LocalDateTime>() {
+    
     override fun deserialize(parser: JsonParser, context: DeserializationContext): LocalDateTime =
         try {
             LocalDateTime.parse(parser.text)

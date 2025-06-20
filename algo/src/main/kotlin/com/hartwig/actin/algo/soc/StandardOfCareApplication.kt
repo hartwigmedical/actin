@@ -17,13 +17,13 @@ import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
 class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
@@ -57,14 +57,16 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info(" Loaded algo config: $configuration")
 
         val resources = RuleMappingResources(
-            referenceDateProvider,
-            doidModel,
-            icdModel,
-            functionInputResolver,
-            atcTree,
-            treatmentDatabase,
-            config.personalizationDataPath,
-            configuration
+            referenceDateProvider = referenceDateProvider,
+            doidModel = doidModel,
+            icdModel = icdModel,
+            functionInputResolver = functionInputResolver,
+            atcTree = atcTree,
+            treatmentDatabase = treatmentDatabase,
+            personalizationDataPath = config.personalizationDataPath,
+            treatmentEfficacyPredictionJson = null,
+            algoConfiguration = configuration,
+            maxMolecularTestAge = null
         )
         val standardOfCareEvaluator = StandardOfCareEvaluatorFactory(resources).create()
 

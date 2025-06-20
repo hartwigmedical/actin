@@ -9,7 +9,8 @@ data class TreatmentMatch(
     val referenceDate: LocalDate,
     val referenceDateIsLive: Boolean,
     val trialMatches: List<TrialMatch>,
-    val standardOfCareMatches: List<AnnotatedTreatmentMatch>? = null,
-    val personalizedDataAnalysis: PersonalizedDataAnalysis? = null,
+    val standardOfCareMatches: List<AnnotatedTreatmentMatch>?,
+    val personalizedDataAnalysis: PersonalizedDataAnalysis?,
+    val survivalPredictionsPerTreatment: Map<String, List<Double>>?,
     val maxMolecularTestAge: LocalDate? = null
 )

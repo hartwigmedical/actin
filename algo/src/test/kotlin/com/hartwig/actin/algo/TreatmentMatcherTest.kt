@@ -26,13 +26,14 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val MAX_AGE = LocalDate.of(2023, 12, 10)
 
 class TreatmentMatcherTest {
+    
     private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())
     private val trialMatches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
@@ -53,15 +54,18 @@ class TreatmentMatcherTest {
         TestMolecularFactory.createMinimalTestMolecularHistory(),
         mockk<ActionabilityMatcher>()
     )
+    
     private val treatmentMatcher = TreatmentMatcher(
-        trialMatcher,
-        standardOfCareEvaluator,
-        trials,
-        CurrentDateProvider(),
-        EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-        null,
-        MAX_AGE
+        trialMatcher = trialMatcher,
+        standardOfCareEvaluator = standardOfCareEvaluator,
+        trials = trials,
+        referenceDateProvider = CurrentDateProvider(),
+        evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
+        personalizationDataPath = null,
+        treatmentEfficacyPredictionPath = null,
+        maxMolecularTestAge = MAX_AGE
     )
+    
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
         sampleId = patient.molecularHistory.latestOrangeMolecularRecord()?.sampleId ?: "N/A",
@@ -69,13 +73,15 @@ class TreatmentMatcherTest {
         referenceDateIsLive = true,
         trialMatches = trialMatches,
         standardOfCareMatches = null,
+        personalizedDataAnalysis = null,
+        survivalPredictionsPerTreatment = null,
         maxMolecularTestAge = MAX_AGE
     )
 
     @Test
     fun `Should produce match for patient when SOC evaluation unavailable and annotate with efficacy evidence`() {
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient) } returns false
-        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient)).isEqualTo(expectedTreatmentMatch)
+        assertThat(treatmentMatcher.run(patient)).isEqualTo(expectedTreatmentMatch)
     }
 
     @Test
@@ -89,7 +95,7 @@ class TreatmentMatcherTest {
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient) } returns true
         every { standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient) } returns StandardOfCareEvaluation(expectedSocTreatments)
 
-        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
+        assertThat(treatmentMatcher.run(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
                     standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher)
@@ -105,18 +111,19 @@ class TreatmentMatcherTest {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }
         val treatmentMatcher = TreatmentMatcher(
-            trialMatcher,
-            standardOfCareEvaluator,
-            trials,
-            CurrentDateProvider(),
-            EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-            null,
-            MAX_AGE
+            trialMatcher = trialMatcher,
+            standardOfCareEvaluator = standardOfCareEvaluator,
+            trials = trials,
+            referenceDateProvider = CurrentDateProvider(),
+            evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
+            personalizationDataPath = null,
+            treatmentEfficacyPredictionPath = null,
+            maxMolecularTestAge = MAX_AGE
         )
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")
 
-        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patientWithoutMolecular)).isEqualTo(
+        assertThat(treatmentMatcher.run(patientWithoutMolecular)).isEqualTo(
             expectedTreatmentMatchWithoutMolecular
         )
     }
