@@ -8,7 +8,10 @@ import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.nio.file.Files
 
-private data class TreatmentEfficacyPrediction(@JsonProperty("survival_probs") val survivalProbs: List<Double>)
+private data class TreatmentEfficacyPrediction(
+    @JsonProperty("survival_probs")
+    val survivalProbs: List<Double>
+)
 
 object TreatmentEfficacyPredictionJson {
 
@@ -17,11 +20,12 @@ object TreatmentEfficacyPredictionJson {
 
     fun read(treatmentEfficacyPredictionJson: String): Map<String, List<Double>> {
         logger.info("Loading treatment efficacy predictions from $treatmentEfficacyPredictionJson")
-        val results: Map<String, TreatmentEfficacyPrediction> =
-            mapper.readValue(Files.readString(File(treatmentEfficacyPredictionJson).toPath()))
+
+        val json = Files.readString(File(treatmentEfficacyPredictionJson).toPath())
+        val results = mapper.readValue<Map<String, TreatmentEfficacyPrediction>>(json).mapValues { it.value.survivalProbs }
 
         logger.info(" Loaded treatment efficacy predictions for ${results.keys.size} treatments")
-        
-        return results.mapValues { it.value.survivalProbs }
+
+        return results
     }
 }

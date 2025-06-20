@@ -32,8 +32,7 @@ class TreatmentMatcher(
             if (standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient)) {
                 val evaluatedTreatments = standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient).evaluatedTreatments
                 val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
-                val survivalPredictionsPerTreatment =
-                    treatmentEfficacyPredictionPath?.let { TreatmentEfficacyPredictionJson.read(treatmentEfficacyPredictionPath) }
+                val survivalPredictionsPerTreatment = treatmentEfficacyPredictionPath?.let(TreatmentEfficacyPredictionJson::read)
                 Triple(
                     evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
                     personalizedDataAnalysis,

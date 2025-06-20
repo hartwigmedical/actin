@@ -11,7 +11,7 @@ class SurvivalPredictionEntryFactoryTest {
     }
 
     @Test
-    fun `Should create survival prediction for sparse input`() {
+    fun `Should create survival prediction for input over limited days`() {
         val survivalPredictions = mapOf("treatment" to (1..90).map { 1.0 })
 
         val entries = SurvivalPredictionEntryFactory.create(survivalPredictions)
