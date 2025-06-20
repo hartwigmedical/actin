@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.isCUP
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.hasCancerOfUnknownPrimary
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.lesions
 import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
@@ -14,18 +14,9 @@ class TumorDetailsInterpreterTest {
 
     @Test
     fun `Should correctly determine if tumor is CUP`() {
-        assertThat(isCUP(TumorDetails())).isFalse
-
-        assertThat(isCUP(TumorDetails(primaryTumorLocation = TumorDetailsInterpreter.CUP_LOCATION))).isFalse
-
-        assertThat(
-            isCUP(
-                TumorDetails(
-                    primaryTumorLocation = TumorDetailsInterpreter.CUP_LOCATION,
-                    primaryTumorSubLocation = TumorDetailsInterpreter.CUP_SUB_LOCATION
-                )
-            )
-        ).isTrue
+        assertThat(hasCancerOfUnknownPrimary(TumorDetails().name)).isFalse
+        assertThat(hasCancerOfUnknownPrimary(TumorDetails(name = "Unknown").name)).isFalse
+        assertThat(hasCancerOfUnknownPrimary(TumorDetails(name = "Something (CUP))").name)).isTrue()
     }
 
     class LesionInterpreterTest {
@@ -89,15 +80,15 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
-        fun `Should map primaryTumorLocation Brain to brainLesions`() {
-            val details = TumorDetails(primaryTumorLocation = "Brain")
+        fun `Should map name Brain to brainLesions`() {
+            val details = TumorDetails(name = "Some brain")
             val expected = "Brain"
             assertThat(lesions(details)).isEqualTo(expected)
         }
 
         @Test
-        fun `Should map primaryTumorType Glioma to brainLesions`() {
-            val details = TumorDetails(primaryTumorType = "Glioma")
+        fun `Should map name Glioma to brainLesions`() {
+            val details = TumorDetails(name = "Some glioma")
             val expected = "Brain"
             assertThat(lesions(details)).isEqualTo(expected)
         }

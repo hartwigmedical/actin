@@ -30,6 +30,7 @@ import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
 import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
+import com.hartwig.actin.molecular.panel.PanelVirusAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
@@ -164,6 +165,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
         val panelFusionAnnotator = PanelFusionAnnotator(knownFusionCache, ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(ensemblDataCache)
+        val panelVirusAnnotator = PanelVirusAnnotator()
         val panelDriverAttributeAnnotator =
             PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), geneDriverLikelihoodModel)
         val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, doidEntry, tumorDoids)
@@ -173,6 +175,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelVirusAnnotator,
             panelDriverAttributeAnnotator,
             panelSpecifications,
             evidenceAnnotator
@@ -197,6 +200,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+        panelVirusAnnotator: PanelVirusAnnotator,
         panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
         panelSpecifications: PanelSpecifications,
         panelRecordEvidenceAnnotator: EvidenceAnnotator<PanelRecord>
@@ -211,6 +215,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelVariantAnnotator,
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
+                panelVirusAnnotator,
                 panelDriverAttributeAnnotator,
                 panelSpecifications
             ),

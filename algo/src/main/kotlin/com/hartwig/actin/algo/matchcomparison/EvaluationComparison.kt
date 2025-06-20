@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.mapKeyDif
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import org.apache.logging.log4j.LogManager
@@ -30,7 +29,7 @@ object EvaluationComparison {
                 EvaluationDifferences.create()
             } else {
                 val (newFunction, newEvaluation) = newFunctionAndEvaluation
-                val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it.id }}"
+                val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it }}"
 
                 val resultDifferences = extractDifferences(
                     oldEvaluation, newEvaluation, mapOf("result for $criteriaId" to Evaluation::result)
@@ -62,7 +61,7 @@ object EvaluationComparison {
         }.fold(EvaluationDifferences.create(mapKeyDifferences = modifiedKeys)) { acc, other -> acc + other }
     }
 
-    private fun evaluationsByCriteria(evaluations: Map<Eligibility, Evaluation>): Map<Set<CriterionReference>, Pair<EligibilityFunction, Evaluation>> {
+    private fun evaluationsByCriteria(evaluations: Map<Eligibility, Evaluation>): Map<Set<String>, Pair<EligibilityFunction, Evaluation>> {
         return evaluations.map { (eligibility, evaluation) -> eligibility.references to Pair(eligibility.function, evaluation) }.toMap()
     }
 

@@ -9,8 +9,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_LOCATION
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_SUB_LOCATION
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
@@ -111,6 +110,7 @@ class ReportContentProviderTest {
             ResistanceEvidenceChapter::class,
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
+            EfficacyEvidenceDetailsChapter::class,
             TrialMatchingOtherResultsChapter::class
         )
     }
@@ -129,7 +129,8 @@ class ReportContentProviderTest {
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
             EfficacyEvidenceDetailsChapter::class,
-            TrialMatchingOtherResultsChapter::class
+            TrialMatchingOtherResultsChapter::class,
+            TrialMatchingDetailsChapter::class
         )
     }
 
@@ -176,7 +177,7 @@ class ReportContentProviderTest {
 
     @Test
     fun `Should show eligible approved treatments options for CUP with high prediction`() {
-        val cupTumor = TumorDetails(primaryTumorLocation = CUP_LOCATION, primaryTumorSubLocation = CUP_SUB_LOCATION)
+        val cupTumor = TumorDetails(name = "Some ${TumorDetailsInterpreter.CUP_STRING}")
         val molecularHistory = MolecularHistory(
             listOf(
                 TestMolecularFactory.createMinimalTestMolecularRecord().copy(

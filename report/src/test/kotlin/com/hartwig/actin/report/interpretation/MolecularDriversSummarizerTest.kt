@@ -283,7 +283,7 @@ class MolecularDriversSummarizerTest {
             event = event,
             driverLikelihood = driverLikelihood,
             isReportable = isReportable,
-            type = VirusType.MERKEL_CELL_VIRUS,
+            type = VirusType.MCV,
             integrations = VIRUS_INTEGRATIONS
         )
     }

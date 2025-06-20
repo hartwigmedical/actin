@@ -39,8 +39,8 @@ object TestTrialFactory {
     private fun createGeneralEligibility(): List<Eligibility> {
         return listOf(
             Eligibility(
-                function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = listOf("18")),
-                references = setOf(CriterionReference(id = "I-01", text = "Is adult"))
+                references = setOf("I-01"),
+                function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = listOf("18"))
             )
         )
     }
@@ -51,14 +51,12 @@ object TestTrialFactory {
                 metadata = createTestMetadata("A"),
                 eligibility = listOf(
                     Eligibility(
+                        references = setOf("E-01"),
                         function = EligibilityFunction(
                             rule = EligibilityRule.NOT,
                             parameters = listOf(
                                 EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, parameters = emptyList())
                             )
-                        ),
-                        references = setOf(
-                            CriterionReference(id = "E-01", text = "Has no active CNS metastases and has exhausted SOC")
                         )
                     )
                 )
@@ -67,10 +65,8 @@ object TestTrialFactory {
                 metadata = createTestMetadata("B"),
                 eligibility = listOf(
                     Eligibility(
-                        function = EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList()),
-                        references = setOf(
-                            CriterionReference(id = "E-01", text = "Has no active CNS metastases and has exhausted SOC")
-                        )
+                        references = setOf("E-01"),
+                        function = EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList())
                     )
                 )
             ),

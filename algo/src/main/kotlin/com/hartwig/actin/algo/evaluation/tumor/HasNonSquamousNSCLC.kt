@@ -15,24 +15,30 @@ class HasNonSquamousNSCLC(private val doidModel: DoidModel) : EvaluationFunction
             return EvaluationFactory.undetermined("Non-squamous NSCLC tumor type undetermined (tumor type missing)")
         }
 
-        val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
-        val isSquamousNSCLC = DoidConstants.LUNG_SQUAMOUS_CELL_CARCINOMA_DOID in expandedDoidSet
-        val isAdenoSquamousNSCLC = DoidConstants.LUNG_ADENOSQUAMOUS_CARCINOMA_DOID in expandedDoidSet
-        val isNonSquamousNSCLC = NON_SQUAMOUS_NSCLC_DOIDS.any { it in expandedDoidSet }
-        val isNonSmallNSCLC = DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID in expandedDoidSet
+        val isSquamousNsclc = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
+            doidModel,
+            tumorDoids,
+            setOf(DoidConstants.LUNG_SQUAMOUS_CELL_CARCINOMA_DOID, DoidConstants.LUNG_ADENOSQUAMOUS_CARCINOMA_DOID)
+        )
+        val isNonSquamousNsclc = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
+            doidModel,
+            tumorDoids,
+            DoidConstants.LUNG_NON_SQUAMOUS_NSCLC_DOIDS
+        )
+        val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
         val isExactLungCarcinoma = DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.LUNG_CARCINOMA_DOID)
         val isExactLungCancer = DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.LUNG_CANCER_DOID)
 
         return when {
-            isSquamousNSCLC || isAdenoSquamousNSCLC -> {
+            isSquamousNsclc -> {
                 EvaluationFactory.fail("Has no non-squamous NSCLC")
             }
 
-            isNonSquamousNSCLC -> {
+            isNonSquamousNsclc -> {
                 EvaluationFactory.pass("Has non-squamous NSCLC")
             }
 
-            isNonSmallNSCLC || isExactLungCarcinoma || isExactLungCancer -> {
+            isNsclc || isExactLungCarcinoma || isExactLungCancer -> {
                 EvaluationFactory.undetermined("Undetermined if non-squamous NSCLC")
             }
 
@@ -40,14 +46,5 @@ class HasNonSquamousNSCLC(private val doidModel: DoidModel) : EvaluationFunction
                 EvaluationFactory.fail("Has no non-squamous NSCLC")
             }
         }
-
-    }
-
-    companion object {
-        val NON_SQUAMOUS_NSCLC_DOIDS = setOf(
-            DoidConstants.LUNG_ADENOCARCINOMA_DOID,
-            DoidConstants.LUNG_LARGE_CELL_CARCINOMA_DOID,
-            DoidConstants.LUNG_NON_SQUAMOUS_NON_SMALL_CARCINOMA_DOID
-        )
     }
 }

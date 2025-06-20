@@ -351,11 +351,11 @@ object TestMolecularFactory {
         transcriptId = "",
         hgvsCodingImpact = "",
         hgvsProteinImpact = "",
-        affectedCodon = 0,
+        affectedCodon = null,
         affectedExon = null,
         inSpliceRegion = null,
         effects = emptySet(),
-        codingEffect = CodingEffect.NONE,
+        codingEffect = null,
     )
 
     fun createProperVariant() = Variant(
@@ -369,10 +369,10 @@ object TestMolecularFactory {
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
             affectedCodon = 600,
+            affectedExon = 15,
             inSpliceRegion = false,
             effects = setOf(VariantEffect.MISSENSE),
-            codingEffect = CodingEffect.MISSENSE,
-            affectedExon = null
+            codingEffect = CodingEffect.MISSENSE
         ),
         otherImpacts = emptySet(),
         extendedVariantDetails = ExtendedVariantDetails(
@@ -585,14 +585,23 @@ object TestMolecularFactory {
                 fusedExonUp = 6,
                 fusedExonDown = 20,
             ), viruses = proper.viruses + Virus(
+                name = "Human papillomavirus type 16",
+                type = VirusType.HPV,
+                integrations = null,
+                isReliable = true,
                 isReportable = true,
                 event = "HPV positive",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                name = "Human papillomavirus type 16",
-                type = VirusType.HUMAN_PAPILLOMA_VIRUS,
-                integrations = 3,
+            ) + Virus(
+                name = "Epstein-Barr virus",
+                type = VirusType.EBV,
+                integrations = 4,
                 isReliable = true,
+                isReportable = true,
+                event = "EBV positive",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
             )
         )
     }

@@ -34,6 +34,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ANTI_KLK2(TreatmentCategory.TARGETED_THERAPY, "anti-KLK2"),
     ANTI_LAG_3(TreatmentCategory.IMMUNOTHERAPY, "anti-LAG-3"),
     ANTI_NKG2D(TreatmentCategory.IMMUNOTHERAPY, "anti-NKG2D"),
+    ANTI_NY_ESO_1(TreatmentCategory.IMMUNOTHERAPY, "anti-NY-ESO-1"),
     ANTI_OX40(TreatmentCategory.IMMUNOTHERAPY, "anti-OX40"),
     ANTI_PD_1_LAG_3(TreatmentCategory.IMMUNOTHERAPY, "anti-PD-1/LAG-3"),
     ANTI_PD_1_TIM_3(TreatmentCategory.IMMUNOTHERAPY, "anti-PD-1/TIM-3"),

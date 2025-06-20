@@ -51,7 +51,7 @@ class IsEligibleForOnLabelTreatmentTest {
             doidModel,
             MIN_DATE
         )
-    private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
+    private val colorectalCancerPatient = TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
     fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion`() {
@@ -175,7 +175,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TumorTestFactory.withTumorDetails(TumorDetails(primaryTumorLocation = "unknown", primaryTumorSubLocation = "CUP"))
+                TumorTestFactory.withTumorDetails(TumorDetails(name = "Unknown (CUP)"))
             )
         )
     }

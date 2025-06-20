@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTes
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.skippedExons
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.tmb
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.variants
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSequencingTestExtractorFunctions.viruses
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.clinical.ingestion.CurationCategory
 import com.hartwig.feed.datamodel.FeedIhcResult
@@ -72,6 +73,7 @@ class SequencingTestExtractor(
                                 deletions = deletions(sequencingTestResultConfig),
                                 fusions = fusions(sequencingTestResultConfig),
                                 skippedExons = skippedExons(sequencingTestResultConfig),
+                                viruses = viruses(sequencingTestResultConfig),
                                 tumorMutationalBurden = tmb(sequencingTestResultConfig),
                                 isMicrosatelliteUnstable = msi(sequencingTestResultConfig),
                                 isHomologousRecombinationDeficient = hrd(sequencingTestResultConfig),

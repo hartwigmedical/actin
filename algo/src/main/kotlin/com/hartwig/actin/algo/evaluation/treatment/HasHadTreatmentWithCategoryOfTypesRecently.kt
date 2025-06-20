@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
-import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
@@ -37,7 +37,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val typesList = concatItemsWithAnd(types)
+        val typesList = concatItemsWithOr(types)
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {

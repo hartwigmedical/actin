@@ -107,11 +107,7 @@ object TestClinicalFactory {
 
     private fun createTestTumorDetails(): TumorDetails {
         return TumorDetails(
-            primaryTumorLocation = "Skin",
-            primaryTumorSubLocation = "",
-            primaryTumorType = "Melanoma",
-            primaryTumorSubType = "",
-            primaryTumorExtraDetails = "",
+            name = "Skin melanoma",
             doids = setOf("8923"),
             stage = TumorStage.IV,
             hasMeasurableDisease = true,

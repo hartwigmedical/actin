@@ -15,7 +15,14 @@ class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
-                EvaluationFactory.pass("Has intolerance ${Format.concatItemsWithAnd(icdMatches.fullMatches)} belonging to $targetIcdTitle")
+                EvaluationFactory.pass(
+                    "Has intolerance ${
+                        Format.concatItemsWithAnd(
+                            icdMatches.fullMatches,
+                            true
+                        )
+                    } belonging to $targetIcdTitle"
+                )
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {

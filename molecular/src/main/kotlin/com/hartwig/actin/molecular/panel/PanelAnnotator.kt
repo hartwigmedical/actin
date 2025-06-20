@@ -22,6 +22,7 @@ class PanelAnnotator(
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
+    private val panelVirusAnnotator: PanelVirusAnnotator,
     private val panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<SequencingTest, PanelRecord> {
@@ -37,6 +38,7 @@ class PanelAnnotator(
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
+        val annotatedViruses = panelVirusAnnotator.annotate(input.viruses)
 
         return PanelRecord(
             specification = if (input.knownSpecifications) panelSpecifications.panelSpecification(input.test) else PanelSpecification(
@@ -51,7 +53,7 @@ class PanelAnnotator(
                 homozygousDisruptions = emptyList(),
                 disruptions = emptyList(),
                 fusions = annotatedFusions,
-                viruses = emptyList()
+                viruses = annotatedViruses
             ),
             characteristics = MolecularCharacteristics(
                 purity = null,

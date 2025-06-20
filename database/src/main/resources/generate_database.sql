@@ -16,11 +16,7 @@ DROP TABLE IF EXISTS `tumor`;
 CREATE TABLE `tumor`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) UNIQUE,
-    `primaryTumorLocation` varchar(100),
-    `primaryTumorSubLocation` varchar(50),
-    `primaryTumorType` varchar(50),
-    `primaryTumorSubType` varchar(100),
-    `primaryTumorExtraDetails` varchar(100),
+    `name` varchar(300),
     `doids` varchar(50),
     `stage` varchar(50),
     `hasMeasurableDisease` BOOLEAN,
@@ -570,19 +566,11 @@ CREATE TABLE `eligibility`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `reference`;
-CREATE TABLE `reference`
-(   `id` int NOT NULL AUTO_INCREMENT,
-    `code` varchar(50) NOT NULL,
-    `text` varchar(15000) NOT NULL,
-    PRIMARY KEY (`id`)
-);
-
 DROP TABLE IF EXISTS `eligibilityReference`;
 CREATE TABLE `eligibilityReference`
 (   `eligibilityId` int NOT NULL,
-    `referenceId` int NOT NULL,
-    PRIMARY KEY (`eligibilityId`, `referenceId`)
+    `reference` varchar(50) NOT NULL,
+    PRIMARY KEY (`eligibilityId`, `reference`)
 );
 
 

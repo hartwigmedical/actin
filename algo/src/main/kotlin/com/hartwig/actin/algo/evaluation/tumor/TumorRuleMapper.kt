@@ -131,7 +131,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasKnownSCLCTransformationCreator(): FunctionCreator {
-        return { HasKnownSCLCTransformation(doidModel(), maxMolecularTestAge()) }
+        return { HasKnownSclcTransformation(doidModel(), maxMolecularTestAge()) }
     }
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
@@ -169,7 +169,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasAnyTumorStageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val stagesToMatch = functionInputResolver().createManyTumorStagesInput(function)
-            HasTumorStage(stagesToMatch)
+            DerivedTumorStageEvaluationFunction(HasTumorStage(stagesToMatch), "tumor stage(s) ${stagesToMatch.joinToString { " or " }}")
         }
     }
 
@@ -181,17 +181,15 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasLocallyAdvancedCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer(), "locally advanced cancer") }
     }
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
-        return {
-            DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()))
-        }
+        return { DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()), "metastatic cancer") }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer(), "unresectable cancer") }
     }
 
     private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
@@ -210,11 +208,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer(), "unresectable stage III cancer") }
     }
 
     private fun hasRecurrentCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer(), "recurrent cancer") }
     }
 
     private fun meetsSpecificCriteriaRegardingRecurrentCancerCreator(): FunctionCreator {
@@ -222,7 +220,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasIncurableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer()) }
+        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer(), "incurable cancer") }
     }
 
     private fun hasAnyLesionCreator(): FunctionCreator {
@@ -301,7 +299,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasOnlyLungAndOrLungLymphNodeMetastasesCreator(): FunctionCreator {
-        return { HasOnlyLungAndOrLungLymphNodeMetastases()}
+        return { HasOnlyLungAndOrLungLymphNodeMetastases() }
     }
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {

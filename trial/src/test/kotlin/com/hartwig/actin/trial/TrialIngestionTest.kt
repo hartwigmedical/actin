@@ -2,7 +2,6 @@ package com.hartwig.actin.trial
 
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortMetadata
-import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -26,7 +25,6 @@ private const val IS_FEMALE = "IS_FEMALE"
 private const val COHORT_ID = "cohortId"
 private const val DESCRIPTION = "description"
 private const val REFERENCE_ID = "id"
-private const val REFERENCE_TEXT = "text"
 private const val LOCATION = "location"
 
 class TrialIngestionTest {
@@ -45,9 +43,7 @@ class TrialIngestionTest {
                     acronym = ACRONYM,
                     title = TITLE,
                     phase = TrialPhase.PHASE_1,
-                    inclusionCriterion = listOf(
-                        InclusionCriterionConfig(IS_MALE, listOf(InclusionCriterionReferenceConfig(REFERENCE_ID, REFERENCE_TEXT)))
-                    ),
+                    inclusionCriterion = listOf(InclusionCriterionConfig(IS_MALE, listOf(REFERENCE_ID))),
                     cohorts = listOf(
                         CohortConfig(
                             cohortId = COHORT_ID,
@@ -56,16 +52,7 @@ class TrialIngestionTest {
                             description = DESCRIPTION,
                             ignore = false,
                             evaluable = true,
-                            inclusionCriterion = listOf(
-                                InclusionCriterionConfig(
-                                    IS_FEMALE, listOf(
-                                        InclusionCriterionReferenceConfig(
-                                            REFERENCE_ID,
-                                            REFERENCE_TEXT
-                                        )
-                                    )
-                                )
-                            )
+                            inclusionCriterion = listOf(InclusionCriterionConfig(IS_FEMALE, listOf(REFERENCE_ID)))
                         )
                     ),
                     locations = listOf(LOCATION)
@@ -88,7 +75,7 @@ class TrialIngestionTest {
                 ),
                 generalEligibility = listOf(
                     Eligibility(
-                        setOf(CriterionReference(REFERENCE_ID, REFERENCE_TEXT)),
+                        setOf(REFERENCE_ID),
                         EligibilityFunction(EligibilityRule.IS_MALE)
                     )
                 ),
@@ -104,7 +91,7 @@ class TrialIngestionTest {
                         ),
                         eligibility = listOf(
                             Eligibility(
-                                setOf(CriterionReference(REFERENCE_ID, REFERENCE_TEXT)),
+                                setOf(REFERENCE_ID),
                                 EligibilityFunction(EligibilityRule.IS_FEMALE)
                             )
                         )
@@ -117,7 +104,8 @@ class TrialIngestionTest {
                     trial.cohorts.flatMap { it.eligibility.map { EligibilityRuleState.used(it.function.rule) } }
         }.toSet()
         assertThat(result.value.eligibilityRulesState.size).isEqualTo(EligibilityRule.entries.size)
-        assertThat((result.value.eligibilityRulesState.filter { it.usedStatus == EligibilityRuleUsedStatus.USED }.toSet())).isEqualTo(usedRules)
+        assertThat((result.value.eligibilityRulesState.filter { it.usedStatus == EligibilityRuleUsedStatus.USED }.toSet())).isEqualTo(
+            usedRules
+        )
     }
-
 }

@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.SequencedVirus
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -51,37 +53,19 @@ class StandardSequencingTestExtractorFunctionsTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if coding is known but gene is not`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                hgvsCodingImpact = CODING,
-            )
-        )
+        val test = setOf(SequencingTestResultConfig(input = "", hgvsCodingImpact = CODING))
         StandardSequencingTestExtractorFunctions.variants(test)
     }
 
     @Test
     fun `Should extract amplifications without copy nr`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                gene = GENE,
-                amplifiedGene = GENE
-            )
-        )
+        val test = setOf(SequencingTestResultConfig(input = "", gene = GENE, amplifiedGene = GENE))
         assertThat(StandardSequencingTestExtractorFunctions.amplifications(test)).containsExactly(SequencedAmplification(gene = GENE))
     }
 
     @Test
     fun `Should extract amplifications with copy nr`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                gene = GENE,
-                amplifiedGene = GENE,
-                amplifiedGeneCopyNr = 5
-            )
-        )
+        val test = setOf(SequencingTestResultConfig(input = "", gene = GENE, amplifiedGene = GENE, amplifiedGeneCopyNr = 5))
         assertThat(StandardSequencingTestExtractorFunctions.amplifications(test)).containsExactly(
             SequencedAmplification(
                 gene = GENE,
@@ -92,37 +76,19 @@ class StandardSequencingTestExtractorFunctionsTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if gene does not equal amplifiedGene`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                gene = GENE,
-                amplifiedGene = OTHER_GENE
-            )
-        )
+        val test = setOf(SequencingTestResultConfig(input = "", gene = GENE, amplifiedGene = OTHER_GENE))
         StandardSequencingTestExtractorFunctions.amplifications(test)
     }
 
     @Test
     fun `Should extract deletions`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                gene = GENE,
-                deletedGene = GENE
-            )
-        )
+        val test = setOf(SequencingTestResultConfig(input = "", gene = GENE, deletedGene = GENE))
         assertThat(StandardSequencingTestExtractorFunctions.deletions(test)).containsExactly(SequencedDeletion(gene = GENE))
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if gene does not equal deletedGene`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                gene = GENE,
-                deletedGene = OTHER_GENE
-            )
-        )
+        val test = setOf(SequencingTestResultConfig(input = "", gene = GENE, deletedGene = OTHER_GENE))
         StandardSequencingTestExtractorFunctions.deletions(test)
     }
 
@@ -154,13 +120,7 @@ class StandardSequencingTestExtractorFunctionsTest {
 
     @Test
     fun `Should extract fusions also if gene is null`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                fusionGeneUp = GENE,
-                fusionGeneDown = OTHER_GENE
-            )
-        )
+        val test = setOf(SequencingTestResultConfig(input = "", fusionGeneUp = GENE, fusionGeneDown = OTHER_GENE))
         assertThat(StandardSequencingTestExtractorFunctions.fusions(test)).containsExactly(
             SequencedFusion(
                 geneUp = GENE,
@@ -171,14 +131,8 @@ class StandardSequencingTestExtractorFunctionsTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if gene does not equal any of the up or down genes`() {
-        val test = setOf(
-            SequencingTestResultConfig(
-                input = "",
-                gene = GENE,
-                fusionGeneUp = OTHER_GENE,
-                fusionGeneDown = "And another gene"
-            )
-        )
+        val test =
+            setOf(SequencingTestResultConfig(input = "", gene = GENE, fusionGeneUp = OTHER_GENE, fusionGeneDown = "And another gene"))
         StandardSequencingTestExtractorFunctions.fusions(test)
     }
 
@@ -199,6 +153,39 @@ class StandardSequencingTestExtractorFunctionsTest {
                 exonStart = EXON,
                 exonEnd = OTHER_EXON,
                 transcript = TRANSCRIPT
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract virus when virusIsLowRisk is null`() {
+        val test = setOf(SequencingTestResultConfig(input = "", virus = VirusType.HPV))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
+            SequencedVirus(
+                type = VirusType.HPV,
+                isLowRisk = false
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract virus when virusIsLowRisk is true`() {
+        val test = setOf(SequencingTestResultConfig(input = "", virus = VirusType.HBV, virusIsLowRisk = true))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
+            SequencedVirus(
+                type = VirusType.HBV,
+                isLowRisk = true
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract virus when virusIsLowRisk is false`() {
+        val test = setOf(SequencingTestResultConfig(input = "", virus = VirusType.EBV, virusIsLowRisk = false))
+        assertThat(StandardSequencingTestExtractorFunctions.viruses(test)).containsExactly(
+            SequencedVirus(
+                type = VirusType.EBV,
+                isLowRisk = false
             )
         )
     }

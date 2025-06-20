@@ -48,7 +48,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
 
             mainMatchesWithUnknownExtension.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Recent ${Format.concatItemsWithAnd(mainMatchesWithUnknownExtension)} but undetermined if history of $diseaseDescription"
+                    "Recent ${Format.concatItemsWithAnd(mainMatchesWithUnknownExtension, true)} " +
+                            "but undetermined if history of $diseaseDescription"
                 )
             }
 

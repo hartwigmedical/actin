@@ -16,11 +16,7 @@
     "hasHartwigSequencing": false
   },
   "tumor": {
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Carcinoma",
-    "primaryTumorSubType": "Squamous cell carcinoma",
-    "primaryTumorExtraDetails": "",
+    "name": "Lung squamous cell carcinoma",
     "doids": [
       "3907"
     ],

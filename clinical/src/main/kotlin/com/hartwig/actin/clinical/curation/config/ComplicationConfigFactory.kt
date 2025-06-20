@@ -58,5 +58,4 @@ class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfig
             emptyList()
         }
     }
-
 }

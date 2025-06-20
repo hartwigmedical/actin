@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
@@ -12,8 +11,7 @@ class IneligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val requestingSource: TrialSource?,
     private val title: String,
-    private val footNote: String?,
-    private val allowDeEmphasis: Boolean,
+    private val indicateNoSlotsOrClosed: Boolean,
     private val useIneligibilityInsteadOfSiteAndConfig: Boolean
 ) : TrialTableGenerator {
 
@@ -61,14 +59,11 @@ class IneligibleTrialGenerator(
             countryOfReference = null,
             includeFeedback = useIneligibilityInsteadOfSiteAndConfig,
             feedbackFunction = InterpretedCohort::fails,
-            allowDeEmphasis = allowDeEmphasis,
+            indicateNoSlotsOrClosed = indicateNoSlotsOrClosed,
             useSmallerSize = true,
             includeCohortConfig = !useIneligibilityInsteadOfSiteAndConfig,
             includeSites = !useIneligibilityInsteadOfSiteAndConfig
         )
-        if (footNote != null) {
-            table.addCell(Cells.createSpanningSubNote(footNote, table).setFontSize(Styles.SMALL_FONT_SIZE))
-        }
         return table
     }
 
@@ -85,16 +80,12 @@ class IneligibleTrialGenerator(
         ): TrialTableGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
             val title = "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
-            val footNote = if (!openOnly) {
-                "Closed cohorts are shown in grey.".takeUnless { ineligibleCohorts.all(InterpretedCohort::isOpen) }
-            } else null
 
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
                 requestingSource = requestingSource,
                 title = title,
-                footNote = footNote,
-                allowDeEmphasis = true,
+                indicateNoSlotsOrClosed = true,
                 useIneligibilityInsteadOfSiteAndConfig = true
             )
         }
@@ -111,8 +102,7 @@ class IneligibleTrialGenerator(
                 cohorts = nonEvaluableAndIgnoredCohorts,
                 requestingSource = requestingSource,
                 title = title,
-                footNote = null,
-                allowDeEmphasis = false,
+                indicateNoSlotsOrClosed = false,
                 useIneligibilityInsteadOfSiteAndConfig = false
             )
         }
