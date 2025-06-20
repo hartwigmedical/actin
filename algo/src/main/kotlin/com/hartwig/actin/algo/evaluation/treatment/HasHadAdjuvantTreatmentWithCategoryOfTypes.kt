@@ -37,7 +37,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
             }
 
             else -> {
-                val namesString = Format.concatItemsWithAnd(types)
+                val namesString = Format.concatItemsWithOr(types)
                 EvaluationFactory.fail("Not received adjuvant $namesString")
             }
         }

@@ -19,11 +19,11 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> EvaluationFactory.pass(
-                "Has complication(s) " + Format.concatItemsWithAnd(icdMatches.fullMatches)
+                "Has complication(s) " + Format.concatItemsWithAnd(icdMatches.fullMatches, true)
             )
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has complication(s) ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension)} " +
+                "Has complication(s) ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension, true)} " +
                         "but undetermined if $icdTitleText"
             )
 
