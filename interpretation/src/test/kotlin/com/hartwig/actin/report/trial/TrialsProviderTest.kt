@@ -117,7 +117,8 @@ class TrialsProviderTest {
 
     @Test
     fun `externalTrialsUnfiltered should not filter external trials`() {
-        val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_01))
+        val country1Trial1 =
+            EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_01))
         val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
 
         val externalTrialsSet: Set<EventWithExternalTrial> = setOf(country1Trial1, country2Trial1)
@@ -152,7 +153,7 @@ class TrialsProviderTest {
     @Test
     fun `externalTrials should filter internal trials and filtered and original should be different without extended mode`() {
         // Should be filtered based on INTERNAL_TRIAL_IDS
-        val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS, )))
+        val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
         // Should be filtered based on matching event in evaluable cohorts
         val country1Trial2 =
             EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
