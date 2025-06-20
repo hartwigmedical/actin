@@ -1320,11 +1320,11 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X",
+    "eligibilityRule": "HAS_TOTAL_PROTEIN_G_PER_L_IN_URINE_OF_AT_LEAST_X",
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X",
+    "eligibilityRule": "HAS_TOTAL_PROTEIN_G_IN_24H_URINE_OF_AT_LEAST_X",
     "usedStatus": "UNUSED"
   },
   {

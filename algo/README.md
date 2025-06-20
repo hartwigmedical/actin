@@ -490,10 +490,10 @@ _Tumor markers_
 
 _Urine measurements_
 
-| Rule                                                         | When does a patient pass evaluation?                               | Note |
-|--------------------------------------------------------------|--------------------------------------------------------------------|------|
-| HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X                     | Total protein in urine (TOTAL_PROTEIN_URINE) in g/L => X.          |      |
-| HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X                 | Total protein in 24 hours urine (TOTAL_PROTEIN_24U) in g/24h => X. |      |
+| Rule                                             | When does a patient pass evaluation?                               | Note |
+|--------------------------------------------------|--------------------------------------------------------------------|------|
+| HAS_TOTAL_PROTEIN_G_PER_L_IN_URINE_OF_AT_LEAST_X | Total protein in urine (TOTAL_PROTEIN_URINE) in g/L => X.          |      |
+| HAS_TOTAL_PROTEIN_G_IN_24H_URINE_OF_AT_LEAST_X   | Total protein in 24 hours urine (TOTAL_PROTEIN_24U) in g/24h => X. |      |
 
 _Other_
 
