@@ -2,17 +2,17 @@ package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
-import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
-import java.time.LocalDate
+
+const val YOUNG_ADULT_CUT_OFF = 40
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
 
-class MolecularFilteredExternalTrials(private val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
+class MolecularFilteredExternalTrials(val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
 
     fun isNotEmpty() = original.isNotEmpty()
 
@@ -31,19 +31,14 @@ class ExternalTrials(val nationalTrials: MolecularFilteredExternalTrials, val in
 }
 
 class TrialsProvider(
-    private val patientRecord: PatientRecord,
-    private val treatmentMatch: TreatmentMatch,
+    private val externalTrials: Set<EventWithExternalTrial>,
+    private val cohorts: List<InterpretedCohort>,
+    private val nonEvaluableCohorts: List<InterpretedCohort>,
+    private val internalTrialIds: Set<String>,
+    private val isYoungAdult: Boolean,
     private val countryOfReference: Country,
-    private val enableExtendedMode: Boolean,
-    filterOnSOCExhaustionAndTumorType: Boolean
+    private val enableExtendedMode: Boolean
 ) {
-
-    private val cohorts: List<InterpretedCohort> = InterpretedCohortFactory.createEvaluableCohorts(
-        treatmentMatch,
-        filterOnSOCExhaustionAndTumorType
-    )
-    private val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
-
     fun evaluableCohorts(): List<InterpretedCohort> {
         return cohorts
     }
@@ -60,42 +55,45 @@ class TrialsProvider(
         return filterCohortsAvailable(cohorts.filter { !it.ignore && it.hasSlotsAvailable })
     }
 
-    private fun externalEligibleTrials(): Set<EventWithExternalTrial> {
-        return patientRecord.molecularHistory.molecularTests.flatMap { t ->
-            AggregatedEvidenceFactory.create(t).eligibleTrialsPerEvent.flatMap {
-                it.value.map { trial -> EventWithExternalTrial(it.key, trial) }
-            }
-        }.toSet()
+    fun externalTrialsUnfiltered(): ExternalTrials {
+        return externalTrials(setOf(), listOf(), false)
     }
 
     fun externalTrials(): ExternalTrials {
-        val evaluated = eligibleCohortsWithSlotsAvailableAndNotIgnore()
+        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), isYoungAdult)
+    }
 
-        val eligibleExternalTrials = externalEligibleTrials().filterInternalTrials(treatmentMatch.trialMatches)
+    private fun externalTrials(
+        internalTrialIds: Set<String>,
+        internalEvaluatedCohorts: List<InterpretedCohort>,
+        isYoungAdult: Boolean
+    ): ExternalTrials {
+        val eligibleExternalTrials = externalTrials.filterInternalTrials(internalTrialIds)
 
         val (nationalTrials, internationalTrials) = partitionByCountry(eligibleExternalTrials, countryOfReference)
 
-        val filteredNationalTrials = nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
+        val filteredNationalTrials = nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
             .filterExclusivelyInChildrensHospitalsInReferenceCountry(
-                patientRecord.patient.birthYear,
-                treatmentMatch.referenceDate,
+                isYoungAdult,
                 countryOfReference
             )
 
-        val nationalTrialsNotOverlappingHospital =
+        val filteredInternationalTrials =
+            internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
+                .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials)
+
+        return ExternalTrials(
             hideOverlappingTrials(
                 nationalTrials,
                 filteredNationalTrials,
                 enableExtendedMode
+            ),
+            hideOverlappingTrials(
+                internationalTrials,
+                filteredInternationalTrials,
+                enableExtendedMode
             )
-
-        val internationalTrialsNotOverlappingHospitalOrNational = hideOverlappingTrials(
-            internationalTrials,
-            internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
-                .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials),
-            enableExtendedMode
         )
-        return ExternalTrials(nationalTrialsNotOverlappingHospital, internationalTrialsNotOverlappingHospitalOrNational)
     }
 
     private fun hideOverlappingTrials(
@@ -104,12 +102,41 @@ class TrialsProvider(
         enableExtendedMode: Boolean
     ): MolecularFilteredExternalTrials {
         return MolecularFilteredExternalTrials(
-            original.toSet(),
-            (if (enableExtendedMode) original else filtered).toSet()
+            original,
+            if (enableExtendedMode) original else filtered
         )
     }
 
     companion object {
+        fun create(
+            patientRecord: PatientRecord,
+            treatmentMatch: TreatmentMatch,
+            countryOfReference: Country,
+            enableExtendedMode: Boolean,
+            filterOnSOCExhaustionAndTumorType: Boolean
+        ): TrialsProvider {
+            val isYoungAdult = (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF
+            val cohorts = InterpretedCohortFactory.createEvaluableCohorts(
+                treatmentMatch,
+                filterOnSOCExhaustionAndTumorType
+            )
+            val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
+            val internalTrialIds = treatmentMatch.trialMatches.mapNotNull { it.identification.nctId }.toSet()
+            return TrialsProvider(
+                externalEligibleTrials(patientRecord), cohorts, nonEvaluableCohorts, internalTrialIds, isYoungAdult,
+                countryOfReference,
+                enableExtendedMode
+            )
+        }
+
+        private fun externalEligibleTrials(patientRecord: PatientRecord): Set<EventWithExternalTrial> {
+            return patientRecord.molecularHistory.molecularTests.flatMap { t ->
+                AggregatedEvidenceFactory.create(t).eligibleTrialsPerEvent.flatMap {
+                    it.value.map { trial -> EventWithExternalTrial(it.key, trial) }
+                }
+            }.toSet()
+        }
+
         fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation
@@ -118,7 +145,7 @@ class TrialsProvider(
 
         private fun countryNames(it: EventWithExternalTrial) = it.trial.countries.map { c -> c.country }
 
-        fun partitionByCountry(
+        private fun partitionByCountry(
             trials: Set<EventWithExternalTrial>,
             country: Country
         ): Pair<Set<EventWithExternalTrial>, Set<EventWithExternalTrial>> {
@@ -128,9 +155,8 @@ class TrialsProvider(
     }
 }
 
-fun Set<EventWithExternalTrial>.filterInternalTrials(internalTrials: List<TrialMatch>): Set<EventWithExternalTrial> {
-    val internalIds = internalTrials.map { it.identification.nctId }.toSet()
-    return this.filter { it.trial.nctId !in internalIds }.toSet()
+fun Set<EventWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<String>): Set<EventWithExternalTrial> {
+    return this.filter { it.trial.nctId !in internalTrialIds }.toSet()
 }
 
 fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(
@@ -144,20 +170,18 @@ fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(tr
     return filterMolecularCriteriaAlreadyPresent(trials.map { it.event }.toSet())
 }
 
-private fun hospitalsNamesForCountry(trial: ExternalTrial, country: Country) =
+private fun hospitalsForCountry(trial: ExternalTrial, country: Country) =
     trial.countries.firstOrNull { it.country == country }?.hospitalsPerCity?.flatMap { it.value }?.toSet()
         ?: throw IllegalArgumentException("Country not found")
 
 
 fun Set<EventWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReferenceCountry(
-    birthYear: Int,
-    referenceDate: LocalDate,
+    isYoungAdult: Boolean,
     countryOfReference: Country
 ): Set<EventWithExternalTrial> {
-    val isYoungAdult = referenceDate.year - birthYear < 40
     return this.filter { ewt ->
         val allHospitalsAreChildrensInReferenceCountry =
-            hospitalsNamesForCountry(ewt.trial, countryOfReference).all { it.isChildrensHospital == true }
+            hospitalsForCountry(ewt.trial, countryOfReference).all { it.isChildrensHospital == true }
         !allHospitalsAreChildrensInReferenceCountry || isYoungAdult
     }.toSet()
 }
