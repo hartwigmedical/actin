@@ -1,20 +1,20 @@
 {
   "No Treatment": {
-    "survivalProbs": [
+    "survival_probs": [
       0.91,
       0.84,
       0.27
     ]
   },
   "Treatment 1": {
-    "survivalProbs": [
+    "survival_probs": [
       0.93,
       0.87,
       0.54
     ]
   },
   "Treatment 2": {
-    "survivalProbs": [
+    "survival_probs": [
       0.96,
       0.88,
       0.75

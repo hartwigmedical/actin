@@ -1,12 +1,13 @@
 package com.hartwig.actin.personalization.serialization
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.File
 import java.nio.file.Files
 
-data class TreatmentEfficacyPrediction(val survivalProbs: List<Double>)
+data class TreatmentEfficacyPrediction(@JsonProperty("survival_probs") val survivalProbs: List<Double>)
 
 object TreatmentEfficacyPredictionJson {
     private val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
