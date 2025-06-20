@@ -54,7 +54,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_FIRST_LINE_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
-            EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AND_AT_LEAST_Y_CYCLES to hasHadTreatmentWithAnyDrugWithCyclesCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
@@ -261,15 +261,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadTreatmentWithDrugsCreator(): FunctionCreator {
+    private fun hasHadTreatmentWithAnyDrugCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadTreatmentWithDrug(functionInputResolver().createManyDrugsInput(function))
-        }
-    }
-
-    private fun hasHadTreatmentWithAnyDrugAsMostRecentCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            HasHadTreatmentWithDrugFromSetAsMostRecent(functionInputResolver().createManyDrugsInput(function))
+            HasHadTreatmentWithDrugWithCycles(functionInputResolver().createManyDrugsInput(function), null)
         }
     }
 
@@ -277,6 +271,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createManyDrugsOneIntegerInput(function)
             HasHadTreatmentWithDrugWithCycles(input.drugs, input.integer)
+        }
+    }
+
+    private fun hasHadTreatmentWithAnyDrugAsMostRecentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasHadTreatmentWithDrugFromSetAsMostRecent(functionInputResolver().createManyDrugsInput(function))
         }
     }
 

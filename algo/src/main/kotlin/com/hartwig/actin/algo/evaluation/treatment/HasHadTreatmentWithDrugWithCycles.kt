@@ -10,39 +10,40 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
-class HasHadTreatmentWithDrugWithCycles(private val drugsToFind: Set<Drug>, private val minCycles: Int) : EvaluationFunction {
-// refactoren met HasHadTreatmentWithDrug
+class HasHadTreatmentWithDrugWithCycles(private val drugsToFind: Set<Drug>, private val minCycles: Int?) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val effectiveTreatmentHistory = record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)
-
-//            .groupBy {
-//                when (it.treatmentHistoryDetails?.cycles) {
-//                    null -> EvaluationResult.UNDETERMINED
-//                    >= minCycles -> EvaluationResult.PASS
-//                    else -> EvaluationResult.FAIL
-//                }
-//            }
-
         val namesToMatch = drugsToFind.map { it.name.lowercase() }.toSet()
-        val matchingDrugs = effectiveTreatmentHistory
-            .flatMap(TreatmentHistoryEntry::allTreatments)
-            .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
-            .filter { it.name.lowercase() in namesToMatch }.toSet()
-
         val drugList = concatItemsWithOr(drugsToFind)
 
-        // matching drug + pass cycles -> PASS
-        // matching drug + undetermined cycles -> UNDETERMINED
-        // trial -> UNDETERMINED
-        // matching drug + fail cycles -> FAIL
-        // no matching drugs + maakt niet uit -> FAIL
+        val drugsByEvaluationResult: Map<EvaluationResult, Set<Drug>> = effectiveTreatmentHistory
+            .flatMap { entry ->
+                val result = if (minCycles == null) EvaluationResult.PASS else when (entry.treatmentHistoryDetails?.cycles) {
+                    null -> EvaluationResult.UNDETERMINED
+                    in minCycles..Int.MAX_VALUE -> EvaluationResult.PASS
+                    else -> EvaluationResult.FAIL
+                }
+                entry.allTreatments()
+                    .mapNotNull { it as? DrugTreatment }
+                    .flatMap { it.drugs }
+                    .filter { it.name.lowercase() in namesToMatch }
+                    .map { result to it }
+            }
+            .groupBy({ it.first }, { it.second })
+            .mapValues { it.value.toSet() }
 
         return when {
-            matchingDrugs.isNotEmpty() -> {
-                EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(matchingDrugs)}")
+            drugsByEvaluationResult[EvaluationResult.PASS]?.isNotEmpty() == true -> {
+                val matchingDrugs = drugsByEvaluationResult[EvaluationResult.PASS]!!
+                val cyclesString = minCycles?.let { " for at least $minCycles cycles" } ?: ""
+                EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(matchingDrugs)}$cyclesString")
+            }
+
+            drugsByEvaluationResult[EvaluationResult.UNDETERMINED]?.isNotEmpty() == true -> {
+                val matchingDrugs = drugsByEvaluationResult[EvaluationResult.UNDETERMINED]!!
+                EvaluationFactory.undetermined("Has received treatments with ${concatItemsWithAnd(matchingDrugs)} but undetermined if at least $minCycles cycles")
             }
 
             effectiveTreatmentHistory.any {
@@ -51,6 +52,11 @@ class HasHadTreatmentWithDrugWithCycles(private val drugsToFind: Set<Drug>, priv
                 }
             } -> {
                 EvaluationFactory.undetermined("Undetermined if received any treatments containing $drugList")
+            }
+
+            drugsByEvaluationResult[EvaluationResult.FAIL]?.isNotEmpty() == true -> {
+                val matchingDrugs = drugsByEvaluationResult[EvaluationResult.FAIL]!!
+                EvaluationFactory.fail("Has received treatments with ${concatItemsWithAnd(matchingDrugs)} but not at least $minCycles cycles")
             }
 
             else -> {
