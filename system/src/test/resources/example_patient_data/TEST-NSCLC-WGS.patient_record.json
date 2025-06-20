@@ -85,6 +85,8 @@
       "treatmentHistoryDetails": {
         "stopYear": 2024,
         "stopMonth": 9,
+        "maxStopYear": null,
+        "maxStopMonth": null,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": "PARTIAL_RESPONSE",

@@ -7,6 +7,8 @@ import java.time.LocalDate
 data class TreatmentHistoryDetails(
     val stopYear: Int? = null,
     val stopMonth: Int? = null,
+    val maxStopYear: Int? = null,
+    val maxStopMonth: Int? = null,
     val ongoingAsOf: LocalDate? = null,
     val cycles: Int? = null,
     val bestResponse: TreatmentResponse? = null,

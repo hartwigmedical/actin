@@ -70,6 +70,8 @@
       "treatmentHistoryDetails": {
         "stopYear": null,
         "stopMonth": null,
+        "maxStopYear": null,
+        "maxStopMonth": null,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": null,
@@ -104,6 +106,8 @@
       "treatmentHistoryDetails": {
         "stopYear": null,
         "stopMonth": null,
+        "maxStopYear": null,
+        "maxStopMonth": null,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": null,
