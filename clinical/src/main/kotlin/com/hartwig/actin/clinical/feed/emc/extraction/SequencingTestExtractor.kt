@@ -78,7 +78,7 @@ class SequencingTestExtractor(
                                 isMicrosatelliteUnstable = msi(sequencingTestResultConfig),
                                 isHomologousRecombinationDeficient = hrd(sequencingTestResultConfig),
                                 negativeResults = negativeResults(sequencingTestResultConfig),
-                                knownSpecifications = false
+                                knownSpecifications = sequencingTestConfig.allowFromAnyLab == true
                             )
                         ),
                         extractionEvaluation

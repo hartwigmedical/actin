@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.util.ResourceFile
 
 class SequencingTestConfigFactory : CurationConfigFactory<SequencingTestConfig> {
 
@@ -12,7 +13,8 @@ class SequencingTestConfigFactory : CurationConfigFactory<SequencingTestConfig> 
             SequencingTestConfig(
                 input = input,
                 ignore = ignore,
-                curatedName = name
+                curatedName = name,
+                allowFromAnyLab = ResourceFile.optionalBool(parts[fields["allowFromAnyLab"]!!])
             )
         )
     }

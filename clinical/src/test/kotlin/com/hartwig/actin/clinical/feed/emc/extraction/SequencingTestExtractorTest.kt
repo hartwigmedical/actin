@@ -25,7 +25,7 @@ private val SEQUENCING_TEST = SequencingTest(test = TEST, knownSpecifications = 
 class SequencingTestExtractorTest {
 
     private val testCuration = mockk<CurationDatabase<SequencingTestConfig>> {
-        every { find(TEST) } returns setOf(SequencingTestConfig(TEST, false, CURATED_TEST))
+        every { find(TEST) } returns setOf(SequencingTestConfig(TEST, false, CURATED_TEST, false))
     }
     private val testResultCuration = mockk<CurationDatabase<SequencingTestResultConfig>>()
     private val extractor = SequencingTestExtractor(testCuration, testResultCuration)
@@ -93,7 +93,7 @@ class SequencingTestExtractorTest {
 
     @Test
     fun `Should allow for ignoring of full tests`() {
-        every { testCuration.find(TEST) } returns setOf(SequencingTestConfig(input = TEST, ignore = true, curatedName = "<ignore>"))
+        every { testCuration.find(TEST) } returns setOf(SequencingTestConfig(input = TEST, ignore = true, curatedName = "<ignore>", false))
         every { testResultCuration.find(TEST) } returns setOf(
             SequencingTestResultConfig(input = TEST, ignore = true, gene = GENE, hgvsCodingImpact = CODING)
         )
@@ -131,6 +131,24 @@ class SequencingTestExtractorTest {
                 variants = setOf(
                     SequencedVariant(gene = GENE, hgvsCodingImpact = CODING), SequencedVariant(gene = GENE2, hgvsProteinImpact = PROTEIN)
                 )
+            ),
+            numberOfInputs = 1
+        )
+    }
+
+    @Test
+    fun `Should set knownSpecifications to true if allowFromAnyLab is true in curation`() {
+        every { testCuration.find(TEST) } returns setOf(SequencingTestConfig(TEST, false, CURATED_TEST, true))
+        every { testResultCuration.find(TEST) } returns setOf(
+            SequencingTestResultConfig(input = TEST, gene = GENE, hgvsCodingImpact = CODING)
+        )
+
+        val result = extractor.extract(PATIENT_ID, ihcTestResults)
+        assertResultContains(
+            result = result,
+            sequencingTest = SEQUENCING_TEST.copy(
+                knownSpecifications = true,
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
             ),
             numberOfInputs = 1
         )
