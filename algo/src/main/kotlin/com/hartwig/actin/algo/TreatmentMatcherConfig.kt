@@ -19,6 +19,7 @@ data class TreatmentMatcherConfig(
     val atcTsv: String,
     val extendedEfficacyJson: String,
     val personalizationDataPath: String?,
+    val treatmentEfficacyPredictionJson: String?,
     val serveDirectory: String,
     val outputDirectory: String,
     val runHistorically: Boolean,
@@ -36,6 +37,7 @@ data class TreatmentMatcherConfig(
         private const val ATC_TSV = "atc_tsv"
         private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
         private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
+        private const val TREATMENT_EFFICACY_PREDICTION_JSON = "treatment_efficacy_prediction_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
@@ -52,6 +54,7 @@ data class TreatmentMatcherConfig(
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
             options.addOption(EXTENDED_EFFICACY_JSON, true, "Path to JSON file containing extended efficacy evidence")
             options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
+            options.addOption(TREATMENT_EFFICACY_PREDICTION_JSON, true, "Path to treatment efficacy prediction JSON file")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to")
             options.addOption(
@@ -89,6 +92,7 @@ data class TreatmentMatcherConfig(
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
                 personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
+                treatmentEfficacyPredictionJson = ApplicationConfig.optionalFile(cmd, TREATMENT_EFFICACY_PREDICTION_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 runHistorically = runHistorically,

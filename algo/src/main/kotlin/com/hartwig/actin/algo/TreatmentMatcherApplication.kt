@@ -72,15 +72,16 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         val maxMolecularTestAge = configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         val resources = RuleMappingResources(
-            referenceDateProvider,
-            doidModel,
-            icdModel,
-            functionInputResolver,
-            atcTree,
-            treatmentDatabase,
-            config.personalizationDataPath,
-            configuration,
-            maxMolecularTestAge
+            referenceDateProvider = referenceDateProvider,
+            doidModel = doidModel,
+            icdModel = icdModel,
+            functionInputResolver = functionInputResolver,
+            atcTree = atcTree,
+            treatmentDatabase = treatmentDatabase,
+            personalizationDataPath = config.personalizationDataPath,
+            treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,
+            algoConfiguration = configuration,
+            maxMolecularTestAge = maxMolecularTestAge
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
@@ -101,9 +102,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 actionabilityMatcher = ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials())
             )
 
-        val treatmentMatcher =
-            TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
-        val treatmentMatch = treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient)
+        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
+        val treatmentMatch = treatmentMatcher.run(patient)
 
         LOGGER.info("Printing treatment match")
         TreatmentMatchPrinter.printMatch(treatmentMatch)
