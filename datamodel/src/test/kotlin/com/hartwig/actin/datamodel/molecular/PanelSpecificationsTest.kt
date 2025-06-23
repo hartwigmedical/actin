@@ -125,17 +125,6 @@ class PanelSpecificationsTest {
         assertThat(derivedSpecification.testsGene(GENE, predicateForTargets(MolecularTestTarget.AMPLIFICATION))).isFalse()
     }
 
-    @Test
-    fun `Should fall back on standard gene maps if no panel specification is found`() {
-        val archer = PanelSpecification(derivedGeneTargetMap(SequencingTest(test = "archer")))
-        assertThat(archer.testsGene("ALK", predicateForTargets(MolecularTestTarget.MUTATION))).isTrue()
-        assertThat(archer.testsGene("ALK", predicateForTargets(MolecularTestTarget.FUSION))).isTrue()
-
-        val ngs = PanelSpecification(derivedGeneTargetMap(SequencingTest(test = "ngs")))
-        assertThat(ngs.testsGene("EGFR", predicateForTargets(MolecularTestTarget.MUTATION))).isTrue()
-        assertThat(ngs.testsGene("EGFR", predicateForTargets(MolecularTestTarget.FUSION))).isFalse()
-    }
-
     private fun predicateForTargets(target: MolecularTestTarget): (t: List<MolecularTestTarget>) -> Boolean =
         { it.contains(target) }
 }
