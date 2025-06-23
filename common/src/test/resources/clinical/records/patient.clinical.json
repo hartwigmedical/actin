@@ -59,7 +59,7 @@
         "stopYear": 2020,
         "stopMonth": null,
         "maxStopYear": null,
-        "maxStopMonth": null,
+        "maxStopMonth": 12,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": "PROGRESSIVE_DISEASE",
