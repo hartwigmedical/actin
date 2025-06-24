@@ -28,6 +28,6 @@ class SurgeryConfigFactoryTest {
         assertThat(surgeryConfig.errors.first().category).isEqualTo(CurationCategory.SURGERY)
         assertThat(surgeryConfig.errors.first().invalidValue).isEqualTo("UNKNOWN_ENUM")
         assertThat(surgeryConfig.errors.first().validType).isEqualTo("OtherTreatmentType")
-        assertThat(surgeryConfig.errors.first().additionalMessage).isEqualTo("Accepted values are [ALLOGENIC, AUTOLOGOUS, CRYOTHERAPY, MICROWAVE, RADIOFREQUENCY, HYPERTHERMIA, CYTOREDUCTIVE_SURGERY, DEBULKING_SURGERY, OTHER_SURGERY]")
+        assertThat(surgeryConfig.errors.first().additionalMessage).isEqualTo("Accepted values are [CYTOREDUCTIVE_SURGERY, DEBULKING_SURGERY, OTHER_SURGERY]")
     }
 }

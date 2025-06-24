@@ -135,8 +135,7 @@ inline fun <reified T : Enum<T>> validateEnum(
                 fieldName,
                 fieldValue,
                 T::class.java.simpleName,
-                "Accepted values are ${enumValues<T>().map { it.name }}" + (disallowed?.let { " excluding values [${it.joinToString(", ")}]" }
-                    ?: "")
+                "Accepted values are ${enumValues<T>().filterNot { disallowed?.contains(it) ?: false }.map { it.name }}"
             )
         )
     }
