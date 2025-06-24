@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.util.DateComparison
+import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
@@ -18,8 +18,8 @@ object ProgressiveDiseaseFunctions {
         val treatmentDuration = DateComparison.minWeeksBetweenDates(
             treatment.startYear,
             treatment.startMonth,
-            treatment.treatmentHistoryDetails?.stopYear,
-            treatment.treatmentHistoryDetails?.stopMonth
+            treatment.stopYear(),
+            treatment.stopMonth()
         )
 
         return when {
