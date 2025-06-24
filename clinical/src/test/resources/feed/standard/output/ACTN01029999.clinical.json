@@ -76,6 +76,8 @@
       "treatmentHistoryDetails": {
         "stopYear": 2020,
         "stopMonth": 1,
+        "maxStopYear": null,
+        "maxStopMonth": null,
         "ongoingAsOf": null,
         "cycles": 5,
         "bestResponse": null,
@@ -193,7 +195,8 @@
       "deletions": [],
       "fusions": [],
       "skippedExons": [],
-      "negativeResults": []
+      "negativeResults": [],
+      "viruses": []
     }
   ],
   "labValues": [

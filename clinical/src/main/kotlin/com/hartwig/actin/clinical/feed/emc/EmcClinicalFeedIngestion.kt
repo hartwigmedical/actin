@@ -24,6 +24,7 @@ import com.hartwig.actin.clinical.feed.emc.extraction.VitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.PathologyReportsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
+import com.hartwig.actin.clinical.feed.treatment.TreatmentHistoryEntryFunctions
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ingestion.FeedValidationWarning
@@ -61,9 +62,10 @@ class EmcClinicalFeedIngestion(
 
     override fun ingest(): List<Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation>> {
         LOGGER.info("Creating clinical model")
-        return Paths.get(feedDirectory).listDirectoryEntries()
-            .filter { it.name.endsWith("json") }
-            .map(::recordAndEvaluationFromPath)
+        val feedRecords = Paths.get(feedDirectory).listDirectoryEntries().filter { it.name.endsWith("json") }
+        LOGGER.info(" Read ${feedRecords.size} feed records")
+        
+        return feedRecords.map(::recordAndEvaluationFromPath)
     }
 
     private fun recordAndEvaluationFromPath(file: Path): Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation> {
@@ -75,10 +77,6 @@ class EmcClinicalFeedIngestion(
             .filterNot { it.category == "BODY_WEIGHT" }
             .flatMap { VitalFunctionValidator().validate(patientId, it).warnings }
             .toSet()
-        val questionnaireWarnings = setOfNotNull(
-            FeedValidationWarning(patientId, "No Questionnaire Found").takeIf { feedRecord.patientDetails.questionnaireDate == null }
-        )
-        val validationWarnings = vitalFunctionWarnings + questionnaireWarnings
 
         val questionnaireCurationErrors = TumorStageValidator.validate(patientId, feedRecord.tumorDetails.stage).errors
 
@@ -104,7 +102,14 @@ class EmcClinicalFeedIngestion(
             tumor = tumorExtraction.extracted,
             comorbidities = comorbidities,
             clinicalStatus = clinicalStatus,
-            oncologicalHistory = oncologicalHistoryExtraction.extracted,
+            oncologicalHistory = TreatmentHistoryEntryFunctions.setMaxStopDate(
+                oncologicalHistoryExtractor.extract(
+                    patientId,
+                    feedRecord.treatmentHistory
+                ).extracted,
+                patientDetailsExtraction.extracted.questionnaireDate,
+                patientDetailsExtraction.extracted.registrationDate
+            ),
             priorPrimaries = priorPrimaryExtraction.extracted,
             ihcTests = ihcTestsExtraction.extracted,
             sequencingTests = sequencingTestExtraction.extracted,
@@ -144,7 +149,7 @@ class EmcClinicalFeedIngestion(
                 record.patient.questionnaireDate,
                 patientEvaluation,
                 questionnaireCurationErrors,
-                validationWarnings,
+                vitalFunctionWarnings,
             ),
             patientEvaluation
         )

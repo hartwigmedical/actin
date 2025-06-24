@@ -12,14 +12,12 @@ class IhcTestConfigFactory(private val curationCategory: CurationCategory) : Cur
         val input = parts[fields["input"]!!]
         val (impliesPotentialIndeterminateStatus, impliesPotentialIndeterminateStatusValidationErrors)
                 = validateBoolean(curationCategory, input, "impliesPotentialIndeterminateStatus", fields, parts)
-        val molecularTest = impliesPotentialIndeterminateStatus?.let { curateObject(it, fields, parts) }
+        val molecularTest = curateObject(impliesPotentialIndeterminateStatus ?: false, fields, parts)
         return ValidatedCurationConfig(
             IhcTestConfig(
                 input = input,
                 ignore = ignore,
-                curated = if (!ignore) {
-                    molecularTest
-                } else null
+                curated = molecularTest.takeIf { !ignore && impliesPotentialIndeterminateStatusValidationErrors.isEmpty() }
             ), impliesPotentialIndeterminateStatusValidationErrors
         )
     }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.util
+package com.hartwig.actin.calendar
 
 import java.time.LocalDate
 import java.time.YearMonth

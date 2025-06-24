@@ -1,24 +1,27 @@
 package com.hartwig.actin.report.trial
 
-import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
-import com.hartwig.actin.report.trial.TrialsProvider.Companion.partitionByCountry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val NCT_01 = "NCT00000001"
+private const val NCT_02 = "NCT00000002"
+private const val NCT_03 = "NCT00000003"
 private const val URL = "url"
 
 private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
+private const val ROS1_TARGET = "ROS1"
 
-private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = emptyMap())
+private val AMSTERDAM = "Amsterdam"
+private val UTRECHT = "Utrecht"
+private val NKI = Hospital("NKI", isChildrensHospital = false)
+private val PMC = Hospital("PMC", isChildrensHospital = true)
+private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = mapOf(AMSTERDAM to setOf(NKI)))
 private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
 
 private val BASE_EXTERNAL_TRIAL = TestExternalTrialFactory.create(
@@ -30,20 +33,14 @@ private val BASE_EXTERNAL_TRIAL = TestExternalTrialFactory.create(
     url = URL
 )
 
-val TRIAL_MATCHES = setOf(
-    TrialMatch(
-        identification = TrialIdentification("TRIAL-1", open = true, "TR-1", "Different title of same trial 1", NCT_01, null, null, null, emptySet(), null),
+private val INTERNAL_TRIAL_IDS = setOf(NCT_01, NCT_03)
+private val EVALUABLE_COHORTS = listOf(
+    InterpretedCohortTestFactory.interpretedCohort(
         isPotentiallyEligible = true,
-        evaluations = emptyMap(),
-        cohorts = emptyList(),
-        nonEvaluableCohorts = emptyList()
-    ),
-    TrialMatch(
-        identification = TrialIdentification("TRIAL-3", open = true, "TR-3", "Different trial 3", "NCT00000003", null, null, null, emptySet(), null),
-        isPotentiallyEligible = true,
-        evaluations = emptyMap(),
-        cohorts = emptyList(),
-        nonEvaluableCohorts = emptyList()
+        isOpen = true,
+        isIgnore = false,
+        hasSlotsAvailable = true,
+        molecularEvents = setOf(EGFR_TARGET)
     )
 )
 
@@ -51,44 +48,32 @@ class TrialsProviderTest {
 
     @Test
     fun `Should filter internal trials`() {
-        val notFiltered = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(nctId = "NCT00000002"))
+        val notFiltered = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(NCT_02))
         assertThat(
             setOf(
                 EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(nctId = NCT_01)),
                 notFiltered
-            ).filterInternalTrials(TRIAL_MATCHES.toList())
+            ).filterInternalTrials(setOf(NCT_01, NCT_03))
         ).containsExactly(notFiltered)
-    }
-
-    @Test
-    fun `Should partition by country`() {
-        val country1Trial = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
-        val country2Trial = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
-
-        val (inCountry, otherCountries) = partitionByCountry(setOf(country1Trial, country2Trial), Country.NETHERLANDS)
-
-        assertThat(inCountry).containsExactly(country1Trial)
-        assertThat(otherCountries).containsExactly(country2Trial)
     }
 
     @Test
     fun `Should filter trials exclusively in childrens hospitals in reference country`() {
         val notFilteredHospital = createExternalTrialSummaryWithHospitals(
             NETHERLANDS to mapOf(
-                "Utrecht" to setOf(Hospital("PMC", isChildrensHospital = true)),
-                "Amsterdam" to setOf(Hospital("NKI", isChildrensHospital = false))
+                UTRECHT to setOf(PMC),
+                AMSTERDAM to setOf(NKI)
             )
         )
         val filteredHospital = createExternalTrialSummaryWithHospitals(
             NETHERLANDS to mapOf(
-                "Utrecht" to setOf(Hospital("Sophia KinderZiekenhuis", isChildrensHospital = true))
+                UTRECHT to setOf(Hospital("Sophia KinderZiekenhuis", isChildrensHospital = true))
             )
         )
         assertThat(
             setOf(notFilteredHospital, filteredHospital)
                 .filterExclusivelyInChildrensHospitalsInReferenceCountry(
-                    birthYear = 1960,
-                    referenceDate = LocalDate.of(2021, 1, 1),
+                    false,
                     countryOfReference = Country.NETHERLANDS
                 )
         ).containsExactly(notFilteredHospital)
@@ -98,12 +83,11 @@ class TrialsProviderTest {
     fun `Should not filter trials exclusively in childrens hospitals in reference country when patient is younger than 25 years old`() {
         val notFilteredHospital = createExternalTrialSummaryWithHospitals(
             NETHERLANDS to mapOf(
-                "Utrecht" to setOf(Hospital("PMC", true))
+                UTRECHT to setOf(PMC)
             )
         )
         val result = setOf(notFilteredHospital).filterExclusivelyInChildrensHospitalsInReferenceCountry(
-            birthYear = 2000,
-            referenceDate = LocalDate.of(2021, 1, 1),
+            true,
             countryOfReference = Country.NETHERLANDS
         )
         assertThat(result).containsExactly(notFilteredHospital)
@@ -129,6 +113,69 @@ class TrialsProviderTest {
         val notFiltered = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL)
         val result = setOf(filtered, notFiltered).filterMolecularCriteriaAlreadyPresentInTrials(setOf(otherTrial))
         assertThat(result).containsExactly(notFiltered)
+    }
+
+    @Test
+    fun `externalTrialsUnfiltered should not filter external trials`() {
+        val country1Trial1 =
+            EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_01))
+        val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+
+        val externalTrialsSet: Set<EventWithExternalTrial> = setOf(country1Trial1, country2Trial1)
+        val trialsProvider =
+            TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), INTERNAL_TRIAL_IDS, false, Country.NETHERLANDS, true)
+        val externalTrials = trialsProvider.externalTrialsUnfiltered()
+
+        assertThat(externalTrials.nationalTrials.filtered).isEqualTo(externalTrials.nationalTrials.original)
+        assertThat(externalTrials.internationalTrials.filtered).isEqualTo(externalTrials.internationalTrials.original)
+        assertThat(externalTrials.nationalTrials.filtered).containsExactly(country1Trial1)
+        assertThat(externalTrials.internationalTrials.filtered).containsExactly(country2Trial1)
+    }
+
+    @Test
+    fun `externalTrials should filter internal trials and return filtered and original equal with extended mode`() {
+        val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
+        val country1Trial2 =
+            EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
+        val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
+
+        val externalTrialsSet: Set<EventWithExternalTrial> = setOf(country1Trial1, country1Trial2, country2Trial1)
+        val trialsProvider =
+            TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), INTERNAL_TRIAL_IDS, false, Country.NETHERLANDS, true)
+        val externalTrials = trialsProvider.externalTrials()
+
+        assertThat(externalTrials.nationalTrials.filtered).isEqualTo(externalTrials.nationalTrials.original)
+        assertThat(externalTrials.internationalTrials.filtered).isEqualTo(externalTrials.internationalTrials.original)
+        assertThat(externalTrials.nationalTrials.filtered).containsExactly(country1Trial2)
+        assertThat(externalTrials.internationalTrials.filtered).isEmpty()
+    }
+
+    @Test
+    fun `externalTrials should filter internal trials and filtered and original should be different without extended mode`() {
+        // Should be filtered based on INTERNAL_TRIAL_IDS
+        val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
+        // Should be filtered based on matching event in evaluable cohorts
+        val country1Trial2 =
+            EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
+        val country1Trial3 =
+            EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
+        // Should be filtered based on INTERNAL_TRIAL_IDS
+        val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
+        val country2Trial2 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+        // Should be filtered based on national trials with same molecular criteria
+        val country2Trial3 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+        val country2Trial4 = EventWithExternalTrial(ROS1_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+
+        val externalTrialsSet: Set<EventWithExternalTrial> =
+            setOf(country1Trial1, country1Trial2, country1Trial3, country2Trial1, country2Trial2, country2Trial3, country2Trial4)
+        val trialsProvider =
+            TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), INTERNAL_TRIAL_IDS, false, Country.NETHERLANDS, false)
+        val externalTrials = trialsProvider.externalTrials()
+
+        assertThat(externalTrials.nationalTrials.original).containsExactly(country1Trial2, country1Trial3)
+        assertThat(externalTrials.internationalTrials.original).containsExactly(country2Trial2, country2Trial3, country2Trial4)
+        assertThat(externalTrials.nationalTrials.filtered).containsExactly(country1Trial3)
+        assertThat(externalTrials.internationalTrials.filtered).containsExactly(country2Trial4)
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)

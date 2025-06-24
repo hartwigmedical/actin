@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedNegativeResult
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.SequencedVirus
 
 object StandardSequencingTestExtractorFunctions {
 
@@ -59,17 +60,6 @@ object StandardSequencingTestExtractorFunctions {
         )
     }.toSet()
 
-    fun skippedExons(results: Set<SequencingTestResultConfig>) = results.mapNotNull { result ->
-        result.exonSkipStart?.let { exonSkipStart ->
-            SequencedSkippedExons(
-                gene = result.gene!!,
-                exonStart = exonSkipStart,
-                exonEnd = result.exonSkipEnd ?: exonSkipStart,
-                transcript = result.transcript
-            )
-        }
-    }.toSet()
-
     fun fusions(results: Set<SequencingTestResultConfig>): Set<SequencedFusion> {
         val fusionResults = results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
         if (fusionResults.any {
@@ -90,6 +80,21 @@ object StandardSequencingTestExtractorFunctions {
             }
             .toSet()
     }
+
+    fun skippedExons(results: Set<SequencingTestResultConfig>) = results.mapNotNull { result ->
+        result.exonSkipStart?.let { exonSkipStart ->
+            SequencedSkippedExons(
+                gene = result.gene!!,
+                exonStart = exonSkipStart,
+                exonEnd = result.exonSkipEnd ?: exonSkipStart,
+                transcript = result.transcript
+            )
+        }
+    }.toSet()
+
+    fun viruses(results: Set<SequencingTestResultConfig>) =
+        results.mapNotNull { result ->
+            result.virus?.let { virus -> SequencedVirus(type = virus, isLowRisk = result.virusIsLowRisk ?: false) } }.toSet()
 
     private fun configuredGenesAreNotEqual(gene1: String?, gene2: String?): Boolean {
         return (gene1 != null && gene2 != null && gene1 != gene2)

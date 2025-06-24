@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.DateComparison
+import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -47,12 +47,11 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
     private fun enoughCyclesAndOngoingTreatment(treatmentHistoryEntry: TreatmentHistoryEntry, latestStart: LocalDate?): Boolean? {
         val treatmentHistoryDetails = treatmentHistoryEntry.treatmentHistoryDetails
         return treatmentHistoryDetails?.cycles?.let { cycles ->
-            val appearsOngoing = with(treatmentHistoryDetails) {
-                val treatmentNotStopped = DateComparison.isAfterDate(referenceDate, stopYear, stopMonth)
-                treatmentNotStopped == true ||
-                    (treatmentNotStopped == null && latestStart?.let {
-                        DateComparison.isAfterDate(latestStart, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-                    } != false)
+            val appearsOngoing = with(treatmentHistoryEntry) {
+                val treatmentNotStopped = DateComparison.isAfterDate(referenceDate, stopYear(), stopMonth())
+                treatmentNotStopped == true || (treatmentNotStopped == null && latestStart?.let {
+                    DateComparison.isAfterDate(latestStart, startYear, startMonth)
+                } != false)
             }
             cycles >= minCycles && appearsOngoing
         }

@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
+
 data class SequencingTestResultConfig(
     override val input: String,
     override val ignore: Boolean = false,
@@ -21,6 +23,8 @@ data class SequencingTestResultConfig(
     val deletedGene: String? = null,
     val exonSkipStart: Int? = null,
     val exonSkipEnd: Int? = null,
+    val virus: VirusType? = null,
+    val virusIsLowRisk: Boolean? = null,
     val msi: Boolean? = null,
     val tmb: Double? = null,
     val hrd: Boolean? = null,
