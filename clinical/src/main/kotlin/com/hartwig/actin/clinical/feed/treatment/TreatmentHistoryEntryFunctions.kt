@@ -48,7 +48,7 @@ object TreatmentHistoryEntryFunctions {
                     val (maxStopYear, maxStopMonth) = when {
                         index < systemic.size - 1 -> {
                             val next = systemic[index + 1]
-                            next.startYear to next.startMonth
+                            next.startYear to (next.startMonth ?: LAST_MONTH)
                         }
 
                         startDateBeforeMaxStopDate -> maxDate.year to maxDate.monthValue
