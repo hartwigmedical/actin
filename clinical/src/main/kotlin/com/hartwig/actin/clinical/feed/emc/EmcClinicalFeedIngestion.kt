@@ -62,9 +62,10 @@ class EmcClinicalFeedIngestion(
 
     override fun ingest(): List<Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation>> {
         LOGGER.info("Creating clinical model")
-        return Paths.get(feedDirectory).listDirectoryEntries()
-            .filter { it.name.endsWith("json") }
-            .map(::recordAndEvaluationFromPath)
+        val feedRecords = Paths.get(feedDirectory).listDirectoryEntries().filter { it.name.endsWith("json") }
+        LOGGER.info(" Read ${feedRecords.size} feed records")
+        
+        return feedRecords.map(::recordAndEvaluationFromPath)
     }
 
     private fun recordAndEvaluationFromPath(file: Path): Triple<ClinicalRecord, PatientIngestionResult, CurationExtractionEvaluation> {
