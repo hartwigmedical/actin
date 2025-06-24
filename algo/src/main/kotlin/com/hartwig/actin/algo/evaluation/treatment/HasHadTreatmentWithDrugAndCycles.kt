@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, private val minCycles: Int?) : EvaluationFunction {
 
@@ -22,22 +23,7 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
             .mapNotNull { entry ->
                 TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) { treatment ->
                     (treatment as? DrugTreatment)?.drugs?.any { it.name.lowercase() in namesToMatch } == true
-                }?.let { matchingEntry ->
-                    val hasCycles = matchingEntry.treatmentHistoryDetails?.cycles.let { cycles ->
-                        when {
-                            minCycles == null -> EvaluationResult.PASS
-                            cycles == null -> EvaluationResult.UNDETERMINED
-                            cycles >= minCycles -> EvaluationResult.PASS
-                            else -> EvaluationResult.FAIL
-                        }
-                    }
-
-                    val matchingDrugs = matchingEntry.allTreatments()
-                        .mapNotNull { it as? DrugTreatment }
-                        .flatMap { it.drugs }
-                        .filter { it.name.lowercase() in namesToMatch }
-                    hasCycles to matchingDrugs
-                }
+                }?.let { matchingEntry -> evaluateCyclesForMatchingDrugs(matchingEntry, namesToMatch) }
             }
             .groupBy({ it.first }, { it.second })
             .mapValues { entry -> entry.value.flatten().toSet() }
@@ -73,5 +59,26 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
                 EvaluationFactory.fail("Has not received any treatments containing $drugList")
             }
         }
+    }
+
+    private fun evaluateCyclesForMatchingDrugs(
+        matchingEntry: TreatmentHistoryEntry,
+        namesToMatch: Set<String>
+    ): Pair<EvaluationResult, List<Drug>> {
+        val hasCycles = matchingEntry.treatmentHistoryDetails?.cycles.let { cycles ->
+            when {
+                minCycles == null -> EvaluationResult.PASS
+                cycles == null -> EvaluationResult.UNDETERMINED
+                cycles >= minCycles -> EvaluationResult.PASS
+                else -> EvaluationResult.FAIL
+            }
+        }
+
+        val matchingDrugs = matchingEntry.allTreatments()
+            .mapNotNull { it as? DrugTreatment }
+            .flatMap { it.drugs }
+            .filter { it.name.lowercase() in namesToMatch }
+
+        return hasCycles to matchingDrugs
     }
 }
