@@ -263,14 +263,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentWithAnyDrugCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadTreatmentWithDrugWithCycles(functionInputResolver().createManyDrugsInput(function), null)
+            HasHadTreatmentWithDrugAndCycles(functionInputResolver().createManyDrugsInput(function), null)
         }
     }
 
     private fun hasHadTreatmentWithAnyDrugWithCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createManyDrugsOneIntegerInput(function)
-            HasHadTreatmentWithDrugWithCycles(input.drugs, input.integer)
+            HasHadTreatmentWithDrugAndCycles(input.drugs, input.integer)
         }
     }
 

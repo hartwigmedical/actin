@@ -16,15 +16,16 @@ import org.junit.Test
 
 private const val MATCHING_DRUG_NAME = "match"
 private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
+private val MATCHING_DRUG_TREATMENT = drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)
 
-class HasHadTreatmentWithDrugWithCyclesTest {
+class HasHadTreatmentWithDrugAndCyclesTest {
 
-    private val functionWithoutCycles = HasHadTreatmentWithDrugWithCycles(
+    private val functionWithoutCycles = HasHadTreatmentWithDrugAndCycles(
         setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
         null
     )
     private val functionWithCycles =
-        HasHadTreatmentWithDrugWithCycles(setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 2)
+        HasHadTreatmentWithDrugAndCycles(setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 3)
 
     @Test
     fun `Should fail for empty treatment history`() {
@@ -48,7 +49,19 @@ class HasHadTreatmentWithDrugWithCyclesTest {
 
     @Test
     fun `Should fail for therapy containing matching drug but not enough cycles`() {
-        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), numCycles = 1))
+        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT), numCycles = 1))
+        assertEvaluation(EvaluationResult.FAIL, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
+    fun `Should fail for maintenance and switch therapies containing matching drug but not enough cycles`() {
+        val matchingTreatmentStage = TreatmentTestFactory.treatmentStage(MATCHING_DRUG_TREATMENT, cycles = 1)
+        val treatmentHistory = listOf(
+            treatmentHistoryEntry(
+                maintenanceTreatment = matchingTreatmentStage,
+                switchToTreatments = listOf(matchingTreatmentStage)
+            )
+        )
         assertEvaluation(EvaluationResult.FAIL, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
@@ -68,7 +81,7 @@ class HasHadTreatmentWithDrugWithCyclesTest {
 
     @Test
     fun `Should evaluate to undetermined for therapy containing matching drug but undetermined how many cycles`() {
-        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), numCycles = null))
+        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT), numCycles = null))
         assertEvaluation(EvaluationResult.UNDETERMINED, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
@@ -116,14 +129,42 @@ class HasHadTreatmentWithDrugWithCyclesTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined for maintenance therapy containing matching drug but undetermined how many cycles`() {
+        val treatmentHistory = listOf(
+            treatmentHistoryEntry(
+                maintenanceTreatment = TreatmentTestFactory.treatmentStage(
+                    MATCHING_DRUG_TREATMENT,
+                    cycles = null
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined for switch therapy containing matching drug but undetermined how many cycles`() {
+        val treatmentHistory = listOf(
+            treatmentHistoryEntry(
+                switchToTreatments = listOf(
+                    TreatmentTestFactory.treatmentStage(
+                        MATCHING_DRUG_TREATMENT,
+                        cycles = null
+                    )
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
     fun `Should pass for therapy containing matching drug`() {
-        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY))))
+        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT)))
         assertEvaluation(EvaluationResult.PASS, functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
     fun `Should pass for therapy containing matching drug and enough cycles`() {
-        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), numCycles = 3))
+        val treatmentHistory = listOf(treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT), numCycles = 3))
         assertEvaluation(EvaluationResult.PASS, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
@@ -145,5 +186,41 @@ class HasHadTreatmentWithDrugWithCyclesTest {
             EvaluationResult.PASS,
             functionWithoutCycles.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, listOf(medication)))
         )
+    }
+
+    @Test
+    fun `Should pass for maintenance therapy containing matching drug and enough cycles`() {
+        val treatmentHistory =
+            listOf(treatmentHistoryEntry(maintenanceTreatment = TreatmentTestFactory.treatmentStage(MATCHING_DRUG_TREATMENT, cycles = 3)))
+        assertEvaluation(EvaluationResult.PASS, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.PASS, functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
+    fun `Should pass for switch therapy containing matching drug and enough cycles`() {
+        val treatmentHistory = listOf(
+            treatmentHistoryEntry(
+                switchToTreatments = listOf(
+                    TreatmentTestFactory.treatmentStage(
+                        MATCHING_DRUG_TREATMENT,
+                        cycles = 3
+                    )
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.PASS, functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
+    fun `Should pass for maintenance and switch therapies containing matching drug and enough cycles`() {
+        val matchingTreatmentStage = TreatmentTestFactory.treatmentStage(MATCHING_DRUG_TREATMENT, cycles = 2)
+        val treatmentHistory = listOf(
+            treatmentHistoryEntry(
+                maintenanceTreatment = matchingTreatmentStage,
+                switchToTreatments = listOf(matchingTreatmentStage)
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 }
