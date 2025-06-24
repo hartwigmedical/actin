@@ -152,14 +152,12 @@ class HasHadCytoreductiveSurgeryTest {
         surgeryName: String? = null,
         treatmentType: OtherTreatmentType = OtherTreatmentType.OTHER_SURGERY,
     ): PatientRecord {
-        val treatments = treatmentName?.let { listOf(
-            treatmentHistoryEntry(
-                treatments = setOf(treatment(name = it, isSystemic = false, categories = categories, types = types))
-            )
-        )}
-        val surgeries = surgeryName?.let { listOf(
+        val treatments = listOfNotNull(treatmentName?.let {
+            treatmentHistoryEntry(treatments = setOf(treatment(name = it, isSystemic = false, categories = categories, types = types)))
+        })
+        val surgeries = listOfNotNull(surgeryName?.let {
             Surgery(name = it, status = SurgeryStatus.FINISHED, endDate = null, treatmentType = treatmentType)
-        )}
+        })
         return withSurgeriesAndOncologicalHistory(treatments, surgeries)
     }
 }
