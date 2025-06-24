@@ -26,4 +26,14 @@ internal object SurgeryTestFactory {
     fun withOncologicalHistory(treatments: List<TreatmentHistoryEntry>): PatientRecord {
         return base.copy(oncologicalHistory = treatments)
     }
+
+    fun withSurgeriesAndOncologicalHistory(
+        treatments: List<TreatmentHistoryEntry>?,
+        surgeries: List<Surgery>?,
+    ): PatientRecord {
+        return base.copy(
+            surgeries = surgeries ?: base.surgeries,
+            oncologicalHistory = treatments ?: base.oncologicalHistory,
+        )
+    }
 }
