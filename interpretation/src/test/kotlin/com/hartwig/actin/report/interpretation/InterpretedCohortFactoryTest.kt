@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
-import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory.createTestMetadata
+import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory.createTestCohortMetadata
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -197,7 +197,7 @@ class InterpretedCohortFactoryTest {
 
     private fun createCohortMatch(name: String, evaluation: Map<Eligibility, Evaluation>): CohortMatch {
         return CohortMatch(
-            metadata = createTestMetadata(name, open = true, evaluable = true, slotsAvailable = true, ignore = false),
+            metadata = createTestCohortMetadata(name, open = true, evaluable = true, slotsAvailable = true, ignore = false),
             isPotentiallyEligible = true,
             evaluations = evaluation
         )

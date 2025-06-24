@@ -17,6 +17,7 @@ data class RuleMappingResources(
     val atcTree: AtcTree,
     val treatmentDatabase: TreatmentDatabase,
     val personalizationDataPath: String?,
+    val treatmentEfficacyPredictionJson: String?,
     val algoConfiguration: AlgoConfiguration,
-    val maxMolecularTestAge: LocalDate? = null
+    val maxMolecularTestAge: LocalDate?
 )
