@@ -7,7 +7,16 @@ data class Complication(
     override val icdCodes: Set<IcdCode>,
     override val year: Int? = null,
     override val month: Int? = null,
-): Comorbidity {
+) : Comorbidity {
+    constructor(
+        baseComorbidity: BaseComorbidity
+    ) : this(
+        baseComorbidity.name,
+        baseComorbidity.icdCodes,
+        baseComorbidity.year,
+        baseComorbidity.month
+    )
+
     override val comorbidityClass = ComorbidityClass.COMPLICATION
 
     override fun withDefaultDate(date: LocalDate): Comorbidity = if (year != null) this else {

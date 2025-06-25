@@ -1,37 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
-import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
-import com.hartwig.actin.clinical.curation.config.EcgConfigFactory
-import com.hartwig.actin.clinical.curation.config.IhcTestConfig
-import com.hartwig.actin.clinical.curation.config.IhcTestConfigFactory
-import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
-import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
-import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
-import com.hartwig.actin.clinical.curation.config.LabMeasurementConfigFactory
-import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
-import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory
-import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
-import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory
-import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
-import com.hartwig.actin.clinical.curation.config.MedicationNameConfigFactory
-import com.hartwig.actin.clinical.curation.config.OtherConditionConfigFactory
-import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
-import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
-import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
-import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
-import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfig
-import com.hartwig.actin.clinical.curation.config.PriorPrimaryConfigFactory
-import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
-import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
-import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfig
-import com.hartwig.actin.clinical.curation.config.SequencingTestResultConfigFactory
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfigFactory
-import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
-import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
+import com.hartwig.actin.clinical.curation.config.*
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
@@ -213,12 +183,13 @@ data class CurationDatabaseContext(
 
         private fun createComorbidityCurationDatabase(curationDir: String, icdModel: IcdModel): CurationDatabase<ComorbidityConfig> {
             return listOf(
-                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV to OtherConditionConfigFactory(icdModel),
-                CurationDatabaseReader.COMPLICATION_TSV to ComplicationConfigFactory(icdModel),
-                CurationDatabaseReader.INTOLERANCE_TSV to IntoleranceConfigFactory(icdModel),
-                CurationDatabaseReader.TOXICITY_TSV to ToxicityConfigFactory(icdModel),
-                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(icdModel),
-                CurationDatabaseReader.INFECTION_TSV to InfectionConfigFactory(icdModel)
+//                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV to OtherConditionConfigFactory(icdModel),
+//                CurationDatabaseReader.COMPLICATION_TSV to ComplicationConfigFactory(icdModel),
+//                CurationDatabaseReader.INTOLERANCE_TSV to IntoleranceConfigFactory(icdModel),
+//                CurationDatabaseReader.TOXICITY_TSV to ToxicityConfigFactory(icdModel),
+//                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(icdModel),
+//                CurationDatabaseReader.INFECTION_TSV to InfectionConfigFactory(icdModel),
+                CurationDatabaseReader.COMORBIDITY to ComorbidityConfigFactory(icdModel),
             )
                 .map { (tsv, factory) ->
                     CurationDatabaseReader.read(curationDir, tsv, factory, CurationCategory.COMORBIDITY) { it.comorbidityEvaluatedInputs }
