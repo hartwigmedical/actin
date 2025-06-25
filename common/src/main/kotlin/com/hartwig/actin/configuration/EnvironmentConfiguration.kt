@@ -51,7 +51,7 @@ data class ReportConfiguration(
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
     val includeTreatmentEvidenceRanking: Boolean = false,
-    val countryOfReference: Country = Country.NETHERLANDS
+    val countryOfReference: Country = Country.OTHER
 )
 
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"

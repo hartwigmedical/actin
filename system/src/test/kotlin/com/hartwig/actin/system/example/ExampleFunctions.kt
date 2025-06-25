@@ -4,6 +4,7 @@ import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.testutil.ResourceLocator
 import java.io.File
 
@@ -59,7 +60,8 @@ object ExampleFunctions {
             report = ReportConfiguration(
                 includeApprovedTreatmentsInSummary = false,
                 includeMolecularDetailsChapter = false,
-                includeClinicalDetailsChapter = false
+                includeClinicalDetailsChapter = false,
+                countryOfReference = Country.NETHERLANDS
             )
         )
     }
@@ -89,7 +91,8 @@ object ExampleFunctions {
                 includeLongitudinalMolecularChapter = true,
                 includeMolecularEvidenceChapter = true,
                 includeRawPathologyReport = true,
-                includeTreatmentEvidenceRanking = true
+                includeTreatmentEvidenceRanking = true,
+                countryOfReference = Country.NETHERLANDS
             )
         )
     }
