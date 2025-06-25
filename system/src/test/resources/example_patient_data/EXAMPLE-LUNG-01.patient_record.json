@@ -5,7 +5,8 @@
     "birthYear": 1975,
     "registrationDate": "2025-02-20",
     "questionnaireDate": "2025-02-20",
-    "hasHartwigSequencing": true
+    "hasHartwigSequencing": true,
+    "sourceId": null
   },
   "tumor": {
     "name": "Lung adenocarcinoma",
@@ -24,18 +25,11 @@
     "hasLungLesions": true,
     "hasLymphNodeLesions": false,
     "otherLesions": [],
-    "biopsyLocation": "Lung",
-    "rawPathologyReport": null
+    "biopsyLocation": "Lung"
   },
   "clinicalStatus": {
     "who": 1,
     "infectionStatus": null,
-    "ecg": {
-      "hasSigAberrationLatestECG": false,
-      "aberrationDescription": "",
-      "qtcfValue": 430,
-      "qtcfUnit": "ms"
-    },
     "lvef": 0.5,
     "hasComplications": false
   },
@@ -90,12 +84,31 @@
   "priorPrimaries": [],
   "comorbidities": [
     {
+      "name": "QTCF ECG",
+      "qtcfMeasure": {
+        "value": 430,
+        "unit": "ms"
+      },
+      "comorbidityClass": "ECG"
+    },
+    {
       "name": "Rheumatoid arthritis",
       "year": 2023,
       "month": null,
       "icdCodes": [],
       "category": "Autoimmune disease",
       "comorbidityClass": "OTHER_CONDITION"
+    }
+  ],
+  "ihcTests": [
+    {
+      "item": "PD-L1",
+      "measure": null,
+      "scoreText": null,
+      "scoreValuePrefix": ">",
+      "scoreValue": 50,
+      "scoreValueUnit": "%",
+      "impliesPotentialIndeterminateStatus": false
     }
   ],
   "labValues": [
@@ -252,27 +265,14 @@
       "isTrialMedication": false
     }
   ],
-  "ihcTests": [
-    {
-      "item": "PD-L1",
-      "measure": null,
-      "scoreText": null,
-      "scoreValuePrefix": ">",
-      "scoreValue": 50,
-      "scoreValueUnit": "%",
-      "impliesPotentialIndeterminateStatus": false
-    }
-  ],
   "molecularHistory": {
     "molecularTests": [
       {
-        "patientId": "EXAMPLE-LUNG-01",
         "sampleId": "EXAMPLE-LUNG-01-T",
         "refGenomeVersion": "V37",
         "externalTrialSource": "Hartwig",
         "containsTumorCells": true,
         "isContaminated": false,
-        "hasSufficientPurity": true,
         "immunology": {
           "isReliable": true,
           "hlaAlleles": [
@@ -330,6 +330,8 @@
             ]
           }
         ],
+        "specification": null,
+        "hasSufficientPurity": true,
         "hasSufficientQuality": true,
         "testTypeDisplay": null,
         "experimentType": "HARTWIG_WHOLE_GENOME",
@@ -371,7 +373,9 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "OSIMERTINIB",
-                    "treatmentTypes": ["EGFR-INHIBITOR"],
+                    "treatmentTypes": [
+                      "EGFR-INHIBITOR"
+                    ],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
@@ -398,7 +402,9 @@
                   },
                   {
                     "treatment": "AFATINIB",
-                    "treatmentTypes": ["EGFR-INHIBITOR"],
+                    "treatmentTypes": [
+                      "EGFR-INHIBITOR"
+                    ],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR L858R",
@@ -542,7 +548,9 @@
                 "treatmentEvidence": [
                   {
                     "treatment": "AFATINIB",
-                    "treatmentTypes": ["EGFR-INHIBITOR"],
+                    "treatmentTypes": [
+                      "EGFR-INHIBITOR"
+                    ],
                     "molecularMatch": {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
@@ -811,8 +819,8 @@
             }
           },
           "homologousRecombination": {
-            "score": 0.0,
             "isDeficient": false,
+            "score": 0.0,
             "type": "NONE",
             "brca1Value": 0.0,
             "brca2Value": 0.0,

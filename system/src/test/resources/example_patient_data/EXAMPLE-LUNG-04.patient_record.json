@@ -1,18 +1,10 @@
 {
-  "patientId": "TEST-SCLC-NGS",
+  "patientId": "EXAMPLE-LUNG-04",
   "patient": {
     "gender": "FEMALE",
     "birthYear": 1980,
-    "registrationDate": {
-      "year": 2024,
-      "month": 9,
-      "day": 10
-    },
-    "questionnaireDate": {
-      "year": 2024,
-      "month": 9,
-      "day": 1
-    },
+    "registrationDate": "2024-09-10",
+    "questionnaireDate": "2024-09-01",
     "hasHartwigSequencing": false
   },
   "tumor": {
@@ -32,22 +24,13 @@
     "hasLungLesions": true,
     "hasLymphNodeLesions": true,
     "otherLesions": [],
-    "biopsyLocation": "Lung",
-    "rawPathologyReport": null
+    "biopsyLocation": "Lung"
   },
   "clinicalStatus": {
     "who": 2,
     "infectionStatus": {
       "hasActiveInfection": false,
       "description": null
-    },
-    "ecg": {
-      "hasSigAberrationLatestECG": false,
-      "aberrationDescription": "",
-      "qtcfMeasure": {
-        "value": 430.0,
-        "unit": "ms"
-      }
     },
     "lvef": 0.5,
     "hasComplications": true
@@ -146,13 +129,20 @@
       "comorbidityClass": "COMPLICATION"
     }
   ],
+  "ihcTests": [
+    {
+      "item": "PD-L1",
+      "measure": null,
+      "scoreText": null,
+      "scoreValuePrefix": "<",
+      "scoreValue": 1,
+      "scoreValueUnit": "%",
+      "impliesPotentialIndeterminateStatus": false
+    }
+  ],
   "labValues": [
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "ALAT",
       "name": "ALAT",
       "comparator": "",
@@ -163,11 +153,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "ASAT",
       "name": "ASAT",
       "comparator": "",
@@ -178,11 +164,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "TBIL",
       "name": "total bilirubin",
       "comparator": "",
@@ -193,11 +175,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "ALP",
       "name": "alkaline phosphatase",
       "comparator": "",
@@ -208,11 +186,7 @@
       "isOutsideRef": true
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "Hb",
       "name": "hemoglobin",
       "comparator": "",
@@ -223,11 +197,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "LEUKO-ABS",
       "name": "absolute leukocyte count",
       "comparator": "",
@@ -238,11 +208,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "THROMBO-ABS",
       "name": "absolute thrombocyte count",
       "comparator": "",
@@ -253,11 +219,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "LYMPHO-ABS",
       "name": "absolute lymphocyte count eDA",
       "comparator": "",
@@ -268,11 +230,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "NEUTRO-ABS",
       "name": "absolute neutrophil count eDA",
       "comparator": "",
@@ -283,11 +241,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "CREA",
       "name": "creatinine",
       "comparator": "",
@@ -298,11 +252,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "ALP",
       "name": "alkaline phosphatase",
       "comparator": "",
@@ -313,11 +263,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "APTT",
       "name": "APTT",
       "comparator": "",
@@ -328,11 +274,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "POCT_INR",
       "name": "POCT INR",
       "comparator": "",
@@ -343,11 +285,7 @@
       "isOutsideRef": false
     },
     {
-      "date": {
-        "year": 2024,
-        "month": 9,
-        "day": 10
-      },
+      "date": "2024-09-10",
       "code": "PT",
       "name": "PT",
       "comparator": "",
@@ -401,11 +339,7 @@
   ],
   "bloodTransfusions": [
     {
-      "date": {
-        "year": 2024,
-        "month": 8,
-        "day": 20
-      },
+      "date": "2024-08-20",
       "product": "PLATELETS_POOLED"
     }
   ],
@@ -424,11 +358,7 @@
         "periodBetweenUnit": "DAYS",
         "ifNeeded": false
       },
-      "startDate": {
-        "year": 2019,
-        "month": 1,
-        "day": 1
-      },
+      "startDate": "2019-01-01",
       "stopDate": null,
       "drug": null,
       "cypInteractions": [
@@ -495,11 +425,7 @@
         "periodBetweenUnit": "DAYS",
         "ifNeeded": false
       },
-      "startDate": {
-        "year": 2019,
-        "month": 1,
-        "day": 1
-      },
+      "startDate": "2019-01-01",
       "stopDate": null,
       "drug": null,
       "cypInteractions": [
@@ -544,38 +470,15 @@
       }
     }
   ],
-  "ihcTests": [
-    {
-      "item": "PD-L1",
-      "measure": null,
-      "scoreText": null,
-      "scoreValuePrefix": "<",
-      "scoreValue": 1,
-      "scoreValueUnit": "%",
-      "impliesPotentialIndeterminateStatus": false
-    }
-  ],
   "molecularHistory": {
     "molecularTests": [
       {
-        "testedGenes": [
-          "ALK",
-          "BRAF",
-          "EGFR",
-          "KRAS",
-          "MET",
-          "RET",
-          "ROS1",
-          "SMARCA4",
-          "TP53"
-        ],
+        "specification": {
+          "geneTargetMap": []
+        },
         "experimentType": "PANEL",
         "testTypeDisplay": "Small NGS Lung Panel",
-        "date": {
-          "year": 2024,
-          "month": 9,
-          "day": 15
-        },
+        "date": "2024-09-15",
         "drivers": {
           "variants": [
             {
@@ -604,9 +507,12 @@
               "event": "TP53 R273H",
               "driverLikelihood": "HIGH",
               "evidence": {
+                "treatmentEvidence": [],
                 "eligibleTrials": [
                   {
+                    "nctId": "NCT00000026",
                     "title": "TP53-TRIAL",
+                    "treatments": [],
                     "countries": [
                       {
                         "country": "NETHERLANDS",
@@ -630,29 +536,23 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000026",
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2015,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate":"2015-01-01",
                         "sourceEvent": "TP53 mutations",
-                        "isCategoryEvent": true
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
-                    "evidenceLevelDetails": "CLINICAL_STUDY",
                     "applicableCancerTypes": [
                       {
                         "matchedCancerType": "Lung cancer",
                         "excludedCancerSubTypes": []
                       }
-                    ]
+                    ],
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
-                ],
-                "treatmentEvidence": []
+                ]
               },
               "gene": "TP53",
               "geneRole": "TSG",
@@ -685,9 +585,12 @@
               "event": "SMARCA4 T910M",
               "driverLikelihood": "HIGH",
               "evidence": {
+                "treatmentEvidence": [],
                 "eligibleTrials": [
                   {
+                    "nctId": "NCT00000036",
                     "title": "SMARCA4-TRIAL",
+                    "treatments": [],
                     "countries": [
                       {
                         "country": "NETHERLANDS",
@@ -712,29 +615,23 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000036",
                     "molecularMatches": [
                       {
-                        "sourceDate": {
-                          "year": 2015,
-                          "month": 1,
-                          "day": 1
-                        },
+                        "sourceDate": "2015-01-01",
                         "sourceEvent": "SMARCA4 mutations",
-                        "isCategoryEvent": true
+                        "sourceEvidenceType": "HOTSPOT_MUTATION",
+                        "sourceUrl": ""
                       }
                     ],
-                    "evidenceLevelDetails": "CLINICAL_STUDY",
                     "applicableCancerTypes": [
                       {
                         "matchedCancerType": "Lung cancer",
                         "excludedCancerSubTypes": []
                       }
-                    ]
+                    ],
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
-                ],
-                "treatmentEvidence": []
+                ]
               },
               "gene": "SMARCA4",
               "geneRole": "TSG",
@@ -752,20 +649,23 @@
           "purity": null,
           "ploidy": 2.0,
           "predictedTumorOrigin": null,
-          "isMicrosatelliteUnstable": false,
-          "microsatelliteEvidence": null,
-          "homologousRecombinationScore": null,
-          "isHomologousRecombinationDeficient": false,
-          "brca1Value": null,
-          "brca2Value": null,
-          "hrdType": null,
-          "homologousRecombinationEvidence": null,
-          "tumorMutationalBurden": 8.0,
-          "hasHighTumorMutationalBurden": false,
-          "tumorMutationalBurdenEvidence": null,
-          "tumorMutationalLoad": null,
-          "hasHighTumorMutationalLoad": null,
-          "tumorMutationalLoadEvidence": null
+          "microsatelliteStability": {
+            "isUnstable": false,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
+          },
+          "homologousRecombination": null,
+          "tumorMutationalBurden": {
+            "score": 8.0,
+            "isHigh": false,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            }
+          },
+          "tumorMutationalLoad": null
         },
         "evidenceSource": "Hartwig"
       }

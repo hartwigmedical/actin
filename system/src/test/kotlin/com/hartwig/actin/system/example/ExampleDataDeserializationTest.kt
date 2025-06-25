@@ -8,14 +8,14 @@ import org.junit.Test
 
 class ExampleDataDeserializationTest {
 
-    private val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE)
-    private val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(LUNG_01_EXAMPLE)
-    private val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
-
     @Test
     fun `Should be able to deserialize example data`() {
-        assertThat(PatientRecordJson.read(examplePatientRecordJson)).isNotNull()
-        assertThat(TreatmentMatchJson.read(exampleTreatmentMatchJson)).isNotNull()
-        assertThat(TrialJson.readFromDir(exampleTrialDatabaseDir)).isNotNull()
+        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE))).isNotNull()
+        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_02_EXAMPLE))).isNotNull()
+        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_03_EXAMPLE))).isNotNull()
+        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_04_EXAMPLE))).isNotNull()
+        
+        assertThat(TreatmentMatchJson.read(ExampleFunctions.resolveExampleTreatmentMatchJson(LUNG_01_EXAMPLE))).isNotNull()
+        assertThat(TrialJson.readFromDir(ExampleFunctions.resolveExampleTrialDatabaseDirectory())).isNotNull()
     }
 }
