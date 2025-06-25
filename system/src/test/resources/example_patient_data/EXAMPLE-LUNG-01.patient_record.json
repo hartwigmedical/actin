@@ -84,14 +84,6 @@
   "priorPrimaries": [],
   "comorbidities": [
     {
-      "name": "QTCF ECG",
-      "qtcfMeasure": {
-        "value": 430,
-        "unit": "ms"
-      },
-      "comorbidityClass": "ECG"
-    },
-    {
       "name": "Rheumatoid arthritis",
       "year": 2023,
       "month": null,
