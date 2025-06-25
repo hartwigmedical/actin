@@ -4,11 +4,14 @@ import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.testutil.ResourceLocator
 import java.io.File
-import java.time.LocalDate
 
 const val LUNG_01_EXAMPLE = "LUNG-01"
+const val LUNG_02_EXAMPLE = "LUNG-02"
+const val LUNG_03_EXAMPLE = "LUNG-03"
+const val LUNG_04_EXAMPLE = "LUNG-04"
 
 private const val EXAMPLE_NAME_ = "<example_name>"
 
@@ -49,7 +52,7 @@ object ExampleFunctions {
         return listOf(systemTestResourcesDirectory(), EXAMPLE_TREATMENT_MATCH_DIRECTORY).joinToString(File.separator)
     }
 
-    fun createExampleEnvironmentConfiguration(reportDate: LocalDate? = null): EnvironmentConfiguration {
+    fun createExampleEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,
@@ -58,12 +61,12 @@ object ExampleFunctions {
                 includeApprovedTreatmentsInSummary = false,
                 includeMolecularDetailsChapter = false,
                 includeClinicalDetailsChapter = false,
-                reportDate = reportDate
+                countryOfReference = Country.NETHERLANDS
             )
         )
     }
 
-    fun createExhaustiveEnvironmentConfiguration(reportDate: LocalDate? = null): EnvironmentConfiguration {
+    fun createExhaustiveEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,
@@ -89,7 +92,7 @@ object ExampleFunctions {
                 includeMolecularEvidenceChapter = true,
                 includeRawPathologyReport = true,
                 includeTreatmentEvidenceRanking = true,
-                reportDate = reportDate
+                countryOfReference = Country.NETHERLANDS
             )
         )
     }

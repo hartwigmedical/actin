@@ -53,10 +53,11 @@ class ReportRegressionTest(private val exampleName: String) {
         val localExampleReportApplication = LocalExampleReportApplication()
 
         localExampleReportApplication.run(
+            LocalDate.of(2025, 4, 17),
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
             outputDirectory,
-            ExampleFunctions.createExhaustiveEnvironmentConfiguration(LocalDate.of(2025, 4, 17))
+            ExampleFunctions.createExhaustiveEnvironmentConfiguration()
         )
 
         assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))

@@ -3,42 +3,40 @@ package com.hartwig.actin.report.datamodel
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
-import com.hartwig.actin.report.datamodel.ReportFactory.fromInputs
+import com.hartwig.actin.report.datamodel.ReportFactory.create
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class ReportFactoryTest {
 
+    private val reportDate = LocalDate.of(2025, 7, 1)
     @Test
     fun `Should create report from test data`() {
         assertThat(
-            fromInputs(
+            create(
+                reportDate,
                 TestPatientFactory.createMinimalTestWGSPatientRecord(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-                EnvironmentConfiguration(requestingHospital = "NKI-AvL")
+                EnvironmentConfiguration()
             )
-        ).isNotNull
+        ).isNotNull()
 
         assertThat(
-            fromInputs(
+            create(
+                reportDate,
                 TestPatientFactory.createProperTestPatientRecord(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch(),
-                EnvironmentConfiguration(requestingHospital = "NKI-AvL")
+                EnvironmentConfiguration()
             )
-        ).isNotNull
+        ).isNotNull()
     }
 
     @Test
-    fun `Should use clinical patient ID on mismatch`() {
+    fun `Should use patient record patient ID on mismatch`() {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(patientId = "clinical")
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(patientId = "treatment-match")
 
-        assertThat(
-            fromInputs(
-                patient,
-                treatmentMatch,
-                EnvironmentConfiguration(requestingHospital = "NKI-AvL")
-            ).patientId
-        ).isEqualTo("clinical")
+        assertThat(create(reportDate, patient, treatmentMatch, EnvironmentConfiguration()).patientId).isEqualTo("clinical")
     }
 }

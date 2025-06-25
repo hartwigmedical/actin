@@ -5,9 +5,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import java.io.File
-import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 enum class ConfigurationProfile {
     STANDARD,
@@ -52,8 +51,7 @@ data class ReportConfiguration(
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
     val includeTreatmentEvidenceRanking: Boolean = false,
-    val countryOfReference: Country = Country.NETHERLANDS,
-    val reportDate: LocalDate? = null
+    val countryOfReference: Country = Country.OTHER
 )
 
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
