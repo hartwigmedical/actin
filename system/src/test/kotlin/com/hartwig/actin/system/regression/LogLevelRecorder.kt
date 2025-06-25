@@ -19,6 +19,7 @@ class LevelRecordingAppender : AbstractAppender("TestLogAppender", null, Pattern
 }
 
 class LogLevelRecorder {
+    
     private val logLevel = LevelRecordingAppender()
 
     fun start() {

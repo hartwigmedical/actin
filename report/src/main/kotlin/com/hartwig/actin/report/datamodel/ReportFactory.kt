@@ -10,7 +10,7 @@ object ReportFactory {
 
     private val LOGGER = LogManager.getLogger(ReportFactory::class.java)
 
-    fun create(patient: PatientRecord, treatmentMatch: TreatmentMatch, config: EnvironmentConfiguration): Report {
+    fun create(reportDate: LocalDate, patient: PatientRecord, treatmentMatch: TreatmentMatch, config: EnvironmentConfiguration): Report {
         if (patient.patientId != treatmentMatch.patientId) {
             LOGGER.warn(
                 "Patient record patientId '${patient.patientId}' not the same as " +
@@ -19,7 +19,7 @@ object ReportFactory {
         }
 
         return Report(
-            reportDate = config.report.reportDate ?: LocalDate.now(),
+            reportDate = reportDate,
             patientId = patient.patientId,
             requestingHospital = config.requestingHospital,
             patientRecord = patient,

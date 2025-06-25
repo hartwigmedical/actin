@@ -11,6 +11,7 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.time.LocalDate
 import kotlin.system.exitProcess
 
 class ReporterApplication(private val config: ReporterConfig) {
@@ -27,7 +28,7 @@ class ReporterApplication(private val config: ReporterConfig) {
         val envConfig = EnvironmentConfiguration.create(config.overrideYaml, config.profile)
         LOGGER.info(" Loaded config: $envConfig")
 
-        val report = ReportFactory.create(patient, treatmentMatch, envConfig)
+        val report = ReportFactory.create(LocalDate.now(), patient, treatmentMatch, envConfig)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, config.enableExtendedMode)
         LOGGER.info("Done!")

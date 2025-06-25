@@ -31,19 +31,21 @@ import java.io.File
 import java.time.Period
 import kotlin.system.exitProcess
 
+private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
+
 class LocalExampleTreatmentMatchApplication {
 
     fun run(examplePatientRecordJson: String, exampleTrialDatabaseDir: String, outputDirectory: String) {
-        LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
+        LOGGER.info("Loading patient record from '$examplePatientRecordJson'")
         val patient = PatientRecordJson.read(examplePatientRecordJson)
 
-        LOGGER.info("Loading trial data from {}", exampleTrialDatabaseDir)
+        LOGGER.info("Loading trial data from '$exampleTrialDatabaseDir'")
         val trials = TrialJson.readFromDir(exampleTrialDatabaseDir)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, runHistorically = false)
         val resources = createExampleRuleMappingResources(referenceDateProvider)
 
-        LOGGER.info("Matching patient ${patient.patientId} to available trials")
+        LOGGER.info("Running treatment matcher for patient '${patient.patientId}'")
 
         val match = TreatmentMatcher
             .create(
@@ -66,9 +68,7 @@ class LocalExampleTreatmentMatchApplication {
             listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private").joinToString(File.separator)
 
         val doidJson = listOf(resourceDirectory, "disease_ontology", "doid.json").joinToString(File.separator)
-        val icdTsv = listOf(
-            resourceDirectory, "icd", "SimpleTabulation-ICD-11-MMS-en.tsv"
-        ).joinToString(File.separator)
+        val icdTsv = listOf(resourceDirectory, "icd", "SimpleTabulation-ICD-11-MMS-en.tsv").joinToString(File.separator)
         val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
         val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
 
@@ -138,14 +138,13 @@ class LocalExampleTreatmentMatchApplication {
     }
 }
 
-private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
-
 fun main() {
     LocalExampleTreatmentMatchApplication.LOGGER.info("Running ACTIN Example Treatment Matcher")
+    
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
         val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
-        val outputDirectory = System.getProperty("user.dir") + "/system/src/test/resources/example_treatment_match/"
+        val outputDirectory = ExampleFunctions.resolveExampleTreatmentMatchOutputDirectory()
 
         LocalExampleTreatmentMatchApplication().run(examplePatientRecordJson, exampleTrialDatabaseDir, outputDirectory)
     } catch (exception: ParseException) {

@@ -4,8 +4,8 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.utils.CompareTool
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
+import java.io.File
 
 fun assertThatPdf(actual: String): PdfAssertion {
     return PdfAssertion(actual)
@@ -29,7 +29,6 @@ class PdfAssertion(private val actual: String) {
         val result = CompareTool().compareVisually(expected, actual, OUTPUT_PATH, reportRegressionDiff)
         assertThat(result ?: "").withFailMessage("$result Difference file(s) can be found in $OUTPUT_PATH/$reportRegressionDiff[1..n].jpg")
             .doesNotContain("differs")
-
     }
 
     private fun extractText(actual: String): String {

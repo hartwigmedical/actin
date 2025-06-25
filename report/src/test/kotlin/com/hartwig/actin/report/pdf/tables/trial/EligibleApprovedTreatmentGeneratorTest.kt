@@ -18,6 +18,7 @@ import com.hartwig.actin.report.pdf.getCellContents
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class EligibleApprovedTreatmentGeneratorTest {
 
@@ -65,6 +66,7 @@ class EligibleApprovedTreatmentGeneratorTest {
         treatmentMatch: TreatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
     ): Table {
         val report = ReportFactory.create(
+            LocalDate.of(2025, 7, 1),
             PatientRecordFactory.fromInputs(clinicalRecord, molecularHistory),
             treatmentMatch,
             EnvironmentConfiguration.create(null)

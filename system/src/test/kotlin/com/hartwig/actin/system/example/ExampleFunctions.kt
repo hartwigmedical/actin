@@ -6,7 +6,6 @@ import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.testutil.ResourceLocator
 import java.io.File
-import java.time.LocalDate
 
 const val LUNG_01_EXAMPLE = "LUNG-01"
 
@@ -49,7 +48,7 @@ object ExampleFunctions {
         return listOf(systemTestResourcesDirectory(), EXAMPLE_TREATMENT_MATCH_DIRECTORY).joinToString(File.separator)
     }
 
-    fun createExampleEnvironmentConfiguration(reportDate: LocalDate? = null): EnvironmentConfiguration {
+    fun createExampleEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,
@@ -57,13 +56,12 @@ object ExampleFunctions {
             report = ReportConfiguration(
                 includeApprovedTreatmentsInSummary = false,
                 includeMolecularDetailsChapter = false,
-                includeClinicalDetailsChapter = false,
-                reportDate = reportDate
+                includeClinicalDetailsChapter = false
             )
         )
     }
 
-    fun createExhaustiveEnvironmentConfiguration(reportDate: LocalDate? = null): EnvironmentConfiguration {
+    fun createExhaustiveEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,
@@ -88,8 +86,7 @@ object ExampleFunctions {
                 includeLongitudinalMolecularChapter = true,
                 includeMolecularEvidenceChapter = true,
                 includeRawPathologyReport = true,
-                includeTreatmentEvidenceRanking = true,
-                reportDate = reportDate
+                includeTreatmentEvidenceRanking = true
             )
         )
     }

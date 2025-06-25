@@ -6,13 +6,16 @@ import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.report.datamodel.ReportFactory.create
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class ReportFactoryTest {
 
+    private val reportDate = LocalDate.of(2025, 7, 1)
     @Test
     fun `Should create report from test data`() {
         assertThat(
             create(
+                reportDate,
                 TestPatientFactory.createMinimalTestWGSPatientRecord(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
                 EnvironmentConfiguration()
@@ -21,6 +24,7 @@ class ReportFactoryTest {
 
         assertThat(
             create(
+                reportDate,
                 TestPatientFactory.createProperTestPatientRecord(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch(),
                 EnvironmentConfiguration()
@@ -33,12 +37,6 @@ class ReportFactoryTest {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(patientId = "clinical")
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(patientId = "treatment-match")
 
-        assertThat(
-            create(
-                patient,
-                treatmentMatch,
-                EnvironmentConfiguration()
-            ).patientId
-        ).isEqualTo("clinical")
+        assertThat(create(reportDate, patient, treatmentMatch, EnvironmentConfiguration()).patientId).isEqualTo("clinical")
     }
 }
