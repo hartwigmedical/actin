@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
 import com.hartwig.actin.datamodel.personalization.Population
 import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
 import com.hartwig.actin.datamodel.personalization.TreatmentGroup
-import com.hartwig.actin.personalization.datamodel.LocationGroup
+import com.hartwig.actin.personalization.datamodel.diagnosis.LocationGroup
 import com.hartwig.actin.personalization.similarity.PersonalizedDataInterpreter as PersonalizedDataAnalyzer
 import com.hartwig.actin.personalization.similarity.population.Measurement as PopulationMeasurement
 import com.hartwig.actin.personalization.similarity.population.PersonalizedDataAnalysis as PersonalAnalysis
@@ -57,7 +57,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
         return analysis.populations.map { population ->
             Population(
                 population.name,
-                population.patientsByMeasurementType.entries.mapNotNull { (type, patients) ->
+                population.entriesByMeasurementType.entries.mapNotNull { (type, patients) ->
                     measurementTypeLookup[type.name]?.let { it to patients.size }
                 }.toMap()
             )
@@ -65,7 +65,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
     }
 
     private fun convertMeasurement(measurement: PopulationMeasurement) =
-        with(measurement) { Measurement(value, numPatients, min, max, iqr) }
+        with(measurement) { Measurement(value, numEntries, min, max, iqr) }
 
     private fun hasActivatingMutationInGene(patient: PatientRecord, gene: String): Boolean {
         return GeneHasActivatingMutation(gene, null).evaluate(patient).result == EvaluationResult.PASS
