@@ -13,7 +13,9 @@ enum class TreatmentGroup(val display: String, val memberTreatmentNames: List<St
     FOLFOXIRI_B("FOLFOXIRI-B", listOf("folfoxiri+bevacizumab")),
     IRINOTECAN("Irinotecan", listOf("irinotecan")),
     NIVOLUMAB("Nivolumab", listOf("nivolumab")),
-    PEMBROLIZUMAB("Pembrolizumab", listOf("pembrolizumab"));
+    PEMBROLIZUMAB("Pembrolizumab", listOf("pembrolizumab")),
+    OTHER("Other", emptyList());
+    
     companion object {
         private val groupsByTreatmentName = entries.flatMap { group -> group.memberTreatmentNames.map { it to group } }.toMap()
 
