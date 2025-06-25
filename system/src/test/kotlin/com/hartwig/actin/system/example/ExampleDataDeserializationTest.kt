@@ -10,10 +10,10 @@ class ExampleDataDeserializationTest {
 
     @Test
     fun `Should be able to deserialize example data`() {
-        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE))).isNotNull()
-        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_02_EXAMPLE))).isNotNull()
-        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_03_EXAMPLE))).isNotNull()
-        assertThat(PatientRecordJson.read(ExampleFunctions.resolveExamplePatientRecordJson(LUNG_04_EXAMPLE))).isNotNull()
+        listOf(LUNG_01_EXAMPLE, LUNG_02_EXAMPLE, LUNG_03_EXAMPLE, LUNG_04_EXAMPLE).forEach {
+            val recordJson = ExampleFunctions.resolveExamplePatientRecordJson(it)
+            assertThat(PatientRecordJson.read(recordJson)).isNotNull()
+        }
         
         assertThat(TreatmentMatchJson.read(ExampleFunctions.resolveExampleTreatmentMatchJson(LUNG_01_EXAMPLE))).isNotNull()
         assertThat(TrialJson.readFromDir(ExampleFunctions.resolveExampleTrialDatabaseDirectory())).isNotNull()
