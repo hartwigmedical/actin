@@ -1,2 +1,2 @@
-input	name
-Archer	Archer FP - Lung
+input	name	allowFromAnyLab
+Archer	Archer FP - Lung	0

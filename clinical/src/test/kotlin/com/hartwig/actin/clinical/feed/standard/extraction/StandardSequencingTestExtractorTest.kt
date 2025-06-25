@@ -45,7 +45,7 @@ private val SEQUENCING_TEST_CURATION_WARNING = CurationWarning(
 class StandardSequencingTestExtractorTest {
 
     private val testCuration = mockk<CurationDatabase<SequencingTestConfig>> {
-        every { find(TEST) } returns setOf(SequencingTestConfig(TEST, false, CURATED_TEST))
+        every { find(TEST) } returns setOf(SequencingTestConfig(TEST, false, CURATED_TEST, false))
     }
     private val testResultCuration = mockk<CurationDatabase<SequencingTestResultConfig>>()
     val extractor = StandardSequencingTestExtractor(testCuration, testResultCuration)
@@ -202,7 +202,7 @@ class StandardSequencingTestExtractorTest {
     @Test
     fun `Should allow for ignoring of full tests`() {
         every { testCuration.find(TEST) } returns setOf(
-            SequencingTestConfig(input = TEST, ignore = true, curatedName = "<ignore>")
+            SequencingTestConfig(input = TEST, ignore = true, curatedName = "<ignore>", false)
         )
         assertThat(extractedResult().extracted).isEmpty()
     }
