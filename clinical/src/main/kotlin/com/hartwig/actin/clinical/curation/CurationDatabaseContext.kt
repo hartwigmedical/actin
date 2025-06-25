@@ -183,12 +183,12 @@ data class CurationDatabaseContext(
 
         private fun createComorbidityCurationDatabase(curationDir: String, icdModel: IcdModel): CurationDatabase<ComorbidityConfig> {
             return listOf(
-//                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV to OtherConditionConfigFactory(icdModel),
-//                CurationDatabaseReader.COMPLICATION_TSV to ComplicationConfigFactory(icdModel),
-//                CurationDatabaseReader.INTOLERANCE_TSV to IntoleranceConfigFactory(icdModel),
-//                CurationDatabaseReader.TOXICITY_TSV to ToxicityConfigFactory(icdModel),
-//                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(icdModel),
-//                CurationDatabaseReader.INFECTION_TSV to InfectionConfigFactory(icdModel),
+                CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV to OtherConditionConfigFactory(icdModel),
+                CurationDatabaseReader.COMPLICATION_TSV to ComplicationConfigFactory(icdModel),
+                CurationDatabaseReader.INTOLERANCE_TSV to IntoleranceConfigFactory(icdModel),
+                CurationDatabaseReader.TOXICITY_TSV to ToxicityConfigFactory(icdModel),
+                CurationDatabaseReader.ECG_TSV to EcgConfigFactory(icdModel),
+                CurationDatabaseReader.INFECTION_TSV to InfectionConfigFactory(icdModel),
                 CurationDatabaseReader.COMORBIDITY to ComorbidityConfigFactory(icdModel),
             )
                 .map { (tsv, factory) ->

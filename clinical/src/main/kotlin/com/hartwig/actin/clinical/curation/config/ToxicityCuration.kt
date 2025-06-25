@@ -11,8 +11,6 @@ import java.time.LocalDate
 data class ToxicityCuration(
     override val name: String?,
     override val icdCodes: Set<IcdCode>,
-    override val year: Int? = null,
-    override val month: Int? = null,
     val grade: Int?
 ) : Comorbidity {
     constructor(
@@ -21,11 +19,11 @@ data class ToxicityCuration(
     ) : this(
         baseComorbidity.name,
         baseComorbidity.icdCodes,
-        baseComorbidity.year,
-        baseComorbidity.month,
         grade,
     )
 
+    override val month = null
+    override val year = null
     override val comorbidityClass = ComorbidityClass.TOXICITY
     override fun withDefaultDate(date: LocalDate): Comorbidity = Toxicity(name, icdCodes, date, ToxicitySource.EHR, grade)
 }

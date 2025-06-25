@@ -24,7 +24,7 @@ class ComorbidityConfigFactoryTest {
     @Test
     fun `Should return null curation and validation error when type is not recognized`() {
         val configFactory = ComorbidityConfigFactory(icdModel)
-        val data = arrayOf("no type", "input", "1", "unknown_type", icdMainTitle, "2023", "12")
+        val data = arrayOf("no type", "input", "1", "unknown_type", icdMainTitle, "2023", "12", "0.5", "")
         val config = configFactory.create(fields, data)
 
         assertThat(config.errors).hasSize(1)
@@ -40,7 +40,7 @@ class ComorbidityConfigFactoryTest {
     @Test
     fun `Should return complication config from valid data`() {
         val configFactory = ComorbidityConfigFactory(icdModel)
-        val data = arrayOf("complication", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2023", "12")
+        val data = arrayOf("complication", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2023", "12", "0.5", "")
         val config = configFactory.create(fields, data)
 
         assertThat(config.errors).isEmpty()
@@ -61,7 +61,7 @@ class ComorbidityConfigFactoryTest {
     @Test
     fun `Should return intolerance config from valid data`() {
         val configFactory = ComorbidityConfigFactory(icdModel)
-        val data = arrayOf("intolerance", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle")
+        val data = arrayOf("intolerance", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2020", "11", "", "")
         val config = configFactory.create(fields, data)
 
         assertThat(config.errors).isEmpty()
@@ -71,7 +71,9 @@ class ComorbidityConfigFactoryTest {
                 ignore = false,
                 curated = Intolerance(
                     name = "name",
-                    icdCodes = icdCodes
+                    icdCodes = icdCodes,
+                    year = 2020,
+                    month = 11
                 )
             )
         )

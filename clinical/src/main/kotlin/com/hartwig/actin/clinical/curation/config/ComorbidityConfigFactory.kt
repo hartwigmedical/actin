@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.fasterxml.jackson.databind.ser.Serializers.Base
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.*
@@ -9,57 +10,70 @@ import kotlin.reflect.full.memberProperties
 
 
 class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
-    private val requiredFields = mapOf(
-        "toxicity" to setOf("name", "grade", "icd"),
-        "complication" to setOf("impliesUnknownComplicationState", "name", "icd", "year", "month"),
-        "other_condition" to setOf("name", "year", "month", "icd", "isLVEF", "lvefValue"),
-        "intolerance" to setOf("name", "icd"),
-        "ecg" to setOf("interpretation", "icd", "isQTCF", "isJTC", "qtcfValue", "qtcfUnit", "jtcValue", "jtcUnit"),
-        "infection" to setOf("interpretation", "icd")
-    )
 
-    private val fieldProcessingFunction = mapOf(
-        "name" to ::validateString,
-        "interpretation" to ::validateString,
-        "icd" to ::partialValidateIcd,
-        "year" to ::partialValidateInteger,
-        "month" to ::partialValidateInteger,
-        "grade" to ::partialValidateInteger,
-        "impliesUnknownComplicationState" to ::partialValidateBoolean,
-        "isLVEF" to ::partialValidateBoolean,
-        "lvefValue" to ::partialValidateDouble,
-    )
-
-    internal fun <T> partialValidate(
+    internal fun lazyValidateBoolean(
         fieldName: String,
         fields: Map<String, Int>,
         parts: Array<String>,
-        validateFn: (CurationCategory, String, String, Map<String, Int>, Array<String>) -> Pair<T, List<CurationConfigValidationError>>
-    ): Pair<T, List<CurationConfigValidationError>> {
-        return validateFn(CurationCategory.COMORBIDITY, parts[fields["input"]!!], fieldName, fields, parts)
+        allErrors: MutableList<List<CurationConfigValidationError>>
+    ): Boolean? {
+        val result = validateBoolean(
+            CurationCategory.COMORBIDITY, parts[fields["input"]!!], fieldName, fields, parts
+        )
+        allErrors.add(result.second)
+        return result.first
     }
 
-    internal fun partialValidateBoolean(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
-        partialValidate(fieldName, fields, parts, ::validateBoolean)
+    internal fun lazyValidateInteger(
+        fieldName: String,
+        fields: Map<String, Int>,
+        parts: Array<String>,
+        allErrors: MutableList<List<CurationConfigValidationError>>
+    ): Int? {
+        val result = validateInteger(
+            CurationCategory.COMORBIDITY, parts[fields["input"]!!], fieldName, fields, parts
+        )
+        allErrors.add(result.second)
+        return result.first
+    }
 
-    internal fun partialValidateInteger(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
-        partialValidate(fieldName, fields, parts, ::validateInteger)
+    internal fun lazyValidateDouble(
+        fieldName: String,
+        fields: Map<String, Int>,
+        parts: Array<String>,
+        allErrors: MutableList<List<CurationConfigValidationError>>
+    ): Double? {
+        val result = validateDouble(
+            CurationCategory.COMORBIDITY, parts[fields["input"]!!], fieldName, fields, parts
+        )
+        allErrors.add(result.second)
+        return result.first
+    }
 
-    internal fun partialValidateDouble(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
-        partialValidate(fieldName, fields, parts, ::validateDouble)
+    internal fun lazyValidateIcd(
+        fieldName: String,
+        fields: Map<String, Int>,
+        parts: Array<String>,
+        allErrors: MutableList<List<CurationConfigValidationError>>
+    ): Set<IcdCode> {
+        val result = validateIcd(
+            CurationCategory.COMORBIDITY, parts[fields["input"]!!], fieldName, fields, parts, icdModel
+        )
+        allErrors.add(result.second)
+        return result.first
+    }
 
-    internal fun partialValidateIcd(fieldName: String, fields: Map<String, Int>, parts: Array<String>) =
-        partialValidate(fieldName, fields, parts) { category, inputValue, fName, flds, prts ->
-            validateIcd(category, inputValue, fName, flds, prts, icdModel)
-        }
+    internal fun lazyValidateString(
+        fieldName: String,
+        fields: Map<String, Int>,
+        parts: Array<String>
+    ): String? =
+        parts[fields[fieldName]!!].trim().ifEmpty { null }
 
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
         val type = parts[fields["type"]!!]
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        if (type !in requiredFields.keys) {
-            return generateNoTypeError(type, input, ignore)
-        }
         return generateConfig(input, ignore, type, fields, parts)
     }
 
@@ -71,86 +85,69 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         fields: Map<String, Int>,
         parts: Array<String>
     ): ValidatedCurationConfig<ComorbidityConfig> {
-        val retval = requiredFields[type]!!.map { it ->
-            it to fieldProcessingFunction[it]!!.call(it, fields, parts)
-        }.toMap()
-        val fieldValues = retval.mapValues { it.value.first }
-        val validationErrors = retval.flatMap { it.value.second }
-        val allErrors = validationErrors.fold(emptyList<CurationConfigValidationError>()) { acc, current ->
-            acc + current
+        val allErrors = mutableListOf(emptyList<CurationConfigValidationError>())
+
+        val name = parts[fields["name"]!!].trim().ifEmpty { null }
+        val year by lazy { lazyValidateInteger("year", fields, parts, allErrors) }
+        val month by lazy { lazyValidateInteger("month", fields, parts, allErrors) }
+        val icdCode by lazy { lazyValidateIcd("icd", fields, parts, allErrors) }
+        val grade by lazy { lazyValidateInteger("grade", fields, parts, allErrors) }
+        val impliesUnknownComplicationState by lazy {
+            lazyValidateBoolean("impliesUnknownComplicationState", fields, parts, allErrors)
         }
-        var curated: Comorbidity? = when (type) {
-            "complication" ->
-                Complication(
-                    name = fieldValues["name"]!! as String?,
-                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet(),
-                    year = fieldValues["year"]!! as Int?,
-                    month = fieldValues["month"]!! as Int?
-                )
+        val isLVEF by lazy { lazyValidateBoolean("isLVEF", fields, parts, allErrors) }
+        val lvefValue by lazy { lazyValidateDouble("lvefValue", fields, parts, allErrors) }
+        val isQTCF by lazy { lazyValidateBoolean("isQTCF", fields, parts, allErrors) }
+        val isJTC by lazy { lazyValidateBoolean("isJTC", fields, parts, allErrors) }
+        val qtcfValue by lazy { lazyValidateInteger("qtcfValue", fields, parts, allErrors) }
+        val qtcfUnit by lazy { lazyValidateString("qtcfUnit", fields, parts) }
+        val jtcValue by lazy { lazyValidateInteger("jtcValue", fields, parts, allErrors) }
+        val jtcUnit by lazy { lazyValidateString("jtcUnit", fields, parts) }
+        val interpretation by lazy { lazyValidateString("interpretation", fields, parts) }
 
-            "intolerance" ->
-                Intolerance(
-                    name = fieldValues["name"]!! as String?,
-                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet()
-                )
+        val baseComorbidity = BaseComorbidity(name, icdCode, year, month)
 
-            "other_condition" ->
-                OtherCondition(
-                    name = fieldValues["name"]!! as String?,
-                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet(),
-                    year = fieldValues["year"]!! as Int?,
-                    month = fieldValues["month"]!! as Int?,
-                )
-
-            "toxicity" ->
-                ToxicityCuration(
-                    name = fieldValues["name"]!! as String?,
-                    grade = fieldValues["grade"]!! as Int?,
-                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet()
-                )
+        val curated: Comorbidity? = when (type) {
+            "complication" -> Complication(baseComorbidity)
+            "intolerance" -> Intolerance(baseComorbidity)
+            "other_condition" -> OtherCondition(baseComorbidity)
+            "toxicity" -> ToxicityCuration(baseComorbidity, grade)
 
             "ecg" -> Ecg(
-                name = fieldValues["interpretation"]!! as String?,
-                icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet(),
-                qtcfMeasure = if (fieldValues["isQTCF"]!! as Boolean? == true) {
+                name = interpretation,
+                icdCodes = icdCode,
+                qtcfMeasure = if (isQTCF == true) {
                     EcgMeasure(
-                        value = fieldValues["qtcfValue"]!! as Int,
-                        unit = parts[fields["qtcfUnit"]!!]
+                        value = qtcfValue as Int,
+                        unit = qtcfUnit as String
                     )
                 } else null,
-                jtcMeasure = if (fieldValues["isJTC"]!! as Boolean? == true) {
+                jtcMeasure = if (isJTC == true) {
                     EcgMeasure(
-                        value = fieldValues["jtcValue"]!! as Int,
-                        unit = parts[fields["jtcUnit"]!!]
+                        value = jtcValue as Int,
+                        unit = jtcUnit as String
                     )
                 } else null
             )
-
             "infection" ->
                 OtherCondition(
-                    name = fieldValues["interpretation"]!! as String?,
-                    icdCodes = fieldValues["icd"]!! as? Set<IcdCode> ?: emptySet()
+                    name = interpretation,
+                    icdCodes = icdCode
                 )
 
             else -> null
         }
 
-        return ValidatedCurationConfig(
+        return if (curated == null) {
+            generateNoTypeError(type, input, ignore)
+        } else ValidatedCurationConfig(
             ComorbidityConfig(
                 input = input,
                 ignore = ignore,
-//                lvef = if (retval["isLVEF"]!!.first as Boolean? == true) retval["lvefValue"]!!.first as Double? else null,
+                lvef = if (isLVEF == true) lvefValue else null,
                 curated = if (!ignore) curated else null
-            ), allErrors
+            ), allErrors.fold(emptyList()) { acc, errors -> acc + errors }
         )
-    }
-
-    fun validateString(
-        fieldName: String,
-        fields: Map<String, Int>,
-        parts: Array<String>,
-    ): Pair<String?, List<CurationConfigValidationError>> {
-        return Pair(parts[fields[fieldName]!!].trim().ifEmpty { null }, emptyList())
     }
 
     fun generateNoTypeError(
