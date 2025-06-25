@@ -34,7 +34,7 @@ class SequencingTestResultConfigFactoryTest {
                 "virus",
                 "OTHER",
                 "VirusType",
-                "Accepted values are [EBV, HBV, HHV8, HPV, MCV, OTHER] excluding values [OTHER]"
+                "Accepted values are [EBV, HBV, HHV8, HPV, MCV]"
             )
         )
     }

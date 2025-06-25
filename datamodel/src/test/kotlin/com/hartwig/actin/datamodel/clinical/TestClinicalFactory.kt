@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -497,8 +498,9 @@ object TestClinicalFactory {
 
     private fun createTestSurgeries(): List<Surgery> {
         return listOf(
-            Surgery(name = "Surgery 1", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED),
-            Surgery(name = "Surgery 2", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED)
+            Surgery(name = "Surgery 1", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY),
+            Surgery(name = "Surgery 2", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.DEBULKING_SURGERY),
+            Surgery(name = "Surgery 3", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.OTHER_SURGERY)
         )
     }
 

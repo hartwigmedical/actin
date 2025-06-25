@@ -151,7 +151,7 @@ class StandardDataIngestion(
         ) = StandardDataIngestion(
             directory,
             StandardMedicationExtractor(atcModel, drugInteractionDatabase, qtProlongatingDatabase, treatmentDatabase),
-            StandardSurgeryExtractor(curationDatabaseContext.surgeryNameCuration),
+            StandardSurgeryExtractor(curationDatabaseContext.surgeryCuration),
             StandardVitalFunctionsExtractor(),
             StandardBloodTransfusionExtractor(),
             StandardLabValuesExtractor(curationDatabaseContext.labMeasurementCuration),
