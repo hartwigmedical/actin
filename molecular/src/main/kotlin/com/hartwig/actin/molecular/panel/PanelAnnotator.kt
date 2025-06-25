@@ -34,16 +34,18 @@ class PanelAnnotator(
     }
 
     private fun interpret(input: SequencingTest): PanelRecord {
+        val specification = if (input.knownSpecifications) panelSpecifications.panelSpecification(input.test) else PanelSpecification(
+            derivedGeneTargetMap(input)
+        )
+        
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
         val annotatedViruses = panelVirusAnnotator.annotate(input.viruses)
-
+        
         return PanelRecord(
-            specification = if (input.knownSpecifications) panelSpecifications.panelSpecification(input.test) else PanelSpecification(
-                derivedGeneTargetMap(input)
-            ),
+            specification = specification,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
             date = input.date,

@@ -46,13 +46,6 @@ steps:
     waitFor:
       - 'Build and push the molecular image with tag'
 
-  - id: 'Build and push the clinical image with tag'
-    name: 'europe-west4-docker.pkg.dev/hmf-build/hmf-docker/docker-tag'
-    dir: 'clinical'
-    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-clinical', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
-    waitFor:
-      - 'Build and push the molecular image with tag'
-
   - name: 'gcr.io/cloud-builders/gcloud'
     args: [ 'pubsub', 'topics', 'publish', 'actin-upgrade.pending', '--project', 'actin-build', '--message', '{ "tag": "$TAG_NAME", "repository": "actin", "is_version_property": "true"}' ]
 

@@ -11,7 +11,6 @@
     <modules>
         <module>datamodel</module>
         <module>common</module>
-        <module>clinical</module>
         <module>molecular</module>
         <module>trial</module>
         <module>algo</module>
