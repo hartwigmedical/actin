@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
+import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation

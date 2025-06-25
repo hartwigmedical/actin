@@ -258,7 +258,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
             TumorCharacteristicType.HPV_POSITIVE -> {
-                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HUMAN_PAPILLOMA_VIRUS }
+                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HPV }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {
@@ -267,7 +267,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
             TumorCharacteristicType.EBV_POSITIVE -> {
-                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.EPSTEIN_BARR_VIRUS }
+                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.EBV }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {

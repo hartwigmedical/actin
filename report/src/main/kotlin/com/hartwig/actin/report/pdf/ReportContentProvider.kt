@@ -41,7 +41,7 @@ import org.apache.logging.log4j.LogManager
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
 
     private val logger = LogManager.getLogger(ReportContentProvider::class.java)
-    private val trialsProvider = TrialsProvider(
+    private val trialsProvider = TrialsProvider.create(
         report.patientRecord,
         report.treatmentMatch,
         report.config.countryOfReference,

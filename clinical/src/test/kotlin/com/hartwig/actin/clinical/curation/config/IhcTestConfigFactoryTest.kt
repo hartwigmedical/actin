@@ -13,7 +13,7 @@ class IhcTestConfigFactoryTest {
         TestCurationFactory.curationHeaders(CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV)
 
     @Test
-    fun `Should return MolecularTestConfig from valid inputs`() {
+    fun `Should return IhcTestConfig from valid inputs`() {
         val config = IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
             fields,
             arrayOf("input", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "1")
@@ -21,13 +21,14 @@ class IhcTestConfigFactoryTest {
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
-        val curated = config.config.curated!!
-        assertThat(curated.item).isEqualTo("item")
-        assertThat(curated.measure).isEqualTo("measure")
-        assertThat(curated.scoreValuePrefix).isEqualTo("scoreValuePrefix")
-        assertThat(curated.scoreValue).isEqualTo(1.0)
-        assertThat(curated.scoreValueUnit).isEqualTo("scoreValueUnit")
-        assertThat(curated.impliesPotentialIndeterminateStatus).isEqualTo(true)
+        with(config.config.curated!!) {
+            assertThat(item).isEqualTo("item")
+            assertThat(measure).isEqualTo("measure")
+            assertThat(scoreValuePrefix).isEqualTo("scoreValuePrefix")
+            assertThat(scoreValue).isEqualTo(1.0)
+            assertThat(scoreValueUnit).isEqualTo("scoreValueUnit")
+            assertThat(impliesPotentialIndeterminateStatus).isEqualTo(true)
+        }
     }
 
     @Test
@@ -60,5 +61,24 @@ class IhcTestConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.curated).isNull()
+    }
+
+    @Test
+    fun `Should set impliesPotentialIndeterminateStatus to false when not provided and return IhcTestConfig`() {
+        val config = IhcTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
+            fields,
+            arrayOf("input", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "")
+        )
+        assertThat(config.errors).isEmpty()
+        assertThat(config.config.input).isEqualTo("input")
+        assertThat(config.config.ignore).isEqualTo(false)
+        with(config.config.curated!!) {
+            assertThat(item).isEqualTo("item")
+            assertThat(measure).isEqualTo("measure")
+            assertThat(scoreValuePrefix).isEqualTo("scoreValuePrefix")
+            assertThat(scoreValue).isEqualTo(1.0)
+            assertThat(scoreValueUnit).isEqualTo("scoreValueUnit")
+            assertThat(impliesPotentialIndeterminateStatus).isEqualTo(false)
+        }
     }
 }

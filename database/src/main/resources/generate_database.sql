@@ -16,11 +16,7 @@ DROP TABLE IF EXISTS `tumor`;
 CREATE TABLE `tumor`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) UNIQUE,
-    `primaryTumorLocation` varchar(100),
-    `primaryTumorSubLocation` varchar(50),
-    `primaryTumorType` varchar(50),
-    `primaryTumorSubType` varchar(100),
-    `primaryTumorExtraDetails` varchar(100),
+    `name` varchar(300),
     `doids` varchar(50),
     `stage` varchar(50),
     `hasMeasurableDisease` BOOLEAN,

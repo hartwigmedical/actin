@@ -83,7 +83,7 @@ class TestStandardOfCareApplication {
             val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
             val recentDate = LocalDate.now().minusDays(7)
             return base.copy(
-                tumor = base.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID), primaryTumorSubLocation = "sigmoid"),
+                tumor = base.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID), name = "sigmoid"),
                 oncologicalHistory = listOf(CAPOX, CAPECITABINE, BEVACIZUMAB, TRIFLURIDINE_TIPIRACIL, FOLFIRI, PANITUMUMAB)
                     .map {
                         val treatment = treatmentDatabase.findTreatmentByName(it) ?: throw IllegalStateException("Treatment not found: $it")

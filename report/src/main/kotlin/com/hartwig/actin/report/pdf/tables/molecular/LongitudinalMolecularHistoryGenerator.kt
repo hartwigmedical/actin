@@ -38,9 +38,9 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             }
 
         val finalColumnWidths = FloatArray(eventVAFMapByTest.size) { 0.8f }
-        val table = Tables.createRelativeWidthCols(1.3f, 1.3f, 0.8f, *finalColumnWidths)
+        val table = Tables.createRelativeWidthCols(1.0f, 1.0f, *finalColumnWidths)
 
-        val headers = listOf("Event", "Description", "Driver likelihood") + eventVAFMapByTest.keys.map(::testDisplay)
+        val headers = listOf("Event", "Description") + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
         val allDrivers = molecularHistory.molecularTests.map(MolecularTest::drivers).reduce(Drivers::combine)
@@ -56,7 +56,6 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
                         entry.driverType,
                         if (entry.driverType.contains(entry.proteinEffect?.display() ?: "", true)) null else entry.proteinEffect?.display()
                     ).joinToString("\n"),
-                    entry.driverLikelihoodDisplay
                 )
                 val testTextFields = eventVAFMapByTest.values.map { eventVAFMap ->
                     if (entry.event in eventVAFMap) {
@@ -83,7 +82,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     private fun characteristicRow(
         table: Table, sortedAndFilteredTests: Set<MolecularTest>, name: String, contentProvider: (MolecularTest) -> String
     ) {
-        (listOf(name, "", "") + sortedAndFilteredTests.map(contentProvider)).forEach { table.addCell(Cells.createContent(it)) }
+        (listOf(name, "") + sortedAndFilteredTests.map(contentProvider)).forEach { table.addCell(Cells.createContent(it)) }
     }
 
     private fun testDisplay(test: MolecularTest): String {

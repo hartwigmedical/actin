@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.SequencedVirus
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
@@ -11,6 +12,8 @@ import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.Virus
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -19,8 +22,8 @@ import org.junit.Test
 private const val OTHER_GENE = "other_gene"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
-
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
+private val PANEL_VIRUS = SequencedVirus(type = VirusType.HPV, isLowRisk = false)
 
 private const val TEST_NAME = "test"
 
@@ -38,12 +41,16 @@ class PanelAnnotatorTest {
     private val panelDriverAttributeAnnotator = mockk<PanelDriverAttributeAnnotator>() {
         every { annotate(any()) } answers { firstArg() }
     }
+    private val panelVirusAnnotator = mockk<PanelVirusAnnotator> {
+        every { annotate(any<Set<SequencedVirus>>()) } returns emptyList()
+    }
 
     private val annotator =
         PanelAnnotator(
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
+            panelVirusAnnotator,
             panelDriverAttributeAnnotator,
             PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )
@@ -85,6 +92,15 @@ class PanelAnnotatorTest {
 
         val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(skippedExons = setOf(ARCHER_SKIPPED_EXON)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
+    }
+
+    @Test
+    fun `Should annotate virus`() {
+        val expected = mockk<Virus>()
+        every { panelVirusAnnotator.annotate(setOf(PANEL_VIRUS)) } returns listOf(expected)
+
+        val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(viruses = setOf(PANEL_VIRUS)))
+        assertThat(annotatedPanel.drivers.viruses).isEqualTo(listOf(expected))
     }
 
     private fun createTestSequencingTest(): SequencingTest {

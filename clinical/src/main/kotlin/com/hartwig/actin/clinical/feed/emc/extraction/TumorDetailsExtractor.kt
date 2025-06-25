@@ -77,8 +77,7 @@ class TumorDetailsExtractor(
             lesionLocationConfigMap,
             LesionLocationCategory.LYMPH_NODE
         )
-
-        val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" || primaryTumorDetails.primaryTumorType == "Glioma"
+        val hasBrainOrGliomaTumor = listOf("brain", "glioma").any { primaryTumorDetails.name.lowercase().contains(it) }
 
         val tumorDetails = primaryTumorDetails.copy(
             stage = TumorStageResolver.resolve(feedTumorDetail.stage),
@@ -116,9 +115,8 @@ class TumorDetailsExtractor(
         inputTumorLocation: String?,
         inputTumorType: String?
     ): Pair<TumorDetails, CurationExtractionEvaluation> {
-        val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType)?.lowercase()
-            ?: return Pair(TumorDetails(), CurationExtractionEvaluation())
-
+        val inputPrimaryTumor =
+            tumorInput(inputTumorLocation, inputTumorType)?.lowercase() ?: return Pair(TumorDetails(), CurationExtractionEvaluation())
         val primaryTumorCuration = CurationResponse.createFromConfigs(
             primaryTumorCuration.find(inputPrimaryTumor),
             patientId,
@@ -127,17 +125,8 @@ class TumorDetailsExtractor(
             "primary tumor",
             true
         )
+        val tumor = primaryTumorCuration.config()?.let { TumorDetails(name = it.name, doids = it.doids) } ?: TumorDetails()
 
-        val tumor = primaryTumorCuration.config()?.let {
-            TumorDetails(
-                primaryTumorLocation = it.primaryTumorLocation,
-                primaryTumorSubLocation = it.primaryTumorSubLocation,
-                primaryTumorType = it.primaryTumorType,
-                primaryTumorSubType = it.primaryTumorSubType,
-                primaryTumorExtraDetails = it.primaryTumorExtraDetails,
-                doids = it.doids
-            )
-        } ?: TumorDetails()
         return Pair(tumor, primaryTumorCuration.extractionEvaluation)
     }
 

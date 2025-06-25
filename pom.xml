@@ -25,7 +25,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <serve.version>8.2.0</serve.version>
-        <actin-personalization.version>0.26.0</actin-personalization.version>
+        <actin-personalization.version>0.28.0</actin-personalization.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.0.0</actin-transvar.version>
         <actin-pave-lite.version>1.0.0</actin-pave-lite.version>

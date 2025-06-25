@@ -7,11 +7,7 @@
     "questionnaireDate": "2021-08-01"
   },
   "tumor": {
-    "primaryTumorLocation": null,
-    "primaryTumorSubLocation": null,
-    "primaryTumorType": null,
-    "primaryTumorSubType": null,
-    "primaryTumorExtraDetails": null,
+    "name": "",
     "doids": null,
     "stage": "III",
     "hasMeasurableDisease": true,
@@ -62,6 +58,8 @@
       "treatmentHistoryDetails": {
         "stopYear": 2020,
         "stopMonth": null,
+        "maxStopYear": null,
+        "maxStopMonth": 12,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": "PROGRESSIVE_DISEASE",

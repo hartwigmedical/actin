@@ -8,11 +8,7 @@
     "hasHartwigSequencing": true
   },
   "tumor": {
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Carcinoma",
-    "primaryTumorSubType": "Adenocarcinoma",
-    "primaryTumorExtraDetails": "",
+    "name": "Lung adenocarcinoma",
     "doids": [
       "3910"
     ],
@@ -76,6 +72,8 @@
       "treatmentHistoryDetails": {
         "stopYear": 2025,
         "stopMonth": 1,
+        "maxStopYear": null,
+        "maxStopMonth": null,
         "ongoingAsOf": null,
         "cycles": null,
         "bestResponse": "PARTIAL_RESPONSE",
