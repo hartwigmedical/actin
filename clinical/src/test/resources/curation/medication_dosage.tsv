@@ -1,2 +1,0 @@
-input	dosageMin	dosageMax	dosageUnit	frequency	frequencyUnit	periodBetweenValue	periodBetweenUnit	ifNeeded
-200 milligram inlooptijd: 30 minuten, via 0,2 um filter	200	200	mg	30	min	0.0	mo	0
