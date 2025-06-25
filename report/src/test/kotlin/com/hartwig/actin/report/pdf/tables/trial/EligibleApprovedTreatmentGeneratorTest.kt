@@ -64,7 +64,7 @@ class EligibleApprovedTreatmentGeneratorTest {
         molecularHistory: MolecularHistory = MolecularHistory.empty(),
         treatmentMatch: TreatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
     ): Table {
-        val report = ReportFactory.fromInputs(
+        val report = ReportFactory.create(
             PatientRecordFactory.fromInputs(clinicalRecord, molecularHistory),
             treatmentMatch,
             EnvironmentConfiguration.create(null)

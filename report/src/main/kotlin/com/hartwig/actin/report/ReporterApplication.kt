@@ -27,7 +27,7 @@ class ReporterApplication(private val config: ReporterConfig) {
         val envConfig = EnvironmentConfiguration.create(config.overrideYaml, config.profile)
         LOGGER.info(" Loaded config: $envConfig")
 
-        val report = ReportFactory.fromInputs(patient, treatmentMatch, envConfig)
+        val report = ReportFactory.create(patient, treatmentMatch, envConfig)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, config.enableExtendedMode)
         LOGGER.info("Done!")

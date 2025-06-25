@@ -26,7 +26,7 @@ class LocalExampleReportApplication {
         LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
 
-        val report = ReportFactory.fromInputs(patient, treatmentMatch, environmentConfiguration)
+        val report = ReportFactory.create(patient, treatmentMatch, environmentConfiguration)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
         writer.write(report, enableExtendedMode = false)
