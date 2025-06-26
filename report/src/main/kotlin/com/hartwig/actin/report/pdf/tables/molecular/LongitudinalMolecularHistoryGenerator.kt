@@ -43,7 +43,8 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         val headers = listOf("Event", "Description") + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
-        val allDrivers = molecularHistory.molecularTests.map(MolecularTest::drivers).reduce(Drivers::combine)
+        val allDrivers = molecularHistory.molecularTests.map(MolecularTest::drivers)
+            .fold(Drivers(emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()), Drivers::combine)
         val molecularDriversInterpreter = MolecularDriversInterpreter(allDrivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
 
         MolecularDriverEntryFactory(molecularDriversInterpreter).create()
