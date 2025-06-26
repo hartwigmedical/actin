@@ -10,20 +10,6 @@ data class Toxicity(
     val grade: Int?,
     val endDate: LocalDate? = null
 ) : Comorbidity {
-    constructor(
-        baseComorbidity: BaseComorbidity,
-        evaluatedDate: LocalDate? = null,
-        source: ToxicitySource,
-        grade: Int? = null,
-        endDate: LocalDate? = null
-    ) : this(
-        baseComorbidity.name,
-        baseComorbidity.icdCodes,
-        evaluatedDate,
-        source,
-        grade,
-        endDate,
-    )
 
     override val comorbidityClass = ComorbidityClass.TOXICITY
     override val year: Int?

@@ -72,8 +72,8 @@ class ComorbidityConfigFactoryTest {
                 curated = Intolerance(
                     name = "name",
                     icdCodes = icdCodes,
-                    year = 2020,
-                    month = 11
+                    year = null,
+                    month = null
                 )
             )
         )

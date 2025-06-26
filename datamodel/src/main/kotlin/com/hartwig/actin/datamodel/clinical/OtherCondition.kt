@@ -8,14 +8,6 @@ data class OtherCondition(
     override val year: Int? = null,
     override val month: Int? = null
 ) : Comorbidity {
-    constructor(
-        baseComorbidity: BaseComorbidity
-    ) : this(
-        baseComorbidity.name,
-        baseComorbidity.icdCodes,
-        baseComorbidity.year,
-        baseComorbidity.month
-    )
 
     override val comorbidityClass = ComorbidityClass.OTHER_CONDITION
 

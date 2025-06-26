@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.datamodel.clinical.BaseComorbidity
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.ComorbidityClass
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -13,14 +12,6 @@ data class ToxicityCuration(
     override val icdCodes: Set<IcdCode>,
     val grade: Int?
 ) : Comorbidity {
-    constructor(
-        baseComorbidity: BaseComorbidity,
-        grade: Int? = null
-    ) : this(
-        baseComorbidity.name,
-        baseComorbidity.icdCodes,
-        grade,
-    )
 
     override val month = null
     override val year = null

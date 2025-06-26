@@ -12,22 +12,6 @@ data class Intolerance(
     override val year: Int? = null,
     override val month: Int? = null
 ): Comorbidity {
-    constructor(
-        baseComorbidity: BaseComorbidity,
-        type: String? = null,
-        clinicalStatus: String? = null,
-        verificationStatus: String? = null,
-        criticality: String? = null
-    ) : this(
-        baseComorbidity.name,
-        baseComorbidity.icdCodes,
-        type,
-        clinicalStatus,
-        verificationStatus,
-        criticality,
-        baseComorbidity.year,
-        baseComorbidity.month
-    )
 
     override val comorbidityClass = ComorbidityClass.INTOLERANCE
 

@@ -10,18 +10,6 @@ data class Ecg(
     override val year: Int? = null,
     override val month: Int? = null
 ) : Comorbidity {
-    constructor(
-        baseComorbidity: BaseComorbidity,
-        qtcfMeasure: EcgMeasure? = null,
-        jtcMeasure: EcgMeasure? = null
-    ) : this(
-        baseComorbidity.name,
-        qtcfMeasure,
-        jtcMeasure,
-        baseComorbidity.icdCodes,
-        baseComorbidity.year,
-        baseComorbidity.month
-    )
 
     override val comorbidityClass = ComorbidityClass.ECG
 

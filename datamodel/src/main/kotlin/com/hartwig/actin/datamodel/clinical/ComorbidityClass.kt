@@ -7,6 +7,6 @@ enum class ComorbidityClass(val treatmentClass: Type) {
     COMPLICATION(Complication::class.java),
     TOXICITY(Toxicity::class.java),
     INTOLERANCE(Intolerance::class.java),
+    INFECTION(OtherCondition::class.java),
     ECG(Ecg::class.java),
-    BASE_COMORBIDITY(BaseComorbidity::class.java);
 }
