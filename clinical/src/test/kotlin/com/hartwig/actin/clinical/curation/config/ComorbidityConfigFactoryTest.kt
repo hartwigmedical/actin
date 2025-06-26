@@ -114,7 +114,7 @@ class ComorbidityConfigFactoryTest {
     }
 
     @Test
-    fun `test ToxicityCuration creation`() {
+    fun `Test ToxicityCuration creation`() {
         val data = arrayOf("toxicity", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2023", "12", "1", "")
         val config = configFactory.create(fields, data)
 
@@ -162,7 +162,7 @@ class ComorbidityConfigFactoryTest {
     }
 
     @Test
-    fun `test Ecg creation`() {
+    fun `Test Ecg creation`() {
         val data = arrayOf("ecg", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2023", "12", "0.5", "1", "1", "ecg", "1", "1", "10", "ms", "20", "ms")
         val config = configFactory.create(fields, data)
 
@@ -183,7 +183,23 @@ class ComorbidityConfigFactoryTest {
     }
 
     @Test
-    fun `test Infection as OtherCondition creation`() {
+    fun `Should return validation error for invalid Ecg QTCF value`() {
+        val data = arrayOf("ecg", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2023", "12", "0.5", "1", "1", "ecg", "1", "1", "invalid", "ms", "20", "ms")
+        val config = configFactory.create(fields, data)
+
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.COMORBIDITY,
+                "input",
+                "qtcfValue",
+                "invalid",
+                "integer"
+            )
+        )
+    }
+
+    @Test
+    fun `Test Infection as OtherCondition creation`() {
         val data = arrayOf("infection", "input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "", "", "", "", "", "interpretation")
         val config = configFactory.create(fields, data)
 

@@ -140,6 +140,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
                     ),
                     icdCodeResult.second + yearResult.second + monthResult.second
                 )
+
             ComorbidityClass.INTOLERANCE.name ->
                 Pair(
                     Intolerance(
@@ -148,6 +149,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
                     ),
                     icdCodeResult.second
                 )
+
             ComorbidityClass.OTHER_CONDITION.name ->
                 Pair(
                     OtherCondition(
@@ -158,6 +160,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
                     ),
                     icdCodeResult.second + yearResult.second + monthResult.second
                 )
+
             ComorbidityClass.TOXICITY.name ->
                 Pair(
                     ToxicityCuration(
@@ -167,26 +170,27 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
                     ),
                     icdCodeResult.second + gradeResult.second
                 )
+
             ComorbidityClass.ECG.name ->
                 Pair(
                     Ecg(
                         name = interpretationResult.first,
                         icdCodes = icdCodeResult.first,
                         qtcfMeasure = if (isQTCFResult.first == true) {
-                            EcgMeasure(
-                                value = qtcfValueResult.first as Int,
-                                unit = qtcfUnitResult.first as String
-                            )
+                            val value = qtcfValueResult.first
+                            val unit = qtcfUnitResult.first
+                            if (value != null && unit != null) EcgMeasure(value, unit) else null
                         } else null,
+
                         jtcMeasure = if (isJTCResult.first == true) {
-                            EcgMeasure(
-                                value = jtcValueResult.first as Int,
-                                unit = jtcUnitResult.first as String
-                            )
+                            val value = jtcValueResult.first
+                            val unit = jtcUnitResult.first
+                            if (value != null && unit != null) EcgMeasure(value, unit) else null
                         } else null
                     ),
                     icdCodeResult.second + qtcfValueResult.second + jtcValueResult.second
                 )
+
             ComorbidityClass.INFECTION.name ->
                 Pair(
                     OtherCondition(
@@ -195,6 +199,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
                     ),
                     icdCodeResult.second
                 )
+
             else -> Pair(null, emptyList())
         }
 
