@@ -28,7 +28,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val yearResult by lazy {
             validateInteger(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "year",
                 fields,
                 parts
@@ -37,7 +37,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val monthResult by lazy {
             validateInteger(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "month",
                 fields,
                 parts
@@ -46,7 +46,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val icdCodeResult by lazy {
             validateIcd(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "icd",
                 fields,
                 parts,
@@ -56,7 +56,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val gradeResult by lazy {
             validateInteger(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "grade",
                 fields,
                 parts
@@ -65,7 +65,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val impliesUnknownComplicationStateResult by lazy {
             validateBoolean(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "impliesUnknownComplicationState",
                 fields,
                 parts
@@ -74,7 +74,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val isLVEFResult by lazy {
             validateBoolean(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "isLVEF",
                 fields,
                 parts
@@ -83,7 +83,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val lvefValueResult by lazy {
             validateDouble(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "lvefValue",
                 fields,
                 parts
@@ -92,7 +92,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val isQTCFResult by lazy {
             validateBoolean(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "isQTCF",
                 fields,
                 parts
@@ -101,7 +101,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val isJTCResult by lazy {
             validateBoolean(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "isJTC",
                 fields,
                 parts
@@ -110,24 +110,24 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         val qtcfValueResult by lazy {
             validateInteger(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "qtcfValue",
                 fields,
                 parts
             )
         }
-        val qtcfUnitResult by lazy { validateString("qtcfUnit", fields, parts) }
+        val qtcfUnitResult by lazy { extractString("qtcfUnit", fields, parts) }
         val jtcValueResult by lazy {
             validateInteger(
                 CurationCategory.COMORBIDITY,
-                parts[fields["input"]!!],
+                input,
                 "jtcValue",
                 fields,
                 parts
             )
         }
-        val jtcUnitResult by lazy { validateString("jtcUnit", fields, parts) }
-        val interpretationResult by lazy { validateString("interpretation", fields, parts) }
+        val jtcUnitResult by lazy { extractString("jtcUnit", fields, parts) }
+        val interpretationResult by lazy { extractString("interpretation", fields, parts) }
 
         val curatedPair: Pair<Comorbidity?, List<CurationConfigValidationError>> = when (type.uppercase()) {
             ComorbidityClass.COMPLICATION.name ->
@@ -212,7 +212,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         )
     }
 
-    fun generateNoTypeError(
+    private fun generateNoTypeError(
         type: String,
         input: String,
         ignore: Boolean
@@ -235,7 +235,7 @@ class ComorbidityConfigFactory(private val icdModel: IcdModel) : CurationConfigF
         )
     }
 
-    fun validateString(
+    private fun extractString(
         fieldName: String,
         fields: Map<String, Int>,
         parts: Array<String>
