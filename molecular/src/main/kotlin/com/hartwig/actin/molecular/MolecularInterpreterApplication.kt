@@ -43,22 +43,36 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
-import kotlin.system.exitProcess
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
-class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
+data class DataResources(
+    val serveDatabase: ServeDatabase,
+    val doidEntry: DoidEntry
+)
 
-    fun run() {
+class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
+    fun run() = runBlocking {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+
+        LOGGER.info("resource load starting")
+        val dataResources = parallelLoad()
+        LOGGER.info("resource load complete")
 
         LOGGER.info("Loading clinical json from {}", config.clinicalJson)
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
@@ -70,14 +84,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
         }
 
-        LOGGER.info("Loading DOID tree from {}", config.doidJson)
-        val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
-
-        val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-        LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
-        val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
-        LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
+        val doidEntry = dataResources.doidEntry
+        val serveDatabase = dataResources.serveDatabase
 
         LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
         val panelSpecifications =
@@ -94,6 +102,32 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         PatientRecordJson.write(patientRecord, config.outputDirectory)
 
         LOGGER.info("Done!")
+    }
+
+    suspend fun loadServeDatabase(serveJsonFilePath: String): ServeDatabase = withContext(Dispatchers.IO) {
+        LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
+        val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
+        LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
+        serveDatabase
+    }
+
+    suspend fun loadDoidTree(doidJsonFilePath: String): DoidEntry = withContext(Dispatchers.IO) {
+        LOGGER.info("Loading DOID tree from {}", doidJsonFilePath)
+        val doidEntry = DoidJson.readDoidOwlEntry(doidJsonFilePath)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+        doidEntry
+    }
+
+    suspend fun parallelLoad(): DataResources = coroutineScope {
+        val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
+
+        val deferredServeDatabase = async { loadServeDatabase(serveJsonFilePath) }
+        val deferredDoidEntry = async { loadDoidTree(config.doidJson) }
+
+        val serveDatabase = deferredServeDatabase.await()
+        val doidEntry = deferredDoidEntry.await()
+
+        DataResources(serveDatabase, doidEntry)
     }
 
     private fun interpretOrangeRecord(
