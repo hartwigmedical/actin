@@ -61,7 +61,7 @@ import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
-data class DataResources(
+private data class DataResources(
     val serveDatabase: ServeDatabase,
     val doidEntry: DoidEntry
 )
@@ -71,7 +71,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
         LOGGER.info("resource load starting")
-        val dataResources = parallelLoad()
+        val dataResources = loadParallel()
         LOGGER.info("resource load complete")
 
         LOGGER.info("Loading clinical json from {}", config.clinicalJson)
@@ -84,16 +84,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
         }
 
-        val doidEntry = dataResources.doidEntry
-        val serveDatabase = dataResources.serveDatabase
-
         LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
         val panelSpecifications =
             config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
 
-        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, panelSpecifications, doidEntry, tumorDoids)
+        val orangeMolecularTests = interpretOrangeRecord(config, dataResources.serveDatabase, panelSpecifications, dataResources.doidEntry, tumorDoids)
         val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids, panelSpecifications)
+            interpretClinicalMolecularTests(config, clinical, dataResources.serveDatabase, dataResources.doidEntry, tumorDoids, panelSpecifications)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
@@ -104,25 +101,25 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Done!")
     }
 
-    suspend fun loadServeDatabase(serveJsonFilePath: String): ServeDatabase = withContext(Dispatchers.IO) {
-        LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
-        val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
-        LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
-        serveDatabase
-    }
-
-    suspend fun loadDoidTree(doidJsonFilePath: String): DoidEntry = withContext(Dispatchers.IO) {
-        LOGGER.info("Loading DOID tree from {}", doidJsonFilePath)
-        val doidEntry = DoidJson.readDoidOwlEntry(doidJsonFilePath)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
-        doidEntry
-    }
-
-    suspend fun parallelLoad(): DataResources = coroutineScope {
+    private suspend fun loadParallel(): DataResources = coroutineScope {
         val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
 
-        val deferredServeDatabase = async { loadServeDatabase(serveJsonFilePath) }
-        val deferredDoidEntry = async { loadDoidTree(config.doidJson) }
+        val deferredServeDatabase = async {
+            withContext(Dispatchers.IO) {
+                LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
+                val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
+                LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
+                serveDatabase
+            }
+        }
+        val deferredDoidEntry = async {
+            withContext(Dispatchers.IO) {
+                LOGGER.info("Loading DOID tree from {}", config.doidJson)
+                val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
+                LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+                doidEntry
+            }
+        }
 
         val serveDatabase = deferredServeDatabase.await()
         val doidEntry = deferredDoidEntry.await()
