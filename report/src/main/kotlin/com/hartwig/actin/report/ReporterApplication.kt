@@ -25,7 +25,7 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val envConfig = EnvironmentConfiguration.create(config.overrideYaml, config.profile)
+        val envConfig = EnvironmentConfiguration.create(config.overrideYaml)
         LOGGER.info(" Loaded config: $envConfig")
 
         val report = ReportFactory.create(LocalDate.now(), patient, treatmentMatch, envConfig)
