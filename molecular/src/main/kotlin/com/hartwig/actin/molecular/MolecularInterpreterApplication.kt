@@ -219,18 +219,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         }
     }
 
-    fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
-        return when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
-                EnsemblRefGenome.V37
-            }
-
-            RefGenomeVersion.V38 -> {
-                EnsemblRefGenome.V38
-            }
-        }
-    }
-
     companion object {
         const val APPLICATION: String = "ACTIN Molecular Interpreter"
 
@@ -239,6 +227,17 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     }
 }
 
+fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
+    return when (refGenomeVersion) {
+        RefGenomeVersion.V37 -> {
+            EnsemblRefGenome.V37
+        }
+
+        RefGenomeVersion.V38 -> {
+            EnsemblRefGenome.V38
+        }
+    }
+}
 
 fun main(args: Array<String>) {
     val options: Options = MolecularInterpreterConfig.createOptions()
