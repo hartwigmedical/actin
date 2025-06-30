@@ -768,11 +768,11 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_DRIVER_EVENT_WITH_APPROVED_THERAPY_AVAILABLE",
+    "eligibilityRule": "HAS_MOLECULAR_DRIVER_EVENT_WITH_APPROVED_THERAPY_AVAILABLE",
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE",
+    "eligibilityRule": "HAS_MOLECULAR_DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE",
     "usedStatus": "UNUSED"
   },
   {
