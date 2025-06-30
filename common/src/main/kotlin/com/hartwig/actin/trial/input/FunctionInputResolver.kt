@@ -24,6 +24,7 @@ import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.input.datamodel.AlbiGrade
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
@@ -90,6 +91,11 @@ class FunctionInputResolver(
             when (function.rule.input) {
                 FunctionInput.NONE -> {
                     return function.parameters.isEmpty()
+                }
+
+                FunctionInput.ONE_ALBI_GRADE -> {
+                    createOneAlbiGradeInput(function)
+                    return true
                 }
 
                 FunctionInput.ONE_INTEGER -> {
@@ -431,6 +437,11 @@ class FunctionInputResolver(
             LOGGER.warn(exception.message)
             return false
         }
+    }
+
+    fun createOneAlbiGradeInput(function: EligibilityFunction): AlbiGrade {
+        assertParamConfig(function, FunctionInput.ONE_ALBI_GRADE, 1)
+        return AlbiGrade.valueOf("GRADE_" + parameterAsString(function, 0))
     }
 
     fun createOneIntegerInput(function: EligibilityFunction): Int {

@@ -289,6 +289,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
 
     // Rules related to recent laboratory measurements
     HAS_ADEQUATE_ORGAN_FUNCTION(FunctionInput.NONE),
+    HAS_ALBI_GRADE_X(FunctionInput.ONE_ALBI_GRADE),
     HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_POTENTIAL_LEUKOCYTOSIS(FunctionInput.NONE),

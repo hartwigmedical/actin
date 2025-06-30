@@ -2,9 +2,10 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
@@ -52,17 +53,24 @@ internal object LabEvaluation {
         return evaluateVersusValueWithMargin(value, comparator, maxValue, false, LAB_VALUE_POSITIVE_MARGIN_OF_ERROR)
     }
 
-    fun isValid(value: LabValue?, measurement: LabMeasurement, minValidDate: LocalDate): Boolean {
-        return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
+    fun isValid(
+        value: LabValue?, measurement: LabMeasurement, minValidDate: LocalDate, expectedUnit: LabUnit = measurement.defaultUnit
+    ): Boolean {
+        return value != null && value.unit == expectedUnit && !value.date.isBefore(minValidDate)
     }
 
-    fun evaluateInvalidLabValue(measurement: LabMeasurement, mostRecent: LabValue?, minValidDate: LocalDate): Evaluation {
+    fun evaluateInvalidLabValue(
+        measurement: LabMeasurement,
+        mostRecent: LabValue?,
+        minValidDate: LocalDate,
+        expectedUnit: LabUnit = measurement.defaultUnit
+    ): Evaluation {
         return when {
             mostRecent == null -> {
                 EvaluationFactory.recoverableUndetermined("No measurement found for ${measurement.display()}")
             }
 
-            mostRecent.unit != measurement.defaultUnit -> {
+            mostRecent.unit != expectedUnit -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit.display()}"
                 )
