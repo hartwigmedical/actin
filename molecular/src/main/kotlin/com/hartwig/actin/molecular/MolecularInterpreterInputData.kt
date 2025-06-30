@@ -48,7 +48,6 @@ object InputDataLoader {
                     ClinicalRecordJson.read(config.clinicalJson)
                 }
             }
-
             val orange = async {
                 withContext(Dispatchers.IO) {
                     if (config.orangeJson != null) {
@@ -59,7 +58,6 @@ object InputDataLoader {
                     }
                 }
             }
-
             val deferredServeDatabase = async {
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
@@ -72,7 +70,7 @@ object InputDataLoader {
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading DOID tree from {}", config.doidJson)
                     val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-                    LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+                    LOGGER.info(" Loaded {} nodes from DOID tree", doidEntry.nodes.size)
                     doidEntry
                 }
             }
