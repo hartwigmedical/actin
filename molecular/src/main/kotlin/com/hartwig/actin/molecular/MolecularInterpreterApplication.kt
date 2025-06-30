@@ -51,7 +51,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
         LOGGER.info("resource load starting")
-        val inputData = loadInputData(config, CLINICAL_TESTS_REF_GENOME_VERSION)
+        val inputData = InputDataLoader.load(config, CLINICAL_TESTS_REF_GENOME_VERSION)
         LOGGER.info("resource load complete")
 
         val tumorDoids = inputData.clinical.tumor.doids.orEmpty().toSet()
@@ -76,7 +76,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretOrangeRecord(
         tumorDoids: Set<String>,
-        inputData: InputData
+        inputData: MolecularInterpreterInputData
     ): List<MolecularTest> {
         return if (inputData.orange != null) {
             val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.orange.refGenomeVersion())
@@ -98,7 +98,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         config: MolecularInterpreterConfig,
         clinical: ClinicalRecord,
         tumorDoids: Set<String>,
-        inputData: InputData
+        inputData: MolecularInterpreterInputData
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
@@ -230,7 +230,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             }
         }
     }
-    
+
     companion object {
         const val APPLICATION: String = "ACTIN Molecular Interpreter"
 
