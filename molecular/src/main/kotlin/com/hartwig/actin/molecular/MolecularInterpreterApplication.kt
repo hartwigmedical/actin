@@ -40,6 +40,7 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
@@ -63,11 +64,14 @@ import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
 private data class DataResources(
+    val clinical: ClinicalRecord,
+    val orange: OrangeRecord? = null,
     val serveDatabase: ServeDatabase,
     val doidEntry: DoidEntry,
     val ensemblDataCache: EnsemblDataCache,
     val dndsDatabase: DndsDatabase,
-    val knownFusionCache: KnownFusionCache
+    val knownFusionCache: KnownFusionCache,
+    val panelSpecifications: PanelSpecifications
 )
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
@@ -78,28 +82,21 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val dataResources = loadParallel()
         LOGGER.info("resource load complete")
 
-        LOGGER.info("Loading clinical json from {}", config.clinicalJson)
-        val clinical = ClinicalRecordJson.read(config.clinicalJson)
-
-        val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
+        val tumorDoids = dataResources.clinical.tumor.doids.orEmpty().toSet()
         if (tumorDoids.isEmpty()) {
-            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId)
+            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", dataResources.clinical.patientId)
         } else {
             LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
         }
 
-        LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
-        val panelSpecifications =
-            config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
-
-        val orangeMolecularTests = interpretOrangeRecord(config, dataResources.serveDatabase, panelSpecifications, dataResources.doidEntry, tumorDoids)
+        val orangeMolecularTests = interpretOrangeRecord(config, tumorDoids, dataResources)
         val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, clinical, tumorDoids, panelSpecifications, dataResources)
+            interpretClinicalMolecularTests(config, dataResources.clinical, tumorDoids, dataResources)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
 
-        val patientRecord = PatientRecordFactory.fromInputs(clinical, history)
+        val patientRecord = PatientRecordFactory.fromInputs(dataResources.clinical, history)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
 
         LOGGER.info("Done!")
@@ -107,6 +104,26 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private suspend fun loadParallel(): DataResources = coroutineScope {
         val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
+
+        val clinical = async {
+            withContext(Dispatchers.IO) {
+                LOGGER.info("Loading clinical json from {}", config.clinicalJson)
+                val clinical = ClinicalRecordJson.read(config.clinicalJson)
+                clinical
+            }
+        }
+
+        val orange = async {
+            withContext(Dispatchers.IO) {
+                if (config.orangeJson != null) {
+                    LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
+                    val orange = OrangeJson.getInstance().read(config.orangeJson)
+                    orange
+                } else {
+                    null
+                }
+            }
+        }
 
         val deferredServeDatabase = async {
             withContext(Dispatchers.IO) {
@@ -150,36 +167,43 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 knownFusionCache
             }
         }
+        val panelSpecifications = async {
+            withContext(Dispatchers.IO) {
+                LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
+                val panelSpecifications =
+                    config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
+                panelSpecifications
+            }
+        }
 
         DataResources(
+            clinical = clinical.await(),
+            orange = orange.await(),
             serveDatabase = deferredServeDatabase.await(),
             doidEntry = deferredDoidEntry.await(),
             ensemblDataCache = deferredEnsemblDataCache.await(),
             dndsDatabase = deferredDndsDatabase.await(),
-            knownFusionCache = deferredKnownFusionCache.await()
+            knownFusionCache = deferredKnownFusionCache.await(),
+            panelSpecifications = panelSpecifications.await()
         )
     }
 
     private fun interpretOrangeRecord(
         config: MolecularInterpreterConfig,
-        serveDatabase: ServeDatabase,
-        panelSpecifications: PanelSpecifications,
-        doidEntry: DoidEntry,
         tumorDoids: Set<String>,
+        dataResources: DataResources
     ): List<MolecularTest> {
-        return if (config.orangeJson != null) {
-            LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
-            val orange = OrangeJson.getInstance().read(config.orangeJson)
-            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(orange.refGenomeVersion())
-            val serveRecord = selectForRefGenomeVersion(serveDatabase, orangeRefGenomeVersion)
+        return if (dataResources.orange != null) {
+            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(dataResources.orange.refGenomeVersion())
+            val serveRecord = selectForRefGenomeVersion(dataResources.serveDatabase, orangeRefGenomeVersion)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
             MolecularInterpreter(
-                OrangeExtractor(geneFilter, panelSpecifications),
+                OrangeExtractor(geneFilter, dataResources.panelSpecifications),
                 MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents())),
-                listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, doidEntry, tumorDoids))
-            ).run(listOf(orange))
+                listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, dataResources.doidEntry, tumorDoids))
+            ).run(listOf(dataResources.orange))
         } else {
             emptyList()
         }
@@ -189,7 +213,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         config: MolecularInterpreterConfig,
         clinical: ClinicalRecord,
         tumorDoids: Set<String>,
-        panelSpecifications: PanelSpecifications,
         dataResources: DataResources
     ): List<MolecularTest> {
         LOGGER.info(
@@ -224,7 +247,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelCopyNumberAnnotator,
             panelVirusAnnotator,
             panelDriverAttributeAnnotator,
-            panelSpecifications,
+            dataResources.panelSpecifications,
             evidenceAnnotator
         )
 
