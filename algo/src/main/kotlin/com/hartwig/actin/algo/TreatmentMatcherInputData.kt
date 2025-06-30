@@ -24,7 +24,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
 data class TreatmentMatcherInputData(
     val patient: PatientRecord,
@@ -105,7 +104,8 @@ object InputDataLoader {
         val icdModel = IcdModel.create(icdNodes)
 
         val refGenomeVersion = patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37
-        val serveRefGenomeVersion = toServeRefGenomeVersion(refGenomeVersion)
+        val serveRefGenomeVersion = ServeLoader.toServeRefGenomeVersion(refGenomeVersion)
+
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
             ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
         LOGGER.info(" Loaded {} evidences from SERVE", serveRecord.evidences().size)
@@ -119,17 +119,5 @@ object InputDataLoader {
             treatmentDatabase = treatmentDatabase,
             serveRecord = serveRecord
         )
-    }
-}
-
-private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): ServeRefGenome {
-    return when (refGenomeVersion) {
-        RefGenomeVersion.V37 -> {
-            ServeRefGenome.V37
-        }
-
-        RefGenomeVersion.V38 -> {
-            ServeRefGenome.V38
-        }
     }
 }

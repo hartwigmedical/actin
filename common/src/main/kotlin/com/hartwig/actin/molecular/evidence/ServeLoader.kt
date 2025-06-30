@@ -29,7 +29,7 @@ object ServeLoader {
         return loadServeRecord(jsonFilePath, RefGenomeVersion.V37)
     }
 
-    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {
+    fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {
         return when (refGenomeVersion) {
             RefGenomeVersion.V37 -> {
                 RefGenome.V37

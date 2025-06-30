@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
+import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
@@ -42,7 +43,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
-import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
@@ -191,7 +191,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     }
 
     private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, refGenomeVersion: RefGenomeVersion): ServeRecord {
-        return serveDatabase.records()[toServeRefGenomeVersion(refGenomeVersion)]
+        return serveDatabase.records()[ServeLoader.toServeRefGenomeVersion(refGenomeVersion)]
             ?: throw IllegalStateException("No serve record for ref genome version $refGenomeVersion")
     }
 
@@ -206,7 +206,31 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             }
         }
     }
-    
+
+    private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefGenomeVersion {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                PaveRefGenomeVersion.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                PaveRefGenomeVersion.V38
+            }
+        }
+    }
+
+    fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                EnsemblRefGenome.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                EnsemblRefGenome.V38
+            }
+        }
+    }
+
     companion object {
         const val APPLICATION: String = "ACTIN Molecular Interpreter"
 
@@ -215,41 +239,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     }
 }
 
-private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): ServeRefGenome {
-    return when (refGenomeVersion) {
-        RefGenomeVersion.V37 -> {
-            ServeRefGenome.V37
-        }
-
-        RefGenomeVersion.V38 -> {
-            ServeRefGenome.V38
-        }
-    }
-}
-
-private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefGenomeVersion {
-    return when (refGenomeVersion) {
-        RefGenomeVersion.V37 -> {
-            PaveRefGenomeVersion.V37
-        }
-
-        RefGenomeVersion.V38 -> {
-            PaveRefGenomeVersion.V38
-        }
-    }
-}
-
-fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
-    return when (refGenomeVersion) {
-        RefGenomeVersion.V37 -> {
-            EnsemblRefGenome.V37
-        }
-
-        RefGenomeVersion.V38 -> {
-            EnsemblRefGenome.V38
-        }
-    }
-}
 
 fun main(args: Array<String>) {
     val options: Options = MolecularInterpreterConfig.createOptions()

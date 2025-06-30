@@ -78,7 +78,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Done!")
     }
 
-
     companion object {
         const val APPLICATION = "ACTIN Treatment Matcher"
 
