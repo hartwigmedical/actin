@@ -131,7 +131,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             withContext(Dispatchers.IO) {
                 LOGGER.info("Loading DOID tree from {}", config.doidJson)
                 val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-                LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+                LOGGER.info(" Loaded {} nodes from DOID tree", doidEntry.nodes.size)
                 doidEntry
             }
         }
@@ -139,7 +139,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             withContext(Dispatchers.IO) {
                 LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
                 val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
-                LOGGER.info(" Loaded {} nodes", icdNodes.size)
+                LOGGER.info(" Loaded {} nodes from ICD-11 tree", icdNodes.size)
                 icdNodes
             }
         }
@@ -159,7 +159,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
                 LOGGER.info("Loading SERVE database for resistance evidence from {}", serveJsonFilePath)
                 val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
-                LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
+                LOGGER.info(" Loaded SERVE version {}", serveDatabase.version())
                 serveDatabase
             }
         }
@@ -187,7 +187,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         }
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
             ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
-        LOGGER.info(" Loaded {} evidences", serveRecord.evidences().size)
+        LOGGER.info(" Loaded {} evidences from SERVE", serveRecord.evidences().size)
 
         DataResources(
             patient = patient,
