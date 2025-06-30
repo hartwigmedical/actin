@@ -81,7 +81,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
             EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSitu(),
-            EligibilityRule.TUMOR_INFILTRATES_IN_BLOOD_VESSEL to { TumorInfiltratesBloodVessel() }
+            EligibilityRule.HAS_LESIONS_INFILTRATING_BLOOD_VESSEL to { HasLesionsInfiltratingBloodVessel() }
         )
     }
 

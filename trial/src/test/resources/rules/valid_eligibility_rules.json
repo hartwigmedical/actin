@@ -356,7 +356,7 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "TUMOR_INFILTRATES_IN_BLOOD_VESSEL",
+    "eligibilityRule": "HAS_LESIONS_INFILTRATING_BLOOD_VESSEL",
     "usedStatus": "UNUSED"
   },
   {

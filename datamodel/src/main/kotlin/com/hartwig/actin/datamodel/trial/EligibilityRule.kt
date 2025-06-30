@@ -99,7 +99,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_BCLC_STAGE_X(FunctionInput.ONE_STRING),
     HAS_LEFT_SIDED_COLORECTAL_TUMOR(FunctionInput.NONE),
     HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU(FunctionInput.NONE),
-    TUMOR_INFILTRATES_IN_BLOOD_VESSEL(FunctionInput.NONE),
+    HAS_LESIONS_INFILTRATING_BLOOD_VESSEL(FunctionInput.NONE),
 
     // Rules related to previous cancer treatments
     CURRENTLY_GETS_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES(FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER),
