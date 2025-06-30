@@ -15,7 +15,6 @@ import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +24,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
 data class TreatmentMatcherInputData(
     val patient: PatientRecord,
@@ -105,15 +105,7 @@ object InputDataLoader {
         val icdModel = IcdModel.create(icdNodes)
 
         val refGenomeVersion = patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37
-        val serveRefGenomeVersion = when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
-                RefGenome.V37
-            }
-
-            RefGenomeVersion.V38 -> {
-                RefGenome.V38
-            }
-        }
+        val serveRefGenomeVersion = toServeRefGenomeVersion(refGenomeVersion)
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
             ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
         LOGGER.info(" Loaded {} evidences from SERVE", serveRecord.evidences().size)
@@ -127,5 +119,17 @@ object InputDataLoader {
             treatmentDatabase = treatmentDatabase,
             serveRecord = serveRecord
         )
+    }
+}
+
+private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): ServeRefGenome {
+    return when (refGenomeVersion) {
+        RefGenomeVersion.V37 -> {
+            ServeRefGenome.V37
+        }
+
+        RefGenomeVersion.V38 -> {
+            ServeRefGenome.V38
+        }
     }
 }

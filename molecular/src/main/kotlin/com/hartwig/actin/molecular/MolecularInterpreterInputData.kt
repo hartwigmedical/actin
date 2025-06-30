@@ -45,8 +45,7 @@ object InputDataLoader {
             val clinical = async {
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading clinical json from {}", config.clinicalJson)
-                    val clinical = ClinicalRecordJson.read(config.clinicalJson)
-                    clinical
+                    ClinicalRecordJson.read(config.clinicalJson)
                 }
             }
 
@@ -54,8 +53,7 @@ object InputDataLoader {
                 withContext(Dispatchers.IO) {
                     if (config.orangeJson != null) {
                         LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
-                        val orange = OrangeJson.getInstance().read(config.orangeJson)
-                        orange
+                        OrangeJson.getInstance().read(config.orangeJson)
                     } else {
                         null
                     }

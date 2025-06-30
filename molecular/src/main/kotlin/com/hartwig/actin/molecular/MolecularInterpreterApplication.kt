@@ -206,36 +206,36 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             }
         }
     }
-
-    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): ServeRefGenome {
-        return when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
-                ServeRefGenome.V37
-            }
-
-            RefGenomeVersion.V38 -> {
-                ServeRefGenome.V38
-            }
-        }
-    }
-
-    private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefGenomeVersion {
-        return when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
-                PaveRefGenomeVersion.V37
-            }
-
-            RefGenomeVersion.V38 -> {
-                PaveRefGenomeVersion.V38
-            }
-        }
-    }
-
+    
     companion object {
         const val APPLICATION: String = "ACTIN Molecular Interpreter"
 
         val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
         private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+    }
+}
+
+private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): ServeRefGenome {
+    return when (refGenomeVersion) {
+        RefGenomeVersion.V37 -> {
+            ServeRefGenome.V37
+        }
+
+        RefGenomeVersion.V38 -> {
+            ServeRefGenome.V38
+        }
+    }
+}
+
+private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefGenomeVersion {
+    return when (refGenomeVersion) {
+        RefGenomeVersion.V37 -> {
+            PaveRefGenomeVersion.V37
+        }
+
+        RefGenomeVersion.V38 -> {
+            PaveRefGenomeVersion.V38
+        }
     }
 }
 
