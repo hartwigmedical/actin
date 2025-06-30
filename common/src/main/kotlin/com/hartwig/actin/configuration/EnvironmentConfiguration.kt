@@ -8,12 +8,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
-enum class ConfigurationProfile {
-    STANDARD,
-    CRC,
-    MCGI
-}
-
 enum class MolecularSummaryType {
     NONE,
     STANDARD,
@@ -67,54 +61,19 @@ data class EnvironmentConfiguration(
     companion object {
         private val LOGGER = LogManager.getLogger(EnvironmentConfiguration::class.java)
 
-        fun create(overridesPath: String?, profile: String? = null): EnvironmentConfiguration {
-            val initialConfig = overridesPath?.let {
-                val mapper = ObjectMapper(YAMLFactory())
-                mapper.registerModules(KotlinModule.Builder().configure(KotlinFeature.NullIsSameAsDefault, true).build())
-                mapper.findAndRegisterModules()
-                mapper.readValue(File(overridesPath), EnvironmentConfiguration::class.java)
-            } ?: EnvironmentConfiguration()
+        fun create(environmentConfigFile: String?): EnvironmentConfiguration {
+            val configuration = environmentConfigFile?.let { readEnvironmentConfigYaml(it) } ?: EnvironmentConfiguration()
+            val configSource = environmentConfigFile?.let { "file $it" } ?: "defaults"
 
-            val configProfile = profile?.let(ConfigurationProfile::valueOf) ?: ConfigurationProfile.STANDARD
-
-            val configuration = when (configProfile) {
-                ConfigurationProfile.CRC -> initialConfig.copy(
-                    report = initialConfig.report.copy(
-                        includeOverviewWithClinicalHistorySummary = true,
-                        includeMolecularDetailsChapter = false,
-                        includeIneligibleTrialsInSummary = true,
-                        includeApprovedTreatmentsInSummary = false,
-                        includeSOCLiteratureEfficacyEvidence = true,
-                        includeEligibleSOCTreatmentSummary = true,
-                        molecularSummaryType = MolecularSummaryType.NONE,
-                        includePatientHeader = false,
-                        filterOnSOCExhaustionAndTumorType = true
-                    )
-                )
-
-                ConfigurationProfile.MCGI -> initialConfig.copy(
-                    report = initialConfig.report.copy(
-                        includeMolecularDetailsChapter = false,
-                        molecularSummaryType = MolecularSummaryType.NONE,
-                        includeApprovedTreatmentsInSummary = false,
-                        includeTrialMatchingInSummary = false,
-                        includeClinicalDetailsChapter = false,
-                        includeTrialMatchingChapter = true,
-                        includeOnlyExternalTrialsInTrialMatching = true,
-                        includeExternalTrialsInSummary = false,
-                        includeLongitudinalMolecularChapter = true,
-                        includeMolecularEvidenceChapter = true,
-                        includeTreatmentEvidenceRanking = true,
-                        countryOfReference = Country.USA
-                    )
-                )
-
-                ConfigurationProfile.STANDARD -> initialConfig
-            }
-
-            val configSource = overridesPath?.let { "file $it" } ?: "defaults"
-            LOGGER.info("Loaded environment configuration from $configSource using $configProfile profile.")
+            LOGGER.info("Loaded environment configuration from $configSource")
             return configuration
+        }
+
+        private fun readEnvironmentConfigYaml(environmentConfigYamlPath: String): EnvironmentConfiguration {
+            val mapper = ObjectMapper(YAMLFactory())
+            mapper.registerModules(KotlinModule.Builder().configure(KotlinFeature.NullIsSameAsDefault, true).build())
+            mapper.findAndRegisterModules()
+            return mapper.readValue(File(environmentConfigYamlPath), EnvironmentConfiguration::class.java)
         }
     }
 }

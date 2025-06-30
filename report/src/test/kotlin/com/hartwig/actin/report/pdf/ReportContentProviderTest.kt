@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf
 
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
@@ -11,25 +10,18 @@ import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
-import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
-import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
-import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
-import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryWithOverviewGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
-import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -92,43 +84,6 @@ class ReportContentProviderTest {
             SummaryChapter::class,
             MolecularDetailsChapter::class,
             ClinicalDetailsChapter::class,
-            TrialMatchingOtherResultsChapter::class,
-            TrialMatchingDetailsChapter::class
-        )
-    }
-
-    @Test
-    fun `Should omit molecular chapter and include efficacy chapter and resistance evidence chapter when CRC profile is provided`() {
-        val report = proper.copy(
-            config = EnvironmentConfiguration.create(null, "CRC").report
-        )
-        val enableExtendedMode = false
-        val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
-        assertThat(chapters.map { it::class }).containsExactly(
-            SummaryChapter::class,
-            PersonalizedEvidenceChapter::class,
-            ResistanceEvidenceChapter::class,
-            EfficacyEvidenceChapter::class,
-            ClinicalDetailsChapter::class,
-            EfficacyEvidenceDetailsChapter::class,
-            TrialMatchingOtherResultsChapter::class
-        )
-    }
-
-    @Test
-    fun `Should omit molecular chapter and include both efficacy chapters and resistance evidence chapter when CRC profile is provided in extended mode`() {
-        val report = proper.copy(
-            config = EnvironmentConfiguration.create(null, "CRC").report
-        )
-        val enableExtendedMode = true
-        val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
-        assertThat(chapters.map { it::class }).containsExactly(
-            SummaryChapter::class,
-            PersonalizedEvidenceChapter::class,
-            ResistanceEvidenceChapter::class,
-            EfficacyEvidenceChapter::class,
-            ClinicalDetailsChapter::class,
-            EfficacyEvidenceDetailsChapter::class,
             TrialMatchingOtherResultsChapter::class,
             TrialMatchingDetailsChapter::class
         )
@@ -217,23 +172,7 @@ class ReportContentProviderTest {
             EligibleTrialGenerator::class
         )
     }
-
-    @Test
-    fun `Should omit molecular table summary and include SOC treatments in summary when using CRC profile`() {
-        val report = TestReportFactory.createExhaustiveTestReport().copy(
-            config = EnvironmentConfiguration.create(null, "CRC").report
-        )
-        val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, emptyList())
-
-        assertThat(tables.map { it::class }).containsExactly(
-            PatientClinicalHistoryWithOverviewGenerator::class,
-            SOCEligibleApprovedTreatmentGenerator::class,
-            EligibleTrialGenerator::class,
-            EligibleTrialGenerator::class,
-            IneligibleTrialGenerator::class
-        )
-    }
-
+    
     private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
         val trialMatchingOtherResultsChapter =
             ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingOtherResultsChapter>().first()

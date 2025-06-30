@@ -21,7 +21,7 @@ private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(
 )
 
 class AnyGeneHasDriverEventWithApprovedTherapy(
-    private val genes: Set<String>,
+    private val genes: Set<String>?,
     val doidModel: DoidModel,
     private val evaluationFunctionFactory: EvaluationFunctionFactory,
     private val maxTestAge: LocalDate? = null
@@ -38,7 +38,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
 
             isNsclc -> {
                 val evaluation = HasMolecularDriverEventInNsclc(
-                    genesToInclude = genes.toSet(),
+                    genesToInclude = genes?.toSet(),
                     genesToExclude = emptySet(),
                     maxTestAge = maxTestAge,
                     warnForMatchesOutsideGenesToInclude = false,
@@ -48,7 +48,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
                 if (evaluation.result in setOf(
                         EvaluationResult.UNDETERMINED,
                         EvaluationResult.FAIL
-                    ) && !NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE.containsAll(genes)
+                    ) && genes?.let { !NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE.containsAll(genes) } ?: false
                 ) {
                     val unevaluatedGenes = genes.subtract(NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE)
                     EvaluationFactory.undetermined("Possible presence of driver events for gene(s) ${Format.concat(unevaluatedGenes)} could not be determined")
