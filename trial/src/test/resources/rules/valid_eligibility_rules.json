@@ -260,6 +260,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_LESIONS_INFILTRATING_BLOOD_VESSEL",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_LESION_COUNT_OF_AT_LEAST_X_IN_BODY_LOCATION_Y",
     "usedStatus": "UNUSED"
   },
