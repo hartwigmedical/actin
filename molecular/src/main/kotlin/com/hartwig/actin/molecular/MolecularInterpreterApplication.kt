@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.SequencingTest
@@ -11,13 +10,9 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.doid.datamodel.DoidEntry
-import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
-import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
@@ -28,29 +23,17 @@ import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
 import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
-import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.panel.PanelVirusAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
-import com.hartwig.hmftools.common.fusion.KnownFusionCache
-import com.hartwig.hmftools.datamodel.OrangeJson
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
-import com.hartwig.serve.datamodel.serialization.ServeJson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -63,147 +46,49 @@ import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
-private data class DataResources(
-    val clinical: ClinicalRecord,
-    val orange: OrangeRecord? = null,
-    val serveDatabase: ServeDatabase,
-    val doidEntry: DoidEntry,
-    val ensemblDataCache: EnsemblDataCache,
-    val dndsDatabase: DndsDatabase,
-    val knownFusionCache: KnownFusionCache,
-    val panelSpecifications: PanelSpecifications
-)
-
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
     fun run() = runBlocking {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
         LOGGER.info("resource load starting")
-        val dataResources = loadParallel()
+        val inputData = loadInputData(config, CLINICAL_TESTS_REF_GENOME_VERSION)
         LOGGER.info("resource load complete")
 
-        val tumorDoids = dataResources.clinical.tumor.doids.orEmpty().toSet()
+        val tumorDoids = inputData.clinical.tumor.doids.orEmpty().toSet()
         if (tumorDoids.isEmpty()) {
-            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", dataResources.clinical.patientId)
+            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", inputData.clinical.patientId)
         } else {
             LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
         }
 
-        val orangeMolecularTests = interpretOrangeRecord(config, tumorDoids, dataResources)
+        val orangeMolecularTests = interpretOrangeRecord(tumorDoids, inputData)
         val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, dataResources.clinical, tumorDoids, dataResources)
+            interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
 
-        val patientRecord = PatientRecordFactory.fromInputs(dataResources.clinical, history)
+        val patientRecord = PatientRecordFactory.fromInputs(inputData.clinical, history)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
 
         LOGGER.info("Done!")
     }
 
-    private suspend fun loadParallel(): DataResources = coroutineScope {
-        val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-
-        val clinical = async {
-            withContext(Dispatchers.IO) {
-                LOGGER.info("Loading clinical json from {}", config.clinicalJson)
-                val clinical = ClinicalRecordJson.read(config.clinicalJson)
-                clinical
-            }
-        }
-
-        val orange = async {
-            withContext(Dispatchers.IO) {
-                if (config.orangeJson != null) {
-                    LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
-                    val orange = OrangeJson.getInstance().read(config.orangeJson)
-                    orange
-                } else {
-                    null
-                }
-            }
-        }
-
-        val deferredServeDatabase = async {
-            withContext(Dispatchers.IO) {
-                LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
-                val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
-                LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
-                serveDatabase
-            }
-        }
-        val deferredDoidEntry = async {
-            withContext(Dispatchers.IO) {
-                LOGGER.info("Loading DOID tree from {}", config.doidJson)
-                val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-                LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
-                doidEntry
-            }
-        }
-        val deferredEnsemblDataCache = async {
-            withContext(Dispatchers.IO) {
-                val ensemblRefGenomeVersion = toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)
-                LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
-                EnsemblDataLoader.load(config.ensemblCachePath, ensemblRefGenomeVersion)
-            }
-        }
-        val deferredDndsDatabase = async {
-            withContext(Dispatchers.IO) {
-                LOGGER.info(
-                    "Loading dnds database for driver likelihood annotation from " +
-                            "${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}"
-                )
-                DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
-            }
-        }
-        val deferredKnownFusionCache = async {
-            withContext(Dispatchers.IO) {
-                LOGGER.info("Loading known fusions from " + config.knownFusionsPath)
-                val knownFusionCache = KnownFusionCache()
-                if (!knownFusionCache.loadFromFile(config.knownFusionsPath)) {
-                    throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
-                }
-                knownFusionCache
-            }
-        }
-        val panelSpecifications = async {
-            withContext(Dispatchers.IO) {
-                LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
-                val panelSpecifications =
-                    config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) } ?: PanelSpecifications(emptyMap())
-                panelSpecifications
-            }
-        }
-
-        DataResources(
-            clinical = clinical.await(),
-            orange = orange.await(),
-            serveDatabase = deferredServeDatabase.await(),
-            doidEntry = deferredDoidEntry.await(),
-            ensemblDataCache = deferredEnsemblDataCache.await(),
-            dndsDatabase = deferredDndsDatabase.await(),
-            knownFusionCache = deferredKnownFusionCache.await(),
-            panelSpecifications = panelSpecifications.await()
-        )
-    }
-
     private fun interpretOrangeRecord(
-        config: MolecularInterpreterConfig,
         tumorDoids: Set<String>,
-        dataResources: DataResources
+        inputData: InputData
     ): List<MolecularTest> {
-        return if (dataResources.orange != null) {
-            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(dataResources.orange.refGenomeVersion())
-            val serveRecord = selectForRefGenomeVersion(dataResources.serveDatabase, orangeRefGenomeVersion)
+        return if (inputData.orange != null) {
+            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.orange.refGenomeVersion())
+            val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, orangeRefGenomeVersion)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
             MolecularInterpreter(
-                OrangeExtractor(geneFilter, dataResources.panelSpecifications),
+                OrangeExtractor(geneFilter, inputData.panelSpecifications),
                 MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents())),
-                listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, dataResources.doidEntry, tumorDoids))
-            ).run(listOf(dataResources.orange))
+                listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids))
+            ).run(listOf(inputData.orange))
         } else {
             emptyList()
         }
@@ -213,32 +98,32 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         config: MolecularInterpreterConfig,
         clinical: ClinicalRecord,
         tumorDoids: Set<String>,
-        dataResources: DataResources
+        inputData: InputData
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
                     + "assuming ref genome version '$CLINICAL_TESTS_REF_GENOME_VERSION'"
         )
-        val serveRecord = selectForRefGenomeVersion(dataResources.serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
+        val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
 
         LOGGER.info("Interpreting {} prior sequencing test(s)", clinical.sequencingTests.size)
-        val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dataResources.dndsDatabase)
+        val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(inputData.dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
-            toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION), config.referenceGenomeFastaPath, dataResources.ensemblDataCache
+            toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION), config.referenceGenomeFastaPath, inputData.ensemblDataCache
         )
         val paveRefGenomeVersion = toPaveRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)
         val paver = Paver(
             config.ensemblCachePath, config.referenceGenomeFastaPath, paveRefGenomeVersion, config.driverGenePanelPath, config.tempDir
         )
-        val paveLite = PaveLite(dataResources.ensemblDataCache, false)
+        val paveLite = PaveLite(inputData.ensemblDataCache, false)
 
         val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
-        val panelFusionAnnotator = PanelFusionAnnotator(dataResources.knownFusionCache, dataResources.ensemblDataCache)
-        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(dataResources.ensemblDataCache)
+        val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
+        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()
         val panelDriverAttributeAnnotator =
             PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), geneDriverLikelihoodModel)
-        val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, dataResources.doidEntry, tumorDoids)
+        val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical.sequencingTests,
@@ -247,7 +132,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             panelCopyNumberAnnotator,
             panelVirusAnnotator,
             panelDriverAttributeAnnotator,
-            dataResources.panelSpecifications,
+            inputData.panelSpecifications,
             evidenceAnnotator
         )
 
@@ -334,18 +219,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         }
     }
 
-    private fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
-        return when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
-                EnsemblRefGenome.V37
-            }
-
-            RefGenomeVersion.V38 -> {
-                EnsemblRefGenome.V38
-            }
-        }
-    }
-
     private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefGenomeVersion {
         return when (refGenomeVersion) {
             RefGenomeVersion.V37 -> {
@@ -357,13 +230,24 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             }
         }
     }
-
-
+    
     companion object {
         const val APPLICATION: String = "ACTIN Molecular Interpreter"
 
         val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
         private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+    }
+}
+
+fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
+    return when (refGenomeVersion) {
+        RefGenomeVersion.V37 -> {
+            EnsemblRefGenome.V37
+        }
+
+        RefGenomeVersion.V38 -> {
+            EnsemblRefGenome.V38
+        }
     }
 }
 
