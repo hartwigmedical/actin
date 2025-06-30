@@ -356,6 +356,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "TUMOR_INFILTRATES_IN_BLOOD_VESSEL",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "CURRENTLY_GETS_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES",
     "usedStatus": "UNUSED"
   },
