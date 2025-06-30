@@ -33,6 +33,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
+            EligibilityRule.DRIVER_EVENT_IN_ANY_GENE_WITH_APPROVED_THERAPY_AVAILABLE to
+                    hasMolecularDriverEventInAnyGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
                     hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC to
@@ -113,6 +115,17 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator(),
             EligibilityRule.HAS_PROTEIN_X_POLYMORPHISM_Y to hasProteinPolymorphismCreator()
         )
+    }
+
+    private fun hasMolecularDriverEventInAnyGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
+        return {
+            AnyGeneHasDriverEventWithApprovedTherapy(
+                emptySet(),
+                doidModel(),
+                EvaluationFunctionFactory.create(resources),
+                maxMolecularTestAge()
+            )
+        }
     }
 
     private fun hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
