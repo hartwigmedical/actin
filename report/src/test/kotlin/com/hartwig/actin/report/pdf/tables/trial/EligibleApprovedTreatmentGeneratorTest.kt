@@ -23,6 +23,13 @@ import java.time.LocalDate
 class EligibleApprovedTreatmentGeneratorTest {
 
     @Test
+    fun `Should return approved treatments if available`() {
+        val contents = eligibleTreatmentsTable(treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch())
+        assertThat(getCellContents(contents, 0, 0)).isEqualTo("Pembrolizumab")
+    }
+
+
+    @Test
     fun `Should return Potential SOC if it is a cancer of unknown primary`() {
         val cupTumor = TumorDetails(name = "Some $CUP_STRING")
         val clinicalRecord = TestClinicalFactory.createProperTestClinicalRecord().copy(tumor = cupTumor)
