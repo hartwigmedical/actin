@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.laboratory.LabUnitConversionTable.findConversionFactor
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AlbiGrade
@@ -34,8 +33,15 @@ class HasSpecificAlbiGrade(
 
             else -> {
                 val albiScore = calculateAlbiScore(albumin!!, bilirubin!!)
+
+                if (albiScore == null) {
+                    EvaluationFactory.recoverableUndetermined(
+                        "ALBI score cannot be calculated since albumin or bilirubin not in expected unit and not able to convert"
+                    )
+                }
+
                 val albiGrade = when {
-                    albiScore <= -2.60 -> AlbiGrade.GRADE_1
+                    albiScore!! <= -2.60 -> AlbiGrade.GRADE_1
                     albiScore <= -1.39 -> AlbiGrade.GRADE_2
                     else -> AlbiGrade.GRADE_3
                 }
@@ -57,22 +63,12 @@ class HasSpecificAlbiGrade(
         }
     }
 
-    private fun calculateAlbiScore(albumin: LabValue, bilirubin: LabValue): Double {
-        return log10(valueInExpectedUnit(bilirubin)) * 0.66 - 0.0852 * valueInExpectedUnit(albumin)
-    }
-
-    private fun valueInExpectedUnit(labValue: LabValue): Double {
-        val expected = when (labValue.measurement) {
-            LabMeasurement.ALBUMIN -> LabUnit.GRAMS_PER_LITER
-            LabMeasurement.TOTAL_BILIRUBIN -> LabUnit.MICROMOLES_PER_LITER
-            else -> labValue.unit
-        }
-
-        return if (labValue.unit == expected) {
-            labValue.value
-        } else {
-            val conversion = findConversionFactor(labValue.measurement, labValue.unit, expected)
-            conversion?.let { labValue.value * it } ?: labValue.value
-        }
+    private fun calculateAlbiScore(albumin: LabValue, bilirubin: LabValue): Double? {
+        val convertedBilirubin =
+            LabUnitConverter.convert(LabMeasurement.TOTAL_BILIRUBIN, bilirubin, LabUnit.MICROMOLES_PER_LITER)
+        val convertedAlbumin = LabUnitConverter.convert(LabMeasurement.ALBUMIN, albumin, LabUnit.GRAMS_PER_LITER)
+        return if (convertedBilirubin != null && convertedAlbumin != null) {
+            log10(convertedBilirubin) * 0.66 - 0.0852 * convertedAlbumin
+        } else null
     }
 }

@@ -1060,10 +1060,6 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "HAS_ALBI_GRADE_X",
-    "usedStatus": "UNUSED"
-  },
-  {
     "eligibilityRule": "HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X",
     "usedStatus": "UNUSED"
   },
@@ -1121,6 +1117,10 @@
   },
   {
     "eligibilityRule": "HAS_PTT_ULN_OF_AT_MOST_X",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_ALBI_GRADE_X",
     "usedStatus": "UNUSED"
   },
   {
