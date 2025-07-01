@@ -104,6 +104,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_CANCER_WITH_LARGE_CELL_COMPONENT",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_KNOWN_SCLC_TRANSFORMATION",
     "usedStatus": "UNUSED"
   },

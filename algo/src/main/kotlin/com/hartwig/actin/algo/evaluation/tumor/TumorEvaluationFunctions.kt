@@ -24,6 +24,14 @@ object TumorEvaluationFunctions {
         return hasSmallCellDoid || hasSmallCellName
     }
 
+    fun hasTumorWithLargeCellComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
+        val hasLargeCellDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.LARGE_CELL_CANCER_DOIDS)
+        val hasLargeCellName = TumorTermConstants.LARGE_CELL_TERMS.any {
+            tumorName.lowercase().contains(it)
+        } && !TumorTermConstants.NON_SMALL_CELL_TERMS.any { tumorName.lowercase().contains(it) }
+        return hasLargeCellDoid || hasLargeCellName
+    }
+
     fun hasCancerOfUnknownPrimary(tumorName: String): Boolean {
         return tumorName.contains(TumorTermConstants.CUP_TERM)
     }

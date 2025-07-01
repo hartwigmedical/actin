@@ -7,4 +7,5 @@ object TumorTermConstants {
     val NEUROENDOCRINE_TERMS = setOf("neuroendocrine")
     val NON_SMALL_CELL_TERMS = setOf("non-small", "non small")
     val SMALL_CELL_TERMS = setOf("small cell", "scnec")
+    val LARGE_CELL_TERMS = setOf("large cell", "lcnec")
 }
