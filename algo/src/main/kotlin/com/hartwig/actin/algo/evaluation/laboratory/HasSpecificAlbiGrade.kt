@@ -2,34 +2,34 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.laboratory.LabUnitConversionTable.findConversionFactor
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
-import com.hartwig.actin.trial.input.datamodel.AlbiGrade
 import java.time.LocalDate
 import kotlin.math.log10
 
 class HasSpecificAlbiGrade(
-    private val grade: AlbiGrade, private val minValidDate: LocalDate, private val minPassDate: LocalDate
+    private val grade: AlbiGrade,
+    private val minValidLabDate: LocalDate,
+    private val minPassLabDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (albumin, bilirubin) = listOf(LabMeasurement.ALBUMIN, LabMeasurement.TOTAL_BILIRUBIN)
-            .map { measurement -> record.labValues.filter { it.measurement == measurement } }
-            .map { it.sortedWith(LabValueDescendingDateComparator(true)).firstOrNull() }
-
-        val albuminValid = LabEvaluation.isValid(albumin, LabMeasurement.ALBUMIN, minValidDate, LabUnit.GRAMS_PER_LITER)
-        val bilirubinValid = LabEvaluation.isValid(bilirubin, LabMeasurement.TOTAL_BILIRUBIN, minValidDate, LabUnit.MICROMOLES_PER_LITER)
+        val interpreter = LabInterpretation.interpret(record.labValues)
+        val bilirubin = interpreter.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN)
+        val albumin = interpreter.mostRecentValue(LabMeasurement.ALBUMIN)
 
         return when {
-            !albuminValid -> {
-                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.ALBUMIN, albumin, minValidDate, LabUnit.GRAMS_PER_LITER)
+            !LabEvaluation.isValid(albumin, LabMeasurement.ALBUMIN, minValidLabDate) -> {
+                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.ALBUMIN, albumin, minValidLabDate)
             }
 
-            !bilirubinValid -> {
-                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.TOTAL_BILIRUBIN, bilirubin, minValidDate, LabUnit.MICROMOLES_PER_LITER)
+            !LabEvaluation.isValid(bilirubin, LabMeasurement.TOTAL_BILIRUBIN, minValidLabDate) -> {
+                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.TOTAL_BILIRUBIN, bilirubin, minValidLabDate)
             }
 
             else -> {
@@ -41,16 +41,16 @@ class HasSpecificAlbiGrade(
                 }
 
                 if (albiGrade == grade) {
-                    val message = "Albumin-bilirubin (ALBI) grade sufficient." +
-                            if (albumin.date.isBefore(minPassDate) || bilirubin.date.isBefore(minPassDate)) {
-                        " but measurement occurred before $minPassDate"
+                    val message = "ALBI grade sufficient" +
+                            if (albumin.date.isBefore(minPassLabDate) || bilirubin.date.isBefore(minPassLabDate)) {
+                        " but measurement occurred before $minPassLabDate"
                     } else {
                         ""
                     }
                     EvaluationFactory.recoverablePass(message)
                 } else {
                     EvaluationFactory.recoverableFail(
-                        "Albumin-bilirubin (ALBI) grade ($albiGrade) insufficient - should be ${grade.display}."
+                        "ALBI grade (${albiGrade.display()}) insufficient - should be ${grade.display()}"
                     )
                 }
             }
@@ -58,6 +58,21 @@ class HasSpecificAlbiGrade(
     }
 
     private fun calculateAlbiScore(albumin: LabValue, bilirubin: LabValue): Double {
-        return log10(bilirubin.value) * 0.66 - 0.0852 * albumin.value
+        return log10(valueInExpectedUnit(bilirubin)) * 0.66 - 0.0852 * valueInExpectedUnit(albumin)
+    }
+
+    private fun valueInExpectedUnit(labValue: LabValue): Double {
+        val expected = when (labValue.measurement) {
+            LabMeasurement.ALBUMIN -> LabUnit.GRAMS_PER_LITER
+            LabMeasurement.TOTAL_BILIRUBIN -> LabUnit.MICROMOLES_PER_LITER
+            else -> labValue.unit
+        }
+
+        return if (labValue.unit == expected) {
+            labValue.value
+        } else {
+            val conversion = findConversionFactor(labValue.measurement, labValue.unit, expected)
+            conversion?.let { labValue.value * it } ?: labValue.value
+        }
     }
 }

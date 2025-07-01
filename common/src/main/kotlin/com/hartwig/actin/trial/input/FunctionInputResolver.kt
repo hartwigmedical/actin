@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
+import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
@@ -24,7 +25,6 @@ import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
-import com.hartwig.actin.trial.input.datamodel.AlbiGrade
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
@@ -441,7 +441,7 @@ class FunctionInputResolver(
 
     fun createOneAlbiGradeInput(function: EligibilityFunction): AlbiGrade {
         assertParamConfig(function, FunctionInput.ONE_ALBI_GRADE, 1)
-        return AlbiGrade.valueOf("GRADE_" + parameterAsString(function, 0))
+        return toAlbiGrade(parameterAsString(function, 0))
     }
 
     fun createOneIntegerInput(function: EligibilityFunction): Int {
@@ -934,6 +934,14 @@ class FunctionInputResolver(
             parameterAsInt(function, 1),
             parameterAsInt(function, 2)
         )
+    }
+
+    private fun toAlbiGrade(grade: String): AlbiGrade {
+        try {
+            return AlbiGrade.valueOf("GRADE_$grade")
+        } catch (e: Exception) {
+            throw IllegalStateException("ALBI grade not found: GRADE_$grade")
+        }
     }
 
     private fun throwExceptionIfAtcCategoryNotMapped(category: String) {
