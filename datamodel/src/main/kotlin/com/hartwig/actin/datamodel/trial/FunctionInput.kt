@@ -2,6 +2,7 @@ package com.hartwig.actin.datamodel.trial
 
 enum class FunctionInput {
     NONE,
+    ONE_ALBI_GRADE,
     ONE_INTEGER,
     TWO_INTEGERS,
     MANY_INTEGERS,

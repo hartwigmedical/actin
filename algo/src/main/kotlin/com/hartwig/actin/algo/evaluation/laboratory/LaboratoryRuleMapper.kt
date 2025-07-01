@@ -12,10 +12,10 @@ import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.othercondition.HasPotentialSymptomaticHypercalcemia
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctionFactory
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -50,6 +50,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
             EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
             EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X to hasLimitedPTTCreator(),
+            EligibilityRule.HAS_ALBI_GRADE_X to hasSpecificAlbiGradeCreator(),
             EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X to hasSufficientLabValueCreator(
                 LabMeasurement.ALBUMIN,
                 LabUnit.GRAMS_PER_DECILITER
@@ -157,6 +158,13 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasAdequateOrganFunctionCreator(): FunctionCreator {
         return { HasAdequateOrganFunction(minValidLabDate(), icdModel()) }
+    }
+
+    private fun hasSpecificAlbiGradeCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val albiGrade = functionInputResolver().createOneAlbiGradeInput(function)
+            HasSpecificAlbiGrade(albiGrade, minValidLabDate(), minPassLabDate())
+        }
     }
 
     private fun hasLimitedPTTCreator(): FunctionCreator {

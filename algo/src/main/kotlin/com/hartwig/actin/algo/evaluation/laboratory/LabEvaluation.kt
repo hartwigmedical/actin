@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
@@ -56,7 +56,11 @@ internal object LabEvaluation {
         return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
     }
 
-    fun evaluateInvalidLabValue(measurement: LabMeasurement, mostRecent: LabValue?, minValidDate: LocalDate): Evaluation {
+    fun evaluateInvalidLabValue(
+        measurement: LabMeasurement,
+        mostRecent: LabValue?,
+        minValidDate: LocalDate
+    ): Evaluation {
         return when {
             mostRecent == null -> {
                 EvaluationFactory.recoverableUndetermined("No measurement found for ${measurement.display()}")

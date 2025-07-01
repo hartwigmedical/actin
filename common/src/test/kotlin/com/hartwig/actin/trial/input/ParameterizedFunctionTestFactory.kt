@@ -42,6 +42,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 emptyList()
             }
 
+            FunctionInput.ONE_ALBI_GRADE -> {
+                listOf("1")
+            }
+
             FunctionInput.ONE_INTEGER, FunctionInput.ONE_DOUBLE -> {
                 listOf("1")
             }

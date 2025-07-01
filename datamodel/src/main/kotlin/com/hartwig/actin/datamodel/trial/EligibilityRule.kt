@@ -304,6 +304,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_APTT_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS(FunctionInput.NONE),
     HAS_PTT_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
+    HAS_ALBI_GRADE_X(FunctionInput.ONE_ALBI_GRADE),
     HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_ALBUMIN_LLN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_ASAT_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),

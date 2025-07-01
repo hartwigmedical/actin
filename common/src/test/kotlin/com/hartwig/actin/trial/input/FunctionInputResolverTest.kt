@@ -17,6 +17,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory.createTestResolver
+import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -108,6 +109,18 @@ class FunctionInputResolverTest {
         val rule = firstOfType(FunctionInput.NONE)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isTrue
         assertThat(resolver.hasValidInputs(create(rule, listOf("1 is too many")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one ALBI grade input`() {
+        val rule = firstOfType(FunctionInput.ONE_ALBI_GRADE)
+        val valid = create(rule, listOf("1"))
+
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneAlbiGradeInput(valid)).isEqualTo(AlbiGrade.GRADE_1)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "2")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an albi grade")))!!).isFalse
     }
 
     @Test
