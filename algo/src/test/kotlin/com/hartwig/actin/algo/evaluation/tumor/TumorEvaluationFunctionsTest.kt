@@ -19,6 +19,7 @@ class TumorEvaluationFunctionsTest {
             ), listOf("Small cell cancer", "Neuroendocrine cancer")
         )
     private val smallCellDoids = setOf(DoidConstants.SMALL_CELL_CANCER_DOIDS.first(), OTHER_DOID)
+    private val largeCellDoids = setOf(DoidConstants.LARGE_CELL_CANCER_DOIDS.first(), OTHER_DOID)
     private val neuroendocrineDoids = setOf(DoidConstants.NEUROENDOCRINE_DOIDS.first(), OTHER_DOID)
     private val otherDoids = setOf(OTHER_DOID)
     private val otherName = "name"
@@ -35,6 +36,22 @@ class TumorEvaluationFunctionsTest {
                 doidModel,
                 otherDoids,
                 "name ${TumorTermConstants.SMALL_CELL_TERMS.first()}"
+            )
+        ).isTrue()
+    }
+
+    @Test
+    fun `Should return true if tumor has large cell doid`() {
+        assertThat(TumorEvaluationFunctions.hasTumorWithLargeCellComponent(doidModel, largeCellDoids, otherName)).isTrue()
+    }
+
+    @Test
+    fun `Should return true if tumor has large cell name`() {
+        assertThat(
+            TumorEvaluationFunctions.hasTumorWithLargeCellComponent(
+                doidModel,
+                otherDoids,
+                "name ${TumorTermConstants.LARGE_CELL_TERMS.first()}"
             )
         ).isTrue()
     }
