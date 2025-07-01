@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidTerm
+import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.DoidModel
@@ -18,15 +19,16 @@ object TumorEvaluationFunctions {
 
     fun hasTumorWithSmallCellComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
         val hasSmallCellDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.SMALL_CELL_CANCER_DOIDS)
-        val hasSmallCellName = TumorTermConstants.SMALL_CELL_TERMS.any {
-            tumorName.lowercase().contains(it)
-        } && !TumorTermConstants.NON_SMALL_CELL_TERMS.any { tumorName.lowercase().contains(it) }
+        val hasSmallCellName = ValueComparison.stringCaseInsensitivelyMatchesQueryCollection(
+            tumorName,
+            TumorTermConstants.SMALL_CELL_TERMS
+        ) && !TumorTermConstants.NON_SMALL_CELL_TERMS.any { tumorName.lowercase().contains(it) }
         return hasSmallCellDoid || hasSmallCellName
     }
 
     fun hasTumorWithLargeCellComponent(doidModel: DoidModel, tumorDoids: Set<String>?, tumorName: String): Boolean {
         val hasLargeCellDoid = isOfAtLeastOneDoidType(doidModel, tumorDoids, DoidConstants.LARGE_CELL_CANCER_DOIDS)
-        val hasLargeCellName = TumorTermConstants.LARGE_CELL_TERMS.any { tumorName.lowercase().contains(it) }
+        val hasLargeCellName = ValueComparison.stringCaseInsensitivelyMatchesQueryCollection(tumorName, TumorTermConstants.LARGE_CELL_TERMS)
         return hasLargeCellDoid || hasLargeCellName
     }
 
