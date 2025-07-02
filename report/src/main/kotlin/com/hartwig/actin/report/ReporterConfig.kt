@@ -9,13 +9,15 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
+import java.time.LocalDate
 
 data class ReporterConfig(
     val patientJson: String,
     val treatmentMatchJson: String,
     val overrideYaml: String?,
     val outputDirectory: String,
-    val enableExtendedMode: Boolean
+    val enableExtendedMode: Boolean,
+    val reportDate: LocalDate? = null
 ) {
 
     companion object {
@@ -26,6 +28,7 @@ data class ReporterConfig(
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
         private const val LOG_DEBUG = "log_debug"
+        private const val REPORT_DATE = "report_date"
 
         fun createOptions(): Options {
             val options = Options()
@@ -35,6 +38,7 @@ data class ReporterConfig(
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
+            options.addOption(REPORT_DATE, true, "If set, sets fixed report date")
             return options
         }
 
@@ -54,6 +58,7 @@ data class ReporterConfig(
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
                 overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                reportDate = cmd.getOptionValue(REPORT_DATE)?.let { LocalDate.parse(it) },
                 enableExtendedMode = enableExtendedMode
             )
         }
