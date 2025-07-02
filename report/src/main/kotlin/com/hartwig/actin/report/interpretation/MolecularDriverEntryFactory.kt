@@ -1,23 +1,23 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.approved
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.experimental
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 
@@ -64,45 +64,45 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     private fun formatMutationType(variant: Variant): String {
         return when {
             variant.isCancerAssociatedVariant && variant.proteinEffect == ProteinEffect.UNKNOWN -> {
-                "Cancer-associated variant with unknown protein effect"
+                "cancer-associated variant with unknown protein effect"
             }
 
             variant.isCancerAssociatedVariant && isNoEffect(variant) -> {
-                "Cancer-associated variant with no protein effect"
+                "cancer-associated variant with no protein effect"
             }
 
             isNoEffect(variant) -> {
-                "No protein effect"
+                "no protein effect"
             }
 
             variant.geneRole == GeneRole.ONCO && isGainOfFunction(variant) -> {
-                "Gain of function"
+                "gain of function"
             }
 
             variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
-                "Loss of function, biallelic"
+                "loss of function, biallelic"
             }
 
             variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) -> {
-                "Loss of function"
+                "loss of function"
             }
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)
                     && variant.isCancerAssociatedVariant && (variant.extendedVariantDetails?.isBiallelic == true) -> {
-                "Cancer-associated variant, biallelic"
+                "cancer-associated variant, biallelic"
             }
 
             variant.isCancerAssociatedVariant -> {
-                "Cancer-associated variant"
+                "cancer-associated variant"
             }
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG) &&
                     (variant.extendedVariantDetails?.isBiallelic == true) -> {
-                "No known cancer-associated variant, biallelic"
+                "no known cancer-associated variant, biallelic"
             }
 
             else -> {
-                "No known cancer-associated variant, not biallelic"
+                "no known cancer-associated variant, not biallelic"
             }
         }
     }
