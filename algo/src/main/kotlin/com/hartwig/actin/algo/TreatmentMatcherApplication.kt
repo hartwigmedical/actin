@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo
 
-import com.hartwig.actin.PatientPrinter
-import com.hartwig.actin.PatientRecordJson
+import InputDataLoader
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
@@ -10,20 +9,11 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
-import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.doid.DoidModelFactory
-import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.icd.IcdModel
-import com.hartwig.actin.icd.serialization.CsvReader
-import com.hartwig.actin.icd.serialization.IcdDeserializer
-import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
-import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.serialization.ServeJson
+import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -35,48 +25,32 @@ import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
-    fun run() {
+    fun run() = runBlocking {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
-        LOGGER.info("Loading patient record from {}", config.patientRecordJson)
-        val patient = PatientRecordJson.read(config.patientRecordJson)
-        PatientPrinter.printRecord(patient)
+        LOGGER.info("Loading data")
+        val inputData = InputDataLoader.load(config)
+        LOGGER.info("Loading complete")
 
-        LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
-        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
-        LOGGER.info(" Loaded {} trials", trials.size)
-
-        LOGGER.info("Loading DOID tree from {}", config.doidJson)
-        val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
-        val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
-
-        LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
-        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
-        LOGGER.info(" Loaded {} nodes", icdNodes.size)
-        val icdModel = IcdModel.create(icdNodes)
-
-        LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
-        val atcTree = AtcTree.createFromFile(config.atcTsv)
-
-        val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(inputData.patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
 
         // We assume we never check validity of a gene inside algo.
         val molecularInputChecker = MolecularInputChecker.createAnyGeneValid()
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver =
-            FunctionInputResolver(doidModel, icdModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
+            FunctionInputResolver(inputData.doidModel, inputData.icdModel, molecularInputChecker,
+                treatmentDatabase, MedicationCategories.create(inputData.atcTree))
         val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
         LOGGER.info(" Loaded algo config: $configuration")
 
         val maxMolecularTestAge = configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
-            doidModel = doidModel,
-            icdModel = icdModel,
+            doidModel = inputData.doidModel,
+            icdModel = inputData.icdModel,
             functionInputResolver = functionInputResolver,
-            atcTree = atcTree,
+            atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,
             personalizationDataPath = config.personalizationDataPath,
             treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,
@@ -85,25 +59,18 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
-        val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-        LOGGER.info("Loading SERVE database for resistance evidence from {}", serveJsonFilePath)
-        val serveRecord = ServeLoader.loadServeRecord(
-            serveJsonFilePath,
-            patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37
-        )
-        LOGGER.info(" Loaded {} evidences", serveRecord.evidences().size)
         val resistanceEvidenceMatcher =
             ResistanceEvidenceMatcher.create(
-                doidModel = doidModel,
-                tumorDoids = patient.tumor.doids.orEmpty().toSet(),
-                evidences = serveRecord.evidences(),
+                doidModel = inputData.doidModel,
+                tumorDoids = inputData.patient.tumor.doids.orEmpty().toSet(),
+                evidences = inputData.serveRecord.evidences(),
                 treatmentDatabase = treatmentDatabase,
-                molecularHistory = patient.molecularHistory,
-                actionabilityMatcher = ActionabilityMatcher(serveRecord.evidences(), serveRecord.trials())
+                molecularHistory = inputData.patient.molecularHistory,
+                actionabilityMatcher = ActionabilityMatcher(inputData.serveRecord.evidences(), inputData.serveRecord.trials())
             )
 
-        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
-        val treatmentMatch = treatmentMatcher.run(patient)
+        val treatmentMatcher = TreatmentMatcher.create(resources, inputData.trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
+        val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         LOGGER.info("Printing treatment match")
         TreatmentMatchPrinter.printMatch(treatmentMatch)
