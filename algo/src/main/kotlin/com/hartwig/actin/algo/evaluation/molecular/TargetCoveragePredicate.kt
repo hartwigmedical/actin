@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import java.util.function.Predicate
@@ -75,6 +76,6 @@ data class TargetCoverageMessage(private val messagePrefix: String?, private val
 
     override fun toString(): String {
         return "${if (messagePrefix != null) "$messagePrefix " else ""}gene${if (genes.size > 1) "s" else ""} " +
-                "${genes.joinToString()} undetermined (not tested for ${targetString})"
+                "${Format.concat(genes)} undetermined (not tested for ${targetString})"
     }
 }
