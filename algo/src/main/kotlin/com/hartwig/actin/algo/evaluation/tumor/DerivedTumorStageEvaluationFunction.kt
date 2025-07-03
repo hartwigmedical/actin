@@ -24,10 +24,10 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
             return followResultOfSingleDerivation(derivedResults)
         }
 
-        val uniqueResults = derivedResults.values.toSet()
+        val uniqueResults = derivedResults.values.map(Evaluation::result).toSet()
 
         return if (uniqueResults.size == 1) {
-            createEvaluationForDerivedResult(derivedResults, uniqueResults.first().result)
+            createEvaluationForDerivedResult(derivedResults, uniqueResults.first())
         } else {
             EvaluationFactory.undetermined("Undetermined if patient has $messageEnd")
         }
