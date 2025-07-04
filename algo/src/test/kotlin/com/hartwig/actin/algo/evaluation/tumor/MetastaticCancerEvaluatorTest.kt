@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.tumor.MetastaticCancerEvaluator.STAGE_II_POTENTIALLY_METASTATIC_CANCER_DOIDS
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -13,8 +14,9 @@ class MetastaticCancerEvaluatorTest {
     @Test
     fun `Should return METASTATIC for stage III or IV`() {
         listOf(TumorStage.III, TumorStage.IV).forEach { stage ->
-            assertThat(MetastaticCancerEvaluator.isMetastatic(TumorTestFactory.withTumorStage(stage), doidModel))
-                .isEqualTo(MetastaticCancerEvaluation.METASTATIC)
+            assertThat(MetastaticCancerEvaluator.isMetastatic(TumorTestFactory.withTumorStage(stage), doidModel)).isEqualTo(
+                    MetastaticCancerEvaluation.METASTATIC
+                )
         }
     }
 
@@ -31,9 +33,9 @@ class MetastaticCancerEvaluatorTest {
     fun `Should return NON_METASTATIC for tumor stage II in cancer type without possible metastatic disease in stage II`() {
         assertThat(
             MetastaticCancerEvaluator.isMetastatic(
-                TumorTestFactory.withTumorStageAndDoid(TumorStage.II, STAGE_II_POTENTIALLY_METASTATIC_CANCER_DOIDS.first()), doidModel
+                TumorTestFactory.withTumorStageAndDoid(TumorStage.II, DoidConstants.COLORECTAL_CANCER_DOID), doidModel
             )
-        ).isEqualTo(MetastaticCancerEvaluation.UNDETERMINED)
+        ).isEqualTo(MetastaticCancerEvaluation.NON_METASTATIC)
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,10 +12,12 @@ class HasOligometastaticCancer(private val doidModel: DoidModel) : EvaluationFun
         val metastaticCancerEvaluation = MetastaticCancerEvaluator.isMetastatic(record, doidModel)
 
         return when (metastaticCancerEvaluation) {
-            MetastaticCancerEvaluation.DATA_MISSING -> undetermined("Undetermined if oligometastatic cancer (tumor stage missing)")
+            MetastaticCancerEvaluation.DATA_MISSING -> {
+                EvaluationFactory.undetermined("Undetermined if oligometastatic cancer (tumor stage missing)")
+            }
 
             MetastaticCancerEvaluation.METASTATIC, MetastaticCancerEvaluation.UNDETERMINED -> {
-                undetermined("Undetermined if oligometastatic cancer")
+                EvaluationFactory.undetermined("Undetermined if oligometastatic cancer")
             }
 
             MetastaticCancerEvaluation.NON_METASTATIC -> {
