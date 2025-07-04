@@ -48,7 +48,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertThat(evaluation.passMessagesStrings()).containsExactly("All systemic treatments resulted in progressive disease")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Has had progressive disease following latest treatment line")
         assertEvaluation(EvaluationResult.PASS, evaluation)
     }
 

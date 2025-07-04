@@ -28,7 +28,7 @@ class HasHadProgressionFollowingLatestTreatmentLine(
             }
 
             systemicTreatments.all { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
-                EvaluationFactory.pass("All systemic treatments resulted in progressive disease")
+                EvaluationFactory.pass("Has had progressive disease following latest treatment line")
             }
 
             treatmentWithoutDateDiffersInPDStatusFromLastTreatment -> {
