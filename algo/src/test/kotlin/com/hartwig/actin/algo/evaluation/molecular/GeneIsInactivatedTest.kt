@@ -54,7 +54,7 @@ class GeneIsInactivatedTest {
     )
     private val nonHighDriverNonBiallelicMatchingVariant = matchingVariant.copy(
         driverLikelihood = DriverLikelihood.LOW,
-        isBiallelic = false,
+        isBiallelic = false
     )
 
     @Test
