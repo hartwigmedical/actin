@@ -7,19 +7,18 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
-class HasMetastaticCancerTest {
+class HasOligometastaticCancerTest {
 
     private val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-    private val function = HasMetastaticCancer(doidModel)
+    private val function = HasOligometastaticCancer(doidModel)
 
     @Test
-    fun `Should pass for stage III or IV`() {
-        assertEvaluation(EvaluationResult.PASS, evaluateFunction(TumorStage.III))
-        assertEvaluation(EvaluationResult.PASS, evaluateFunction(TumorStage.IV))
+    fun `Should return undetermined for stage III or IV`() {
+        listOf(TumorStage.III, TumorStage.IV).forEach { stage -> assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(stage)) }
     }
 
     @Test
-    fun `Should be undetermined for tumor stage II in cancer type with possible metastatic disease in stage II`() {
+    fun `Should return undetermined for tumor stage II in cancer type with possible metastatic disease in stage II`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
@@ -33,12 +32,11 @@ class HasMetastaticCancerTest {
 
     @Test
     fun `Should fail for tumor stage I or II`() {
-        assertEvaluation(EvaluationResult.FAIL, evaluateFunction(TumorStage.I))
-        assertEvaluation(EvaluationResult.FAIL, evaluateFunction(TumorStage.II))
+        listOf(TumorStage.I, TumorStage.II).forEach { stage -> assertEvaluation(EvaluationResult.FAIL, evaluateFunction(stage)) }
     }
 
     @Test
-    fun `Should be undetermined when no tumor stage provided`() {
+    fun `Should return undetermined when no tumor stage provided`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(null))
     }
 

@@ -33,6 +33,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_TNM_T_SCORE_X to hasSpecificTnmTScoreCreator(),
             EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER to hasLocallyAdvancedCancerCreator(),
             EligibilityRule.HAS_METASTATIC_CANCER to hasMetastaticCancerCreator(),
+            EligibilityRule.HAS_OLIGOMETASTATIC_CANCER to hasOligometastaticCancerCreator(),
             EligibilityRule.HAS_UNRESECTABLE_CANCER to hasUnresectableCancerCreator(),
             EligibilityRule.HAS_UNRESECTABLE_STAGE_III_CANCER to hasUnresectableStageIIICancerCreator(),
             EligibilityRule.HAS_RECURRENT_CANCER to hasRecurrentCancerCreator(),
@@ -192,6 +193,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
         return { DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()), "metastatic cancer") }
+    }
+
+    private fun hasOligometastaticCancerCreator(): FunctionCreator {
+        return { DerivedTumorStageEvaluationFunction(HasOligometastaticCancer(doidModel()), "oligometastatic cancer") }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {

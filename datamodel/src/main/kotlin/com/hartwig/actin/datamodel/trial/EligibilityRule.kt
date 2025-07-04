@@ -51,6 +51,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_TNM_T_SCORE_X(FunctionInput.MANY_TNM_T),
     HAS_LOCALLY_ADVANCED_CANCER(FunctionInput.NONE),
     HAS_METASTATIC_CANCER(FunctionInput.NONE),
+    HAS_OLIGOMETASTATIC_CANCER(FunctionInput.NONE),
     HAS_UNRESECTABLE_CANCER(FunctionInput.NONE),
     HAS_UNRESECTABLE_STAGE_III_CANCER(FunctionInput.NONE),
     HAS_RECURRENT_CANCER(FunctionInput.NONE),
