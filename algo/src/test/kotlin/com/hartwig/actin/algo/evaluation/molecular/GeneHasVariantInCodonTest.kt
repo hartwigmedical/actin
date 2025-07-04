@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val MATCHING_CODON = 100
@@ -30,7 +30,7 @@ class GeneHasVariantInCodonTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal()
-                        .copy(isReportable = true, gene = TARGET_GENE, extendedVariantDetails = TestVariantFactory.createMinimalExtended())
+                        .copy(isReportable = true, gene = TARGET_GENE)
                 )
             )
         )
@@ -45,8 +45,7 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        canonicalImpact = impactWithCodon(OTHER_CODON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        canonicalImpact = impactWithCodon(OTHER_CODON)
                     )
                 )
             )
@@ -63,7 +62,6 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(MATCHING_CODON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
                     )
                 )
             )
@@ -85,7 +83,7 @@ class GeneHasVariantInCodonTest {
     }
 
     @Test
-    fun `Should warn when reportable codon matches but subclonal`() {
+    fun `Should warn when reportable codon matches but known subclonal`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -93,8 +91,8 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
-                        canonicalImpact = impactWithCodon(MATCHING_CODON)
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        clonalLikelihood = 0.3
                     )
                 )
             )
@@ -111,7 +109,7 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(OTHER_CODON),
-                        otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))
+                        otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON)),
                     )
                 )
             )
@@ -119,7 +117,7 @@ class GeneHasVariantInCodonTest {
     }
 
     @Test
-    fun `Should warn when reportable codon matches but also variant on non-canonical transcript `() {
+    fun `Should warn when reportable codon matches but also variant on non-canonical transcript`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -127,8 +125,7 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        canonicalImpact = impactWithCodon(MATCHING_CODON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+                        canonicalImpact = impactWithCodon(MATCHING_CODON)
                     ),
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
@@ -150,13 +147,12 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        canonicalImpact = impactWithCodon(MATCHING_CODON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+                        canonicalImpact = impactWithCodon(MATCHING_CODON)
                     ),
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
+                        clonalLikelihood = 0.3,
                         canonicalImpact = impactWithCodon(MATCHING_CODON)
                     )
                 )
@@ -188,8 +184,9 @@ class GeneHasVariantInCodonTest {
                 molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
             )
         )
-        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessagesStrings()).containsExactly("Mutation in codons A100, B200 in gene gene A undetermined (not tested for mutations)")
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessagesStrings())
+            .containsExactly("Mutation in codons A100, B200 in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun impactWithCodon(affectedCodon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)

@@ -44,7 +44,8 @@ class GeneIsInactivatedTest {
         gene = GENE,
         isReportable = true,
         driverLikelihood = DriverLikelihood.HIGH,
-        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true),
+        isBiallelic = true,
+        clonalLikelihood = 1.0,
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
         canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
@@ -53,7 +54,7 @@ class GeneIsInactivatedTest {
     )
     private val nonHighDriverNonBiallelicMatchingVariant = matchingVariant.copy(
         driverLikelihood = DriverLikelihood.LOW,
-        extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false),
+        isBiallelic = false
     )
 
     @Test
@@ -126,10 +127,15 @@ class GeneIsInactivatedTest {
     }
 
     @Test
+    fun `Should warn with matching TSG variant when unknown if biallelic`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(isBiallelic = null))
+    }
+
+    @Test
     fun `Should pass with matching TSG variant when unknown if clonal`() {
         assertResultForVariant(
             EvaluationResult.PASS,
-            matchingVariant.copy(extendedVariantDetails = null)
+            matchingVariant.copy(clonalLikelihood = null)
         )
     }
 
@@ -137,7 +143,7 @@ class GeneIsInactivatedTest {
     fun `Should fail with matching TSG variant but not clonal`() {
         assertResultForVariant(
             EvaluationResult.FAIL,
-            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(clonalLikelihood = 0.4))
+            matchingVariant.copy(clonalLikelihood = 0.4)
         )
     }
 
@@ -165,7 +171,7 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG variant is not biallelic`() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false))
+            matchingVariant.copy(isBiallelic = false)
         )
     }
 
@@ -297,7 +303,7 @@ class GeneIsInactivatedTest {
     fun `Should warn with multiple low driver variants with unknown phase groups and inactivating effects`() {
         val variant1 = variantWithPhaseGroups(null)
         // Add copy number to make distinct:
-        val variant2 = variant1.copy(extendedVariantDetails = variant1.extendedVariantDetails?.copy(variantCopyNumber = 1.0))
+        val variant2 = variant1.copy(variantCopyNumber = 1.0)
 
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
@@ -349,6 +355,6 @@ class GeneIsInactivatedTest {
         isReportable = true,
         canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),
         driverLikelihood = DriverLikelihood.LOW,
-        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(phaseGroups = phaseGroups)
+        phaseGroups = phaseGroups
     )
 }

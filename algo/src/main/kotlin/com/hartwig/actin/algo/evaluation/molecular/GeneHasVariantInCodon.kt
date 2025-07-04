@@ -35,7 +35,7 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
                 codons.forEach { codon ->
                     if (isCodonMatch(variant.canonicalImpact.affectedCodon, codon)) {
                         canonicalCodonMatches.add(codon)
-                        if (variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
+                        if (variant.isReportable && variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
                             canonicalReportableSubclonalCodonMatches.add(codon)
                         }
                     }
@@ -49,7 +49,7 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
             .groupBy { variant ->
                 val hasCanonicalCodonMatch = containsCodon(variant.canonicalImpact.affectedCodon, canonicalCodonMatches)
                 when {
-                    hasCanonicalCodonMatch && variant.isReportable && variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true -> {
+                    hasCanonicalCodonMatch && variant.isReportable && variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true -> {
                         VariantClassification.CANONICAL_REPORTABLE_SUBCLONAL
                     }
 

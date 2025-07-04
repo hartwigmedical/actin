@@ -45,7 +45,7 @@ class GeneHasVariantWithProteinImpact(
             .filter { it.proteinImpact in allowedProteinImpacts }
             .groupBy { variantAndImpact ->
                 if (variantAndImpact.variant.isReportable) {
-                    if (variantAndImpact.variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
+                    if (variantAndImpact.variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
                         VariantClassification.CANONICAL_REPORTABLE_SUBCLONAL
                     } else {
                         VariantClassification.CANONICAL_REPORTABLE

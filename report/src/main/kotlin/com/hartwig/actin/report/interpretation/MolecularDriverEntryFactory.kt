@@ -50,9 +50,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
         val driverType = "Mutation ($mutationTypeString$driverLikelihood)"
 
-        val variantAndTotalCopies = variant.extendedVariantDetails?.let { details ->
-            listOf(min(details.variantCopyNumber, details.totalCopyNumber), details.totalCopyNumber)
-        } ?: listOf(0.0, 0.0)
+        val variantAndTotalCopies =
+            variant.variantCopyNumber?.let { vcn -> variant.totalCopyNumber?.let { cn -> listOf(min(vcn, cn), cn) } } ?: listOf(0.0, 0.0)
         val (variantCopyString, totalCopyString) = variantAndTotalCopies.map(::formatCopyNumberString)
 
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
@@ -79,7 +78,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
                 "gain of function"
             }
 
-            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.isBiallelic == true) -> {
                 "loss of function, biallelic"
             }
 
@@ -88,7 +87,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             }
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)
-                    && variant.isCancerAssociatedVariant && (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                    && variant.isCancerAssociatedVariant && (variant.isBiallelic == true) -> {
                 "cancer-associated variant, biallelic"
             }
 
@@ -97,7 +96,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             }
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG) &&
-                    (variant.extendedVariantDetails?.isBiallelic == true) -> {
+                    (variant.isBiallelic == true) -> {
                 "no known cancer-associated variant, biallelic"
             }
 

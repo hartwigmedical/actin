@@ -124,28 +124,22 @@ Furthermore, every driver event affecting a single gene is assigned the followin
 
 In addition to the (gene) driver fields, the following data is captured for variants:
 
-| Field                     | Example Value | Details                                                                      |
-|---------------------------|---------------|------------------------------------------------------------------------------|
-| chromosome                | 1             | The chromosome in which the event was detected                               |
-| position                  | 41206120      | Genomic position in respect to chromosome and ref genome                     |
-| ref                       | A             | The base(s) as found in the reference genome at this position                |
-| alt                       | G             | The base(s) as found in the sample analyzed                                  |
-| type                      | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                |
-| variantAlleleFrequency    | 0.63          | The percentage of genomic reads containing this variant                      |
-| canonicalImpact           | See impact    | The impact of this variant on the canonical transcript of the gene           |
-| otherImpacts              | See impact    | The impact of this variant on other transcripts of the gene                  |
-| extendedVariantDetails    | See below     | Optional field with extended details on the variant                          |
-| isCancerAssociatedVariant | true          | Indicates whether this specific variant is a known cancer-associated variant |
-
-Depending on the type of molecular test, more details may be available for a variant as follows:
-
-| Field             | Example Value | Details                                                                                             |
-|-------------------|---------------|-----------------------------------------------------------------------------------------------------|
-| variantCopyNumber | 2.3           | The number of copies of this variant in the tumor                                                   |
-| totalCopyNumber   | 4.0           | The total number of copies in the tumor on the variant genomic position                             |
-| isBiallelic       | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
-| phaseGroups       | 1, 2          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
-| clonalLikelihood  | 0.98          | Likelihood that the variant exists in every tumor cell (hence: is clonal)                           |
+| Field                     | Example Value | Details                                                                                             |
+|---------------------------|---------------|-----------------------------------------------------------------------------------------------------|
+| chromosome                | 1             | The chromosome in which the event was detected                                                      |
+| position                  | 41206120      | Genomic position in respect to chromosome and ref genome                                            |
+| ref                       | A             | The base(s) as found in the reference genome at this position                                       |
+| alt                       | G             | The base(s) as found in the sample analyzed                                                         |
+| type                      | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                       |
+| variantAlleleFrequency    | 0.63          | The percentage of genomic reads containing this variant                                             |
+| canonicalImpact           | See impact    | The impact of this variant on the canonical transcript of the gene                                  |
+| otherImpacts              | See impact    | The impact of this variant on other transcripts of the gene                                         |
+| variantCopyNumber         | 2.3           | The number of copies of this variant in the tumor                                                   |
+| totalCopyNumber           | 4.0           | The total number of copies in the tumor on the variant genomic position                             |
+| isBiallelic               | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
+| clonalLikelihood          | 1, 2          | Likelihood that the variant exists in every tumor cell (hence: is clonal)                           |
+| phaseGroups               | 0.98          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
+| isCancerAssociatedVariant | true          | Indicates whether this specific variant is a known cancer-associated variant                        |
 
 The following data is captured as impact of a variant on a specific transcript:
 

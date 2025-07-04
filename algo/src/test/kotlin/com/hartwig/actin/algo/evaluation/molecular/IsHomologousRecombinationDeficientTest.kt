@@ -86,7 +86,7 @@ class IsHomologousRecombinationDeficientTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = "other gene",
                         isReportable = true,
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = false)
+                        isBiallelic = false
                     )
                 )
             )
@@ -101,7 +101,7 @@ class IsHomologousRecombinationDeficientTest {
         return TestVariantFactory.createMinimal().copy(
             gene = hrdGene,
             isReportable = isReportable,
-            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
+            isBiallelic = isBiallelic
         )
     }
 }

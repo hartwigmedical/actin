@@ -464,13 +464,11 @@
                 "codingEffect": "MISSENSE"
               },
               "otherImpacts": [],
-              "extendedVariantDetails": {
-                "variantCopyNumber": 2,
-                "totalCopyNumber": 4,
-                "isBiallelic": false,
-                "phaseGroups": null,
-                "clonalLikelihood": 1.0
-              },
+              "variantCopyNumber": 2,
+              "totalCopyNumber": 4,
+              "isBiallelic": false,
+              "clonalLikelihood": 1.0,
+              "phaseGroups": null,
               "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "EGFR L858R",
@@ -604,13 +602,11 @@
                 "codingEffect": "MISSENSE"
               },
               "otherImpacts": [],
-              "extendedVariantDetails": {
-                "variantCopyNumber": 1,
-                "totalCopyNumber": 4,
-                "isBiallelic": false,
-                "phaseGroups": null,
-                "clonalLikelihood": 1.0
-              },
+              "variantCopyNumber": 1,
+              "totalCopyNumber": 4,
+              "isBiallelic": false,
+              "clonalLikelihood": 1.0,
+              "phaseGroups": null,
               "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "EGFR C797S",
@@ -716,13 +712,11 @@
                 "codingEffect": "MISSENSE"
               },
               "otherImpacts": [],
-              "extendedVariantDetails": {
-                "variantCopyNumber": 0.3,
-                "totalCopyNumber": 2,
-                "isBiallelic": false,
-                "phaseGroups": null,
-                "clonalLikelihood": 0.4
-              },
+              "variantCopyNumber": 0.3,
+              "totalCopyNumber": 2,
+              "isBiallelic": false,
+              "clonalLikelihood": 0.4,
+              "phaseGroups": null,
               "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "KRAS G12D",

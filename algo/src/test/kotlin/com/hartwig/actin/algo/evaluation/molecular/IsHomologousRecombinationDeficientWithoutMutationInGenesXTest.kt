@@ -242,7 +242,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
             isReportable = isReportable,
             isCancerAssociatedVariant = isCancerAssociatedVariant,
             driverLikelihood = driverLikelihood,
-            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
+            isBiallelic = isBiallelic
         )
     }
 }

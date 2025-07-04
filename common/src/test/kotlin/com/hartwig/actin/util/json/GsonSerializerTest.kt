@@ -3,7 +3,6 @@ package com.hartwig.actin.util.json
 import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
@@ -25,7 +24,7 @@ class GsonSerializerTest {
         val variant5 = variant(DriverLikelihood.MEDIUM, "BRAF", "V600E", "1800")
         val variants = setOf(variant3, variant5, variant1, variant4, variant2)
 
-        val deserialized = gson.fromJson<List<ExtendedVariantDetails>>(gson.toJson(variants), object : TypeToken<List<Variant>>() {}.type)
+        val deserialized = gson.fromJson<List<Variant>>(gson.toJson(variants), object : TypeToken<List<Variant>>() {}.type)
         assertThat(deserialized).isEqualTo(variants.sorted())
     }
 

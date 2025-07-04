@@ -114,7 +114,7 @@ class IsMicrosatelliteUnstableTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = "other gene",
                         isReportable = true,
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = false)
+                        isBiallelic = false
                     )
                 )
             )
@@ -145,7 +145,7 @@ class IsMicrosatelliteUnstableTest {
         return TestVariantFactory.createMinimal().copy(
             gene = msiGene,
             isReportable = isReportable,
-            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
+            isBiallelic = isBiallelic
         )
     }
 }

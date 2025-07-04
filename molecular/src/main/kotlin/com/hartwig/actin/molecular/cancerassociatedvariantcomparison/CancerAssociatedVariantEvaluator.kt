@@ -63,7 +63,11 @@ object CancerAssociatedVariantEvaluator {
                 codingEffect = null
             ),
             otherImpacts = emptySet(),
-            extendedVariantDetails = null,
+            variantCopyNumber = null,
+            totalCopyNumber = null,
+            isBiallelic = null,
+            clonalLikelihood = null,
+            phaseGroups = null,
             isCancerAssociatedVariant = false,
             isReportable = false,
             event = "",

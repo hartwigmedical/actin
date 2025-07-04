@@ -55,17 +55,17 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val reportableNonDriverBiallelicVariantsOther: MutableSet<String> = mutableSetOf()
         val reportableNonDriverNonBiallelicVariantsOther: MutableSet<String> = mutableSetOf()
         val inactivationHighDriverNonBiallelicVariants: MutableSet<String> = mutableSetOf()
+        val inactivationHighDriverUnknownBiallelicVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
         for (variant in drivers.variants) {
-            val variantIsClonal = variant.extendedVariantDetails?.clonalLikelihood?.let { it >= CLONAL_CUTOFF } ?: true
+            val variantIsClonal = variant.clonalLikelihood?.let { it >= CLONAL_CUTOFF } ?: true
             if (variant.gene == gene && variantIsClonal && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
                 if (!variant.isReportable) {
                     inactivationEventsThatAreUnreportable.add(variant.event)
                 } else {
-                    val extendedVariant = variant.extendedVariantDetails
-                    val phaseGroups: Set<Int>? = extendedVariant?.phaseGroups
+                    val phaseGroups: Set<Int>? = variant.phaseGroups
                     if (phaseGroups != null) {
                         if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {
                             eventsThatMayBeTransPhased.add(variant.event)
@@ -80,14 +80,16 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                                 || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
                         if (variant.geneRole == GeneRole.ONCO) {
                             inactivationEventsNoTSG.add(variant.event)
-                        } else if (extendedVariant?.isBiallelic == false) {
+                        } else if (variant.isBiallelic == false) {
                             inactivationHighDriverNonBiallelicVariants.add(variant.event)
+                        } else if (variant.isBiallelic == null) {
+                            inactivationHighDriverUnknownBiallelicVariants.add(variant.event)
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event)
                         } else {
                             inactivationEventsThatQualify.add(variant.event)
                         }
-                    } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && extendedVariant?.isBiallelic == true) {
+                    } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && variant.isBiallelic == true) {
                         reportableNonDriverBiallelicVariantsOther.add(variant.event)
                     } else if (
                         (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.homologousRecombination?.isDeficient == true)
@@ -121,6 +123,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
             inactivationEventsNoTSG,
             inactivationEventsGainOfFunction,
             inactivationHighDriverNonBiallelicVariants,
+            inactivationHighDriverUnknownBiallelicVariants,
             inactivationEventsOnNonCanonicalTranscript,
             reportableNonDriverBiallelicVariantsOther,
             reportableNonDriverNonBiallelicVariantsOther,
@@ -136,6 +139,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         inactivationEventsNoTSG: Set<String>,
         inactivationEventsGainOfFunction: Set<String>,
         inactivationHighDriverNonBiallelicVariants: Set<String>,
+        inactivationHighDriverUnknownBiallelicVariants: Set<String>,
         inactivationEventsOnNonCanonicalTranscript: Set<String>,
         reportableNonDriverBiallelicVariantsOther: Set<String>,
         reportableNonDriverNonBiallelicVariantsOther: Set<String>,
@@ -161,6 +165,12 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                     EventsWithMessages(
                         inactivationHighDriverNonBiallelicVariants,
                         "Inactivation event(s) ${concat(inactivationHighDriverNonBiallelicVariants)} for $gene but event(s) are not biallelic"
+                    )
+                } else null,
+                if (inactivationHighDriverUnknownBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
+                    EventsWithMessages(
+                        inactivationHighDriverUnknownBiallelicVariants,
+                        "Inactivation event(s) ${concat(inactivationHighDriverUnknownBiallelicVariants)} for $gene but unknown if event(s) are biallelic"
                     )
                 } else null,
                 EventsWithMessages(
