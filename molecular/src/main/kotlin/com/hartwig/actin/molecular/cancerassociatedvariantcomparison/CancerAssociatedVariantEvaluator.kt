@@ -63,7 +63,6 @@ object CancerAssociatedVariantEvaluator {
                 codingEffect = null
             ),
             otherImpacts = emptySet(),
-            extendedVariantDetails = null,
             isCancerAssociatedVariant = false,
             isReportable = false,
             event = "",

@@ -451,7 +451,6 @@
                 "codingEffect": "MISSENSE"
               },
               "otherImpacts": [],
-              "extendedVariantDetails": null,
               "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "PIK3CA E545K",

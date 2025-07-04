@@ -147,7 +147,7 @@ class GeneHasActivatingMutation(
     private fun profile(event: String, warningType: ActivationWarningType? = null, activating: Boolean = false) =
         ActivationProfile(event = event, activating = activating, warningType = warningType)
 
-    private fun isSubclonal(variant: Variant) = variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
+    private fun isSubclonal(variant: Variant) = variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
 
     private fun ignoredCodon(
         codonsToIgnore: List<String>?, variant: Variant

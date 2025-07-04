@@ -24,14 +24,4 @@ object TestVariantFactory {
             isAssociatedWithDrugResistance = null,
         )
     }
-
-    fun createMinimalExtended(): ExtendedVariantDetails {
-        return ExtendedVariantDetails(
-            clonalLikelihood = 1.0,
-            variantCopyNumber = 0.0,
-            totalCopyNumber = 0.0,
-            isBiallelic = false,
-            phaseGroups = null,
-        )
-    }
 }

@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
@@ -66,13 +65,11 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                     variantAlleleFrequency = variant.adjustedVAF(),
                     canonicalImpact = extractCanonicalImpact(variant),
                     otherImpacts = extractOtherImpacts(variant),
-                    extendedVariantDetails = ExtendedVariantDetails(
-                        variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
-                        totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
-                        isBiallelic = variant.biallelic(),
-                        phaseGroups = variant.localPhaseSets()?.toSet(),
-                        clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
-                    ),
+                    variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
+                    totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
+                    isBiallelic = variant.biallelic(),
+                    clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
+                    phaseGroups = variant.localPhaseSets()?.toSet(),
                     isCancerAssociatedVariant = variant.hotspot() == HotspotType.HOTSPOT,
                     isReportable = variant.reported(),
                     event = event,

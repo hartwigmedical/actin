@@ -17,9 +17,9 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
         val msiVariants = drivers.variants
             .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
 
-        val biallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == true }
-        val nonBiallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == false }
-        val unknownBiallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == null }
+        val biallelicMsiVariants = msiVariants.filter { it.isBiallelic == true }
+        val nonBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == false }
+        val unknownBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == null }
 
         val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.canonicalImpact.type == CopyNumberType.DEL }
         val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in MSI_GENES }

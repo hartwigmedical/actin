@@ -501,7 +501,6 @@
                 "codingEffect": "MISSENSE"
               },
               "otherImpacts": [],
-              "extendedVariantDetails": null,
               "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "TP53 R273H",
@@ -579,7 +578,6 @@
                 "codingEffect": "MISSENSE"
               },
               "otherImpacts": [],
-              "extendedVariantDetails": null,
               "isCancerAssociatedVariant": true,
               "isReportable": true,
               "event": "SMARCA4 T910M",
