@@ -164,6 +164,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_OLIGOMETASTATIC_CANCER",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_UNRESECTABLE_CANCER",
     "usedStatus": "UNUSED"
   },
