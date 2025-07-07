@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -17,6 +18,20 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
             EligibilityRule.HAS_COMPLICATION_WITH_ANY_ICD_TITLE_X to hasSpecificComplicationCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
+            EligibilityRule.HAS_PLEURAL_EFFUSION to {
+                HasSpecificComplication(
+                    icdModel(), listOf(
+                        IcdConstants.PLEURAL_EFFUSION_CODE,
+                        IcdConstants.MALIGNANT_NEOPLASM_METASTASIS_IN_PLEURA_CODE
+                    )
+                )
+            },
+            EligibilityRule.HAS_PERITONEAL_EFFUSION to {
+                HasSpecificComplication(
+                    icdModel(),
+                    listOf(IcdConstants.MALIGNANT_NEORPLASM_METASTASIS_IN_RETROPERITONEUM_OR_PERITONEUM_BLOCK, IcdConstants.ASCITES_CODE)
+                )
+            }
         )
     }
 

@@ -493,6 +493,8 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_COMPLICATION_WITH_ANY_ICD_TITLE_X(FunctionInput.MANY_ICD_TITLES),
     HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN(FunctionInput.NONE),
     HAS_LEPTOMENINGEAL_DISEASE(FunctionInput.NONE),
+    HAS_PLEURAL_EFFUSION(FunctionInput.NONE),
+    HAS_PERITONEAL_EFFUSION(FunctionInput.NONE),
 
     // Rules related to allergies/toxicities
     HAS_INTOLERANCE_TO_NAME_X(FunctionInput.ONE_STRING),
