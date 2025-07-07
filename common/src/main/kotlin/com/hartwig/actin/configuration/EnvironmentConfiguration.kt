@@ -10,8 +10,7 @@ import java.io.File
 
 enum class MolecularSummaryType {
     NONE,
-    STANDARD,
-    SHORT;
+    STANDARD
 }
 
 data class AlgoConfiguration(

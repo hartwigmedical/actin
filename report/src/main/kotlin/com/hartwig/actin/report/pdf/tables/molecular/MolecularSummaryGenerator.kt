@@ -21,7 +21,6 @@ class MolecularSummaryGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val isShort: Boolean,
     private val molecularTestFilter: MolecularTestFilter
 ) : TableGenerator {
 
@@ -77,7 +76,7 @@ class MolecularSummaryGenerator(
                     logger.warn("Generating WGS results for non-WGS sample")
                 }
                 val wgsGenerator = WGSSummaryGenerator(
-                    isShort,
+                    molecularTest.experimentType.useShortSummary(),
                     patientRecord,
                     molecularTest,
                     pathologyReport,
