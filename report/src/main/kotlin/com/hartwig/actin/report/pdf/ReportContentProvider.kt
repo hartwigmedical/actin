@@ -125,7 +125,6 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 cohorts = cohorts,
                 keyWidth = keyWidth,
                 valueWidth = valueWidth,
-                isShort = report.config.molecularSummaryType == MolecularSummaryType.SHORT,
                 molecularTestFilter = MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE &&

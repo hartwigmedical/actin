@@ -15,4 +15,8 @@ enum class ExperimentType(private val display: String) : Displayable {
     override fun toString(): String {
         return display
     }
+
+    fun useShortSummary(): Boolean {
+        return this == HARTWIG_TARGETED || this == PANEL
+    }
 }
