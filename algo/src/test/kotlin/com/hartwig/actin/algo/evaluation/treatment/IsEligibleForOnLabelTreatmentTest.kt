@@ -62,7 +62,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 isReportable = true,
                 type = VariantType.DELETE,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 19),
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
+                clonalLikelihood = 1.0,
                 driverLikelihood = DriverLikelihood.HIGH,
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 isCancerAssociatedVariant = true
@@ -80,7 +80,6 @@ class IsEligibleForOnLabelTreatmentTest {
                 isReportable = true,
                 type = VariantType.INSERT,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 20),
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended(),
                 driverLikelihood = DriverLikelihood.HIGH
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
@@ -125,7 +124,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 isReportable = true,
                 type = VariantType.SNV,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = "T790M"),
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
+                clonalLikelihood = 1.0,
                 driverLikelihood = DriverLikelihood.HIGH
             )
         ).copy(

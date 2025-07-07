@@ -13,6 +13,11 @@ object TestVariantFactory {
             type = VariantType.SNV,
             canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal(),
             otherImpacts = emptySet(),
+            variantCopyNumber = null,
+            totalCopyNumber = null,
+            isBiallelic = null,
+            clonalLikelihood = null,
+            phaseGroups = null,
             isCancerAssociatedVariant = false,
             isReportable = false,
             event = "",
@@ -22,16 +27,6 @@ object TestVariantFactory {
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null,
-        )
-    }
-
-    fun createMinimalExtended(): ExtendedVariantDetails {
-        return ExtendedVariantDetails(
-            clonalLikelihood = 1.0,
-            variantCopyNumber = 0.0,
-            totalCopyNumber = 0.0,
-            isBiallelic = false,
-            phaseGroups = null,
         )
     }
 }

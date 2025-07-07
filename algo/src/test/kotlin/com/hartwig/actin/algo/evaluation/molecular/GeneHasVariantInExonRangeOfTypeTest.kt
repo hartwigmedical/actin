@@ -61,7 +61,6 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(OTHER_EXON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )
@@ -93,8 +92,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         driverLikelihood = DriverLikelihood.HIGH,
                         type = VariantType.INSERT,
-                        canonicalImpact = impactWithExon(MATCHING_EXON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
             )
@@ -177,8 +175,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         driverLikelihood = DriverLikelihood.HIGH,
                         type = VariantType.INSERT,
-                        canonicalImpact = impactWithExon(MATCHING_EXON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
             )
@@ -263,8 +260,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         driverLikelihood = DriverLikelihood.HIGH,
-                        canonicalImpact = impactWithExon(MATCHING_EXON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
             )
@@ -282,16 +278,14 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         type = VariantType.INSERT,
-                        canonicalImpact = impactWithExon(MATCHING_EXON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        canonicalImpact = impactWithExon(MATCHING_EXON)
                     ),
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(OTHER_EXON),
-                        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        otherImpacts = setOf(impactWithExon(MATCHING_EXON))
                     )
                 )
             )
@@ -310,8 +304,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         type = VariantType.DELETE,
                         canonicalImpact = impactWithExon(OTHER_EXON),
-                        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        otherImpacts = setOf(impactWithExon(MATCHING_EXON))
                     ),
                     TestFusionFactory.createMinimal().copy(
                         geneStart = TARGET_GENE,
@@ -338,8 +331,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         type = VariantType.DELETE,
                         driverLikelihood = DriverLikelihood.HIGH,
                         canonicalImpact = impactWithExon(MATCHING_EXON),
-                        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                        otherImpacts = setOf(impactWithExon(MATCHING_EXON))
                     )
                 )
             )

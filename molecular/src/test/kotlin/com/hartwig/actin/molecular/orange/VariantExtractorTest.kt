@@ -104,12 +104,12 @@ class VariantExtractorTest {
         assertThat(variant.isReportable).isTrue
         assertThat(variant.driverLikelihood).isEqualTo(DriverLikelihood.MEDIUM)
         assertThat(variant.type).isEqualTo(VariantType.MNV)
-        assertThat(variant.extendedVariantDetails?.variantCopyNumber).isEqualTo(0.4, Offset.offset(EPSILON))
-        assertThat(variant.extendedVariantDetails?.totalCopyNumber).isEqualTo(0.8, Offset.offset(EPSILON))
-        assertThat(variant.extendedVariantDetails?.isBiallelic).isFalse
+        assertThat(variant.variantCopyNumber).isEqualTo(0.4, Offset.offset(EPSILON))
+        assertThat(variant.totalCopyNumber).isEqualTo(0.8, Offset.offset(EPSILON))
+        assertThat(variant.isBiallelic).isFalse
         assertThat(variant.isCancerAssociatedVariant).isFalse
-        assertThat(variant.extendedVariantDetails?.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
-        assertThat(variant.extendedVariantDetails?.phaseGroups).isEqualTo(setOf(1))
+        assertThat(variant.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
+        assertThat(variant.phaseGroups).isEqualTo(setOf(1))
 
         val canonical = variant.canonicalImpact
         assertThat(canonical.transcriptId).isEqualTo("ENST-canonical")

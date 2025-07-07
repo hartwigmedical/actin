@@ -39,11 +39,11 @@ data class HomologousRecombinationDeficiencyGeneSummary(
 
         fun createForDrivers(drivers: Drivers): HomologousRecombinationDeficiencyGeneSummary {
             val hrdVariantGroups = drivers.variants
-                .filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable && it.extendedVariantDetails != null }
+                .filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable && it.isBiallelic != null }
                 .groupBy(
                     { variant ->
                         HRDDriverClassification(
-                            variant.extendedVariantDetails!!.isBiallelic,
+                            variant.isBiallelic!!,
                             variant.isCancerAssociatedVariant,
                             variant.driverLikelihood == DriverLikelihood.HIGH
                         )

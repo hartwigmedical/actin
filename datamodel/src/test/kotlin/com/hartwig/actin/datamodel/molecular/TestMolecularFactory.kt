@@ -18,7 +18,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.DisruptionType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -335,7 +334,11 @@ object TestMolecularFactory {
         variantAlleleFrequency = null,
         canonicalImpact = createMinimalTranscriptImpact(),
         otherImpacts = emptySet(),
-        extendedVariantDetails = null,
+        variantCopyNumber = null,
+        totalCopyNumber = null,
+        isBiallelic = null,
+        clonalLikelihood = null,
+        phaseGroups = null,
         isCancerAssociatedVariant = false,
         isReportable = false,
         event = "",
@@ -375,9 +378,11 @@ object TestMolecularFactory {
             codingEffect = CodingEffect.MISSENSE
         ),
         otherImpacts = emptySet(),
-        extendedVariantDetails = ExtendedVariantDetails(
-            variantCopyNumber = 4.1, totalCopyNumber = 6.0, isBiallelic = false, phaseGroups = null, clonalLikelihood = 1.0
-        ),
+        variantCopyNumber = 4.1,
+        totalCopyNumber = 6.0,
+        isBiallelic = false,
+        clonalLikelihood = 1.0,
+        phaseGroups = null,
         isCancerAssociatedVariant = true,
         isReportable = true,
         event = "BRAF V600E",

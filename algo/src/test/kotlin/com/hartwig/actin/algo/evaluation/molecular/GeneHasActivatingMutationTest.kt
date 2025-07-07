@@ -137,7 +137,7 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
+                clonalLikelihood = 0.2
             ),
         )
     }
@@ -150,7 +150,7 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.LOW,
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
+                clonalLikelihood = 0.2
             ),
             null
         )
@@ -164,7 +164,7 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.LOW,
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
+                clonalLikelihood = 0.2
             ),
             true
         )
@@ -264,7 +264,7 @@ class GeneHasActivatingMutationTest {
             isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(300),
-            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
+            clonalLikelihood = 0.8
         )
 
         private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE = TestVariantFactory.createMinimal().copy(
@@ -276,7 +276,7 @@ class GeneHasActivatingMutationTest {
             isCancerAssociatedVariant = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(100),
-            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
+            clonalLikelihood = 0.8
         )
 
         private fun impactWithCodon(affectedCodon: Int) =

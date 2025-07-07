@@ -32,8 +32,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal()
                         .copy(
                             gene = MATCHING_GENE,
-                            isReportable = true,
-                            extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                            isReportable = true
                         )
                 )
             )
@@ -83,7 +82,6 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
@@ -116,7 +114,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
+                        clonalLikelihood = 0.3,
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )

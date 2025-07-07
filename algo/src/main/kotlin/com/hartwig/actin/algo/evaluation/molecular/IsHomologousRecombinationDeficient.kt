@@ -17,7 +17,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
         for (gene in MolecularConstants.HRD_GENES) {
             for (variant in test.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
-                    when (variant.extendedVariantDetails?.isBiallelic) {
+                    when (variant.isBiallelic) {
                         true -> {
                             hrdGenesWithBiallelicDriver.add(gene)
                         }
@@ -26,7 +26,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
                             hrdGenesWithNonBiallelicDriver.add(gene)
                         }
 
-                        else -> {
+                        null -> {
                             hrdGenesWithUnknownAllelicDriver.add(gene)
                         }
                     }

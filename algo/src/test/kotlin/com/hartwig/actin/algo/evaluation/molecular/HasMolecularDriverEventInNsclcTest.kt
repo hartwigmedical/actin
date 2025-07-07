@@ -29,7 +29,7 @@ private val BASE_SPECIFIC_VARIANT = TestVariantFactory.createMinimal().copy(
     event = "$CORRECT_PROTEIN_IMPACT_GENE $CORRECT_PROTEIN_IMPACT",
     isReportable = true,
     driverLikelihood = DriverLikelihood.HIGH,
-    extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+    clonalLikelihood = 1.0
 )
 
 val BASE_ACTIVATING_MUTATION = TestVariantFactory.createMinimal().copy(
@@ -39,7 +39,7 @@ val BASE_ACTIVATING_MUTATION = TestVariantFactory.createMinimal().copy(
     isReportable = true,
     driverLikelihood = DriverLikelihood.HIGH,
     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-    extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+    clonalLikelihood = 1.0
 )
 
 private val BASE_FUSION = TestFusionFactory.createMinimal().copy(

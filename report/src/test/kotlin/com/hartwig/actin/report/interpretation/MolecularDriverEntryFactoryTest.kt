@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -122,9 +121,9 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should assign correct driver type to variant drivers with gene role TSG`() {
         val tsgCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isCancerAssociatedVariant = true)
-        val tsgCavBi = tsgCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val tsgCavBi = tsgCav.copy(isBiallelic = true)
         val tsgNoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.TSG, isCancerAssociatedVariant = false)
-        val tsgNoCavBi = tsgNoCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val tsgNoCavBi = tsgNoCav.copy(isBiallelic = true)
 
         assertVariantType(
             tsgCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
@@ -162,10 +161,10 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should assign correct driver type to variant drivers with gene role BOTH`() {
         val bothCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isCancerAssociatedVariant = true)
-        val bothCavBi = bothCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val bothCavBi = bothCav.copy(isBiallelic = true)
 
         val bothNoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.BOTH, isCancerAssociatedVariant = false)
-        val bothNoCavBi = bothNoCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val bothNoCavBi = bothNoCav.copy(isBiallelic = true)
 
         assertVariantType(
             bothCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
@@ -198,10 +197,10 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should assign correct driver type to variant drivers with unknown gene role`() {
         val unknownCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isCancerAssociatedVariant = true)
-        val unknownBi = unknownCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val unknownBi = unknownCav.copy(isBiallelic = true)
 
         val unknownNoCav = TestMolecularFactory.createProperVariant().copy(geneRole = GeneRole.UNKNOWN, isCancerAssociatedVariant = false)
-        val unknownNoCavBi = unknownNoCav.copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = true))
+        val unknownNoCavBi = unknownNoCav.copy(isBiallelic = true)
 
         assertVariantType(
             unknownCav.copy(proteinEffect = ProteinEffect.UNKNOWN),
