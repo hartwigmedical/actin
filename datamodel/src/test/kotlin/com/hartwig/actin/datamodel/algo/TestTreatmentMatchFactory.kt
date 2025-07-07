@@ -24,7 +24,6 @@ object TestTreatmentMatchFactory {
     fun createMinimalTreatmentMatch(): TreatmentMatch {
         return TreatmentMatch(
             patientId = TestPatientFactory.TEST_PATIENT,
-            sampleId = TestPatientFactory.TEST_SAMPLE,
             referenceDate = LocalDate.of(2021, 8, 2),
             referenceDateIsLive = true,
             trialMatches = emptyList(),

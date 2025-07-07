@@ -21,7 +21,6 @@ class MatchOutputComparisonApplication {
 
             extractDifferences(oldMatches, newMatches, mapOf(
                 "patientId" to TreatmentMatch::patientId,
-                "sampleId" to TreatmentMatch::sampleId,
                 "referenceDate" to TreatmentMatch::referenceDate
             )).forEach(LOGGER::info)
 
