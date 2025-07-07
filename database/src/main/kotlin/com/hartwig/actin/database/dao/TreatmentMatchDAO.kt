@@ -35,19 +35,18 @@ class TreatmentMatchDAO(private val context: DSLContext) {
         val treatmentMatchId = context.insertInto(
             Tables.TREATMENTMATCH,
             Tables.TREATMENTMATCH.PATIENTID,
-            Tables.TREATMENTMATCH.SAMPLEID,
             Tables.TREATMENTMATCH.REFERENCEDATE,
             Tables.TREATMENTMATCH.REFERENCEDATEISLIVE
         )
             .values(
                 treatmentMatch.patientId,
-                treatmentMatch.sampleId,
                 treatmentMatch.referenceDate,
                 treatmentMatch.referenceDateIsLive
             )
             .returning(Tables.TREATMENTMATCH.ID)
             .fetchOne()!!
             .getValue(Tables.TREATMENTMATCH.ID)
+        
         for (trialMatch in treatmentMatch.trialMatches) {
             val trialMatchId = writeTrialMatch(treatmentMatchId, trialMatch)
             writeEvaluations(trialMatchId, null, trialMatch.evaluations)

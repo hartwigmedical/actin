@@ -44,7 +44,6 @@ class TreatmentMatcher(
 
         return TreatmentMatch(
             patientId = patient.patientId,
-            sampleId = patient.molecularHistory.latestOrangeMolecularRecord()?.sampleId ?: "N/A",
             referenceDate = referenceDateProvider.date(),
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,

@@ -579,7 +579,6 @@ DROP TABLE IF EXISTS `treatmentMatch`;
 CREATE TABLE `treatmentMatch`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `sampleId` varchar(50) NOT NULL,
     `referenceDate` DATE NOT NULL,
     `referenceDateIsLive` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)

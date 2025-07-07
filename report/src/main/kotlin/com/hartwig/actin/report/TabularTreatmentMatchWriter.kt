@@ -25,7 +25,6 @@ object TabularTreatmentMatchWriter {
                     val cohortFails = extractUnrecoverableFails(cohortMatch.evaluations)
                     val cohortLine = listOf(
                         treatmentMatch.patientId,
-                        treatmentMatch.sampleId,
                         trialMatch.identification.trialId,
                         trialMatch.identification.acronym,
                         cohortMatch.metadata.cohortId,
@@ -41,7 +40,6 @@ object TabularTreatmentMatchWriter {
                 if (trialMatch.cohorts.isEmpty()) {
                     val trialLine = listOf(
                         treatmentMatch.patientId,
-                        treatmentMatch.sampleId,
                         trialMatch.identification.trialId,
                         trialMatch.identification.acronym,
                         "",
@@ -61,7 +59,6 @@ object TabularTreatmentMatchWriter {
         return concatWithTabs(
             listOf(
                 "Patient",
-                "Sample ID",
                 "Trial ID",
                 "Trial acronym",
                 "Cohort ID",

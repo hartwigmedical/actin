@@ -54,7 +54,6 @@ class TreatmentMatchJsonTest {
         val expectedJson = ("""
             {
                 "patientId":"ACTN01029999",
-                "sampleId":"ACTN01029999T",
                 "referenceDate":"2021-08-02",
                 "referenceDateIsLive":true,
                 "trialMatches":[

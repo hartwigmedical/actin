@@ -68,7 +68,6 @@ class TreatmentMatcherTest {
     
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
-        sampleId = patient.molecularHistory.latestOrangeMolecularRecord()?.sampleId ?: "N/A",
         referenceDate = LocalDate.now(),
         referenceDateIsLive = true,
         trialMatches = trialMatches,
@@ -121,10 +120,9 @@ class TreatmentMatcherTest {
             maxMolecularTestAge = MAX_AGE
         )
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
-        val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")
 
         assertThat(treatmentMatcher.run(patientWithoutMolecular)).isEqualTo(
-            expectedTreatmentMatchWithoutMolecular
+            expectedTreatmentMatch
         )
     }
 }
