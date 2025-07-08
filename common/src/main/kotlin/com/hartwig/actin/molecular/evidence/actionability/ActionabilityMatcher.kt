@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
@@ -238,7 +239,8 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
             TumorCharacteristicType.HPV_POSITIVE -> {
-                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HPV }
+                val hits =
+                    molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HPV && virus.driverLikelihood == DriverLikelihood.HIGH }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {
@@ -247,7 +249,8 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
             TumorCharacteristicType.EBV_POSITIVE -> {
-                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.EBV }
+                val hits =
+                    molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.EBV && virus.driverLikelihood == DriverLikelihood.HIGH }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {

@@ -297,7 +297,7 @@ class ActionabilityMatcherTest {
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val virus = TestMolecularFactory.minimalVirus().copy(type = VirusType.HPV)
+        val virus = TestMolecularFactory.minimalVirus().copy(type = VirusType.HPV, driverLikelihood = DriverLikelihood.HIGH)
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 viruses = listOf(virus)
