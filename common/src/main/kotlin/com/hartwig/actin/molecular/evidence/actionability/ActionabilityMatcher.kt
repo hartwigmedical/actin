@@ -71,10 +71,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     }
 
     private fun matchHotspot(molecularTest: MolecularTest, hotspot: ActionableHotspot): ActionabilityMatchResult {
-        val matches = molecularTest.drivers.variants
-            .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && HotspotMatching.isMatch(hotspot, variant)
-            }
+        val matches = molecularTest.drivers.variants.filter { variant -> variant.isReportable && HotspotMatching.isMatch(hotspot, variant) }
 
         return successWhenNotEmpty(matches)
     }
@@ -204,19 +201,15 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
     private fun matchCharacteristic(molecularTest: MolecularTest, characteristic: ActionableCharacteristic): ActionabilityMatchResult {
         return when (characteristic.type()) {
-            TumorCharacteristicType.MICROSATELLITE_STABLE -> {
-                ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> matchMicrosatelliteStability(
+                molecularTest,
+                evaluateMicrosatelliteUnstable = true
+            )
 
-            TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> {
-                molecularTest.characteristics.microsatelliteStability?.let { msi ->
-                    if (msi.isUnstable) {
-                        ActionabilityMatchResult.Success(listOf(msi))
-                    } else {
-                        ActionabilityMatchResult.Failure
-                    }
-                } ?: ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.MICROSATELLITE_STABLE -> matchMicrosatelliteStability(
+                molecularTest,
+                evaluateMicrosatelliteUnstable = false
+            )
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> {
                 molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
@@ -228,28 +221,15 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
                 } ?: ActionabilityMatchResult.Failure
             }
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> {
-                ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> ActionabilityMatchResult.Failure
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> {
-                molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
-                    if (tmb.isHigh) {
-                        ActionabilityMatchResult.Success(listOf(tmb))
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, evaluateTmbHigh = true)
 
-                    } else {
-                        ActionabilityMatchResult.Failure
-                    }
-                } ?: ActionabilityMatchResult.Failure
-            }
-
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> {
-                ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, evaluateTmbHigh = false)
 
             TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> {
                 molecularTest.characteristics.homologousRecombination?.let { hr ->
-                    if (hr.isDeficient == true) {
+                    if (hr.isDeficient) {
                         ActionabilityMatchResult.Success(listOf(hr))
                     } else {
                         ActionabilityMatchResult.Failure
@@ -286,8 +266,30 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         }
     }
 
-    companion object {
+    private fun matchMicrosatelliteStability(
+        molecularTest: MolecularTest,
+        evaluateMicrosatelliteUnstable: Boolean
+    ): ActionabilityMatchResult {
+        return molecularTest.characteristics.microsatelliteStability?.let { msi ->
+            if (evaluateMicrosatelliteUnstable && msi.isUnstable || !evaluateMicrosatelliteUnstable && !msi.isUnstable) {
+                ActionabilityMatchResult.Success(listOf(msi))
+            } else {
+                ActionabilityMatchResult.Failure
+            }
+        } ?: ActionabilityMatchResult.Failure
+    }
 
+    private fun matchTumorMutationalBurden(molecularTest: MolecularTest, evaluateTmbHigh: Boolean): ActionabilityMatchResult {
+        return molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
+            if (evaluateTmbHigh && tmb.isHigh || !evaluateTmbHigh && !tmb.isHigh) {
+                ActionabilityMatchResult.Success(listOf(tmb))
+            } else {
+                ActionabilityMatchResult.Failure
+            }
+        } ?: ActionabilityMatchResult.Failure
+    }
+
+    companion object {
         fun successWhenNotEmpty(matches: List<Actionable>): ActionabilityMatchResult {
             return if (matches.isEmpty()) {
                 ActionabilityMatchResult.Failure
