@@ -430,7 +430,34 @@ The ploidy is hard-coded set to 2.
 
 Every molecular test (regardless of ORANGE or non-ORANGE) is interpreted and annotated with treatment evidence and external trials.
 
-### Interpretation of drivers
+### Annotation of driver events and characteristics with SERVE evidence 
+
+Every (potential) driver and characteristic is annotated with evidence from SERVE. In practice all treatment evidence and external trials
+come from `CKB`. The evidence annotations occur in the following order:
+
+1. Collect all on-label and off-label applicable treatment evidences that match with the driver / characteristic
+2. Determine external trials for which the patient has at least one molecular match and filter for on-label trials.
+3. Map the evidences and trials to the ACTIN evidence datamodel (above).
+
+Treatment evidence and trials is considered on-label in case the applicable evidence or at least one of the trial tumor DOIDs is equal to or
+a parent of the patient's tumor doids, and none of the patient's tumor DOIDs (or parents thereof) is excluded by the evidence.
+
+A molecular match is made between treatment evidence or trial and driver / characteristics as follows.
+
+| Driver / Characteristic         | Evidence collected                                                                                                                                                                                                                                        |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| microsatellite status           | All signature evidence of type `MICROSATELLITE_UNSTABLE` in case tumor has MSI                                                                                                                                                                            |
+| homologous recombination status | All signature evidence of type `HOMOLOGOUS_RECOMBINATION_DEFICIENT` in case tumor is HRD                                                                                                                                                                  |
+| tumor mutational burden status  | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                                  |
+| tumor mutational load status    | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                                    |
+| variant                         | In case the variant has `HIGH` driver likelihood and is reported: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
+| copy number                     | In case of a (partial) amplification, all gene level events of type `AMPLIFICATION`. <br/>In case of a deletion, all gene level events of type `DELETION`                                                                                                 |
+| homozygous disruption           | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                                              | 
+| disruption                      | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported and geneRole is not TSG                                                                                                                                                 | 
+| fusion                          | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                                    | 
+| virus                           | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                                         | 
+
+### Annotation of driver events with SERVE additional data
 
 Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance` from the SERVE
 database. In addition, every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
@@ -454,33 +481,6 @@ The annotation finds the best matching entry from SERVE's known event database a
   - Else, fall back to known fusion match ignoring specific exon ranges.
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
-
-### Molecular and cancer type matching
-
-Every (potential)  driver and characteristic is annotated with evidence from SERVE. In practice all treatment evidence and external trials
-come from `CKB`. The evidence annotations occur in the following order:
-
-1. Collect all on-label and off-label applicable treatment evidences that match with the driver / characteristic
-2. Determine external trials for which the patient has at least one molecular match and filter for on-label trials.
-3. Map the evidences and trials to the ACTIN evidence datamodel (above).
-
-Treatment evidence and trials is considered on-label in case the applicable evidence or at least one of the trial tumor DOIDs is equal to or
-a parent of the patient's tumor doids, and none of the patient's tumor DOIDs (or parents thereof) is excluded by the evidence.
-
-A molecular match is made between treatment evidence or trial and driver / characteristics as follows.
-
-| Driver / Characteristic         | Evidence collected                                                                                                                                                                                                                                        |
-|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| microsatellite status           | All signature evidence of type `MICROSATELLITE_UNSTABLE` in case tumor has MSI                                                                                                                                                                            |
-| homologous recombination status | All signature evidence of type `HOMOLOGOUS_RECOMBINATION_DEFICIENT` in case tumor is HRD                                                                                                                                                                  |
-| tumor mutational burden status  | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                                  |
-| tumor mutational load status    | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                                    |
-| variant                         | In case the variant has `HIGH` driver likelihood and is reported: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
-| copy number                     | In case of a (partial) amplification, all gene level events of type `AMPLIFICATION`. In case of a deletion, all gene level events of type `DELETION`                                                                                                      |
-| homozygous disruption           | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                                              | 
-| disruption                      | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported and geneRole is not TSG                                                                                                                                                 | 
-| fusion                          | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                                    | 
-| virus                           | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                                         | 
 
 ## Note on test data
 
