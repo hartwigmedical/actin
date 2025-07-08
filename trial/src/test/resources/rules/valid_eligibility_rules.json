@@ -1820,6 +1820,14 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_PLEURAL_EFFUSION",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_PERITONEAL_EFFUSION",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_INTOLERANCE_TO_NAME_X",
     "usedStatus": "UNUSED"
   },
