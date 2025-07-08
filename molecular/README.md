@@ -344,7 +344,7 @@ The molecular characteristics are extracted as follows:
 | homologousRecombinationScore       | The CHORD field `hrdValue`                                                             |
 | isHomologousRecombinationDeficient | The interpretation of CHORD `hrStatus`                                                 |
 | brca1Value                         | The CHORD field `brca1Value`                                                           |
-| brca22Value                        | The CHORD field `brca2Value`                                                           |
+| brca2Value                         | The CHORD field `brca2Value`                                                           |
 | hrdType                            | Trivially derived from the CHORD field `hrdType`                                       |
 | tumorMutationalBurden              | The PURPLE characteristics field `tumorMutationalBurden`                               |
 | hasHighTumorMutationalBurden       | The interpretation of PURPLE `tumorMutationalBurdenStatus`                             |
@@ -408,7 +408,7 @@ The base properties of a molecular test are extracted as follows
 
 ### Extracting of drivers
 
-It is assumed that panels can only produce variants, copy numbers and fusions.
+For panels, variants, amplifications, deletions, fusions and viruses (HPV/EBV/MCV/HBV/HHV8) can be extracted.
 
 Variants are extracted as follows:
 
@@ -422,9 +422,7 @@ For fusions, a fusion type and subsequent driver likelihood are determined based
 
 ### Extraction of characteristics
 
-Currently, it is assumed that only `isMicrosatelliteUnstable` and `tumorMutationalBurden` can be provided via panel tests.
-
-The ploidy is hard-coded set to 2.
+`microsatelliteStability`, `tumorMutationalBurden` and `homologousRecombination` can be provided via panel tests.
 
 ## Interpretation of drivers and annotation with treatment evidence and external trials
 
