@@ -22,6 +22,7 @@ import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher.Companion.successWhenNotEmpty
 import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
+import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
@@ -656,6 +657,46 @@ class ActionabilityMatcherTest {
     }
 
     @Test
+    fun `Should match absence of protein evidence with variant on that gene if MMR gene`() {
+        val gene = GeneConstants.MMR_GENES.first()
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val variant = brafMolecularTestVariant.copy(
+            gene = gene, canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+        )
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                variants = listOf(variant)
+            )
+        )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(1)
+        assertThat(matches[variant]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should not match absence of protein evidence with variant on that gene if non-MMR gene`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val variant = brafMolecularTestVariant.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+        )
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                variants = listOf(variant)
+            )
+        )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).isEmpty()
+    }
+
+    @Test
     fun `Should match promiscuous fusion`() {
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "EGFR", geneEvent = GeneEvent.FUSION)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
@@ -706,6 +747,37 @@ class ActionabilityMatcherTest {
     }
 
     @Test
+    fun `Should match absence of protein evidence with hom disruption if MMR gene`() {
+        val gene = GeneConstants.MMR_GENES.first()
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val homDisruption = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = gene)
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption)))
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(1)
+        assertThat(matches[homDisruption]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should not match absence of protein with hom disruption if non-MMR gene`() {
+        val gene = "some gene"
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val homDisruption = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = gene)
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption)))
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).isEmpty()
+    }
+
+    @Test
     fun `Should match copy number amplification`() {
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "EGFR", geneEvent = GeneEvent.AMPLIFICATION)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
@@ -745,6 +817,43 @@ class ActionabilityMatcherTest {
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
         assertThat(matches[copyNumber]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should match absence of protein evidence with deletion if MMR gene`() {
+        val gene = GeneConstants.MMR_GENES.first()
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val copyNumber = TestMolecularFactory.minimalCopyNumber().copy(
+            gene = gene,
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+        )
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(1)
+        assertThat(matches[copyNumber]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should not match absence of protein with deletion if non-MMR gene`() {
+        val gene = "some gene"
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val copyNumber = TestMolecularFactory.minimalCopyNumber().copy(
+            gene = gene,
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+        )
+        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).isEmpty()
     }
 
     @Test

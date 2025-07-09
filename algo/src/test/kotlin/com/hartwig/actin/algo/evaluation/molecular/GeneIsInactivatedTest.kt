@@ -19,6 +19,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -228,7 +229,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in MSI gene in MSI sample`() {
-        val msiGene = MolecularConstants.MSI_GENES.iterator().next()
+        val msiGene = GeneConstants.MMR_GENES.first()
         val function = GeneIsInactivated(msiGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
@@ -239,7 +240,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in MS-Stable sample`() {
-        val msiGene = MolecularConstants.MSI_GENES.iterator().next()
+        val msiGene = GeneConstants.MMR_GENES.first()
         val function = GeneIsInactivated(msiGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
@@ -250,7 +251,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in HRD gene in HRD sample`() {
-        val hrdGene = MolecularConstants.HRD_GENES.iterator().next()
+        val hrdGene = MolecularConstants.HRD_GENES.first()
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
@@ -261,7 +262,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in HRD gene in HR-Proficient sample`() {
-        val hrdGene = MolecularConstants.HRD_GENES.iterator().next()
+        val hrdGene = MolecularConstants.HRD_GENES.first()
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(

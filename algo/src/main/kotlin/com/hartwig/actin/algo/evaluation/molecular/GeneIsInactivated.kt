@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
 class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null) :
@@ -93,7 +94,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                         reportableNonDriverBiallelicVariantsOther.add(variant.event)
                     } else if (
                         (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.homologousRecombination?.isDeficient == true)
-                        || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.microsatelliteStability?.isUnstable == true)
+                        || (variant.gene in GeneConstants.MMR_GENES && test.characteristics.microsatelliteStability?.isUnstable == true)
                     ) {
                         reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                     }

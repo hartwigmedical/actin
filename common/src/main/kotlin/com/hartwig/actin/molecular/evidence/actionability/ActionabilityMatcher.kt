@@ -7,12 +7,14 @@ import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
+import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
@@ -119,10 +121,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     private fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
         val variantMatches = molecularTest.drivers.variants
             .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && VariantEvidence.isGeneEventEligible(gene) && GeneMatching.isMatch(
-                    gene,
-                    variant
-                )
+                VariantEvidence.isVariantEligible(variant) && GeneMatching.isMatch(gene, variant) && (VariantEvidence.isGeneEventEligible(
+                    gene
+                ) || isMmrAbsenceOfProteinEvent(gene.event(), gene.gene()))
             }
 
         val promiscuousFusionMatches = if (FusionEvidence.isPromiscuousFusionEvent(gene.event())) {
@@ -143,14 +144,19 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             emptyList()
         }
 
-        val homozygousDisruptionMatches = if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene.event())) {
-            molecularTest.drivers.homozygousDisruptions
-                .filter { homozygousDisruption ->
-                    HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(gene, homozygousDisruption)
-                }
-        } else {
-            emptyList()
-        }
+        val homozygousDisruptionMatches =
+            if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene.event()) || isMmrAbsenceOfProteinEvent(
+                    gene.event(),
+                    gene.gene()
+                )
+            ) {
+                molecularTest.drivers.homozygousDisruptions
+                    .filter { homozygousDisruption ->
+                        HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(gene, homozygousDisruption)
+                    }
+            } else {
+                emptyList()
+            }
 
         val copyNumberAmplificationMatches = if (CopyNumberEvidence.isAmplificationEvent(gene.event())) {
             molecularTest.drivers.copyNumbers
@@ -161,19 +167,24 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             emptyList()
         }
 
-        val copyNumberDeletionMatches = if (CopyNumberEvidence.isDeletionEvent(gene.event())) {
-            molecularTest.drivers.copyNumbers
-                .filter { copyNumber ->
-                    CopyNumberEvidence.isDeletionMatch(gene, copyNumber)
-                }
-        } else {
-            emptyList()
-        }
+        val copyNumberDeletionMatches =
+            if (CopyNumberEvidence.isDeletionEvent(gene.event()) || isMmrAbsenceOfProteinEvent(gene.event(), gene.gene())) {
+                molecularTest.drivers.copyNumbers
+                    .filter { copyNumber ->
+                        CopyNumberEvidence.isDeletionMatch(gene, copyNumber)
+                    }
+            } else {
+                emptyList()
+            }
 
         return successWhenNotEmpty(
             variantMatches + promiscuousFusionMatches + disruptionMatches +
                     homozygousDisruptionMatches + copyNumberAmplificationMatches + copyNumberDeletionMatches
         )
+    }
+
+    private fun isMmrAbsenceOfProteinEvent(geneEvent: GeneEvent, gene: String): Boolean {
+        return geneEvent == GeneEvent.ABSENCE_OF_PROTEIN && GeneConstants.MMR_GENES.contains(gene)
     }
 
     private fun matchFusions(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
@@ -191,7 +202,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
         return successWhenNotEmpty(matches)
     }
-
 
     private fun matchCharacteristics(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
         val characteristicMatches = criterium.characteristics()
