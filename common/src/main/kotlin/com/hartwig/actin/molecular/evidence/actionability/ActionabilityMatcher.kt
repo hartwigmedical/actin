@@ -30,7 +30,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     fun match(molecularTest: MolecularTest): MatchesForActionable {
         val evidences = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }
         val trials = match(molecularTest, trials) { it.anyMolecularCriteria().toList() }
-
         val allActionables = evidences.keys + trials.keys
 
         return allActionables.associateWith { actionable ->
@@ -123,10 +122,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
         val promiscuousFusionMatches = if (FusionEvidence.isPromiscuousFusionEvent(gene.event())) {
-            molecularTest.drivers.fusions
-                .filter { fusion ->
-                    FusionEvidence.isPromiscuousMatch(gene, fusion)
-                }
+            molecularTest.drivers.fusions.filter { fusion -> FusionEvidence.isPromiscuousMatch(gene, fusion) }
         } else {
             emptyList()
         }
@@ -146,36 +142,32 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
                     gene.gene()
                 )
             ) {
-                molecularTest.drivers.homozygousDisruptions
-                    .filter { homozygousDisruption ->
-                        HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(gene, homozygousDisruption)
-                    }
+                molecularTest.drivers.homozygousDisruptions.filter { homozygousDisruption ->
+                    HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(
+                        gene,
+                        homozygousDisruption
+                    )
+                }
             } else {
                 emptyList()
             }
 
         val copyNumberAmplificationMatches = if (CopyNumberEvidence.isAmplificationEvent(gene.event())) {
-            molecularTest.drivers.copyNumbers
-                .filter { copyNumber ->
-                    CopyNumberEvidence.isAmplificationMatch(gene, copyNumber)
-                }
+            molecularTest.drivers.copyNumbers.filter { copyNumber -> CopyNumberEvidence.isAmplificationMatch(gene, copyNumber) }
         } else {
             emptyList()
         }
 
         val copyNumberDeletionMatches =
             if (CopyNumberEvidence.isDeletionEvent(gene.event()) || isMmrAbsenceOfProteinEvent(gene.event(), gene.gene())) {
-                molecularTest.drivers.copyNumbers
-                    .filter { copyNumber ->
-                        CopyNumberEvidence.isDeletionMatch(gene, copyNumber)
-                    }
+                molecularTest.drivers.copyNumbers.filter { copyNumber -> CopyNumberEvidence.isDeletionMatch(gene, copyNumber) }
             } else {
                 emptyList()
             }
 
         return successWhenNotEmpty(
-            variantMatches + promiscuousFusionMatches + disruptionMatches +
-                    homozygousDisruptionMatches + copyNumberAmplificationMatches + copyNumberDeletionMatches
+            variantMatches + promiscuousFusionMatches + disruptionMatches + homozygousDisruptionMatches
+                    + copyNumberAmplificationMatches + copyNumberDeletionMatches
         )
     }
 
