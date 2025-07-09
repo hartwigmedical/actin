@@ -74,46 +74,42 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     }
 
     private fun matchHotspot(molecularTest: MolecularTest, hotspot: ActionableHotspot): ActionabilityMatchResult {
-        val matches = molecularTest.drivers.variants.filter { variant -> variant.isReportable && HotspotMatching.isMatch(hotspot, variant) }
+        val matches = molecularTest.drivers.variants.filter { variant -> HotspotMatching.isMatch(hotspot, variant) }
 
         return successWhenNotEmpty(matches)
     }
 
     private fun matchCodons(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        val codonMatches = criterium.codons()
-            .map { codon -> matchCodon(molecularTest, codon) }
+        val codonMatches = criterium.codons().map { codon -> matchCodon(molecularTest, codon) }
 
         return ActionabilityMatchResult.combine(codonMatches)
     }
 
     private fun matchCodon(molecularTest: MolecularTest, codon: RangeAnnotation): ActionabilityMatchResult {
-        val matches = molecularTest.drivers.variants
-            .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(codon, variant)
-            }
+        val matches = molecularTest.drivers.variants.filter { variant -> RangeMatching.isMatch(codon, variant) }
 
         return successWhenNotEmpty(matches)
     }
 
     private fun matchExons(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        val exonMatches = criterium.exons()
-            .map { exon -> matchExon(molecularTest, exon) }
+        val exonMatches = criterium.exons().map { exon -> matchExon(molecularTest, exon) }
 
         return ActionabilityMatchResult.combine(exonMatches)
     }
 
     private fun matchExon(molecularTest: MolecularTest, exon: RangeAnnotation): ActionabilityMatchResult {
-        val matches = molecularTest.drivers.variants
-            .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(exon, variant)
-            }
+        val matches = molecularTest.drivers.variants.filter { variant ->
+            VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(
+                exon,
+                variant
+            )
+        }
 
         return successWhenNotEmpty(matches)
     }
 
     private fun matchGenes(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        val geneMatches = criterium.genes()
-            .map { gene -> matchGene(molecularTest, gene) }
+        val geneMatches = criterium.genes().map { gene -> matchGene(molecularTest, gene) }
 
         return ActionabilityMatchResult.combine(geneMatches)
     }
