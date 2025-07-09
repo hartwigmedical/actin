@@ -262,7 +262,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         return if (criterium.hla().isEmpty()) {
             ActionabilityMatchResult.Success()
         } else {
-            logger.warn("Evidence contains HLA but matching supported")
+            logger.warn("Evidence contains HLA but matching in ACTIN not supported")
             ActionabilityMatchResult.Failure
         }
     }
