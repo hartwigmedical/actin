@@ -14,6 +14,7 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     GALLBLADDER("gallbladder"),
     HEAD_AND_NECK("head and neck"),
     KIDNEY("kidney"),
+    LARGE_INTESTINE("large intestine"),
     LIVER("liver"),
     LUNG("lung"),
     LYMPH_NODE("lymph node"),
@@ -22,6 +23,7 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     PERITONEUM("peritoneum"),
     PROSTATE("prostate"),
     REPRODUCTIVE_SYSTEM("reproductive system"),
+    SMALL_INTESTINE("small intestine"),
     SPLEEN("spleen"),
     STOMACH("stomach"),
     THYROID_GLAND("thyroid gland"),
@@ -31,4 +33,3 @@ enum class BodyLocationCategory(private val display: String): Displayable {
         return display
     }
 }
-
