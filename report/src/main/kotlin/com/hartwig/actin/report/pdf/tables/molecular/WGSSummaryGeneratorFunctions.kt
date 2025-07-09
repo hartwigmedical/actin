@@ -71,7 +71,7 @@ object WGSSummaryGeneratorFunctions {
             if (filteredContents.isEmpty() && !hasTmbData &&
                 actionableEventsWithLowOrMediumDriver.isEmpty() && actionableEventsWithUnknownDriver.isEmpty()
             ) {
-                table.addCell(Cells.createSpanningContent("No relevant genomic alterations found", table))
+                table.addCell(Cells.createSpanningContent("No relevant alterations found", table))
             }
         } else {
             table.addCell(
