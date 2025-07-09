@@ -11,7 +11,7 @@ class HomozygousDisruptionEvidence {
             setOf(GeneEvent.DELETION, GeneEvent.UNDEREXPRESSION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun isHomozygousDisruptionEvent(gene: ActionableGene): Boolean {
-            return HOMOZYGOUS_DISRUPTION_EVENTS.contains(gene.event()) || MmrFunctions.isMmrAbsenceOfProteinEvent(gene.event(), gene.gene())
+            return HOMOZYGOUS_DISRUPTION_EVENTS.contains(gene.event()) || MmrActionabilityFunctions.isMmrAbsenceOfProteinEvent(gene)
         }
 
         fun isHomozygousDisruptionMatch(actionableGene: ActionableGene, disruption: HomozygousDisruption): Boolean {

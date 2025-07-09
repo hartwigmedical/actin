@@ -11,7 +11,7 @@ class VariantEvidence {
         private val VARIANT_GENE_EVENTS = setOf(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun isGeneEventEligible(gene: ActionableGene): Boolean =
-            VARIANT_GENE_EVENTS.contains(gene.event()) || MmrFunctions.isMmrAbsenceOfProteinEvent(gene.event(), gene.gene())
+            VARIANT_GENE_EVENTS.contains(gene.event()) || MmrActionabilityFunctions.isMmrAbsenceOfProteinEvent(gene)
 
         fun isVariantEligible(variant: Variant): Boolean =
             variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH

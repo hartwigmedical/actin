@@ -16,7 +16,7 @@ class CopyNumberEvidence {
         }
 
         fun isDeletionEvent(gene: ActionableGene): Boolean {
-            return DELETION_EVENTS.contains(gene.event()) || MmrFunctions.isMmrAbsenceOfProteinEvent(gene.event(), gene.gene())
+            return DELETION_EVENTS.contains(gene.event()) || MmrActionabilityFunctions.isMmrAbsenceOfProteinEvent(gene)
         }
 
         fun isAmplificationMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {

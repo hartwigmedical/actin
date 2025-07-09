@@ -14,7 +14,7 @@ import org.junit.Test
 
 class IsHomologousRecombinationDeficientTest {
     private val function = IsHomologousRecombinationDeficient()
-    private val hrdGene = GeneConstants.HR_GENES.first()
+    private val hrGene = GeneConstants.HR_GENES.first()
 
     @Test
     fun canEvaluate() {
@@ -31,7 +31,7 @@ class IsHomologousRecombinationDeficientTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.createMinimal().copy(isReportable = true, gene = hrdGene)
+                    TestVariantFactory.createMinimal().copy(isReportable = true, gene = hrGene)
                 )
             )
         )
@@ -54,7 +54,7 @@ class IsHomologousRecombinationDeficientTest {
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
                         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
-                        gene = hrdGene
+                        gene = hrGene
                     )
                 )
             )
@@ -63,7 +63,7 @@ class IsHomologousRecombinationDeficientTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomologousRecombinationAndHomozygousDisruption(
-                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = hrdGene)
+                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = hrGene)
                 )
             )
         )
@@ -71,7 +71,7 @@ class IsHomologousRecombinationDeficientTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRecombinationAndDisruption(
-                    true, TestDisruptionFactory.createMinimal().copy(gene = hrdGene)
+                    true, TestDisruptionFactory.createMinimal().copy(gene = hrGene)
                 )
             )
         )
@@ -100,7 +100,7 @@ class IsHomologousRecombinationDeficientTest {
 
     private fun hrdVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
         return TestVariantFactory.createMinimal().copy(
-            gene = hrdGene,
+            gene = hrGene,
             isReportable = isReportable,
             isBiallelic = isBiallelic
         )
