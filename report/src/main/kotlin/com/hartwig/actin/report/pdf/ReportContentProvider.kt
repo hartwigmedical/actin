@@ -144,7 +144,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 valueWidth = valueWidth,
                 referenceDate = report.treatmentMatch.referenceDate
             ),
-            TumorDetailsGenerator(record = report.patientRecord, keyWidth = keyWidth, valueWidth = valueWidth),
+            TumorDetailsGenerator(report = report, keyWidth = keyWidth, valueWidth = valueWidth),
             report.patientRecord.medications?.let {
                 MedicationGenerator(
                     medications = it,
