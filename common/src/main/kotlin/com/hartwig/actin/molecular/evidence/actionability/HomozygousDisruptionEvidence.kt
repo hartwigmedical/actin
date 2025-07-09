@@ -7,7 +7,7 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 class HomozygousDisruptionEvidence {
 
     companion object {
-        private val HOMOZYGOUS_DISRUPTION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+        private val HOMOZYGOUS_DISRUPTION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.UNDEREXPRESSION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun isHomozygousDisruptionEvent(geneEvent: GeneEvent): Boolean {
             return HOMOZYGOUS_DISRUPTION_EVENTS.contains(geneEvent)
