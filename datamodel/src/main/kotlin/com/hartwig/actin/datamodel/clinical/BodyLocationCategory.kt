@@ -14,7 +14,6 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     GALLBLADDER("gallbladder"),
     HEAD_AND_NECK("head and neck"),
     KIDNEY("kidney"),
-    LARGE_INTESTINE("large intestine"),
     LIVER("liver"),
     LUNG("lung"),
     LYMPH_NODE("lymph node"),
