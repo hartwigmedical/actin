@@ -222,17 +222,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
                 evaluateMicrosatelliteUnstable = false
             )
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        ActionabilityMatchResult.Success(listOf(tml))
-                    } else {
-                        ActionabilityMatchResult.Failure
-                    }
-                } ?: ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, evaluateTmlHigh = true)
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> ActionabilityMatchResult.Failure
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, evaluateTmlHigh = false)
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, evaluateTmbHigh = true)
 
@@ -286,6 +278,16 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         return molecularTest.characteristics.microsatelliteStability?.let { msi ->
             if (evaluateMicrosatelliteUnstable && msi.isUnstable || !evaluateMicrosatelliteUnstable && !msi.isUnstable) {
                 ActionabilityMatchResult.Success(listOf(msi))
+            } else {
+                ActionabilityMatchResult.Failure
+            }
+        } ?: ActionabilityMatchResult.Failure
+    }
+
+    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, evaluateTmlHigh: Boolean): ActionabilityMatchResult {
+        return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
+            if (evaluateTmlHigh && tml.isHigh || !evaluateTmlHigh && !tml.isHigh) {
+                ActionabilityMatchResult.Success(listOf(tml))
             } else {
                 ActionabilityMatchResult.Failure
             }

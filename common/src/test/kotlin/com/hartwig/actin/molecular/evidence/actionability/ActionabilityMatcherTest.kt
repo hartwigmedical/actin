@@ -489,9 +489,7 @@ class ActionabilityMatcherTest {
         val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
-        val tumorMutationalLoad = TumorMutationalLoad(
-            score = 185, isHigh = true, evidence = TestClinicalEvidenceFactory.createEmpty()
-        )
+        val tumorMutationalLoad = TumorMutationalLoad(score = 185, isHigh = true, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
             TestMolecularFactory.createMinimalTestPanelRecord().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
@@ -501,6 +499,55 @@ class ActionabilityMatcherTest {
         )
         assertThat(matches).hasSize(1)
         assertThat(matches[tumorMutationalLoad]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should match low tml evidence or trials with low tml tumor`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+        val tumorMutationalLoad = TumorMutationalLoad(score = 5, isHigh = false, evidence = TestClinicalEvidenceFactory.createEmpty())
+        val matches = matcher.match(
+            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
+                    tumorMutationalLoad = tumorMutationalLoad
+                )
+            )
+        )
+        assertThat(matches).hasSize(1)
+        assertThat(matches[tumorMutationalLoad]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should not match high tml evidence or trials with low tml tumor`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+        val tumorMutationalLoad = TumorMutationalLoad(score = 5, isHigh = false, evidence = TestClinicalEvidenceFactory.createEmpty())
+        val matches = matcher.match(
+            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
+                    tumorMutationalLoad = tumorMutationalLoad
+                )
+            )
+        )
+        assertThat(matches).isEmpty()
+    }
+
+    @Test
+    fun `Should not match low tml evidence or trials with high tml tumor`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+        val tumorMutationalLoad = TumorMutationalLoad(score = 185, isHigh = true, evidence = TestClinicalEvidenceFactory.createEmpty())
+        val matches = matcher.match(
+            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
+                    tumorMutationalLoad = tumorMutationalLoad
+                )
+            )
+        )
+        assertThat(matches).isEmpty()
     }
 
     @Test
