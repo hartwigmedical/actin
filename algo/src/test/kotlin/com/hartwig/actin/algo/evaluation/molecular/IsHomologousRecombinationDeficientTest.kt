@@ -9,11 +9,12 @@ import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.molecular.util.GeneConstants
 import org.junit.Test
 
 class IsHomologousRecombinationDeficientTest {
     private val function = IsHomologousRecombinationDeficient()
-    private val hrdGene = MolecularConstants.HRD_GENES.first()
+    private val hrdGene = GeneConstants.HR_GENES.first()
 
     @Test
     fun canEvaluate() {

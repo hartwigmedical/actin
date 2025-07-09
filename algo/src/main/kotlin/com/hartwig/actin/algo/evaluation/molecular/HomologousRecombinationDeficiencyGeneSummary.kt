@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.molecular.util.GeneConstants
 
 private data class HRDDriverClassification(val isBiallelic: Boolean, val isCancerAssociatedVariant: Boolean, val isHighDriver: Boolean)
 
@@ -39,7 +40,7 @@ data class HomologousRecombinationDeficiencyGeneSummary(
 
         fun createForDrivers(drivers: Drivers): HomologousRecombinationDeficiencyGeneSummary {
             val hrdVariantGroups = drivers.variants
-                .filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable && it.isBiallelic != null }
+                .filter { it.gene in GeneConstants.HR_GENES && it.isReportable && it.isBiallelic != null }
                 .groupBy(
                     { variant ->
                         HRDDriverClassification(
@@ -53,14 +54,14 @@ data class HomologousRecombinationDeficiencyGeneSummary(
                 .mapValues { it.value.toSet() }
 
             val hrdGenesWithDeletionOrPartialDel = drivers.copyNumbers
-                .filter { it.canonicalImpact.type == CopyNumberType.DEL && it.gene in MolecularConstants.HRD_GENES }
+                .filter { it.canonicalImpact.type == CopyNumberType.DEL && it.gene in GeneConstants.HR_GENES }
                 .map(GeneAlteration::gene)
                 .toSet()
-            val hrdGenesWithHomozygousDisruption = drivers.homozygousDisruptions.filter { it.gene in MolecularConstants.HRD_GENES }
+            val hrdGenesWithHomozygousDisruption = drivers.homozygousDisruptions.filter { it.gene in GeneConstants.HR_GENES }
                 .map(GeneAlteration::gene)
                 .toSet()
             val hrdGenesWithNonHomozygousDisruption = drivers.disruptions
-                .filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable }
+                .filter { it.gene in GeneConstants.HR_GENES && it.isReportable }
                 .map(GeneAlteration::gene)
                 .toSet()
 

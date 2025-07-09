@@ -251,7 +251,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in HRD gene in HRD sample`() {
-        val hrdGene = MolecularConstants.HRD_GENES.first()
+        val hrdGene = GeneConstants.HR_GENES.first()
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
@@ -262,7 +262,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in HRD gene in HR-Proficient sample`() {
-        val hrdGene = MolecularConstants.HRD_GENES.first()
+        val hrdGene = GeneConstants.HR_GENES.first()
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(

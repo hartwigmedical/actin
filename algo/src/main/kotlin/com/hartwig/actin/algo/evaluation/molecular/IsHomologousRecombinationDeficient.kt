@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
@@ -14,7 +15,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
         val hrdGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
         val hrdGenesWithNonBiallelicDriver: MutableSet<String> = mutableSetOf()
         val hrdGenesWithUnknownAllelicDriver: MutableSet<String> = mutableSetOf()
-        for (gene in MolecularConstants.HRD_GENES) {
+        for (gene in GeneConstants.HR_GENES) {
             for (variant in test.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
                     when (variant.isBiallelic) {
