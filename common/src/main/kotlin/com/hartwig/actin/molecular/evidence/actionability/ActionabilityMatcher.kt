@@ -7,14 +7,12 @@ import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
-import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
-import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
@@ -98,10 +96,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
     private fun matchExon(molecularTest: MolecularTest, exon: RangeAnnotation): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants.filter { variant ->
-            VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(
-                exon,
-                variant
-            )
+            VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(exon, variant)
         }
 
         return successWhenNotEmpty(matches)
@@ -116,9 +111,10 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     private fun matchGene(molecularTest: MolecularTest, gene: ActionableGene): ActionabilityMatchResult {
         val variantMatches = molecularTest.drivers.variants
             .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && GeneMatching.isMatch(gene, variant) && (VariantEvidence.isGeneEventEligible(
-                    gene
-                ) || isMmrAbsenceOfProteinEvent(gene.event(), gene.gene()))
+                VariantEvidence.isVariantEligible(variant) && VariantEvidence.isGeneEventEligible(gene) && GeneMatching.isMatch(
+                    gene,
+                    variant
+                )
             }
 
         val promiscuousFusionMatches = if (FusionEvidence.isPromiscuousFusionEvent(gene.event())) {
@@ -137,11 +133,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         }
 
         val homozygousDisruptionMatches =
-            if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene.event()) || isMmrAbsenceOfProteinEvent(
-                    gene.event(),
-                    gene.gene()
-                )
-            ) {
+            if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene)) {
                 molecularTest.drivers.homozygousDisruptions.filter { homozygousDisruption ->
                     HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(
                         gene,
@@ -159,7 +151,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         }
 
         val copyNumberDeletionMatches =
-            if (CopyNumberEvidence.isDeletionEvent(gene.event()) || isMmrAbsenceOfProteinEvent(gene.event(), gene.gene())) {
+            if (CopyNumberEvidence.isDeletionEvent(gene)) {
                 molecularTest.drivers.copyNumbers.filter { copyNumber -> CopyNumberEvidence.isDeletionMatch(gene, copyNumber) }
             } else {
                 emptyList()
@@ -169,10 +161,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             variantMatches + promiscuousFusionMatches + disruptionMatches + homozygousDisruptionMatches
                     + copyNumberAmplificationMatches + copyNumberDeletionMatches
         )
-    }
-
-    private fun isMmrAbsenceOfProteinEvent(geneEvent: GeneEvent, gene: String): Boolean {
-        return geneEvent == GeneEvent.ABSENCE_OF_PROTEIN && GeneConstants.MMR_GENES.contains(gene)
     }
 
     private fun matchFusions(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
@@ -200,23 +188,27 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
     private fun matchCharacteristic(molecularTest: MolecularTest, characteristic: ActionableCharacteristic): ActionabilityMatchResult {
         return when (characteristic.type()) {
-            TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> matchMicrosatelliteStability(
-                molecularTest,
-                evaluateMicrosatelliteUnstable = true
-            )
+            TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> {
+                matchMicrosatelliteStability(
+                    molecularTest,
+                    requireMicrosatelliteUnstable = true
+                )
+            }
 
-            TumorCharacteristicType.MICROSATELLITE_STABLE -> matchMicrosatelliteStability(
-                molecularTest,
-                evaluateMicrosatelliteUnstable = false
-            )
+            TumorCharacteristicType.MICROSATELLITE_STABLE -> {
+                matchMicrosatelliteStability(
+                    molecularTest,
+                    requireMicrosatelliteUnstable = false
+                )
+            }
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, evaluateTmlHigh = true)
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = true)
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, evaluateTmlHigh = false)
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = false)
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, evaluateTmbHigh = true)
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, requireTmbHigh = true)
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, evaluateTmbHigh = false)
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, requireTmbHigh = false)
 
             TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> {
                 molecularTest.characteristics.homologousRecombination?.let { hr ->
@@ -230,7 +222,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
             TumorCharacteristicType.HPV_POSITIVE -> {
                 val hits =
-                    molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HPV && virus.driverLikelihood == DriverLikelihood.HIGH }
+                    molecularTest.drivers.viruses.filter { virus ->
+                        virus.type == VirusType.HPV && virus.driverLikelihood == DriverLikelihood.HIGH
+                    }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {
@@ -240,7 +234,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
             TumorCharacteristicType.EBV_POSITIVE -> {
                 val hits =
-                    molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.EBV && virus.driverLikelihood == DriverLikelihood.HIGH }
+                    molecularTest.drivers.viruses.filter { virus ->
+                        virus.type == VirusType.EBV && virus.driverLikelihood == DriverLikelihood.HIGH
+                    }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {
@@ -261,10 +257,10 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
     private fun matchMicrosatelliteStability(
         molecularTest: MolecularTest,
-        evaluateMicrosatelliteUnstable: Boolean
+        requireMicrosatelliteUnstable: Boolean
     ): ActionabilityMatchResult {
         return molecularTest.characteristics.microsatelliteStability?.let { msi ->
-            if (evaluateMicrosatelliteUnstable && msi.isUnstable || !evaluateMicrosatelliteUnstable && !msi.isUnstable) {
+            if (requireMicrosatelliteUnstable && msi.isUnstable || !requireMicrosatelliteUnstable && !msi.isUnstable) {
                 ActionabilityMatchResult.Success(listOf(msi))
             } else {
                 ActionabilityMatchResult.Failure
@@ -272,9 +268,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         } ?: ActionabilityMatchResult.Failure
     }
 
-    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, evaluateTmlHigh: Boolean): ActionabilityMatchResult {
+    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, requireTmlHigh: Boolean): ActionabilityMatchResult {
         return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-            if (evaluateTmlHigh && tml.isHigh || !evaluateTmlHigh && !tml.isHigh) {
+            if (requireTmlHigh && tml.isHigh || !requireTmlHigh && !tml.isHigh) {
                 ActionabilityMatchResult.Success(listOf(tml))
             } else {
                 ActionabilityMatchResult.Failure
@@ -282,9 +278,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         } ?: ActionabilityMatchResult.Failure
     }
 
-    private fun matchTumorMutationalBurden(molecularTest: MolecularTest, evaluateTmbHigh: Boolean): ActionabilityMatchResult {
+    private fun matchTumorMutationalBurden(molecularTest: MolecularTest, requireTmbHigh: Boolean): ActionabilityMatchResult {
         return molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
-            if (evaluateTmbHigh && tmb.isHigh || !evaluateTmbHigh && !tmb.isHigh) {
+            if (requireTmbHigh && tmb.isHigh || !requireTmbHigh && !tmb.isHigh) {
                 ActionabilityMatchResult.Success(listOf(tmb))
             } else {
                 ActionabilityMatchResult.Failure

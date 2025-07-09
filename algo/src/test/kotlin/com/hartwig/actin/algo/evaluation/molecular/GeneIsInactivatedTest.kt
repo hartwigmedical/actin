@@ -229,44 +229,44 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in MSI gene in MSI sample`() {
-        val msiGene = GeneConstants.MMR_GENES.first()
-        val function = GeneIsInactivated(msiGene)
+        val mmrGene = GeneConstants.MMR_GENES.first()
+        val function = GeneIsInactivated(mmrGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                withMicrosatelliteStabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene))
+                withMicrosatelliteStabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
             )
         )
     }
 
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in MS-Stable sample`() {
-        val msiGene = GeneConstants.MMR_GENES.first()
-        val function = GeneIsInactivated(msiGene)
+        val mmrGene = GeneConstants.MMR_GENES.first()
+        val function = GeneIsInactivated(mmrGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                withMicrosatelliteStabilityAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene))
+                withMicrosatelliteStabilityAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
             )
         )
     }
 
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in HRD gene in HRD sample`() {
-        val hrdGene = GeneConstants.HR_GENES.first()
-        val function = GeneIsInactivated(hrdGene)
+        val hrGene = GeneConstants.HR_GENES.first()
+        val function = GeneIsInactivated(hrGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                withHomologousRecombinationAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
+                withHomologousRecombinationAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrGene))
             )
         )
     }
 
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in HRD gene in HR-Proficient sample`() {
-        val hrdGene = GeneConstants.HR_GENES.first()
-        val function = GeneIsInactivated(hrdGene)
+        val hrGene = GeneConstants.HR_GENES.first()
+        val function = GeneIsInactivated(hrGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                withHomologousRecombinationAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
+                withHomologousRecombinationAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrGene))
             )
         )
     }
