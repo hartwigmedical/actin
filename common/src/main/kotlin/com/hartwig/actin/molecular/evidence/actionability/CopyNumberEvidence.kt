@@ -9,7 +9,7 @@ class CopyNumberEvidence {
 
     companion object {
         private val AMPLIFICATION_EVENTS = setOf(GeneEvent.AMPLIFICATION, GeneEvent.OVEREXPRESSION)
-        private val DELETION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.UNDEREXPRESSION)
+        private val DELETION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.UNDEREXPRESSION, GeneEvent.INACTIVATION)
 
         fun isAmplificationEvent(geneEvent: GeneEvent): Boolean {
             return AMPLIFICATION_EVENTS.contains(geneEvent)
