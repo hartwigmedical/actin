@@ -9,11 +9,12 @@ import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class IsMicrosatelliteUnstableTest {
-    private val msiGene = MolecularConstants.MSI_GENES.first()
+    private val mmrGene = GeneConstants.MMR_GENES.first()
     private val function = IsMicrosatelliteUnstable()
 
     @Test
@@ -68,7 +69,7 @@ class IsMicrosatelliteUnstableTest {
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
                         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
-                        gene = msiGene
+                        gene = mmrGene
                     )
                 )
             )
@@ -81,7 +82,7 @@ class IsMicrosatelliteUnstableTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteStabilityAndHomozygousDisruption(
-                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = msiGene)
+                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = mmrGene)
                 )
             )
         )
@@ -92,7 +93,7 @@ class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withMicrosatelliteStabilityAndDisruption(
-                    true, TestDisruptionFactory.createMinimal().copy(gene = msiGene)
+                    true, TestDisruptionFactory.createMinimal().copy(gene = mmrGene)
                 )
             )
         )
@@ -134,16 +135,16 @@ class IsMicrosatelliteUnstableTest {
         val evaluation = function.evaluate(
             MolecularTestFactory.withMicrosatelliteStabilityAndVariant(
                 null,
-                TestVariantFactory.createMinimal().copy(gene = msiGene, isReportable = true)
+                TestVariantFactory.createMinimal().copy(gene = mmrGene, isReportable = true)
             )
         )
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No MSI test result but driver event(s) in MMR gene(s) (MLH1) detected")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No MSI test result but driver event(s) in MMR gene(s) (EPCAM) detected")
     }
 
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
         return TestVariantFactory.createMinimal().copy(
-            gene = msiGene,
+            gene = mmrGene,
             isReportable = isReportable,
             isBiallelic = isBiallelic
         )

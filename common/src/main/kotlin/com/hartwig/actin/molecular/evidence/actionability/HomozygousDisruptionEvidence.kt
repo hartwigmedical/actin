@@ -7,15 +7,15 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 class HomozygousDisruptionEvidence {
 
     companion object {
-        private val HOMOZYGOUS_DISRUPTION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+        private val HOMOZYGOUS_DISRUPTION_EVENTS =
+            setOf(GeneEvent.DELETION, GeneEvent.UNDEREXPRESSION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
-        fun isHomozygousDisruptionEvent(geneEvent: GeneEvent): Boolean {
-            return HOMOZYGOUS_DISRUPTION_EVENTS.contains(geneEvent)
+        fun isHomozygousDisruptionEvent(gene: ActionableGene): Boolean {
+            return HOMOZYGOUS_DISRUPTION_EVENTS.contains(gene.event()) || MmrActionabilityFunctions.isMmrAbsenceOfProteinEvent(gene)
         }
 
         fun isHomozygousDisruptionMatch(actionableGene: ActionableGene, disruption: HomozygousDisruption): Boolean {
-            // TODO we don't check isReportable here, should we?
-            return disruption.gene == actionableGene.gene()
+            return disruption.isReportable && disruption.gene == actionableGene.gene()
         }
     }
 }

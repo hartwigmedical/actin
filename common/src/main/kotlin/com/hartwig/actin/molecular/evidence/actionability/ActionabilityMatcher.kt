@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
@@ -27,7 +28,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     fun match(molecularTest: MolecularTest): MatchesForActionable {
         val evidences = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }
         val trials = match(molecularTest, trials) { it.anyMolecularCriteria().toList() }
-
         val allActionables = evidences.keys + trials.keys
 
         return allActionables.associateWith { actionable ->
@@ -71,49 +71,39 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     }
 
     private fun matchHotspot(molecularTest: MolecularTest, hotspot: ActionableHotspot): ActionabilityMatchResult {
-        val matches = molecularTest.drivers.variants
-            .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && HotspotMatching.isMatch(hotspot, variant)
-            }
+        val matches = molecularTest.drivers.variants.filter { variant -> HotspotMatching.isMatch(hotspot, variant) }
 
         return successWhenNotEmpty(matches)
     }
 
     private fun matchCodons(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        val codonMatches = criterium.codons()
-            .map { codon -> matchCodon(molecularTest, codon) }
+        val codonMatches = criterium.codons().map { codon -> matchCodon(molecularTest, codon) }
 
         return ActionabilityMatchResult.combine(codonMatches)
     }
 
     private fun matchCodon(molecularTest: MolecularTest, codon: RangeAnnotation): ActionabilityMatchResult {
-        val matches = molecularTest.drivers.variants
-            .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(codon, variant)
-            }
+        val matches = molecularTest.drivers.variants.filter { variant -> RangeMatching.isMatch(codon, variant) }
 
         return successWhenNotEmpty(matches)
     }
 
     private fun matchExons(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        val exonMatches = criterium.exons()
-            .map { exon -> matchExon(molecularTest, exon) }
+        val exonMatches = criterium.exons().map { exon -> matchExon(molecularTest, exon) }
 
         return ActionabilityMatchResult.combine(exonMatches)
     }
 
     private fun matchExon(molecularTest: MolecularTest, exon: RangeAnnotation): ActionabilityMatchResult {
-        val matches = molecularTest.drivers.variants
-            .filter { variant ->
-                VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(exon, variant)
-            }
+        val matches = molecularTest.drivers.variants.filter { variant ->
+            VariantEvidence.isVariantEligible(variant) && RangeMatching.isMatch(exon, variant)
+        }
 
         return successWhenNotEmpty(matches)
     }
 
     private fun matchGenes(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        val geneMatches = criterium.genes()
-            .map { gene -> matchGene(molecularTest, gene) }
+        val geneMatches = criterium.genes().map { gene -> matchGene(molecularTest, gene) }
 
         return ActionabilityMatchResult.combine(geneMatches)
     }
@@ -128,10 +118,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
         val promiscuousFusionMatches = if (FusionEvidence.isPromiscuousFusionEvent(gene.event())) {
-            molecularTest.drivers.fusions
-                .filter { fusion ->
-                    FusionEvidence.isPromiscuousMatch(gene, fusion)
-                }
+            molecularTest.drivers.fusions.filter { fusion -> FusionEvidence.isPromiscuousMatch(gene, fusion) }
         } else {
             emptyList()
         }
@@ -145,36 +132,34 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             emptyList()
         }
 
-        val homozygousDisruptionMatches = if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene.event())) {
-            molecularTest.drivers.homozygousDisruptions
-                .filter { homozygousDisruption ->
-                    HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(gene, homozygousDisruption)
+        val homozygousDisruptionMatches =
+            if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene)) {
+                molecularTest.drivers.homozygousDisruptions.filter { homozygousDisruption ->
+                    HomozygousDisruptionEvidence.isHomozygousDisruptionMatch(
+                        gene,
+                        homozygousDisruption
+                    )
                 }
-        } else {
-            emptyList()
-        }
+            } else {
+                emptyList()
+            }
 
         val copyNumberAmplificationMatches = if (CopyNumberEvidence.isAmplificationEvent(gene.event())) {
-            molecularTest.drivers.copyNumbers
-                .filter { copyNumber ->
-                    CopyNumberEvidence.isAmplificationMatch(gene, copyNumber)
-                }
+            molecularTest.drivers.copyNumbers.filter { copyNumber -> CopyNumberEvidence.isAmplificationMatch(gene, copyNumber) }
         } else {
             emptyList()
         }
 
-        val copyNumberDeletionMatches = if (CopyNumberEvidence.isDeletionEvent(gene.event())) {
-            molecularTest.drivers.copyNumbers
-                .filter { copyNumber ->
-                    CopyNumberEvidence.isDeletionMatch(gene, copyNumber)
-                }
-        } else {
-            emptyList()
-        }
+        val copyNumberDeletionMatches =
+            if (CopyNumberEvidence.isDeletionEvent(gene)) {
+                molecularTest.drivers.copyNumbers.filter { copyNumber -> CopyNumberEvidence.isDeletionMatch(gene, copyNumber) }
+            } else {
+                emptyList()
+            }
 
         return successWhenNotEmpty(
-            variantMatches + promiscuousFusionMatches + disruptionMatches +
-                    homozygousDisruptionMatches + copyNumberAmplificationMatches + copyNumberDeletionMatches
+            variantMatches + promiscuousFusionMatches + disruptionMatches + homozygousDisruptionMatches
+                    + copyNumberAmplificationMatches + copyNumberDeletionMatches
         )
     }
 
@@ -194,7 +179,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         return successWhenNotEmpty(matches)
     }
 
-
     private fun matchCharacteristics(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
         val characteristicMatches = criterium.characteristics()
             .map { characteristic -> matchCharacteristic(molecularTest, characteristic) }
@@ -204,52 +188,31 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
     private fun matchCharacteristic(molecularTest: MolecularTest, characteristic: ActionableCharacteristic): ActionabilityMatchResult {
         return when (characteristic.type()) {
-            TumorCharacteristicType.MICROSATELLITE_STABLE -> {
-                ActionabilityMatchResult.Failure
-            }
-
             TumorCharacteristicType.MICROSATELLITE_UNSTABLE -> {
-                molecularTest.characteristics.microsatelliteStability?.let { msi ->
-                    if (msi.isUnstable) {
-                        ActionabilityMatchResult.Success(listOf(msi))
-                    } else {
-                        ActionabilityMatchResult.Failure
-                    }
-                } ?: ActionabilityMatchResult.Failure
+                matchMicrosatelliteStability(
+                    molecularTest,
+                    requireMicrosatelliteUnstable = true
+                )
             }
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> {
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.isHigh) {
-                        ActionabilityMatchResult.Success(listOf(tml))
-                    } else {
-                        ActionabilityMatchResult.Failure
-                    }
-                } ?: ActionabilityMatchResult.Failure
+            TumorCharacteristicType.MICROSATELLITE_STABLE -> {
+                matchMicrosatelliteStability(
+                    molecularTest,
+                    requireMicrosatelliteUnstable = false
+                )
             }
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> {
-                ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = true)
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> {
-                molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
-                    if (tmb.isHigh) {
-                        ActionabilityMatchResult.Success(listOf(tmb))
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = false)
 
-                    } else {
-                        ActionabilityMatchResult.Failure
-                    }
-                } ?: ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, requireTmbHigh = true)
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> {
-                ActionabilityMatchResult.Failure
-            }
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, requireTmbHigh = false)
 
             TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT -> {
                 molecularTest.characteristics.homologousRecombination?.let { hr ->
-                    if (hr.isDeficient == true) {
+                    if (hr.isDeficient) {
                         ActionabilityMatchResult.Success(listOf(hr))
                     } else {
                         ActionabilityMatchResult.Failure
@@ -258,7 +221,10 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
             TumorCharacteristicType.HPV_POSITIVE -> {
-                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.HPV }
+                val hits =
+                    molecularTest.drivers.viruses.filter { virus ->
+                        virus.type == VirusType.HPV && virus.driverLikelihood == DriverLikelihood.HIGH
+                    }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {
@@ -267,7 +233,10 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
             TumorCharacteristicType.EBV_POSITIVE -> {
-                val hits = molecularTest.drivers.viruses.filter { virus -> virus.type == VirusType.EBV }
+                val hits =
+                    molecularTest.drivers.viruses.filter { virus ->
+                        virus.type == VirusType.EBV && virus.driverLikelihood == DriverLikelihood.HIGH
+                    }
                 if (hits.isNotEmpty()) {
                     ActionabilityMatchResult.Success(hits)
                 } else {
@@ -281,13 +250,45 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         return if (criterium.hla().isEmpty()) {
             ActionabilityMatchResult.Success()
         } else {
-            logger.warn("Evidence contains HLA but matching supported")
+            logger.warn("Evidence contains HLA but matching in ACTIN not supported")
             ActionabilityMatchResult.Failure
         }
     }
 
-    companion object {
+    private fun matchMicrosatelliteStability(
+        molecularTest: MolecularTest,
+        requireMicrosatelliteUnstable: Boolean
+    ): ActionabilityMatchResult {
+        return molecularTest.characteristics.microsatelliteStability?.let { msi ->
+            if (requireMicrosatelliteUnstable && msi.isUnstable || !requireMicrosatelliteUnstable && !msi.isUnstable) {
+                ActionabilityMatchResult.Success(listOf(msi))
+            } else {
+                ActionabilityMatchResult.Failure
+            }
+        } ?: ActionabilityMatchResult.Failure
+    }
 
+    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, requireTmlHigh: Boolean): ActionabilityMatchResult {
+        return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
+            if (requireTmlHigh && tml.isHigh || !requireTmlHigh && !tml.isHigh) {
+                ActionabilityMatchResult.Success(listOf(tml))
+            } else {
+                ActionabilityMatchResult.Failure
+            }
+        } ?: ActionabilityMatchResult.Failure
+    }
+
+    private fun matchTumorMutationalBurden(molecularTest: MolecularTest, requireTmbHigh: Boolean): ActionabilityMatchResult {
+        return molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
+            if (requireTmbHigh && tmb.isHigh || !requireTmbHigh && !tmb.isHigh) {
+                ActionabilityMatchResult.Success(listOf(tmb))
+            } else {
+                ActionabilityMatchResult.Failure
+            }
+        } ?: ActionabilityMatchResult.Failure
+    }
+
+    companion object {
         fun successWhenNotEmpty(matches: List<Actionable>): ActionabilityMatchResult {
             return if (matches.isEmpty()) {
                 ActionabilityMatchResult.Failure
