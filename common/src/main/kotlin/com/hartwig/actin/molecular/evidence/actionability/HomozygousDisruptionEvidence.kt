@@ -14,8 +14,7 @@ class HomozygousDisruptionEvidence {
         }
 
         fun isHomozygousDisruptionMatch(actionableGene: ActionableGene, disruption: HomozygousDisruption): Boolean {
-            // TODO we don't check isReportable here, should we?
-            return disruption.gene == actionableGene.gene()
+            return disruption.isReportable && disruption.gene == actionableGene.gene()
         }
     }
 }

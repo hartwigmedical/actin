@@ -735,15 +735,15 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val homozygousDisruption =
+        val homDisruption =
             TestMolecularFactory.minimalHomozygousDisruption().copy(gene = "BRAF", isReportable = true, geneRole = GeneRole.UNKNOWN)
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
-            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homozygousDisruption))
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption))
         )
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
-        assertThat(matches[homozygousDisruption]).isEqualTo(actionabilityMatch(evidence, trial))
+        assertThat(matches[homDisruption]).isEqualTo(actionabilityMatch(evidence, trial))
     }
 
     @Test
@@ -753,7 +753,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val homDisruption = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = gene)
+        val homDisruption = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = gene, isReportable = true)
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption)))
 
@@ -769,7 +769,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val homDisruption = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = gene)
+        val homDisruption = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = gene, isReportable = true)
         val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption)))
 

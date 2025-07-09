@@ -6,7 +6,7 @@ import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
 class CopyNumberEvidence {
-    
+
     companion object {
         private val AMPLIFICATION_EVENTS = setOf(GeneEvent.AMPLIFICATION, GeneEvent.OVEREXPRESSION)
         private val DELETION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.UNDEREXPRESSION)
@@ -26,8 +26,7 @@ class CopyNumberEvidence {
         }
 
         fun isDeletionMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return copyNumber.canonicalImpact.type == CopyNumberType.DEL
-                    && copyNumber.gene == actionableGene.gene()
+            return copyNumber.canonicalImpact.type == CopyNumberType.DEL && copyNumber.gene == actionableGene.gene()
         }
     }
 }
