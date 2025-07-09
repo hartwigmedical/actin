@@ -22,6 +22,7 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     PERITONEUM("peritoneum"),
     PROSTATE("prostate"),
     REPRODUCTIVE_SYSTEM("reproductive system"),
+    SMALL_INTESTINE("small intestine"),
     SPLEEN("spleen"),
     STOMACH("stomach"),
     THYROID_GLAND("thyroid gland"),
@@ -31,4 +32,3 @@ enum class BodyLocationCategory(private val display: String): Displayable {
         return display
     }
 }
-
