@@ -24,6 +24,7 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
         val canonicalReportedSvIds = linx.allSomaticBreakends().filter { it.isCanonical && it.reported() }.map { it.svId() }.toSet()
         return linx.allSomaticBreakends()
             .filter { breakend -> breakend.isCanonical || !canonicalReportedSvIds.contains(breakend.svId()) }
+            .filter { breakend -> breakend.disruptive() }
             .filter { breakend ->
                 val geneIncluded = geneFilter.include(breakend.gene())
                 if (!geneIncluded && breakend.reported()) {

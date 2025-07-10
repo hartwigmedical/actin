@@ -34,6 +34,7 @@ class DisruptionExtractorTest {
             .gene("gene 1")
             .reported(true)
             .isCanonical(true)
+            .disruptive(true)
             .type(LinxBreakendType.DUP)
             .junctionCopyNumber(0.2)
             .undisruptedCopyNumber(1.6)
@@ -66,8 +67,9 @@ class DisruptionExtractorTest {
     fun `Should extract disruptions on non-canonical transcripts if not present on canonical transcript`() {
         val structuralVariant1 = structuralVariantBuilder().svId(1).clusterId(5).build()
         val structuralVariant2 = structuralVariantBuilder().svId(2).clusterId(3).build()
-        val nonCanonical = breakendBuilder().gene("gene 2").svId(1).isCanonical(false).reported(true).build()
-        val canonical = breakendBuilder().gene("gene 1").svId(2).isCanonical(true).type(LinxBreakendType.DEL).reported(true).build()
+        val canonical =
+            breakendBuilder().gene("gene 1").svId(2).isCanonical(true).disruptive(true).type(LinxBreakendType.DEL).reported(true).build()
+        val nonCanonical = breakendBuilder().gene("gene 2").svId(1).isCanonical(false).disruptive(true).reported(true).build()
 
         val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
@@ -85,8 +87,8 @@ class DisruptionExtractorTest {
     @Test
     fun `Should only extract disruption on canonical transcripts if present on both canonical and non canonical transcript`() {
         val structuralVariant = structuralVariantBuilder().svId(1).clusterId(5).build()
-        val canonical = breakendBuilder().reported(true).gene("gene 1").svId(1).isCanonical(true).build()
-        val nonCanonical = breakendBuilder().reported(true).gene("gene 2").svId(1).isCanonical(false).build()
+        val canonical = breakendBuilder().reported(true).gene("gene 1").svId(1).isCanonical(true).disruptive(true).build()
+        val nonCanonical = breakendBuilder().reported(true).gene("gene 2").svId(1).isCanonical(false).disruptive(true).build()
 
         val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
@@ -102,8 +104,28 @@ class DisruptionExtractorTest {
     }
 
     @Test
+    fun `Should extract only disruptive breakends`() {
+        val structuralVariant = structuralVariantBuilder().svId(1).clusterId(5).build()
+        val disruptive = breakendBuilder().reported(false).gene("gene disruptive").svId(1).isCanonical(true).disruptive(true).build()
+        val nonDisruptive =
+            breakendBuilder().reported(false).gene("gene non-disruptive").svId(1).isCanonical(true).disruptive(false).build()
+
+        val linx = ImmutableLinxRecord.builder()
+            .from(createMinimalTestOrangeRecord().linx())
+            .addAllSomaticStructuralVariants(structuralVariant)
+            .addAllSomaticBreakends(disruptive, nonDisruptive)
+            .build()
+
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), emptyList())
+        assertThat(disruptions).hasSize(1)
+
+        val disruption = disruptions.first()
+        assertThat(disruption.gene).isEqualTo("gene disruptive")
+    }
+
+    @Test
     fun `Should throw exception when filtering reported disruption`() {
-        val linxBreakend = breakendBuilder().gene("gene 1").reported(true).isCanonical(true).build()
+        val linxBreakend = breakendBuilder().gene("gene 1").reported(true).isCanonical(true).disruptive(true).build()
         val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
             .addAllSomaticBreakends(linxBreakend)
@@ -118,13 +140,13 @@ class DisruptionExtractorTest {
     fun `Should filter breakend with deletions`() {
         val gene = "gene"
 
-        val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).isCanonical(true).build()
+        val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).isCanonical(true).disruptive(true).build()
         assertThat(extractor.extractDisruptions(withBreakend(breakend1), setOf(gene), emptyList())).hasSize(0)
 
-        val breakend2 = breakendBuilder().gene(gene).type(LinxBreakendType.DUP).isCanonical(true).build()
+        val breakend2 = breakendBuilder().gene(gene).type(LinxBreakendType.DUP).isCanonical(true).disruptive(true).build()
         assertThat(extractor.extractDisruptions(withBreakend(breakend2), setOf(gene), emptyList())).hasSize(1)
 
-        val breakend3 = breakendBuilder().gene("other").type(LinxBreakendType.DEL).isCanonical(true).build()
+        val breakend3 = breakendBuilder().gene("other").type(LinxBreakendType.DEL).isCanonical(true).disruptive(true).build()
         assertThat(extractor.extractDisruptions(withBreakend(breakend3), setOf(gene), emptyList())).hasSize(1)
     }
 
@@ -159,6 +181,7 @@ class DisruptionExtractorTest {
             .gene("gene")
             .reported(true)
             .isCanonical(true)
+            .disruptive(true)
             .type(LinxBreakendType.DUP)
             .junctionCopyNumber(1.2)
             .undisruptedCopyNumber(1.4)
