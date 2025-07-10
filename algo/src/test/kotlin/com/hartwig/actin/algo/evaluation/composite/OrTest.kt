@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -101,6 +102,28 @@ class OrTest {
         assertThat(result.undeterminedMessagesStrings()).hasSize(2)
         assertThat(result.undeterminedMessagesStrings()).contains("undetermined 1")
         assertThat(result.undeterminedMessagesStrings()).contains("undetermined 2")
+    }
+
+    @Test
+    fun `Should retain warn with molecular event when combined with undetermined with isMissingMolecularResultForEvaluation`() {
+        val warn = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.WARN,
+                recoverable = true,
+                warnMessages = setOf(StaticMessage("warn 1")),
+                inclusionMolecularEvents = setOf("inclusion event")
+            )
+        }
+        val undetermined = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.UNDETERMINED,
+                recoverable = true,
+                undeterminedMessages = setOf(StaticMessage("undetermined 1")),
+                isMissingMolecularResultForEvaluation = true
+            )
+        }
+        val result: Evaluation = Or(listOf(warn, undetermined)).evaluate(TEST_PATIENT)
+        assertEvaluation(EvaluationResult.WARN, result)
     }
 
     @Test
