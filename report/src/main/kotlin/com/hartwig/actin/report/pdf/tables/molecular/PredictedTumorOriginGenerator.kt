@@ -11,7 +11,7 @@ import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-private const val ADDITIONAL_EMPTY_COLS = 2
+private const val ADDITIONAL_EMPTY_COLS = 1
 private const val PADDING_LEFT = 20
 private const val PADDING_RIGHT = 25
 
@@ -38,8 +38,11 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             )
             Tables.createSingleCol().addCell(Cells.createContentNoBorder(message))
         } else {
-            val numColumns = predictions.size + 1 + ADDITIONAL_EMPTY_COLS
-            val table = Tables.createMultiCol(numColumns)
+            val standardColumnRelativeWidth = 3.5f
+            val predictionColumnsRelativeWidths = FloatArray(predictions.size) { 2f }
+            val emptyColumnRelativeWidth = 4f
+
+            val table = Tables.createRelativeWidthCols(standardColumnRelativeWidth, *predictionColumnsRelativeWidths, emptyColumnRelativeWidth)
             table.addHeaderCell(Cells.createEmpty())
             predictions.indices.asSequence()
                 .map { i: Int -> "${i + 1}. ${predictions[i].cancerType}" }
@@ -56,7 +59,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
                 likelihoodCell
             }.forEach(table::addCell)
             repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
-            
+
             table.addCell(Cells.createContent("This score is calculated by combining information on:"))
             repeat(predictions.size) { table.addCell(Cells.createContent("")) }
             repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
@@ -67,7 +70,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : Ta
             addClassifierRow(
                 "(3) Driver genes and passenger characteristics", predictions, CupPrediction::featureClassifier, table
             )
-            if (isWGTS()){
+            if (isWGTS()) {
                 addClassifierRow(
                     "(4) Gene expression", predictions, CupPrediction::expressionPairWiseClassifier, table
                 )
