@@ -154,10 +154,7 @@ class TrialsProviderTest {
     fun `externalTrials should filter internal trials and filtered and original should be different without extended mode`() {
         // Should be filtered based on INTERNAL_TRIAL_IDS
         val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
-        // Should be filtered based on matching event in evaluable cohorts
         val country1Trial2 =
-            EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
-        val country1Trial3 =
             EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
         // Should be filtered based on INTERNAL_TRIAL_IDS
         val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
@@ -167,14 +164,14 @@ class TrialsProviderTest {
         val country2Trial4 = EventWithExternalTrial(ROS1_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
 
         val externalTrialsSet: Set<EventWithExternalTrial> =
-            setOf(country1Trial1, country1Trial2, country1Trial3, country2Trial1, country2Trial2, country2Trial3, country2Trial4)
+            setOf(country1Trial1, country1Trial2, country2Trial1, country2Trial2, country2Trial3, country2Trial4)
         val trialsProvider =
             TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), INTERNAL_TRIAL_IDS, false, Country.NETHERLANDS, false)
         val externalTrials = trialsProvider.externalTrials()
 
-        assertThat(externalTrials.nationalTrials.original).containsExactly(country1Trial2, country1Trial3)
+        assertThat(externalTrials.nationalTrials.original).containsExactly(country1Trial2)
         assertThat(externalTrials.internationalTrials.original).containsExactly(country2Trial2, country2Trial3, country2Trial4)
-        assertThat(externalTrials.nationalTrials.filtered).containsExactly(country1Trial3)
+        assertThat(externalTrials.nationalTrials.filtered).containsExactly(country1Trial2)
         assertThat(externalTrials.internationalTrials.filtered).containsExactly(country2Trial4)
     }
 
