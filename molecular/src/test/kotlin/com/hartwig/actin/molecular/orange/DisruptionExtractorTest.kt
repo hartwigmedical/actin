@@ -102,6 +102,25 @@ class DisruptionExtractorTest {
     }
 
     @Test
+    fun `Should extract only disruptive breakends`() {
+        val structuralVariant = structuralVariantBuilder().svId(1).clusterId(5).build()
+        val disruptive = breakendBuilder().reported(false).gene("gene disruptive").svId(1).isCanonical(true).disruptive(true).build()
+        val nonDisruptive = breakendBuilder().reported(false).gene("gene non-disruptive").svId(1).isCanonical(true).disruptive(false).build()
+
+        val linx = ImmutableLinxRecord.builder()
+            .from(createMinimalTestOrangeRecord().linx())
+            .addAllSomaticStructuralVariants(structuralVariant)
+            .addAllSomaticBreakends(disruptive, nonDisruptive)
+            .build()
+
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
+        assertThat(disruptions).hasSize(1)
+
+        val disruption = disruptions.first()
+        assertThat(disruption.gene).isEqualTo("gene disruptive")
+    }
+
+    @Test
     fun `Should throw exception when filtering reported disruption`() {
         val linxBreakend = breakendBuilder().gene("gene 1").reported(true).isCanonical(true).build()
         val linx = ImmutableLinxRecord.builder()
