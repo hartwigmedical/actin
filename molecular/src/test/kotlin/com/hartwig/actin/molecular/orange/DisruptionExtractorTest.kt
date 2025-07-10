@@ -48,7 +48,7 @@ class DisruptionExtractorTest {
             .addAllSomaticBreakends(linxBreakend)
             .build()
 
-        val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), emptyList())
         assertThat(disruptions).hasSize(1)
 
         val disruption = disruptions.first()
@@ -75,7 +75,7 @@ class DisruptionExtractorTest {
             .addAllSomaticBreakends(nonCanonical, canonical)
             .build()
 
-        val disruptions = extractor.extractDisruptions(linx, setOf("gene 1"), listOf())
+        val disruptions = extractor.extractDisruptions(linx, setOf("gene 1"), emptyList())
         assertThat(disruptions).hasSize(1)
 
         val disruption = disruptions.first()
@@ -94,7 +94,7 @@ class DisruptionExtractorTest {
             .addAllSomaticBreakends(canonical, nonCanonical)
             .build()
 
-        val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), emptyList())
         assertThat(disruptions).hasSize(1)
 
         val disruption = disruptions.first()
@@ -119,13 +119,13 @@ class DisruptionExtractorTest {
         val gene = "gene"
 
         val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).isCanonical(true).build()
-        assertThat(extractor.extractDisruptions(withBreakend(breakend1), setOf(gene), listOf())).hasSize(0)
+        assertThat(extractor.extractDisruptions(withBreakend(breakend1), setOf(gene), emptyList())).hasSize(0)
 
         val breakend2 = breakendBuilder().gene(gene).type(LinxBreakendType.DUP).isCanonical(true).build()
-        assertThat(extractor.extractDisruptions(withBreakend(breakend2), setOf(gene), listOf())).hasSize(1)
+        assertThat(extractor.extractDisruptions(withBreakend(breakend2), setOf(gene), emptyList())).hasSize(1)
 
         val breakend3 = breakendBuilder().gene("other").type(LinxBreakendType.DEL).isCanonical(true).build()
-        assertThat(extractor.extractDisruptions(withBreakend(breakend3), setOf(gene), listOf())).hasSize(1)
+        assertThat(extractor.extractDisruptions(withBreakend(breakend3), setOf(gene), emptyList())).hasSize(1)
     }
 
     @Test
