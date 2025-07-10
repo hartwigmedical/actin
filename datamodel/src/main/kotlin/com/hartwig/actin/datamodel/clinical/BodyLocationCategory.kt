@@ -31,4 +31,12 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     override fun display(): String {
         return display
     }
+
+    companion object {
+        fun fromString(string: String): BodyLocationCategory {
+            return BodyLocationCategory.valueOf(
+                string.trim { it <= ' ' }.replace(" ".toRegex(), "_").uppercase()
+            )
+        }
+    }
 }
