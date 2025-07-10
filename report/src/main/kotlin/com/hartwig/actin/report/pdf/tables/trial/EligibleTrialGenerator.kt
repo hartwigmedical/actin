@@ -135,9 +135,8 @@ class EligibleTrialGenerator(
                 listOfNotNull(
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { externalTrials.isNotEmpty() },
-                    ("${formatCountWithLabel(externalFilteredCount, "trial")} filtered due to eligible local trials for the same molecular " +
-                            "target and/or the trial is for young adult patients. See Other Trial Matching Results for filtered matches.")
-                        .takeIf { externalFilteredCount > 0 }
+                    ("${formatCountWithLabel(externalFilteredCount, "trial")} filtered because trial is for young adult patients. " +
+                            "See Other Trial Matching Results for filtered matches.").takeIf { externalFilteredCount > 0 }
                 ).joinToString("\n")
             } else
                 listOfNotNull(

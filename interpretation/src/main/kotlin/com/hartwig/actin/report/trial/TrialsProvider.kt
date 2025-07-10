@@ -72,11 +72,8 @@ class TrialsProvider(
 
         val (nationalTrials, internationalTrials) = partitionByCountry(eligibleExternalTrials, countryOfReference)
 
-        val filteredNationalTrials = nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
-            .filterExclusivelyInChildrensHospitalsInReferenceCountry(
-                isYoungAdult,
-                countryOfReference
-            )
+        val filteredNationalTrials =
+            nationalTrials.filterExclusivelyInChildrensHospitalsInReferenceCountry(isYoungAdult, countryOfReference)
 
         val filteredInternationalTrials =
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)

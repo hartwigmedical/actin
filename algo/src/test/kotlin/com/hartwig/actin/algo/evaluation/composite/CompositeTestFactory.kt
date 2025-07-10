@@ -29,7 +29,7 @@ internal object CompositeTestFactory {
         return evaluationFunction { evaluation }
     }
 
-    private fun evaluationFunction(function: (PatientRecord) -> Evaluation): EvaluationFunction {
+    fun evaluationFunction(function: (PatientRecord) -> Evaluation): EvaluationFunction {
         return object : EvaluationFunction {
             override fun evaluate(record: PatientRecord): Evaluation {
                 return function(record)
