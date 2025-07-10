@@ -41,8 +41,10 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
         val undeterminedWithMissingMolecularResult =
             evaluationsByResult[EvaluationResult.UNDETERMINED]?.any { it.isMissingMolecularResultForEvaluation } ?: false
         val warnWithMolecularEvent =
-            evaluationsByResult[EvaluationResult.WARN]?.any { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
-                ?: false
+            evaluationsByResult[EvaluationResult.WARN]?.any {
+                it.exclusionMolecularEvents.isNotEmpty() ||
+                        it.inclusionMolecularEvents.isNotEmpty()
+            } ?: false
         return undeterminedWithMissingMolecularResult && warnWithMolecularEvent
     }
 }
