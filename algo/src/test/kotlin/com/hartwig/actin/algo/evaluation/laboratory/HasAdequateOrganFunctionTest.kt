@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
-import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 import java.time.LocalDate
 
@@ -15,7 +14,7 @@ private val VALID_DATE = LocalDate.of(2024, 12, 1)
 
 class HasAdequateOrganFunctionTest {
 
-    private val function = HasAdequateOrganFunction(VALID_DATE, TestIcdFactory.createTestModel())
+    private val function = HasAdequateOrganFunction(VALID_DATE)
     private val upperLimitLabMeasurementList = listOf(
         LabMeasurement.LACTATE_DEHYDROGENASE,
         LabMeasurement.TOTAL_BILIRUBIN,
@@ -77,18 +76,6 @@ class HasAdequateOrganFunctionTest {
             )
             assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
         }
-    }
-
-    @Test
-    fun `Should warn when cardiovascular disease present in history`() {
-        assertEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                ComorbidityTestFactory.withOtherCondition(
-                    ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.HEART_DISEASE_SET.first())
-                )
-            )
-        )
     }
 }
 
