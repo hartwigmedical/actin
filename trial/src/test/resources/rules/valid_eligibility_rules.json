@@ -1172,6 +1172,14 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_GGT_ULN_OF_AT_MOST_X",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_GGT_ULN_OF_AT_LEAST_X",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X",
     "usedStatus": "UNUSED"
   },
