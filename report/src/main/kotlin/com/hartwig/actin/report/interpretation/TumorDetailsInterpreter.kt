@@ -63,7 +63,8 @@ object TumorDetailsInterpreter {
         val confirmedOtherLesions = tumor.otherLesions.orEmpty()
         val suspectedOtherLesions =
             tumor.otherSuspectedLesions?.filterNot { it in confirmedOtherLesions }?.map { "$it (suspected)" }.orEmpty()
-        val unknownCategories = allCategorizedLesions.filter { it.hasLesion == null && it.hasSuspectedLesion != true }.map { it.type }
+        val unknownCategories = allCategorizedLesions.filter { it.hasLesion == null && it.hasSuspectedLesion != true }
+            .map { it.type } + if (tumor.otherLesions == null) "Other" else ""
 
         val allLesions = (confirmedCategorizedLesions + confirmedOtherLesions + listOfNotNull(tumor.biopsyLocation))
             .sorted()
