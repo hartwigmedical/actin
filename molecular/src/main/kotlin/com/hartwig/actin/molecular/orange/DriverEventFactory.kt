@@ -33,7 +33,11 @@ object DriverEventFactory {
 
     fun gainDelEvent(gainDel: PurpleGainDeletion): String {
         return when (gainDel.interpretation()) {
-            CopyNumberInterpretation.PARTIAL_GAIN, CopyNumberInterpretation.FULL_GAIN -> {
+            CopyNumberInterpretation.PARTIAL_GAIN -> {
+                gainDel.gene() + " partial amp"
+            }
+
+            CopyNumberInterpretation.FULL_GAIN -> {
                 gainDel.gene() + " amp"
             }
 

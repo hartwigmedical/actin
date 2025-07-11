@@ -49,7 +49,7 @@ class DriverEventFactoryTest {
     @Test
     fun `Should generate events for copy numbers`() {
         assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.FULL_GAIN))).isEqualTo("MYC amp")
-        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.PARTIAL_GAIN))).isEqualTo("MYC amp")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.PARTIAL_GAIN))).isEqualTo("MYC partial amp")
         assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.FULL_DEL))).isEqualTo("PTEN del")
         assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.PARTIAL_DEL))).isEqualTo("PTEN del")
     }
