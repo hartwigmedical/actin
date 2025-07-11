@@ -8,7 +8,7 @@ object TumorDetailsInterpreter {
     const val CUP_STRING = "(CUP)"
 
     data class Lesions(
-        val nonLymphnodeLesions: List<String>,
+        val nonLymphNodeLesions: List<String>,
         val lymphNodeLesions: List<String>,
         val suspectedCategorizedLesions: List<String>,
         val suspectedOtherLesions: List<String>,
@@ -24,7 +24,7 @@ object TumorDetailsInterpreter {
 
     fun lesionString(tumor: TumorDetails): String {
         return with (classifyLesions(tumor)) {
-            (nonLymphnodeLesions + lymphNodeLesions + suspectedCategorizedLesions + suspectedOtherLesions)
+            (nonLymphNodeLesions + lymphNodeLesions + suspectedCategorizedLesions + suspectedOtherLesions)
                 .joinToString(", ")
                 .ifEmpty { Formats.VALUE_UNKNOWN }
         }

@@ -142,12 +142,12 @@ class TumorDetailsInterpreterTest {
                 otherSuspectedLesions = listOf("Adrenal gland")
             )
             val expected = TumorDetailsInterpreter.Lesions(
-                listOf("Bone", "CNS"),
-                listOf("Lymph nodes (inguinal, mediastinal)"),
-                listOf("Lung (suspected)"),
-                listOf("Adrenal gland (suspected)"),
-                listOf("Liver"),
-                listOf("Brain")
+                nonLymphNodeLesions = listOf("Bone", "CNS"),
+                lymphNodeLesions = listOf("Lymph nodes (inguinal, mediastinal)"),
+                suspectedCategorizedLesions = listOf("Lung (suspected)"),
+                suspectedOtherLesions = listOf("Adrenal gland (suspected)"),
+                negativeCategories = listOf("Liver"),
+                unknownCategories = listOf("Brain")
             )
             assertThat(classifyLesions(details)).isEqualTo(expected)
         }
