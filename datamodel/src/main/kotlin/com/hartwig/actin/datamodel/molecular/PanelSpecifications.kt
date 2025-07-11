@@ -1,9 +1,11 @@
 package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.clinical.SequencingTest
+import java.time.LocalDate
 import java.util.function.Predicate
 
 data class PanelGeneSpecification(val geneName: String, val targets: List<MolecularTestTarget>)
+data class PanelTestSpecification(val testName: String, val version: LocalDate? = null)
 
 data class PanelSpecification(private val geneTargetMap: Map<String, List<MolecularTestTarget>>) {
     fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
@@ -23,17 +25,17 @@ fun derivedGeneTargetMap(testResults: SequencingTest) =
             } +
             testResults.negativeResults.map { it.gene to listOf(MolecularTestTarget.MUTATION) }
 
-class PanelSpecifications(panelGeneSpecifications: Map<String, List<PanelGeneSpecification>>) {
+class PanelSpecifications(panelGeneSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>) {
 
-    private val panelSpecifications: Map<String, PanelSpecification> = panelGeneSpecifications.mapValues { (_, specs) ->
+    private val panelSpecifications: Map<PanelTestSpecification, PanelSpecification> = panelGeneSpecifications.mapValues { (_, specs) ->
         PanelSpecification(
             specs.groupBy(PanelGeneSpecification::geneName).mapValues { it.value.flatMap(PanelGeneSpecification::targets) })
     }
 
-    fun panelSpecification(panelName: String): PanelSpecification {
-        return panelSpecifications[panelName] ?: throw IllegalStateException(
-            ("Panel [$panelName] is not found in panel specifications. Check curation and map to one " +
-                    "of [${panelSpecifications.keys.joinToString()}] or add this panel to the specification TSV.")
+    fun panelSpecification(spec: PanelTestSpecification): PanelSpecification {
+        return panelSpecifications[spec] ?: throw IllegalStateException(
+            "Panel [${spec.testName}${spec.version?.let { " version $it" } ?: ""}] is not found in panel specifications. Check curation and map to one " +
+                    "of [${panelSpecifications.keys.joinToString()}] or add this panel to the specification TSV."
         )
     }
 }

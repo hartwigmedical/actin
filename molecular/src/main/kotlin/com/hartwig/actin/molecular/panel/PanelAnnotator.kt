@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -34,7 +35,9 @@ class PanelAnnotator(
     }
 
     private fun interpret(input: SequencingTest): PanelRecord {
-        val specification = if (input.knownSpecifications) panelSpecifications.panelSpecification(input.test) else PanelSpecification(
+        //TODO(ADD DATE CHECK FOR WGS TEST (FROM FEED) AND ADD PANEL SPEC DATE CORRESPONDING TO TEST DATE)
+
+        val specification = if (input.knownSpecifications) panelSpecifications.panelSpecification(PanelTestSpecification(input.test)) else PanelSpecification(
             derivedGeneTargetMap(input)
         )
         

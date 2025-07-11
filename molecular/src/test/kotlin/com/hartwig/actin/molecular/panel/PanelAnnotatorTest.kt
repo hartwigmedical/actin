@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
@@ -52,7 +53,7 @@ class PanelAnnotatorTest {
             panelCopyNumberAnnotator,
             panelVirusAnnotator,
             panelDriverAttributeAnnotator,
-            PanelSpecifications(mapOf(TEST_NAME to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
+            PanelSpecifications(mapOf(PanelTestSpecification(TEST_NAME) to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
         )
 
     @Test
