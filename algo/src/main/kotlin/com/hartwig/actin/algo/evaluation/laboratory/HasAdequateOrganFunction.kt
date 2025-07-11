@@ -3,17 +3,13 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.icd.IcdConstants.ARTERY_DISEASE_BLOCK
-import com.hartwig.actin.algo.icd.IcdConstants.HEART_DISEASE_SET
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
-import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val icdModel: IcdModel) : EvaluationFunction {
+class HasAdequateOrganFunction(private val minValidDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpretation.interpret(record.labValues)
@@ -54,10 +50,6 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
             .filter { it.second == LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED }
             .map { it.first }
 
-        val significantCardiovascularHistory = icdModel.findInstancesMatchingAnyIcdCode(
-            record.comorbidities, (HEART_DISEASE_SET + ARTERY_DISEASE_BLOCK).map { IcdCode(it) }.toSet()
-        ).fullMatches
-
         val messageStart = "Possible inadequate organ function"
 
         return when {
@@ -70,12 +62,6 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
             valuesAboveUpperLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
                     "$messageStart (${Format.concat(valuesAboveUpperLimit.map { it.first.display() })} above ULN)"
-                )
-            }
-
-            significantCardiovascularHistory.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "$messageStart (cardiovascular disease present: ${significantCardiovascularHistory.joinToString(", ") { it.display() }})"
                 )
             }
 
