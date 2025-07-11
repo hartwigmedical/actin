@@ -32,17 +32,17 @@ class PanelSpecificationsTest {
 
     @Test
     fun `Should resolve a panels specification from the set of all specification by name`() {
-        val panelName = "panel"
+        val panelSpec = PanelTestSpecification("panel")
         val specification = PanelSpecifications(
             mapOf(
-                panelName to listOf(
+                panelSpec to listOf(
                     PanelGeneSpecification(
                         GENE,
                         listOf(MolecularTestTarget.MUTATION)
                     )
                 )
             )
-        ).panelSpecification(panelName)
+        ).panelSpecification(panelSpec)
         assertThat(specification.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION) })
     }
 
@@ -50,7 +50,7 @@ class PanelSpecificationsTest {
     fun `Should throw illegal state exception when a panel name is not found`() {
         assertThatThrownBy {
             val specifications = PanelSpecifications(emptyMap())
-            specifications.panelSpecification("panel")
+            specifications.panelSpecification(PanelTestSpecification("panel"))
         }.isInstanceOfAny(IllegalStateException::class.java)
     }
 

@@ -1,3 +1,5 @@
-testName	version	gene	mutation	amplification	deletion	fusion
-oncopanel	1.0	ABCB1	true			
-archer	1.1	ALK	true	true	true	true
+testName	versionDate	gene	mutation	amplification	deletion	fusion
+oncopanel	2022-01-01	ABCB1	true
+oncopanel	2023-01-01	EGFR	true
+archer		ALK	true	true	true	true
+archer		ROS1	true	false	false	true
