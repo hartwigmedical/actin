@@ -17,7 +17,7 @@ class HasQtcfWithGender(
             evalFunction(threshold).evaluate(record)
         } else {
             EvaluationFactory.fail(
-                "${gender.display()} QTCF exceptable bound not applicable for ${
+                "${gender.display()} QTCF acceptable bound not applicable for ${
                     record.patient.gender.display().lowercase()
                 }"
             )

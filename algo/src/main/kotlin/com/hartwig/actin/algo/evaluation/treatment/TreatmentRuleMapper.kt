@@ -97,6 +97,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TARGETED_THERAPY_INTERFERING_WITH_RAS_MEK_MAPK_PATHWAY to hasHadTargetedTherapyInterferingWithRasMekMapkPathwayCreator(),
             EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY to { HasHadNonInternalRadiotherapy() },
             EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X to hasHadRadiotherapyToSomeBodyLocationCreator(),
+            EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_WITH_ANY_DRUG_X_AND_AT_LEAST_Y_CYCLES to hasHadChemoradiotherapyWithAnyDrugAndMinimumCyclesCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentNameCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentCategoryCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(),
@@ -519,6 +520,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
             HasHadTreatmentWithCategoryOfTypesAsMostRecent(input.category, input.types)
+        }
+    }
+
+    private fun hasHadChemoradiotherapyWithAnyDrugAndMinimumCyclesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createManyDrugsOneIntegerInput(function)
+            HasHadChemoradiotherapyWithDrugAndCycles(input.drugs, input.integer)
         }
     }
 

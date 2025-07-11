@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import kotlin.collections.any
 
 class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
 
@@ -12,16 +13,38 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
         val bestResult = evaluationsByResult.keys.maxOrNull()
             ?: throw IllegalStateException("Could not determine OR result for functions: $functions")
 
+        val finalResult =
+            if (bestResult == EvaluationResult.UNDETERMINED && undeterminedWithMissingMolecularResultAndWarnWithMolecularEvent(
+                    evaluationsByResult
+                )
+            ) {
+                EvaluationResult.WARN
+            } else bestResult
+
         val additionalEvaluations = listOf(EvaluationResult.PASS, EvaluationResult.WARN, EvaluationResult.UNDETERMINED)
             .flatMap { result ->
-                evaluationsByResult[EvaluationResult.WARN]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
+                evaluationsByResult[result]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
                     ?: emptyList()
             }
-        val evaluations = evaluationsByResult[bestResult]!! + additionalEvaluations
+
+        val evaluations = evaluationsByResult[finalResult]!! + additionalEvaluations
         val recoverable = evaluations.any(Evaluation::recoverable)
         val filteredEvaluations =
-            if (bestResult == EvaluationResult.FAIL && recoverable) evaluations.filter { it.recoverable } else evaluations
+            if (finalResult == EvaluationResult.FAIL && recoverable) evaluations.filter { it.recoverable } else evaluations
 
-        return filteredEvaluations.fold(Evaluation(bestResult, recoverable), Evaluation::addMessagesAndEvents)
+        return filteredEvaluations.fold(Evaluation(finalResult, recoverable), Evaluation::addMessagesAndEvents)
+    }
+
+    private fun undeterminedWithMissingMolecularResultAndWarnWithMolecularEvent(
+        evaluationsByResult: Map<EvaluationResult, List<Evaluation>>
+    ): Boolean {
+        val undeterminedWithMissingMolecularResult =
+            evaluationsByResult[EvaluationResult.UNDETERMINED]?.any { it.isMissingMolecularResultForEvaluation } ?: false
+        val warnWithMolecularEvent =
+            evaluationsByResult[EvaluationResult.WARN]?.any {
+                it.exclusionMolecularEvents.isNotEmpty() ||
+                        it.inclusionMolecularEvents.isNotEmpty()
+            } ?: false
+        return undeterminedWithMissingMolecularResult && warnWithMolecularEvent
     }
 }

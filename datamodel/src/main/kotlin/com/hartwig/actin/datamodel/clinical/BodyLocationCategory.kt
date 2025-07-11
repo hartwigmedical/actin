@@ -22,6 +22,7 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     PERITONEUM("peritoneum"),
     PROSTATE("prostate"),
     REPRODUCTIVE_SYSTEM("reproductive system"),
+    SMALL_INTESTINE("small intestine"),
     SPLEEN("spleen"),
     STOMACH("stomach"),
     THYROID_GLAND("thyroid gland"),
@@ -30,5 +31,12 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     override fun display(): String {
         return display
     }
-}
 
+    companion object {
+        fun fromString(string: String): BodyLocationCategory {
+            return BodyLocationCategory.valueOf(
+                string.trim { it <= ' ' }.replace(" ".toRegex(), "_").uppercase()
+            )
+        }
+    }
+}

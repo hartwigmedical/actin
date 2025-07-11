@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
@@ -15,17 +15,17 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
     override fun evaluate(test: MolecularTest): Evaluation {
         val drivers = test.drivers
         val msiVariants = drivers.variants
-            .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
+            .filter { variant -> variant.gene in GeneConstants.MMR_GENES && variant.isReportable }
 
         val biallelicMsiVariants = msiVariants.filter { it.isBiallelic == true }
         val nonBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == false }
         val unknownBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == null }
 
-        val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.canonicalImpact.type == CopyNumberType.DEL }
-        val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in MSI_GENES }
+        val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in GeneConstants.MMR_GENES && it.canonicalImpact.type == CopyNumberType.DEL }
+        val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in GeneConstants.MMR_GENES }
         val msiGenesWithBiallelicDriver = genesFrom(biallelicMsiVariants, msiCopyNumbers, msiHomozygousDisruptions)
 
-        val msiDisruptions = drivers.disruptions.filter { it.gene in MSI_GENES && it.isReportable }
+        val msiDisruptions = drivers.disruptions.filter { it.gene in GeneConstants.MMR_GENES && it.isReportable }
         val msiGenesWithNonBiallelicDriver = genesFrom(nonBiallelicMsiVariants, msiDisruptions)
 
         val msiGenesWithUnknownBiallelicDriver = genesFrom(unknownBiallelicMsiVariants)
