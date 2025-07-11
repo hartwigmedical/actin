@@ -147,7 +147,7 @@ class TumorDetailsInterpreterTest {
                 suspectedCategorizedLesions = listOf("Lung (suspected)"),
                 suspectedOtherLesions = listOf("Adrenal gland (suspected)"),
                 negativeCategories = listOf("Liver"),
-                unknownCategories = listOf("Brain")
+                unknownLesions = listOf("Brain")
             )
             assertThat(classifyLesions(details)).isEqualTo(expected)
         }
