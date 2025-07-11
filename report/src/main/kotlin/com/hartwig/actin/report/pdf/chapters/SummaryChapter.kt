@@ -46,9 +46,11 @@ class SummaryChapter(
         addParagraphWithContent(patientDetailFields, document)
 
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
-        val tumorDetailFields = listOf(
+        val tumorDetailFields = listOfNotNull(
             "Tumor: " to report.patientRecord.tumor.name,
-            " | Lesions: " to TumorDetailsInterpreter.lesions(report.patientRecord.tumor),
+            if (report.config.includeLesionsInTumorSummary) {
+                " | Lesions: " to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
+            } else null,
             " | $stageTitle: " to stages
         )
         addParagraphWithContent(tumorDetailFields, document)

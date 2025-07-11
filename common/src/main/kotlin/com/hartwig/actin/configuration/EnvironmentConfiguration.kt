@@ -31,6 +31,8 @@ data class ReportConfiguration(
     val molecularSummaryType: MolecularSummaryType = MolecularSummaryType.STANDARD,
     val includeOtherOncologicalHistoryInSummary: Boolean = true,
     val includePatientHeader: Boolean = true,
+    val includeLesionsInTumorSummary: Boolean = true,
+    val includePreviousPrimaryInClinicalSummary: Boolean = true,
     val includeRelevantNonOncologicalHistoryInSummary: Boolean = true,
     val includeApprovedTreatmentsInSummary: Boolean = true,
     val includeTrialMatchingInSummary: Boolean = true,
