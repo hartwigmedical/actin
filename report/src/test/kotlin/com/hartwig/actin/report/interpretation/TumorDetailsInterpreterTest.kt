@@ -1,8 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.classifyLesions
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.hasCancerOfUnknownPrimary
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.lesions
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.lesionString
 import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -23,43 +24,43 @@ class TumorDetailsInterpreterTest {
 
         @Test
         fun `Should return unknown string when lesion data is missing`() {
-            val lesions = lesions(TumorDetails())
+            val lesions = lesionString(TumorDetails())
             assertThat(lesions).isEqualTo(Formats.VALUE_UNKNOWN)
         }
 
         @Test
         fun `Should return string for bone lesions`() {
-            val lesions = lesions(TumorDetails(hasBoneLesions = true))
+            val lesions = lesionString(TumorDetails(hasBoneLesions = true))
             assertThat(lesions).isEqualTo(TumorDetails.BONE)
         }
 
         @Test
         fun `Should return string for brain lesions`() {
-            val lesions = lesions(TumorDetails(hasBrainLesions = true))
+            val lesions = lesionString(TumorDetails(hasBrainLesions = true))
             assertThat(lesions).isEqualTo(TumorDetails.BRAIN)
         }
 
         @Test
         fun `Should return string for cns lesions`() {
-            val lesions = lesions(TumorDetails(hasCnsLesions = true))
+            val lesions = lesionString(TumorDetails(hasCnsLesions = true))
             assertThat(lesions).isEqualTo(TumorDetails.CNS)
         }
 
         @Test
         fun `Should return string for liver lesions`() {
-            val lesions = lesions(TumorDetails(hasLiverLesions = true))
+            val lesions = lesionString(TumorDetails(hasLiverLesions = true))
             assertThat(lesions).isEqualTo(TumorDetails.LIVER)
         }
 
         @Test
         fun `Should return string for lung lesions`() {
-            val lesions = lesions(TumorDetails(hasLungLesions = true))
+            val lesions = lesionString(TumorDetails(hasLungLesions = true))
             assertThat(lesions).isEqualTo(TumorDetails.LUNG)
         }
 
         @Test
         fun `Should concatenate multiple lesions together`() {
-            val lesions = lesions(TumorDetails(hasLiverLesions = true, hasLungLesions = true))
+            val lesions = lesionString(TumorDetails(hasLiverLesions = true, hasLungLesions = true))
             assertThat(lesions).isEqualTo("Liver, Lung")
         }
 
@@ -70,12 +71,12 @@ class TumorDetailsInterpreterTest {
                 otherLesions = listOf("lymph nodes abdominal", "lymph nodes inguinal")
             )
             val expected = "Lymph nodes (abdominal, inguinal)"
-            assertThat(lesions(details)).isEqualTo(expected)
+            assertThat(lesionString(details)).isEqualTo(expected)
         }
 
         @Test
         fun `Should return lymph nodes when input is lymph nodes without location specification`() {
-            val lesions = lesions(TumorDetails(otherLesions = listOf("lymph nodes")))
+            val lesions = lesionString(TumorDetails(otherLesions = listOf("lymph nodes")))
             assertThat(lesions).isEqualTo("Lymph nodes")
         }
 
@@ -83,34 +84,34 @@ class TumorDetailsInterpreterTest {
         fun `Should map name Brain to brainLesions`() {
             val details = TumorDetails(name = "Some brain")
             val expected = "Brain"
-            assertThat(lesions(details)).isEqualTo(expected)
+            assertThat(lesionString(details)).isEqualTo(expected)
         }
 
         @Test
         fun `Should map name Glioma to brainLesions`() {
             val details = TumorDetails(name = "Some glioma")
             val expected = "Brain"
-            assertThat(lesions(details)).isEqualTo(expected)
+            assertThat(lesionString(details)).isEqualTo(expected)
         }
 
         @Test
         fun `Should include biopsyLocation among lesions locations`() {
             val details = TumorDetails(biopsyLocation = "Lung")
             val expected = "Lung"
-            assertThat(lesions(details)).isEqualTo(expected)
+            assertThat(lesionString(details)).isEqualTo(expected)
         }
 
         @Test
         fun `Should show (active) postfix if active CNS or brain lesion`() {
             val details =
                 TumorDetails(hasActiveBrainLesions = true, hasBrainLesions = true, hasCnsLesions = true, hasActiveCnsLesions = true)
-            assertThat(lesions(details)).isEqualTo("Brain (active), CNS (active)")
+            assertThat(lesionString(details)).isEqualTo("Brain (active), CNS (active)")
         }
 
         @Test
         fun `Should only show lesion once and without (suspected) if both suspected and confirmed`() {
             val details = TumorDetails(hasBoneLesions = true, hasSuspectedBoneLesions = true)
-            assertThat(lesions(details)).isEqualTo("Bone")
+            assertThat(lesionString(details)).isEqualTo("Bone")
         }
 
         @Test
@@ -123,7 +124,32 @@ class TumorDetailsInterpreterTest {
                 otherSuspectedLesions = listOf("Adrenal gland", "Bladder")
             )
             val expected = "Bone, Lymph nodes (inguinal, mediastinal), Liver (suspected), Adrenal gland (suspected), Bladder (suspected)"
-            assertThat(lesions(details)).isEqualTo(expected)
+            assertThat(lesionString(details)).isEqualTo(expected)
+        }
+
+        @Test
+        fun `Should correctly sort lesions in lesion object`() {
+            val details = TumorDetails(
+                hasBoneLesions = true,
+                hasLiverLesions = false,
+                hasSuspectedLungLesions = true,
+                hasBrainLesions = null,
+                hasActiveBrainLesions = null,
+                hasSuspectedBrainLesions = null,
+                hasCnsLesions = true,
+                hasLymphNodeLesions = true,
+                otherLesions = listOf("Lymph nodes inguinal", "Lymph nodes mediastinal"),
+                otherSuspectedLesions = listOf("Adrenal gland")
+            )
+            val expected = TumorDetailsInterpreter.Lesions(
+                listOf("Bone", "CNS"),
+                listOf("Lymph nodes (inguinal, mediastinal)"),
+                listOf("Lung (suspected)"),
+                listOf("Adrenal gland (suspected)"),
+                listOf("Liver"),
+                listOf("Brain")
+            )
+            assertThat(classifyLesions(details)).isEqualTo(expected)
         }
     }
 }

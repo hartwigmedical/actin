@@ -49,7 +49,7 @@ class SummaryChapter(
         val tumorDetailFields = listOfNotNull(
             "Tumor: " to report.patientRecord.tumor.name,
             if (report.config.includeLesionsInTumorSummary) {
-                " | Lesions: " to TumorDetailsInterpreter.lesions(report.patientRecord.tumor)
+                " | Lesions: " to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
             } else null,
             " | $stageTitle: " to stages
         )

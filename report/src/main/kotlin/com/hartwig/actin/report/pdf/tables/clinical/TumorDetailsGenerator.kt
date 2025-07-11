@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -8,12 +9,11 @@ import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class TumorDetailsGenerator(private val report: Report, private val keyWidth: Float, private val valueWidth: Float) :
+class TumorDetailsGenerator(private val record: PatientRecord, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
 
     override fun title(): String {
-        val date = record.patient.questionnaireDate?.let { record.patient.registrationDate }
-        return "Tumor details (${date(date)})"
+        return "Tumor details (${date(record.patient.questionnaireDate)})"
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -28,28 +28,20 @@ class TumorDetailsGenerator(private val report: Report, private val keyWidth: Fl
         return table
     }
 
-    private val record = report.patientRecord
-
     private fun Table.createLesionDetails() {
-        with (record.tumor) {
-            createLesionRow("CNS", activeLesionString(hasCnsLesions, hasActiveCnsLesions))
-            createLesionRow("Brain", activeLesionString(hasBrainLesions, hasActiveBrainLesions))
+        val lesions = TumorDetailsInterpreter.classifyLesions(record.tumor)
 
-            if (!report.config.includeLesionsInTumorSummary) {
-                createLesionRow("Liver", Formats.yesNoUnknown(hasLiverLesions))
-                createLesionRow("Bone", Formats.yesNoUnknown(hasBoneLesions))
-            }
+        with(lesions) {
+            val negative = suspectedCategorizedLesions + suspectedCategorizedLesions + negativeCategories
+
+            createLesionRow("Known lesions:", nonLymphnodeLesions + lymphNodeLesions)
+            createLesionRow("Unknown lesions:", unknownCategories)
+            if (negative.isNotEmpty()) createLesionRow("No lesions present:", negative)
         }
     }
 
-    private fun Table.createLesionRow(key: String, value: String) {
-        addCell(Cells.createKey("$key lesions present"))
-        addCell(Cells.createValue(value))
-    }
-
-    private fun activeLesionString(hasLesions: Boolean?, active: Boolean?): String {
-        val activeString =
-            if (hasLesions == true) active?.let { if (it) " (active)" else " (not active)" } ?: " (unknown if active)" else null
-        return Formats.yesNoUnknown(hasLesions) + activeString.orEmpty()
+    private fun Table.createLesionRow(key: String, value: List<String>) {
+        addCell(Cells.createKey(key))
+        addCell(Cells.createValue(value.joinToString().ifEmpty { Formats.VALUE_NONE }))
     }
 }

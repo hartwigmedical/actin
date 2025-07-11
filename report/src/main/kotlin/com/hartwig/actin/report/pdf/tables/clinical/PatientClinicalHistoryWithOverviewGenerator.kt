@@ -43,7 +43,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
             "Birth year" to record.patient.birthYear.toString(),
             "WHO" to whoStatus(record.clinicalStatus.who),
             "Tumor" to record.tumor.name,
-            "Lesions" to TumorDetailsInterpreter.lesions(record.tumor),
+            "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
             "Stage" to stage(record.tumor),
             "Measurable disease (RECIST)" to measurableDisease(record.tumor),
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),
