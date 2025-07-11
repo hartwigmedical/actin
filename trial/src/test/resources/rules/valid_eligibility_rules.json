@@ -108,6 +108,14 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_LOW_GRADE_CANCER",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_HIGH_GRADE_CANCER",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_KNOWN_SCLC_TRANSFORMATION",
     "usedStatus": "UNUSED"
   },
