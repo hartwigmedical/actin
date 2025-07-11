@@ -13,7 +13,7 @@ object TumorDetailsInterpreter {
         val suspectedCategorizedLesions: List<String>,
         val suspectedOtherLesions: List<String>,
         val negativeCategories: List<String>,
-        val unknownCategories: List<String>
+        val unknownLesions: List<String>
     )
 
     private data class Lesion(val type: String, val hasLesion: Boolean?, val hasSuspectedLesion: Boolean?)
@@ -23,7 +23,7 @@ object TumorDetailsInterpreter {
     }
 
     fun lesionString(tumor: TumorDetails): String {
-        return with (classifyLesions(tumor)) {
+        return with(classifyLesions(tumor)) {
             (nonLymphNodeLesions + lymphNodeLesions + suspectedCategorizedLesions + suspectedOtherLesions)
                 .joinToString(", ")
                 .ifEmpty { Formats.VALUE_UNKNOWN }
@@ -64,6 +64,7 @@ object TumorDetailsInterpreter {
         val suspectedOtherLesions =
             tumor.otherSuspectedLesions?.filterNot { it in confirmedOtherLesions }?.map { "$it (suspected)" }.orEmpty()
         val unknownCategories = allCategorizedLesions.filter { it.hasLesion == null && it.hasSuspectedLesion != true }.map { it.type }
+        val unknownLesions = if (tumor.otherLesions != null) unknownCategories else unknownCategories + "Other"
 
         val allLesions = (confirmedCategorizedLesions + confirmedOtherLesions + listOfNotNull(tumor.biopsyLocation))
             .sorted()
@@ -79,7 +80,7 @@ object TumorDetailsInterpreter {
             suspectedCategorizedLesions,
             suspectedOtherLesions,
             negativeCategorizedLesions,
-            unknownCategories
+            unknownLesions
         )
     }
 
