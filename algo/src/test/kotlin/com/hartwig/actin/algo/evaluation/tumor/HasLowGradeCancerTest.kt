@@ -9,19 +9,19 @@ class HasLowGradeCancerTest {
 
     @Test
     fun `Should fail when high grade cancer`() {
-        val wrongCancerType = TumorTestFactory.withDoidAndName("", "high-grade")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(wrongCancerType))
+        val highGradeTumor = TumorTestFactory.withDoidAndName("", "high-grade tumor")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(highGradeTumor))
     }
 
     @Test
     fun `Should pass when low grade cancer`() {
-        val wrongCancerType = TumorTestFactory.withDoidAndName("", "low-grade")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(wrongCancerType))
+        val lowGradeTumor = TumorTestFactory.withDoidAndName("", "low-grade tumor")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(lowGradeTumor))
     }
 
     @Test
     fun `Should resolve to undetermined if terms not found`() {
-        val wrongCancerType = TumorTestFactory.withDoidAndName("", "other term")
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(wrongCancerType))
+        val undefinedTumor = TumorTestFactory.withDoidAndName("", "other term")
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(undefinedTumor))
     }
 }

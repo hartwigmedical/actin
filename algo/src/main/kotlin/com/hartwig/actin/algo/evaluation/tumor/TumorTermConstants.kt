@@ -8,4 +8,7 @@ object TumorTermConstants {
     val NON_SMALL_CELL_TERMS = setOf("non-small", "non small")
     val SMALL_CELL_TERMS = setOf("small cell", "scnec")
     val LARGE_CELL_TERMS = setOf("large cell", "lcnec")
+
+    val LOW_GRADE_TERMS = setOf("low grade", "low-grade")
+    val HIGH_GRADE_TERMS = setOf("high grade", "high-grade")
 }
