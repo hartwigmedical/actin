@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class PlatinumFunctions(val platinumTreatments: Set<TreatmentHistoryEntry>) {
+class PlatinumProgressionFunctions(val platinumTreatments: Set<TreatmentHistoryEntry>) {
 
     fun hasProgressionOrUnknownProgressionOnPlatinum() = platinumTreatments.any { isProgressiveDisease(it) != false }
 
@@ -17,12 +17,12 @@ class PlatinumFunctions(val platinumTreatments: Set<TreatmentHistoryEntry>) {
     private fun isProgressiveDisease(entry: TreatmentHistoryEntry) = ProgressiveDiseaseFunctions.treatmentResultedInPD(entry)
 
     companion object {
-        fun create(record: PatientRecord): PlatinumFunctions {
+        fun create(record: PatientRecord): PlatinumProgressionFunctions {
             val treatments = record.oncologicalHistory.asSequence().filter { entry ->
                 entry.allTreatments().filterIsInstance<DrugTreatment>()
                     .any { treatment -> treatment.drugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) } }
             }.toSet()
-            return PlatinumFunctions(treatments)
+            return PlatinumProgressionFunctions(treatments)
         }
     }
 }
