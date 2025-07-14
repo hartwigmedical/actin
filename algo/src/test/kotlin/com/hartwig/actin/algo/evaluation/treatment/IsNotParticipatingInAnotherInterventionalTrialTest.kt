@@ -10,7 +10,8 @@ import java.time.LocalDate
 
 class IsNotParticipatingInAnotherInterventionalTrialTest {
 
-    private val function = IsNotParticipatingInAnotherInterventionalTrial(MedicationTestFactory.alwaysActive(), LocalDate.of(2025, 2, 2))
+    private val minStopDate = LocalDate.of(2025, 2, 2)
+    private val function = IsNotParticipatingInAnotherInterventionalTrial(MedicationTestFactory.alwaysActive(), minStopDate)
 
     @Test
     fun `Should warn when patient recently received trial medication`() {
@@ -18,6 +19,16 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MedicationTestFactory.withMedications(medications))
+        )
+    }
+
+    @Test
+    fun `Should return not evaluated when patient had non recent trial medication`() {
+        val stoppedFunction = IsNotParticipatingInAnotherInterventionalTrial(MedicationTestFactory.alwaysStopped(), minStopDate)
+        val medications = listOf(medication(isTrialMedication = true))
+        assertEvaluation(
+            EvaluationResult.NOT_EVALUATED,
+            stoppedFunction.evaluate(MedicationTestFactory.withMedications(medications))
         )
     }
 
