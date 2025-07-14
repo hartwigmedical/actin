@@ -26,7 +26,7 @@ class PlatinumProgressionFunctionsTest {
         val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         assertThat(base.hasProgressionOnPlatinumWithinSixMonths(referenceDate)).isFalse()
         assertThat(base.hasProgressionOrUnknownProgressionOnPlatinum()).isFalse()
-        assertThat(base.platinumTreatments).isEmpty()
+        assertThat(base.platinumTreatment).isNull()
     }
 
     @Test

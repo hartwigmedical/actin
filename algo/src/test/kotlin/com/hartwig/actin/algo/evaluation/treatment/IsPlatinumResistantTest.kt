@@ -24,16 +24,6 @@ class IsPlatinumResistantTest {
     )
 
     @Test
-    fun `Should fail if treatment history does not contain platinum`() {
-        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet()))
-
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
-        )
-    }
-
-    @Test
     fun `Should fail if treatment history contains platinum but without progression`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
@@ -52,7 +42,7 @@ class IsPlatinumResistantTest {
 
 
     @Test
-    fun `Should resolve to undetermined if treatment history contains platinum but unknown if progression`() {
+    fun `Should evaluate to undetermined if treatment history contains platinum but unknown if progression`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
@@ -68,7 +58,7 @@ class IsPlatinumResistantTest {
     }
 
     @Test
-    fun `Should resolve to undetermined if treatment history contains platinum with progression but long time ago`() {
+    fun `Should evaluate to undetermined if treatment history contains platinum with progression but long time ago`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
@@ -77,6 +67,16 @@ class IsPlatinumResistantTest {
                 startMonth = nonRecentDate.monthValue
             )
         )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if treatment history does not contain platinum`() {
+        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet()))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,

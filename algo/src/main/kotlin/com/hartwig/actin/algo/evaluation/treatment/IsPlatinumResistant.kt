@@ -20,13 +20,11 @@ class IsPlatinumResistant(private val referenceDate: LocalDate) : EvaluationFunc
                 EvaluationFactory.undetermined("Undetermined if patient is platinum resistant")
             }
 
-            platinumProgression.platinumTreatments.isNotEmpty() -> {
-                EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
+            platinumProgression.platinumTreatment == null -> {
+                EvaluationFactory.undetermined("Undetermined if patient is platinum resistant (no platinum treatment)")
             }
 
-            else -> {
-                EvaluationFactory.fail("Not platinum resistant (no platinum treatment)")
-            }
+            else -> EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
         }
     }
 }
