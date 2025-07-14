@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
@@ -34,6 +33,7 @@ import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
+import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -41,7 +41,6 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
@@ -107,7 +106,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
 
         LOGGER.info("Interpreting {} prior sequencing test(s)", clinical.sequencingTests.size)
-        val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(inputData.dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
             toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION), config.referenceGenomeFastaPath, inputData.ensemblDataCache
         )
@@ -122,7 +120,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()
         val panelDriverAttributeAnnotator =
-            PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), geneDriverLikelihoodModel)
+            PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), inputData.dndsDatabase)
         val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
