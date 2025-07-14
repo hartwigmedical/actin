@@ -47,14 +47,14 @@ private const val ESTIMATED_TMB = 10.0
 private const val ESTIMATED_SNV_TO_INDEL_RATIO = 30
 private const val MB_PER_GENOME = 2859
 
-data class VariantEstimates(val snvCount: Int, val indelCount: Int)
+data class VariantCountEstimates(val snvs: Int, val indels: Int)
 
-fun estimateVariants(tmb: Double, snvToIndelRatio: Int = ESTIMATED_SNV_TO_INDEL_RATIO): VariantEstimates {
+fun estimateVariants(tmb: Double): VariantCountEstimates {
     val estimatedTotalVariants = tmb * MB_PER_GENOME
-    val indelCount = estimatedTotalVariants / (snvToIndelRatio + 1)
+    val indelCount = estimatedTotalVariants / (ESTIMATED_SNV_TO_INDEL_RATIO + 1)
     val snvCount = estimatedTotalVariants - indelCount
 
-    return VariantEstimates(snvCount.toInt(), indelCount.toInt())
+    return VariantCountEstimates(snvCount.toInt(), indelCount.toInt())
 }
 
 class DndsModel(
@@ -72,38 +72,38 @@ class DndsModel(
 
     companion object {
         fun create(dndsDatabase: DndsDatabase, tumorMutationalBurden: TumorMutationalBurden?): DndsModel {
-            val estimates = estimateVariants(tumorMutationalBurden?.score ?: ESTIMATED_TMB)
+            val variantCountEstimates = estimateVariants(tumorMutationalBurden?.score ?: ESTIMATED_TMB)
             return DndsModel(
-                geneLookup(dndsDatabase.oncoDndsGeneEntries, estimates),
-                geneLookup(dndsDatabase.tsgDndsGeneEntries, estimates)
+                geneLookup(dndsDatabase.oncoDndsGeneEntries, variantCountEstimates),
+                geneLookup(dndsDatabase.tsgDndsGeneEntries, variantCountEstimates)
             )
         }
 
         private fun geneLookup(
             entries: List<DndsGeneEntry>,
-            estimates: VariantEstimates
+            estimates: VariantCountEstimates
         ) = entries.groupBy { it.gene }.mapValues {
             it.value.flatMap { geneEntry ->
                 listOf(
                     DndsDriverType.NONSENSE to createEntry(
                         geneEntry.nonsenseVusDriversPerSample,
                         geneEntry.nonsensePassengersPerMutation,
-                        estimates.snvCount
+                        estimates.snvs
                     ),
                     DndsDriverType.INDEL to createEntry(
                         geneEntry.indelVusDriversPerSample,
                         geneEntry.indelPassengersPerMutation,
-                        estimates.indelCount,
+                        estimates.indels,
                     ),
                     DndsDriverType.MISSENSE to createEntry(
                         geneEntry.missenseVusDriversPerSample,
                         geneEntry.missensePassengersPerMutation,
-                        estimates.snvCount,
+                        estimates.snvs,
                     ),
                     DndsDriverType.SPLICE to createEntry(
                         geneEntry.spliceVusDriversPerSample,
                         geneEntry.splicePassengersPerMutation,
-                        estimates.snvCount
+                        estimates.snvs
                     )
                 )
             }.groupBy { databaseEntries -> databaseEntries.first }.mapValues { entry -> entry.value.first().second }
