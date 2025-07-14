@@ -1436,6 +1436,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_HISTORY_OF_GASTROINTESTINAL_FISTULA",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE",
     "usedStatus": "UNUSED"
   },

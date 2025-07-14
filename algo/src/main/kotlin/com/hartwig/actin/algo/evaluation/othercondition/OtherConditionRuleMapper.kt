@@ -38,6 +38,15 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                     )
                 ), "gastrointestinal disease"
             ),
+            EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_FISTULA to hasOtherConditionWithIcdCodesFromSetCreator(
+                setOf(
+                    IcdCode(IcdConstants.FISTULA_OF_OESOPHAGUS),
+                    IcdCode(IcdConstants.GASTRIC_FISTULA),
+                    IcdCode(IcdConstants.FISTULA_OF_SMALL_INTESTINE),
+                    IcdCode(IcdConstants.FISTULA_OF_LARGE_INTESTINE),
+                    IcdCode(IcdConstants.FISTULA_OF_APPENDIX),
+                ), "gastrointestinal fistula"
+            ),
             EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.IMMUNE_SYSTEM_DISEASE_CHAPTER)),
                 "immune system disease"
@@ -144,7 +153,8 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to {
                 HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                     icdModel(),
-                    listOf(IcdConstants.FUNCTIONAL_SWALLOWING_DISORDER_CODE, IcdConstants.DISORDERS_OF_ORAL_MUCOSA_CODE).map { IcdCode(it) }.toSet(),
+                    listOf(IcdConstants.FUNCTIONAL_SWALLOWING_DISORDER_CODE, IcdConstants.DISORDERS_OF_ORAL_MUCOSA_CODE).map { IcdCode(it) }
+                        .toSet(),
                     "potential oral medication difficulties",
                     referenceDateProvider().date()
                 )
@@ -155,7 +165,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_PET_CT_SCAN to hasContraindicationToCTCreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to hasOtherConditionWithIcdCodesFromSetCreator(
-                setOf(IcdCode(IcdConstants.DIALYSIS_CARE_CODE), IcdCode(IcdConstants.DEPENDANCE_ON_RENAL_DIALYSIS_CODE)), "renal dialysis"
+                setOf(IcdCode(IcdConstants.DIALYSIS_CARE_CODE), IcdCode(IcdConstants.DEPENDENCE_ON_RENAL_DIALYSIS_CODE)), "renal dialysis"
             ),
             EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
