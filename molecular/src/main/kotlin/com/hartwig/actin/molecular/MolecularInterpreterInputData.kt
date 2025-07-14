@@ -8,7 +8,6 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.evidence.ServeLoader
-import com.hartwig.actin.molecular.panel.PanelDetailsFile
 import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
@@ -101,19 +100,11 @@ object InputDataLoader {
                     knownFusionCache
                 }
             }
-            val panelLabConfigurations = async {
-                withContext(Dispatchers.IO) {
-                    LOGGER.info("Loading panel details from {}", config.panelDetailsFilePath)
-                    config.panelDetailsFilePath?.let {
-                        PanelDetailsFile.readLabConfigurations(it)
-                    } ?: emptyMap()
-                }
-            }
             val panelSpecifications = async {
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
                     val panelSpecifications =
-                        config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it, panelLabConfigurations.await()) }
+                        config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) }
                             ?: PanelSpecifications(emptyMap())
                     panelSpecifications
                 }

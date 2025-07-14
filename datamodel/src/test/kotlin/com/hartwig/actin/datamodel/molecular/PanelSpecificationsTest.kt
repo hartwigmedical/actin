@@ -13,7 +13,6 @@ import org.junit.Test
 private const val GENE = "gene"
 private const val ANOTHER_GENE = "another gene"
 private const val TEST = "test"
-private val ANY_LAB = setOf(ExternalLab.ANY)
 
 class PanelSpecificationsTest {
 
@@ -33,7 +32,7 @@ class PanelSpecificationsTest {
 
     @Test
     fun `Should resolve a panels specification from the set of all specification by name`() {
-        val panelSpec = PanelTestSpecification("panel", null, ANY_LAB)
+        val panelSpec = PanelTestSpecification("panel", null)
         val specification = PanelSpecifications(
             mapOf(
                 panelSpec to listOf(
@@ -51,7 +50,7 @@ class PanelSpecificationsTest {
     fun `Should throw illegal state exception when a panel name is not found`() {
         assertThatThrownBy {
             val specifications = PanelSpecifications(emptyMap())
-            specifications.panelSpecification(PanelTestSpecification("panel", null, ANY_LAB))
+            specifications.panelSpecification(PanelTestSpecification("panel"))
         }.isInstanceOfAny(IllegalStateException::class.java)
     }
 

@@ -37,7 +37,9 @@ class PanelAnnotator(
     private fun interpret(input: SequencingTest): PanelRecord {
         //TODO(ADD DATE CHECK FOR WGS TEST (FROM FEED) AND ADD PANEL SPEC DATE CORRESPONDING TO TEST DATE)
 
-        val specification = if (input.knownSpecifications) panelSpecifications.panelSpecification(PanelTestSpecification(input.test)) else PanelSpecification(
+        val specification = if (input.knownSpecifications) {
+            panelSpecifications.panelSpecification(PanelTestSpecification(input.test))
+        } else PanelSpecification(
             derivedGeneTargetMap(input)
         )
         

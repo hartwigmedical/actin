@@ -5,12 +5,7 @@ import java.time.LocalDate
 import java.util.function.Predicate
 
 data class PanelGeneSpecification(val geneName: String, val targets: List<MolecularTestTarget>)
-data class PanelTestSpecification(
-    val testName: String,
-    val version: LocalDate? = null,
-    val configurableForLabs: Set<ExternalLab> = setOf(ExternalLab.ANY)
-) {
-
+data class PanelTestSpecification(val testName: String, val version: LocalDate? = null) {
     override fun toString(): String = "$testName${version?.let { " version $it" } ?: ""}"
 }
 
@@ -39,9 +34,9 @@ class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<
             geneSpecs.groupBy(PanelGeneSpecification::geneName).mapValues { it.value.flatMap(PanelGeneSpecification::targets) })
     }
 
-    fun panelSpecification(spec: PanelTestSpecification): PanelSpecification {
-        return panelSpecifications[spec] ?: throw IllegalStateException(
-            "Panel [${spec.testName}${spec.version?.let { " version $it" } ?: ""}] is not found in panel specifications. Check curation and map to one " +
+    fun panelSpecification(testSpec: PanelTestSpecification): PanelSpecification {
+        return panelSpecifications[testSpec] ?: throw IllegalStateException(
+            "Panel [${testSpec.testName}${testSpec.version?.let { " version $it" } ?: ""}] is not found in panel specifications. Check curation and map to one " +
                     "of [${panelSpecifications.keys.joinToString()}] or add this panel to the specification TSV."
         )
     }

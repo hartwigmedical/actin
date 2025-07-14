@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
-import com.hartwig.actin.datamodel.molecular.PanelTestSpecification
 import java.time.LocalDate
 
 data class PanelGeneEntry(
@@ -26,11 +25,5 @@ data class PanelGeneEntry(
                     "Please correct in the panel_specifications.tsv"
         )
         return PanelGeneSpecification(gene, targets)
-    }
-
-    fun toPanelTestSpecification(labConfigurations: LabConfigurations): PanelTestSpecification {
-        val labs = labConfigurations[testName]
-            ?: throw IllegalStateException("No lab configuration found for test '$testName'. Please add it to panel_details.tsv")
-        return PanelTestSpecification(testName, versionDate, labs)
     }
 }

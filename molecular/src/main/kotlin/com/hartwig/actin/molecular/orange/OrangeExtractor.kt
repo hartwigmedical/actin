@@ -42,7 +42,9 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record),
-            specification = if (record.experimentType() == OrangeExperimentType.TARGETED) panelSpecifications.panelSpecification(PanelTestSpecification(ONCO_PANEL)) else null
+            specification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
+                panelSpecifications.panelSpecification(PanelTestSpecification(ONCO_PANEL))
+            } else null
         )
     }
 
