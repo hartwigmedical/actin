@@ -136,7 +136,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_INTERVENTIONAL_TRIAL to {
                 IsNotParticipatingInAnotherInterventionalTrial(
                     selector,
-                    referenceDateProvider().date().minusWeeks(2)
+                    referenceDateProvider().date().minusWeeks(4)
                 )
             },
             EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to { HasReceivedSystemicTherapyForBrainMetastases() },
