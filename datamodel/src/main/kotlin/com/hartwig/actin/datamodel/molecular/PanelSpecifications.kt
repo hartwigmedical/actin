@@ -5,7 +5,14 @@ import java.time.LocalDate
 import java.util.function.Predicate
 
 data class PanelGeneSpecification(val geneName: String, val targets: List<MolecularTestTarget>)
-data class PanelTestSpecification(val testName: String, val version: LocalDate? = null)
+data class PanelTestSpecification(
+    val testName: String,
+    val version: LocalDate? = null,
+    val configurableForLabs: Set<ExternalLab> = setOf(ExternalLab.ANY)
+) {
+
+    override fun toString(): String = "$testName${version?.let { " version $it" } ?: ""}"
+}
 
 data class PanelSpecification(private val geneTargetMap: Map<String, List<MolecularTestTarget>>) {
     fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
@@ -25,11 +32,11 @@ fun derivedGeneTargetMap(testResults: SequencingTest) =
             } +
             testResults.negativeResults.map { it.gene to listOf(MolecularTestTarget.MUTATION) }
 
-class PanelSpecifications(panelGeneSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>) {
+class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>) {
 
-    private val panelSpecifications: Map<PanelTestSpecification, PanelSpecification> = panelGeneSpecifications.mapValues { (_, specs) ->
+    private val panelSpecifications: Map<PanelTestSpecification, PanelSpecification> = panelSpecifications.mapValues { (_, geneSpecs) ->
         PanelSpecification(
-            specs.groupBy(PanelGeneSpecification::geneName).mapValues { it.value.flatMap(PanelGeneSpecification::targets) })
+            geneSpecs.groupBy(PanelGeneSpecification::geneName).mapValues { it.value.flatMap(PanelGeneSpecification::targets) })
     }
 
     fun panelSpecification(spec: PanelTestSpecification): PanelSpecification {

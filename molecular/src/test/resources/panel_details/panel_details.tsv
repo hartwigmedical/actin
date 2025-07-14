@@ -1,0 +1,4 @@
+testName	configurableForLabs	configuredFromLab	configuredVersions	configuredVersionDates	note
+oncopanel	NKI-AvL, EMC		v1	2025-01-01	test
+archer	any		v2
+ngs
