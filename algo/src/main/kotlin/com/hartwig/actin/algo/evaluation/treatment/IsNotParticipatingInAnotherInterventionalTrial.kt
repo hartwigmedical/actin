@@ -22,10 +22,10 @@ class IsNotParticipatingInAnotherInterventionalTrial(
 
         return when {
             hadRecentTrialTreatment || hasActiveOrRecentlyStoppedTrialMedication -> {
-                EvaluationFactory.warn("Recent trial medication - might be participating in another trial")
+                EvaluationFactory.warn("Recent trial treatment - undetermined if patient is participating in another interventional trial")
             }
 
-            else -> EvaluationFactory.notEvaluated("Assumed that patient is not participating in another trial")
+            else -> EvaluationFactory.notEvaluated("Assumed that patient is not participating in another interventional trial")
         }
     }
 }
