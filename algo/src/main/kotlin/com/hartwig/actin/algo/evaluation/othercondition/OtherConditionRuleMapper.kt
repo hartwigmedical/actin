@@ -40,10 +40,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             ),
             EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_FISTULA to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(
-                    IcdCode(IcdConstants.PERITONEAL_ABSCESS),
-                    IcdCode(IcdConstants.FISTULA_OF_APPENDIX),
+                    IcdCode(IcdConstants.FISTULA_OF_OESOPHAGUS),
+                    IcdCode(IcdConstants.GASTRIC_FISTULA),
+                    IcdCode(IcdConstants.FISTULA_OF_SMALL_INTESTINE),
                     IcdCode(IcdConstants.FISTULA_OF_LARGE_INTESTINE),
-                    IcdCode(IcdConstants.FISTULA_OF_SMALL_INTESTINE)
+                    IcdCode(IcdConstants.FISTULA_OF_APPENDIX),
                 ), "gastrointestinal fistula"
             ),
             EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
