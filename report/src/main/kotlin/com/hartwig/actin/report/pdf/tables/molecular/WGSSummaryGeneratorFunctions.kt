@@ -32,25 +32,26 @@ object WGSSummaryGeneratorFunctions {
         summarizer: MolecularDriversSummarizer
     ): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
+        val isShort = summaryType == SummaryType.SHORT_SUMMARY
 
-        if (summaryType != SummaryType.SHORT_SUMMARY) {
+        if (!isShort) {
             table.addCell(Cells.createKey("Biopsy location"))
             table.addCell(biopsySummary(patientRecord, molecular))
         }
 
         if (wgsMolecular?.hasSufficientQuality != false) {
-            if (summaryType != SummaryType.SHORT_SUMMARY) {
+            if (!isShort) {
                 val cuppaModeIsWGTS = if (molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS) " (WGTS)" else ""
                 table.addCell(Cells.createKey("Molecular tissue of origin prediction${cuppaModeIsWGTS}"))
                 table.addCell(tumorOriginPredictionCell(molecular))
             }
 
-            val hasTmbData = createTmbCells(molecular, summaryType == SummaryType.SHORT_SUMMARY, table)
+            val hasTmbData = createTmbCells(molecular, isShort, table)
 
             val tableContents = generateTableContents(summaryType, summarizer, molecular)
 
             val filteredContents = tableContents
-                .filterNot { (_, value) -> (value.contains(Formats.VALUE_NONE) || value.contains(Formats.VALUE_UNKNOWN)) && summaryType == SummaryType.SHORT_SUMMARY }
+                .filterNot { (_, value) -> (value.contains(Formats.VALUE_NONE) || value.contains(Formats.VALUE_UNKNOWN)) && isShort }
                 .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
             if (filteredContents.isNotEmpty() || hasTmbData) {
                 filteredContents.forEach(table::addCell)
@@ -60,7 +61,7 @@ object WGSSummaryGeneratorFunctions {
                 summarizer.actionableEventsThatAreNotKeyDrivers().partition { it.driverLikelihood == null }
             val ploidy = molecular.characteristics.ploidy
 
-            if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || summaryType != SummaryType.SHORT_SUMMARY) {
+            if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
                 table.addCell(Cells.createKey("Potential trial events, considered no high driver"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, ploidy))
             }
