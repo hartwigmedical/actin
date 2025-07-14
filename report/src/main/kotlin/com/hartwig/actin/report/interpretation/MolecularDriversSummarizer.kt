@@ -18,6 +18,12 @@ class MolecularDriversSummarizer private constructor(
         return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { it.event }.sorted()
     }
 
+    fun otherVariants(): List<String> {
+        val keyVariants = keyVariants()
+        val otherVariants = drivers.variants.filterNot { it.event in keyVariants }
+        return otherVariants.toSet().map { it.event }.sorted()
+    }
+
     fun keyAmplifiedGenes(): List<String> {
         return drivers.copyNumbers
             .asSequence()

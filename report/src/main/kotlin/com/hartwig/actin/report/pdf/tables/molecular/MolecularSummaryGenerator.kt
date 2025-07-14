@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.pdf.chapters.MolecularSummaryFunctions
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -76,7 +77,7 @@ class MolecularSummaryGenerator(
                     logger.warn("Generating WGS results for non-WGS sample")
                 }
                 val wgsGenerator = WGSSummaryGenerator(
-                    molecularTest.experimentType.useShortSummary(),
+                    summaryType = MolecularSummaryFunctions.selectMolecularSummary(isMolecularDetailsPage = false, molecularTest.experimentType),
                     patientRecord,
                     molecularTest,
                     pathologyReport,

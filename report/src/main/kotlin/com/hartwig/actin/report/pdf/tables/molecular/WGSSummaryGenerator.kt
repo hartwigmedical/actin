@@ -6,12 +6,13 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
+import com.hartwig.actin.report.pdf.chapters.MolecularSummaryFunctions
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.itextpdf.layout.element.Table
 
 class WGSSummaryGenerator(
-    private val isShort: Boolean,
+    private val summaryType: MolecularSummaryFunctions.SummaryType,
     private val patientRecord: PatientRecord,
     private val molecular: MolecularTest,
     private val pathologyReport: PathologyReport?,
@@ -36,7 +37,7 @@ class WGSSummaryGenerator(
 
     override fun contents(): Table {
         return WGSSummaryGeneratorFunctions.createMolecularSummaryTable(
-            isShort, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
+            summaryType, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
         )
     }
 }

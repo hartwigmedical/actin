@@ -48,7 +48,6 @@ class MolecularDetailsChapter(
     }
 
     private fun addMolecularDetails(document: Document) {
-
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
@@ -108,7 +107,15 @@ class MolecularDetailsChapter(
             OrangeMolecularRecordGenerator(trials, cohorts, tableWidth, it, pathologyReport)
         }
         val wgsSummaryGenerators = externalPanelResults.map {
-            WGSSummaryGenerator(true, report.patientRecord, it, pathologyReport, cohorts, keyWidth, valueWidth)
+            WGSSummaryGenerator(
+                summaryType = MolecularSummaryFunctions.selectMolecularSummary(isMolecularDetailsPage = true),
+                report.patientRecord,
+                it,
+                pathologyReport,
+                cohorts,
+                keyWidth,
+                valueWidth
+            )
         }
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
