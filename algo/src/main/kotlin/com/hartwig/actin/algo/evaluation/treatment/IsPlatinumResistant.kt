@@ -4,25 +4,18 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
-import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import java.time.LocalDate
 
-// recurs within 6 months
-
-class IsPlatinumResistant : EvaluationFunction {
+class IsPlatinumResistant(private val referenceDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val platinumTreatmentEntries = record.oncologicalHistory.asSequence().filter { entry ->
-            entry.allTreatments().filterIsInstance<DrugTreatment>()
-                .any { treatment -> treatment.drugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) } }
-        }.toSet()
-
-        val hasProgressionOnPlatinum = platinumTreatmentEntries.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true }
+        val platinumFunctions = PlatinumFunctions.create(record)
 
         return when {
-            hasProgressionOnPlatinum -> EvaluationFactory.undetermined("Undetermined if patient is platinum resistant")
-            platinumTreatmentEntries.isNotEmpty() -> EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
-            else -> EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
+            platinumFunctions.hasProgressionOnPlatinumWithinSixMonths(referenceDate) -> EvaluationFactory.pass("Is platinum resistant")
+            platinumFunctions.hasProgressionOrUnknownProgressionOnPlatinum() -> EvaluationFactory.undetermined("Undetermined if patient is platinum resistant")
+            platinumFunctions.platinumTreatments.isNotEmpty() -> EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
+            else -> EvaluationFactory.fail("Not platinum resistant (no platinum treatment)")
         }
     }
 }
