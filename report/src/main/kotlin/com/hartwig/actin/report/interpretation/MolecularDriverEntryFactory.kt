@@ -139,7 +139,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     private fun formatCopies(impact: TranscriptCopyNumberImpact): String {
         return if (impact.type == CopyNumberType.PARTIAL_GAIN) {
-            "${impact.maxCopies} copies (${impact.minCopies} copies total)"
+            "${impact.maxCopies} copies (${impact.minCopies} full copies)"
         } else "${impact.minCopies} copies"
     }
 
