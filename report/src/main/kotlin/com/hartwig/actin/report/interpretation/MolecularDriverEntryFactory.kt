@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.approved
@@ -124,16 +125,22 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val entries = mutableListOf<MolecularDriverEntry>()
         if (copyNumber.canonicalImpact.type != CopyNumberType.NONE || molecularDriversInterpreter.copyNumberIsActionable(copyNumber)) {
             val canonicalDriverType = getDriverType(copyNumber.canonicalImpact.type)
-            val canonicalName = "${copyNumber.event}, ${copyNumber.canonicalImpact.minCopies} copies"
+            val canonicalName = "${copyNumber.event}, ${formatCopies(copyNumber.canonicalImpact)}"
             entries.add(driverEntryForGeneAlteration(canonicalDriverType, canonicalName, copyNumber))
         }
 
         entries.addAll(copyNumber.otherImpacts.map { impact ->
             val otherDriverType = getDriverType(impact.type)
-            val otherName = "${copyNumber.event} (alt), ${impact.minCopies} copies"
+            val otherName = "${copyNumber.event} (alt), ${formatCopies(impact)}"
             driverEntryForGeneAlteration(otherDriverType, otherName, copyNumber)
         })
         return entries
+    }
+
+    private fun formatCopies(impact: TranscriptCopyNumberImpact): String {
+        return if (impact.type == CopyNumberType.PARTIAL_GAIN) {
+            "${impact.maxCopies} copies (${impact.minCopies} full copies)"
+        } else "${impact.minCopies} copies"
     }
 
     private fun getDriverType(type: CopyNumberType): String {
