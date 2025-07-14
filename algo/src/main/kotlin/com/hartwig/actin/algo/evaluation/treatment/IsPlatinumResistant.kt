@@ -12,10 +12,21 @@ class IsPlatinumResistant(private val referenceDate: LocalDate) : EvaluationFunc
         val platinumProgression = PlatinumProgressionFunctions.create(record)
 
         return when {
-            platinumProgression.hasProgressionOnPlatinumWithinSixMonths(referenceDate) -> EvaluationFactory.pass("Is platinum resistant")
-            platinumProgression.hasProgressionOrUnknownProgressionOnPlatinum() -> EvaluationFactory.undetermined("Undetermined if patient is platinum resistant")
-            platinumProgression.platinumTreatments.isNotEmpty() -> EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
-            else -> EvaluationFactory.fail("Not platinum resistant (no platinum treatment)")
+            platinumProgression.hasProgressionOnPlatinumWithinSixMonths(referenceDate) -> {
+                EvaluationFactory.pass("Is platinum resistant")
+            }
+
+            platinumProgression.hasProgressionOrUnknownProgressionOnPlatinum() -> {
+                EvaluationFactory.undetermined("Undetermined if patient is platinum resistant")
+            }
+
+            platinumProgression.platinumTreatments.isNotEmpty() -> {
+                EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
+            }
+
+            else -> {
+                EvaluationFactory.fail("Not platinum resistant (no platinum treatment)")
+            }
         }
     }
 }
