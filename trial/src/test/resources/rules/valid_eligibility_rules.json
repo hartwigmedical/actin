@@ -756,7 +756,7 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL",
+    "eligibilityRule": "IS_NOT_PARTICIPATING_IN_ANOTHER_INTERVENTIONAL_TRIAL",
     "usedStatus": "UNUSED"
   },
   {
