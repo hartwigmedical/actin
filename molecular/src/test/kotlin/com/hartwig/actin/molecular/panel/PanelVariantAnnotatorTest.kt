@@ -20,6 +20,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 private const val TRANSCRIPT = "transcript"
@@ -94,9 +95,9 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
-    fun `Should filter variant on null output from transcript annotator`() {
+    fun `Should throw exception on null output from transcript annotator`() {
         every { transvarAnnotator.resolve(GENE, null, HGVS_CODING) } returns null
-        assertThat(annotator.annotate(setOf(ARCHER_VARIANT))).isEmpty()
+        assertThatThrownBy { annotator.annotate(setOf(ARCHER_VARIANT)) }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
