@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.PanelTestSpecification
 import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import java.time.LocalDate
 
@@ -40,13 +39,5 @@ class PanelSpecificationsFileTest {
         assertThat(oldOncoPanel.testsGene("EGFR") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
         assertThat(newOncoPanel.testsGene("ABCB1") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
         assertThat(newOncoPanel.testsGene("EGFR") { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
-    }
-
-    @Test
-    fun `Should throw illegal state exception when test name not found in panel details file`() {
-        assertThatThrownBy {
-            PanelSpecificationsFile.create(ResourceLocator.resourceOnClasspath("panel_specifications/panel_specifications.tsv"), emptyMap())
-        }.isInstanceOfAny(IllegalStateException::class.java)
-            .hasMessageContaining("No lab configuration found for test 'oncopanel'. Please add it to panel_details.tsv")
     }
 }

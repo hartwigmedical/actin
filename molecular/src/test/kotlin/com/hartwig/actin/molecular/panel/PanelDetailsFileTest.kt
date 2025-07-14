@@ -20,7 +20,7 @@ class PanelDetailsFileTest {
     }
 
     @Test
-    fun `Should throw when panel details TSV contains duplicate test entries`() {
+    fun `Should throw illegal state exception when panel details TSV contains duplicate test entries`() {
         val path = ResourceLocator.resourceOnClasspath("panel_details/panel_details_with_duplicates.tsv")
 
         assertThatThrownBy { PanelDetailsFile.readLabConfigurations(path) }
