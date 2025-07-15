@@ -28,16 +28,12 @@ class IhcTestInterpreter {
         val scoreText = test.scoreText
         val scoreValue = test.scoreValue
         when {
-            scoreText != null && scoreValue != null -> interpretationBuilder.addInterpretation(
-                type,
-                item,
-                formatValueAndTextBasedIhcTest(test),
-                date,
-                1
-            )
+            scoreText != null && scoreValue != null -> {
+                interpretationBuilder.addInterpretation(type, item, formatValueAndTextBasedIhcTest(test), date)
+            }
 
-            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item, date, 0)
-            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedIhcTest(test), date, 1)
+            scoreText != null -> interpretationBuilder.addInterpretation(type, item, scoreText, date)
+            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedIhcTest(test), date)
             else -> logger.error("IHC test is neither text-based nor value-based: {}", test)
         }
     }
