@@ -84,4 +84,22 @@ class PlatinumProgressionFunctionsTest {
         val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history))
         assertThat(base.hasProgressionOnPlatinumWithinSixMonths(referenceDate)).isTrue()
     }
+
+    @Test
+    fun `Should use latest platinum treatment if multiple`() {
+        val first = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(platinum),
+            startYear = recentDate.year - 1,
+            startMonth = recentDate.monthValue - 1
+        )
+        val second = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(platinum),
+            stopReason = StopReason.PROGRESSIVE_DISEASE,
+            startYear = recentDate.year,
+            startMonth = recentDate.monthValue
+        )
+        val history = listOf(first, second)
+        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history))
+        assertThat(base.platinumTreatment?.startYear).isEqualTo(second.startYear)
+    }
 }
