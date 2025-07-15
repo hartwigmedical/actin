@@ -104,7 +104,7 @@ class MolecularSummaryGenerator(
 
     private fun selectSummaryType(experimentType: ExperimentType): SummaryType {
         return when {
-            experimentType in setOf(ExperimentType.HARTWIG_TARGETED, experimentType == ExperimentType.PANEL) -> SummaryType.SHORT_SUMMARY
+            experimentType in setOf(ExperimentType.HARTWIG_TARGETED, ExperimentType.PANEL) -> SummaryType.SHORT_SUMMARY
             else -> SummaryType.LONG_SUMMARY
         }
     }
