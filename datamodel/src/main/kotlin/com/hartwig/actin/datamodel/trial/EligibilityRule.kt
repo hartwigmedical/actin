@@ -210,6 +210,8 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     IS_NOT_PARTICIPATING_IN_ANOTHER_INTERVENTIONAL_TRIAL(FunctionInput.NONE),
     HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES(FunctionInput.NONE),
     HAS_HAD_BRAIN_RADIATION_THERAPY(FunctionInput.NONE),
+    IS_PLATINUM_SENSITIVE(FunctionInput.NONE),
+    IS_PLATINUM_RESISTANT(FunctionInput.NONE),
 
     // Rules related to previous primary tumors
     HAS_ACTIVE_SECOND_MALIGNANCY(FunctionInput.NONE),

@@ -768,6 +768,14 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "IS_PLATINUM_SENSITIVE",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "IS_PLATINUM_RESISTANT",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_ACTIVE_SECOND_MALIGNANCY",
     "usedStatus": "UNUSED"
   },

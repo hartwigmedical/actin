@@ -141,6 +141,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             },
             EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to { HasReceivedSystemicTherapyForBrainMetastases() },
             EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to { HasHadBrainRadiationTherapy() },
+            EligibilityRule.IS_PLATINUM_RESISTANT to { IsPlatinumResistant(referenceDate) },
+            EligibilityRule.IS_PLATINUM_SENSITIVE to { IsPlatinumSensitive(referenceDate) }
         )
     }
 
