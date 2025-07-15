@@ -116,9 +116,7 @@ object Cells {
 
     fun createKey(paragraphs: List<Paragraph>): Cell {
         val cell = createBorderless()
-        for (paragraph in paragraphs) {
-            cell.add(paragraph)
-        }
+        paragraphs.forEach(cell::add)
         cell.addStyle(Styles.tableKeyStyle())
         return cell
     }
@@ -137,9 +135,7 @@ object Cells {
 
     fun createValue(paragraphs: List<Paragraph>): Cell {
         val cell = createBorderless()
-        for (paragraph in paragraphs) {
-            cell.add(paragraph)
-        }
+        paragraphs.forEach(cell::add)
         cell.addStyle(Styles.tableHighlightStyle())
         return cell
     }
