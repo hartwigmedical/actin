@@ -12,7 +12,11 @@ class PlatinumProgressionFunctions(val platinumTreatment: TreatmentHistoryEntry?
 
     fun hasProgressionOnPlatinumWithinSixMonths(referenceDate: LocalDate) =
         isProgressiveDisease(platinumTreatment) == true && platinumTreatment?.let {
-            isAfterDate(referenceDate.minusMonths(6), it.startYear, it.startMonth)
+            isAfterDate(
+                referenceDate.minusMonths(6),
+                it.startYear,
+                it.startMonth
+            )
         } == true
 
     private fun isProgressiveDisease(entry: TreatmentHistoryEntry?) = entry?.let(ProgressiveDiseaseFunctions::treatmentResultedInPD)
