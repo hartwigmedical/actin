@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.PanelSpecification
+import com.hartwig.actin.datamodel.molecular.PanelSpecificationFunctions
 import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
@@ -16,10 +17,12 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.util.ExtractionUtil
+import java.time.LocalDate
 
 private const val TMB_HIGH_CUTOFF = 10.0
 
 class PanelAnnotator(
+    private val registrationDate: LocalDate,
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
@@ -35,10 +38,11 @@ class PanelAnnotator(
     }
 
     private fun interpret(input: SequencingTest): PanelRecord {
-        //TODO(ADD DATE CHECK FOR WGS TEST (FROM FEED) AND ADD PANEL SPEC DATE CORRESPONDING TO TEST DATE)
+        val testVersion =
+            PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
 
         val specification = if (input.knownSpecifications) {
-            panelSpecifications.panelSpecification(PanelTestSpecification(input.test))
+            panelSpecifications.panelSpecification(PanelTestSpecification(input.test, testVersion))
         } else PanelSpecification(
             derivedGeneTargetMap(input)
         )

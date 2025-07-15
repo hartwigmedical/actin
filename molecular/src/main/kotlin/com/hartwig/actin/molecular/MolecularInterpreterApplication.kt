@@ -126,7 +126,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
-            clinical.sequencingTests,
+            clinical,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
@@ -151,7 +151,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     }
 
     private fun interpretSequencingMolecularTests(
-        sequencingTests: List<SequencingTest>,
+        clinical: ClinicalRecord,
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
@@ -167,6 +167,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 }
             },
             annotator = PanelAnnotator(
+                clinical.patient.registrationDate,
                 panelVariantAnnotator,
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
@@ -175,7 +176,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelSpecifications
             ),
             postAnnotators = listOf(panelRecordEvidenceAnnotator)
-        ).run(sequencingTests)
+        ).run(clinical.sequencingTests)
     }
 
     private fun interpretIhcMolecularTests(
