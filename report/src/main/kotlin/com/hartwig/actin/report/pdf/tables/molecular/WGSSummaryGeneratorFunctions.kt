@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
+import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -22,7 +23,7 @@ import com.itextpdf.layout.element.Text
 object WGSSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTable(
-        isShort: Boolean,
+        summaryType: SummaryType,
         patientRecord: PatientRecord,
         molecular: MolecularTest,
         wgsMolecular: MolecularRecord?,
@@ -31,25 +32,26 @@ object WGSSummaryGeneratorFunctions {
         summarizer: MolecularDriversSummarizer
     ): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
+        val isShortSummaryType = summaryType == SummaryType.SHORT_SUMMARY
 
-        if (!isShort) {
+        if (!isShortSummaryType) {
             table.addCell(Cells.createKey("Biopsy location"))
             table.addCell(biopsySummary(patientRecord, molecular))
         }
 
         if (wgsMolecular?.hasSufficientQuality != false) {
-            if (!isShort) {
+            if (!isShortSummaryType) {
                 val cuppaModeIsWGTS = if (molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS) " (WGTS)" else ""
                 table.addCell(Cells.createKey("Molecular tissue of origin prediction${cuppaModeIsWGTS}"))
                 table.addCell(tumorOriginPredictionCell(molecular))
             }
 
-            val hasTmbData = createTmbCells(molecular, isShort, table)
+            val hasTmbData = createTmbCells(molecular, isShortSummaryType, table)
 
-            val tableContents = generateTableContents(isShort, summarizer, molecular)
+            val tableContents = generateTableContents(summaryType, summarizer, molecular)
 
             val filteredContents = tableContents
-                .filterNot { (_, value) -> (value.contains(Formats.VALUE_NONE) || value.contains(Formats.VALUE_UNKNOWN)) && isShort }
+                .filterNot { (_, value) -> (value.contains(Formats.VALUE_NONE) || value.contains(Formats.VALUE_UNKNOWN)) && isShortSummaryType }
                 .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
             if (filteredContents.isNotEmpty() || hasTmbData) {
                 filteredContents.forEach(table::addCell)
@@ -59,7 +61,7 @@ object WGSSummaryGeneratorFunctions {
                 summarizer.actionableEventsThatAreNotKeyDrivers().partition { it.driverLikelihood == null }
             val ploidy = molecular.characteristics.ploidy
 
-            if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
+            if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShortSummaryType) {
                 table.addCell(Cells.createKey("Potential trial events, considered no high driver"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, ploidy))
             }
@@ -183,16 +185,17 @@ object WGSSummaryGeneratorFunctions {
     }
 
     private fun generateTableContents(
-        isShort: Boolean,
+        summaryType: SummaryType,
         summarizer: MolecularDriversSummarizer,
         molecular: MolecularTest
     ): List<Pair<String, String>> {
         val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular)
-        val orderedKeys = determineOrderedKeys(isShort)
+        val orderedKeys = determineOrderedKeys(summaryType)
         val keyToValueMap = mapOf(
             "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
             "HR status" to characteristicsGenerator.createHRStatusString(),
             "Driver mutations" to formatList(summarizer.keyVariants()),
+            "Other mutations" to formatList(summarizer.otherVariants()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
@@ -202,31 +205,51 @@ object WGSSummaryGeneratorFunctions {
         return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
     }
 
-    private fun determineOrderedKeys(isShort: Boolean): List<String> {
-        return if (isShort) {
-            listOf(
-                "Driver mutations",
-                "Amplified genes",
-                "Gene fusions",
-                "Deleted genes",
-                "Homozygously disrupted genes",
-                "Microsatellite (in)stability",
-                "HR status",
-                "Virus",
-            )
-        } else {
-            listOf(
-                "Microsatellite (in)stability",
-                "HR status",
-                "",
-                "Driver mutations",
-                "Amplified genes",
-                "Deleted genes",
-                "Homozygously disrupted genes",
-                "Gene fusions",
-                "Virus",
-                "",
-            )
+    private fun determineOrderedKeys(summaryType: SummaryType): List<String> {
+        return when (summaryType) {
+            SummaryType.SHORT_SUMMARY -> {
+                listOf(
+                    "Driver mutations",
+                    "Amplified genes",
+                    "Gene fusions",
+                    "Deleted genes",
+                    "Homozygously disrupted genes",
+                    "Microsatellite (in)stability",
+                    "HR status",
+                    "Virus",
+                )
+            }
+
+            SummaryType.LONG_SUMMARY -> {
+                listOf(
+                    "Microsatellite (in)stability",
+                    "HR status",
+                    "",
+                    "Driver mutations",
+                    "Amplified genes",
+                    "Deleted genes",
+                    "Homozygously disrupted genes",
+                    "Gene fusions",
+                    "Virus",
+                    "",
+                )
+            }
+
+            SummaryType.FULL -> {
+                listOf(
+                    "Microsatellite (in)stability",
+                    "HR status",
+                    "",
+                    "Driver mutations",
+                    "Other mutations",
+                    "Amplified genes",
+                    "Deleted genes",
+                    "Homozygously disrupted genes",
+                    "Gene fusions",
+                    "Virus",
+                    "",
+                )
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
+import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.IhcResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
@@ -48,7 +49,6 @@ class MolecularDetailsChapter(
     }
 
     private fun addMolecularDetails(document: Document) {
-
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
@@ -108,7 +108,15 @@ class MolecularDetailsChapter(
             OrangeMolecularRecordGenerator(trials, cohorts, tableWidth, it, pathologyReport)
         }
         val wgsSummaryGenerators = externalPanelResults.map {
-            WGSSummaryGenerator(true, report.patientRecord, it, pathologyReport, cohorts, keyWidth, valueWidth)
+            WGSSummaryGenerator(
+                SummaryType.FULL,
+                report.patientRecord,
+                it,
+                pathologyReport,
+                cohorts,
+                keyWidth,
+                valueWidth
+            )
         }
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
