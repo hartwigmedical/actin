@@ -32,7 +32,7 @@ class IhcResultGenerator(
 
     private fun ihcTestInterpretationContents(ihcTestInterpretation: IhcTestInterpretation, table: Table) {
         ihcTestInterpretation.results
-            .sortedWith(compareBy({ it.sortPrecedence }, { it.details }))
+            .sortedWith(compareBy({ it.sortPrecedence }, { it.grouping }))
             .groupBy { it.details }
             .forEach { (group, results) ->
                 val paragraphs = results
