@@ -25,7 +25,6 @@ class IhcResultGeneratorTest {
 
     @Test
     fun `Should return content grouped per date when all IHC tests have the same date`() {
-
         val generator = IhcResultGenerator(
             ihcTests = listOf(ihcTest1, ihcTest2, ihcTest3, ihcTest4, ihcTest5),
             keyWidth = 10.0f,
@@ -42,7 +41,6 @@ class IhcResultGeneratorTest {
 
     @Test
     fun `Should return content grouped per date when all IHC tests have different dates`() {
-
         val generator = IhcResultGenerator(
             ihcTests = listOf(
                 ihcTest1,
@@ -62,5 +60,4 @@ class IhcResultGeneratorTest {
         assertThat(extractTextFromCell(table.getCell(1, 0))).isEqualTo("PD-L1")
         assertThat(extractTextFromCell(table.getCell(1, 1))).isEqualTo("Score TPS 2% (2024-05-10)")
     }
-
 }
