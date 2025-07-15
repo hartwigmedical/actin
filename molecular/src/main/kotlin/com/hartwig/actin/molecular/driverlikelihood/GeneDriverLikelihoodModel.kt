@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import kotlin.math.max
 
-class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
+class GeneDriverLikelihoodModel(private val dndsModel: DndsModel) {
 
     fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
         val hasCancerAssociatedVariant = variants.any { it.isCancerAssociatedVariant }
@@ -19,7 +19,11 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
         }
     }
 
-    private fun handleVariantsOfUnknownSignificance(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
+    private fun handleVariantsOfUnknownSignificance(
+        gene: String,
+        geneRole: GeneRole,
+        variants: List<Variant>
+    ): Double? {
         return when (geneRole) {
             GeneRole.ONCO -> oncoLikelihood(lookupDndsPerVariant(variants, gene, geneRole))
 
@@ -63,7 +67,7 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
             DndsDriverType.MISSENSE -> 4
         }
     }.mapNotNull {
-        dndsDatabase.find(gene, geneRole, it)
+        dndsModel.find(gene, geneRole, it)
     }
 
     private fun oncoLikelihood(dndsEntries: List<DndsDatabaseEntry>): Double? {

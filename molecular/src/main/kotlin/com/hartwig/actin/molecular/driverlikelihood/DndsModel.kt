@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.driverlikelihood
 
-import com.fasterxml.jackson.databind.ObjectReader
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import org.apache.commons.math3.distribution.PoissonDistribution
 import java.io.File
+import org.apache.commons.math3.distribution.PoissonDistribution
 
 enum class DndsDriverType {
     INDEL, NONSENSE, MISSENSE, SPLICE
@@ -29,10 +29,35 @@ data class DndsGeneEntry(
     val indelPassengersPerMutation: Double
 )
 
-private const val ESTIMATED_MUTATION_COUNT_SNV = 30000
-private const val ESTIMATED_MUTATION_COUNT_FRAMESHIFT = 1000
+data class DndsDatabase(val oncoDndsGeneEntries: List<DndsGeneEntry>, val tsgDndsGeneEntries: List<DndsGeneEntry>) {
+    companion object {
+        fun create(oncoDndsPath: String, tsgDndsPath: String): DndsDatabase {
+            val reader =
+                CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(DndsGeneEntry::class.java)
+                    .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
+            return DndsDatabase(
+                reader.readValues<DndsGeneEntry>(File(oncoDndsPath)).readAll(),
+                reader.readValues<DndsGeneEntry>(File(tsgDndsPath)).readAll()
+            )
+        }
+    }
+}
 
-class DndsDatabase(
+private const val ESTIMATED_TMB = 10.0
+private const val ESTIMATED_SNV_TO_INDEL_RATIO = 30
+private const val MB_PER_GENOME = 2859
+
+data class VariantCountEstimates(val snvs: Int, val indels: Int)
+
+fun estimateVariants(tmb: Double): VariantCountEstimates {
+    val estimatedTotalVariants = tmb * MB_PER_GENOME
+    val indelCount = estimatedTotalVariants / (ESTIMATED_SNV_TO_INDEL_RATIO + 1)
+    val snvCount = estimatedTotalVariants - indelCount
+
+    return VariantCountEstimates(snvCount.toInt(), indelCount.toInt())
+}
+
+class DndsModel(
     private val oncoGeneLookup: Map<String, Map<DndsDriverType, DndsDatabaseEntry>>,
     private val tsgGeneLookup: Map<String, Map<DndsDriverType, DndsDatabaseEntry>>,
 ) {
@@ -46,40 +71,39 @@ class DndsDatabase(
     }
 
     companion object {
-        fun create(oncoDndsFilePath: String, tsgDndsFilePath: String): DndsDatabase {
-            val reader =
-                CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(DndsGeneEntry::class.java)
-                    .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
-            val oncoGeneLookup = geneLookup(reader, oncoDndsFilePath)
-            val tsgGeneLookup = geneLookup(reader, tsgDndsFilePath)
-            return DndsDatabase(oncoGeneLookup, tsgGeneLookup)
+        fun create(dndsDatabase: DndsDatabase, tumorMutationalBurden: TumorMutationalBurden?): DndsModel {
+            val variantCountEstimates = estimateVariants(tumorMutationalBurden?.score ?: ESTIMATED_TMB)
+            return DndsModel(
+                geneLookup(dndsDatabase.oncoDndsGeneEntries, variantCountEstimates),
+                geneLookup(dndsDatabase.tsgDndsGeneEntries, variantCountEstimates)
+            )
         }
 
         private fun geneLookup(
-            reader: ObjectReader,
-            oncoDndFilePath: String
-        ) = reader.readValues<DndsGeneEntry>(File(oncoDndFilePath)).readAll().groupBy { it.gene }.mapValues {
+            entries: List<DndsGeneEntry>,
+            estimates: VariantCountEstimates
+        ) = entries.groupBy { it.gene }.mapValues {
             it.value.flatMap { geneEntry ->
                 listOf(
                     DndsDriverType.NONSENSE to createEntry(
                         geneEntry.nonsenseVusDriversPerSample,
                         geneEntry.nonsensePassengersPerMutation,
-                        ESTIMATED_MUTATION_COUNT_SNV
+                        estimates.snvs
                     ),
                     DndsDriverType.INDEL to createEntry(
                         geneEntry.indelVusDriversPerSample,
                         geneEntry.indelPassengersPerMutation,
-                        ESTIMATED_MUTATION_COUNT_FRAMESHIFT,
+                        estimates.indels,
                     ),
                     DndsDriverType.MISSENSE to createEntry(
                         geneEntry.missenseVusDriversPerSample,
                         geneEntry.missensePassengersPerMutation,
-                        ESTIMATED_MUTATION_COUNT_SNV,
+                        estimates.snvs,
                     ),
                     DndsDriverType.SPLICE to createEntry(
                         geneEntry.spliceVusDriversPerSample,
                         geneEntry.splicePassengersPerMutation,
-                        ESTIMATED_MUTATION_COUNT_SNV
+                        estimates.snvs
                     )
                 )
             }.groupBy { databaseEntries -> databaseEntries.first }.mapValues { entry -> entry.value.first().second }
