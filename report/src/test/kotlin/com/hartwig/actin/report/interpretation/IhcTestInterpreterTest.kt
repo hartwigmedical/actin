@@ -17,7 +17,9 @@ class IhcTestInterpreterTest {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", "Positive")))
         assertThat(result).containsExactly(
             IhcTestInterpretation(
-                "IHC", listOf(IhcTestResultInterpretation("Positive", "HER2", DEFAULT_DATE))
+                "IHC", listOf(
+                    IhcTestResultInterpretation("HER2", "Positive", DEFAULT_DATE)
+                )
             )
         )
     }
@@ -57,7 +59,7 @@ class IhcTestInterpreterTest {
         val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", "Positive").copy(measureDate = null)))
         assertThat(result).containsExactly(
             IhcTestInterpretation(
-                "IHC", listOf(IhcTestResultInterpretation("Positive", "HER2", null))
+                "IHC", listOf(IhcTestResultInterpretation("HER2", "Positive", null))
             )
         )
     }
@@ -72,7 +74,7 @@ class IhcTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             IhcTestInterpretation(
-                "IHC", listOf(IhcTestResultInterpretation("Negative", "HER2", MORE_RECENT_DATE))
+                "IHC", listOf(IhcTestResultInterpretation("HER2", "Negative", MORE_RECENT_DATE))
             )
         )
     }
@@ -87,7 +89,7 @@ class IhcTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             IhcTestInterpretation(
-                "IHC", listOf(IhcTestResultInterpretation("Negative", "HER2", DEFAULT_DATE))
+                "IHC", listOf(IhcTestResultInterpretation("HER2", "Negative", DEFAULT_DATE))
             )
         )
     }
@@ -102,7 +104,7 @@ class IhcTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             IhcTestInterpretation(
-                "IHC", listOf(IhcTestResultInterpretation("Positive", "HER2", null))
+                "IHC", listOf(IhcTestResultInterpretation("HER2", "Positive", null))
             )
         )
     }
