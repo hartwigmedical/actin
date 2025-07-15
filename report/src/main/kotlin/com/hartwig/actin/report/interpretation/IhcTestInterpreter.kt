@@ -36,7 +36,7 @@ class IhcTestInterpreter {
                 1
             )
 
-            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item, date, 0)
+            scoreText != null -> interpretationBuilder.addInterpretation(type, item, scoreText, date, 0)
             scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedIhcTest(test), date, 1)
             else -> logger.error("IHC test is neither text-based nor value-based: {}", test)
         }
