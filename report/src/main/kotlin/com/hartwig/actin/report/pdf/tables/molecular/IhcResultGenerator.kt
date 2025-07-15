@@ -32,17 +32,17 @@ class IhcResultGenerator(
 
     private fun ihcTestInterpretationContents(ihcTestInterpretation: IhcTestInterpretation, table: Table) {
         ihcTestInterpretation.results
-            .sortedWith(compareBy({ it.sortPrecedence }, { it.grouping }))
-            .groupBy { it.grouping }
+            .sortedWith(compareBy({ it.sortPrecedence }, { it.details }))
+            .groupBy { it.details }
             .forEach { (group, results) ->
-                table.addCell(Cells.createKey(group))
                 val paragraphs = results
                     .groupBy { it.date }.entries
                     .sortedWith(nullsLast(compareByDescending { it.key }))
                     .map { (date, resultsForDate) ->
-                        Paragraph(resultsForDate.joinToString { it.details } + (date?.let { " ($it)" } ?: ""))
+                        Paragraph(resultsForDate.joinToString { it.grouping } + (date?.let { " ($it)" } ?: ""))
                     }
                 table.addCell(Cells.createValue(paragraphs))
+                table.addCell(Cells.createKey(group))
             }
     }
 }
