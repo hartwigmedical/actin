@@ -2,18 +2,17 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.PanelRecord
-import com.hartwig.actin.datamodel.molecular.PanelSpecification
-import com.hartwig.actin.datamodel.molecular.PanelSpecificationFunctions
-import com.hartwig.actin.datamodel.molecular.PanelSpecifications
-import com.hartwig.actin.datamodel.molecular.PanelTestSpecification
+import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
-import com.hartwig.actin.datamodel.molecular.derivedGeneTargetMap
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
+import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.util.ExtractionUtil
@@ -42,9 +41,9 @@ class PanelAnnotator(
             PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
 
         val specification = if (input.knownSpecifications) {
-            panelSpecifications.panelSpecification(PanelTestSpecification(input.test, testVersion))
-        } else PanelSpecification(
-            derivedGeneTargetMap(input)
+            panelSpecifications.panelTargetSpecification(PanelTestSpecification(input.test, testVersion))
+        } else PanelTargetSpecification(
+            PanelSpecificationFunctions.derivedGeneTargetMap(input)
         )
         
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
@@ -54,7 +53,7 @@ class PanelAnnotator(
         val annotatedViruses = panelVirusAnnotator.annotate(input.viruses)
         
         return PanelRecord(
-            specification = specification,
+            targetSpecification = specification,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
             date = input.date,

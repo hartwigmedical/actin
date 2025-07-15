@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.molecular
 
+import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import java.time.LocalDate
 
 data class MolecularHistory(

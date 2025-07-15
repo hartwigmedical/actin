@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
-import com.hartwig.actin.datamodel.molecular.PanelGeneSpecification
+import com.hartwig.actin.datamodel.molecular.panel.PanelGeneSpecification
 import java.time.LocalDate
 
 data class PanelGeneEntry(

@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.molecular
 
+import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -10,7 +11,7 @@ class PanelRecordTest {
         val targets = listOf(MolecularTestTarget.MUTATION)
         val gene = "gene"
         val record =
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(specification = PanelSpecification(mapOf(gene to targets)))
+            TestMolecularFactory.createMinimalTestPanelRecord().copy(targetSpecification = PanelTargetSpecification(mapOf(gene to targets)))
         Assertions.assertThat(record.testsGene(gene) { it == targets }).isTrue()
         Assertions.assertThat(record.testsGene(gene) { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
     }

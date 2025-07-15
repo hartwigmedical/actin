@@ -117,7 +117,7 @@ class MolecularEvaluationFunctionTest {
                         listOf(
                             TestMolecularFactory.createMinimalTestPanelRecord()
                                 .copy(
-                                    specification = TestMolecularFactory.panelSpecifications(
+                                    targetSpecification = TestMolecularFactory.panelSpecifications(
                                         setOf("GENE"),
                                         listOf(MolecularTestTarget.MUTATION)
                                     )
