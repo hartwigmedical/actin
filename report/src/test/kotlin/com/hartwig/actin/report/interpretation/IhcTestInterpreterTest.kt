@@ -29,7 +29,7 @@ class IhcTestInterpreterTest {
         assertThat(result).containsExactly(
             IhcTestInterpretation(
                 "IHC",
-                listOf(IhcTestResultInterpretation("HER2", "Score 90%", DEFAULT_DATE, 1))
+                listOf(IhcTestResultInterpretation("HER2", "Score 90%", DEFAULT_DATE, 0))
             )
         )
     }
@@ -42,7 +42,7 @@ class IhcTestInterpreterTest {
         assertThat(result).containsExactly(
             IhcTestInterpretation(
                 "IHC",
-                listOf(IhcTestResultInterpretation("PD-L1", "Positive, score 50%", DEFAULT_DATE, sortPrecedence = 1))
+                listOf(IhcTestResultInterpretation("PD-L1", "Positive, score 50%", DEFAULT_DATE, 0))
             )
         )
     }
@@ -55,7 +55,7 @@ class IhcTestInterpreterTest {
         assertThat(result).containsExactly(
             IhcTestInterpretation(
                 "IHC",
-                listOf(IhcTestResultInterpretation("HER2", "Score 90", DEFAULT_DATE, 1))
+                listOf(IhcTestResultInterpretation("HER2", "Score 90", DEFAULT_DATE, 0))
             )
         )
     }
@@ -66,7 +66,7 @@ class IhcTestInterpreterTest {
             ihcTests = listOf(ihcMolecularTest("HER2", "Positive").copy(measureDate = null))
         )
         assertThat(result).containsExactly(
-            IhcTestInterpretation("IHC", listOf(IhcTestResultInterpretation("Positive", "HER2", null)))
+            IhcTestInterpretation("IHC", listOf(IhcTestResultInterpretation("HER2", "Positive", null)))
         )
     }
 
@@ -111,7 +111,8 @@ class IhcTestInterpreterTest {
             )
         )
         assertThat(result).containsExactly(
-            IhcTestInterpretation("IHC",
+            IhcTestInterpretation(
+                "IHC",
                 listOf(IhcTestResultInterpretation("HER2", "Positive", null))
             )
         )
