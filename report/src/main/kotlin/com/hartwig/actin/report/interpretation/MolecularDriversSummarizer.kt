@@ -19,7 +19,8 @@ class MolecularDriversSummarizer private constructor(
     }
 
     fun otherVariants(): List<String> {
-        return drivers.variants.filterNot { it.event in keyVariants() }.toSet().map { it.event }.sorted()
+        return drivers.variants.asSequence().filter { it.isReportable }.filterNot { it.event in keyVariants() }.toSet().map { it.event }
+            .sorted().toList()
     }
 
     fun keyAmplifiedGenes(): List<String> {

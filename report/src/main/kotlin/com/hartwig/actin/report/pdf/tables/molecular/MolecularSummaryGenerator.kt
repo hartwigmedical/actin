@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.pdf.chapters.MolecularSummaryFunctions
+import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -77,7 +77,7 @@ class MolecularSummaryGenerator(
                     logger.warn("Generating WGS results for non-WGS sample")
                 }
                 val wgsGenerator = WGSSummaryGenerator(
-                    summaryType = MolecularSummaryFunctions.selectMolecularSummary(isMolecularDetailsPage = false, molecularTest.experimentType),
+                    selectSummaryType(molecularTest.experimentType),
                     patientRecord,
                     molecularTest,
                     pathologyReport,
@@ -99,6 +99,13 @@ class MolecularSummaryGenerator(
             val molecularResultGenerator = IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter())
             table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
             table.addCell(Cells.create(molecularResultGenerator.contents()))
+        }
+    }
+
+    private fun selectSummaryType(experimentType: ExperimentType): SummaryType {
+        return when {
+            experimentType in setOf(ExperimentType.HARTWIG_TARGETED, experimentType == ExperimentType.PANEL) -> SummaryType.SHORT_SUMMARY
+            else -> SummaryType.LONG_SUMMARY
         }
     }
 }

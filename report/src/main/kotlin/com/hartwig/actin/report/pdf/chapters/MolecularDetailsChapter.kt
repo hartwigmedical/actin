@@ -10,6 +10,7 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
+import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.IhcResultGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
@@ -108,7 +109,7 @@ class MolecularDetailsChapter(
         }
         val wgsSummaryGenerators = externalPanelResults.map {
             WGSSummaryGenerator(
-                summaryType = MolecularSummaryFunctions.selectMolecularSummary(isMolecularDetailsPage = true),
+                SummaryType.FULL,
                 report.patientRecord,
                 it,
                 pathologyReport,
