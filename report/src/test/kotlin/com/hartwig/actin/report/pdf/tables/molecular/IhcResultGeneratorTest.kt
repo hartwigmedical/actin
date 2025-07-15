@@ -33,10 +33,10 @@ class IhcResultGeneratorTest {
         )
         val table = generator.contents()
         assertThat(table.numberOfRows).isEqualTo(2)
-        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Negative")
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("ALK, NTRK1, NTRK2, NTRK3 (2024-05-10)")
-        assertThat(extractTextFromCell(table.getCell(1, 0))).isEqualTo("PD-L1")
-        assertThat(extractTextFromCell(table.getCell(1, 1))).isEqualTo("Score TPS 2% (2024-05-10)")
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("ALK, NTRK1, NTRK2, NTRK3 (2024-05-10)")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Negative")
+        assertThat(extractTextFromCell(table.getCell(1, 0))).isEqualTo("PD-L1 (2024-05-10)")
+        assertThat(extractTextFromCell(table.getCell(1, 1))).isEqualTo("Score TPS 2%")
     }
 
     @Test
@@ -55,9 +55,9 @@ class IhcResultGeneratorTest {
         )
         val table = generator.contents()
         assertThat(table.numberOfRows).isEqualTo(2)
-        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Negative")
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("ALK, NTRK1 (2024-05-10)\nNTRK2 (2024-05-09)\nNTRK3")
-        assertThat(extractTextFromCell(table.getCell(1, 0))).isEqualTo("PD-L1")
-        assertThat(extractTextFromCell(table.getCell(1, 1))).isEqualTo("Score TPS 2% (2024-05-10)")
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("ALK, NTRK1 (2024-05-10)\nNTRK2 (2024-05-09)\nNTRK3")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Negative")
+        assertThat(extractTextFromCell(table.getCell(1, 0))).isEqualTo("PD-L1 (2024-05-10)")
+        assertThat(extractTextFromCell(table.getCell(1, 1))).isEqualTo("Score TPS 2%")
     }
 }
