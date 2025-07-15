@@ -41,8 +41,8 @@ class IhcResultGenerator(
                     .map { (date, resultsForDate) ->
                         Paragraph(resultsForDate.joinToString { it.grouping } + (date?.let { " ($it)" } ?: ""))
                     }
-                table.addCell(Cells.createValue(paragraphs))
-                table.addCell(Cells.createKey(group))
+                table.addCell(Cells.createKey(paragraphs))
+                table.addCell(Cells.createValue(group))
             }
     }
 }

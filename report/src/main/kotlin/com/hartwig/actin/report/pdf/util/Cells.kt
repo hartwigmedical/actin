@@ -80,10 +80,6 @@ object Cells {
         return createContent(Paragraph(text))
     }
 
-    fun createContentSmallItalic(text: String): Cell {
-        return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
-    }
-
     fun createContentMediumItalic(text: String): Cell {
         return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(MEDIUM_FONT)
     }
@@ -114,6 +110,15 @@ object Cells {
 
     fun createKey(text: String): Cell {
         val cell = create(Paragraph(text))
+        cell.addStyle(Styles.tableKeyStyle())
+        return cell
+    }
+
+    fun createKey(paragraphs: List<Paragraph>): Cell {
+        val cell = createBorderless()
+        for (paragraph in paragraphs) {
+            cell.add(paragraph)
+        }
         cell.addStyle(Styles.tableKeyStyle())
         return cell
     }
