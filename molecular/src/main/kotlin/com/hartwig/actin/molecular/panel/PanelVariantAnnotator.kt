@@ -122,7 +122,7 @@ class PanelVariantAnnotator(
         otherImpacts = otherImpacts(paveResponse, transvarAnnotation),
         variantCopyNumber = null,
         totalCopyNumber = null,
-        isBiallelic = null,
+        isBiallelic = variant.isBiallelic,
         clonalLikelihood = null,
         phaseGroups = null,
         isCancerAssociatedVariant = false,
