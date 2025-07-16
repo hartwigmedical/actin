@@ -20,7 +20,6 @@ data class MolecularInterpreterConfig(
     val driverGenePanelPath: String,
     val knownFusionsPath: String,
     val panelSpecificationsFilePath: String?,
-    val panelDetailsFilePath: String?,
     val tempDir: String,
     val outputDirectory: String
 ) {
@@ -39,7 +38,6 @@ data class MolecularInterpreterConfig(
         private const val DRIVER_GENE_PANEL_PATH = "driver_gene_panel"
         private const val KNOWN_FUSIONS_PATH = "known_fusions_file"
         private const val PANEL_SPECIFICATIONS_FILE_PATH = "panel_specifications_file"
-        private const val PANEL_DETAILS_FILE_PATH = "panel_details_file"
         private const val TEMP_DIR: String = "temp"
         private const val OUTPUT_DIRECTORY: String = "output_directory"
         private const val LOG_DEBUG: String = "log_debug"
@@ -60,11 +58,6 @@ data class MolecularInterpreterConfig(
                 PANEL_SPECIFICATIONS_FILE_PATH,
                 true,
                 "Path to TSV file containing panel gene and genomic alteration coverage specifications"
-            )
-            options.addOption(
-                PANEL_DETAILS_FILE_PATH,
-                true,
-                "Path to TSV file containing panel details (mapping of test name to details like configurableForLabs)"
             )
             options.addOption(TEMP_DIR, false, "if set, path to temp dir to use for intermediate files, otherwise system temp dir is used")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
@@ -89,7 +82,6 @@ data class MolecularInterpreterConfig(
                 driverGenePanelPath = ApplicationConfig.nonOptionalFile(cmd, DRIVER_GENE_PANEL_PATH),
                 knownFusionsPath = ApplicationConfig.nonOptionalFile(cmd, KNOWN_FUSIONS_PATH),
                 panelSpecificationsFilePath = ApplicationConfig.optionalFile(cmd, PANEL_SPECIFICATIONS_FILE_PATH),
-                panelDetailsFilePath = ApplicationConfig.optionalFile(cmd, PANEL_DETAILS_FILE_PATH),
                 tempDir = ApplicationConfig.optionalDir(cmd, TEMP_DIR) ?: System.getProperty("java.io.tmpdir"),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
