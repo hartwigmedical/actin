@@ -109,7 +109,7 @@ class MolecularDetailsChapter(
         }
         val wgsSummaryGenerators = externalPanelResults.map {
             WGSSummaryGenerator(
-                SummaryType.FULL,
+                SummaryType.DETAILS,
                 report.patientRecord,
                 it,
                 pathologyReport,
