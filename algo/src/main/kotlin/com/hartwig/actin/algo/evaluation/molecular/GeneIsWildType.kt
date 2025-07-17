@@ -21,8 +21,8 @@ class GeneIsWildType(override val gene: String, maxTestAge: LocalDate? = null) :
 
     private fun evaluationPrecedenceFunction(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
         (groupedEvaluationsByResult[EvaluationResult.FAIL]
-            ?: groupedEvaluationsByResult[EvaluationResult.PASS]
             ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+            ?: groupedEvaluationsByResult[EvaluationResult.PASS]
             ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
 
     override fun evaluate(test: MolecularTest): Evaluation {

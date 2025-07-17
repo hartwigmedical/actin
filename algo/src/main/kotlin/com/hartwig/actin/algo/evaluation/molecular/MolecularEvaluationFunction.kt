@@ -41,7 +41,7 @@ abstract class MolecularEvaluationFunction(
             val testEvaluation =
                 recentMolecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
             if (testEvaluation.isNotEmpty()) {
-                return MolecularEvaluation.combine(testEvaluation)
+                return MolecularEvaluation.combine(testEvaluation, evaluationPrecedence())
             }
 
             evaluate(record.molecularHistory)
