@@ -85,11 +85,11 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should not create tumor mutational cell when result is unknown and summary table configuration is short type`() {
+    fun `Should not create tumor mutational cell when result is unknown and summary table configuration is not long summary type`() {
         val record = molecularRecord.copy(
             characteristics = molecularRecord.characteristics.copy(tumorMutationalLoad = null, tumorMutationalBurden = null)
         )
-        val hasTmbTmlCells = WGSSummaryGeneratorFunctions.createTmbCells(record, true, Tables.createFixedWidthCols(100f, 100f))
+        val hasTmbTmlCells = WGSSummaryGeneratorFunctions.createTmbCells(record, false, Tables.createFixedWidthCols(100f, 100f))
         assertThat(hasTmbTmlCells).isFalse()
     }
 }
