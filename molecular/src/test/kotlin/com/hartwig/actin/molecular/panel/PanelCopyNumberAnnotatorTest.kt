@@ -26,7 +26,7 @@ class PanelCopyNumberAnnotatorTest {
     private val annotator = PanelCopyNumberAnnotator(ensembleDataCache)
 
     @Test
-    fun `Should annotate gene amplification with evidence for canonical transcript`() {
+    fun `Should convert sequenced amplification to amp copy number for canonical transcript`() {
         setupEnsemblDataCacheForCopyNumber()
 
         val annotatedPanel = annotator.annotate(setOf(SequencedAmplification(GENE, CANONICAL_TRANSCRIPT)))
@@ -37,7 +37,7 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate gene amplification with evidence for non-canonical transcript`() {
+    fun `Should convert sequenced amplification to amp copy number for non-canonical transcript`() {
         setupEnsemblDataCacheForCopyNumber()
 
         val annotatedPanel = annotator.annotate(setOf(SequencedAmplification(GENE, NON_CANONICAL_TRANSCRIPT)))
@@ -51,7 +51,32 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate gene deletion with evidence for canonical transcript`() {
+    fun `Should annotate with copies and partial information correctly for canonical transcript`() {
+        setupEnsemblDataCacheForCopyNumber()
+
+        val annotatedPanel = annotator.annotate(setOf(SequencedAmplification(GENE, CANONICAL_TRANSCRIPT, 20, true)))
+        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN)
+            .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 20, maxCopies = 20)
+        val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
+        check(annotatedPanel, canonicalImpact, otherImpacts, "amp")
+    }
+
+    @Test
+    fun `Should annotate with copies and partial information correctly for non-canonical transcript`() {
+        setupEnsemblDataCacheForCopyNumber()
+
+        val annotatedPanel = annotator.annotate(setOf(SequencedAmplification(GENE, NON_CANONICAL_TRANSCRIPT, 20, true)))
+        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE)
+            .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = null, maxCopies = null)
+        val otherImpacts = setOf(
+            TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN)
+                .copy(transcriptId = NON_CANONICAL_TRANSCRIPT, minCopies = 20, maxCopies = 20)
+        )
+        check(annotatedPanel, canonicalImpact, otherImpacts, "amp")
+    }
+
+    @Test
+    fun `Should convert sequenced deletion to del copy number for canonical transcript`() {
         setupEnsemblDataCacheForCopyNumber()
 
         val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, CANONICAL_TRANSCRIPT)))
@@ -62,7 +87,7 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate gene deletion with evidence for non-canonical transcript`() {
+    fun `Should convert sequenced deletion to del copy number for non-canonical transcript`() {
         setupEnsemblDataCacheForCopyNumber()
 
         val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, NON_CANONICAL_TRANSCRIPT)))

@@ -80,6 +80,11 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
+        assertThat(annotated.chromosome).isEqualTo(CHROMOSOME)
+        assertThat(annotated.position).isEqualTo(POSITION)
+        assertThat(annotated.ref).isEqualTo(REF)
+        assertThat(annotated.alt).isEqualTo(ALT)
+        assertThat(annotated.type).isEqualTo(VariantType.SNV)
         assertThat(annotated.variantAlleleFrequency).isNull()
         assertThat(annotated.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
         assertThat(annotated.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
@@ -87,11 +92,14 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
         assertThat(annotated.canonicalImpact.inSpliceRegion).isFalse()
         assertThat(annotated.otherImpacts).isEmpty()
-        assertThat(annotated.chromosome).isEqualTo(CHROMOSOME)
-        assertThat(annotated.position).isEqualTo(POSITION)
-        assertThat(annotated.ref).isEqualTo(REF)
-        assertThat(annotated.alt).isEqualTo(ALT)
-        assertThat(annotated.type).isEqualTo(VariantType.SNV)
+        assertThat(annotated.isBiallelic).isNull()
+    }
+
+    @Test
+    fun `Should annotate with vaf and isBiallelic if known`() {
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT.copy(variantAlleleFrequency = 0.5, isBiallelic = true))).first()
+        assertThat(annotated.variantAlleleFrequency).isEqualTo(0.5)
+        assertThat(annotated.isBiallelic).isTrue()
     }
 
     @Test
