@@ -776,6 +776,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "IS_PRIMARY_PLATINUM_REFRACTORY_WITHIN_X_MONTHS",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_ACTIVE_SECOND_MALIGNANCY",
     "usedStatus": "UNUSED"
   },

@@ -142,7 +142,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to { HasReceivedSystemicTherapyForBrainMetastases() },
             EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to { HasHadBrainRadiationTherapy() },
             EligibilityRule.IS_PLATINUM_RESISTANT to { IsPlatinumResistant(referenceDate) },
-            EligibilityRule.IS_PLATINUM_SENSITIVE to { IsPlatinumSensitive(referenceDate) }
+            EligibilityRule.IS_PLATINUM_SENSITIVE to { IsPlatinumSensitive(referenceDate) },
+            EligibilityRule.IS_PRIMARY_PLATINUM_REFRACTORY_WITHIN_X_MONTHS to isPrimaryPlatinumRefractoryWithinMonthsCreator(),
         )
     }
 
@@ -646,6 +647,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasPreviouslyParticipatedInSpecificTrialCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasPreviouslyParticipatedInTrial(functionInputResolver().createOneStringInput(function))
+        }
+    }
+
+    private fun isPrimaryPlatinumRefractoryWithinMonthsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            IsPrimaryPlatinumRefractoryWithinMonths(functionInputResolver().createOneIntegerInput(function), referenceDate)
         }
     }
 }
