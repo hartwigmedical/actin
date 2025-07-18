@@ -5,7 +5,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.hartwig.actin.datamodel.molecular.panel.PanelGeneEntry
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import java.io.File
