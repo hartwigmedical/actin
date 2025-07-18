@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class PlatinumProgressionFunctions(
+class PlatinumProgressionAnalysis(
     val firstPlatinumTreatment: TreatmentHistoryEntry?,
     val lastPlatinumTreatment: TreatmentHistoryEntry?,
     val referenceDate: LocalDate
@@ -21,25 +21,25 @@ class PlatinumProgressionFunctions(
     fun hasProgressionOnLastPlatinumWithinSixMonths() = hasProgressionOnPlatinumWithinMonths(lastPlatinumTreatment, 6)
 
     private fun hasProgressionOrUnknownProgressionOnPlatinum(platinumTreatment: TreatmentHistoryEntry?) =
-        platinumTreatment?.let { isProgressiveDisease(it) != false } ?: false
+        platinumTreatment?.let { isProgressiveDisease(it) != false }
 
-    private fun hasProgressionOnPlatinumWithinMonths(platinumTreatment: TreatmentHistoryEntry?, minMonths: Int) =
-        isProgressiveDisease(platinumTreatment) == true && platinumTreatment?.let {
-            isAfterDate(
+    private fun hasProgressionOnPlatinumWithinMonths(platinumTreatment: TreatmentHistoryEntry?, minMonths: Int): Boolean? =
+        platinumTreatment?.let {
+            isProgressiveDisease(it) == true && isAfterDate(
                 referenceDate.minusMonths(minMonths.toLong()),
                 it.startYear,
                 it.startMonth
-            )
-        } == true
+            ) == true
+        }
 
     private fun isProgressiveDisease(entry: TreatmentHistoryEntry?) = entry?.let(ProgressiveDiseaseFunctions::treatmentResultedInPD)
 
     companion object {
-        fun create(record: PatientRecord, referenceDate: LocalDate): PlatinumProgressionFunctions {
+        fun create(record: PatientRecord, referenceDate: LocalDate): PlatinumProgressionAnalysis {
             val platinumTreatments = record.oncologicalHistory.filter { it.isOfType(DrugType.PLATINUM_COMPOUND) == true }
             val lastPlatinumTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(platinumTreatments)
             val firstPlatinumTreatment = SystemicTreatmentAnalyser.firstSystemicTreatment(platinumTreatments)
-            return PlatinumProgressionFunctions(firstPlatinumTreatment, lastPlatinumTreatment, referenceDate)
+            return PlatinumProgressionAnalysis(firstPlatinumTreatment, lastPlatinumTreatment, referenceDate)
         }
     }
 }

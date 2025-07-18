@@ -12,19 +12,18 @@ class IsPrimaryPlatinumRefractoryWithinMonths(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val platinumProgression = PlatinumProgressionFunctions.create(record, referenceDate)
-        val firstPlatinum = platinumProgression.firstPlatinumTreatment
+        val platinumProgression = PlatinumProgressionAnalysis.create(record, referenceDate)
 
         return when {
-            platinumProgression.hasProgressionOnFirstPlatinumWithinMonths(minMonths) -> {
+            platinumProgression.hasProgressionOnFirstPlatinumWithinMonths(minMonths) == true -> {
                 EvaluationFactory.pass("Is primary platinum refractory")
             }
 
-            platinumProgression.hasProgressionOrUnknownProgressionOnFirstPlatinum() -> {
+            platinumProgression.hasProgressionOrUnknownProgressionOnFirstPlatinum() == true -> {
                 EvaluationFactory.undetermined("Undetermined if patient is primary platinum refractory")
             }
 
-            firstPlatinum == null -> {
+            platinumProgression.firstPlatinumTreatment == null -> {
                 EvaluationFactory.undetermined("Undetermined if patient is primary platinum refractory (no platinum treatment)")
             }
 
