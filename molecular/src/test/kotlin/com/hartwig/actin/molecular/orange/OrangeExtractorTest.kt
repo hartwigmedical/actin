@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.molecular.panel.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory

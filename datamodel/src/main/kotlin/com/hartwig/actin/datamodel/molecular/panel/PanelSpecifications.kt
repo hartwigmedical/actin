@@ -1,10 +1,6 @@
-package com.hartwig.actin.molecular.panel
+package com.hartwig.actin.datamodel.molecular.panel
 
-import com.hartwig.actin.datamodel.molecular.panel.PanelGeneSpecification
-import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
-
-class PanelSpecifications(val panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>) {
+class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>) {
 
     private val molecularTargetsPerTest: Map<PanelTestSpecification, PanelTargetSpecification> = panelSpecifications.mapValues { (_, geneSpecs) ->
         PanelTargetSpecification(

@@ -1,6 +1,7 @@
-package com.hartwig.actin.datamodel.molecular
+package com.hartwig.actin.datamodel.molecular.panel
 
-import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import org.assertj.core.api.Assertions
 import org.junit.Test
 

@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
-import com.hartwig.actin.molecular.panel.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotator

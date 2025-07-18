@@ -1,8 +1,7 @@
-package com.hartwig.actin.molecular.panel
+package com.hartwig.actin.datamodel.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
 
@@ -25,13 +24,13 @@ class PanelGeneEntryTest {
     @Test
     fun `Should return correct gene specification`() {
         val spec = geneEntry.toPanelGeneSpecification()
-        assertThat(spec.geneName).isEqualTo(gene)
-        assertThat(spec.targets).isEqualTo(listOf(MolecularTestTarget.MUTATION))
+        Assertions.assertThat(spec.geneName).isEqualTo(gene)
+        Assertions.assertThat(spec.targets).isEqualTo(listOf(MolecularTestTarget.MUTATION))
     }
 
     @Test
     fun `Should throw IllegalStateException gene has no targets`() {
-        assertThatThrownBy {
+        Assertions.assertThatThrownBy {
             geneEntry.copy(mutation = false).toPanelGeneSpecification()
         }.isInstanceOf(IllegalStateException::class.java)
             .hasMessageContaining("Targets for test $test version $versionDate and gene $gene are empty")

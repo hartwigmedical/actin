@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -54,7 +55,16 @@ class PanelAnnotatorTest {
             panelCopyNumberAnnotator,
             panelVirusAnnotator,
             panelDriverAttributeAnnotator,
-            PanelSpecifications(mapOf(PanelTestSpecification(TEST_NAME) to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION)))))
+            PanelSpecifications(
+                mapOf(
+                    PanelTestSpecification(TEST_NAME) to listOf(
+                        PanelGeneSpecification(
+                            GENE,
+                            listOf(MolecularTestTarget.MUTATION)
+                        )
+                    )
+                )
+            )
         )
 
     @Test

@@ -1,8 +1,6 @@
-package com.hartwig.actin.datamodel.molecular
+package com.hartwig.actin.datamodel.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencingTest
-import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
