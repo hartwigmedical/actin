@@ -2,13 +2,13 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.evidence.ServeLoader
-import com.hartwig.actin.molecular.panel.PanelSpecificationsFile
+import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -104,7 +104,7 @@ object InputDataLoader {
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
                     val panelSpecifications =
-                        config.panelSpecificationsFilePath?.let { PanelSpecificationsFile.create(it) }
+                        config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it) }
                             ?: PanelSpecifications(emptyMap())
                     panelSpecifications
                 }

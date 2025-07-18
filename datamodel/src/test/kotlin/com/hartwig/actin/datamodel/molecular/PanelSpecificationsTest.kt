@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.panel.PanelGeneSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions.derivedGeneTargetMap
-import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test

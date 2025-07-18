@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.MolecularExtractor
