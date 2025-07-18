@@ -18,7 +18,7 @@ class TargetCoveragePredicateTest {
         assertThat(predicate.test(MolecularTestTarget.entries)).isTrue()
         assertThat(
             predicate.message(GENE).toString()
-        ).isEqualTo("Mutation in gene GENE undetermined (not tested for fusions, mutations, amplifications and deletions)")
+        ).isEqualTo("Mutation in gene GENE undetermined (not tested for mutations, amplifications, deletions and fusions)")
     }
 
     @Test
@@ -30,7 +30,7 @@ class TargetCoveragePredicateTest {
         assertThat(predicate.test(listOf(MolecularTestTarget.DELETION))).isTrue()
         assertThat(
             predicate.message(GENE).toString()
-        ).isEqualTo("Mutation in gene GENE undetermined (not tested for fusions, mutations, amplifications or deletions)")
+        ).isEqualTo("Mutation in gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)")
     }
 
     @Test

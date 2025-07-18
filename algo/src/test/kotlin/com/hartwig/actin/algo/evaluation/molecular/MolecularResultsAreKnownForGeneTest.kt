@@ -171,7 +171,7 @@ class MolecularResultsAreKnownForGeneTest {
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
                             TestMolecularFactory.createMinimalTestPanelRecord()
-                                .copy(specification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
+                                .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                         )
                     )
                 )
@@ -188,7 +188,7 @@ class MolecularResultsAreKnownForGeneTest {
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
                             TestMolecularFactory.createMinimalTestPanelRecord()
-                                .copy(specification = TestMolecularFactory.panelSpecifications(setOf("EGFR")))
+                                .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("EGFR")))
                         )
                     )
                 )

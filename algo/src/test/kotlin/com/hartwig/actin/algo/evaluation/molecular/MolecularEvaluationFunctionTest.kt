@@ -103,7 +103,7 @@ class MolecularEvaluationFunctionTest {
         val patient = withPanelTest()
         val evaluation = functionWithGene.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("gene GENE undetermined (not tested for fusions, mutations, amplifications or deletions)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 
@@ -117,7 +117,7 @@ class MolecularEvaluationFunctionTest {
                         listOf(
                             TestMolecularFactory.createMinimalTestPanelRecord()
                                 .copy(
-                                    specification = TestMolecularFactory.panelSpecifications(
+                                    targetSpecification = TestMolecularFactory.panelSpecifications(
                                         setOf("GENE"),
                                         listOf(MolecularTestTarget.MUTATION)
                                     )

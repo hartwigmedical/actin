@@ -423,7 +423,7 @@
   "molecularHistory": {
     "molecularTests": [
       {
-        "specification": {
+        "targetSpecification": {
           "geneTargetMap": []
         },
         "experimentType": "PANEL",

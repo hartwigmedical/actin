@@ -2,8 +2,8 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecifications
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
@@ -18,9 +18,9 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class OrangeExtractorTest {
 
@@ -62,7 +62,7 @@ class OrangeExtractorTest {
 
     @Test
     fun `Should be able to resolve all ref genome versions`() {
-        for (refGenomeVersion in OrangeRefGenomeVersion.values()) {
+        for (refGenomeVersion in OrangeRefGenomeVersion.entries) {
             assertThat(interpreter.determineRefGenomeVersion(refGenomeVersion)).isNotNull()
         }
     }
