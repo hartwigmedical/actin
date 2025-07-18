@@ -23,10 +23,13 @@ class PlatinumProgressionFunctionsTest {
 
     @Test
     fun `Should return false if treatment history is empty`() {
-        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(emptyList()))
-        assertThat(base.hasProgressionOnPlatinumWithinSixMonths(referenceDate)).isFalse()
-        assertThat(base.hasProgressionOrUnknownProgressionOnPlatinum()).isFalse()
-        assertThat(base.platinumTreatment).isNull()
+        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(emptyList()), referenceDate)
+        assertThat(base.hasProgressionOnLastPlatinumWithinSixMonths()).isFalse()
+        assertThat(base.hasProgressionOnFirstPlatinumWithinMonths(6)).isFalse()
+        assertThat(base.hasProgressionOrUnknownProgressionOnLastPlatinum()).isFalse()
+        assertThat(base.hasProgressionOrUnknownProgressionOnFirstPlatinum()).isFalse()
+        assertThat(base.lastPlatinumTreatment).isNull()
+        assertThat(base.firstPlatinumTreatment).isNull()
     }
 
     @Test
@@ -39,8 +42,9 @@ class PlatinumProgressionFunctionsTest {
                 startMonth = recentDate.monthValue
             )
         )
-        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history))
-        assertThat(base.hasProgressionOrUnknownProgressionOnPlatinum()).isFalse()
+        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
+        assertThat(base.hasProgressionOrUnknownProgressionOnLastPlatinum()).isFalse()
+        assertThat(base.hasProgressionOrUnknownProgressionOnFirstPlatinum()).isFalse()
     }
 
 
@@ -53,8 +57,9 @@ class PlatinumProgressionFunctionsTest {
                 startMonth = recentDate.monthValue
             )
         )
-        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history))
-        assertThat(base.hasProgressionOrUnknownProgressionOnPlatinum()).isTrue()
+        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
+        assertThat(base.hasProgressionOrUnknownProgressionOnLastPlatinum()).isTrue()
+        assertThat(base.hasProgressionOrUnknownProgressionOnFirstPlatinum()).isTrue()
     }
 
     @Test
@@ -67,8 +72,9 @@ class PlatinumProgressionFunctionsTest {
                 startMonth = nonRecentDate.monthValue
             )
         )
-        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history))
-        assertThat(base.hasProgressionOnPlatinumWithinSixMonths(referenceDate)).isFalse()
+        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
+        assertThat(base.hasProgressionOnLastPlatinumWithinSixMonths()).isFalse()
+        assertThat(base.hasProgressionOnFirstPlatinumWithinMonths(6)).isFalse()
     }
 
     @Test
@@ -81,12 +87,13 @@ class PlatinumProgressionFunctionsTest {
                 startMonth = recentDate.monthValue
             )
         )
-        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history))
-        assertThat(base.hasProgressionOnPlatinumWithinSixMonths(referenceDate)).isTrue()
+        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
+        assertThat(base.hasProgressionOnLastPlatinumWithinSixMonths()).isTrue()
+        assertThat(base.hasProgressionOnFirstPlatinumWithinMonths(6)).isTrue()
     }
 
     @Test
-    fun `Should use latest platinum treatment if multiple`() {
+    fun `Should use correct platinum treatment if multiple`() {
         val first = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(platinum),
             startYear = recentDate.year - 1,
@@ -99,7 +106,8 @@ class PlatinumProgressionFunctionsTest {
             startMonth = recentDate.monthValue
         )
         val history = listOf(first, second)
-        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history))
-        assertThat(base.platinumTreatment?.startYear).isEqualTo(second.startYear)
+        val base = PlatinumProgressionFunctions.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
+        assertThat(base.firstPlatinumTreatment?.startYear).isEqualTo(first.startYear)
+        assertThat(base.lastPlatinumTreatment?.startYear).isEqualTo(second.startYear)
     }
 }
