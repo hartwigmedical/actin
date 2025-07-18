@@ -1,4 +1,7 @@
-package com.hartwig.actin.datamodel.molecular.panel
+package com.hartwig.actin.molecular.panel
+
+import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
+import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 
 class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>) {
 
