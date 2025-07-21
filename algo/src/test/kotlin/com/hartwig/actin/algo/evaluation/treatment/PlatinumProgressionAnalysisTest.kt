@@ -38,8 +38,8 @@ class PlatinumProgressionAnalysisTest {
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.TOXICITY,
-                startYear = recentDate.year,
-                startMonth = recentDate.monthValue
+                stopYear = recentDate.year,
+                stopMonth = recentDate.monthValue
             )
         )
         val base = PlatinumProgressionAnalysis.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
@@ -53,8 +53,8 @@ class PlatinumProgressionAnalysisTest {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                startYear = recentDate.year,
-                startMonth = recentDate.monthValue
+                stopYear = recentDate.year,
+                stopMonth = recentDate.monthValue
             )
         )
         val base = PlatinumProgressionAnalysis.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
@@ -68,8 +68,8 @@ class PlatinumProgressionAnalysisTest {
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
-                startYear = nonRecentDate.year,
-                startMonth = nonRecentDate.monthValue
+                stopYear = nonRecentDate.year,
+                stopMonth = nonRecentDate.monthValue
             )
         )
         val base = PlatinumProgressionAnalysis.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
@@ -83,8 +83,8 @@ class PlatinumProgressionAnalysisTest {
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
-                startYear = recentDate.year,
-                startMonth = recentDate.monthValue
+                stopYear = recentDate.year,
+                stopMonth = recentDate.monthValue
             )
         )
         val base = PlatinumProgressionAnalysis.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)
@@ -96,14 +96,14 @@ class PlatinumProgressionAnalysisTest {
     fun `Should use correct platinum treatment if multiple`() {
         val first = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(platinum),
-            startYear = recentDate.year - 1,
-            startMonth = recentDate.monthValue - 1
+            stopYear = recentDate.year - 1,
+            stopMonth = recentDate.monthValue - 1
         )
         val second = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(platinum),
             stopReason = StopReason.PROGRESSIVE_DISEASE,
-            startYear = recentDate.year,
-            startMonth = recentDate.monthValue
+            stopYear = recentDate.year,
+            stopMonth = recentDate.monthValue
         )
         val history = listOf(first, second)
         val base = PlatinumProgressionAnalysis.create(TreatmentTestFactory.withTreatmentHistory(history), referenceDate)

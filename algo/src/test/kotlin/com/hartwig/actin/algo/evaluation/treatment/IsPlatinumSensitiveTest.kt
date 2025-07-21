@@ -29,8 +29,8 @@ class IsPlatinumSensitiveTest {
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
-                startYear = recentDate.year,
-                startMonth = recentDate.monthValue
+                stopYear = recentDate.year,
+                stopMonth = recentDate.monthValue
             )
         )
 
@@ -45,8 +45,8 @@ class IsPlatinumSensitiveTest {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                startYear = recentDate.year,
-                startMonth = recentDate.monthValue
+                stopYear = recentDate.year,
+                stopMonth = recentDate.monthValue
             )
         )
 
@@ -62,8 +62,8 @@ class IsPlatinumSensitiveTest {
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
-                startYear = nonRecentDate.year,
-                startMonth = nonRecentDate.monthValue
+                stopYear = nonRecentDate.year,
+                stopMonth = nonRecentDate.monthValue
             )
         )
 
@@ -89,8 +89,8 @@ class IsPlatinumSensitiveTest {
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.TOXICITY,
-                startYear = recentDate.year,
-                startMonth = recentDate.monthValue
+                stopYear = recentDate.year,
+                stopMonth = recentDate.monthValue
             )
         )
 

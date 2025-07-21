@@ -27,8 +27,8 @@ class PlatinumProgressionAnalysis(
         platinumTreatment?.let {
             isProgressiveDisease(it) == true && isAfterDate(
                 referenceDate.minusMonths(minMonths.toLong()),
-                it.startYear,
-                it.startMonth
+                it.treatmentHistoryDetails?.stopYear,
+                it.treatmentHistoryDetails?.stopMonth
             ) == true
         }
 
