@@ -11,12 +11,12 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import org.junit.Test
 import java.time.LocalDate
 
-class IsPlatinumSensitiveTest {
+class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
     private val referenceDate = LocalDate.of(2025, 2, 5)
-    private val recentDate = LocalDate.of(2025, 2, 5).minusMonths(2)
+    private val recentDate = LocalDate.of(2025, 2, 5).minusMonths(1)
     private val nonRecentDate = LocalDate.of(2025, 2, 5).minusMonths(9)
-    private val function = IsPlatinumSensitive(referenceDate)
+    private val function = IsPrimaryPlatinumRefractoryWithinMonths(3, referenceDate)
 
     private val platinum = DrugTreatment(
         name = "Carboplatin",
@@ -24,11 +24,11 @@ class IsPlatinumSensitiveTest {
     )
 
     @Test
-    fun `Should fail if treatment history contains platinum treatment with progression and within 6 months`() {
+    fun `Should fail if treatment history contains platinum but without progression`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                stopReason = StopReason.PROGRESSIVE_DISEASE,
+                stopReason = StopReason.TOXICITY,
                 stopYear = recentDate.year,
                 stopMonth = recentDate.monthValue
             )
@@ -39,6 +39,7 @@ class IsPlatinumSensitiveTest {
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
+
 
     @Test
     fun `Should evaluate to undetermined if treatment history contains platinum but unknown if progression`() {
@@ -57,7 +58,7 @@ class IsPlatinumSensitiveTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if treatment history contains platinum with progression and long time ago`() {
+    fun `Should evaluate to undetermined if treatment history contains platinum with progression but long time ago`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
@@ -84,11 +85,11 @@ class IsPlatinumSensitiveTest {
     }
 
     @Test
-    fun `Should pass if treatment history contains platinum without progression`() {
+    fun `Should pass if treatment history contains platinum with progression and within 3 months`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                stopReason = StopReason.TOXICITY,
+                stopReason = StopReason.PROGRESSIVE_DISEASE,
                 stopYear = recentDate.year,
                 stopMonth = recentDate.monthValue
             )
