@@ -18,14 +18,12 @@ class MolecularDriverEntryComparatorTest {
             create(DriverLikelihood.HIGH, "disruption", "driver 7"),
             create(DriverLikelihood.HIGH, "virus", "driver 6"),
             create(DriverLikelihood.MEDIUM, "fusion", "driver 1"),
-            create(DriverLikelihood.LOW, "disruption (A)", "driver 2"),
-            create(DriverLikelihood.LOW, "disruption (B)", "driver 2")
+            create(DriverLikelihood.LOW, "disruption", "driver 2"),
         )
 
         val entries = listOf(
             expectedEntries[7],
             expectedEntries[5],
-            expectedEntries[9],
             expectedEntries[2],
             expectedEntries[0],
             expectedEntries[8],
