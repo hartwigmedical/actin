@@ -161,7 +161,7 @@ class HasToxicityWithGradeTest {
     fun toxicity(
         source: ToxicitySource,
         grade: Int? = null,
-        name: String = "",
+        name: String? = null,
         icdMainCode: String = icdModel.titleToCodeMap.keys.first(),
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null
