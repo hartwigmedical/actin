@@ -63,5 +63,6 @@ class HasToxicityWithGrade(
         }
     }
 
-    private fun formatToxicities(toxicities: List<Toxicity>) = if (toxicities.isNotEmpty()) " (${toxicities.joinToString(", ") { it.display() }})" else ""
+    private fun formatToxicities(toxicities: List<Toxicity>) =
+        if (toxicities.any { it.name != "" }) " (${toxicities.joinToString(", ") { it.display() }})" else ""
 }
