@@ -2,7 +2,11 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
+import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.util.Cells
@@ -44,7 +48,7 @@ class OrangeMolecularRecordGenerator(
             )
         }
 
-        val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
+        val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, trials)
         TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true, skipWrappingFooter = true)
 
         if (!molecular.hasSufficientQuality) {
@@ -61,15 +65,48 @@ class OrangeMolecularRecordGenerator(
 
     private fun tumorDetailsGenerators(
         molecular: MolecularRecord,
-        evaluated: List<InterpretedCohort>,
         trials: Set<EventWithExternalTrial>
     ): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular),
-                MolecularDriversGenerator(molecular, evaluated, trials)
+                MolecularDriversGenerator(
+                    MolecularDriversInterpreter(
+                        filterDriversByLikelihood(molecular.drivers, true),
+                        InterpretedCohortsSummarizer.fromCohorts(cohorts)
+                    ),
+                    trials,
+                    molecular.externalTrialSource,
+                    molecular.evidenceSource,
+                    "Key drivers"
+                ),
+                MolecularDriversGenerator(
+                    MolecularDriversInterpreter(
+                        filterDriversByLikelihood(molecular.drivers, false),
+                        InterpretedCohortsSummarizer.fromCohorts(cohorts)
+                    ),
+                    trials,
+                    molecular.externalTrialSource,
+                    molecular.evidenceSource,
+                    "Other events"
+                )
             )
         } else emptyList()
+    }
+
+    private fun filterDriversByLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
+        fun <T> filterByLikelihood(items: List<T>, getLikelihood: (T) -> DriverLikelihood?): List<T> =
+            if (useHighDrivers) items.filter { getLikelihood(it) == DriverLikelihood.HIGH }
+            else items.filter { getLikelihood(it) != DriverLikelihood.HIGH }
+
+        return Drivers(
+            variants = filterByLikelihood(drivers.variants) { it.driverLikelihood },
+            copyNumbers = filterByLikelihood(drivers.copyNumbers) { it.driverLikelihood },
+            homozygousDisruptions = filterByLikelihood(drivers.homozygousDisruptions) { it.driverLikelihood },
+            disruptions = filterByLikelihood(drivers.disruptions) { it.driverLikelihood },
+            fusions = filterByLikelihood(drivers.fusions) { it.driverLikelihood },
+            viruses = filterByLikelihood(drivers.viruses) { it.driverLikelihood }
+        )
     }
 }
 
