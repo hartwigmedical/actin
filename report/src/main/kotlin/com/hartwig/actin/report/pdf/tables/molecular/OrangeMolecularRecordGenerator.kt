@@ -5,8 +5,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.report.interpretation.InterpretedCohort
-import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
-import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.util.Cells
@@ -48,7 +46,7 @@ class OrangeMolecularRecordGenerator(
             )
         }
 
-        val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, trials)
+        val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
         TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true, skipWrappingFooter = true)
 
         if (!molecular.hasSufficientQuality) {
@@ -65,29 +63,22 @@ class OrangeMolecularRecordGenerator(
 
     private fun tumorDetailsGenerators(
         molecular: MolecularRecord,
+        evaluated: List<InterpretedCohort>,
         trials: Set<EventWithExternalTrial>
     ): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular),
                 MolecularDriversGenerator(
-                    MolecularDriversInterpreter(
-                        filterDriversByLikelihood(molecular.drivers, true),
-                        InterpretedCohortsSummarizer.fromCohorts(cohorts)
-                    ),
+                    molecular.copy(drivers = filterDriversByLikelihood(molecular.drivers, true)),
+                    evaluated,
                     trials,
-                    molecular.externalTrialSource,
-                    molecular.evidenceSource,
                     "Key drivers"
                 ),
                 MolecularDriversGenerator(
-                    MolecularDriversInterpreter(
-                        filterDriversByLikelihood(molecular.drivers, false),
-                        InterpretedCohortsSummarizer.fromCohorts(cohorts)
-                    ),
+                    molecular.copy(drivers = filterDriversByLikelihood(molecular.drivers, false)),
+                    evaluated,
                     trials,
-                    molecular.externalTrialSource,
-                    molecular.evidenceSource,
                     "Other events"
                 )
             )

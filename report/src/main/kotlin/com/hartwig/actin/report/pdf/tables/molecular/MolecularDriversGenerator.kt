@@ -1,6 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
+import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
@@ -14,10 +17,9 @@ import com.hartwig.actin.report.trial.EventWithExternalTrial
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
-    private val molecularDriversInterpreter: MolecularDriversInterpreter,
+    private val molecular: MolecularRecord,
+    private val cohorts: List<InterpretedCohort>,
     private val externalTrials: Set<EventWithExternalTrial>,
-    private val externalTrialSource: String,
-    private val evidenceSource: String,
     private val title: String
 ) : TableGenerator {
 
@@ -35,10 +37,11 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
         table.addHeaderCell(Cells.createHeader("Trials (Locations)"))
-        table.addHeaderCell(Cells.createHeader("Trials in $externalTrialSource"))
-        table.addHeaderCell(Cells.createHeader("Best evidence in $evidenceSource"))
-        table.addHeaderCell(Cells.createHeader("Resistance in $evidenceSource"))
+        table.addHeaderCell(Cells.createHeader("Trials in ${molecular.externalTrialSource}"))
+        table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
+        table.addHeaderCell(Cells.createHeader("Resistance in ${molecular.evidenceSource}"))
 
+        val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrials)
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().sortedWith(driverSortOrder).forEach { entry ->
