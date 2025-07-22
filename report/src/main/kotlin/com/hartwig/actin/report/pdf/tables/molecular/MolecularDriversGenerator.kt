@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
-import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.interpretation.TrialAcronymAndLocations
@@ -44,7 +43,7 @@ class MolecularDriversGenerator(
         val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrials)
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
-        factory.create().sortedWith(driverSortOrder).forEach { entry ->
+        factory.create().forEach { entry ->
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.display()))
             table.addCell(Cells.createContent(formatActinTrials(entry.actinTrials)))
@@ -74,9 +73,4 @@ class MolecularDriversGenerator(
             }"
         }
     }
-
-    private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
-        MolecularDriverEntry::driverType,
-        MolecularDriverEntry::description
-    )
 }

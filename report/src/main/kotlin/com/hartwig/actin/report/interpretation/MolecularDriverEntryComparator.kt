@@ -26,7 +26,6 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
                 .thenBy { it.contains("fusion") }
                 .thenBy { it.contains("disruption") }
                 .thenBy { it.startsWith("virus") }
-                .thenByDescending { it }
                 .compare(string2.lowercase(), string1.lowercase())
         }
     }
