@@ -70,13 +70,13 @@ class OrangeMolecularRecordGenerator(
             listOf(
                 PredictedTumorOriginGenerator(molecular),
                 MolecularDriversGenerator(
-                    molecular.copy(drivers = filterDriversByLikelihood(molecular.drivers, true)),
+                    molecular.copy(drivers = filterDriversByDriverLikelihood(molecular.drivers, true)),
                     evaluated,
                     trials,
                     "Key drivers"
                 ),
                 MolecularDriversGenerator(
-                    molecular.copy(drivers = filterDriversByLikelihood(molecular.drivers, false)),
+                    molecular.copy(drivers = filterDriversByDriverLikelihood(molecular.drivers, false)),
                     evaluated,
                     trials,
                     "Other events"
@@ -85,18 +85,18 @@ class OrangeMolecularRecordGenerator(
         } else emptyList()
     }
 
-    private fun filterDriversByLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
-        fun <T> filterByLikelihood(items: List<T>, getLikelihood: (T) -> DriverLikelihood?): List<T> =
-            if (useHighDrivers) items.filter { getLikelihood(it) == DriverLikelihood.HIGH }
-            else items.filter { getLikelihood(it) != DriverLikelihood.HIGH }
+    private fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
+        fun <T> filterByDriverLikelihood(items: List<T>, getDriverLikelihood: (T) -> DriverLikelihood?): List<T> =
+            if (useHighDrivers) items.filter { getDriverLikelihood(it) == DriverLikelihood.HIGH }
+            else items.filter { getDriverLikelihood(it) != DriverLikelihood.HIGH }
 
         return Drivers(
-            variants = filterByLikelihood(drivers.variants) { it.driverLikelihood },
-            copyNumbers = filterByLikelihood(drivers.copyNumbers) { it.driverLikelihood },
-            homozygousDisruptions = filterByLikelihood(drivers.homozygousDisruptions) { it.driverLikelihood },
-            disruptions = filterByLikelihood(drivers.disruptions) { it.driverLikelihood },
-            fusions = filterByLikelihood(drivers.fusions) { it.driverLikelihood },
-            viruses = filterByLikelihood(drivers.viruses) { it.driverLikelihood }
+            variants = filterByDriverLikelihood(drivers.variants) { it.driverLikelihood },
+            copyNumbers = filterByDriverLikelihood(drivers.copyNumbers) { it.driverLikelihood },
+            homozygousDisruptions = filterByDriverLikelihood(drivers.homozygousDisruptions) { it.driverLikelihood },
+            disruptions = filterByDriverLikelihood(drivers.disruptions) { it.driverLikelihood },
+            fusions = filterByDriverLikelihood(drivers.fusions) { it.driverLikelihood },
+            viruses = filterByDriverLikelihood(drivers.viruses) { it.driverLikelihood }
         )
     }
 }
