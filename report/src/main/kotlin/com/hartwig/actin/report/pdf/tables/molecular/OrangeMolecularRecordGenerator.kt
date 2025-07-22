@@ -85,7 +85,7 @@ class OrangeMolecularRecordGenerator(
         } else emptyList()
     }
 
-    private fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
+    fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
         fun <T> filterByDriverLikelihood(items: List<T>, getDriverLikelihood: (T) -> DriverLikelihood?): List<T> =
             if (useHighDrivers) items.filter { getDriverLikelihood(it) == DriverLikelihood.HIGH }
             else items.filter { getDriverLikelihood(it) != DriverLikelihood.HIGH }

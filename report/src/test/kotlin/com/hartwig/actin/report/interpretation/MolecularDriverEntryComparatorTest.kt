@@ -11,6 +11,7 @@ class MolecularDriverEntryComparatorTest {
     fun `Should sort molecular driver entries`() {
         val expectedEntries = listOf(
             create(DriverLikelihood.HIGH, "mutation", "driver 3"),
+            create(DriverLikelihood.HIGH, "mutation", "driver 3"),
             create(DriverLikelihood.HIGH, "amplification", "driver 4"),
             create(DriverLikelihood.HIGH, "amplification", "driver 5"),
             create(DriverLikelihood.HIGH, "deletion", "driver 7"),
@@ -22,15 +23,16 @@ class MolecularDriverEntryComparatorTest {
         )
 
         val entries = listOf(
-            expectedEntries[7],
-            expectedEntries[5],
-            expectedEntries[2],
-            expectedEntries[0],
             expectedEntries[8],
-            expectedEntries[1],
             expectedEntries[6],
             expectedEntries[3],
-            expectedEntries[4]
+            expectedEntries[0],
+            expectedEntries[1],
+            expectedEntries[9],
+            expectedEntries[2],
+            expectedEntries[7],
+            expectedEntries[4],
+            expectedEntries[5]
         ).sortedWith(MolecularDriverEntryComparator())
 
         expectedEntries.indices.forEach {
