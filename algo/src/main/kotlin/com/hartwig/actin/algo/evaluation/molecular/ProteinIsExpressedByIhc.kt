@@ -15,16 +15,13 @@ class ProteinIsExpressedByIhc internal constructor(private val protein: String) 
 
         return when {
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "positive" || testScoredAboveZero(ihcTest) } -> {
-                EvaluationFactory.pass("$protein has expression by IHC")
+                EvaluationFactory.pass("$protein has expression by IHC", inclusionEvents = setOf("IHC $protein expression"))
             }
 
-            ihcTests.isNotEmpty() -> {
-                EvaluationFactory.fail("No $protein expression by IHC")
-            }
+            ihcTests.isNotEmpty() -> EvaluationFactory.fail("No $protein expression by IHC")
 
-            else -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
-            }
+
+            else -> EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
         }
     }
 

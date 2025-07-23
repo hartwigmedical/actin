@@ -33,9 +33,9 @@ class ProteinIsLostByIhcTest {
     }
 
     @Test
-    fun `Should be undetermined if there is at least one test with inconclusive result`() {
+    fun `Should warn if there is at least one test with inconclusive result`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withIhcTests(listOf(wrongTest, inconclusiveTest)))
         )
     }

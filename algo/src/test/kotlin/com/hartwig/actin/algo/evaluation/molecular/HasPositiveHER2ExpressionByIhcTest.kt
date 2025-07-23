@@ -59,6 +59,8 @@ class HasPositiveHER2ExpressionByIhcTest {
             )
         )
         assertEvaluation(EvaluationResult.PASS, evaluationValue)
+        assertThat(evaluationValue.inclusionMolecularEvents).isEqualTo(setOf("IHC HER2 positive"))
+
         val evaluationText = function.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
@@ -68,10 +70,11 @@ class HasPositiveHER2ExpressionByIhcTest {
             )
         )
         assertEvaluation(EvaluationResult.PASS, evaluationText)
+        assertThat(evaluationText.inclusionMolecularEvents).isEqualTo(setOf("IHC HER2 positive"))
     }
 
     @Test
-    fun `Should evaluate to undetermined if ERBB2 is amplified and no valid IHC result available`() {
+    fun `Should warn if ERBB2 is amplified and no valid IHC result available`() {
         val erbb2Amp = TestCopyNumberFactory.createMinimal().copy(
             isReportable = true,
             gene = "ERBB2",
@@ -85,8 +88,9 @@ class HasPositiveHER2ExpressionByIhcTest {
                 listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true))
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected)")
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnMessagesStrings()).containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected)")
+        assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("Potential IHC HER2 positive"))
     }
 
     @Test

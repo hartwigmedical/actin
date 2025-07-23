@@ -31,13 +31,15 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
         }
 
         val undeterminedMessage = "No IHC HER2 expression test available"
+
         return when {
             validIhcTests.isEmpty() && !(positiveArguments || negativeArguments) -> {
                 return when {
                     geneERBB2IsAmplified -> {
-                        EvaluationFactory.undetermined(
+                        EvaluationFactory.warn(
                             "$undeterminedMessage (but ERBB2 amplification detected)",
-                            isMissingMolecularResultForEvaluation = true
+                            isMissingMolecularResultForEvaluation = true,
+                            inclusionEvents = setOf("Potential IHC HER2 positive")
                         )
                     }
 
@@ -78,12 +80,10 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
             }
 
             her2ReceptorIsPositive == true -> {
-                EvaluationFactory.pass("IHC HER2 expression determined positive")
+                EvaluationFactory.pass("IHC HER2 expression determined positive", inclusionEvents = setOf("IHC HER2 positive"))
             }
 
-            her2ReceptorIsPositive == false -> {
-                EvaluationFactory.fail("IHC HER2 expression determined negative")
-            }
+            her2ReceptorIsPositive == false -> EvaluationFactory.fail("IHC HER2 expression determined negative")
 
             else -> EvaluationFactory.undetermined("No positive IHC HER2 expression")
         }

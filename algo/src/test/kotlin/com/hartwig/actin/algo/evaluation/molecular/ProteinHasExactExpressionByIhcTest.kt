@@ -37,9 +37,9 @@ class ProteinHasExactExpressionByIhcTest {
     }
 
     @Test
-    fun `Should fail when prior test contains unclear result`() {
+    fun `Should warn when prior test contains unclear result`() {
         val priorTest = ihcTest(scoreText = "Positive")
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(priorTest)))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withIhcTests(priorTest)))
     }
 
     @Test

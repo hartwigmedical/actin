@@ -21,14 +21,17 @@ class AnyGeneFromSetIsOverexpressed(
             result == EvaluationResult.PASS || result == EvaluationResult.WARN
         }.map { it.key }
 
-        if (amplifiedGenes.isNotEmpty()) return EvaluationFactory.warn(
-            "${concat(amplifiedGenes)} is amplified therefore possible overexpression in RNA",
-            isMissingMolecularResultForEvaluation = true
-        )
-
-        return EvaluationFactory.undetermined(
-            "Overexpression of ${concat(genes)} in RNA undetermined",
-            isMissingMolecularResultForEvaluation = true
-        )
+        return if (amplifiedGenes.isNotEmpty()) {
+            EvaluationFactory.warn(
+                "Amplification of ${concat(amplifiedGenes)} detected and therefore possible overexpression in RNA",
+                isMissingMolecularResultForEvaluation = true,
+                inclusionEvents = amplifiedGenes.map { "Potential $it over exp" }.toSet()
+            )
+        } else {
+            EvaluationFactory.undetermined(
+                "Overexpression of ${concat(genes)} in RNA undetermined",
+                isMissingMolecularResultForEvaluation = true
+            )
+        }
     }
 }
