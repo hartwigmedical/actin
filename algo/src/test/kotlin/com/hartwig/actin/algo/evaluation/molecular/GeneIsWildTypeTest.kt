@@ -341,7 +341,7 @@ class GeneIsWildTypeTest {
                 molecularHistory = MolecularHistory(
                     molecularTests = listOf(
                         TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
                                     TestVariantFactory.createMinimal()
@@ -361,7 +361,7 @@ class GeneIsWildTypeTest {
                                 )
                             ),
                         ), TestMolecularFactory.createMinimalTestPanelRecord().copy(
-                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
                                     TestVariantFactory.createMinimal()
