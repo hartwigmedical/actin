@@ -59,9 +59,15 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
 
             her2ReceptorIsPositive != true && geneERBB2IsAmplified -> {
                 return if (her2ReceptorIsPositive == null) {
-                    EvaluationFactory.warn("Non-positive HER2 IHC results (inconsistent with detected ERBB2 amplification)")
+                    EvaluationFactory.undetermined(
+                        "Non-positive HER2 IHC results (inconsistent with detected ERBB2 amplification)",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 } else {
-                    EvaluationFactory.warn("Negative HER2 IHC results (inconsistent with detected ERBB2 amplification)")
+                    EvaluationFactory.undetermined(
+                        "Negative HER2 IHC results (inconsistent with detected ERBB2 amplification)",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 }
             }
 
@@ -73,9 +79,15 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
 
             her2ReceptorIsPositive == null -> {
                 return if (!(positiveArguments || negativeArguments)) {
-                    EvaluationFactory.undetermined("IHC HER2 expression not deterministic by IHC")
+                    EvaluationFactory.undetermined(
+                        "IHC HER2 expression not deterministic by IHC",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 } else {
-                    EvaluationFactory.warn("Conflicting IHC HER2 expression test results")
+                    EvaluationFactory.warn(
+                        "Conflicting IHC HER2 expression test results",
+                        inclusionEvents = setOf("Potential IHC HER2 expression")
+                    )
                 }
             }
 

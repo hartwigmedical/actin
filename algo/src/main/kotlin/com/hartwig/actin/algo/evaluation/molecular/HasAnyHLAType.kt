@@ -35,9 +35,9 @@ class HasAnyHLAType(
             val matchedHlaAlleles = immunology.hlaAlleles.filter(isMatch).map { it.name }
             return when {
                 matchedHlaAlleles.isNotEmpty() -> {
-                    EvaluationFactory.undetermined(
+                    EvaluationFactory.warn(
                         "Has required HLA type ${Format.concatLowercaseWithCommaAndAnd(matchedHlaAlleles)} however undetermined " +
-                                "whether allele is present in tumor"
+                                "whether allele is present in tumor", inclusionEvents = matchedHlaAlleles.map { "HLA-${it}" }.toSet()
                     )
                 }
 

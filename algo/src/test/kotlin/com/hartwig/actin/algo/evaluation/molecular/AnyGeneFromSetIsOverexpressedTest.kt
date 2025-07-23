@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -33,7 +33,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         }
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessagesStrings()).contains("Amplification of geneA and geneC detected and therefore possible overexpression in RNA")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("Potential geneA over exp", "Potential geneC over exp"))
     }
@@ -43,7 +43,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).contains("Overexpression of geneA, geneB and geneC in RNA undetermined")
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()
     }
