@@ -18,7 +18,7 @@ internal object GeneralTestFactory {
     }
 
     fun withWHO(who: Int?): PatientRecord {
-        return withClinicalStatus(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus.copy(who = who))
+        return withClinicalStatus(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus.copy(latestWho = who))
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {

@@ -25,7 +25,7 @@
     "biopsyLocation": "Lymph node"
   },
   "clinicalStatus": {
-    "who": 0,
+    "latestWho": 0,
     "lvef": null
   },
   "oncologicalHistory": [

@@ -91,6 +91,6 @@ internal object ComorbidityTestFactory {
     }
 
     fun withWHO(who: Int?): PatientRecord {
-        return base.copy(clinicalStatus = ClinicalStatus(who = who))
+        return base.copy(clinicalStatus = ClinicalStatus(latestWho = who))
     }
 }

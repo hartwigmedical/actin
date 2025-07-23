@@ -27,7 +27,7 @@
     "biopsyLocation": "Lung"
   },
   "clinicalStatus": {
-    "who": 2,
+    "latestWho": 2,
     "infectionStatus": {
       "hasActiveInfection": false,
       "description": null

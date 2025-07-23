@@ -181,7 +181,7 @@ class ClinicalDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
-                clinicalStatus.who,
+                clinicalStatus.latestWho,
                 infectionStatus?.hasActiveInfection,
                 infectionStatus?.description,
                 ecgs.isNotEmpty(),

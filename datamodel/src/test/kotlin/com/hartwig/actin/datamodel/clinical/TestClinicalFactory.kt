@@ -127,7 +127,7 @@ object TestClinicalFactory {
 
     private fun createTestClinicalStatus(): ClinicalStatus {
         return ClinicalStatus(
-            who = 1,
+            latestWho = 1,
             infectionStatus = InfectionStatus(hasActiveInfection = false, description = null)
         )
     }

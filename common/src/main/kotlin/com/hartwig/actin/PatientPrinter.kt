@@ -11,7 +11,7 @@ class PatientPrinter(private val printer: DatamodelPrinter) {
         printer.print("Birth year: " + record.patient.birthYear)
         printer.print("Gender: " + record.patient.gender)
         printer.print("Primary tumor: " + record.tumor.name)
-        printer.print("WHO status: " + record.clinicalStatus.who)
+        printer.print("WHO status: " + record.clinicalStatus.latestWho)
 
         MolecularHistoryPrinter.print(record.molecularHistory)
     }

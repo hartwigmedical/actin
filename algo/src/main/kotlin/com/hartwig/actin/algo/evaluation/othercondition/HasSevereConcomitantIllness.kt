@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasSevereConcomitantIllness: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val whoStatus = record.clinicalStatus.who
+        val whoStatus = record.clinicalStatus.latestWho
 
         if (whoStatus == 3 || whoStatus == 4) {
             return EvaluationFactory.warn("Potential severe concomitant illnesses (WHO $whoStatus)")
