@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
@@ -13,7 +13,7 @@ class GenesMeetSpecificMrnaExpressionRequirementsTest {
     @Test
     fun `Should evaluate to undetermined with correct message`() {
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Specific mRNA expression requirements for gene(s) gene a, gene b and gene c undetermined")
     }
 }
