@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.MolecularAnnotator
+import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
+import com.hartwig.actin.molecular.driverlikelihood.DndsModel
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -14,22 +16,27 @@ typealias PanelRecordWithDriverAttributes = PanelRecord
 
 class PanelDriverAttributeAnnotator(
     private val knownEventResolver: KnownEventResolver,
-    private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    private val dndsDatabase: DndsDatabase,
 ) : MolecularAnnotator<PanelRecord, PanelRecordWithDriverAttributes> {
 
     override fun annotate(input: PanelRecord): PanelRecordWithDriverAttributes {
+        val geneDriverLikelihoodModel =
+            GeneDriverLikelihoodModel(DndsModel.create(dndsDatabase, input.characteristics.tumorMutationalBurden))
         return input.copy(
             drivers = input.drivers.copy(
-                variants = annotateVariantsWithDriverAttributes(input.drivers.variants),
+                variants = annotateVariantsWithDriverAttributes(input.drivers.variants, geneDriverLikelihoodModel),
                 copyNumbers = input.drivers.copyNumbers.map { annotatedCopyNumberWithDriverAttributes(it) },
                 fusions = input.drivers.fusions.map { annotateFusionWithDriverAttributes(it) },
             )
         )
     }
 
-    private fun annotateVariantsWithDriverAttributes(variants: List<Variant>): List<Variant> {
+    private fun annotateVariantsWithDriverAttributes(
+        variants: List<Variant>,
+        geneDriverLikelihoodModel: GeneDriverLikelihoodModel
+    ): List<Variant> {
         val annotatedVariants = variants.map { annotateVariantWithGeneAlteration(it) }
-        return annotateVariantsWithDriverLikelihood(annotatedVariants)
+        return annotateVariantsWithDriverLikelihood(annotatedVariants, geneDriverLikelihoodModel)
     }
 
     private fun annotateVariantWithGeneAlteration(variant: Variant): Variant {
@@ -43,7 +50,10 @@ class PanelDriverAttributeAnnotator(
         )
     }
 
-    private fun annotateVariantsWithDriverLikelihood(variants: List<Variant>): List<Variant> {
+    private fun annotateVariantsWithDriverLikelihood(
+        variants: List<Variant>,
+        geneDriverLikelihoodModel: GeneDriverLikelihoodModel
+    ): List<Variant> {
         val variantsByGene = variants.groupBy { it.gene }
         return variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()

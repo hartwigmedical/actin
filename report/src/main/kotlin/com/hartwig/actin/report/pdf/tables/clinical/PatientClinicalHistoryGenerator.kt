@@ -52,7 +52,7 @@ class PatientClinicalHistoryGenerator(
             if (report.config.includeOtherOncologicalHistoryInSummary || showDetails) {
                 "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
             } else null,
-            if (report.config.includePreviousPrimaryInClinicalSummary) {
+            if (report.config.includePreviousPrimaryInClinicalSummary || showDetails) {
                 "Previous primary tumor" to priorPrimaryHistoryTable(record)
             } else null,
             if (report.config.includeRelevantNonOncologicalHistoryInSummary || showDetails) {

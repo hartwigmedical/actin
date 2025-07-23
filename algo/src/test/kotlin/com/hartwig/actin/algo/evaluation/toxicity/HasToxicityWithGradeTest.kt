@@ -46,7 +46,9 @@ class HasToxicityWithGradeTest {
     @Test
     fun `Should pass by default with questionnaire toxicity without grade`() {
         val toxicities = listOf(toxicity(source = ToxicitySource.QUESTIONNAIRE))
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        val evaluation = function().evaluate(ComorbidityTestFactory.withToxicities(toxicities))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Has toxicities grade >= 2")
     }
 
     @Test
@@ -159,7 +161,7 @@ class HasToxicityWithGradeTest {
     fun toxicity(
         source: ToxicitySource,
         grade: Int? = null,
-        name: String = "name",
+        name: String? = null,
         icdMainCode: String = icdModel.titleToCodeMap.keys.first(),
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null

@@ -5,17 +5,20 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.evaluation.composite.And
+import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
-
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private val categories = MedicationCategories.create(atcTree())
     private val antiCancerCategories = categories.resolve("Anticancer")
+    private val selector: MedicationSelector =
+        MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
     private val referenceDate = referenceDateProvider().date()
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -75,8 +78,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES to hasHadLimitedTreatmentsOfCategoryCreator(true),
             EligibilityRule.HAS_NOT_HAD_CATEGORY_X_TREATMENT_OR_AT_MOST_Y_LINES to hasHadLimitedTreatmentsOfCategoryCreator(false),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentsOfCategoryWithTypesCreator(),
-            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(true),
-            EligibilityRule.HAS_NOT_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_OR_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(false),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(
+                true
+            ),
+            EligibilityRule.HAS_NOT_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_OR_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(
+                false
+            ),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITH_STOP_REASON_OTHER_THAN_PD to hasHadTreatmentsOfCategoryWithTypesAndStopReasonNotPDCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS_WITH_STOP_REASON_OTHER_THAN_PD
                     to hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDCreator(),
@@ -87,7 +94,11 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_WEEKS to hasHadSystemicTherapyWithIntentsWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_AT_LEAST_Y_WEEKS_AGO to hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
-            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to { HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(referenceDate) },
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
+                HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(
+                    referenceDate
+                )
+            },
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadClinicalBenefitFollowingTreatmentOfCategoryAndTypesCreator(),
@@ -122,9 +133,17 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_PATHOLOGICAL_COMPLETE_RESPONSE_AFTER_SURGERY to { HasPathologicalCompleteResponseAfterSurgery() },
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to { HasPreviouslyParticipatedInTrial() },
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X to hasPreviouslyParticipatedInSpecificTrialCreator(),
-            EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to { IsNotParticipatingInAnotherTrial() },
+            EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_INTERVENTIONAL_TRIAL to {
+                IsNotParticipatingInAnotherInterventionalTrial(
+                    selector,
+                    referenceDateProvider().date().minusWeeks(4)
+                )
+            },
             EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to { HasReceivedSystemicTherapyForBrainMetastases() },
             EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to { HasHadBrainRadiationTherapy() },
+            EligibilityRule.IS_PLATINUM_RESISTANT to { IsPlatinumResistant(referenceDate) },
+            EligibilityRule.IS_PLATINUM_SENSITIVE to { IsPlatinumSensitive(referenceDate) },
+            EligibilityRule.IS_PRIMARY_PLATINUM_REFRACTORY_WITHIN_X_MONTHS to isPrimaryPlatinumRefractoryWithinMonthsCreator(),
         )
     }
 
@@ -139,7 +158,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
             val minDate = referenceDate.minusWeeks(26)
-            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate, maxMolecularTestAge())
+            IsEligibleForOnLabelTreatment(
+                treatmentName,
+                StandardOfCareEvaluatorFactory(resources),
+                doidModel(),
+                minDate,
+                maxMolecularTestAge()
+            )
         }
     }
 
@@ -488,7 +513,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadSystemicTreatmentOnlyOfCategoryOfTypesCreator(): FunctionCreator{
+    private fun hasHadSystemicTreatmentOnlyOfCategoryOfTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
             HasHadSystemicTreatmentOnlyOfCategoryOfTypes(category = input.category, types = input.types)
@@ -573,7 +598,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             And(
                 listOf(
                     HasHadSomeSystemicTreatments(minSystemicTreatments),
-                    HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological=false)
+                    HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological = false)
                 )
             )
         }
@@ -605,7 +630,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             And(
                 listOf(
                     HasHadSomeSystemicTreatments(minSystemicTreatments),
-                    HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological=true)
+                    HasHadProgressionFollowingLatestTreatmentLine(mustBeRadiological = true)
                 )
             )
         }
@@ -622,6 +647,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasPreviouslyParticipatedInSpecificTrialCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasPreviouslyParticipatedInTrial(functionInputResolver().createOneStringInput(function))
+        }
+    }
+
+    private fun isPrimaryPlatinumRefractoryWithinMonthsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            IsPrimaryPlatinumRefractoryWithinMonths(functionInputResolver().createOneIntegerInput(function), referenceDate)
         }
     }
 }

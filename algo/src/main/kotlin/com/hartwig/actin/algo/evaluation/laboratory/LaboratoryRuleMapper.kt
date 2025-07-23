@@ -61,6 +61,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT to hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(),
             EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
+            EligibilityRule.HAS_GGT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.GAMMA_GLUTAMYLTRANSFERASE),
+            EligibilityRule.HAS_GGT_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.GAMMA_GLUTAMYLTRANSFERASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_Y_IF_GILBERT_DISEASE to hasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDiseaseCreator(
                 LabMeasurement.TOTAL_BILIRUBIN

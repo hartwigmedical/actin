@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -19,6 +20,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to hasCancerWithNeuroendocrineComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_LARGE_CELL_COMPONENT to hasCancerWithLargeCellComponentCreator(),
+            EligibilityRule.HAS_LOW_GRADE_CANCER to hasLowGradeCancerCreator(),
+            EligibilityRule.HAS_HIGH_GRADE_CANCER to hasHighGradeCancerCreator(),
             EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to hasKnownSCLCTransformationCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNSCLCCreator(),
             EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
@@ -135,6 +138,14 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasCancerWithLargeCellComponentCreator(): FunctionCreator {
         return { HasCancerWithLargeCellComponent(doidModel()) }
+    }
+
+    private fun hasLowGradeCancerCreator(): FunctionCreator {
+        return { HasLowGradeCancer() }
+    }
+
+    private fun hasHighGradeCancerCreator(): FunctionCreator {
+        return { Not(HasLowGradeCancer()) }
     }
 
     private fun hasKnownSCLCTransformationCreator(): FunctionCreator {

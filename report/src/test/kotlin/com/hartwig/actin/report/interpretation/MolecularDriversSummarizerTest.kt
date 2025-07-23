@@ -49,6 +49,21 @@ class MolecularDriversSummarizerTest {
     }
 
     @Test
+    fun `Should return other variants`() {
+        val variants = listOf(
+            variant("high driver", DriverLikelihood.HIGH, true),
+            variant("non-reportable", DriverLikelihood.HIGH, false),
+            variant("medium likelihood", DriverLikelihood.MEDIUM, true),
+            variant("associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = true),
+            variant("not associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = false)
+        )
+        val molecularDrivers = minimalDrivers.copy(variants = variants)
+
+        val otherEntries = summarizer(molecularDrivers).otherVariants().distinct()
+        assertThat(otherEntries).containsExactly("medium likelihood", "not associated with resistance")
+    }
+
+    @Test
     fun `Should return key amplified genes and indicate partial amplifications and copy nrs if available`() {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "gene 1", DriverLikelihood.HIGH, true),

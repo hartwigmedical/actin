@@ -108,6 +108,14 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_LOW_GRADE_CANCER",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_HIGH_GRADE_CANCER",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_KNOWN_SCLC_TRANSFORMATION",
     "usedStatus": "UNUSED"
   },
@@ -748,7 +756,7 @@
     "usedStatus": "UNUSED"
   },
   {
-    "eligibilityRule": "IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL",
+    "eligibilityRule": "IS_NOT_PARTICIPATING_IN_ANOTHER_INTERVENTIONAL_TRIAL",
     "usedStatus": "UNUSED"
   },
   {
@@ -757,6 +765,18 @@
   },
   {
     "eligibilityRule": "HAS_HAD_BRAIN_RADIATION_THERAPY",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "IS_PLATINUM_SENSITIVE",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "IS_PLATINUM_RESISTANT",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "IS_PRIMARY_PLATINUM_REFRACTORY_WITHIN_X_MONTHS",
     "usedStatus": "UNUSED"
   },
   {
@@ -1164,6 +1184,14 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_GGT_ULN_OF_AT_MOST_X",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_GGT_ULN_OF_AT_LEAST_X",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X",
     "usedStatus": "UNUSED"
   },
@@ -1417,6 +1445,10 @@
   },
   {
     "eligibilityRule": "HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE",
+    "usedStatus": "UNUSED"
+  },
+  {
+    "eligibilityRule": "HAS_HISTORY_OF_GASTROINTESTINAL_FISTULA",
     "usedStatus": "UNUSED"
   },
   {

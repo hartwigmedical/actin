@@ -96,6 +96,15 @@ class GeneIsInactivatedTest {
     }
 
     @Test
+    fun `Should warn when TSG homozygous disruption implies no protein effect`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(
+                MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.NO_EFFECT))
+            )
+        )
+    }
+
+    @Test
     fun `Should pass with matching TSG deletion`() {
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withCopyNumber(matchingDel)))
     }
@@ -119,6 +128,14 @@ class GeneIsInactivatedTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
+        )
+    }
+
+    @Test
+    fun `Should warn when lost gene implies no protein effect`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
         )
     }
 
@@ -161,6 +178,11 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should warn when TSG variant implies gain of function`() {
         assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
+    }
+
+    @Test
+    fun `Should warn when TSG variant implies no protein effect`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(proteinEffect = ProteinEffect.NO_EFFECT))
     }
 
     @Test

@@ -67,12 +67,8 @@ class PanelVariantAnnotator(
                 sequencedVariant.hgvsCodingOrProteinImpact()
             )
 
-        if (externalVariantAnnotation == null) {
-            logger.error("Unable to resolve variant '$sequencedVariant' in variant annotator. See prior warnings.")
-            return null
-        }
-
         return externalVariantAnnotation
+            ?: throw IllegalStateException("Unable to resolve variant '$sequencedVariant' in variant annotator.")
     }
 
     private fun annotateWithPave(transvarVariants: Map<String, TransvarVariant>): Map<String, PaveResponse> {
@@ -126,7 +122,7 @@ class PanelVariantAnnotator(
         otherImpacts = otherImpacts(paveResponse, transvarAnnotation),
         variantCopyNumber = null,
         totalCopyNumber = null,
-        isBiallelic = null,
+        isBiallelic = variant.isBiallelic,
         clonalLikelihood = null,
         phaseGroups = null,
         isCancerAssociatedVariant = false,
@@ -146,7 +142,7 @@ class PanelVariantAnnotator(
             paveImpact.canonicalTranscript,
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
-        
+
         return TranscriptVariantImpact(
             transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,

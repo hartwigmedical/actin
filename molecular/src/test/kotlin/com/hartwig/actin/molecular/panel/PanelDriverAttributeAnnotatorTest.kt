@@ -12,7 +12,6 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.driverlikelihood.TEST_ONCO_DNDS_TSV
 import com.hartwig.actin.molecular.driverlikelihood.TEST_TSG_DNDS_TSV
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
@@ -40,8 +39,10 @@ private val NON_CANCER_ASSOCIATED_VARIANT =
 class PanelDriverAttributeAnnotatorTest {
 
     private val knownEventResolver = mockk<KnownEventResolver>()
-    private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
-    private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(knownEventResolver, geneDriverLikelihoodModel)
+    private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(
+        knownEventResolver,
+        DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV)
+    )
 
     @Test
     fun `Should annotate variant that is a cancer-associated variant`() {

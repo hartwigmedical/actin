@@ -35,14 +35,14 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         }
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
-            type = if (isCanonicalTranscript) CopyNumberType.FULL_GAIN else CopyNumberType.NONE,
+            type = resolveCanonicalAmpType(isCanonicalTranscript, sequencedAmplifiedGene.isPartial),
             minCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null,
             maxCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
-                type = CopyNumberType.FULL_GAIN,
+                type = if (sequencedAmplifiedGene.isPartial == true) CopyNumberType.PARTIAL_GAIN else CopyNumberType.FULL_GAIN,
                 minCopies = sequencedAmplifiedGene.copies,
                 maxCopies = sequencedAmplifiedGene.copies
             )
@@ -103,5 +103,13 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
             ?: throw IllegalArgumentException("No gene data found for gene $gene")
         return ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
+    }
+
+    private fun resolveCanonicalAmpType(isCanonicalTranscript: Boolean, isPartial: Boolean?): CopyNumberType {
+        return when {
+            isCanonicalTranscript && isPartial == true -> CopyNumberType.PARTIAL_GAIN
+            isCanonicalTranscript -> CopyNumberType.FULL_GAIN
+            else -> CopyNumberType.NONE
+        }
     }
 }

@@ -24,6 +24,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
+        val inactivationEventsNoEffect: MutableSet<String> = mutableSetOf()
         val inactivationEventsOnNonCanonicalTranscript: MutableSet<String> = mutableSetOf()
         val evidenceSource = test.evidenceSource
 
@@ -42,12 +43,16 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
             .forEach { geneAlterationDriver ->
                 val isGainOfFunction = (geneAlterationDriver.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION
                         || geneAlterationDriver.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                val isNoEffect = (geneAlterationDriver.proteinEffect == ProteinEffect.NO_EFFECT
+                        || geneAlterationDriver.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
                 if (!geneAlterationDriver.isReportable) {
                     inactivationEventsThatAreUnreportable.add(geneAlterationDriver.event)
                 } else if (geneAlterationDriver.geneRole == GeneRole.ONCO) {
                     inactivationEventsNoTSG.add(geneAlterationDriver.event)
                 } else if (isGainOfFunction) {
                     inactivationEventsGainOfFunction.add(geneAlterationDriver.event)
+                } else if (isNoEffect) {
+                    inactivationEventsNoEffect.add(geneAlterationDriver.event)
                 } else {
                     inactivationEventsThatQualify.add(geneAlterationDriver.event)
                 }
@@ -79,6 +84,8 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                     if (variant.driverLikelihood == DriverLikelihood.HIGH) {
                         val isGainOfFunction = (variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION
                                 || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                        val isNoEffect = (variant.proteinEffect == ProteinEffect.NO_EFFECT
+                                || variant.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
                         if (variant.geneRole == GeneRole.ONCO) {
                             inactivationEventsNoTSG.add(variant.event)
                         } else if (variant.isBiallelic == false) {
@@ -87,6 +94,8 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                             inactivationHighDriverUnknownBiallelicVariants.add(variant.event)
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event)
+                        } else if (isNoEffect) {
+                            inactivationEventsNoEffect.add(variant.event)
                         } else {
                             inactivationEventsThatQualify.add(variant.event)
                         }
@@ -123,6 +132,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
             inactivationEventsThatAreUnreportable,
             inactivationEventsNoTSG,
             inactivationEventsGainOfFunction,
+            inactivationEventsNoEffect,
             inactivationHighDriverNonBiallelicVariants,
             inactivationHighDriverUnknownBiallelicVariants,
             inactivationEventsOnNonCanonicalTranscript,
@@ -139,6 +149,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         inactivationEventsThatAreUnreportable: Set<String>,
         inactivationEventsNoTSG: Set<String>,
         inactivationEventsGainOfFunction: Set<String>,
+        inactivationEventsNoEffect: Set<String>,
         inactivationHighDriverNonBiallelicVariants: Set<String>,
         inactivationHighDriverUnknownBiallelicVariants: Set<String>,
         inactivationEventsOnNonCanonicalTranscript: Set<String>,
@@ -161,6 +172,11 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                     inactivationEventsGainOfFunction,
                     "Inactivation event(s) ${concat(inactivationEventsGainOfFunction)} for $gene"
                             + " however event(s) annotated with gain-of-function protein impact in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    inactivationEventsNoEffect,
+                    "Inactivation event(s) ${concat(inactivationEventsNoEffect)} for $gene"
+                            + " however event(s) annotated with no protein effect in $evidenceSource"
                 ),
                 if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
                     EventsWithMessages(

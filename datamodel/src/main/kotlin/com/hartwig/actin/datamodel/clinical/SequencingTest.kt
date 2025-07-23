@@ -10,6 +10,7 @@ data class SequencedVariant(
     val hgvsProteinImpact: String? = null,
     val transcript: String? = null,
     val variantAlleleFrequency: Double? = null,
+    val isBiallelic: Boolean? = null,
     val exon: Int? = null,
     val codon: Int? = null
 ) {
@@ -21,7 +22,7 @@ data class SequencedVariant(
         impact?.let { if (!impact.startsWith(notationPrefix)) "$notationPrefix.$it" else it }
 }
 
-data class SequencedAmplification(val gene: String, val transcript: String? = null, val copies: Int? = null)
+data class SequencedAmplification(val gene: String, val transcript: String? = null, val copies: Int? = null, val isPartial: Boolean? = null)
 
 data class SequencedDeletion(val gene: String, val transcript: String? = null)
 

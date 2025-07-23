@@ -335,6 +335,54 @@ class GeneIsWildTypeTest {
     }
 
     @Test
+    fun `Should return FAIL when at least one test FAILs`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+            .copy(
+                molecularHistory = MolecularHistory(
+                    molecularTests = listOf(
+                        TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                                variants = listOf(
+                                    TestVariantFactory.createMinimal()
+                                        .copy(
+                                            gene = "ALK",
+                                            isReportable = true,
+                                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                            driverLikelihood = DriverLikelihood.HIGH
+                                        ),
+                                    TestVariantFactory.createMinimal()
+                                        .copy(
+                                            gene = "EGFR",
+                                            isReportable = true,
+                                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                            driverLikelihood = DriverLikelihood.HIGH
+                                        )
+                                )
+                            ),
+                        ), TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                            specification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
+                            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                                variants = listOf(
+                                    TestVariantFactory.createMinimal()
+                                        .copy(
+                                            gene = "KRAS",
+                                            isReportable = true,
+                                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                            driverLikelihood = DriverLikelihood.HIGH
+                                        ),
+
+                                    )
+                            )
+                        )
+                    )
+                )
+            )
+        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+    }
+
+    @Test
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
