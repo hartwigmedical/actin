@@ -74,7 +74,10 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
             her2ReceptorIsPositive != false && TestResult.BORDERLINE in testResults -> {
                 val results =
                     Format.concat(validIhcTests.filter { classifyHer2Test(it) == TestResult.BORDERLINE }.map { "${it.scoreValue}" })
-                EvaluationFactory.undetermined("Undetermined if IHC HER2 score value(s) '$results' is considered positive")
+                EvaluationFactory.warn(
+                    "Undetermined if IHC HER2 score value(s) '$results' is considered positive",
+                    inclusionEvents = setOf("Potential IHC HER2 positive")
+                )
             }
 
             her2ReceptorIsPositive == null -> {

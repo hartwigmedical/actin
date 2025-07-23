@@ -94,7 +94,7 @@ class HasPositiveHER2ExpressionByIhcTest {
     }
 
     @Test
-    fun `Should resolve to undetermined if no positive but borderline result`() {
+    fun `Should warn if no positive but borderline result`() {
         val evaluation = function.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
@@ -102,8 +102,8 @@ class HasPositiveHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if IHC HER2 score value(s) '2.0' is considered positive")
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnMessagesStrings()).containsExactly("Undetermined if IHC HER2 score value(s) '2.0' is considered positive")
     }
 
     @Test

@@ -22,7 +22,7 @@ class HasAnyHLAType(
         )
         val immunology = molecular.immunology
         if (!immunology.isReliable) {
-            return EvaluationFactory.undetermined("HLA typing unreliable")
+            return EvaluationFactory.undetermined("HLA typing unreliable", isMissingMolecularResultForEvaluation = true)
         }
 
         val isMatch: (HlaAllele) -> Boolean = if (matchOnHlaGroup) {
