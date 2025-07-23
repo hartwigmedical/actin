@@ -66,9 +66,9 @@ class HasKnownHPVStatusTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if no WGS performed and correct item not in prior molecular tests`() {
+    fun `Should fail if no WGS performed and correct item not in prior molecular tests`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.FAIL,
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
                     ihcTests = listOf(

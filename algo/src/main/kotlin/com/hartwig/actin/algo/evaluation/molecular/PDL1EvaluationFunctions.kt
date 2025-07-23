@@ -42,12 +42,13 @@ object PDL1EvaluationFunctions {
         return when {
             EvaluationResult.PASS in testEvaluations && (EvaluationResult.FAIL in testEvaluations || EvaluationResult.UNDETERMINED in testEvaluations) -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference (conflicting PD-L1 results)"
+                    "Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference (conflicting PD-L1 results)",
+                    isMissingMolecularResultForEvaluation = true
                 )
             }
 
             EvaluationResult.PASS in testEvaluations -> {
-                EvaluationFactory.pass("PD-L1 expression $comparatorMessage $pdl1Reference")
+                EvaluationFactory.pass("PD-L1 expression $comparatorMessage $pdl1Reference", inclusionEvents = setOf("PD-L1 expression"))
             }
 
             EvaluationResult.FAIL in testEvaluations -> {
@@ -58,13 +59,17 @@ object PDL1EvaluationFunctions {
             EvaluationResult.UNDETERMINED in testEvaluations -> {
                 val testMessage = pdl1TestsWithRequestedMeasurement
                     .joinToString(", ") { "${it.scoreValuePrefix} ${it.scoreValue}" }
-                EvaluationFactory.undetermined("Undetermined if PD-L1 expression ($testMessage) $comparatorMessage $pdl1Reference")
+                EvaluationFactory.undetermined(
+                    "Undetermined if PD-L1 expression ($testMessage) $comparatorMessage $pdl1Reference",
+                    isMissingMolecularResultForEvaluation = true
+                )
             }
 
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
                 val status = pdl1TestsWithRequestedMeasurement.joinToString(", ") { it.scoreText ?: "unknown" }
                 EvaluationFactory.undetermined(
-                    "Unclear if IHC PD-L1 status available ($status) is considered $comparatorMessage $pdl1Reference"
+                    "Unclear if IHC PD-L1 status available ($status) is considered $comparatorMessage $pdl1Reference",
+                    isMissingMolecularResultForEvaluation = true
                 )
             }
 
@@ -72,9 +77,7 @@ object PDL1EvaluationFunctions {
                 EvaluationFactory.recoverableFail("PD-L1 tests not in correct unit ($measure)")
             }
 
-            else -> {
-                EvaluationFactory.undetermined("PD-L1 expression (IHC) not tested", isMissingMolecularResultForEvaluation = true)
-            }
+            else -> EvaluationFactory.undetermined("PD-L1 expression (IHC) not tested", isMissingMolecularResultForEvaluation = true)
         }
     }
 

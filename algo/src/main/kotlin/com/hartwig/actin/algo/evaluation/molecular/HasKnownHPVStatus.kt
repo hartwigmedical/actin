@@ -21,25 +21,19 @@ class HasKnownHPVStatus : EvaluationFunction {
                 return EvaluationFactory.pass("HPV status available by WGS")
             }
 
-            conclusivePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.pass("HPV status available by HPV test")
-            }
+            conclusivePriorTestsForHPV.isNotEmpty() -> EvaluationFactory.pass("HPV status available by HPV test")
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
                 EvaluationFactory.undetermined("HPV status undetermined (low purity in WGS)")
             }
 
-            indeterminatePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.undetermined("HPV tested before but indeterminate status")
-            }
+            indeterminatePriorTestsForHPV.isNotEmpty() -> EvaluationFactory.undetermined("HPV tested before but indeterminate status")
 
             record.molecularHistory.allOrangeMolecularRecords().isEmpty() -> {
-                EvaluationFactory.undetermined("No HPV status result (no molecular data)", isMissingMolecularResultForEvaluation = true)
+                EvaluationFactory.recoverableFail("HPV status not known (no molecular data)")
             }
 
-            else -> {
-                EvaluationFactory.recoverableFail("No HPV status result", isMissingMolecularResultForEvaluation = true)
-            }
+            else -> EvaluationFactory.recoverableFail("HPV status not known")
         }
     }
 }
