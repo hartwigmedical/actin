@@ -2,7 +2,8 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.PanelSpecifications
+import com.hartwig.actin.molecular.panel.PanelSpecifications
+import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -41,7 +42,9 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record),
-            specification = if (record.experimentType() == OrangeExperimentType.TARGETED) panelSpecifications.panelSpecification(ONCO_PANEL) else null
+            targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
+                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL))
+            } else null
         )
     }
 
