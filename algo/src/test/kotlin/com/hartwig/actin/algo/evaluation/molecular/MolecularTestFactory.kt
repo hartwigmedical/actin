@@ -130,6 +130,10 @@ internal object MolecularTestFactory {
         return withMolecularRecord(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells))
     }
 
+    fun withExperimentTypeAndVirus(type: ExperimentType, virus: Virus): PatientRecord {
+        return withMolecularRecord(baseMolecular.copy(experimentType = type, drivers = baseMolecular.drivers.copy(viruses = listOf(virus))))
+    }
+
     fun withExperimentTypeAndCopyNumber(type: ExperimentType, copyNumber: CopyNumber): PatientRecord {
         return withMolecularRecord(withDriver(copyNumber).molecularHistory.latestOrangeMolecularRecord()?.copy(experimentType = type))
     }

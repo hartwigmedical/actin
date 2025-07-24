@@ -426,6 +426,17 @@ object TestMolecularFactory {
         fusedExonDown = 20,
     )
 
+    fun createMinimalVirus() = Virus(
+        name = "",
+        type = VirusType.OTHER,
+        isReliable = false,
+        integrations = null,
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+    )
+
     private fun createProperTestImmunology(): MolecularImmunology {
         return MolecularImmunology(
             isReliable = true,

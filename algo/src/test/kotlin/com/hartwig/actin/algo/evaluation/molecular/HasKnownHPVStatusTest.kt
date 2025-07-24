@@ -4,6 +4,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import org.junit.Test
 
 class HasKnownHPVStatusTest {
@@ -23,6 +25,19 @@ class HasKnownHPVStatusTest {
     }
 
     @Test
+    fun `Should pass when molecular test contains HPV`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withExperimentTypeAndVirus(
+                    type = ExperimentType.PANEL,
+                    virus = TestMolecularFactory.createMinimalVirus().copy(type = VirusType.HPV)
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should resolve to undetermined if WGS does not contain enough tumor cells and no correct test in prior molecular tests `() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
@@ -33,18 +48,18 @@ class HasKnownHPVStatusTest {
     }
 
     @Test
-    fun `Should resolve to undetermined if no WGS has been performed and correct test is in molecularTest with indeterminate status`() {
+    fun `Should warn if no WGS has been performed and correct test is in molecularTest with indeterminate status`() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
             ihcTests =
-                listOf(
-                    MolecularTestFactory.ihcTest(
-                        item = "HPV", impliesIndeterminate = true
-                    )
+            listOf(
+                MolecularTestFactory.ihcTest(
+                    item = "HPV", impliesIndeterminate = true
                 )
+            )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
     }
 
     @Test
