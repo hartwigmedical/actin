@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisruption
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalCopyNumber
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalDisruption
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalHomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
@@ -159,7 +159,7 @@ class KnownEventResolverTest {
         val secondaryKnownEvents = ImmutableKnownEvents.builder().build()
         val resolver = KnownEventResolver(primaryKnownEvents, secondaryKnownEvents, primaryKnownEvents.genes())
 
-        val ampGene1 = minimalCopyNumber().copy(
+        val ampGene1 = createMinimalCopyNumber().copy(
             gene = "gene 1",
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN)
         )
@@ -169,7 +169,7 @@ class KnownEventResolverTest {
         val ampGene2 = ampGene1.copy(gene = "gene 2")
         assertEquality(resolver.resolveForCopyNumber(ampGene2), TestGeneAlterationFactory.createGeneAlteration("gene 2"))
 
-        val homDisruptionGene1 = minimalHomozygousDisruption().copy(gene = "gene 1")
+        val homDisruptionGene1 = createMinimalHomozygousDisruption().copy(gene = "gene 1")
         assertEquality(
             resolver.resolveForHomozygousDisruption(homDisruptionGene1),
             TestGeneAlterationFactory.createGeneAlteration("gene 1")
@@ -181,7 +181,7 @@ class KnownEventResolverTest {
             TestGeneAlterationFactory.createGeneAlteration("gene 2")
         )
 
-        val disruptionGene1 = minimalDisruption().copy(gene = "gene 1")
+        val disruptionGene1 = createMinimalDisruption().copy(gene = "gene 1")
         assertEquality(resolver.resolveForDisruption(disruptionGene1), TestGeneAlterationFactory.createGeneAlteration("gene 1"))
 
         val disruptionGene3 = disruptionGene1.copy(gene = "gene 3")

@@ -1,17 +1,16 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularTest
-import java.time.LocalDate
 
-class AnyGeneFromSetIsNotExpressed(maxTestAge: LocalDate? = null, private val genes: Set<String>) :
-    MolecularEvaluationFunction(maxTestAge) {
+class AnyGeneFromSetIsNotExpressed(private val genes: Set<String>) : EvaluationFunction {
 
-    override fun evaluate(test: MolecularTest): Evaluation {
+    override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Non-expression of ${concat(genes)} in RNA undetermined",
+            "Non-expression of ${Format.concat(genes)} in RNA undetermined",
             isMissingMolecularResultForEvaluation = true
         )
     }

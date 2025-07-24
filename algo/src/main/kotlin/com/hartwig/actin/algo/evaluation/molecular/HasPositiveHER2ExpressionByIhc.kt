@@ -31,13 +31,15 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
         }
 
         val undeterminedMessage = "No IHC HER2 expression test available"
+
         return when {
             validIhcTests.isEmpty() && !(positiveArguments || negativeArguments) -> {
                 return when {
                     geneERBB2IsAmplified -> {
-                        EvaluationFactory.undetermined(
+                        EvaluationFactory.warn(
                             "$undeterminedMessage (but ERBB2 amplification detected)",
-                            isMissingMolecularResultForEvaluation = true
+                            isMissingMolecularResultForEvaluation = true,
+                            inclusionEvents = setOf("Potential IHC HER2 positive")
                         )
                     }
 
@@ -57,33 +59,46 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
 
             her2ReceptorIsPositive != true && geneERBB2IsAmplified -> {
                 return if (her2ReceptorIsPositive == null) {
-                    EvaluationFactory.warn("Non-positive HER2 IHC results (inconsistent with detected ERBB2 amplification)")
+                    EvaluationFactory.undetermined(
+                        "Non-positive HER2 IHC results (inconsistent with detected ERBB2 amplification)",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 } else {
-                    EvaluationFactory.warn("Negative HER2 IHC results (inconsistent with detected ERBB2 amplification)")
+                    EvaluationFactory.undetermined(
+                        "Negative HER2 IHC results (inconsistent with detected ERBB2 amplification)",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 }
             }
 
             her2ReceptorIsPositive != false && TestResult.BORDERLINE in testResults -> {
                 val results =
                     Format.concat(validIhcTests.filter { classifyHer2Test(it) == TestResult.BORDERLINE }.map { "${it.scoreValue}" })
-                EvaluationFactory.undetermined("Undetermined if IHC HER2 score value(s) '$results' is considered positive")
+                EvaluationFactory.warn(
+                    "Undetermined if IHC HER2 score value(s) '$results' is considered positive",
+                    inclusionEvents = setOf("Potential IHC HER2 positive")
+                )
             }
 
             her2ReceptorIsPositive == null -> {
                 return if (!(positiveArguments || negativeArguments)) {
-                    EvaluationFactory.undetermined("IHC HER2 expression not deterministic by IHC")
+                    EvaluationFactory.undetermined(
+                        "IHC HER2 expression not deterministic by IHC",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 } else {
-                    EvaluationFactory.warn("Conflicting IHC HER2 expression test results")
+                    EvaluationFactory.warn(
+                        "Conflicting IHC HER2 expression test results",
+                        inclusionEvents = setOf("Potential IHC HER2 expression")
+                    )
                 }
             }
 
             her2ReceptorIsPositive == true -> {
-                EvaluationFactory.pass("IHC HER2 expression determined positive")
+                EvaluationFactory.pass("IHC HER2 expression determined positive", inclusionEvents = setOf("IHC HER2 positive"))
             }
 
-            her2ReceptorIsPositive == false -> {
-                EvaluationFactory.fail("IHC HER2 expression determined negative")
-            }
+            her2ReceptorIsPositive == false -> EvaluationFactory.fail("IHC HER2 expression determined negative")
 
             else -> EvaluationFactory.undetermined("No positive IHC HER2 expression")
         }

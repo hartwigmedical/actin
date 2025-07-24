@@ -274,7 +274,7 @@ class MolecularDriverEntryFactoryTest {
     fun `Should not show driver likelihood for copy numbers and disruptions`() {
         val copyNumbers = listOf(TestMolecularFactory.createProperCopyNumber())
         val disruptions = listOf(TestDisruptionFactory.createMinimal().copy(isReportable = true))
-        val homozygousDisruptions = listOf(TestMolecularFactory.minimalHomozygousDisruption().copy(isReportable = true))
+        val homozygousDisruptions = listOf(TestMolecularFactory.createMinimalHomozygousDisruption().copy(isReportable = true))
         val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(

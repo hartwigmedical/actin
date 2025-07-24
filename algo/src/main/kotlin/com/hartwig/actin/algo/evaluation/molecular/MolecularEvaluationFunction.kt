@@ -24,7 +24,7 @@ abstract class MolecularEvaluationFunction(
         val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
 
         return if (recentMolecularTests.isEmpty()) {
-            noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
+            noMolecularTestEvaluation() ?: noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
                 "No molecular results of sufficient quality",
                 isMissingMolecularResultForEvaluation = true
             )
@@ -54,6 +54,7 @@ abstract class MolecularEvaluationFunction(
         }
     }
 
+    open fun noMolecularTestEvaluation(): Evaluation? = null
     open fun noMolecularRecordEvaluation(): Evaluation? = null
     open fun evaluate(molecularHistory: MolecularHistory): Evaluation? = null
     open fun evaluate(molecular: MolecularRecord): Evaluation? = null

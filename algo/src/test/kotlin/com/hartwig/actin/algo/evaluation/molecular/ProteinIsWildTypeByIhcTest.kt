@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
@@ -11,13 +11,13 @@ class ProteinIsWildTypeByIhcTest {
 
     @Test
     fun shouldReturnUndeterminedForEmptyListOfTests() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(emptyList())))
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(emptyList())))
     }
 
     @Test
     fun shouldReturnUndeterminedForTestsThatDoNotMeetCriteria() {
         val priorTests = listOf(ihcTest(item = "other"), ihcTest(item = "other 2"))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(priorTests)))
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(priorTests)))
     }
 
     @Test
@@ -29,7 +29,7 @@ class ProteinIsWildTypeByIhcTest {
             ihcTest(scoreText = "WILD TYPE"),
             ihcTest(scoreText = "WILD-type")
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(priorTests)))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(priorTests)))
     }
 
     @Test
@@ -40,7 +40,7 @@ class ProteinIsWildTypeByIhcTest {
             ihcTest(scoreText = "WILD-type"),
             ihcTest(scoreText = "other")
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(priorTests)))
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(priorTests)))
     }
 
     private fun ihcTest(item: String = PROTEIN, scoreText: String? = "WildType") =

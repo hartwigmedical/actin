@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
@@ -15,16 +15,14 @@ class HasLimitedPDL1ByIhcTest {
 
     @Test
     fun `Should pass when test value is below max`() {
-        val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = MAX_PDL1.minus(0.5)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = MAX_PDL1.minus(0.5)))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
     fun `Should pass when test value is equal to maximum value`() {
-        val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = MAX_PDL1))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = MAX_PDL1))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
@@ -37,7 +35,7 @@ class HasLimitedPDL1ByIhcTest {
                 )
             )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Undetermined if PD-L1 expression (> ${MAX_PDL1.minus(1.0)}) below maximum of 2.0"
         )
@@ -45,8 +43,7 @@ class HasLimitedPDL1ByIhcTest {
 
     @Test
     fun `Should fail when test value is above maximum value`() {
-        val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = MAX_PDL1.plus(1.0)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = MAX_PDL1.plus(1.0)))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 }
