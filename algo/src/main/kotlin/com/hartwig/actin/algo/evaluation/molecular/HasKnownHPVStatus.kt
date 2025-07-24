@@ -19,14 +19,12 @@ class HasKnownHPVStatus : EvaluationFunction {
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
-                EvaluationFactory.pass("HPV status available by WGS")
+                EvaluationFactory.pass("HPV status known (by WGS)")
             }
 
-            molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> {
-                EvaluationFactory.pass("HPV status known")
-            }
+            molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> EvaluationFactory.pass("HPV status known")
 
-            determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass("HPV status available by HPV test")
+            determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass("HPV status known (by HPV test)")
 
             indeterminateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.warn("HPV tested before but indeterminate status")
 
