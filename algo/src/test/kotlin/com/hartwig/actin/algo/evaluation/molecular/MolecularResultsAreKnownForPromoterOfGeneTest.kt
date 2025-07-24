@@ -23,9 +23,9 @@ class MolecularResultsAreKnownForPromoterOfGeneTest {
     }
 
     @Test
-    fun `Should be undetermined if promoter of gene not tested by IHC`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 1 coding", false))))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 2 promoter", false))))
+    fun `Should fail if promoter of gene not tested by IHC`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 1 coding", false))))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 2 promoter", false))))
     }
 
     private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): IhcTest {

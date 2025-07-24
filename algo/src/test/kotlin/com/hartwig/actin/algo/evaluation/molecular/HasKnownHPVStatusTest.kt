@@ -38,13 +38,22 @@ class HasKnownHPVStatusTest {
     }
 
     @Test
-    fun `Should resolve to undetermined if WGS does not contain enough tumor cells and no correct test in prior molecular tests `() {
+    fun `Should pass if no WGS performed but correct test is in molecularTest`() {
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+    }
+
+
+    @Test
+    fun `Should pass if WGS does not contain enough tumor cells but correct test is in molecularTest`() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
-            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "Something"))
+            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
@@ -63,21 +72,13 @@ class HasKnownHPVStatusTest {
     }
 
     @Test
-    fun `Should pass if WGS does not contain enough tumor cells but correct test is in molecularTest`() {
+    fun `Should fail if WGS does not contain enough tumor cells and no correct test in prior molecular tests `() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
-            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
+            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "Something"))
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
-    }
-
-    @Test
-    fun `Should pass if no WGS performed but correct test is in molecularTest`() {
-        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
     @Test

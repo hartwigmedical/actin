@@ -131,7 +131,7 @@ internal object MolecularTestFactory {
     }
 
     fun withExperimentTypeAndVirus(type: ExperimentType, virus: Virus): PatientRecord {
-        return withMolecularRecord(baseMolecular.copy(experimentType = type, drivers = baseMolecular.drivers.copy(viruses = listOf(virus))))
+        return withMolecularRecord(withDriver(virus).molecularHistory.latestOrangeMolecularRecord()?.copy(experimentType = type))
     }
 
     fun withExperimentTypeAndCopyNumber(type: ExperimentType, copyNumber: CopyNumber): PatientRecord {
@@ -387,6 +387,7 @@ internal object MolecularTestFactory {
             is HomozygousDisruption -> baseMolecular.drivers.copy(homozygousDisruptions = listOf(driver))
             is Disruption -> baseMolecular.drivers.copy(disruptions = listOf(driver))
             is Fusion -> baseMolecular.drivers.copy(fusions = listOf(driver))
+            is Virus -> baseMolecular.drivers.copy(viruses = listOf(driver))
             else -> baseMolecular.drivers
         }
         return withMolecularRecord(baseMolecular.copy(characteristics = characteristics, drivers = drivers))

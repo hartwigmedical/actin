@@ -19,17 +19,17 @@ class HasKnownHPVStatus : EvaluationFunction {
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
-                EvaluationFactory.pass("HPV status known (by WGS)")
+                EvaluationFactory.pass("HPV status known (by WGS test)")
             }
 
             molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> EvaluationFactory.pass("HPV status known")
 
-            determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass("HPV status known (by HPV test)")
+            determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass("HPV status known (by IHC test)")
 
             indeterminateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.warn("HPV tested before but indeterminate status")
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
-                EvaluationFactory.undetermined(
+                EvaluationFactory.recoverableFail(
                     "HPV status undetermined (WGS contained no tumor cells)",
                     isMissingMolecularResultForEvaluation = true
                 )

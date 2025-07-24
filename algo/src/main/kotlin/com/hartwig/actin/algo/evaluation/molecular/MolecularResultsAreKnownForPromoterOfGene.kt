@@ -18,7 +18,7 @@ class MolecularResultsAreKnownForPromoterOfGene(private val gene: String) : Eval
 
             indeterminatePriorTests.isNotEmpty() -> EvaluationFactory.warn("Test for $gene promoter was done by IHC but indeterminate status")
 
-            else -> EvaluationFactory.undetermined("$gene promoter status not tested", isMissingMolecularResultForEvaluation = true)
+            else -> EvaluationFactory.recoverableFail("$gene promoter status not tested", isMissingMolecularResultForEvaluation = true)
         }
     }
 }
