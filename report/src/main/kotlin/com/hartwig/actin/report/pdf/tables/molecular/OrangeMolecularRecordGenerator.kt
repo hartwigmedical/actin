@@ -2,9 +2,8 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.util.Cells
@@ -70,34 +69,19 @@ class OrangeMolecularRecordGenerator(
             listOf(
                 PredictedTumorOriginGenerator(molecular),
                 MolecularDriversGenerator(
-                    molecular.copy(drivers = filterDriversByDriverLikelihood(molecular.drivers, true)),
+                    molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, true)),
                     evaluated,
                     trials,
                     "Key drivers"
                 ),
                 MolecularDriversGenerator(
-                    molecular.copy(drivers = filterDriversByDriverLikelihood(molecular.drivers, false)),
+                    molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, false)),
                     evaluated,
                     trials,
-                    "Other events"
+                    "Other drivers or relevant events"
                 )
             )
         } else emptyList()
-    }
-
-    fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
-        fun <T> filterByDriverLikelihood(items: List<T>, getDriverLikelihood: (T) -> DriverLikelihood?): List<T> =
-            if (useHighDrivers) items.filter { getDriverLikelihood(it) == DriverLikelihood.HIGH }
-            else items.filter { getDriverLikelihood(it) != DriverLikelihood.HIGH }
-
-        return Drivers(
-            variants = filterByDriverLikelihood(drivers.variants) { it.driverLikelihood },
-            copyNumbers = filterByDriverLikelihood(drivers.copyNumbers) { it.driverLikelihood },
-            homozygousDisruptions = filterByDriverLikelihood(drivers.homozygousDisruptions) { it.driverLikelihood },
-            disruptions = filterByDriverLikelihood(drivers.disruptions) { it.driverLikelihood },
-            fusions = filterByDriverLikelihood(drivers.fusions) { it.driverLikelihood },
-            viruses = filterByDriverLikelihood(drivers.viruses) { it.driverLikelihood }
-        )
     }
 }
 
