@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.util.Cells
@@ -67,7 +68,18 @@ class OrangeMolecularRecordGenerator(
         return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular),
-                MolecularDriversGenerator(molecular, evaluated, trials)
+                MolecularDriversGenerator(
+                    molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, true)),
+                    evaluated,
+                    trials,
+                    "Key drivers"
+                ),
+                MolecularDriversGenerator(
+                    molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, false)),
+                    evaluated,
+                    trials,
+                    "Other drivers or relevant events"
+                )
             )
         } else emptyList()
     }

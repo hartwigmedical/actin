@@ -18,11 +18,12 @@ import com.itextpdf.layout.element.Table
 class MolecularDriversGenerator(
     private val molecular: MolecularRecord,
     private val cohorts: List<InterpretedCohort>,
-    private val externalTrials: Set<EventWithExternalTrial>
+    private val externalTrials: Set<EventWithExternalTrial>,
+    private val title: String
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Drivers"
+        return title
     }
 
     override fun forceKeepTogether(): Boolean {

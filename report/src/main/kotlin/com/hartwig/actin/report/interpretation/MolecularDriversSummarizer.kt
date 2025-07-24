@@ -90,5 +90,21 @@ class MolecularDriversSummarizer private constructor(
         ): MolecularDriversSummarizer {
             return MolecularDriversSummarizer(drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         }
+
+        private fun <T : Driver> List<T>.matchingLikelihood(useHighDrivers: Boolean) =
+            this.filter { (it.driverLikelihood == DriverLikelihood.HIGH) == useHighDrivers }
+
+        fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
+            return with(drivers) {
+                Drivers(
+                    variants = variants.matchingLikelihood(useHighDrivers),
+                    copyNumbers = copyNumbers.matchingLikelihood(useHighDrivers),
+                    homozygousDisruptions = homozygousDisruptions.matchingLikelihood(useHighDrivers),
+                    disruptions = disruptions.matchingLikelihood(useHighDrivers),
+                    fusions = fusions.matchingLikelihood(useHighDrivers),
+                    viruses = viruses.matchingLikelihood(useHighDrivers)
+                )
+            }
+        }
     }
 }
