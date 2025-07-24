@@ -13,10 +13,9 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
             return driverLikelihoodCompare
         }
         val driverTypeCompare = driverTypeComparator.compare(entry1.driverType, entry2.driverType)
-        if (driverTypeCompare != 0) {
-            return driverTypeCompare
-        }
-        return compareOnGeneNameAndCancerAssociatedVariant(entry1, entry2)
+        return if (driverTypeCompare != 0) {
+            driverTypeCompare
+        } else compareOnGeneNameAndCancerAssociatedVariant(entry1, entry2)
     }
 
     private class DriverTypeComparator : Comparator<String> {
