@@ -10,18 +10,14 @@ class MolecularResultsAreKnownForPromoterOfGene(private val gene: String) : Eval
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val (indeterminatePriorTests, validPriorTests) = record.ihcTests
-            .filter { it.item?.contains(gene) ?: false && it.item?.lowercase()?.contains(PROMOTER) ?: false }
+            .filter { it.item.contains(gene) && it.item.lowercase().contains("promoter") }
             .partition(IhcTest::impliesPotentialIndeterminateStatus)
 
         if (validPriorTests.isNotEmpty()) {
-            return EvaluationFactory.pass("$gene promoter tested in prior molecular test")
+            return EvaluationFactory.pass("Results for $gene promoter are available by IHC")
         } else if (indeterminatePriorTests.isNotEmpty()) {
-            return EvaluationFactory.undetermined("$gene promoter tested in prior molecular test but indeterminate status")
+            return EvaluationFactory.warn("Test for $gene promoter was done by IHC but indeterminate status")
         }
-        return EvaluationFactory.recoverableFail("$gene not tested", isMissingMolecularResultForEvaluation = true)
-    }
-
-    companion object {
-        const val PROMOTER = "promoter"
+        return EvaluationFactory.undetermined("$gene promoter status not tested", isMissingMolecularResultForEvaluation = true)
     }
 }

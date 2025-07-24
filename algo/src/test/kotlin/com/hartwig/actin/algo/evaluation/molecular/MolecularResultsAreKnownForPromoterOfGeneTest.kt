@@ -7,16 +7,25 @@ import org.junit.Test
 
 class MolecularResultsAreKnownForPromoterOfGeneTest {
 
+    private val function = MolecularResultsAreKnownForPromoterOfGene("gene 1")
+
     @Test
-    fun canEvaluate() {
-        val function = MolecularResultsAreKnownForPromoterOfGene("gene 1")
+    fun `Should pass if promoter of gene tested by IHC with determinate results`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 1 promoter", false))))
+    }
+
+    @Test
+    fun `Should warn if promoter of gene tested by IHC with indeterminate results`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withIhcTests(create("gene 1 promoter", true)))
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 1 coding", false))))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 2 promoter", false))))
+    }
+
+    @Test
+    fun `Should be undetermined if promoter of gene not tested by IHC`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 1 coding", false))))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(create("gene 2 promoter", false))))
     }
 
     private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): IhcTest {
