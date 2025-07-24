@@ -49,8 +49,8 @@ class HasPositiveHER2ExpressionByIhcTest {
     }
 
     @Test
-    fun `Should evaluate to pass if positive HER2 data`() {
-        val evaluationValue = function.evaluate(
+    fun `Should evaluate to pass if positive HER2 data for values`() {
+        val evaluation = function.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
                     ihcTest(scoreValue = 3.0, scoreValueUnit = "+"),
@@ -58,19 +58,24 @@ class HasPositiveHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluationValue)
-        assertThat(evaluationValue.inclusionMolecularEvents).isEqualTo(setOf("IHC HER2 positive"))
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("IHC HER2 positive"))
+    }
 
-        val evaluationText = function.evaluate(
+    @Test
+    fun `Should evaluate to pass if positive HER2 data for text`() {
+        val evaluation = function.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreText = "pos", impliesPotentialIndeterminateStatus = true),
-                    ihcTest(scoreText = "positive")
+                    ihcTest(
+                        scoreText = "pos",
+                        impliesPotentialIndeterminateStatus = true
+                    ), ihcTest(scoreText = "positive")
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluationText)
-        assertThat(evaluationText.inclusionMolecularEvents).isEqualTo(setOf("IHC HER2 positive"))
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("IHC HER2 positive"))
     }
 
     @Test

@@ -1,13 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import java.time.LocalDate
 
-class GenesMeetSpecificMrnaExpressionRequirements(maxTestAge: LocalDate? = null, private val genes: Set<String>) :
-    MolecularEvaluationFunction(maxTestAge) {
+class GenesMeetSpecificMrnaExpressionRequirements(private val genes: Set<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(

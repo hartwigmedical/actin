@@ -382,14 +382,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun anyGeneFromSetIsNotExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
-            AnyGeneFromSetIsNotExpressed(maxMolecularTestAge(), geneSet)
+            AnyGeneFromSetIsNotExpressed(geneSet)
         }
     }
 
     private fun genesFromSetMeetMrnaExpressionRequirementsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function).geneNames
-            GenesMeetSpecificMrnaExpressionRequirements(maxMolecularTestAge(), genes)
+            GenesMeetSpecificMrnaExpressionRequirements(genes)
         }
     }
 

@@ -85,10 +85,7 @@ class ProteinExpressionByIhcFunctionsTest {
 
     private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
         return listOf(limitedFunction, sufficientFunction, exactFunction).forEach {
-            assertMolecularEvaluation(
-                expected,
-                it.evaluate(record)
-            )
+            assertMolecularEvaluation(expected, it.evaluate(record))
         }
     }
 

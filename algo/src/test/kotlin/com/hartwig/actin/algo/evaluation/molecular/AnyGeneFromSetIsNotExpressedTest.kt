@@ -5,10 +5,10 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class AnyGeneFromSetIsNotExpressedTest {
-    val function = AnyGeneFromSetIsNotExpressed(LocalDate.of(2024, 11, 6), setOf("gene a", "gene b", "gene c"))
+
+    val function = AnyGeneFromSetIsNotExpressed(setOf("gene a", "gene b", "gene c"))
 
     @Test
     fun `Should evaluate to undetermined with correct message`() {

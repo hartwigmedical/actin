@@ -25,7 +25,7 @@ class AnyGeneFromSetIsOverexpressed(
             EvaluationFactory.warn(
                 "Amplification of ${concat(amplifiedGenes)} detected and therefore possible overexpression in RNA",
                 isMissingMolecularResultForEvaluation = true,
-                inclusionEvents = amplifiedGenes.map { "Potential $it over exp" }.toSet()
+                inclusionEvents = amplifiedGenes.map { "Potential $it overexpression" }.toSet()
             )
         } else {
             EvaluationFactory.undetermined(
