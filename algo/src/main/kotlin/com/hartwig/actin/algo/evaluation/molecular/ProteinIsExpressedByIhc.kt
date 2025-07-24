@@ -2,33 +2,30 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.IhcTest
 
 class ProteinIsExpressedByIhc internal constructor(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = IhcTestFilter.allIhcTestsForProtein(record.ihcTests, protein)
+        val ihcTestsForItem = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(record.ihcTests, protein)
+        val (hasCertainPositiveExpression, hasPossiblePositiveExpression) =
+            IhcTestEvaluation.hasPositiveIhcTestResultsForItem(protein, record.ihcTests)
 
         return when {
-            ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "positive" || testScoredAboveZero(ihcTest) } -> {
-                EvaluationFactory.pass("$protein has expression by IHC")
+            ihcTestsForItem.isEmpty() -> {
+                EvaluationFactory.undetermined(
+                    "No $protein IHC test result",
+                    isMissingMolecularResultForEvaluation = true
+                )
             }
 
-            ihcTests.isNotEmpty() -> {
-                EvaluationFactory.fail("No $protein expression by IHC")
-            }
+            hasCertainPositiveExpression -> EvaluationFactory.pass("$protein has expression by IHC")
 
-            else -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
-            }
+            !hasPossiblePositiveExpression -> EvaluationFactory.fail("$protein is not expressed by IHC")
+
+            else -> EvaluationFactory.warn("Undetermined if $protein IHC result indicates $protein expression by IHC")
         }
     }
-
-    private fun testScoredAboveZero(ihcTest: IhcTest) = ihcTest.scoreValue?.let { scoreValue ->
-        evaluateVersusMinValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)
-    } == EvaluationResult.PASS
 }

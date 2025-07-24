@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
@@ -20,6 +21,15 @@ class HasCancerWithSmallCellComponentTest {
     fun `Should pass if tumor has small cell component`() {
         val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.SMALL_CELL_CANCER_DOIDS.first()))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
+    }
+
+    @Test
+    fun `Should warn if tumor is NSCLC and has possible SCLC transformation`() {
+        val tumorDetails = TumorTestFactory.withIhcTestsAndDoids(
+            listOf(IhcTest(item = "SCLC transformation", scoreText = "Positive")),
+            setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+        )
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(tumorDetails))
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.molecular
 
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allIhcTestsForProtein
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allPDL1Tests
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import org.assertj.core.api.Assertions.assertThat
@@ -38,7 +38,7 @@ class IhcTestFilterTest {
     fun `Should filter prior ihs tests on IHC for specific protein`() {
         val test1 = ihcTest(item = "protein 1")
         val test2 = ihcTest(item = "protein 2")
-        val filtered = allIhcTestsForProtein(listOf(test1, test2), "protein 1")
+        val filtered = mostRecentAndUnknownDateIhcTestsForItem(listOf(test1, test2), "protein 1")
         assertThat(filtered).containsExactly(test1)
     }
 
@@ -48,7 +48,7 @@ class IhcTestFilterTest {
         val test2 = test1.copy(measureDate = LocalDate.of(2025, 2, 11))
         val test3 = test1.copy(measureDate = LocalDate.of(2024, 2, 11))
         val test4 = ihcTest(item = "protein 2", measureDate = LocalDate.of(2023, 2, 11))
-        assertThat(IhcTestFilter.mostRecentOrUnknownDateIhcTests(listOf(test1, test2, test3, test4)))
+        assertThat(IhcTestFilter.mostRecentAndUnknownDateIhcTests(listOf(test1, test2, test3, test4)))
             .containsOnly(test1, test2, test4)
     }
 
@@ -57,7 +57,7 @@ class IhcTestFilterTest {
         val test1 = ihcTest(item = "protein 1", measureDate = LocalDate.of(2024, 2, 2))
         val test2 = test1.copy()
         val test3 = test1.copy(scoreValue = 2.0)
-        assertThat(IhcTestFilter.mostRecentOrUnknownDateIhcTests(listOf(test1, test2, test3))).containsOnly(test1, test3)
+        assertThat(IhcTestFilter.mostRecentAndUnknownDateIhcTests(listOf(test1, test2, test3))).containsOnly(test1, test3)
     }
 
     private fun ihcTest(item: String = "", measure: String? = null, measureDate: LocalDate? = null): IhcTest {

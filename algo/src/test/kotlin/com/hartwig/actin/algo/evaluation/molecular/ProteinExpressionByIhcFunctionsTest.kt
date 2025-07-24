@@ -17,24 +17,24 @@ class ProteinExpressionByIhcFunctionsTest {
     private val exactFunction = ProteinExpressionByIhcFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.EXACT)
 
     @Test
-    fun `Should evaluate to undetermined when no IHC tests present in record`() {
+    fun `Should be undetermined when no IHC tests present in record`() {
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIhcTests(emptyList()))
     }
 
     @Test
-    fun `Should evaluate to undetermined when no IHC test of correct protein present in record`() {
+    fun `Should be undetermined when no IHC test of correct protein present in record`() {
         val test = ihcTest(item = "other", scoreValue = 1.0)
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIhcTests(test))
     }
 
     @Test
-    fun `Should evaluate to undetermined when only score text is provided and exact value is unclear`() {
+    fun `Should be undetermined when only score text is provided and exact value is unclear`() {
         val test = MolecularTestFactory.ihcTest(scoreText = "negative")
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIhcTests(test))
     }
 
     @Test
-    fun `Should evaluate to undetermined when exact value is unclear due to comparator`() {
+    fun `Should be undetermined when exact value is unclear due to comparator`() {
         val test =
             MolecularTestFactory.ihcTest(scoreValue = referenceLevel.toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN_OR_EQUAL)
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIhcTests(test))
@@ -52,7 +52,7 @@ class ProteinExpressionByIhcFunctionsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when unclear if above requested value in sufficient function due to comparator`() {
+    fun `Should be undetermined when unclear if above requested value in sufficient function due to comparator`() {
         val test =
             MolecularTestFactory.ihcTest(scoreValue = referenceLevel.minus(1).toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN)
         assertEvaluation(EvaluationResult.UNDETERMINED, sufficientFunction.evaluate(MolecularTestFactory.withIhcTests(test)))
@@ -65,7 +65,7 @@ class ProteinExpressionByIhcFunctionsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when unclear if below requested value in limited function due to comparator`() {
+    fun `Should be undetermined when unclear if below requested value in limited function due to comparator`() {
         val test =
             MolecularTestFactory.ihcTest(scoreValue = referenceLevel.plus(1).toDouble(), scoreValuePrefix = ValueComparison.SMALLER_THAN)
         assertEvaluation(EvaluationResult.UNDETERMINED, limitedFunction.evaluate(MolecularTestFactory.withIhcTests(test)))
