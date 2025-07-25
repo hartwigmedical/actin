@@ -33,7 +33,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
 
         val analysis = analyzer.analyzePatient(
             patient.patient.registrationDate.year - patient.patient.birthYear,
-            patient.clinicalStatus.latestWho!!,
+            patient.performanceStatus.latestWho!!,
             hasRasMutation,
             metastasisLocationGroups
         )

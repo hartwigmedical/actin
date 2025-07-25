@@ -41,7 +41,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         listOf(
             "Gender" to record.patient.gender.display(),
             "Birth year" to record.patient.birthYear.toString(),
-            "WHO" to whoStatus(record.clinicalStatus.latestWho),
+            "WHO" to whoStatus(record.performanceStatus.latestWho),
             "Tumor" to record.tumor.name,
             "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
             "Stage" to stage(record.tumor),

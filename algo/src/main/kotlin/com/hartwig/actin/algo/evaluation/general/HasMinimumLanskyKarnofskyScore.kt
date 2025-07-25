@@ -9,7 +9,7 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val who = record.clinicalStatus.latestWho
+        val who = record.performanceStatus.latestWho
             ?: return EvaluationFactory.undetermined(
                 "Undetermined if ${performanceScore.display()} score based on WHO status is at least $minScore (WHO data missing)"
             )

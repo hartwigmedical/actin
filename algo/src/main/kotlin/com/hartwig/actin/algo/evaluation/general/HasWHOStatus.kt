@@ -9,7 +9,7 @@ import kotlin.math.abs
 class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val who = record.clinicalStatus.latestWho
+        val who = record.performanceStatus.latestWho
         return when {
             who == null -> {
                 EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (WHO data missing)")

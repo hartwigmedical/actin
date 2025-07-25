@@ -2,6 +2,7 @@ package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
+import com.hartwig.actin.datamodel.clinical.AsaScore
 import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
@@ -15,16 +16,18 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.PerformanceStatus
 import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.jooq.DSLContext
 import kotlin.math.roundToInt
+import org.jooq.DSLContext
 
 class ClinicalDAO(private val context: DSLContext) {
 
@@ -33,6 +36,7 @@ class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.PATIENT).execute()
         context.truncate(Tables.TUMOR).execute()
         context.truncate(Tables.CLINICALSTATUS).execute()
+        context.truncate(Tables.PERFORMANCESTATUS).execute()
         context.truncate(Tables.TREATMENTHISTORYENTRY).execute()
         context.truncate(Tables.PRIORPRIMARY).execute()
         context.truncate(Tables.OTHERCONDITION).execute()
@@ -54,6 +58,7 @@ class ClinicalDAO(private val context: DSLContext) {
         writePatientDetails(patientId, record.patient)
         writeTumorDetails(patientId, record.tumor)
         writeClinicalStatus(patientId, record.clinicalStatus, record.ecgs)
+        writePerformanceStatus(patientId, record.performanceStatus)
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
         writePriorPrimaries(patientId, record.priorPrimaries)
         writeOtherConditions(patientId, record.otherConditions)
@@ -167,7 +172,6 @@ class ClinicalDAO(private val context: DSLContext) {
         context.insertInto(
             Tables.CLINICALSTATUS,
             Tables.CLINICALSTATUS.PATIENTID,
-            Tables.CLINICALSTATUS.WHO,
             Tables.CLINICALSTATUS.HASACTIVEINFECTION,
             Tables.CLINICALSTATUS.ACTIVEINFECTIONDESCRIPTION,
             Tables.CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
@@ -181,7 +185,6 @@ class ClinicalDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
-                clinicalStatus.latestWho,
                 infectionStatus?.hasActiveInfection,
                 infectionStatus?.description,
                 ecgs.isNotEmpty(),
@@ -195,6 +198,56 @@ class ClinicalDAO(private val context: DSLContext) {
             )
             .execute()
     }
+
+
+    private fun writePerformanceStatus(patientId: String, performanceStatus: PerformanceStatus) {
+        context.insertInto(
+            Tables.PERFORMANCESTATUS,
+            Tables.PERFORMANCESTATUS.PATIENTID,
+            Tables.PERFORMANCESTATUS.LATESTASA,
+            Tables.PERFORMANCESTATUS.LATESTWHO,
+        )
+            .values(
+                patientId,
+                performanceStatus.latestAsa,
+                performanceStatus.latestWho,
+            )
+            .execute()
+
+        performanceStatus.whoStatuses.forEach { writeWhoStatus(patientId, it) }
+        performanceStatus.asaScores.forEach { writeAsaScore(patientId, it) }
+    }
+
+    private fun writeWhoStatus(patientId: String, whoStatus: WhoStatus) {
+        context.insertInto(
+            Tables.WHOSTATUS,
+            Tables.WHOSTATUS.PATIENTID,
+            Tables.WHOSTATUS.STATUS,
+            Tables.WHOSTATUS.DATE,
+        )
+            .values(
+                patientId,
+                whoStatus.status,
+                whoStatus.date,
+            )
+            .execute()
+    }
+
+    private fun writeAsaScore(patientId: String, asaScore: AsaScore) {
+        context.insertInto(
+            Tables.ASASCORE,
+            Tables.ASASCORE.PATIENTID,
+            Tables.ASASCORE.SCORE,
+            Tables.ASASCORE.DATE,
+        )
+            .values(
+                patientId,
+                asaScore.score,
+                asaScore.date,
+            )
+            .execute()
+    }
+
 
     private fun writeTreatmentHistoryEntries(patientId: String, treatmentHistoryEntries: List<TreatmentHistoryEntry>) {
         val records = treatmentHistoryEntries.flatMap { multiEntry: TreatmentHistoryEntry ->

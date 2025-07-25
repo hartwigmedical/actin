@@ -27,13 +27,15 @@
     "biopsyLocation": "Lung"
   },
   "clinicalStatus": {
-    "latestWho": 0,
     "infectionStatus": {
       "hasActiveInfection": true,
       "description": "Pneumonia"
     },
     "lvef": 0.5,
     "hasComplications": false
+  },
+  "performanceStatus": {
+    "latestWho": 0
   },
   "oncologicalHistory": [
     {

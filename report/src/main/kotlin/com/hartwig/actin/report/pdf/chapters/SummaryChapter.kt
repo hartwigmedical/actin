@@ -41,7 +41,7 @@ class SummaryChapter(
         val patientDetailFields = listOf(
             "Gender: " to report.patientRecord.patient.gender.display(),
             " | Birth year: " to report.patientRecord.patient.birthYear.toString(),
-            " | WHO: " to whoStatus(report.patientRecord.clinicalStatus.latestWho)
+            " | WHO: " to whoStatus(report.patientRecord.performanceStatus.latestWho)
         )
         addParagraphWithContent(patientDetailFields, document)
 

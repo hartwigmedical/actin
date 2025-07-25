@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.PerformanceStatus
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 
 internal object GeneralTestFactory {
@@ -18,14 +18,14 @@ internal object GeneralTestFactory {
     }
 
     fun withWHO(who: Int?): PatientRecord {
-        return withClinicalStatus(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus.copy(latestWho = who))
+        return withPerformanceStatus(TestClinicalFactory.createMinimalTestClinicalRecord().performanceStatus.copy(latestWho = who))
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(patient = patientDetails)
     }
 
-    private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
-        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(clinicalStatus = clinicalStatus)
+    private fun withPerformanceStatus(performanceStatus: PerformanceStatus): PatientRecord {
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(performanceStatus = performanceStatus)
     }
 }
