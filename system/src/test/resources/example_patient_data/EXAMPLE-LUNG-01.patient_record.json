@@ -324,7 +324,9 @@
             ]
           }
         ],
-        "specification": null,
+        "targetSpecification": {
+          "geneTargetMap": []
+        },
         "hasSufficientPurity": true,
         "hasSufficientQuality": true,
         "testTypeDisplay": null,
