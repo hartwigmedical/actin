@@ -58,6 +58,7 @@ object TestClinicalFactory {
             patient = createTestPatientDetails(),
             tumor = TumorDetails(),
             clinicalStatus = ClinicalStatus(),
+            performanceStatus = PerformanceStatus(),
             oncologicalHistory = emptyList(),
             priorPrimaries = emptyList(),
             comorbidities = emptyList(),
@@ -78,6 +79,7 @@ object TestClinicalFactory {
         return createMinimalTestClinicalRecord().copy(
             tumor = createTestTumorDetails(),
             clinicalStatus = createTestClinicalStatus(),
+            performanceStatus = createTestPerformanceStatus(),
             oncologicalHistory = createTreatmentHistory(),
             priorPrimaries = createTestPriorPrimaries(),
             comorbidities = createTestOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
@@ -127,10 +129,11 @@ object TestClinicalFactory {
 
     private fun createTestClinicalStatus(): ClinicalStatus {
         return ClinicalStatus(
-            who = 1,
             infectionStatus = InfectionStatus(hasActiveInfection = false, description = null)
         )
     }
+
+    private fun createTestPerformanceStatus() = PerformanceStatus(latestWho = 1)
 
     private fun drug(name: String, drugType: DrugType, category: TreatmentCategory): Drug {
         return Drug(name = name, drugTypes = setOf(drugType), category = category)

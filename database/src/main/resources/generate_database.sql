@@ -44,7 +44,6 @@ DROP TABLE IF EXISTS `clinicalStatus`;
 CREATE TABLE `clinicalStatus`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) UNIQUE,
-    `who` int,
     `hasActiveInfection` BOOLEAN,
     `activeInfectionDescription` varchar(50),
     `hasToxicitiesGrade2` BOOLEAN,
@@ -58,6 +57,34 @@ CREATE TABLE `clinicalStatus`
     `hasComplications` BOOLEAN,
     PRIMARY KEY (`id`)
 );
+
+DROP TABLE IF EXISTS `performanceStatus`;
+CREATE TABLE `performanceStatus`
+(   `id` int NOT NULL AUTO_INCREMENT,
+    `patientId` varchar(50) UNIQUE,
+    `latestWho` int,
+    `latestAsa` int,
+    PRIMARY KEY (`id`)
+);
+
+DROP TABLE IF EXISTS `asaScore`;
+CREATE TABLE `asaScore`
+(   `id` int NOT NULL AUTO_INCREMENT,
+    `patientId` varchar(50) UNIQUE,
+    `score` int NOT NULL,
+    `date` DATE NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+DROP TABLE IF EXISTS `whoStatus`;
+CREATE TABLE `whoStatus`
+(   `id` int NOT NULL AUTO_INCREMENT,
+    `patientId` varchar(50) UNIQUE,
+    `status` int NOT NULL,
+    `date` DATE NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
 
 DROP TABLE IF EXISTS `treatmentHistoryEntry`;
 CREATE TABLE `treatmentHistoryEntry`

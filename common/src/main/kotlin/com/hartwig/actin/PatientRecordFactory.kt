@@ -19,6 +19,7 @@ object PatientRecordFactory {
             patient = clinical.patient,
             tumor = clinical.tumor,
             clinicalStatus = clinical.clinicalStatus,
+            performanceStatus = clinical.performanceStatus,
             oncologicalHistory = clinical.oncologicalHistory,
             priorPrimaries = clinical.priorPrimaries,
             comorbidities = clinical.comorbidities,
