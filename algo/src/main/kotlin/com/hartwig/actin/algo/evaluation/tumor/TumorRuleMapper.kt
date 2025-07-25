@@ -22,8 +22,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CANCER_WITH_LARGE_CELL_COMPONENT to hasCancerWithLargeCellComponentCreator(),
             EligibilityRule.HAS_LOW_GRADE_CANCER to hasLowGradeCancerCreator(),
             EligibilityRule.HAS_HIGH_GRADE_CANCER to hasHighGradeCancerCreator(),
-            EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to hasKnownSCLCTransformationCreator(),
-            EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNSCLCCreator(),
+            EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to hasKnownSclcTransformationCreator(),
+            EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNsclcCreator(),
             EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
             EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to hasOvarianBorderlineTumorCreator(),
@@ -148,12 +148,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { Not(HasLowGradeCancer()) }
     }
 
-    private fun hasKnownSCLCTransformationCreator(): FunctionCreator {
+    private fun hasKnownSclcTransformationCreator(): FunctionCreator {
         return { HasKnownSclcTransformation(doidModel(), maxMolecularTestAge()) }
     }
 
-    private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
-        return { HasNonSquamousNSCLC(doidModel()) }
+    private fun hasNonSquamousNsclcCreator(): FunctionCreator {
+        return { HasNonSquamousNsclc(doidModel()) }
     }
 
     private fun hasOvarianCancerWithMucinousComponentCreator(): FunctionCreator {

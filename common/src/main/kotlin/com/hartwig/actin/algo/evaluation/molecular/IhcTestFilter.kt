@@ -8,7 +8,7 @@ object IhcTestFilter {
 
     // For lung cancer the measurement type for PD-L1 is assumed to be TPS if not otherwise specified
     fun allPDL1Tests(ihcTests: List<IhcTest>, measureToFind: String? = null, isLungCancer: Boolean? = null): List<IhcTest> {
-        val allPDL1Tests = mostRecentOrUnknownDateIhcTests(ihcTests).filter { test -> test.item == PD_L1 }
+        val allPDL1Tests = mostRecentAndUnknownDateIhcTests(ihcTests).filter { test -> test.item == PD_L1 }
         return if (measureToFind == null || (measureToFind == "TPS" && isLungCancer == true && allPDL1Tests.all { it.measure == null })) {
             allPDL1Tests
         } else {
@@ -16,11 +16,11 @@ object IhcTestFilter {
         }
     }
 
-    fun allIhcTestsForProtein(ihcTests: List<IhcTest>, protein: String): List<IhcTest> {
-        return mostRecentOrUnknownDateIhcTests(ihcTests).filter { it.item == protein }
+    fun mostRecentAndUnknownDateIhcTestsForItem(ihcTests: List<IhcTest>, item: String): Set<IhcTest> {
+        return mostRecentAndUnknownDateIhcTests(ihcTests).filter { it.item == item }.toSet()
     }
 
-    fun mostRecentOrUnknownDateIhcTests(ihcTests: List<IhcTest>): Set<IhcTest> {
+    fun mostRecentAndUnknownDateIhcTests(ihcTests: List<IhcTest>): Set<IhcTest> {
         val (withDate, withoutDate) = ihcTests.partition { it.measureDate != null }
         return withDate
             .groupBy { it.item }

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -23,11 +24,20 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
         val hasSmallCellComponent =
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, record.tumor.doids, record.tumor.name)
 
+        val (hasCertainPositiveSclcTransformation, hasPossiblePositiveSclcTransformation) =
+            IhcTestEvaluation.hasPositiveIhcTestResultsForItem(item = "SCLC transformation", ihcTests = record.ihcTests)
+
         val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
 
         return when {
+            isNsclc && hasCertainPositiveSclcTransformation -> EvaluationFactory.pass("Has SCLC transformation")
+
+            isNsclc && hasPossiblePositiveSclcTransformation -> {
+                EvaluationFactory.warn("Has NSCLC with potential SCLC transformation (unclear results)")
+            }
+
             isNsclc && (isSclc || hasSmallCellComponent) -> {
-                EvaluationFactory.undetermined("NSCLC with small cell component detected - undetermined if considered small cell transformation")
+                EvaluationFactory.undetermined("Has NSCLC with small cell component - undetermined if this is considered SCLC transformation")
             }
 
             isNsclc && inactivatedGenes.isNotEmpty() -> {
@@ -36,16 +46,12 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
             }
 
             isOfUncertainLungCancerType -> {
-                EvaluationFactory.undetermined("Undetermined if NSCLC and hence if there may be small cell transformation")
+                EvaluationFactory.undetermined("Undetermined if tumor type is NSCLC and if there may be SCLC transformation")
             }
 
-            !isLungCancer -> {
-                EvaluationFactory.fail("No lung cancer thus no small cell transformation")
-            }
+            !isLungCancer -> EvaluationFactory.fail("No lung cancer thus no small cell transformation")
 
-            else -> {
-                EvaluationFactory.recoverableFail("No indication of small cell transformation in molecular or tumor type data")
-            }
+            else -> EvaluationFactory.recoverableFail("No indication of small cell transformation in molecular or tumor type data")
         }
     }
 }

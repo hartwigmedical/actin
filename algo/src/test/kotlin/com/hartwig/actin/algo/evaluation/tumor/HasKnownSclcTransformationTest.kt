@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
@@ -19,6 +20,32 @@ class HasKnownSclcTransformationTest {
 
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val function = HasKnownSclcTransformation(doidModel)
+
+    @Test
+    fun `Should pass if tumor is NSCLC and positive SCLC transformation results`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TumorTestFactory.withIhcTestsAndDoids(
+                    listOf(IhcTest(item = "SCLC transformation", scoreText = "Positive")),
+                    setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn if tumor is NSCLC and positive SCLC transformation results`() {
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                TumorTestFactory.withIhcTestsAndDoids(
+                    listOf(IhcTest(item = "SCLC transformation", scoreText = "Possible")),
+                    setOf(SMALL_CELL_LUNG_CANCER_DOIDS.first(), DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+                )
+            )
+        )
+    }
 
     @Test
     fun `Should be undetermined if tumor is NSCLC and has also small cell doid`() {

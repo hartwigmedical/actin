@@ -42,5 +42,4 @@ object IhcTestClassificationFunctions {
             else -> TestResult.UNKNOWN
         }
     }
-
 }
