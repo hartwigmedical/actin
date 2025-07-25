@@ -1,3 +1,0 @@
-StudyID	StudyMETC	StudyAcroniem	StudyTitle	StudyStatus	CohortId	CohortParentId	CohortName	CohortStatus	CohortSlotsNumberAvailable	CohortSlotsDateUpdate
-1	METC 1	StudyWithCohort	This is a study with cohort	Open	1	2	Cohort A	Closed	5	23-04-04
-2	METC 2	StudyWithoutCohort	This is a study without cohort	Closed						
