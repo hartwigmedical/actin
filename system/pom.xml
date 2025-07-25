@@ -24,15 +24,7 @@
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
-            <artifactId>clinical</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
             <artifactId>molecular</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>trial</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
