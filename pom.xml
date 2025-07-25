@@ -12,6 +12,7 @@
         <module>datamodel</module>
         <module>common</module>
         <module>molecular</module>
+        <module>trial</module>
         <module>algo</module>
         <module>interpretation</module>
         <module>report</module>
@@ -170,7 +171,17 @@
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
+                <artifactId>clinical</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
                 <artifactId>molecular</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>trial</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>

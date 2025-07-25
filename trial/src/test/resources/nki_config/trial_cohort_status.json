@@ -1,0 +1,50 @@
+[
+  {
+    "studyMetc": "MEC-001",
+    "studyStatus": "OPEN",
+    "cohortId": "abcd",
+    "cohortOpen": true
+  },
+  {
+    "studyMetc": "MEC-001",
+    "studyStatus": "OPEN",
+    "cohortId": "bcde",
+    "cohortOpen": true
+  },
+  {
+    "studyMetc": "MEC-001",
+    "studyStatus": "OPEN",
+    "cohortId": "bcdef",
+    "cohortOpen": false
+  },
+  {
+    "studyMetc": "MEC-001",
+    "studyStatus": "OPEN",
+    "cohortId": "bcdeg",
+    "cohortOpen": null
+  },
+  {
+    "studyMetc": "MEC-002",
+    "studyStatus": "CLOSED",
+    "cohortId": "cdef",
+    "cohortOpen": true
+  },
+  {
+    "studyMetc": "MEC-003",
+    "studyStatus": "PENDING",
+    "cohortId": "efgh",
+    "cohortOpen": true
+  },
+  {
+    "studyMetc": "MEC-004",
+    "studyStatus": "WITHDRAWN",
+    "cohortId": "fghi",
+    "cohortOpen": true
+  },
+  {
+    "studyMetc": "MEC-005",
+    "studyStatus": "SUSPENDED",
+    "cohortId": "ghij",
+    "cohortOpen": true
+  }
+]
