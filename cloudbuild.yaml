@@ -46,7 +46,6 @@ options:
   machineType: 'E2_HIGHCPU_8'
 images:
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular
-  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-algo
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-report
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-evaluation
