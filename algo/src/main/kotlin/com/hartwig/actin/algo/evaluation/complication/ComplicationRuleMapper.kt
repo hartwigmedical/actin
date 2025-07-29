@@ -23,7 +23,8 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
                 HasSpecificComplication(
                     icdModel(), setOf(
                         IcdCode(IcdConstants.PLEURAL_EFFUSION_CODE),
-                        IcdCode(IcdConstants.MALIGNANT_NEOPLASM_METASTASIS_IN_PLEURA_CODE)
+                        IcdCode(IcdConstants.MALIGNANT_NEOPLASM_METASTASIS_IN_PLEURA_CODE),
+                        IcdCode(IcdConstants.PLEURISY_CODE)
                     )
                 )
             },
