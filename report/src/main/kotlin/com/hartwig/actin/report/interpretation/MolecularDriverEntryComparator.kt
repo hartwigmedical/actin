@@ -15,7 +15,7 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
         val driverTypeCompare = driverTypeComparator.compare(entry1.driverType, entry2.driverType)
         return if (driverTypeCompare != 0) {
             driverTypeCompare
-        } else entry1.description.compareTo(entry2.description)
+        } else compareOnGeneNameAndCancerAssociatedVariant(entry1, entry2)
     }
 
     private class DriverTypeComparator : Comparator<String> {
@@ -26,8 +26,17 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
                 .thenBy { it.contains("fusion") }
                 .thenBy { it.contains("disruption") }
                 .thenBy { it.startsWith("virus") }
-                .thenByDescending { it }
                 .compare(string2.lowercase(), string1.lowercase())
         }
+    }
+
+    private fun compareOnGeneNameAndCancerAssociatedVariant(entry1: MolecularDriverEntry, entry2: MolecularDriverEntry): Int {
+        val geneCompare = entry1.description.substringBefore(' ').compareTo(entry2.description.substringBefore(' '))
+        if (geneCompare != 0) return entry1.description.compareTo(entry2.description)
+
+        return compareValuesBy(
+            entry1, entry2,
+            { it.driverType.contains("no known cancer-associated variant") }
+        )
     }
 }

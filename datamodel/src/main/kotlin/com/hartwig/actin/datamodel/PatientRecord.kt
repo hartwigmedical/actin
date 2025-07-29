@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.PerformanceStatus
 import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -27,6 +28,7 @@ data class PatientRecord(
     val patient: PatientDetails,
     val tumor: TumorDetails,
     val clinicalStatus: ClinicalStatus,
+    val performanceStatus: PerformanceStatus,
     val oncologicalHistory: List<TreatmentHistoryEntry>,
     val priorPrimaries: List<PriorPrimary>,
     val comorbidities: List<Comorbidity>,

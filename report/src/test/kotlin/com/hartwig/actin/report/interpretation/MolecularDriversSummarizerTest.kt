@@ -205,6 +205,34 @@ class MolecularDriversSummarizerTest {
         assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }
     }
 
+    @Test
+    fun `Should filter on driver likelihood`() {
+        val highDriverVariant = TestMolecularFactory.createProperVariant().copy(driverLikelihood = DriverLikelihood.HIGH)
+        val mediumDriverVariant = TestMolecularFactory.createProperVariant().copy(driverLikelihood = DriverLikelihood.MEDIUM)
+        val lowDriverVariant = TestMolecularFactory.createProperVariant().copy(driverLikelihood = DriverLikelihood.LOW)
+        val nullDriverVariant = TestMolecularFactory.createProperVariant().copy(driverLikelihood = null)
+
+        val highDriverCopyNumber = TestMolecularFactory.createProperCopyNumber().copy(driverLikelihood = DriverLikelihood.HIGH)
+        val mediumDriverCopyNumber = TestMolecularFactory.createProperCopyNumber().copy(driverLikelihood = DriverLikelihood.MEDIUM)
+        val lowDriverCopyNumber = TestMolecularFactory.createProperCopyNumber().copy(driverLikelihood = DriverLikelihood.LOW)
+        val nullDriverCopyNumber = TestMolecularFactory.createProperCopyNumber().copy(driverLikelihood = null)
+
+        val molecularRecord = TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+            drivers = TestMolecularFactory.createProperTestDrivers().copy(
+                variants = listOf(highDriverVariant, mediumDriverVariant, lowDriverVariant, nullDriverVariant),
+                copyNumbers = listOf(highDriverCopyNumber, mediumDriverCopyNumber, lowDriverCopyNumber, nullDriverCopyNumber)
+            )
+        )
+
+        val resultUseHigh = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecularRecord.drivers, true)
+        assertThat(resultUseHigh.variants).isEqualTo(listOf(highDriverVariant))
+        assertThat(resultUseHigh.copyNumbers).isEqualTo(listOf(highDriverCopyNumber))
+
+        val resultUseNonHigh = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecularRecord.drivers, false)
+        assertThat(resultUseNonHigh.variants).isEqualTo(listOf(mediumDriverVariant, lowDriverVariant, nullDriverVariant))
+        assertThat(resultUseNonHigh.copyNumbers).isEqualTo(listOf(mediumDriverCopyNumber, lowDriverCopyNumber, nullDriverCopyNumber))
+    }
+
     private fun variant(
         name: String,
         driverLikelihood: DriverLikelihood,

@@ -28,10 +28,12 @@
     "biopsyLocation": "Lung"
   },
   "clinicalStatus": {
-    "who": 1,
     "infectionStatus": null,
     "lvef": 0.5,
     "hasComplications": false
+  },
+  "performanceStatus": {
+    "latestWho": 1
   },
   "oncologicalHistory": [
     {
@@ -322,7 +324,9 @@
             ]
           }
         ],
-        "specification": null,
+        "targetSpecification": {
+          "geneTargetMap": []
+        },
         "hasSufficientPurity": true,
         "hasSufficientQuality": true,
         "testTypeDisplay": null,
