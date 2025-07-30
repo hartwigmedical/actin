@@ -1,29 +1,46 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
+import com.hartwig.actin.algo.evaluation.util.ValueComparison
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
 
-object IhcTestEvaluation {
+class IhcTestEvaluation(private val filteredTests: Set<IhcTest>) {
 
-    fun hasPositiveIhcTestResultsForItem(item: String, ihcTests: List<IhcTest>): Pair<Boolean, Boolean> {
-        val tests = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(item = item, ihcTests = ihcTests)
-        val hasCertainPositiveResults =
-            tests.isNotEmpty() && tests.all { test -> IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.any { it == test.scoreText?.lowercase() } }
-        val hasPossiblePositiveResults =
-            tests.isNotEmpty() && !tests.all { test -> IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.any { it == test.scoreText?.lowercase() }
-                    || test.scoreValue?.toInt() == 0 }
+    fun hasCertainPositiveIhcTestResultsForItem(): Boolean =
+        filteredTests.isNotEmpty() && filteredTests.all { it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS }
 
-        return Pair(hasCertainPositiveResults, hasPossiblePositiveResults)
-    }
+    fun hasPossiblePositiveTestResultsForItem(): Boolean =
+        filteredTests.isNotEmpty() && !filteredTests.all { test ->
+            IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.any { it == test.scoreText?.lowercase() } || testValueZero(test)
+        }
 
-    fun hasNegativeIhcTestResultsForItem(item: String, ihcTests: List<IhcTest>): Pair<Boolean, Boolean> {
-        val tests = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(item = item, ihcTests = ihcTests)
-        val hasCertainNegativeResults =
-            tests.isNotEmpty() && tests.all { test -> IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.any { it == test.scoreText?.lowercase() } }
-        val hasPossibleNegativeResults =
-            tests.isNotEmpty() && !tests.all { test -> IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.any { it == test.scoreText?.lowercase() }
-                    || (test.scoreValue ?: 0.0) > 0 }
+    fun hasPositiveIhcTestResultsForItem(): Pair<Boolean, Boolean> =
+        Pair(hasCertainPositiveIhcTestResultsForItem(), hasPossiblePositiveTestResultsForItem())
 
-        return Pair(hasCertainNegativeResults, hasPossibleNegativeResults)
+    fun hasCertainNegativeIhcTestResultsForItem(): Boolean =
+        filteredTests.isNotEmpty() && filteredTests.all { it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS }
+
+    fun hasPossibleNegativeIhcTestResultsForItem(): Boolean =
+        filteredTests.isNotEmpty() && !filteredTests.all { test ->
+            IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.any { it == test.scoreText?.lowercase() } || testValueAboveZero(test)
+        }
+
+    fun hasNegativeIhcTestResultsForItem(): Pair<Boolean, Boolean> =
+        Pair(hasCertainNegativeIhcTestResultsForItem(), hasPossibleNegativeIhcTestResultsForItem())
+
+    private fun testValueAboveZero(ihcTest: IhcTest) = ihcTest.scoreValue?.let { scoreValue ->
+        ValueComparison.evaluateVersusMinValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)
+    } == EvaluationResult.PASS
+
+    private fun testValueZero(ihcTest: IhcTest) = ihcTest.scoreValue?.let { scoreValue ->
+        ValueComparison.evaluateVersusMaxValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)
+    } == EvaluationResult.PASS
+
+    companion object {
+        fun create(item: String, ihcTests: List<IhcTest>): IhcTestEvaluation {
+            val selectedTests = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(item = item, ihcTests = ihcTests)
+            return IhcTestEvaluation(selectedTests)
+        }
     }
 }

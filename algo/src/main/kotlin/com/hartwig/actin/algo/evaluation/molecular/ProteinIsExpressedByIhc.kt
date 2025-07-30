@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class ProteinIsExpressedByIhc internal constructor(private val protein: String) : EvaluationFunction {
+class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestsForItem = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(record.ihcTests, protein)
         val (hasCertainPositiveExpression, hasPossiblePositiveExpression) =
-            IhcTestEvaluation.hasPositiveIhcTestResultsForItem(protein, record.ihcTests)
+            IhcTestEvaluation.create(protein, record.ihcTests).hasPositiveIhcTestResultsForItem()
 
         return when {
             ihcTestsForItem.isEmpty() -> {

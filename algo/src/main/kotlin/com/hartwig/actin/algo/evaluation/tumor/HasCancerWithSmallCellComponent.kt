@@ -16,16 +16,22 @@ class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : Evalua
             return EvaluationFactory.undetermined("Undetermined if tumor may have small cell component")
         }
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-        val (hasCertainPositiveSclcTransformation, hasPossiblePositiveSclcTransformation) =
-            IhcTestEvaluation.hasPositiveIhcTestResultsForItem(item = "SCLC transformation", ihcTests = record.ihcTests)
+        val (hasCertainPositiveSclcTransformation, hasPossiblePositiveSclcTransformation) = IhcTestEvaluation.create(
+            item = "SCLC transformation",
+            ihcTests = record.ihcTests
+        ).hasPositiveIhcTestResultsForItem()
 
         return when {
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, tumorDoids, record.tumor.name) -> {
                 EvaluationFactory.pass("Has cancer with small cell component")
             }
 
-            isNsclc && (hasCertainPositiveSclcTransformation || hasPossiblePositiveSclcTransformation) -> {
-                EvaluationFactory.warn("Has possible cancer with small cell component (possible SCLC transformation)")
+            isNsclc && hasCertainPositiveSclcTransformation -> {
+                EvaluationFactory.warn("Has potentially cancer with small cell component (positive SCLC transformation)")
+            }
+
+            isNsclc && hasPossiblePositiveSclcTransformation -> {
+                EvaluationFactory.warn("Has potentially cancer with small cell component (possible SCLC transformation)")
             }
 
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, tumorDoids, record.tumor.name) -> {

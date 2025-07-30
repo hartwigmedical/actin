@@ -10,9 +10,8 @@ class ProteinIsWildTypeByIhc(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestsForItem = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(record.ihcTests, protein)
-        val hasCertainWildtypeResults = ihcTestsForItem.isNotEmpty() && ihcTestsForItem.all { test ->
-            IhcTestEvaluationConstants.WILD_TYPE_TERMS.any { it == test.scoreText?.lowercase() }
-        }
+        val hasCertainWildtypeResults =
+            ihcTestsForItem.isNotEmpty() && ihcTestsForItem.all { it.scoreText?.lowercase() in IhcTestEvaluationConstants.WILD_TYPE_TERMS }
 
         return when {
             ihcTestsForItem.isEmpty() -> {

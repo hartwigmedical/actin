@@ -35,7 +35,7 @@ class HasKnownSclcTransformationTest {
     }
 
     @Test
-    fun `Should warn if tumor is NSCLC and positive SCLC transformation results`() {
+    fun `Should warn if tumor is NSCLC and possible SCLC transformation results`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -112,6 +112,6 @@ class HasKnownSclcTransformationTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if small cell transformation may have occurred (RB1 inactivation detected)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if SCLC transformation may have occurred (RB1 inactivation detected)")
     }
 }

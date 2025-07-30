@@ -10,8 +10,8 @@ class ProteinIsLostByIhc(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestsForItem = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(record.ihcTests, protein)
-        val (hasCertainNegativeExpression, hasPossibleNegativeExpression) =
-            IhcTestEvaluation.hasNegativeIhcTestResultsForItem(protein, record.ihcTests)
+        val (hasCertainNegativeExpression, hasPossibleNegativeExpression) = IhcTestEvaluation.create(protein, record.ihcTests)
+            .hasNegativeIhcTestResultsForItem()
 
         return when {
             ihcTestsForItem.isEmpty() -> {

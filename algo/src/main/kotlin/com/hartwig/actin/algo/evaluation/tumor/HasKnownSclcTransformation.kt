@@ -24,8 +24,10 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
         val hasSmallCellComponent =
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, record.tumor.doids, record.tumor.name)
 
-        val (hasCertainPositiveSclcTransformation, hasPossiblePositiveSclcTransformation) =
-            IhcTestEvaluation.hasPositiveIhcTestResultsForItem(item = "SCLC transformation", ihcTests = record.ihcTests)
+        val (hasCertainPositiveSclcTransformation, hasPossiblePositiveSclcTransformation) = IhcTestEvaluation.create(
+            item = "SCLC transformation",
+            ihcTests = record.ihcTests
+        ).hasPositiveIhcTestResultsForItem()
 
         val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
 
@@ -42,16 +44,16 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
 
             isNsclc && inactivatedGenes.isNotEmpty() -> {
                 val genes = inactivatedGenes.joinToString(" and ")
-                EvaluationFactory.undetermined("Undetermined if small cell transformation may have occurred ($genes inactivation detected)")
+                EvaluationFactory.undetermined("Undetermined if SCLC transformation may have occurred ($genes inactivation detected)")
             }
 
             isOfUncertainLungCancerType -> {
                 EvaluationFactory.undetermined("Undetermined if tumor type is NSCLC and if there may be SCLC transformation")
             }
 
-            !isLungCancer -> EvaluationFactory.fail("No lung cancer thus no small cell transformation")
+            !isLungCancer -> EvaluationFactory.fail("No lung cancer thus no SCLC transformation")
 
-            else -> EvaluationFactory.recoverableFail("No indication of small cell transformation in molecular or tumor type data")
+            else -> EvaluationFactory.recoverableFail("No indication of SCLC transformation in molecular or tumor type data")
         }
     }
 }

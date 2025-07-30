@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.datamodel.PatientRecord
@@ -26,11 +26,8 @@ class ProteinExpressionByIhcFunctions(
             ihcTest.scoreValue?.let { scoreValue -> evaluateValue(ihcTest, scoreValue) }
         }.toSet()
 
-        val hasPositiveOrNegativeResult = ihcTestsForItem.any { test ->
-            (IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS + IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS).any {
-                it == test.scoreText?.lowercase()
-            }
-        }
+        val hasPositiveOrNegativeResult = IhcTestEvaluation.create(protein, record.ihcTests).hasCertainPositiveIhcTestResultsForItem() ||
+                IhcTestEvaluation.create(protein, record.ihcTests).hasCertainNegativeIhcTestResultsForItem()
 
         val comparisonText = when (comparisonType) {
             IhcExpressionComparisonType.LIMITED -> "at most"
