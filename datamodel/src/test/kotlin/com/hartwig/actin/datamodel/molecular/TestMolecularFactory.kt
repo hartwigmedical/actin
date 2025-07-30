@@ -428,6 +428,17 @@ object TestMolecularFactory {
         fusedExonDown = 20,
     )
 
+    fun createMinimalVirus() = Virus(
+        name = "",
+        type = VirusType.OTHER,
+        isReliable = false,
+        integrations = null,
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+    )
+
     private fun createProperTestImmunology(): MolecularImmunology {
         return MolecularImmunology(
             isReliable = true,
@@ -613,7 +624,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalDisruption(): Disruption {
+    fun createMinimalDisruption(): Disruption {
         return Disruption(
             type = DisruptionType.INS,
             junctionCopyNumber = 0.0,
@@ -632,22 +643,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalCopyNumber(): CopyNumber {
-        return CopyNumber(
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
-            otherImpacts = emptySet(),
-            isReportable = false,
-            isAssociatedWithDrugResistance = false,
-            event = "",
-            driverLikelihood = DriverLikelihood.LOW,
-            evidence = TestClinicalEvidenceFactory.createEmpty(),
-            gene = "",
-            geneRole = GeneRole.UNKNOWN,
-            proteinEffect = ProteinEffect.UNKNOWN
-        )
-    }
-
-    fun minimalHomozygousDisruption(): HomozygousDisruption {
+    fun createMinimalHomozygousDisruption(): HomozygousDisruption {
         return HomozygousDisruption(
             isReportable = false,
             event = "",
@@ -657,19 +653,6 @@ object TestMolecularFactory {
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = false
-        )
-    }
-
-    fun minimalVirus(): Virus {
-        return Virus(
-            name = "",
-            type = VirusType.OTHER,
-            isReliable = false,
-            integrations = 0,
-            isReportable = false,
-            event = "",
-            driverLikelihood = DriverLikelihood.LOW,
-            evidence = TestClinicalEvidenceFactory.createEmpty()
         )
     }
 

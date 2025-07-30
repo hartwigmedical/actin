@@ -6,40 +6,33 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.driver.VirusType
 
 class HasKnownHPVStatus : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.ihcTests
-            .filter { (it.item?.contains("HPV") ?: false) }
+        val (indeterminateIhcTestsForHpv, determinateIhcTestsForHpv) = record.ihcTests
+            .filter { (it.item.contains("HPV") || it.item.contains("Human papillomavirus")) }
             .partition(IhcTest::impliesPotentialIndeterminateStatus)
-
         val molecularRecords = record.molecularHistory.allOrangeMolecularRecords()
+        val molecularTests = record.molecularHistory.molecularTests
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
-                return EvaluationFactory.pass("HPV status available by WGS")
+                EvaluationFactory.pass("HPV status known (by WGS test)")
             }
 
-            conclusivePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.pass("HPV status available by HPV test")
-            }
+            molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> EvaluationFactory.pass("HPV status known")
+
+            determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass("HPV status known (by IHC test)")
+
+            indeterminateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.warn("HPV tested before but indeterminate status")
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
-                EvaluationFactory.undetermined("HPV status undetermined (low purity in WGS)")
+                EvaluationFactory.recoverableFail("HPV status undetermined (WGS contained no tumor cells)")
             }
 
-            indeterminatePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.undetermined("HPV tested before but indeterminate status")
-            }
-
-            record.molecularHistory.allOrangeMolecularRecords().isEmpty() -> {
-                EvaluationFactory.undetermined("No HPV status result (no molecular data)", isMissingMolecularResultForEvaluation = true)
-            }
-
-            else -> {
-                EvaluationFactory.recoverableFail("No HPV status result", isMissingMolecularResultForEvaluation = true)
-            }
+            else -> EvaluationFactory.recoverableFail("HPV status not known")
         }
     }
 }
