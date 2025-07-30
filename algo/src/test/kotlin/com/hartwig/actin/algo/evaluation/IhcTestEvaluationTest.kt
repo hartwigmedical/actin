@@ -12,157 +12,175 @@ class IhcTestEvaluationTest {
     private val moreRecentDate = LocalDate.of(2024, 4, 2)
 
     @Test
-    fun `Should set both booleans to true if only positive results present for positive results function`() {
+    fun `Should set positive certain and positive possible function to true if only positive results present`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item")
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4)).hasPositiveIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(certain).isTrue
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
+
+        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().first).isTrue
+        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().second).isTrue
     }
 
     @Test
-    fun `Should set certain boolean to false and possible boolean to true if only non-certain positive results present for positive results function`() {
+    fun `Should set positive certain function to false and positive possible function to true if only non-certain positive results present`() {
         val test1 = ihcTest(item = item, scoreText = "Some", measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first())
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4)).hasPositiveIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
+
+        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().first).isFalse
+        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().second).isTrue
     }
 
     @Test
-    fun `Should set both booleans to false if only negative results present for positive results function`() {
+    fun `Should set both positive functions to false if only negative results`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first())
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4)).hasPositiveIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isFalse
+        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isFalse
+
+        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().first).isFalse
+        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().second).isFalse
     }
 
     @Test
-    fun `Should set certain boolean to false and possible boolean to true if recent measure is positive but without date is not for positive results function`() {
+    fun `Should set positive certain function to false and positive possible function to true if recent measure is positive but without date is not`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3)).hasPositiveIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
     }
 
     @Test
-    fun `Should set both booleans to true if recent measure is positive for positive results function`() {
+    fun `Should set both positive functions to true if recent measure is positive`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = moreRecentDate)
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2)).hasPositiveIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(certain).isTrue
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
     }
 
     @Test
-    fun `Should set both booleans to false if recent measure has score value of 0 for positive results function`() {
+    fun `Should set both positive functions to false if recent measure has score value of 0`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = null, scoreValue = 0.0, measureDate = moreRecentDate)
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2)).hasPositiveIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isFalse
+        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isFalse
     }
 
     @Test
-    fun `Should set both booleans to false if there are no tests for that item for positive results function`() {
+    fun `Should set both both positive functions to false if there are no tests for that item for positive results function`() {
         val test1 = ihcTest(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.last())
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2)).hasPositiveIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isFalse
+        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isFalse
     }
 
     @Test
-    fun `Should set both booleans to true if only negative results present for negative results function`() {
+    fun `Should set negative certain and positive possible function to true if only negative results present`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item")
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4)).hasNegativeIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(certain).isTrue
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
+
+        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().first).isTrue
+        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().second).isTrue
     }
 
     @Test
-    fun `Should set certain boolean to false and possible boolean to true if only non-certain negative results present for negative results function`() {
+    fun `Should set negative certain function to false and negative possible function to true if only non-certain negatie results present`() {
         val test1 = ihcTest(item = item, scoreText = "Some", measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4)).hasNegativeIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
+
+        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().first).isFalse
+        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().second).isTrue
     }
 
     @Test
-    fun `Should set both booleans to false if only positive results present for negative results function`() {
+    fun `Should set both negative functions to false if only positive results`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4)).hasNegativeIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isFalse
+        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isFalse
+
+        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().first).isFalse
+        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().second).isFalse
     }
 
     @Test
-    fun `Should set certain boolean to false and possible boolean to true if recent measure is negative but without date is not for negative results function`() {
+    fun `Should set negative certain function to false and negative possible function to true if recent measure is negative but without date is not`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2, test3)).hasNegativeIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
     }
 
     @Test
-    fun `Should set both booleans to true if recent measure is negative for negative results function`() {
+    fun `Should set both negative functions to true if recent measure is negative`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = moreRecentDate)
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2)).hasNegativeIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(certain).isTrue
-        assertThat(possible).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
     }
 
     @Test
-    fun `Should set both booleans to false if recent measure has score value above 0 for negative results function`() {
+    fun `Should set both negative functions to false if recent measure has score value above 0 `() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = null, scoreValue = 2.0, measureDate = moreRecentDate)
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2)).hasNegativeIhcTestResultsForItem()
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(certain).isFalse
-        assertThat(possible).isFalse
+        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isFalse
     }
 
     @Test
-    fun `Should set both booleans to false if there are no tests for that item for negative results function`() {
+    fun `Should set both negative functons to false if there are no tests for that item`() {
         val test1 = ihcTest(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.last())
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        val (certain, possible) = IhcTestEvaluation.create(item, listOf(test1, test2)).hasNegativeIhcTestResultsForItem()
-        assertThat(certain).isFalse
-        assertThat(possible).isFalse
+        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isFalse
     }
 
     private fun ihcTest(item: String = "", scoreText: String? = null, scoreValue: Double? = null, measureDate: LocalDate? = null): IhcTest {
