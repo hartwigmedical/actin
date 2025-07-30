@@ -29,13 +29,10 @@ class HasKnownHPVStatus : EvaluationFunction {
             indeterminateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.warn("HPV tested before but indeterminate status")
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
-                EvaluationFactory.recoverableFail(
-                    "HPV status undetermined (WGS contained no tumor cells)",
-                    isMissingMolecularResultForEvaluation = true
-                )
+                EvaluationFactory.recoverableFail("HPV status undetermined (WGS contained no tumor cells)")
             }
 
-            else -> EvaluationFactory.recoverableFail("HPV status not known", isMissingMolecularResultForEvaluation = true)
+            else -> EvaluationFactory.recoverableFail("HPV status not known")
         }
     }
 }

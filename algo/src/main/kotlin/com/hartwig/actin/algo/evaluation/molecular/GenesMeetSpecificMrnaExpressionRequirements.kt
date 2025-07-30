@@ -10,7 +10,7 @@ class GenesMeetSpecificMrnaExpressionRequirements(private val genes: Set<String>
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Undetermined if specific mRNA expression requirements for gene(s) ${Format.concat(genes)} met",
+            "Undetermined if specific mRNA expression requirements for gene(s) ${Format.concat(genes)} are met",
             isMissingMolecularResultForEvaluation = true
         )
     }

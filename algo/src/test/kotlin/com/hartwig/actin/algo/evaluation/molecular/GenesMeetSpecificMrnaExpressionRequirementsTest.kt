@@ -14,6 +14,6 @@ class GenesMeetSpecificMrnaExpressionRequirementsTest {
     fun `Should evaluate to undetermined with correct message`() {
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if specific mRNA expression requirements for gene(s) gene a, gene b and gene c met")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if specific mRNA expression requirements for gene(s) gene a, gene b and gene c are met")
     }
 }

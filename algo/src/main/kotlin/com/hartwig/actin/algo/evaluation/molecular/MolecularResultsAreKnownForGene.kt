@@ -61,7 +61,7 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("$gene not tested", isMissingMolecularResultForEvaluation = true)
+                EvaluationFactory.recoverableFail("$gene not tested")
             }
         }
     }
