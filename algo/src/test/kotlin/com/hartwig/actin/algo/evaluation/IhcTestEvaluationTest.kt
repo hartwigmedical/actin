@@ -19,11 +19,8 @@ class IhcTestEvaluationTest {
         val test4 = test1.copy(item = "other item")
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isTrue
-        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
-
-        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().first).isTrue
-        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().second).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isTrue
     }
 
     @Test
@@ -34,11 +31,8 @@ class IhcTestEvaluationTest {
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
-
-        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().first).isFalse
-        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().second).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isTrue
     }
 
     @Test
@@ -49,11 +43,8 @@ class IhcTestEvaluationTest {
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isFalse
-
-        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().first).isFalse
-        assertThat(ihcEvaluation.hasPositiveIhcTestResultsForItem().second).isFalse
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isFalse
     }
 
     @Test
@@ -63,8 +54,8 @@ class IhcTestEvaluationTest {
         val test3 = test1.copy(measureDate = null)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3))
 
-        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isTrue
     }
 
     @Test
@@ -73,8 +64,8 @@ class IhcTestEvaluationTest {
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = moreRecentDate)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isTrue
-        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isTrue
     }
 
     @Test
@@ -83,8 +74,8 @@ class IhcTestEvaluationTest {
         val test2 = test1.copy(scoreText = null, scoreValue = 0.0, measureDate = moreRecentDate)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isFalse
     }
 
     @Test
@@ -93,8 +84,8 @@ class IhcTestEvaluationTest {
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.last())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(ihcEvaluation.hasCertainPositiveIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossiblePositiveTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isFalse
     }
 
     @Test
@@ -105,11 +96,8 @@ class IhcTestEvaluationTest {
         val test4 = test1.copy(item = "other item")
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isTrue
-        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
-
-        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().first).isTrue
-        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().second).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isTrue
     }
 
     @Test
@@ -120,11 +108,8 @@ class IhcTestEvaluationTest {
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
-
-        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().first).isFalse
-        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().second).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isTrue
     }
 
     @Test
@@ -135,11 +120,8 @@ class IhcTestEvaluationTest {
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
 
-        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isFalse
-
-        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().first).isFalse
-        assertThat(ihcEvaluation.hasNegativeIhcTestResultsForItem().second).isFalse
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isFalse
     }
 
     @Test
@@ -149,8 +131,8 @@ class IhcTestEvaluationTest {
         val test3 = test1.copy(measureDate = null)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3))
 
-        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isTrue
     }
 
     @Test
@@ -159,8 +141,8 @@ class IhcTestEvaluationTest {
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = moreRecentDate)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isTrue
-        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isTrue
     }
 
     @Test
@@ -169,8 +151,8 @@ class IhcTestEvaluationTest {
         val test2 = test1.copy(scoreText = null, scoreValue = 2.0, measureDate = moreRecentDate)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isFalse
     }
 
     @Test
@@ -179,8 +161,28 @@ class IhcTestEvaluationTest {
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.last())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
-        assertThat(ihcEvaluation.hasCertainNegativeIhcTestResultsForItem()).isFalse
-        assertThat(ihcEvaluation.hasPossibleNegativeIhcTestResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isFalse
+    }
+
+    @Test
+    fun `Should set wildtype certain function to true if only wildtype results present`() {
+        val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.WILD_TYPE_TERMS.first(), measureDate = date)
+        val test2 = test1.copy(measureDate = moreRecentDate)
+        val test3 = test1.copy(measureDate = null)
+        val test4 = test1.copy(item = "other item")
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
+
+        assertThat(ihcEvaluation.hasCertainWildtypeResultsForItem()).isTrue
+    }
+
+    @Test
+    fun `Should set wildtype certain function to false if positive or negative results present`() {
+        val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
+        val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
+
+        assertThat(ihcEvaluation.hasCertainWildtypeResultsForItem()).isFalse
     }
 
     private fun ihcTest(item: String = "", scoreText: String? = null, scoreValue: Double? = null, measureDate: LocalDate? = null): IhcTest {

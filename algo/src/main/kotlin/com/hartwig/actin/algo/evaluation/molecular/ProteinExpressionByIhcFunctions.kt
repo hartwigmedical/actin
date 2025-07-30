@@ -21,13 +21,15 @@ class ProteinExpressionByIhcFunctions(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTestsForItem = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(record.ihcTests, protein)
+        val ihcTestEvaluation = IhcTestEvaluation.create(protein, record.ihcTests)
+        val ihcTestsForItem = ihcTestEvaluation.filteredTests
+
         val evaluationsVersusReference = ihcTestsForItem.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue -> evaluateValue(ihcTest, scoreValue) }
         }.toSet()
 
-        val hasPositiveOrNegativeResult = IhcTestEvaluation.create(protein, record.ihcTests).hasCertainPositiveIhcTestResultsForItem() ||
-                IhcTestEvaluation.create(protein, record.ihcTests).hasCertainNegativeIhcTestResultsForItem()
+        val hasPositiveOrNegativeResult =
+            ihcTestEvaluation.hasCertainPositiveResultsForItem() || ihcTestEvaluation.hasCertainNegativeResultsForItem()
 
         val comparisonText = when (comparisonType) {
             IhcExpressionComparisonType.LIMITED -> "at most"

@@ -9,21 +9,19 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTestsForItem = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(record.ihcTests, protein)
-        val (hasCertainPositiveExpression, hasPossiblePositiveExpression) =
-            IhcTestEvaluation.create(protein, record.ihcTests).hasPositiveIhcTestResultsForItem()
+        val ihcTestEvaluation = IhcTestEvaluation.create(protein, record.ihcTests)
 
         return when {
-            ihcTestsForItem.isEmpty() -> {
+            ihcTestEvaluation.filteredTests.isEmpty() -> {
                 EvaluationFactory.undetermined(
                     "No $protein IHC test result",
                     isMissingMolecularResultForEvaluation = true
                 )
             }
 
-            hasCertainPositiveExpression -> EvaluationFactory.pass("$protein has expression by IHC")
+            ihcTestEvaluation.hasCertainPositiveResultsForItem() -> EvaluationFactory.pass("$protein has expression by IHC")
 
-            !hasPossiblePositiveExpression -> EvaluationFactory.fail("$protein is not expressed by IHC")
+            !ihcTestEvaluation.hasPossiblePositiveResultsForItem() -> EvaluationFactory.fail("$protein is not expressed by IHC")
 
             else -> EvaluationFactory.warn("Undetermined if $protein IHC result indicates $protein expression by IHC")
         }
