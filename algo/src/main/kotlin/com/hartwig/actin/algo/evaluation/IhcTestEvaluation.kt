@@ -15,7 +15,7 @@ class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
     fun hasPossiblePositiveResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && !filteredTests.all { test ->
             (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS || testValueZero(test)) &&
-                    test.impliesPotentialIndeterminateStatus
+                    !test.impliesPotentialIndeterminateStatus
         }
 
     fun hasCertainNegativeResultsForItem(): Boolean =
@@ -26,7 +26,7 @@ class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
     fun hasPossibleNegativeResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && !filteredTests.all { test ->
             (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS || testValueAboveZero(test)) &&
-                    test.impliesPotentialIndeterminateStatus
+                    !test.impliesPotentialIndeterminateStatus
         }
 
     fun hasCertainWildtypeResultsForItem(): Boolean =

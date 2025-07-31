@@ -33,10 +33,12 @@ class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) 
                 }
             }
 
-            her2TestResults.all { it == TestResult.POSITIVE } -> EvaluationFactory.pass(
-                "Has positive HER2 IHC result",
-                inclusionEvents = setOf("IHC HER2 positive")
-            )
+            her2TestResults.all { it == TestResult.POSITIVE } -> {
+                EvaluationFactory.pass(
+                    "Has positive HER2 IHC result",
+                    inclusionEvents = setOf("IHC HER2 positive")
+                )
+            }
 
             her2TestResults.all { it == TestResult.NEGATIVE } -> {
                 val failMessage = "Has no positive HER2 IHC result"
