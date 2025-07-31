@@ -31,7 +31,7 @@ class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction 
             else -> {
                 EvaluationFactory.warn(
                     "Undetermined if $protein IHC result indicates $protein expression by IHC",
-                    inclusionEvents = setOf("potential IHC $protein expression")
+                    inclusionEvents = setOf("Potential IHC $protein expression")
                 )
             }
         }
