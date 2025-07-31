@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
+import com.hartwig.hmftools.common.fusion.KnownFusionType
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -37,16 +38,22 @@ class PanelFusionAnnotatorTest {
 
     @Test
     fun `Should determine fusion driver likelihood`() {
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR, false))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_IG))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_IG, false))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_DEL_DUP))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_DEL_DUP, false))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_ENHANCER_TARGET))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_3, true))
+            .isEqualTo(DriverLikelihood.HIGH)
+
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_ENHANCER_TARGET, false))
+            .isEqualTo(DriverLikelihood.LOW)
+
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_3, false))
             .isEqualTo(DriverLikelihood.LOW)
     }
 
@@ -99,6 +106,80 @@ class PanelFusionAnnotatorTest {
         every { knownFusionCache.hasPromiscuousThreeGene("gene2") } returns false
 
         assertThat(annotator.determineFusionDriverType("gene1", "gene2")).isEqualTo(FusionDriverType.NONE)
+    }
+
+    @Test
+    fun `Should return true for promiscuous 3 fusion within exon range`() {
+        val matchingExon = 4
+        val fusionMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonDown = matchingExon)
+
+        every {
+            knownFusionCache.withinPromiscuousExonRange(
+                KnownFusionType.PROMISCUOUS_3,
+                TRANSCRIPT_END,
+                matchingExon,
+                matchingExon
+            )
+        } returns true
+
+        assertThat(annotator.isPromiscuousWithMatchingExons(FusionDriverType.PROMISCUOUS_3, fusionMatchingExons)).isEqualTo(true)
+    }
+
+    @Test
+    fun `Should return false for promiscuous 3 fusion outside exon range`() {
+        val nonMatchingExon = 8
+        val fusionNonMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonDown = nonMatchingExon)
+
+        every {
+            knownFusionCache.withinPromiscuousExonRange(
+                KnownFusionType.PROMISCUOUS_3,
+                TRANSCRIPT_END,
+                nonMatchingExon,
+                nonMatchingExon
+            )
+        } returns false
+
+        assertThat(annotator.isPromiscuousWithMatchingExons(FusionDriverType.PROMISCUOUS_3, fusionNonMatchingExons)).isEqualTo(false)
+    }
+
+    @Test
+    fun `Should return true for promiscuous 5 fusion within exon range`() {
+        val matchingExon = 4
+        val fusionMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = matchingExon)
+
+        every {
+            knownFusionCache.withinPromiscuousExonRange(
+                KnownFusionType.PROMISCUOUS_5,
+                TRANSCRIPT_END,
+                matchingExon,
+                matchingExon
+            )
+        } returns true
+
+        assertThat(annotator.isPromiscuousWithMatchingExons(FusionDriverType.PROMISCUOUS_5, fusionMatchingExons)).isEqualTo(true)
+    }
+
+    @Test
+    fun `Should return true for promiscuous 5 fusion outside exon range`() {
+        val nonMatchingExon = 8
+        val fusionNonMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = nonMatchingExon)
+
+        every {
+            knownFusionCache.withinPromiscuousExonRange(
+                KnownFusionType.PROMISCUOUS_5,
+                TRANSCRIPT_END,
+                nonMatchingExon,
+                nonMatchingExon
+            )
+        } returns false
+
+        assertThat(annotator.isPromiscuousWithMatchingExons(FusionDriverType.PROMISCUOUS_5, fusionNonMatchingExons)).isEqualTo(false)
+    }
+
+    @Test
+    fun `Should return false for known fusion pair`() {
+        every { knownFusionCache.withinPromiscuousExonRange(KnownFusionType.PROMISCUOUS_5, TRANSCRIPT_END, 1, 1) } returns false
+        assertThat(annotator.isPromiscuousWithMatchingExons(FusionDriverType.KNOWN_PAIR, FULLY_SPECIFIED_SEQUENCED_FUSION)).isEqualTo(false)
     }
 
     @Test

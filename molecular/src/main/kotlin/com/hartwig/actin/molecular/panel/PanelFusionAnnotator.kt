@@ -10,6 +10,7 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
+import com.hartwig.hmftools.common.fusion.KnownFusionType
 import org.apache.logging.log4j.LogManager
 
 class PanelFusionAnnotator(
@@ -23,11 +24,13 @@ class PanelFusionAnnotator(
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
     }
 
-    fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood {
-        return when (driverType) {
-            FusionDriverType.KNOWN_PAIR,
-            FusionDriverType.KNOWN_PAIR_IG,
-            FusionDriverType.KNOWN_PAIR_DEL_DUP -> DriverLikelihood.HIGH
+    fun fusionDriverLikelihood(driverType: FusionDriverType, isPromiscuousWithMatchingExons: Boolean?): DriverLikelihood {
+        return when {
+            isPromiscuousWithMatchingExons == true || driverType in setOf(
+                FusionDriverType.KNOWN_PAIR,
+                FusionDriverType.KNOWN_PAIR_IG,
+                FusionDriverType.KNOWN_PAIR_DEL_DUP
+            ) -> DriverLikelihood.HIGH
 
             else -> DriverLikelihood.LOW
         }
@@ -56,7 +59,10 @@ class PanelFusionAnnotator(
                 geneDown = sequencedFusion.geneDown,
                 exonDown = sequencedFusion.exonDown
             ),
-            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
+            driverLikelihood = if (isReportable) fusionDriverLikelihood(
+                driverType,
+                isPromiscuousWithMatchingExons(driverType, sequencedFusion)
+            ) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = sequencedFusion.transcriptUp,
@@ -89,6 +95,34 @@ class PanelFusionAnnotator(
         return FusionDriverType.NONE
     }
 
+    fun isPromiscuousWithMatchingExons(driverType: FusionDriverType, sequencedFusion: SequencedFusion): Boolean? {
+        return when (driverType) {
+            FusionDriverType.PROMISCUOUS_3 -> {
+                sequencedFusion.exonDown?.let {
+                    knownFusionCache.withinPromiscuousExonRange(
+                        KnownFusionType.PROMISCUOUS_3,
+                        sequencedFusion.transcriptDown,
+                        it,
+                        it
+                    )
+                }
+            }
+
+            FusionDriverType.PROMISCUOUS_5 -> {
+                sequencedFusion.exonUp?.let {
+                    knownFusionCache.withinPromiscuousExonRange(
+                        KnownFusionType.PROMISCUOUS_5,
+                        sequencedFusion.transcriptUp,
+                        it,
+                        it
+                    )
+                }
+            }
+
+            else -> false
+        }
+    }
+
     private fun createFusionFromExonSkip(sequencedSkippedExons: SequencedSkippedExons): Fusion {
         val isReportable = true
         val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
@@ -104,7 +138,7 @@ class PanelFusionAnnotator(
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
             event = sequencedSkippedExons.display(),
-            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
+            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType, false) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = transcript,
