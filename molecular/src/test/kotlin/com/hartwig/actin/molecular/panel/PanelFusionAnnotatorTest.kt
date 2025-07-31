@@ -150,7 +150,7 @@ class PanelFusionAnnotatorTest {
         every {
             knownFusionCache.withinPromiscuousExonRange(
                 KnownFusionType.PROMISCUOUS_5,
-                TRANSCRIPT_END,
+                TRANSCRIPT_START,
                 matchingExon,
                 matchingExon
             )
@@ -167,7 +167,7 @@ class PanelFusionAnnotatorTest {
         every {
             knownFusionCache.withinPromiscuousExonRange(
                 KnownFusionType.PROMISCUOUS_5,
-                TRANSCRIPT_END,
+                TRANSCRIPT_START,
                 nonMatchingExon,
                 nonMatchingExon
             )
