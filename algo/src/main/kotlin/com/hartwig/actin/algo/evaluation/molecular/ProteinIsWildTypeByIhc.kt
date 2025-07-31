@@ -19,9 +19,17 @@ class ProteinIsWildTypeByIhc(private val protein: String) : EvaluationFunction {
                 )
             }
 
-            ihcTestEvaluation.hasCertainWildtypeResultsForItem() -> EvaluationFactory.pass("$protein is wild type by IHC")
+            ihcTestEvaluation.hasCertainWildtypeResultsForItem() -> {
+                EvaluationFactory.pass(
+                    "$protein is wild type by IHC",
+                    inclusionEvents = setOf("IHC $protein wildtype")
+                )
+            }
 
-            else -> EvaluationFactory.warn("Undetermined if $protein IHC result indicates wild type status")
+            else -> EvaluationFactory.warn(
+                "Undetermined if $protein IHC result indicates wild type status",
+                inclusionEvents = setOf("potential IHC $protein wildtype")
+            )
         }
     }
 }

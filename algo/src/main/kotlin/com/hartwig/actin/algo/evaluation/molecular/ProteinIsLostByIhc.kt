@@ -19,11 +19,19 @@ class ProteinIsLostByIhc(private val protein: String) : EvaluationFunction {
                 )
             }
 
-            ihcTestEvaluation.hasCertainNegativeResultsForItem() -> EvaluationFactory.pass("$protein is lost by IHC")
+            ihcTestEvaluation.hasCertainNegativeResultsForItem() -> {
+                EvaluationFactory.pass(
+                    "$protein is lost by IHC",
+                    inclusionEvents = setOf("IHC $protein loss")
+                )
+            }
 
             !ihcTestEvaluation.hasPossibleNegativeResultsForItem() -> EvaluationFactory.fail("$protein is not lost by IHC")
 
-            else -> EvaluationFactory.warn("Undetermined if $protein IHC result indicates $protein loss by IHC")
+            else -> EvaluationFactory.warn(
+                "Undetermined if $protein IHC result indicates $protein loss by IHC",
+                inclusionEvents = setOf("Potential IHC $protein loss")
+            )
         }
     }
 }

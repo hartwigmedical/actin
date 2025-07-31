@@ -19,11 +19,21 @@ class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction 
                 )
             }
 
-            ihcTestEvaluation.hasCertainPositiveResultsForItem() -> EvaluationFactory.pass("$protein has expression by IHC")
+            ihcTestEvaluation.hasCertainPositiveResultsForItem() -> {
+                EvaluationFactory.pass(
+                    "$protein has expression by IHC",
+                    inclusionEvents = setOf("IHC $protein expression")
+                )
+            }
 
             !ihcTestEvaluation.hasPossiblePositiveResultsForItem() -> EvaluationFactory.fail("$protein is not expressed by IHC")
 
-            else -> EvaluationFactory.warn("Undetermined if $protein IHC result indicates $protein expression by IHC")
+            else -> {
+                EvaluationFactory.warn(
+                    "Undetermined if $protein IHC result indicates $protein expression by IHC",
+                    inclusionEvents = setOf("potential IHC $protein expression")
+                )
+            }
         }
     }
 }
