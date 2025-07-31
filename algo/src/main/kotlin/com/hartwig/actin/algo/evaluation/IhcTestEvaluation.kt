@@ -8,23 +8,31 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
 
     fun hasCertainPositiveResultsForItem(): Boolean =
-        filteredTests.isNotEmpty() && filteredTests.all { it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS }
+        filteredTests.isNotEmpty() && filteredTests.all {
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS && !it.impliesPotentialIndeterminateStatus
+        }
 
     fun hasPossiblePositiveResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && !filteredTests.all { test ->
-            test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS || testValueZero(test)
+            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS || testValueZero(test)) &&
+                    test.impliesPotentialIndeterminateStatus
         }
 
     fun hasCertainNegativeResultsForItem(): Boolean =
-        filteredTests.isNotEmpty() && filteredTests.all { it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS }
+        filteredTests.isNotEmpty() && filteredTests.all {
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS && !it.impliesPotentialIndeterminateStatus
+        }
 
     fun hasPossibleNegativeResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && !filteredTests.all { test ->
-            test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS || testValueAboveZero(test)
+            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS || testValueAboveZero(test)) &&
+                    test.impliesPotentialIndeterminateStatus
         }
 
     fun hasCertainWildtypeResultsForItem(): Boolean =
-        filteredTests.isNotEmpty() && filteredTests.all { it.scoreText?.lowercase() in IhcTestEvaluationConstants.WILD_TYPE_TERMS }
+        filteredTests.isNotEmpty() && filteredTests.all {
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.WILD_TYPE_TERMS && !it.impliesPotentialIndeterminateStatus
+        }
 
     private fun testValueAboveZero(ihcTest: IhcTest) = ihcTest.scoreValue?.let { scoreValue ->
         ValueComparison.evaluateVersusMinValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)

@@ -24,6 +24,23 @@ class IhcTestEvaluationTest {
     }
 
     @Test
+    fun `Should set positive certain function to false and positive possible function to true if only positive results present but results are indeterminate`() {
+        val test1 = ihcTest(
+            item = item,
+            scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(),
+            measureDate = date,
+            indeterminateStatus = true
+        )
+        val test2 = test1.copy(measureDate = moreRecentDate)
+        val test3 = test1.copy(measureDate = null)
+        val test4 = test1.copy(item = "other item")
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
+
+        assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isTrue
+    }
+
+    @Test
     fun `Should set positive certain function to false and positive possible function to true if only non-certain positive results present`() {
         val test1 = ihcTest(item = item, scoreText = "Some", measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
@@ -36,8 +53,13 @@ class IhcTestEvaluationTest {
     }
 
     @Test
-    fun `Should set both positive functions to false if only negative results`() {
-        val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
+    fun `Should set both positive functions to false if only negative results with indeterminate status false`() {
+        val test1 = ihcTest(
+            item = item,
+            scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(),
+            measureDate = date,
+            indeterminateStatus = false
+        )
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first())
@@ -45,6 +67,23 @@ class IhcTestEvaluationTest {
 
         assertThat(ihcEvaluation.hasCertainPositiveResultsForItem()).isFalse
         assertThat(ihcEvaluation.hasPossiblePositiveResultsForItem()).isFalse
+    }
+
+    @Test
+    fun `Should set positive certain function to false and positive possible function to true if only negative results but with indeterminate status true`() {
+        val test1 = ihcTest(
+            item = item,
+            scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(),
+            measureDate = date,
+            indeterminateStatus = true
+        )
+        val test2 = test1.copy(measureDate = moreRecentDate)
+        val test3 = test1.copy(measureDate = null)
+        val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
+
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isTrue
     }
 
     @Test
@@ -101,6 +140,23 @@ class IhcTestEvaluationTest {
     }
 
     @Test
+    fun `Should set negative certain function to false and negative possible function to true if only negative results present but results are indeterminate`() {
+        val test1 = ihcTest(
+            item = item,
+            scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(),
+            measureDate = date,
+            indeterminateStatus = true
+        )
+        val test2 = test1.copy(measureDate = moreRecentDate)
+        val test3 = test1.copy(measureDate = null)
+        val test4 = test1.copy(item = "other item")
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
+
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isTrue
+    }
+
+    @Test
     fun `Should set negative certain function to false and negative possible function to true if only non-certain negative results present`() {
         val test1 = ihcTest(item = item, scoreText = "Some", measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
@@ -113,8 +169,13 @@ class IhcTestEvaluationTest {
     }
 
     @Test
-    fun `Should set both negative functions to false if only positive results`() {
-        val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
+    fun `Should set both negative functions to false if only positive results with indeterminate status false`() {
+        val test1 = ihcTest(
+            item = item,
+            scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(),
+            measureDate = date,
+            indeterminateStatus = false
+        )
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
         val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
@@ -122,6 +183,23 @@ class IhcTestEvaluationTest {
 
         assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
         assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isFalse
+    }
+
+    @Test
+    fun `Should set negative certain function to false and negative possible function to true if only positive results but with indeterminate status true`() {
+        val test1 = ihcTest(
+            item = item,
+            scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(),
+            measureDate = date,
+            indeterminateStatus = true
+        )
+        val test2 = test1.copy(measureDate = moreRecentDate)
+        val test3 = test1.copy(measureDate = null)
+        val test4 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
+
+        assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isTrue
     }
 
     @Test
@@ -194,7 +272,19 @@ class IhcTestEvaluationTest {
         assertThat(ihcEvaluation.hasCertainWildtypeResultsForItem()).isFalse
     }
 
-    private fun ihcTest(item: String = "", scoreText: String? = null, scoreValue: Double? = null, measureDate: LocalDate? = null): IhcTest {
-        return IhcTest(item = item, scoreText = scoreText, scoreValue = scoreValue, measureDate = measureDate)
+    private fun ihcTest(
+        item: String = "",
+        scoreText: String? = null,
+        scoreValue: Double? = null,
+        measureDate: LocalDate? = null,
+        indeterminateStatus: Boolean = false
+    ): IhcTest {
+        return IhcTest(
+            item = item,
+            scoreText = scoreText,
+            scoreValue = scoreValue,
+            measureDate = measureDate,
+            impliesPotentialIndeterminateStatus = indeterminateStatus
+        )
     }
 }

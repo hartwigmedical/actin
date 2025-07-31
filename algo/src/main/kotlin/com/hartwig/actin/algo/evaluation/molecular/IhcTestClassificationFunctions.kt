@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
 import com.hartwig.actin.datamodel.clinical.IhcTest
 
 object IhcTestClassificationFunctions {
@@ -20,24 +21,23 @@ object IhcTestClassificationFunctions {
     }
 
     private fun classifyTest(
-        test: IhcTest, unit: String, negativeUpperBound: Int, positiveLowerBound: Int, positiveUpperBound: Int
+        test: IhcTest,
+        unit: String,
+        negativeUpperBound: Int,
+        positiveLowerBound: Int,
+        positiveUpperBound: Int
     ): TestResult {
         val scoreValue = test.scoreValue?.toInt()
         return when {
             test.impliesPotentialIndeterminateStatus -> TestResult.UNKNOWN
 
-            test.scoreText?.lowercase() == "negative" || (scoreValue in 0 until negativeUpperBound && test.scoreValueUnit == unit) -> {
-                TestResult.NEGATIVE
-            }
+            test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS || scoreValue == 0 ||
+                    (scoreValue in 0 until negativeUpperBound && test.scoreValueUnit == unit) -> TestResult.NEGATIVE
 
-            test.scoreText?.lowercase() == "positive" ||
-                    (scoreValue in positiveLowerBound..positiveUpperBound && test.scoreValueUnit == unit) -> {
-                TestResult.POSITIVE
-            }
+            test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS ||
+                    (scoreValue in positiveLowerBound..positiveUpperBound && test.scoreValueUnit == unit) -> TestResult.POSITIVE
 
-            scoreValue in negativeUpperBound until positiveLowerBound && test.scoreValueUnit == unit -> {
-                TestResult.BORDERLINE
-            }
+            scoreValue in negativeUpperBound until positiveLowerBound && test.scoreValueUnit == unit -> TestResult.BORDERLINE
 
             else -> TestResult.UNKNOWN
         }
