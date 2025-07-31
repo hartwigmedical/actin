@@ -22,9 +22,8 @@ class ProteinExpressionByIhcFunctions(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestEvaluation = IhcTestEvaluation.create(protein, record.ihcTests)
-        val ihcTestsForItem = ihcTestEvaluation.filteredTests
 
-        val evaluationsVersusReference = ihcTestsForItem.mapNotNull { ihcTest ->
+        val evaluationsVersusReference = ihcTestEvaluation.filteredTests.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue -> evaluateValue(ihcTest, scoreValue) }
         }.toSet()
 
@@ -38,7 +37,7 @@ class ProteinExpressionByIhcFunctions(
         }
 
         return when {
-            ihcTestsForItem.isEmpty() -> {
+            ihcTestEvaluation.filteredTests.isEmpty() -> {
                 EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
             }
 

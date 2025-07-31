@@ -40,7 +40,7 @@ class HasNonSquamousNsclcTest {
     }
 
     @Test
-    fun `Should return warn when known non-squamous NSCLC type but possible SCC transition`() {
+    fun `Should return warn when known non-squamous NSCLC type but possible SCC transformation`() {
         val evaluation = function.evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
                 listOf(IhcTest(item = "SCC transformation", scoreText = "Possible")),
@@ -52,7 +52,7 @@ class HasNonSquamousNsclcTest {
     }
 
     @Test
-    fun `Should return warn when known non-squamous NSCLC type but certain SCC transition`() {
+    fun `Should return warn when known non-squamous NSCLC type but certain SCC transformation`() {
         val evaluation = function.evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
                 listOf(IhcTest(item = "SCC transformation", scoreText = "Positive")),

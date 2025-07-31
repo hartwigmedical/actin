@@ -36,8 +36,7 @@ class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
 
     companion object {
         fun create(item: String, ihcTests: List<IhcTest>): IhcTestEvaluation {
-            val selectedTests = IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(item = item, ihcTests = ihcTests)
-            return IhcTestEvaluation(selectedTests)
+            return IhcTestEvaluation(IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(item = item, ihcTests = ihcTests))
         }
     }
 }

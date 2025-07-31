@@ -101,7 +101,7 @@ class IhcTestEvaluationTest {
     }
 
     @Test
-    fun `Should set negative certain function to false and negative possible function to true if only non-certain negatie results present`() {
+    fun `Should set negative certain function to false and negative possible function to true if only non-certain negative results present`() {
         val test1 = ihcTest(item = item, scoreText = "Some", measureDate = date)
         val test2 = test1.copy(measureDate = moreRecentDate)
         val test3 = test1.copy(measureDate = null)
@@ -177,9 +177,18 @@ class IhcTestEvaluationTest {
     }
 
     @Test
-    fun `Should set wildtype certain function to false if positive or negative results present`() {
+    fun `Should set wildtype certain function to false if positive results present`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(), measureDate = date)
-        val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
+        val test2 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.WILD_TYPE_TERMS.first())
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
+
+        assertThat(ihcEvaluation.hasCertainWildtypeResultsForItem()).isFalse
+    }
+
+    @Test
+    fun `Should set wildtype certain function to false if negative results present`() {
+        val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
+        val test2 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.WILD_TYPE_TERMS.first())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
         assertThat(ihcEvaluation.hasCertainWildtypeResultsForItem()).isFalse
