@@ -128,6 +128,16 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
+        fun `Should only show lymph node lesions once if both in suspected and other suspected lesions`() {
+            val details = TumorDetails(
+                hasSuspectedLymphNodeLesions = true,
+                otherSuspectedLesions = listOf("Lymph nodes")
+            )
+            val expected = "Lymph nodes (suspected)"
+            assertThat(lesionString(details)).isEqualTo(expected)
+        }
+
+        @Test
         fun `Should correctly sort lesions in lesion object`() {
             val details = TumorDetails(
                 hasBoneLesions = true,
@@ -144,8 +154,7 @@ class TumorDetailsInterpreterTest {
             val expected = TumorDetailsInterpreter.Lesions(
                 nonLymphNodeLesions = listOf("Bone", "CNS"),
                 lymphNodeLesions = listOf("Lymph nodes (inguinal, mediastinal)"),
-                suspectedCategorizedLesions = listOf("Lung (suspected)"),
-                suspectedOtherLesions = listOf("Adrenal gland (suspected)"),
+                suspectedLesions = listOf("Lung (suspected)", "Adrenal gland (suspected)"),
                 negativeCategories = listOf("Liver"),
                 unknownLesions = listOf("Brain")
             )

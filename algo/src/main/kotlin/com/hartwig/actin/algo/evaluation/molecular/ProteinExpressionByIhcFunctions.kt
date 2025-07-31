@@ -42,11 +42,17 @@ class ProteinExpressionByIhcFunctions(
             }
 
             EvaluationResult.PASS in evaluationsVersusReference -> {
-                EvaluationFactory.pass("$protein has expression of $comparisonText $referenceExpressionLevel by IHC")
+                EvaluationFactory.pass(
+                    "$protein has expression of $comparisonText $referenceExpressionLevel by IHC",
+                    inclusionEvents = setOf("IHC $protein expression")
+                )
             }
 
             EvaluationResult.UNDETERMINED in evaluationsVersusReference || hasPositiveOrNegativeResult -> {
-                EvaluationFactory.undetermined("Undetermined if $protein expression is $comparisonText $referenceExpressionLevel by IHC")
+                EvaluationFactory.warn(
+                    "Undetermined if $protein expression is $comparisonText $referenceExpressionLevel by IHC",
+                    inclusionEvents = setOf("Potential IHC $protein expression")
+                )
             }
 
             else -> EvaluationFactory.fail("$protein expression not $comparisonText $referenceExpressionLevel by IHC")

@@ -27,13 +27,15 @@
     "biopsyLocation": "Lung"
   },
   "clinicalStatus": {
-    "who": 2,
     "infectionStatus": {
       "hasActiveInfection": false,
       "description": null
     },
     "lvef": 0.5,
     "hasComplications": true
+  },
+  "performanceStatus": {
+    "latestWho": 2
   },
   "oncologicalHistory": [
     {
@@ -473,7 +475,7 @@
   "molecularHistory": {
     "molecularTests": [
       {
-        "specification": {
+        "targetSpecification": {
           "geneTargetMap": []
         },
         "experimentType": "PANEL",

@@ -85,7 +85,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
             EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
-            EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
+            EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to genesFromSetMeetMrnaExpressionRequirementsCreator(),
             EligibilityRule.LOSS_OF_PROTEIN_X_BY_IHC to proteinIsLostByIhcCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIhcCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIhcCreator(),
@@ -382,7 +382,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun anyGeneFromSetIsNotExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
-            AnyGeneFromSetIsNotExpressed(maxMolecularTestAge(), geneSet)
+            AnyGeneFromSetIsNotExpressed(geneSet)
+        }
+    }
+
+    private fun genesFromSetMeetMrnaExpressionRequirementsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function).geneNames
+            GenesMeetSpecificMrnaExpressionRequirements(genes)
         }
     }
 

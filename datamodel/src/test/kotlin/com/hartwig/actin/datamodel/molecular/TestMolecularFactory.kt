@@ -38,6 +38,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
+import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
@@ -63,7 +65,7 @@ object TestMolecularFactory {
 
     fun createMinimalTestPanelRecord(): PanelRecord {
         return PanelRecord(
-            specification = PanelSpecification(emptyMap()),
+            targetSpecification = PanelTargetSpecification(emptyMap()),
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = "minimal panel",
             date = null,
@@ -91,13 +93,13 @@ object TestMolecularFactory {
             immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
             date = null,
             pharmaco = emptySet(),
-            specification = null
+            targetSpecification = null
         )
     }
 
     fun createProperTestPanelRecord(): PanelRecord {
         return createMinimalTestPanelRecord().copy(
-            specification = PanelSpecification(
+            targetSpecification = PanelTargetSpecification(
                 mapOf(
                     "BRAF" to listOf(MolecularTestTarget.MUTATION),
                     "PTEN" to listOf(MolecularTestTarget.MUTATION)
@@ -125,7 +127,7 @@ object TestMolecularFactory {
 
     fun createExhaustiveTestPanelRecord(): PanelRecord {
         return createProperTestPanelRecord().copy(
-            specification = PanelSpecification(setOf(
+            targetSpecification = PanelTargetSpecification(setOf(
                 "BRAF",
                 "PTEN",
                 "MYC",
@@ -158,7 +160,7 @@ object TestMolecularFactory {
     }
 
     fun panelSpecifications(genes: Set<String>, targets: List<MolecularTestTarget> = listOf(MolecularTestTarget.MUTATION)) =
-        PanelSpecification(genes.associateWith { targets })
+        PanelTargetSpecification(genes.associateWith { targets })
 
     private fun createProperTestCharacteristics(): MolecularCharacteristics {
         return MolecularCharacteristics(
@@ -426,6 +428,17 @@ object TestMolecularFactory {
         fusedExonDown = 20,
     )
 
+    fun createMinimalVirus() = Virus(
+        name = "",
+        type = VirusType.OTHER,
+        isReliable = false,
+        integrations = null,
+        isReportable = false,
+        event = "",
+        driverLikelihood = null,
+        evidence = TestClinicalEvidenceFactory.createEmpty(),
+    )
+
     private fun createProperTestImmunology(): MolecularImmunology {
         return MolecularImmunology(
             isReliable = true,
@@ -611,7 +624,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalDisruption(): Disruption {
+    fun createMinimalDisruption(): Disruption {
         return Disruption(
             type = DisruptionType.INS,
             junctionCopyNumber = 0.0,
@@ -630,22 +643,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalCopyNumber(): CopyNumber {
-        return CopyNumber(
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
-            otherImpacts = emptySet(),
-            isReportable = false,
-            isAssociatedWithDrugResistance = false,
-            event = "",
-            driverLikelihood = DriverLikelihood.LOW,
-            evidence = TestClinicalEvidenceFactory.createEmpty(),
-            gene = "",
-            geneRole = GeneRole.UNKNOWN,
-            proteinEffect = ProteinEffect.UNKNOWN
-        )
-    }
-
-    fun minimalHomozygousDisruption(): HomozygousDisruption {
+    fun createMinimalHomozygousDisruption(): HomozygousDisruption {
         return HomozygousDisruption(
             isReportable = false,
             event = "",
@@ -655,19 +653,6 @@ object TestMolecularFactory {
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = false
-        )
-    }
-
-    fun minimalVirus(): Virus {
-        return Virus(
-            name = "",
-            type = VirusType.OTHER,
-            isReliable = false,
-            integrations = 0,
-            isReportable = false,
-            event = "",
-            driverLikelihood = DriverLikelihood.LOW,
-            evidence = TestClinicalEvidenceFactory.createEmpty()
         )
     }
 

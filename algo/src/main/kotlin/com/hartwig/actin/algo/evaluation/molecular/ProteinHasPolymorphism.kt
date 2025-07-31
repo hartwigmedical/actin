@@ -8,6 +8,9 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class ProteinHasPolymorphism(private val protein: String, private val polymorphism: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has $protein polymorphism $polymorphism")
+        return EvaluationFactory.undetermined(
+            "Undetermined if protein $protein has polymorphism $polymorphism",
+            isMissingMolecularResultForEvaluation = true
+        )
     }
 }

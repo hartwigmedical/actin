@@ -38,14 +38,14 @@ class CopyNumberLookupTest {
         val del = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build()
         val knownCopyNumbers = listOf(amp, del)
 
-        val homDisruptionGene1 = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = "gene 1")
-        val homDisruptionGene2 = TestMolecularFactory.minimalHomozygousDisruption().copy(gene = "gene 2")
+        val homDisruptionGene1 = TestMolecularFactory.createMinimalHomozygousDisruption().copy(gene = "gene 1")
+        val homDisruptionGene2 = TestMolecularFactory.createMinimalHomozygousDisruption().copy(gene = "gene 2")
         assertThat(CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene1)).isEqualTo(del)
         assertThat(CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene2)).isNull()
     }
 
     private fun create(gene: String, copyNumberType: CopyNumberType): CopyNumber {
-        return TestMolecularFactory.minimalCopyNumber().copy(
+        return TestMolecularFactory.createMinimalCopyNumber().copy(
             gene = gene,
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(copyNumberType)
         )

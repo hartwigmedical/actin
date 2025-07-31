@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.ihcTest
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.PatientRecord
@@ -48,43 +48,45 @@ class ProteinExpressionByIhcFunctionsTest {
     @Test
     fun `Should pass when ihc test above requested value in sufficient function`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreValue = referenceLevel.plus(1.0)))
-        assertEvaluation(EvaluationResult.PASS, sufficientFunction.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.PASS, sufficientFunction.evaluate(record))
     }
 
     @Test
     fun `Should be undetermined when unclear if above requested value in sufficient function due to comparator`() {
         val test =
             MolecularTestFactory.ihcTest(scoreValue = referenceLevel.minus(1).toDouble(), scoreValuePrefix = ValueComparison.LARGER_THAN)
-        assertEvaluation(EvaluationResult.UNDETERMINED, sufficientFunction.evaluate(MolecularTestFactory.withIhcTests(test)))
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, sufficientFunction.evaluate(MolecularTestFactory.withIhcTests(test)))
     }
 
     @Test
     fun `Should pass when ihc test below requested value in limited function`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreValue = referenceLevel.minus(1.0)))
-        assertEvaluation(EvaluationResult.PASS, limitedFunction.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.PASS, limitedFunction.evaluate(record))
     }
 
     @Test
     fun `Should be undetermined when unclear if below requested value in limited function due to comparator`() {
         val test =
             MolecularTestFactory.ihcTest(scoreValue = referenceLevel.plus(1).toDouble(), scoreValuePrefix = ValueComparison.SMALLER_THAN)
-        assertEvaluation(EvaluationResult.UNDETERMINED, limitedFunction.evaluate(MolecularTestFactory.withIhcTests(test)))
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, limitedFunction.evaluate(MolecularTestFactory.withIhcTests(test)))
     }
 
     @Test
     fun `Should pass when ihc test equal to requested value in exact function`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreValue = referenceLevel.toDouble()))
-        assertEvaluation(EvaluationResult.PASS, exactFunction.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.PASS, exactFunction.evaluate(record))
     }
 
     @Test
     fun `Should fail when prior test contains exact result with prefix`() {
         val priorTest = ihcTest(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 2.0)
-        assertEvaluation(EvaluationResult.FAIL, exactFunction.evaluate(MolecularTestFactory.withIhcTests(priorTest)))
+        assertMolecularEvaluation(EvaluationResult.FAIL, exactFunction.evaluate(MolecularTestFactory.withIhcTests(priorTest)))
     }
 
     private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
-        return listOf(limitedFunction, sufficientFunction, exactFunction).forEach { assertEvaluation(expected, it.evaluate(record)) }
+        return listOf(limitedFunction, sufficientFunction, exactFunction).forEach {
+            assertMolecularEvaluation(expected, it.evaluate(record))
+        }
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =

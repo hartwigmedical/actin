@@ -13,6 +13,10 @@ object EvaluationAssert {
         } else {
             assertThat(actual.inclusionMolecularEvents).isEmpty()
         }
+
+        if (actual.result == EvaluationResult.UNDETERMINED) {
+            assertThat(actual.isMissingMolecularResultForEvaluation).isTrue
+        }
     }
 
     fun assertEvaluation(expected: EvaluationResult, actual: Evaluation) {

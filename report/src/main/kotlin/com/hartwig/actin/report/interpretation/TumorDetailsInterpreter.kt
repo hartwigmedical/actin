@@ -10,8 +10,7 @@ object TumorDetailsInterpreter {
     data class Lesions(
         val nonLymphNodeLesions: List<String>,
         val lymphNodeLesions: List<String>,
-        val suspectedCategorizedLesions: List<String>,
-        val suspectedOtherLesions: List<String>,
+        val suspectedLesions: List<String>,
         val negativeCategories: List<String>,
         val unknownLesions: List<String>
     )
@@ -24,7 +23,7 @@ object TumorDetailsInterpreter {
 
     fun lesionString(tumor: TumorDetails): String {
         return with(classifyLesions(tumor)) {
-            (nonLymphNodeLesions + lymphNodeLesions + suspectedCategorizedLesions + suspectedOtherLesions)
+            (nonLymphNodeLesions + lymphNodeLesions + suspectedLesions)
                 .joinToString(", ")
                 .ifEmpty { Formats.VALUE_UNKNOWN }
         }
@@ -74,11 +73,14 @@ object TumorDetailsInterpreter {
             it.lowercase().startsWith(TumorDetails.LYMPH_NODE.lowercase())
         }
 
+        val (lymphSuspected, nonLymphSuspected) = (suspectedCategorizedLesions + suspectedOtherLesions).partition {
+            it.lowercase() in setOf("lymph node (suspected)", "lymph nodes (suspected)")
+        }
+
         return Lesions(
             nonLymphNodeLesions,
             lymphNodeLesionsString(lymphNodeLesions),
-            suspectedCategorizedLesions,
-            suspectedOtherLesions,
+            nonLymphSuspected.plus(if (lymphSuspected.isNotEmpty()) listOf("Lymph nodes (suspected)") else emptyList()),
             negativeCategorizedLesions,
             unknownLesions
         )
