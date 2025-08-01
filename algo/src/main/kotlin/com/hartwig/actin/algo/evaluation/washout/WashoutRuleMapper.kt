@@ -31,6 +31,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X_WITHIN_Y_WEEKS to hasRecentlyReceivedRadiotherapyToSomeBodyLocationCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS to hasRecentlyReceivedAnyCancerTherapyCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS to hasRecentlyReceivedAnyCancerTherapyButSomeCreator(),
+            EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_DRUGS_X_WITHIN_Y_WEEKS to hasRecentlyReceivedAnyCancerTherapyButSomeDrugsCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES to hasRecentlyReceivedAnyCancerTherapyWithHalfLifeCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES to hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator(),
         )
@@ -73,7 +74,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         mappedCategories: Map<String, Set<AtcLevel>>, minWeeks: Int
     ): EvaluationFunction {
         val (interpreter, minDate) = createInterpreterForWashout(minWeeks, null, referenceDateProvider().date())
-        return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), interpreter, minDate)
+        return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), emptySet(), interpreter, minDate)
     }
 
     private fun hasRecentlyReceivedTrialMedicationCreator(): FunctionCreator {
@@ -124,28 +125,42 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedAnyCancerTherapyFunction(minWeeks: Int): EvaluationFunction {
         val (interpreter, minDate) = createInterpreterForWashout(minWeeks, null, referenceDateProvider().date())
-        return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, emptyMap(), interpreter, minDate)
+        return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, emptyMap(), emptySet(), interpreter, minDate)
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (mappedCategories, minWeeks) = functionInputResolver().createManyMedicationCategoriesOneIntegerInput(function)
-            createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, minWeeks)
+            createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, emptySet(), minWeeks)
+        }
+    }
+
+    private fun hasRecentlyReceivedAnyCancerTherapyButSomeDrugsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (drugs, minWeeks) = functionInputResolver().createManyDrugsOneIntegerInput(function)
+            createReceivedAnyCancerTherapyButSomeFunction(emptyMap(), drugs, minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (mappedCategories, minWeeks, _) = functionInputResolver().createManyMedicationCategoriesTwoIntegersInput(function)
-            createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, minWeeks)
+            createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, emptySet(), minWeeks)
         }
     }
 
     private fun createReceivedAnyCancerTherapyButSomeFunction(
         mappedIgnoredCategories: Map<String, Set<AtcLevel>>,
+        drugsToIgnore: Set<Drug>,
         minWeeks: Int
     ): EvaluationFunction {
         val (interpreter, minDate) = createInterpreterForWashout(minWeeks, null, referenceDateProvider().date())
-        return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter, minDate)
+        return HasRecentlyReceivedCancerTherapyOfCategory(
+            antiCancerCategories,
+            mappedIgnoredCategories,
+            drugsToIgnore,
+            interpreter,
+            minDate
+        )
     }
 }
