@@ -12,6 +12,7 @@ import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
+import java.time.LocalDate
 import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentType
 
 private const val ONCO_PANEL = "OncoPanel"
@@ -43,7 +44,7 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record),
             targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
-                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL))
+                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL, LocalDate.of(2024, 12, 9)))
             } else null
         )
     }
