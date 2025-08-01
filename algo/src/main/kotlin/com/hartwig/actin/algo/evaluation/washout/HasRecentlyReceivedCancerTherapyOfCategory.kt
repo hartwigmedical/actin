@@ -126,8 +126,9 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = DateComparison.isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
 
-            val drugsNotIgnored = treatmentHistoryEntry.allTreatments()
-                .any { treatment -> (treatment as? DrugTreatment)?.drugs?.any { it !in drugsToIgnore } == true }
+            val drugsNotIgnored = !(treatmentHistoryEntry.allTreatments()
+                .any { treatment -> (treatment as? DrugTreatment)?.drugs?.all { it in drugsToIgnore } == true })
+
 
             val matchingCategories = treatmentHistoryEntry.categories().intersect(treatmentCategoriesToFind)
             val matchingTypes = treatmentHistoryEntry.allTreatments().flatMap(Treatment::types).toSet().intersect(drugTypesToFind)
