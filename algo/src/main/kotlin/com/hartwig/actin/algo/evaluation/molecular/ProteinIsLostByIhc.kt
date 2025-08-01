@@ -2,29 +2,36 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class ProteinIsLostByIhc(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = IhcTestFilter.allIhcTestsForProtein(record.ihcTests, protein)
+        val ihcTestEvaluation = IhcTestEvaluation.create(protein, record.ihcTests)
 
         return when {
-            ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "loss" } -> {
-                EvaluationFactory.pass("$protein is lost by IHC", inclusionEvents = setOf("IHC $protein loss"))
-            }
-
-            ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() != "no loss" } -> {
-                EvaluationFactory.warn(
-                    "$protein IHC test(s) available but undetermined if $protein is lost",
-                    inclusionEvents = setOf("Potential IHC $protein loss")
+            ihcTestEvaluation.filteredTests.isEmpty() -> {
+                EvaluationFactory.undetermined(
+                    "No $protein IHC test result",
+                    isMissingMolecularResultForEvaluation = true
                 )
             }
 
-            ihcTests.isNotEmpty() -> EvaluationFactory.fail("$protein is not lost by IHC")
+            ihcTestEvaluation.hasCertainNegativeResultsForItem() -> {
+                EvaluationFactory.pass(
+                    "$protein is lost by IHC",
+                    inclusionEvents = setOf("IHC $protein loss")
+                )
+            }
 
-            else -> EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
+            !ihcTestEvaluation.hasPossibleNegativeResultsForItem() -> EvaluationFactory.fail("$protein is not lost by IHC")
+
+            else -> EvaluationFactory.warn(
+                "Undetermined if $protein IHC result indicates $protein loss by IHC",
+                inclusionEvents = setOf("Potential IHC $protein loss")
+            )
         }
     }
 }

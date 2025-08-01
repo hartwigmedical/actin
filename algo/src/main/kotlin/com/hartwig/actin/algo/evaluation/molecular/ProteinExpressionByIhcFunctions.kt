@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.datamodel.PatientRecord
@@ -20,15 +21,14 @@ class ProteinExpressionByIhcFunctions(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = IhcTestFilter.allIhcTestsForProtein(record.ihcTests, protein)
-        val evaluationsVersusReference = ihcTests.mapNotNull { ihcTest ->
+        val ihcTestEvaluation = IhcTestEvaluation.create(protein, record.ihcTests)
+
+        val evaluationsVersusReference = ihcTestEvaluation.filteredTests.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue -> evaluateValue(ihcTest, scoreValue) }
         }.toSet()
 
-        val hasPositiveOrNegativeResult = ihcTests.any {
-            val scoreText = it.scoreText?.lowercase()
-            scoreText == "positive" || scoreText == "negative"
-        }
+        val hasPositiveOrNegativeResult =
+            ihcTestEvaluation.hasCertainPositiveResultsForItem() || ihcTestEvaluation.hasCertainNegativeResultsForItem()
 
         val comparisonText = when (comparisonType) {
             IhcExpressionComparisonType.LIMITED -> "at most"
@@ -37,6 +37,10 @@ class ProteinExpressionByIhcFunctions(
         }
 
         return when {
+            ihcTestEvaluation.filteredTests.isEmpty() -> {
+                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
+            }
+
             EvaluationResult.PASS in evaluationsVersusReference -> {
                 EvaluationFactory.pass(
                     "$protein has expression of $comparisonText $referenceExpressionLevel by IHC",
@@ -51,13 +55,7 @@ class ProteinExpressionByIhcFunctions(
                 )
             }
 
-            ihcTests.isEmpty() -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
-            }
-
-            else -> {
-                EvaluationFactory.fail("$protein expression not $comparisonText $referenceExpressionLevel by IHC")
-            }
+            else -> EvaluationFactory.fail("$protein expression not $comparisonText $referenceExpressionLevel by IHC")
         }
     }
 
