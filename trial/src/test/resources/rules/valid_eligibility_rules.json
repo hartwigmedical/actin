@@ -1816,6 +1816,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_DRUGS_X_WITHIN_Y_WEEKS",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES",
     "usedStatus": "UNUSED"
   },

@@ -42,13 +42,14 @@ data class TreatmentAssessmentExtended(
 class HasRecentlyReceivedCancerTherapyOfCategory(
     private val categories: Map<String, Set<AtcLevel>>,
     private val categoriesToIgnore: Map<String, Set<AtcLevel>>,
+    private val drugsToIgnore: Set<Drug>,
     private val interpreter: MedicationStatusInterpreter,
     private val minDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val categoryNames: Set<String> = categories.keys - categoriesToIgnore.keys
-        val treatmentAssessment = assessTreatmentHistory(record, categoryNames)
+        val treatmentAssessment = assessTreatmentHistory(record, categoryNames, drugsToIgnore)
         val matchingTreatmentFound =
             treatmentAssessment.hasHadValidTreatment || treatmentAssessment.hasInconclusiveDate || treatmentAssessment.hasHadTrialAfterMinDate
 
@@ -100,13 +101,21 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             .groupBy({ it.first }, { it.second })
         val (foundMedicationCategories, foundMedicationNames) = activeMedications.flatMap { medication ->
             medication.allLevels().flatMap {
-                categoriesByLevel[it]?.map { category -> category to (medication.drug?.name ?: medication.name) } ?: emptyList()
+                if (medication.drug != null && medication.drug in drugsToIgnore) {
+                    emptyList()
+                } else {
+                    categoriesByLevel[it]?.map { category -> category to (medication.drug?.name ?: medication.name) } ?: emptyList()
+                }
             }
         }.unzip()
         return Pair(foundMedicationCategories, foundMedicationNames)
     }
 
-    private fun assessTreatmentHistory(record: PatientRecord, categoryNames: Set<String>): TreatmentAssessmentExtended {
+    private fun assessTreatmentHistory(
+        record: PatientRecord,
+        categoryNames: Set<String>,
+        drugsToIgnore: Set<Drug>
+    ): TreatmentAssessmentExtended {
         val categoryToDrugTypes = MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.filter { categoryNames.contains(it.key) }
         val drugTypesToFind = categoryToDrugTypes.flatMap { it.value }.toSet()
 
@@ -117,9 +126,12 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = DateComparison.isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
 
+            val drugsNotIgnored = !(treatmentHistoryEntry.allTreatments()
+                .any { treatment -> (treatment as? DrugTreatment)?.drugs?.all { it in drugsToIgnore } == true })
+
             val matchingCategories = treatmentHistoryEntry.categories().intersect(treatmentCategoriesToFind)
             val matchingTypes = treatmentHistoryEntry.allTreatments().flatMap(Treatment::types).toSet().intersect(drugTypesToFind)
-            val isMatch = matchingCategories.isNotEmpty() || matchingTypes.isNotEmpty()
+            val isMatch = (matchingCategories.isNotEmpty() || matchingTypes.isNotEmpty()) && drugsNotIgnored
 
             TreatmentAssessmentExtended(
                 hasHadValidTreatment = isMatch && startedPastMinDate == true,
@@ -145,6 +157,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                                 )
                             }
                         }
+                        .filterNot { it in drugsToIgnore }
                         .map(Drug::name)
                         .toSet()
                 }

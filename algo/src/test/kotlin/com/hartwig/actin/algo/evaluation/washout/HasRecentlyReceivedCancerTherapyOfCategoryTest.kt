@@ -6,7 +6,11 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.MedicationStatus
+import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
@@ -15,6 +19,7 @@ import java.time.LocalDate
 
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+private val DRUG_TO_IGNORE = Drug("drug to ignore", emptySet(), TreatmentCategory.CHEMOTHERAPY)
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
@@ -24,6 +29,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
             "Monoclonal antibodies and antibody drug conjugates" to setOf(AtcLevel(code = "second category to find", name = ""))
         ),
         mapOf("categories to ignore" to setOf(AtcLevel(code = "category to ignore", name = ""))),
+        setOf(DRUG_TO_IGNORE),
         INTERPRETER,
         REFERENCE_DATE
     )
@@ -100,6 +106,20 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     }
 
     @Test
+    fun `Should fail if only matching medication contains drug to ignore`() {
+        val medications = listOf(
+            TestMedicationFactory.createMinimal().copy(
+                atc = AtcTestFactory.atcClassification("category to find"),
+                stopDate = REFERENCE_DATE.plusDays(1),
+                name = "drug to ignore",
+                status = MedicationStatus.ACTIVE,
+                drug = DRUG_TO_IGNORE
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
+
+    @Test
     fun `Should be undetermined when treatment history entry has correct category but inconclusive date`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.minusDays(1)))
@@ -168,6 +188,35 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+        )
+    }
+
+    @Test
+    fun `Should fail if matching treatment history entry only contains drugs to ignore`() {
+        val treatments = DrugTreatment(name = "to ignore", drugs = setOf(DRUG_TO_IGNORE))
+        val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList()))
+        )
+    }
+
+    @Test
+    fun `Should pass if matching treatment history entry contains drugs to ignore but also other drugs`() {
+        val otherDrug = Drug("other drug", emptySet(), TreatmentCategory.CHEMOTHERAPY)
+        val treatments = DrugTreatment(name = "to ignore and other drug", drugs = setOf(DRUG_TO_IGNORE, otherDrug))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                startYear = REFERENCE_DATE.year,
+                startMonth = REFERENCE_DATE.plusMonths(1).monthValue,
+                stopYear = REFERENCE_DATE.year,
+                stopMonth = REFERENCE_DATE.plusMonths(2).monthValue
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList()))
         )
     }
 }
