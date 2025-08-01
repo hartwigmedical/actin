@@ -107,7 +107,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     @Test
     fun `Should fail if only matching medication contains drug to ignore`() {
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.minusDays(1)).copy(drug = DRUG_TO_IGNORE))
+        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)).copy(drug = DRUG_TO_IGNORE))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 
