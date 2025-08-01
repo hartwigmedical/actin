@@ -2,19 +2,21 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.molecular.panel.PanelSpecifications
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
+import java.time.LocalDate
 import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentType
 
 private const val ONCO_PANEL = "OncoPanel"
+private val ONCO_PANEL_DATE = LocalDate.of(2024, 12, 9)
 
 class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpecifications: PanelSpecifications) :
     MolecularExtractor<OrangeRecord, MolecularRecord> {
@@ -43,7 +45,7 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record),
             targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
-                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL))
+                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL, ONCO_PANEL_DATE))
             } else null
         )
     }
