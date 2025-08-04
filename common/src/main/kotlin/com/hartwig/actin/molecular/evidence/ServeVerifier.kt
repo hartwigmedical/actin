@@ -16,9 +16,10 @@ object ServeVerifier {
     }
 
     private fun verifyNoCombinedMolecularProfiles(serveRecord: ServeRecord) {
+        val hasCombinedEvidence = serveRecord.evidences().any { evidence -> isCombinedProfile(evidence.molecularCriterium()) }
         val hasCombinedTrials = serveRecord.trials().any { trial -> trial.anyMolecularCriteria().any { isCombinedProfile(it) } }
 
-        if (hasCombinedTrials) {
+        if (hasCombinedEvidence || hasCombinedTrials) {
             throw IllegalStateException("SERVE record contains combined profiles")
         }
     }

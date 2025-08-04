@@ -10,12 +10,23 @@ object ServeCleaner {
 
     fun cleanServeDatabase(database: ServeDatabase): ServeDatabase {
         val cleanedRecords = database.records().mapValues { (_, record) ->
-            cleanCombinedTrials(record)
+            cleanCombinedTrials(cleanCombinedEvidences(record))
         }
 
         return ImmutableServeDatabase.builder()
             .from(database)
             .records(cleanedRecords)
+            .build()
+    }
+
+    private fun cleanCombinedEvidences(record: ServeRecord): ServeRecord {
+        val cleanedEvidences = record.evidences().filterNot { evidence ->
+            ServeVerifier.isCombinedProfile(evidence.molecularCriterium())
+        }
+
+        return ImmutableServeRecord.builder()
+            .from(record)
+            .evidences(cleanedEvidences)
             .build()
     }
 

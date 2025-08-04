@@ -33,4 +33,28 @@ class ServeCleanerTest {
             assertThat(record.trials()).isEmpty()
         }
     }
+
+    @Test
+    fun `Should completely remove evidence containing combined criteria`() {
+        val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
+        val database = createServeDatabase(evidence, TestServeTrialFactory.createTrialForGene())
+
+        val cleanDatabase = ServeCleaner.cleanServeDatabase(database)
+
+        cleanDatabase.records().values.forEach { record ->
+            assertThat(record.evidences()).isEmpty()
+        }
+    }
+
+    @Test
+    fun `Should retain evidences with simple criteria`() {
+        val evidence = TestServeEvidenceFactory.create(molecularCriterium = SINGLE_PROFILE_1)
+        val database = createServeDatabase(evidence, TestServeTrialFactory.createTrialForGene())
+        val cleanDatabase = ServeCleaner.cleanServeDatabase(database)
+        cleanDatabase.records().values.forEach { record ->
+            assertThat(record.evidences().size).isEqualTo(1)
+            assertThat(record.evidences().first().molecularCriterium()).isEqualTo(SINGLE_PROFILE_1)
+        }
+
+    }
 }
