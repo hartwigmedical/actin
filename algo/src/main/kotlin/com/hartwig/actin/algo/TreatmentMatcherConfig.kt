@@ -21,7 +21,7 @@ data class TreatmentMatcherConfig(
     val personalizationDataPath: String?,
     val treatmentEfficacyPredictionJson: String?,
     val serveDirectory: String,
-    val usedCombinedProfiles: Boolean,
+    val usedCombinedProfilesEfficacyEvidence: Boolean,
     val outputDirectory: String,
     val runHistorically: Boolean,
     val overridesYaml: String?
@@ -40,7 +40,7 @@ data class TreatmentMatcherConfig(
         private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
         private const val TREATMENT_EFFICACY_PREDICTION_JSON = "treatment_efficacy_prediction_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
-        private const val USED_COMBINED_PROFILES: String = "used_combined_profiles"
+        private const val USED_COMBINED_PROFILES_EFFICACY_EVIDENCE: String = "used_combined_profiles_efficacy_evidence"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
         private const val TRIAL_SOURCE = "trial_source"
@@ -58,7 +58,7 @@ data class TreatmentMatcherConfig(
             options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
             options.addOption(TREATMENT_EFFICACY_PREDICTION_JSON, true, "Path to treatment efficacy prediction JSON file")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
-            options.addOption(USED_COMBINED_PROFILES, true, "If set, the combined profiles from the SERVE database where filtered out")
+            options.addOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE, true, "If set, the combined profiles for the efficacy evidence from the SERVE database where filtered out")
 
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to")
             options.addOption(
@@ -98,7 +98,7 @@ data class TreatmentMatcherConfig(
                 personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
                 treatmentEfficacyPredictionJson = ApplicationConfig.optionalFile(cmd, TREATMENT_EFFICACY_PREDICTION_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
-                usedCombinedProfiles = cmd.hasOption(USED_COMBINED_PROFILES),
+                usedCombinedProfilesEfficacyEvidence = cmd.hasOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 runHistorically = runHistorically,
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)

@@ -8,8 +8,8 @@ import com.hartwig.serve.datamodel.serialization.ServeJson
 
 object ServeLoader {
 
-    fun loadServeDatabase(jsonFilePath: String, usedCombinedProfiles: Boolean): ServeDatabase {
-        val serveDatabase = cleanServeDatabase(usedCombinedProfiles, ServeJson.read(jsonFilePath))
+    fun loadServeDatabase(jsonFilePath: String, usedCombinedProfilesEfficacyEvidence: Boolean): ServeDatabase {
+        val serveDatabase = cleanServeDatabase(usedCombinedProfilesEfficacyEvidence, ServeJson.read(jsonFilePath))
 
         ServeVerifier.verifyServeDatabase(serveDatabase)
 
