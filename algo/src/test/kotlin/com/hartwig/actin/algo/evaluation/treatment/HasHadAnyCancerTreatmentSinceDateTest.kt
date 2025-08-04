@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
@@ -19,20 +18,35 @@ private val MIN_DATE = LocalDate.of(2024, 2, 9)
 private val RECENT_DATE = MIN_DATE.plusMonths(3)
 private val OLDER_DATE = MIN_DATE.minusMonths(3)
 private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
+private val CATEGORY_TO_IGNORE = TreatmentCategory.TARGETED_THERAPY
 private val TYPES_TO_IGNORE = setOf(DrugType.ALK_INHIBITOR)
 private val CHEMOTHERAPY_TREATMENT = TreatmentTestFactory.drugTreatment(
     name = "Chemotherapy", category = TreatmentCategory.CHEMOTHERAPY, types = setOf(DrugType.ALKYLATING_AGENT)
 )
 private val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.drugTreatment(
-    name = "Immunotherapy", category = TreatmentCategory.CHEMOTHERAPY, types = setOf(DrugType.ALKYLATING_AGENT)
+    name = "Immunotherapy", category = TreatmentCategory.IMMUNOTHERAPY, types = setOf(DrugType.PD_1_PD_L1_ANTIBODY)
 )
 
 class HasHadAnyCancerTreatmentSinceDateTest {
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
-    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, TYPES_TO_IGNORE, false)
+    private val function = HasHadAnyCancerTreatmentSinceDate(
+        MIN_DATE,
+        MONTHS_AGO,
+        setOf(ATC_LEVELS),
+        interpreter,
+        Pair(CATEGORY_TO_IGNORE, TYPES_TO_IGNORE),
+        false
+    )
     private val functionOnlySystemic =
-        HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, TYPES_TO_IGNORE, true)
+        HasHadAnyCancerTreatmentSinceDate(
+            MIN_DATE,
+            MONTHS_AGO,
+            setOf(ATC_LEVELS),
+            interpreter,
+            Pair(CATEGORY_TO_IGNORE, TYPES_TO_IGNORE),
+            true
+        )
 
     @Test
     fun `Should fail when oncological history is empty`() {
@@ -75,6 +89,45 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 TYPES_TO_IGNORE.first().display()
             }"
         )
+    }
+
+
+    @Test
+    fun `Should fail when some prior treatment is given after the minimal allowed date but is ignored type`() {
+        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = listOf(
+                        TreatmentTestFactory.drugTreatment(
+                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPES_TO_IGNORE
+                        )
+                    ),
+                    stopYear = RECENT_DATE.year,
+                    stopMonth = RECENT_DATE.monthValue
+                )
+            )
+        )
+        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+    }
+
+    @Test
+    fun `Should fail when some prior treatment is given after the minimal allowed date but has non-ignore and ignored type`() {
+        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = listOf(
+                        TreatmentTestFactory.drugTreatment(
+                            name = "to ignore and non-ignore",
+                            category = TreatmentCategory.TARGETED_THERAPY,
+                            types = TYPES_TO_IGNORE + DrugType.ROS1_INHIBITOR
+                        )
+                    ),
+                    stopYear = RECENT_DATE.year,
+                    stopMonth = RECENT_DATE.monthValue
+                )
+            )
+        )
+        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
     }
 
     @Test
@@ -133,13 +186,13 @@ class HasHadAnyCancerTreatmentSinceDateTest {
     }
 
     @Test
-    fun `Should fail when some prior treatment is given after the minimal allowed date but is ignored type`() {
+    fun `Should pass when some prior treatment is given after the minimal allowed date with category to ignore but not type to ignore`() {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
                     treatments = listOf(
                         TreatmentTestFactory.drugTreatment(
-                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPES_TO_IGNORE
+                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = setOf(DrugType.ROS1_INHIBITOR)
                         )
                     ),
                     stopYear = RECENT_DATE.year,
@@ -147,7 +200,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
     }
 
     @Test
@@ -160,11 +213,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                     stopYear = OLDER_DATE.year,
                     stopMonth = OLDER_DATE.monthValue
                 )
-            ),
-            listOf(
-                WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1))
-                    .copy(drug = Drug("drug", drugTypes = setOf(DrugType.ALKYLATING_AGENT), category = TreatmentCategory.CHEMOTHERAPY))
-            )
+            ), listOf(WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1)))
         )
         evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
     }

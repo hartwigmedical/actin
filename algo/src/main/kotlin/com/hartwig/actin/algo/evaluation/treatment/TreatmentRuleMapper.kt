@@ -239,9 +239,18 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadAnyCancerTreatmentIgnoringTypesWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (_, typesToIgnore, monthsAgo) = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+            val (categoryToIgnore, typesToIgnore, monthsAgo) = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
+                function
+            )
             val (interpreter, minDate) = createInterpreterForWashout(null, monthsAgo, referenceDate)
-            HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, antiCancerCategories, interpreter, typesToIgnore, false)
+            HasHadAnyCancerTreatmentSinceDate(
+                minDate,
+                monthsAgo,
+                antiCancerCategories,
+                interpreter,
+                Pair(categoryToIgnore, typesToIgnore),
+                false
+            )
         }
     }
 
@@ -249,7 +258,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val monthsAgo = functionInputResolver().createOneIntegerInput(function)
             val (interpreter, minDate) = createInterpreterForWashout(null, monthsAgo, referenceDate)
-            HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, antiCancerCategories, interpreter, emptySet(), onlySystemicTreatments)
+            HasHadAnyCancerTreatmentSinceDate(
+                minDate,
+                monthsAgo,
+                antiCancerCategories,
+                interpreter,
+                Pair(null, emptySet()),
+                onlySystemicTreatments
+            )
         }
     }
 

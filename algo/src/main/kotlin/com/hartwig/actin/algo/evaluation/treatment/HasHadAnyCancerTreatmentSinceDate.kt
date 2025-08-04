@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import java.time.LocalDate
 
@@ -18,7 +19,7 @@ class HasHadAnyCancerTreatmentSinceDate(
     private val monthsAgo: Int,
     private val atcLevelsToFind: Set<AtcLevel>,
     private val interpreter: MedicationStatusInterpreter,
-    private val ignoringTypes: Set<TreatmentType>,
+    private val ignoringCategoryOfTypes: Pair<TreatmentCategory?, Set<TreatmentType>>,
     private val onlySystemicTreatments: Boolean
 ) : EvaluationFunction {
 
@@ -27,14 +28,16 @@ class HasHadAnyCancerTreatmentSinceDate(
             createTreatmentHistoryEntriesFromMedications(record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
                 ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
 
+        val types = ignoringCategoryOfTypes.second
         val effectiveTreatmentHistory = (record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments)
             .filter { entry ->
-                val typesNotIgnored = entry.allTreatments().any { it.types().minus(ignoringTypes).isNotEmpty() }
-                (!onlySystemicTreatments || entry.allTreatments().any { it.isSystemic }) && typesNotIgnored
+                val treatments = entry.allTreatments().filter { treatment -> treatment.types().none { it in types } }
+                (!onlySystemicTreatments && treatments.isNotEmpty()) || treatments.any { it.isSystemic }
             }
+
         val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
 
-        val ignoringString = if (ignoringTypes.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(ignoringTypes)}" else ""
+        val ignoringString = if (types.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(types)}" else ""
 
         return when {
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, false) } -> {
