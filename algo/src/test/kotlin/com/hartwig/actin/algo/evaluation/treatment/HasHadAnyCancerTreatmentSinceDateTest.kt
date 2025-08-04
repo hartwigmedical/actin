@@ -7,6 +7,8 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -17,18 +19,20 @@ private val MIN_DATE = LocalDate.of(2024, 2, 9)
 private val RECENT_DATE = MIN_DATE.plusMonths(3)
 private val OLDER_DATE = MIN_DATE.minusMonths(3)
 private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
-val CHEMOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
-    name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
+private val TYPES_TO_IGNORE = setOf(DrugType.ALK_INHIBITOR)
+private val CHEMOTHERAPY_TREATMENT = TreatmentTestFactory.drugTreatment(
+    name = "Chemotherapy", category = TreatmentCategory.CHEMOTHERAPY, types = setOf(DrugType.ALKYLATING_AGENT)
 )
-val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
-    name = "Immunotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
+private val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.drugTreatment(
+    name = "Immunotherapy", category = TreatmentCategory.CHEMOTHERAPY, types = setOf(DrugType.ALKYLATING_AGENT)
 )
 
 class HasHadAnyCancerTreatmentSinceDateTest {
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
-    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, false)
-    private val functionOnlySystemic = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, true)
+    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, TYPES_TO_IGNORE, false)
+    private val functionOnlySystemic =
+        HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, TYPES_TO_IGNORE, true)
 
     @Test
     fun `Should fail when oncological history is empty`() {
@@ -66,7 +70,11 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         )
         val evaluation = functionOnlySystemic.evaluate(priorCancerTreatment)
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Has not received systemic anti-cancer therapy within $MONTHS_AGO months")
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Has not received systemic anti-cancer therapy within $MONTHS_AGO months ignoring ${
+                TYPES_TO_IGNORE.first().display()
+            }"
+        )
     }
 
     @Test
@@ -125,6 +133,24 @@ class HasHadAnyCancerTreatmentSinceDateTest {
     }
 
     @Test
+    fun `Should fail when some prior treatment is given after the minimal allowed date but is ignored type`() {
+        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = listOf(
+                        TreatmentTestFactory.drugTreatment(
+                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPES_TO_IGNORE
+                        )
+                    ),
+                    stopYear = RECENT_DATE.year,
+                    stopMonth = RECENT_DATE.monthValue
+                )
+            )
+        )
+        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+    }
+
+    @Test
     fun `Should pass when all prior treatment is stopped before the minimal allowed date but some medication is given after the minimal allowed date`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentsAndMedications(
@@ -134,7 +160,11 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                     stopYear = OLDER_DATE.year,
                     stopMonth = OLDER_DATE.monthValue
                 )
-            ), listOf(WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1)))
+            ),
+            listOf(
+                WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1))
+                    .copy(drug = Drug("drug", drugTypes = setOf(DrugType.ALKYLATING_AGENT), category = TreatmentCategory.CHEMOTHERAPY))
+            )
         )
         evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
     }

@@ -460,6 +460,10 @@
     "usedStatus": "UNUSED"
   },
   {
+    "eligibilityRule": "HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X_OF_TYPES_Y_WITHIN_Z_MONTHS",
+    "usedStatus": "UNUSED"
+  },
+  {
     "eligibilityRule": "HAS_HAD_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS",
     "usedStatus": "UNUSED"
   },
