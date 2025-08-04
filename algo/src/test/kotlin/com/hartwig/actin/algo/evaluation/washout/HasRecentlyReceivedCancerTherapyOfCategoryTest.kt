@@ -18,7 +18,8 @@ import java.time.LocalDate
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
 private val DRUG_TO_IGNORE = Drug("drug to ignore", emptySet(), TreatmentCategory.CHEMOTHERAPY)
-private val OTHER_DRUG = Drug("other drug", emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_MATCHING_DRUG = Drug("other drug", emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_NON_MATCHING_DRUG = Drug("other drug", emptySet(), TreatmentCategory.IMMUNOTHERAPY)
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
@@ -115,8 +116,18 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     fun `Should pass if matching medication contains drug to ignore and other drug`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medication = WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1))
-        val medications = listOf(medication.copy(drug = DRUG_TO_IGNORE), medication.copy(drug = OTHER_DRUG))
+        val medications = listOf(medication.copy(drug = DRUG_TO_IGNORE), medication.copy(drug = OTHER_MATCHING_DRUG))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun `Should fail if matching medication contains drug to ignore and other drug of non matching cancer therapy`() {
+        val medication = WashoutTestFactory.medication(stopDate = REFERENCE_DATE.plusDays(1))
+        val medications = listOf(
+            medication.copy(drug = DRUG_TO_IGNORE, atc = AtcTestFactory.atcClassification("category to find")),
+            medication.copy(drug = OTHER_NON_MATCHING_DRUG, atc = AtcTestFactory.atcClassification("not category to find"))
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 
     @Test
@@ -203,7 +214,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
     @Test
     fun `Should pass if matching treatment history entry contains drugs to ignore but also other drugs`() {
-        val treatments = DrugTreatment(name = "to ignore and other drug", drugs = setOf(DRUG_TO_IGNORE, OTHER_DRUG))
+        val treatments = DrugTreatment(name = "to ignore and other drug", drugs = setOf(DRUG_TO_IGNORE, OTHER_MATCHING_DRUG))
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(treatments),
@@ -215,6 +226,24 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList()))
+        )
+    }
+
+    @Test
+    fun `Should fail if matching treatment history entry contains drug to ignore and other drug of non matching cancer therapy`() {
+        val treatments = DrugTreatment(name = "to ignore and other drug", drugs = setOf(DRUG_TO_IGNORE, OTHER_NON_MATCHING_DRUG))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                startYear = REFERENCE_DATE.year,
+                startMonth = REFERENCE_DATE.plusMonths(1).monthValue,
+                stopYear = REFERENCE_DATE.year,
+                stopMonth = REFERENCE_DATE.plusMonths(2).monthValue
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList()))
         )
     }
