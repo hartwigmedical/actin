@@ -19,7 +19,8 @@ private val RECENT_DATE = MIN_DATE.plusMonths(3)
 private val OLDER_DATE = MIN_DATE.minusMonths(3)
 private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
 private val CATEGORY_TO_IGNORE = TreatmentCategory.TARGETED_THERAPY
-private val TYPES_TO_IGNORE = setOf(DrugType.ALK_INHIBITOR)
+private val TYPE_TO_IGNORE = setOf(DrugType.ALK_INHIBITOR)
+private val TYPE_NOT_TO_IGNORE = setOf(DrugType.ROS1_INHIBITOR)
 private val CHEMOTHERAPY_TREATMENT = TreatmentTestFactory.drugTreatment(
     name = "Chemotherapy", category = TreatmentCategory.CHEMOTHERAPY, types = setOf(DrugType.ALKYLATING_AGENT)
 )
@@ -35,7 +36,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         MONTHS_AGO,
         setOf(ATC_LEVELS),
         interpreter,
-        Pair(CATEGORY_TO_IGNORE, TYPES_TO_IGNORE),
+        Pair(CATEGORY_TO_IGNORE, TYPE_TO_IGNORE),
         false
     )
     private val functionOnlySystemic =
@@ -44,7 +45,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             MONTHS_AGO,
             setOf(ATC_LEVELS),
             interpreter,
-            Pair(CATEGORY_TO_IGNORE, TYPES_TO_IGNORE),
+            Pair(CATEGORY_TO_IGNORE, TYPE_TO_IGNORE),
             true
         )
 
@@ -86,7 +87,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessagesStrings()).containsExactly(
             "Has not received systemic anti-cancer therapy within $MONTHS_AGO months ignoring ${
-                TYPES_TO_IGNORE.first().display()
+                TYPE_TO_IGNORE.first().display()
             }"
         )
     }
@@ -99,7 +100,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 TreatmentTestFactory.treatmentHistoryEntry(
                     treatments = listOf(
                         TreatmentTestFactory.drugTreatment(
-                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPES_TO_IGNORE
+                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPE_TO_IGNORE
                         )
                     ),
                     stopYear = RECENT_DATE.year,
@@ -119,7 +120,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                         TreatmentTestFactory.drugTreatment(
                             name = "to ignore and non-ignore",
                             category = TreatmentCategory.TARGETED_THERAPY,
-                            types = TYPES_TO_IGNORE + DrugType.ROS1_INHIBITOR
+                            types = TYPE_TO_IGNORE + TYPE_NOT_TO_IGNORE
                         )
                     ),
                     stopYear = RECENT_DATE.year,
@@ -192,7 +193,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 TreatmentTestFactory.treatmentHistoryEntry(
                     treatments = listOf(
                         TreatmentTestFactory.drugTreatment(
-                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = setOf(DrugType.ROS1_INHIBITOR)
+                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPE_NOT_TO_IGNORE
                         )
                     ),
                     stopYear = RECENT_DATE.year,

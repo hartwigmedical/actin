@@ -29,9 +29,12 @@ class HasHadAnyCancerTreatmentSinceDate(
                 ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
 
         val types = ignoringCategoryOfTypes.second
+        val treatmentCategory = ignoringCategoryOfTypes.first
         val effectiveTreatmentHistory = (record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments)
             .filter { entry ->
-                val treatments = entry.allTreatments().filter { treatment -> treatment.types().none { it in types } }
+                val treatments = entry.allTreatments().filterNot { treatment ->
+                    treatment.categories().contains(treatmentCategory) && treatment.types().any { it in types }
+                }
                 (!onlySystemicTreatments && treatments.isNotEmpty()) || treatments.any { it.isSystemic }
             }
 
