@@ -18,13 +18,6 @@ steps:
     dir: 'molecular'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
 
-  - id: 'Build and push the trial image with tag'
-    name: 'europe-west4-docker.pkg.dev/hmf-build/hmf-docker/docker-tag'
-    dir: 'trial'
-    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial', '$TAG_NAME', 'Dockerfile','--build-arg', 'VERSION=$TAG_NAME' ]
-    waitFor:
-      - 'Build and push the molecular image with tag'
-
   - id: 'Build and push the algo image with tag'
     name: 'europe-west4-docker.pkg.dev/hmf-build/hmf-docker/docker-tag'
     dir: 'algo'
@@ -46,6 +39,5 @@ options:
   machineType: 'E2_HIGHCPU_8'
 images:
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular
-  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-algo
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-report
