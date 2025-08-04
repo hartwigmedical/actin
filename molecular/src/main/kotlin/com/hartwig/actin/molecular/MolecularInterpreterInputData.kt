@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
-import com.hartwig.actin.molecular.driverlikelihood.DndsModel
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -18,6 +17,7 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -61,7 +61,7 @@ object InputDataLoader {
             val deferredServeDatabase = async {
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
-                    val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
+                    val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, config.usedCombinedProfiles)
                     LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
                     serveDatabase
                 }
