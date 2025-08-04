@@ -1,11 +1,12 @@
 package com.hartwig.actin.trial.sort
 
+import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CohortMetadataComparatorTest {
-   
+
     @Test
     fun `Should sort cohort metadata`() {
         val metadata1 = metadata("A", "A First", open = true, ignore = false)
@@ -25,10 +26,9 @@ class CohortMetadataComparatorTest {
     private fun metadata(cohortId: String, description: String, open: Boolean, ignore: Boolean): CohortMetadata {
         return CohortMetadata(
             evaluable = true,
-            slotsAvailable = true,
+            cohortAvailability = CohortAvailability(slotsAvailable = true, open = open),
             cohortId = cohortId,
             description = description,
-            open = open,
             ignore = ignore
         )
     }
