@@ -101,7 +101,7 @@ class PanelFusionAnnotator(
                 sequencedFusion.exonDown?.let {
                     knownFusionCache.withinPromiscuousExonRange(
                         KnownFusionType.PROMISCUOUS_3,
-                        sequencedFusion.transcriptDown,
+                        sequencedFusion.geneDown?.let { gene -> canonicalTranscriptForGene(gene) } ?: "",
                         it,
                         it
                     )
@@ -112,7 +112,7 @@ class PanelFusionAnnotator(
                 sequencedFusion.exonUp?.let {
                     knownFusionCache.withinPromiscuousExonRange(
                         KnownFusionType.PROMISCUOUS_5,
-                        sequencedFusion.transcriptUp,
+                        sequencedFusion.geneUp?.let { gene -> canonicalTranscriptForGene(gene) } ?: "",
                         it,
                         it
                     )

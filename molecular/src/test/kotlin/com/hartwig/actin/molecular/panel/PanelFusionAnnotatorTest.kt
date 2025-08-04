@@ -113,10 +113,18 @@ class PanelFusionAnnotatorTest {
         val matchingExon = 4
         val fusionMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonDown = matchingExon)
 
+        every { ensembleDataCache.findGeneDataByName(GENE_END) } returns mockk {
+            every { geneId() } returns "geneId"
+        }
+
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
+            every { transcriptName() } returns CANONICAL_TRANSCRIPT
+        }
+
         every {
             knownFusionCache.withinPromiscuousExonRange(
                 KnownFusionType.PROMISCUOUS_3,
-                TRANSCRIPT_END,
+                CANONICAL_TRANSCRIPT,
                 matchingExon,
                 matchingExon
             )
@@ -130,10 +138,18 @@ class PanelFusionAnnotatorTest {
         val nonMatchingExon = 8
         val fusionNonMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonDown = nonMatchingExon)
 
+        every { ensembleDataCache.findGeneDataByName(GENE_END) } returns mockk {
+            every { geneId() } returns "geneId"
+        }
+
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
+            every { transcriptName() } returns CANONICAL_TRANSCRIPT
+        }
+
         every {
             knownFusionCache.withinPromiscuousExonRange(
                 KnownFusionType.PROMISCUOUS_3,
-                TRANSCRIPT_END,
+                CANONICAL_TRANSCRIPT,
                 nonMatchingExon,
                 nonMatchingExon
             )
@@ -147,10 +163,18 @@ class PanelFusionAnnotatorTest {
         val matchingExon = 4
         val fusionMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = matchingExon)
 
+        every { ensembleDataCache.findGeneDataByName(GENE_START) } returns mockk {
+            every { geneId() } returns "geneId"
+        }
+
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
+            every { transcriptName() } returns CANONICAL_TRANSCRIPT
+        }
+
         every {
             knownFusionCache.withinPromiscuousExonRange(
                 KnownFusionType.PROMISCUOUS_5,
-                TRANSCRIPT_START,
+                CANONICAL_TRANSCRIPT,
                 matchingExon,
                 matchingExon
             )
@@ -164,10 +188,18 @@ class PanelFusionAnnotatorTest {
         val nonMatchingExon = 8
         val fusionNonMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = nonMatchingExon)
 
+        every { ensembleDataCache.findGeneDataByName(GENE_START) } returns mockk {
+            every { geneId() } returns "geneId"
+        }
+
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
+            every { transcriptName() } returns CANONICAL_TRANSCRIPT
+        }
+
         every {
             knownFusionCache.withinPromiscuousExonRange(
                 KnownFusionType.PROMISCUOUS_5,
-                TRANSCRIPT_START,
+                CANONICAL_TRANSCRIPT,
                 nonMatchingExon,
                 nonMatchingExon
             )
