@@ -1,2 +1,0 @@
-trialId	referenceIds	appliesToCohorts	inclusionRule
-ACTN 2021	I-01, I-02	all	AND(IS_AT_LEAST_X_YEARS_OLD[18], HAS_METASTATIC_CANCER)
