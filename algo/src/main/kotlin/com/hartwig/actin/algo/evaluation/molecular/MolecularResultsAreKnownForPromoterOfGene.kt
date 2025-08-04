@@ -9,19 +9,16 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 class MolecularResultsAreKnownForPromoterOfGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTests, validPriorTests) = record.ihcTests
-            .filter { it.item?.contains(gene) ?: false && it.item?.lowercase()?.contains(PROMOTER) ?: false }
+        val (indeterminatePriorTests, determinatePriorTests) = record.ihcTests
+            .filter { it.item.contains(gene) && it.item.lowercase().contains("promoter") }
             .partition(IhcTest::impliesPotentialIndeterminateStatus)
 
-        if (validPriorTests.isNotEmpty()) {
-            return EvaluationFactory.pass("$gene promoter tested in prior molecular test")
-        } else if (indeterminatePriorTests.isNotEmpty()) {
-            return EvaluationFactory.undetermined("$gene promoter tested in prior molecular test but indeterminate status")
-        }
-        return EvaluationFactory.recoverableFail("$gene not tested", isMissingMolecularResultForEvaluation = true)
-    }
+        return when {
+            determinatePriorTests.isNotEmpty() -> EvaluationFactory.pass("Results for $gene promoter are available by IHC")
 
-    companion object {
-        const val PROMOTER = "promoter"
+            indeterminatePriorTests.isNotEmpty() -> EvaluationFactory.warn("Test for $gene promoter was done by IHC but indeterminate status")
+
+            else -> EvaluationFactory.recoverableFail("$gene promoter status not tested")
+        }
     }
 }

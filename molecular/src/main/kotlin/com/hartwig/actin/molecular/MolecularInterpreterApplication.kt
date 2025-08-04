@@ -7,9 +7,8 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.PanelRecord
-import com.hartwig.actin.datamodel.molecular.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
@@ -23,6 +22,7 @@ import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
 import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.panel.PanelVirusAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
@@ -124,7 +124,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
-            clinical.sequencingTests,
+            clinical,
             panelVariantAnnotator,
             panelFusionAnnotator,
             panelCopyNumberAnnotator,
@@ -149,7 +149,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     }
 
     private fun interpretSequencingMolecularTests(
-        sequencingTests: List<SequencingTest>,
+        clinical: ClinicalRecord,
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator,
         panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
@@ -165,6 +165,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 }
             },
             annotator = PanelAnnotator(
+                clinical.patient.registrationDate,
                 panelVariantAnnotator,
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
@@ -173,7 +174,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelSpecifications
             ),
             postAnnotators = listOf(panelRecordEvidenceAnnotator)
-        ).run(sequencingTests)
+        ).run(clinical.sequencingTests)
     }
 
     private fun interpretIhcMolecularTests(

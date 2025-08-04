@@ -12,7 +12,6 @@
         <module>datamodel</module>
         <module>common</module>
         <module>molecular</module>
-        <module>trial</module>
         <module>algo</module>
         <module>interpretation</module>
         <module>report</module>
@@ -42,7 +41,7 @@
         <commons.cli.version>1.5.0</commons.cli.version>
         <google.gson.version>2.10</google.gson.version>
         <apache.log4j.version>2.18.0</apache.log4j.version>
-        <slf4j-reload4j.version>1.7.36</slf4j-reload4j.version>
+        <slf4j-reload4j.version>2.0.9</slf4j-reload4j.version>
 
         <jooq.version>3.15.5</jooq.version>
         <mysqlconnector.version>8.0.31</mysqlconnector.version>
@@ -171,17 +170,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
-                <artifactId>clinical</artifactId>
-                <version>local-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig.actin</groupId>
                 <artifactId>molecular</artifactId>
-                <version>local-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig.actin</groupId>
-                <artifactId>trial</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>

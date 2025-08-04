@@ -12,8 +12,7 @@ class HasAnyHLAType(
     private val hlaAllelesToFind: Set<String>,
     maxTestAge: LocalDate? = null,
     private val matchOnHlaGroup: Boolean = false
-) :
-    MolecularEvaluationFunction(maxTestAge, true) {
+) : MolecularEvaluationFunction(maxTestAge, true) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val molecular = test as? MolecularRecord ?: return EvaluationFactory.undetermined(
@@ -22,7 +21,7 @@ class HasAnyHLAType(
         )
         val immunology = molecular.immunology
         if (!immunology.isReliable) {
-            return EvaluationFactory.undetermined("HLA typing unreliable")
+            return EvaluationFactory.undetermined("HLA typing unreliable", isMissingMolecularResultForEvaluation = true)
         }
 
         val isMatch: (HlaAllele) -> Boolean = if (matchOnHlaGroup) {
@@ -35,9 +34,10 @@ class HasAnyHLAType(
             val matchedHlaAlleles = immunology.hlaAlleles.filter(isMatch).map { it.name }
             return when {
                 matchedHlaAlleles.isNotEmpty() -> {
-                    EvaluationFactory.undetermined(
+                    EvaluationFactory.warn(
                         "Has required HLA type ${Format.concatLowercaseWithCommaAndAnd(matchedHlaAlleles)} however undetermined " +
-                                "whether allele is present in tumor"
+                                "whether allele is present in tumor",
+                        inclusionEvents = matchedHlaAlleles.map { "HLA-${it}" }.toSet()
                     )
                 }
 

@@ -7,6 +7,7 @@ data class ClinicalRecord(
     val patient: PatientDetails,
     val tumor: TumorDetails,
     val clinicalStatus: ClinicalStatus,
+    val performanceStatus: PerformanceStatus,
     val oncologicalHistory: List<TreatmentHistoryEntry>,
     val priorPrimaries: List<PriorPrimary>,
     val comorbidities: List<Comorbidity>,

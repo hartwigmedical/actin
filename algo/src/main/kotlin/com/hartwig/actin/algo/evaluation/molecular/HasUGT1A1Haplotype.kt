@@ -19,7 +19,7 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalD
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.UGT1A1 }
-            ?: return EvaluationFactory.undetermined("UGT1A1 haplotype undetermined")
+            ?: return EvaluationFactory.undetermined("UGT1A1 haplotype undetermined", isMissingMolecularResultForEvaluation = true)
 
         return if (hasUGT1A1Type(pharmaco, haplotypeToFind)) {
             EvaluationFactory.pass("Has UGT1A1 type $haplotypeToFind", inclusionEvents = setOf(haplotypeToFind))
