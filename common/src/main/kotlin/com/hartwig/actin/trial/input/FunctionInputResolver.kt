@@ -16,6 +16,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.doid.DoidModel
@@ -65,6 +66,7 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
+import com.hartwig.actin.trial.input.single.OneTreatmentResponseOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
@@ -428,6 +430,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
+                    createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(function)
+                    return true
+                }
+
                 else -> {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
@@ -703,6 +710,15 @@ class FunctionInputResolver(
     fun createManyTnmTInput(function: EligibilityFunction): Set<TnmT> {
         assertParamConfig(function, FunctionInput.MANY_TNM_T, 1)
         return toTnmTs(function.parameters.first())
+    }
+
+    fun createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(function: EligibilityFunction): OneTreatmentResponseOneTreatmentCategoryManyTypes {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES, 3)
+        return OneTreatmentResponseOneTreatmentCategoryManyTypes(
+            treatmentResponse = TreatmentResponse.fromString(parameterAsString(function, 0)),
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 1)),
+            types = toTreatmentTypeSet(function.parameters[2]),
+        )
     }
 
     fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {

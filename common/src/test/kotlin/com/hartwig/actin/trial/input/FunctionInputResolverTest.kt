@@ -18,6 +18,7 @@ import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory.createTestResolver
 import com.hartwig.actin.datamodel.clinical.AlbiGrade
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -1091,6 +1092,34 @@ class FunctionInputResolverTest {
         assertThat(resolver.createManyTnmTInput(valid)).isEqualTo(setOf(TnmT.T2A))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("T2C")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one treatment response one treatment category many types input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES)
+        val treatmentResponse = TreatmentResponse.COMPLETE_RESPONSE.toString()
+        val category = TreatmentCategory.IMMUNOTHERAPY.display()
+        val valid = create(rule, listOf(treatmentResponse, category, "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(valid)
+        assertThat(inputs.treatmentResponse).isEqualTo(TreatmentResponse.COMPLETE_RESPONSE)
+        assertThat(inputs.category).isEqualTo(TreatmentCategory.IMMUNOTHERAPY)
+        assertThat(inputs.types).isEqualTo(setOf(DrugType.ANTI_PD_L1, DrugType.ANTI_PD_1))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category)))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentResponse, category, "not a type")))).isFalse
+        assertThat(
+            resolver.hasValidInputs(
+                create(
+                    rule,
+                    listOf(treatmentResponse, "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}", category)
+                )
+            )
+        ).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment response", "not a treatment category", "test")))!!).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

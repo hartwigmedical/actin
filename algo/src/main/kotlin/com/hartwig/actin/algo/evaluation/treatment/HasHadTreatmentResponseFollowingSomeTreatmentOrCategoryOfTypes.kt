@@ -11,7 +11,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 
-class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
+class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+    private val treatmentResponses: Set<TreatmentResponse>,
     private val targetTreatments: List<Treatment>? = null,
     private val category: TreatmentCategory? = null,
     private val types: Set<TreatmentType>? = null
@@ -48,19 +49,22 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
             }
         }
 
-        val treatmentsWithResponse = targetTreatmentsToResponseMap.filterKeys { it in BENEFIT_RESPONSE_SET }.values.flatten()
-        val benefitMessage = " objective benefit from treatment"
+        val evaluateClinicalBenefit = treatmentResponses == TreatmentResponse.BENEFIT_RESPONSES
+
+        val treatmentsWithResponse = targetTreatmentsToResponseMap.filterKeys { it in treatmentResponses }.values.flatten()
+        val benefitMessage =
+            if (evaluateClinicalBenefit) " objective benefit from treatment" else "${Format.concatWithCommaAndOr(treatmentResponses.map { it.toString() })} from treatment"
         val similarDrugMessage = "receive exact treatment but received similar drugs " +
                 "(${treatmentsSimilarToTargetTreatment?.joinToString(",") { it.treatmentDisplay() }})"
         val hadSimilarTreatmentsWithPD = treatmentsSimilarToTargetTreatment.takeIf { !it.isNullOrEmpty() }
             ?.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true }
 
         return when {
-            targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == false -> {
+            evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == false -> {
                 EvaluationFactory.undetermined("Clinical benefit from treatment${treatmentDisplay()} undetermined - did not $similarDrugMessage")
             }
 
-            targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == true -> {
+            evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == true -> {
                 EvaluationFactory.fail("Did not $similarDrugMessage with PD as best response")
             }
 
@@ -72,7 +76,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
                 EvaluationFactory.pass("Has had$benefitMessage${treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))}")
             }
 
-            TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {
+            evaluateClinicalBenefit && TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
                     "Uncertain$benefitMessage" +
                             "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.STABLE_DISEASE]))} " +
@@ -80,7 +84,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
                 )
             }
 
-            TreatmentResponse.MIXED in targetTreatmentsToResponseMap -> {
+            evaluateClinicalBenefit && TreatmentResponse.MIXED in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
                     "Uncertain$benefitMessage" +
                             "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.MIXED]))} " +
@@ -110,13 +114,4 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
     }
 
     private fun treatmentsInHistory(history: List<TreatmentHistoryEntry>?) = history?.flatMap { it.allTreatments() }
-
-    companion object {
-        private val BENEFIT_RESPONSE_SET = setOf(
-            TreatmentResponse.PARTIAL_RESPONSE,
-            TreatmentResponse.NEAR_COMPLETE_RESPONSE,
-            TreatmentResponse.COMPLETE_RESPONSE,
-            TreatmentResponse.REMISSION
-        )
-    }
 }

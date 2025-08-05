@@ -12,33 +12,44 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val TARGET_CATEGORY = TreatmentCategory.CHEMOTHERAPY
+private val TARGET_TYPES = setOf(DrugType.PLATINUM_COMPOUND)
+private val CORRECT_TREATMENT = TreatmentTestFactory.drugTreatment("Correct", TARGET_CATEGORY, TARGET_TYPES)
+private val OTHER_CORRECT_TREATMENT = CORRECT_TREATMENT.copy(name = "Other correct")
+private val SIMILAR_DRUG_TO_TARGET_TREATMENT =
+    TreatmentTestFactory.treatment("Other chemo", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+private val DRUG_WITH_SAME_CATEGORY_BUT_OTHER_TYPE =
+    TreatmentTestFactory.drugTreatment("Paclitaxel", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.TAXANE))
+private val CORRECT_TREATMENT_WITH_OTHER_CATEGORY_COMBINATION = setOf(CORRECT_TREATMENT, Radiotherapy("Radiotherapy"))
+private val TARGET_TREATMENT_WITH_SAME_CATEGORY_COMBINATION =
+    setOf(CORRECT_TREATMENT, TreatmentTestFactory.treatment("Other chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY)))
+private val WRONG_SPECIFIC_TREATMENT = TreatmentTestFactory.treatment("Radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY))
+private val WRONG_CATEGORY_TREATMENT =
+    TreatmentTestFactory.drugTreatment("wrong1", TreatmentCategory.SUPPORTIVE_TREATMENT, TARGET_TYPES)
+private val WRONG_TYPE_TREATMENT = TreatmentTestFactory.drugTreatment("wrong2", TARGET_CATEGORY, setOf(DrugType.TAXANE))
+
 class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
 
-    private val TARGET_CATEGORY = TreatmentCategory.CHEMOTHERAPY
-    private val TARGET_TYPES = setOf(DrugType.PLATINUM_COMPOUND)
-    private val CORRECT_TREATMENT = TreatmentTestFactory.drugTreatment("Correct", TARGET_CATEGORY, TARGET_TYPES)
-    private val OTHER_CORRECT_TREATMENT = CORRECT_TREATMENT.copy(name = "Other correct")
-    private val SIMILAR_DRUG_TO_TARGET_TREATMENT =
-        TreatmentTestFactory.treatment("Other chemo", true, setOf(TreatmentCategory.CHEMOTHERAPY))
-    private val DRUG_WITH_SAME_CATEGORY_BUT_OTHER_TYPE =
-        TreatmentTestFactory.drugTreatment("Paclitaxel", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.TAXANE))
-    private val CORRECT_TREATMENT_WITH_OTHER_CATEGORY_COMBINATION = setOf(CORRECT_TREATMENT, Radiotherapy("Radiotherapy"))
-    private val TARGET_TREATMENT_WITH_SAME_CATEGORY_COMBINATION =
-        setOf(CORRECT_TREATMENT, TreatmentTestFactory.treatment("Other chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY)))
-    private val WRONG_SPECIFIC_TREATMENT = TreatmentTestFactory.treatment("Radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY))
-    private val WRONG_CATEGORY_TREATMENT =
-        TreatmentTestFactory.drugTreatment("wrong1", TreatmentCategory.SUPPORTIVE_TREATMENT, TARGET_TYPES)
-    private val WRONG_TYPE_TREATMENT = TreatmentTestFactory.drugTreatment("wrong2", TARGET_CATEGORY, setOf(DrugType.TAXANE))
     private val functionWithSpecificTreatments =
-        HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT))
+        HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+            treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
+            listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT)
+        )
     private val functionWithSpecificCategoryAndType =
-        HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(category = TARGET_CATEGORY, types = TARGET_TYPES)
-    private val functionWithSpecificCategory = HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(category = TARGET_CATEGORY)
+        HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+            treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
+            category = TARGET_CATEGORY,
+            types = TARGET_TYPES
+        )
+    private val functionWithSpecificCategory = HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+        treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
+        category = TARGET_CATEGORY
+    )
 
     @Test
     fun `Should throw an illegal state exception when specific treatment and category and type not specified in function`() {
         Assertions.assertThatIllegalStateException().isThrownBy {
-            HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(null, null, null)
+            HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(emptySet(), null, null, null)
                 .evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         }.withMessage("Treatment or category must be provided")
     }
