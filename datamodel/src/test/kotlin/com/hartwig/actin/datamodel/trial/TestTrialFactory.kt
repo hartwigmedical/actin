@@ -79,8 +79,10 @@ object TestTrialFactory {
         return CohortMetadata(
             cohortId = cohortId,
             evaluable = evaluable,
-            open = true,
-            slotsAvailable = true,
+            cohortAvailability = CohortAvailability(
+                open = true,
+                slotsAvailable = true
+            ),
             ignore = false,
             description = "Cohort $cohortId"
         )

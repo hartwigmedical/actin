@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
 import com.hartwig.actin.datamodel.personalization.Population
 import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
 import com.hartwig.actin.datamodel.personalization.TreatmentGroup
+import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -147,8 +148,7 @@ object TestTreatmentMatchFactory {
         return CohortMetadata(
             cohortId = cohortId,
             evaluable = evaluable,
-            open = open,
-            slotsAvailable = slotsAvailable,
+            cohortAvailability = CohortAvailability(open, slotsAvailable),
             ignore = ignore,
             description = "Cohort $cohortId"
         )
