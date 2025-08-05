@@ -49,7 +49,7 @@ data class MolecularInterpreterConfig(
             options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed")
             options.addOption(ORANGE_JSON, true, "(Optional) path of the ORANGE json to be interpreted")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
-            options.addOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE, true, "If set, the combined profiles for the efficacy evidence from the SERVE database where filtered out")
+            options.addOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE, false, "If set, the combined profiles for the efficacy evidence from the SERVE database where filtered out")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(ONCO_DNDS_DATABASE_PATH, true, "Path to DNDS values for ONCO genes")
             options.addOption(TSG_DNDS_DATABASE_PATH, true, "Path to DNDS values for TSG genes")

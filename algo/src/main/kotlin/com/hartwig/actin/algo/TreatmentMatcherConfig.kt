@@ -58,7 +58,7 @@ data class TreatmentMatcherConfig(
             options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
             options.addOption(TREATMENT_EFFICACY_PREDICTION_JSON, true, "Path to treatment efficacy prediction JSON file")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
-            options.addOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE, true, "If set, the combined profiles for the efficacy evidence from the SERVE database where filtered out")
+            options.addOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE, false, "If set, the combined profiles for the efficacy evidence from the SERVE database where filtered out")
 
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to")
             options.addOption(

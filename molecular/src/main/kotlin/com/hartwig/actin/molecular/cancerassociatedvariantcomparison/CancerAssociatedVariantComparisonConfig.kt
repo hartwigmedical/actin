@@ -29,7 +29,7 @@ data class CancerAssociatedVariantComparisonConfig(
             val options = Options()
             options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known events")
-            options.addOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE, true, "If set, the combined profiles for the efficacy evidence from the SERVE database where filtered out")
+            options.addOption(USED_COMBINED_PROFILES_EFFICACY_EVIDENCE, false, "If set, the combined profiles for the efficacy evidence from the SERVE database where filtered out")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where cancer-associated variant comparison output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
