@@ -92,7 +92,6 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         )
     }
 
-
     @Test
     fun `Should fail when some prior treatment is given after the minimal allowed date but is ignored type`() {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
@@ -100,7 +99,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 TreatmentTestFactory.treatmentHistoryEntry(
                     treatments = listOf(
                         TreatmentTestFactory.drugTreatment(
-                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPE_TO_IGNORE
+                            name = "to ignore", category = CATEGORY_TO_IGNORE, types = TYPE_TO_IGNORE
                         )
                     ),
                     stopYear = RECENT_DATE.year,
@@ -119,7 +118,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                     treatments = listOf(
                         TreatmentTestFactory.drugTreatment(
                             name = "to ignore and non-ignore",
-                            category = TreatmentCategory.TARGETED_THERAPY,
+                            category = CATEGORY_TO_IGNORE,
                             types = TYPE_TO_IGNORE + TYPE_NOT_TO_IGNORE
                         )
                     ),
@@ -193,7 +192,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 TreatmentTestFactory.treatmentHistoryEntry(
                     treatments = listOf(
                         TreatmentTestFactory.drugTreatment(
-                            name = "to ignore", category = TreatmentCategory.TARGETED_THERAPY, types = TYPE_NOT_TO_IGNORE
+                            name = "to ignore", category = CATEGORY_TO_IGNORE, types = TYPE_NOT_TO_IGNORE
                         )
                     ),
                     stopYear = RECENT_DATE.year,
