@@ -53,7 +53,7 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
 
         val treatmentsWithResponse = targetTreatmentsToResponseMap.filterKeys { it in treatmentResponses }.values.flatten()
         val benefitMessage =
-            if (evaluateClinicalBenefit) " objective benefit from treatment" else "${Format.concatWithCommaAndOr(treatmentResponses.map { it.toString() })} from treatment"
+            if (evaluateClinicalBenefit) " objective benefit from treatment" else " ${Format.concatWithCommaAndOr(treatmentResponses.map { it.display() })} from treatment"
         val similarDrugMessage = "receive exact treatment but received similar drugs " +
                 "(${treatmentsSimilarToTargetTreatment?.joinToString(",") { it.treatmentDisplay() }})"
         val hadSimilarTreatmentsWithPD = treatmentsSimilarToTargetTreatment.takeIf { !it.isNullOrEmpty() }

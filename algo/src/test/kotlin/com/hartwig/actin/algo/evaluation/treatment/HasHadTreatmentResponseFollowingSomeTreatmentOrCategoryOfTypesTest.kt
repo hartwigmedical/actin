@@ -27,22 +27,39 @@ private val WRONG_SPECIFIC_TREATMENT = TreatmentTestFactory.treatment("Radiother
 private val WRONG_CATEGORY_TREATMENT =
     TreatmentTestFactory.drugTreatment("wrong1", TreatmentCategory.SUPPORTIVE_TREATMENT, TARGET_TYPES)
 private val WRONG_TYPE_TREATMENT = TreatmentTestFactory.drugTreatment("wrong2", TARGET_CATEGORY, setOf(DrugType.TAXANE))
+private val COMPLETE_RESPONSE = TreatmentResponse.COMPLETE_RESPONSE
 
-class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
+class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesTest {
 
-    private val functionWithSpecificTreatments =
+    private val functionWithSpecificTreatmentsAndClinicalBenefit =
         HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
             listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT)
         )
-    private val functionWithSpecificCategoryAndType =
+    private val functionWithSpecificCategoryAndTypeAndClinicalBenefit =
         HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
             category = TARGET_CATEGORY,
             types = TARGET_TYPES
         )
-    private val functionWithSpecificCategory = HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+    private val functionWithSpecificCategoryAndClinicalBenefit = HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
         treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
+        category = TARGET_CATEGORY
+    )
+
+    private val functionWithSpecificTreatmentsAndCompleteResponse =
+        HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+            treatmentResponses = setOf(COMPLETE_RESPONSE),
+            listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT)
+        )
+    private val functionWithSpecificCategoryAndTypeAndCompleteResponse =
+        HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+            treatmentResponses = setOf(COMPLETE_RESPONSE),
+            category = TARGET_CATEGORY,
+            types = TARGET_TYPES
+        )
+    private val functionWithSpecificCategoryAndCompleteResponse = HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+        treatmentResponses = setOf(COMPLETE_RESPONSE),
         category = TARGET_CATEGORY
     )
 
@@ -56,7 +73,8 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
 
     @Test
     fun `Should fail if treatment history is empty`() {
-        assertForAllFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        assertForAllClinicalBenefitFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        assertForAllCompleteResponseFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
     }
 
     @Test
@@ -66,9 +84,15 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(WRONG_CATEGORY_TREATMENT))
         )
         val wrongTypeHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(WRONG_TYPE_TREATMENT)))
-        assertForAllFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(history))
+        assertForAllClinicalBenefitFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(history))
+        assertForAllCompleteResponseFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(history))
         assertEvaluation(
-            EvaluationResult.FAIL, functionWithSpecificCategoryAndType.evaluate(TreatmentTestFactory.withTreatmentHistory(wrongTypeHistory))
+            EvaluationResult.FAIL,
+            functionWithSpecificCategoryAndTypeAndClinicalBenefit.evaluate(TreatmentTestFactory.withTreatmentHistory(wrongTypeHistory))
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithSpecificCategoryAndTypeAndCompleteResponse.evaluate(TreatmentTestFactory.withTreatmentHistory(wrongTypeHistory))
         )
     }
 
@@ -81,7 +105,8 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                     bestResponse = TreatmentResponse.COMPLETE_RESPONSE
                 )
             )
-            assertForAllFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
+            assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
+            assertForAllCompleteResponseFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
         }
     }
 
@@ -93,7 +118,8 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                 bestResponse = TreatmentResponse.COMPLETE_RESPONSE
             )
         )
-        assertForAllFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history1))
+        assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history1))
+        assertForAllCompleteResponseFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history1))
 
         val history2 = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
@@ -101,7 +127,8 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                 bestResponse = TreatmentResponse.COMPLETE_RESPONSE
             )
         )
-        assertForAllFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history2))
+        assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history2))
+        assertForAllCompleteResponseFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history2))
     }
 
     @Test
@@ -113,7 +140,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                     bestResponse = TreatmentResponse.PARTIAL_RESPONSE
                 )
             )
-            assertForAllFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
+            assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
         }
     }
 
@@ -126,7 +153,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                     bestResponse = TreatmentResponse.REMISSION
                 )
             )
-            assertForAllFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
+            assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
         }
     }
 
@@ -139,7 +166,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                     bestResponse = TreatmentResponse.MIXED
                 )
             )
-            assertForAllFunctions(EvaluationResult.WARN, TreatmentTestFactory.withTreatmentHistory(history))
+            assertForAllClinicalBenefitFunctions(EvaluationResult.WARN, TreatmentTestFactory.withTreatmentHistory(history))
         }
     }
 
@@ -152,7 +179,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                     bestResponse = TreatmentResponse.STABLE_DISEASE
                 )
             )
-            assertForAllFunctions(EvaluationResult.WARN, TreatmentTestFactory.withTreatmentHistory(history))
+            assertForAllClinicalBenefitFunctions(EvaluationResult.WARN, TreatmentTestFactory.withTreatmentHistory(history))
         }
     }
 
@@ -167,9 +194,12 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                     )
                 )
             )
-            assertForAllFunctions(EvaluationResult.UNDETERMINED, record)
-            assertThat(functionWithSpecificTreatments.evaluate(record).undeterminedMessagesStrings())
+            assertForAllClinicalBenefitFunctions(EvaluationResult.UNDETERMINED, record)
+            assertForAllCompleteResponseFunctions(EvaluationResult.UNDETERMINED, record)
+            assertThat(functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(record).undeterminedMessagesStrings())
                 .containsExactly("Undetermined objective benefit from treatment with ${it.display()}")
+            assertThat(functionWithSpecificTreatmentsAndCompleteResponse.evaluate(record).undeterminedMessagesStrings())
+                .containsExactly("Undetermined ${COMPLETE_RESPONSE.display()} from treatment with ${it.display()}")
         }
     }
 
@@ -180,14 +210,33 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                 listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(OTHER_CORRECT_TREATMENT), bestResponse = it))
             )
         }
-        val messageEnding = "objective benefit from treatment with ${OTHER_CORRECT_TREATMENT.display()}"
-        assertThat(functionWithSpecificTreatments.evaluate(pass).passMessagesStrings()).containsExactly("Has had $messageEnding")
-        assertThat(functionWithSpecificTreatments.evaluate(undetermined).undeterminedMessagesStrings()).containsExactly("Undetermined $messageEnding")
+        val messageEndingClinicalBenefit = "objective benefit from treatment with ${OTHER_CORRECT_TREATMENT.display()}"
+        val messageEndingCompleteResponse = "${COMPLETE_RESPONSE.display()} from treatment with ${OTHER_CORRECT_TREATMENT.display()}"
+        assertThat(
+            functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(pass).passMessagesStrings()
+        ).containsExactly("Has had $messageEndingClinicalBenefit")
+        assertThat(
+            functionWithSpecificTreatmentsAndCompleteResponse.evaluate(pass).passMessagesStrings()
+        ).containsExactly("Has had $messageEndingCompleteResponse")
+        assertThat(
+            functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(undetermined).undeterminedMessagesStrings()
+        ).containsExactly("Undetermined $messageEndingClinicalBenefit")
+        assertThat(
+            functionWithSpecificTreatmentsAndCompleteResponse.evaluate(undetermined).undeterminedMessagesStrings()
+        ).containsExactly("Undetermined $messageEndingCompleteResponse")
     }
 
     @Test
     fun `Should include all target treatments in message if none are present in history`() {
-        assertThat(functionWithSpecificTreatments.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessagesStrings())
+        assertThat(
+            functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+                .failMessagesStrings()
+        )
+            .containsExactly("Has not received treatment with ${CORRECT_TREATMENT.display()} or ${OTHER_CORRECT_TREATMENT.display()}")
+        assertThat(
+            functionWithSpecificTreatmentsAndCompleteResponse.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+                .failMessagesStrings()
+        )
             .containsExactly("Has not received treatment with ${CORRECT_TREATMENT.display()} or ${OTHER_CORRECT_TREATMENT.display()}")
     }
 
@@ -199,8 +248,10 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                 TreatmentTestFactory.treatmentHistoryEntry(setOf(CORRECT_TREATMENT), bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
             )
         )
-        assertThat(functionWithSpecificTreatments.evaluate(record).undeterminedMessagesStrings())
+        assertThat(functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(record).undeterminedMessagesStrings())
             .containsExactly("Undetermined objective benefit from treatment with ${OTHER_CORRECT_TREATMENT.display()}")
+        assertThat(functionWithSpecificTreatmentsAndCompleteResponse.evaluate(record).undeterminedMessagesStrings())
+            .containsExactly("Undetermined ${COMPLETE_RESPONSE.display()} from treatment with ${OTHER_CORRECT_TREATMENT.display()}")
     }
 
     @Test
@@ -213,7 +264,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithSpecificTreatments.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -227,7 +278,11 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithSpecificTreatments.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithSpecificTreatmentsAndCompleteResponse.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -241,7 +296,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithSpecificTreatments.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -253,12 +308,18 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
                 bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
             )
         )
-        assertForAllFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(history))
+        assertForAllClinicalBenefitFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(history))
     }
 
-    private fun assertForAllFunctions(result: EvaluationResult, record: PatientRecord) {
-        assertEvaluation(result, functionWithSpecificTreatments.evaluate(record))
-        assertEvaluation(result, functionWithSpecificCategory.evaluate(record))
-        assertEvaluation(result, functionWithSpecificCategoryAndType.evaluate(record))
+    private fun assertForAllClinicalBenefitFunctions(result: EvaluationResult, record: PatientRecord) {
+        assertEvaluation(result, functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(record))
+        assertEvaluation(result, functionWithSpecificCategoryAndClinicalBenefit.evaluate(record))
+        assertEvaluation(result, functionWithSpecificCategoryAndTypeAndClinicalBenefit.evaluate(record))
+    }
+
+    private fun assertForAllCompleteResponseFunctions(result: EvaluationResult, record: PatientRecord) {
+        assertEvaluation(result, functionWithSpecificTreatmentsAndCompleteResponse.evaluate(record))
+        assertEvaluation(result, functionWithSpecificCategoryAndCompleteResponse.evaluate(record))
+        assertEvaluation(result, functionWithSpecificCategoryAndTypeAndCompleteResponse.evaluate(record))
     }
 }
