@@ -7,6 +7,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasOligoprogressiveDisease : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has synchronous metastatic disease")
+        return EvaluationFactory.undetermined("Undetermined if patient has oligoprogressive disease")
     }
 }
