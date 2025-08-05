@@ -6,22 +6,34 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 
 object ServeVerifier {
 
-    fun verifyServeDatabase(serveDatabase: ServeDatabase) {
-        verifyNoCombinedMolecularProfiles(serveDatabase)
+    fun verifyServeDatabase(serveDatabase: ServeDatabase, usedCombinedProfilesEfficacyEvidence: Boolean) {
+        verifyNoCombinedMolecularProfiles(serveDatabase, usedCombinedProfilesEfficacyEvidence)
         verifyAllHotspotsHaveConsistentGenes(serveDatabase)
     }
 
-    private fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase) {
-        serveDatabase.records().values.forEach { verifyNoCombinedMolecularProfiles(it) }
+    private fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase, usedCombinedProfilesEfficacyEvidence: Boolean) {
+        serveDatabase.records().values.forEach { verifyNoCombinedMolecularProfiles(it, usedCombinedProfilesEfficacyEvidence) }
     }
 
-    private fun verifyNoCombinedMolecularProfiles(serveRecord: ServeRecord) {
-        val hasCombinedEvidence = serveRecord.evidences().any { evidence -> isCombinedProfile(evidence.molecularCriterium()) }
-        val hasCombinedTrials = serveRecord.trials().any { trial -> trial.anyMolecularCriteria().any { isCombinedProfile(it) } }
+    private fun verifyNoCombinedMolecularProfiles(
+        serveRecord: ServeRecord,
+        usedCombinedProfilesEfficacyEvidence: Boolean
+    ) {
+        val hasCombinedEvidence =
+            serveRecord.evidences().any { evidence -> isCombinedProfile(evidence.molecularCriterium()) }
+        val hasCombinedTrials =
+            serveRecord.trials().any { trial -> trial.anyMolecularCriteria().any { isCombinedProfile(it) } }
 
-        if (hasCombinedEvidence || hasCombinedTrials) {
-            throw IllegalStateException("SERVE record contains combined profiles")
+        if (usedCombinedProfilesEfficacyEvidence) {
+            if (hasCombinedTrials) {
+                throw IllegalStateException("SERVE record contains combined profiles for trials ")
+            }
+        } else {
+            if (hasCombinedEvidence || hasCombinedTrials) {
+                throw IllegalStateException("SERVE record contains combined profiles for trials and/or evidence")
+            }
         }
+
     }
 
     fun isCombinedProfile(molecularCriterium: MolecularCriterium): Boolean {

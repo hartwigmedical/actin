@@ -17,7 +17,7 @@ class ServeVerifierTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
 
         val database = createServeDatabase(evidence, trial)
-        assertThatCode { ServeVerifier.verifyServeDatabase(database) }.doesNotThrowAnyException()
+        assertThatCode { ServeVerifier.verifyServeDatabase(database, false) }.doesNotThrowAnyException()
     }
 
     @Test
@@ -27,7 +27,7 @@ class ServeVerifierTest {
 
         val database = createServeDatabase(evidence, trial)
 
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 
     @Test
@@ -37,7 +37,7 @@ class ServeVerifierTest {
 
         val database = createServeDatabase(evidence, trial)
 
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 
     @Test
@@ -52,7 +52,7 @@ class ServeVerifierTest {
         )
 
         val database = createServeDatabase(evidence, TestServeTrialFactory.create())
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 
 
@@ -70,7 +70,7 @@ class ServeVerifierTest {
         )
 
         val database = createServeDatabase(TestServeEvidenceFactory.create(), trial)
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 
     @Test
@@ -81,6 +81,6 @@ class ServeVerifierTest {
         )
 
         val database = createServeDatabase(TestServeEvidenceFactory.create(), trial)
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 }
