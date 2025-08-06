@@ -437,7 +437,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_QTCF_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_QTCF_OF_AT_MOST_X_WITH_GENDER_Y(FunctionInput.ONE_DOUBLE_ONE_GENDER),
     HAS_QTCF_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
-    HAS_QTCF_OF_AT_LEAST_X_WITH_GENDER_Y(FunctionInput.ONE_DOUBLE_ONE_GENDER),
+    HAS_QTCF_OF_AT_MOST_X_FOR_FEMALE_OR_Y_FOR_MALE(FunctionInput.TWO_DOUBLES),
     HAS_JTC_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_LONG_QT_SYNDROME(FunctionInput.NONE),
     HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE(FunctionInput.NONE),
