@@ -142,7 +142,7 @@ class MolecularDriversSummarizerTest {
             interpretedCohort(
                 isPotentiallyEligible = true,
                 isOpen = true,
-                molecularEvents = setOf(
+                molecularInclusionEvents = setOf(
                     "expected medium likelihood variant",
                     "expected low likelihood virus",
                     "expected non-reportable virus",

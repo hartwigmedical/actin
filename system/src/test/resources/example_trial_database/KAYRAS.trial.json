@@ -62,6 +62,17 @@
           "G12D"
         ]
       }
+    },
+    {
+      "references": [
+        "I-05"
+      ],
+      "function": {
+        "rule": "PD_L1_SCORE_TPS_OF_AT_LEAST_X",
+        "parameters": [
+          "50"
+        ]
+      }
     }
   ],
   "cohorts": [

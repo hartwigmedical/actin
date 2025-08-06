@@ -13,7 +13,7 @@ class InterpretedCohortComparator(private val requestingSource: TrialSource? = n
             } ?: true
         }
             .thenByDescending(InterpretedCohort::hasSlotsAvailable)
-            .thenBy { it.molecularEvents.isEmpty() }
+            .thenBy { it.molecularInclusionEvents.isEmpty() }
             .thenBy(nullsLast(), InterpretedCohort::phase)
             .thenByDescending { it.warnings.isEmpty() }
             .thenBy(InterpretedCohort::trialId)
@@ -30,7 +30,7 @@ class InterpretedCohortComparator(private val requestingSource: TrialSource? = n
             return 1
         }
 
-        val hasMolecular = cohort1.molecularEvents.isNotEmpty()
+        val hasMolecular = cohort1.molecularInclusionEvents.isNotEmpty()
         return compareBy<String> { hasMolecular && it.contains(COMBINATION_COHORT_IDENTIFIER) }
             .thenByDescending { it }
             .compare(cohort2Name, cohort1Name)

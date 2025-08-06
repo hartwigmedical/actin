@@ -25,12 +25,12 @@ class InterpretedCohortsSummarizer(
 
             val eligibleOpenTrialsByInclusionEvent = openCohorts
                 .filter(InterpretedCohort::isPotentiallyEligible)
-                .flatMap { cohort -> cohort.molecularEvents.map { it to TrialAcronymAndLocations(cohort.acronym, cohort.locations) } }
+                .flatMap { cohort -> cohort.molecularInclusionEvents.map { it to TrialAcronymAndLocations(cohort.acronym, cohort.locations) } }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, acronymsAndLocations) -> acronymsAndLocations.sortedBy { it.trialAcronym }.distinct() }
 
             val inclusionEventsOfNonIgnoredOpenTrials = openCohorts
-                .flatMap(InterpretedCohort::molecularEvents)
+                .flatMap(InterpretedCohort::molecularInclusionEvents)
                 .toSet()
 
             return InterpretedCohortsSummarizer(eligibleOpenTrialsByInclusionEvent, inclusionEventsOfNonIgnoredOpenTrials)

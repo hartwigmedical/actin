@@ -38,6 +38,7 @@ object PDL1EvaluationFunctions {
         }.toSet()
 
         val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
+        val comparatorSign = if (evaluateMaxPDL1) "<=" else ">="
 
         return when {
             EvaluationResult.PASS in testEvaluations && (EvaluationResult.FAIL in testEvaluations || EvaluationResult.UNDETERMINED in testEvaluations) -> {
@@ -48,7 +49,10 @@ object PDL1EvaluationFunctions {
             }
 
             EvaluationResult.PASS in testEvaluations -> {
-                EvaluationFactory.pass("PD-L1 expression $comparatorMessage $pdl1Reference", inclusionEvents = setOf("PD-L1 expression"))
+                EvaluationFactory.pass(
+                    "PD-L1 expression $comparatorMessage $pdl1Reference",
+                    inclusionEvents = setOf("PD-L1 $comparatorSign $pdl1Reference")
+                )
             }
 
             EvaluationResult.FAIL in testEvaluations -> {

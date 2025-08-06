@@ -41,8 +41,8 @@ class InterpretedCohortFactoryTest {
         assertThat(cohorts).hasSize(4)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
-        assertThat(trial1cohortA.molecularEvents).isNotEmpty
-        assertThat(trial1cohortA.molecularEvents).containsExactly("MSI")
+        assertThat(trial1cohortA.molecularInclusionEvents).isNotEmpty
+        assertThat(trial1cohortA.molecularInclusionEvents).containsExactly("MSI")
         assertThat(trial1cohortA.isPotentiallyEligible).isTrue
         assertThat(trial1cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortA.isOpen).isTrue
@@ -54,7 +54,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
-        assertThat(trial1cohortB.molecularEvents).isEmpty()
+        assertThat(trial1cohortB.molecularInclusionEvents).isEmpty()
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
         assertThat(trial1cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortB.isOpen).isTrue
@@ -66,7 +66,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
-        assertThat(trial1cohortC.molecularEvents).isEmpty()
+        assertThat(trial1cohortC.molecularInclusionEvents).isEmpty()
         assertThat(trial1cohortC.isPotentiallyEligible).isFalse
         assertThat(trial1cohortC.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortC.isOpen).isFalse
@@ -78,8 +78,8 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
-        assertThat(trial2cohortA.molecularEvents).isNotEmpty
-        assertThat(trial2cohortA.molecularEvents).containsExactly("MSI")
+        assertThat(trial2cohortA.molecularInclusionEvents).isNotEmpty
+        assertThat(trial2cohortA.molecularInclusionEvents).containsExactly("MSI")
         assertThat(trial2cohortA.isPotentiallyEligible).isTrue
         assertThat(trial2cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial2cohortA.isOpen).isTrue
@@ -97,7 +97,7 @@ class InterpretedCohortFactoryTest {
         assertThat(nonEvaluableCohorts).hasSize(1)
 
         val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
-        assertThat(trial2cohortB.molecularEvents).isEmpty()
+        assertThat(trial2cohortB.molecularInclusionEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
         assertThat(trial2cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial2cohortB.isOpen).isTrue

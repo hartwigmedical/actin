@@ -25,7 +25,8 @@ class TrialGeneratorFunctionsTest {
         hasSlotsAvailable = false,
         ignore = false,
         isEvaluable = false,
-        molecularEvents = setOf("MSI"),
+        molecularInclusionEvents = setOf("MSI"),
+        molecularExclusionEvents = emptySet(),
         isPotentiallyEligible = true,
         isMissingMolecularResultForEvaluation = false,
         warnings = setOf("warning1"),
@@ -40,7 +41,7 @@ class TrialGeneratorFunctionsTest {
         warnings = setOf("warning1", "warning2"),
         source = TrialSource.LKO,
         sourceId = "123",
-        molecularEvents = emptySet()
+        molecularInclusionEvents = emptySet()
     )
 
     @Test
@@ -172,8 +173,8 @@ class TrialGeneratorFunctionsTest {
 
     @Test
     fun `Should group molecular events for multiple cohorts in trial if molecular event is None for all cohorts`() {
-        val noMolecularEvent1 = cohort1.copy(molecularEvents = emptySet())
-        val noMolecularEvent2 = cohort1.copy(name = "cohort3", molecularEvents = emptySet())
+        val noMolecularEvent1 = cohort1.copy(molecularInclusionEvents = emptySet())
+        val noMolecularEvent2 = cohort1.copy(name = "cohort3", molecularInclusionEvents = emptySet())
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(noMolecularEvent1, noMolecularEvent2),
