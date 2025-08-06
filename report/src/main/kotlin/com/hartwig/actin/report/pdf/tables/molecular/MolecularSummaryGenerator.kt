@@ -39,9 +39,9 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
             molecularTestFilter.apply(patientRecord.molecularHistory.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
-        val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests).filter { ihc ->
-            cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.any { it.contains(ihc.item, ignoreCase = true) }
-        }
+        val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
+        val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
+            .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             emptyList(),
             nonIhcTestsIncludedInTrialMatching,
@@ -98,7 +98,8 @@ class MolecularSummaryGenerator(
         }
 
         if (ihcTests.isNotEmpty()) {
-            val molecularResultGenerator = IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter())
+            val molecularResultGenerator =
+                IhcResultGenerator("Trial-relevant IHC results", ihcTests, keyWidth, valueWidth, IhcTestInterpreter())
             table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
             table.addCell(Cells.create(molecularResultGenerator.contents()))
         }

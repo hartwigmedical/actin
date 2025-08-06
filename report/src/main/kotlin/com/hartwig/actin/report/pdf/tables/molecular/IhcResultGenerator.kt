@@ -10,6 +10,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
 class IhcResultGenerator(
+    private val title: String = "IHC results",
     private val ihcTests: List<IhcTest>,
     private val keyWidth: Float,
     private val valueWidth: Float,
@@ -17,7 +18,7 @@ class IhcResultGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return "IHC results"
+        return title
     }
 
     override fun forceKeepTogether(): Boolean {
