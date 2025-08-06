@@ -99,7 +99,7 @@ class MolecularSummaryGenerator(
 
         if (ihcTests.isNotEmpty()) {
             val molecularResultGenerator =
-                IhcResultGenerator("Trial-relevant IHC results", ihcTests, keyWidth, valueWidth, IhcTestInterpreter())
+                IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter(), "Trial-relevant IHC results")
             table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
             table.addCell(Cells.create(molecularResultGenerator.contents()))
         }

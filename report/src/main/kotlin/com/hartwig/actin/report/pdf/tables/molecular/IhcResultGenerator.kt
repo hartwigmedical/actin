@@ -10,11 +10,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
 class IhcResultGenerator(
-    private val title: String = "IHC results",
     private val ihcTests: List<IhcTest>,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val interpreter: IhcTestInterpreter
+    private val interpreter: IhcTestInterpreter,
+    private val title: String = "IHC results",
 ) : TableGenerator {
 
     override fun title(): String {

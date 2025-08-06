@@ -54,7 +54,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
-        assertThat(trial1cohortB.molecularInclusionEvents).isEmpty()
+        assertThat(trial1cohortB.molecularInclusionEvents).containsExactly("HER2 amp")
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
         assertThat(trial1cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortB.isOpen).isTrue
