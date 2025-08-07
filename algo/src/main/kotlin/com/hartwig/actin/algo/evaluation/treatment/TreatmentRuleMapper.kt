@@ -248,7 +248,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 monthsAgo,
                 antiCancerCategories,
                 interpreter,
-                Pair(categoryToIgnore, typesToIgnore),
+                categoryToIgnore,
+                typesToIgnore,
                 false
             )
         }
@@ -263,7 +264,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 monthsAgo,
                 antiCancerCategories,
                 interpreter,
-                Pair(null, emptySet()),
+                null,
+                emptySet(),
                 onlySystemicTreatments
             )
         }

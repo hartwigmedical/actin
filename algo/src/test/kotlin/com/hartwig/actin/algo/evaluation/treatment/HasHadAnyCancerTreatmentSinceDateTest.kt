@@ -36,7 +36,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         MONTHS_AGO,
         setOf(ATC_LEVELS),
         interpreter,
-        Pair(CATEGORY_TO_IGNORE, TYPE_TO_IGNORE),
+        CATEGORY_TO_IGNORE,
+        TYPE_TO_IGNORE,
         false
     )
     private val functionOnlySystemic =
@@ -45,7 +46,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             MONTHS_AGO,
             setOf(ATC_LEVELS),
             interpreter,
-            Pair(CATEGORY_TO_IGNORE, TYPE_TO_IGNORE),
+            CATEGORY_TO_IGNORE,
+            TYPE_TO_IGNORE,
             true
         )
 
@@ -192,7 +194,28 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 TreatmentTestFactory.treatmentHistoryEntry(
                     treatments = listOf(
                         TreatmentTestFactory.drugTreatment(
-                            name = "to ignore", category = CATEGORY_TO_IGNORE, types = TYPE_NOT_TO_IGNORE
+                            name = "not to ignore", category = CATEGORY_TO_IGNORE, types = TYPE_NOT_TO_IGNORE
+                        )
+                    ),
+                    stopYear = RECENT_DATE.year,
+                    stopMonth = RECENT_DATE.monthValue
+                )
+            )
+        )
+        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
+    }
+
+    @Test
+    fun `Should pass when some prior treatment is given after the minimal allowed date with one treatment with type to ignore and another treatment with a type not to ignore`() {
+        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = listOf(
+                        TreatmentTestFactory.drugTreatment(
+                            name = "to ignore", category = CATEGORY_TO_IGNORE, types = TYPE_TO_IGNORE
+                        ),
+                        TreatmentTestFactory.drugTreatment(
+                            name = "not to ignore", category = CATEGORY_TO_IGNORE, types = TYPE_NOT_TO_IGNORE
                         )
                     ),
                     stopYear = RECENT_DATE.year,

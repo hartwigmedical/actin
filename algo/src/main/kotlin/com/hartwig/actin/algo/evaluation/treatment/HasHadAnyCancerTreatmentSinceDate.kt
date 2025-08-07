@@ -19,7 +19,8 @@ class HasHadAnyCancerTreatmentSinceDate(
     private val monthsAgo: Int,
     private val atcLevelsToFind: Set<AtcLevel>,
     private val interpreter: MedicationStatusInterpreter,
-    private val ignoringCategoryOfTypes: Pair<TreatmentCategory?, Set<TreatmentType>>,
+    private val categoryToIgnore: TreatmentCategory?,
+    private val typesToIgnore: Set<TreatmentType>,
     private val onlySystemicTreatments: Boolean
 ) : EvaluationFunction {
 
@@ -28,19 +29,17 @@ class HasHadAnyCancerTreatmentSinceDate(
             createTreatmentHistoryEntriesFromMedications(record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
                 ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
 
-        val types = ignoringCategoryOfTypes.second
-        val treatmentCategory = ignoringCategoryOfTypes.first
         val effectiveTreatmentHistory = (record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments)
             .filter { entry ->
                 val treatments = entry.allTreatments().filterNot { treatment ->
-                    treatment.categories().contains(treatmentCategory) && treatment.types().any { it in types }
+                    treatment.categories().contains(categoryToIgnore) && treatment.types().any { it in typesToIgnore }
                 }
                 (!onlySystemicTreatments && treatments.isNotEmpty()) || treatments.any { it.isSystemic }
             }
 
         val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
 
-        val ignoringString = if (types.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(types)}" else ""
+        val ignoringString = if (typesToIgnore.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(typesToIgnore)}" else ""
 
         return when {
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, false) } -> {
