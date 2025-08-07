@@ -37,7 +37,7 @@ object ServeVerifier {
             throw IllegalStateException("SERVE record contains combined profiles for trials ")
         }
 
-        if (usedCombinedProfilesEfficacyEvidence) {
+        if (!usedCombinedProfilesEfficacyEvidence) {
             if (hasCombinedEvidence) {
                 throw IllegalStateException("SERVE record contains combined profiles for trials and/or evidence")
             }
