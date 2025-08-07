@@ -1097,24 +1097,24 @@ class FunctionInputResolverTest {
     @Test
     fun `Should resolve functions with one treatment response one treatment category many types input`() {
         val rule = firstOfType(FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES)
-        val treatmentResponse = TreatmentResponse.COMPLETE_RESPONSE.toString()
-        val category = TreatmentCategory.IMMUNOTHERAPY.display()
-        val valid = create(rule, listOf(treatmentResponse, category, "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}"))
+        val treatmentResponse = TreatmentResponse.COMPLETE_RESPONSE
+        val category = TreatmentCategory.IMMUNOTHERAPY
+        val valid = create(rule, listOf(treatmentResponse.toString(), category.display(), "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
         val inputs = resolver.createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(valid)
-        assertThat(inputs.treatmentResponse).isEqualTo(TreatmentResponse.COMPLETE_RESPONSE)
-        assertThat(inputs.category).isEqualTo(TreatmentCategory.IMMUNOTHERAPY)
+        assertThat(inputs.treatmentResponse).isEqualTo(treatmentResponse)
+        assertThat(inputs.category).isEqualTo(category)
         assertThat(inputs.types).isEqualTo(setOf(DrugType.ANTI_PD_L1, DrugType.ANTI_PD_1))
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf(category)))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentResponse, category, "not a type")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category.display())))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentResponse.toString(), category.display(), "not a type")))).isFalse
         assertThat(
             resolver.hasValidInputs(
                 create(
                     rule,
-                    listOf(treatmentResponse, "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}", category)
+                    listOf(treatmentResponse.toString(), "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}", category.display())
                 )
             )
         ).isFalse

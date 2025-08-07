@@ -52,7 +52,9 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
         val evaluateClinicalBenefit = treatmentResponses == TreatmentResponse.BENEFIT_RESPONSES
 
         val treatmentsWithResponse = targetTreatmentsToResponseMap.filterKeys { it in treatmentResponses }.values.flatten()
-        val benefitMessage =
+        val otherResponses = targetTreatmentsToResponseMap.filterKeys { it !in treatmentResponses }.keys.filterNotNull()
+
+        val responseMessage =
             if (evaluateClinicalBenefit) " objective benefit from treatment" else " ${Format.concatWithCommaAndOr(treatmentResponses.map { it.display() })} from treatment"
         val similarDrugMessage = "receive exact treatment but received similar drugs " +
                 "(${treatmentsSimilarToTargetTreatment?.joinToString(",") { it.treatmentDisplay() }})"
@@ -60,6 +62,15 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             ?.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true }
 
         return when {
+            !evaluateClinicalBenefit && otherResponses.isNotEmpty() && treatmentsWithResponse.isNotEmpty() -> {
+                EvaluationFactory.warn(
+                    "Uncertain$responseMessage${treatmentDisplay()} - also had ${
+                        Format.concatLowercaseWithCommaAndAnd(
+                            otherResponses.map { it.display() })
+                    }"
+                )
+            }
+
             evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == false -> {
                 EvaluationFactory.undetermined("Clinical benefit from treatment${treatmentDisplay()} undetermined - did not $similarDrugMessage")
             }
@@ -73,12 +84,12 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             }
 
             treatmentsWithResponse.isNotEmpty() -> {
-                EvaluationFactory.pass("Has had$benefitMessage${treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))}")
+                EvaluationFactory.pass("Has had$responseMessage${treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))}")
             }
 
             evaluateClinicalBenefit && TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
-                    "Uncertain$benefitMessage" +
+                    "Uncertain$responseMessage" +
                             "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.STABLE_DISEASE]))} " +
                             "(best response: stable disease)"
                 )
@@ -86,7 +97,7 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
 
             evaluateClinicalBenefit && TreatmentResponse.MIXED in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
-                    "Uncertain$benefitMessage" +
+                    "Uncertain$responseMessage" +
                             "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.MIXED]))} " +
                             "(best response: mixed)"
                 )
@@ -94,12 +105,12 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
 
             targetTreatmentsToResponseMap.containsKey(null) -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined$benefitMessage${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[null]))}"
+                    "Undetermined$responseMessage${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[null]))}"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No$benefitMessage${treatmentDisplay()}")
+                EvaluationFactory.fail("No$responseMessage${treatmentDisplay()}")
             }
         }
     }

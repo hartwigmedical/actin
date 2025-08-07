@@ -112,23 +112,17 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesTest {
 
     @Test
     fun `Should pass if treatment history contains target therapy combined with other therapy with best response complete response`() {
-        val history1 = listOf(
-            TreatmentTestFactory.treatmentHistoryEntry(
-                CORRECT_TREATMENT_WITH_OTHER_CATEGORY_COMBINATION,
-                bestResponse = TreatmentResponse.COMPLETE_RESPONSE
-            )
-        )
-        assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history1))
-        assertForAllCompleteResponseFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history1))
-
-        val history2 = listOf(
-            TreatmentTestFactory.treatmentHistoryEntry(
-                TARGET_TREATMENT_WITH_SAME_CATEGORY_COMBINATION,
-                bestResponse = TreatmentResponse.COMPLETE_RESPONSE
-            )
-        )
-        assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history2))
-        assertForAllCompleteResponseFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history2))
+        listOf(CORRECT_TREATMENT_WITH_OTHER_CATEGORY_COMBINATION, TARGET_TREATMENT_WITH_SAME_CATEGORY_COMBINATION)
+            .forEach { treatment ->
+                val history = listOf(
+                    TreatmentTestFactory.treatmentHistoryEntry(
+                        treatment,
+                        bestResponse = TreatmentResponse.COMPLETE_RESPONSE
+                    )
+                )
+                assertForAllClinicalBenefitFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
+                assertForAllCompleteResponseFunctions(EvaluationResult.PASS, TreatmentTestFactory.withTreatmentHistory(history))
+            }
     }
 
     @Test
@@ -181,6 +175,25 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesTest {
             )
             assertForAllClinicalBenefitFunctions(EvaluationResult.WARN, TreatmentTestFactory.withTreatmentHistory(history))
         }
+    }
+
+    @Test
+    fun `Should warn if treatment history entry with correct treatment and complete response and another treatment history with correct treatment but progressive disease`() {
+        val record = TreatmentTestFactory.withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(CORRECT_TREATMENT),
+                    bestResponse = TreatmentResponse.COMPLETE_RESPONSE
+                ),
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(CORRECT_TREATMENT),
+                    bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
+                )
+            )
+        )
+        assertForAllCompleteResponseFunctions(EvaluationResult.WARN, record)
+        assertThat(functionWithSpecificTreatmentsAndCompleteResponse.evaluate(record).warnMessagesStrings())
+            .containsExactly("Uncertain ${COMPLETE_RESPONSE.display()} from treatment with ${CORRECT_TREATMENT.display()} or ${OTHER_CORRECT_TREATMENT.display()} - also had progressive disease")
     }
 
     @Test

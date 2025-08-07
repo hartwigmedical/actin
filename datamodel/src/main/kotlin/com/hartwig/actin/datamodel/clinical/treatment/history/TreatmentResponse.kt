@@ -12,7 +12,7 @@ enum class TreatmentResponse : Displayable {
     REMISSION;
 
     override fun display(): String {
-        return this.toString().replace("_".toRegex(), " ").lowercase()
+        return this.toString().replace("_", " ").lowercase()
     }
 
     companion object {

@@ -100,7 +100,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     referenceDate
                 )
             },
-            EligibilityRule.HAS_HAD_BEST_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadBestResponseFollowingTreatmentOfCategoryAndTypesCreator(),
+            EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadClinicalBenefitFollowingTreatmentOfCategoryAndTypesCreator(),
@@ -492,7 +492,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadBestResponseFollowingTreatmentOfCategoryAndTypesCreator(): FunctionCreator {
+    private fun hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(function)
             HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
@@ -516,15 +516,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            input.mappedType?.let { mappedType ->
-                HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
-                    treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
-                    category = input.mappedCategory,
-                    types = setOf(mappedType)
-                )
-            } ?: HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+            HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
                 treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
-                category = input.mappedCategory
+                category = input.mappedCategory,
+                types = input.mappedType?.let { setOf(it) }
             )
         }
     }
