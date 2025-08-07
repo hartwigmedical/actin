@@ -11,8 +11,16 @@ object ServeVerifier {
         verifyAllHotspotsHaveConsistentGenes(serveDatabase)
     }
 
-    private fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase, usedCombinedProfilesEfficacyEvidence: Boolean) {
-        serveDatabase.records().values.forEach { verifyNoCombinedMolecularProfiles(it, usedCombinedProfilesEfficacyEvidence) }
+    private fun verifyNoCombinedMolecularProfiles(
+        serveDatabase: ServeDatabase,
+        usedCombinedProfilesEfficacyEvidence: Boolean
+    ) {
+        serveDatabase.records().values.forEach {
+            verifyNoCombinedMolecularProfiles(
+                it,
+                usedCombinedProfilesEfficacyEvidence
+            )
+        }
     }
 
     private fun verifyNoCombinedMolecularProfiles(
@@ -24,12 +32,13 @@ object ServeVerifier {
         val hasCombinedTrials =
             serveRecord.trials().any { trial -> trial.anyMolecularCriteria().any { isCombinedProfile(it) } }
 
+
+        if (hasCombinedTrials) {
+            throw IllegalStateException("SERVE record contains combined profiles for trials ")
+        }
+
         if (usedCombinedProfilesEfficacyEvidence) {
-            if (hasCombinedTrials) {
-                throw IllegalStateException("SERVE record contains combined profiles for trials ")
-            }
-        } else {
-            if (hasCombinedEvidence || hasCombinedTrials) {
+            if (hasCombinedEvidence) {
                 throw IllegalStateException("SERVE record contains combined profiles for trials and/or evidence")
             }
         }
