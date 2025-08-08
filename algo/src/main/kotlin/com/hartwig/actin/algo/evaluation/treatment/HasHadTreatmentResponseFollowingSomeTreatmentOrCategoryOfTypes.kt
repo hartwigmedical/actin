@@ -51,8 +51,8 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
 
         val evaluateClinicalBenefit = treatmentResponses == TreatmentResponse.BENEFIT_RESPONSES
 
-        val treatmentsWithResponse = targetTreatmentsToResponseMap.filterKeys { it in treatmentResponses }.values.flatten()
-        val otherResponses = targetTreatmentsToResponseMap.filterKeys { it !in treatmentResponses }.keys.filterNotNull()
+        val (treatmentsWithResponse, otherResponses) = targetTreatmentsToResponseMap.entries.partition { it.key in treatmentResponses }
+            .let { (withResponse, otherResponse) -> withResponse.flatMap { it.value } to otherResponse.mapNotNull { it.key } }
 
         val responseMessage =
             if (evaluateClinicalBenefit) " objective benefit from treatment" else " ${Format.concatWithCommaAndOr(treatmentResponses.map { it.display() })} from treatment"
