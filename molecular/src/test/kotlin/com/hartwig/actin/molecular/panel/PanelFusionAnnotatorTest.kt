@@ -119,6 +119,7 @@ class PanelFusionAnnotatorTest {
 
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
+            every { exons().size } returns matchingExon
         }
 
         every {
@@ -144,6 +145,7 @@ class PanelFusionAnnotatorTest {
 
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
+            every { exons().size } returns nonMatchingExon
         }
 
         every {
@@ -169,6 +171,7 @@ class PanelFusionAnnotatorTest {
 
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
+            every { exons().size } returns matchingExon
         }
 
         every {
@@ -194,6 +197,8 @@ class PanelFusionAnnotatorTest {
 
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
+            every { exons().size } returns nonMatchingExon
+
         }
 
         every {
@@ -268,6 +273,7 @@ class PanelFusionAnnotatorTest {
 
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
+            every { exons().size } returns EXON_SKIPPED_DOWN
         }
 
         every { ensembleDataCache.findGeneDataByName(GENE) } returns mockk {
@@ -340,6 +346,20 @@ class PanelFusionAnnotatorTest {
     fun `Should throw exception if both genes are null`() {
         val fusion = SequencedFusion(geneUp = null, geneDown = null)
         annotator.annotate(setOf(fusion), emptySet())
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception if exon is out of canonical transcript range`() {
+        every { ensembleDataCache.findGeneDataByName(GENE_START) } returns mockk {
+            every { geneId() } returns "geneId"
+        }
+
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
+            every { transcriptName() } returns CANONICAL_TRANSCRIPT
+            every { exons().size } returns 5
+        }
+
+        annotator.isPromiscuousWithMatchingExons(FusionDriverType.PROMISCUOUS_5, FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = 8))
     }
 
     private fun setupKnownFusionCache() {

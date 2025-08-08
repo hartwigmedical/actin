@@ -101,7 +101,7 @@ class PanelFusionAnnotator(
                 sequencedFusion.exonDown?.let {
                     knownFusionCache.withinPromiscuousExonRange(
                         KnownFusionType.PROMISCUOUS_3,
-                        sequencedFusion.geneDown?.let { gene -> canonicalTranscriptForGene(gene) } ?: "",
+                        sequencedFusion.geneDown?.let { gene -> canonicalTranscriptForGene(gene, it, it) } ?: "",
                         it,
                         it
                     )
@@ -112,7 +112,7 @@ class PanelFusionAnnotator(
                 sequencedFusion.exonUp?.let {
                     knownFusionCache.withinPromiscuousExonRange(
                         KnownFusionType.PROMISCUOUS_5,
-                        sequencedFusion.geneUp?.let { gene -> canonicalTranscriptForGene(gene) } ?: "",
+                        sequencedFusion.geneUp?.let { gene -> canonicalTranscriptForGene(gene, it, it) } ?: "",
                         it,
                         it
                     )
@@ -128,7 +128,7 @@ class PanelFusionAnnotator(
         val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
         val transcript = sequencedSkippedExons.transcript ?: run {
             logger.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
-            canonicalTranscriptForGene(sequencedSkippedExons.gene)
+            canonicalTranscriptForGene(sequencedSkippedExons.gene, sequencedSkippedExons.exonStart, sequencedSkippedExons.exonEnd)
         }
 
         return Fusion(
@@ -148,11 +148,18 @@ class PanelFusionAnnotator(
         )
     }
 
-    private fun canonicalTranscriptForGene(gene: String): String {
+    private fun canonicalTranscriptForGene(gene: String, exonStart: Int, exonEnd: Int): String {
         val geneData = ensembleDataCache.findGeneDataByName(gene)
             ?: throw IllegalArgumentException("No gene data found for gene $gene")
-        val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
+        val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
-        return transcript
+
+        val size = transcript.exons().size
+        if (exonStart !in 1..size || exonEnd !in 1..size) {
+            val exonString = if (exonStart == exonEnd) "exonStart" else "$exonStart or $exonEnd"
+            throw IllegalStateException("Exon $exonString is out of canonical transcript range 1-$size for gene $gene")
+        }
+
+        return transcript.transcriptName()
     }
 }
