@@ -44,7 +44,7 @@ class IhcTestInterpreter {
 
     private fun formatValueBasedIhcTest(valueTest: IhcTest): String {
         return valueTest.scoreValue?.let {
-            return listOfNotNull(
+            listOfNotNull(
                 "Score", valueTest.measure, valueTest.scoreValuePrefix, Formats.twoDigitNumber(it) + valueTest.scoreValueUnit.orEmpty()
             ).joinToString(" ")
         } ?: ""

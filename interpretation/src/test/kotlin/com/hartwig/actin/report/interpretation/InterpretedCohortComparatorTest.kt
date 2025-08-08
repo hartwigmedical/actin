@@ -60,7 +60,7 @@ class InterpretedCohortComparatorTest {
         assertExpectedOrder(
             listOf(
                 cohort,
-                cohort.copy(molecularEvents = emptySet())
+                cohort.copy(molecularInclusionEvents = emptySet())
             )
         )
     }
@@ -93,7 +93,7 @@ class InterpretedCohortComparatorTest {
         return InterpretedCohortTestFactory.interpretedCohort(
             trialId = trialId,
             acronym = "",
-            molecularEvents = setOf(*molecularEvents),
+            molecularInclusionEvents = setOf(*molecularEvents),
             cohort = cohort,
             isPotentiallyEligible = false,
             isOpen = false,

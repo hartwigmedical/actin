@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.molecular
 
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allPDL1Tests
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -36,7 +36,7 @@ class IhcTestFilterTest {
 
     @Test
     fun `Should filter prior ihs tests on IHC for specific protein`() {
-        val test1 = ihcTest(item = "protein 1")
+        val test1 = ihcTest(item = "PROTEIN 1")
         val test2 = ihcTest(item = "protein 2")
         val filtered = mostRecentAndUnknownDateIhcTestsForItem(listOf(test1, test2), "protein 1")
         assertThat(filtered).containsExactly(test1)

@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
@@ -316,6 +317,14 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
 
             FunctionInput.MANY_TNM_T -> {
                 listOf("T2A")
+            }
+
+            FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
+                listOf(
+                    TreatmentResponse.COMPLETE_RESPONSE.toString(),
+                    TreatmentCategory.CHEMOTHERAPY.display(),
+                    "${DrugType.ALKYLATING_AGENT};${DrugType.ANTIMETABOLITE}",
+                )
             }
         }
     }

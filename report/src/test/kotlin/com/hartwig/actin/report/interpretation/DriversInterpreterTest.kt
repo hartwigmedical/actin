@@ -110,8 +110,8 @@ class DriversInterpreterTest {
 
     private fun createCohortsForEvents(events: List<String>): List<InterpretedCohort> {
         return listOf(
-            interpretedCohort(acronym = "trial 1", molecularEvents = events, isPotentiallyEligible = true, isOpen = true),
-            interpretedCohort(acronym = "trial 2", molecularEvents = events, isPotentiallyEligible = true, isOpen = false)
+            interpretedCohort(acronym = "trial 1", molecularInclusionEvents = events, isPotentiallyEligible = true, isOpen = true),
+            interpretedCohort(acronym = "trial 2", molecularInclusionEvents = events, isPotentiallyEligible = true, isOpen = false)
         )
     }
 }

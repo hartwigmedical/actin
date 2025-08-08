@@ -14,7 +14,7 @@ enum class TreatmentCategory : Displayable {
     SUPPORTIVE_TREATMENT;
 
     override fun display(): String {
-        return this.toString().replace("_".toRegex(), " ").lowercase()
+        return this.toString().replace("_", " ").lowercase()
     }
 
     companion object {
