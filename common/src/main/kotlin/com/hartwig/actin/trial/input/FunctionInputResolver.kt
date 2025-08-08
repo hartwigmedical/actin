@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
-import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -39,7 +38,6 @@ import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.ManyTreatmentCategories
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
-import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -132,11 +130,6 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_DOUBLE -> {
                     createOneDoubleInput(function)
-                    return true
-                }
-
-                FunctionInput.ONE_DOUBLE_ONE_GENDER -> {
-                    createOneDoubleOneGenderInput(function)
                     return true
                 }
 
@@ -472,14 +465,6 @@ class FunctionInputResolver(
     fun createOneDoubleInput(function: EligibilityFunction): Double {
         assertParamConfig(function, FunctionInput.ONE_DOUBLE, 1)
         return parameterAsString(function, 0).toDouble()
-    }
-
-    fun createOneDoubleOneGenderInput(function: EligibilityFunction): OneDoubleOneGender {
-        assertParamConfig(function, FunctionInput.ONE_DOUBLE_ONE_GENDER, 2)
-        return OneDoubleOneGender(
-            double = parameterAsString(function, 0).toDouble(),
-            gender = toGender(function.parameters[1] as String)
-        )
     }
 
     fun createTwoDoublesInput(function: EligibilityFunction): TwoDoubles {
@@ -971,14 +956,6 @@ class FunctionInputResolver(
     private fun toMedicationCategoryMap(category: String): Pair<String, Set<AtcLevel>> {
         throwExceptionIfAtcCategoryNotMapped(category)
         return medicationCategories.resolveCategoryName(category) to medicationCategories.resolve(category)
-    }
-
-    private fun toGender(genderName: String): Gender {
-        try {
-            return Gender.valueOf(genderName.uppercase(Locale.getDefault()))
-        } catch (e: Exception) {
-            throw IllegalStateException("Gender name not found: $genderName")
-        }
     }
 
     private fun toTnmTs(input: Any): Set<TnmT>{

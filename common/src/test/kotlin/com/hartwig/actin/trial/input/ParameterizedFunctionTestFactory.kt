@@ -59,10 +59,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("1", "2")
             }
 
-            FunctionInput.ONE_DOUBLE_ONE_GENDER -> {
-                listOf("1", "female")
-            }
-
             FunctionInput.ONE_SYSTEMIC_TREATMENT -> {
                 listOf("CAPECITABINE+OXALIPLATIN")
             }
