@@ -1,10 +1,10 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
-import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -17,7 +17,6 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory.createTestResolver
-import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -29,7 +28,6 @@ import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
-import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -1051,21 +1049,6 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("OatP1b1")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("BCRP, OATP1B1")))).isFalse
-    }
-
-    @Test
-    fun `Should resolve functions with one double one gender input`() {
-        val rule = firstOfType(FunctionInput.ONE_DOUBLE_ONE_GENDER)
-        val valid = create(rule, listOf("1.0", "female"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = OneDoubleOneGender(gender = Gender.FEMALE, double = 1.0)
-        assertThat(resolver.createOneDoubleOneGenderInput(valid)).isEqualTo(expected)
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "not a gender")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("een", "female")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("female", "1.0")))).isFalse
     }
 
     @Test
