@@ -375,8 +375,8 @@ class MolecularDriverEntryFactoryTest {
 
     private fun createFactoryWithCohortsForEvent(molecularRecord: MolecularRecord, event: String): MolecularDriverEntryFactory {
         val cohorts = listOf(
-            interpretedCohort(acronym = "trial 1", molecularEvents = setOf(event), isPotentiallyEligible = true, isOpen = true),
-            interpretedCohort(acronym = "trial 2", molecularEvents = setOf(event), isPotentiallyEligible = true, isOpen = false)
+            interpretedCohort(acronym = "trial 1", molecularInclusionEvents = setOf(event), isPotentiallyEligible = true, isOpen = true),
+            interpretedCohort(acronym = "trial 2", molecularInclusionEvents = setOf(event), isPotentiallyEligible = true, isOpen = false)
         )
         return createFactoryForMolecularRecordAndCohorts(molecularRecord, cohorts)
     }

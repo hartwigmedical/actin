@@ -1,6 +1,6 @@
 {
   "patientId": "EXAMPLE-LUNG-01",
-  "referenceDate": "2025-06-10",
+  "referenceDate": "2025-08-06",
   "referenceDateIsLive": true,
   "trialMatches": [
     {
@@ -252,11 +252,13 @@
         {
           "metadata": {
             "cohortId": "A",
+            "description": "Dose escalation - monotherapy",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": true,
-            "slotsAvailable": false,
             "ignore": false,
-            "description": "Dose escalation - monotherapy"
+            "open": true,
+            "slotsAvailable": false
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
@@ -264,11 +266,13 @@
         {
           "metadata": {
             "cohortId": "B",
+            "description": "Dose expansion - monotherapy",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": false,
-            "slotsAvailable": false,
             "ignore": false,
-            "description": "Dose expansion - monotherapy"
+            "open": false,
+            "slotsAvailable": false
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
@@ -418,6 +422,36 @@
         ],
         [
           {
+            "references": [
+              "I-05"
+            ],
+            "function": {
+              "rule": "PD_L1_SCORE_TPS_OF_AT_LEAST_X",
+              "parameters": [
+                "50"
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [
+              "PD-L1 \u003e\u003d 50.0"
+            ],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "PD-L1 expression above minimum of 50.0"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
             "references": [],
             "function": {
               "rule": "WARN_IF",
@@ -452,11 +486,13 @@
         {
           "metadata": {
             "cohortId": "A",
+            "description": "Dose expansion - monotherapy - NSCLC",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": true,
-            "slotsAvailable": true,
             "ignore": false,
-            "description": "Dose expansion - monotherapy - NSCLC"
+            "open": true,
+            "slotsAvailable": true
           },
           "isPotentiallyEligible": true,
           "evaluations": [
@@ -493,11 +529,13 @@
         {
           "metadata": {
             "cohortId": "B",
+            "description": "Dose expansion - monotherapy - Colorectum",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": true,
-            "slotsAvailable": true,
             "ignore": false,
-            "description": "Dose expansion - monotherapy - Colorectum"
+            "open": true,
+            "slotsAvailable": true
           },
           "isPotentiallyEligible": false,
           "evaluations": [
@@ -698,11 +736,13 @@
         {
           "metadata": {
             "cohortId": "A",
+            "description": "Dose escalation - monotherapy",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": true,
-            "slotsAvailable": true,
             "ignore": false,
-            "description": "Dose escalation - monotherapy"
+            "open": true,
+            "slotsAvailable": true
           },
           "isPotentiallyEligible": false,
           "evaluations": {}
@@ -871,11 +911,13 @@
         {
           "metadata": {
             "cohortId": "A",
+            "description": "Lung cancer C797S cohort",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": true,
-            "slotsAvailable": true,
             "ignore": false,
-            "description": "Lung cancer C797S cohort"
+            "open": true,
+            "slotsAvailable": true
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
@@ -1085,11 +1127,13 @@
         {
           "metadata": {
             "cohortId": "A",
+            "description": "Dose expansion - monotherapy - NSCLC",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": false,
-            "slotsAvailable": true,
             "ignore": false,
-            "description": "Dose expansion - monotherapy - NSCLC"
+            "open": false,
+            "slotsAvailable": true
           },
           "isPotentiallyEligible": false,
           "evaluations": [
@@ -1126,11 +1170,13 @@
         {
           "metadata": {
             "cohortId": "B",
+            "description": "Dose expansion - monotherapy - Other cancer types",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
             "evaluable": true,
-            "open": false,
-            "slotsAvailable": true,
             "ignore": false,
-            "description": "Dose expansion - monotherapy - Other cancer types"
+            "open": false,
+            "slotsAvailable": true
           },
           "isPotentiallyEligible": false,
           "evaluations": [
@@ -1184,5 +1230,6 @@
   ],
   "standardOfCareMatches": null,
   "personalizedDataAnalysis": null,
+  "survivalPredictionsPerTreatment": null,
   "maxMolecularTestAge": null
 }

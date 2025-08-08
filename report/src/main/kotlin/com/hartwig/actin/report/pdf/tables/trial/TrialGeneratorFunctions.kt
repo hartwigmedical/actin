@@ -174,9 +174,9 @@ object TrialGeneratorFunctions {
         indicateNoSlotsOrClosed: Boolean
     ): List<List<String>> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohortsForTrial, feedbackFunction) else emptySet()
-        val commonEvents = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::molecularEvents)
+        val commonEvents = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::molecularInclusionEvents)
         val commonLocations = findCommonMembersInCohorts(cohortsForTrial, InterpretedCohort::locations)
-        val allEventsEmpty = cohortsForTrial.all { it.molecularEvents.isEmpty() }
+        val allEventsEmpty = cohortsForTrial.all { it.molecularInclusionEvents.isEmpty() }
 
         val hidePrefix = (commonFeedback.isEmpty() && commonEvents.isEmpty() && commonLocations.isEmpty()) || cohortsForTrial.size == 1
 
@@ -205,7 +205,7 @@ object TrialGeneratorFunctions {
 
             listOfNotNull(
                 cohortString,
-                concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
+                concat(cohort.molecularInclusionEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
                 if (includeSites) TrialLocations.actinTrialLocation(
                     cohort.source,
                     requestingSource,

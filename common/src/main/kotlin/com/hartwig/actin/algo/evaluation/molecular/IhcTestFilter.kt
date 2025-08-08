@@ -17,7 +17,7 @@ object IhcTestFilter {
     }
 
     fun mostRecentAndUnknownDateIhcTestsForItem(ihcTests: List<IhcTest>, item: String): Set<IhcTest> {
-        return mostRecentAndUnknownDateIhcTests(ihcTests).filter { it.item == item }.toSet()
+        return mostRecentAndUnknownDateIhcTests(ihcTests).filter { it.item.equals(item, ignoreCase = true) }.toSet()
     }
 
     fun mostRecentAndUnknownDateIhcTests(ihcTests: List<IhcTest>): Set<IhcTest> {

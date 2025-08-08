@@ -40,7 +40,7 @@ private val EVALUABLE_COHORTS = listOf(
         isOpen = true,
         isIgnore = false,
         hasSlotsAvailable = true,
-        molecularEvents = setOf(EGFR_TARGET)
+        molecularInclusionEvents = setOf(EGFR_TARGET)
     )
 )
 
@@ -97,7 +97,7 @@ class TrialsProviderTest {
     fun `Should filter molecular criteria already matched in interpreted cohorts`() {
         val interpretedCohorts = listOf(
             InterpretedCohortTestFactory.interpretedCohort(
-                molecularEvents = setOf(EGFR_TARGET)
+                molecularInclusionEvents = setOf(EGFR_TARGET)
             )
         )
         val filtered = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL)

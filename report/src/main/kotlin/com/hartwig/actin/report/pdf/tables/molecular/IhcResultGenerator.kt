@@ -13,11 +13,12 @@ class IhcResultGenerator(
     private val ihcTests: List<IhcTest>,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val interpreter: IhcTestInterpreter
+    private val interpreter: IhcTestInterpreter,
+    private val title: String = "IHC results",
 ) : TableGenerator {
 
     override fun title(): String {
-        return "IHC results"
+        return title
     }
 
     override fun forceKeepTogether(): Boolean {
