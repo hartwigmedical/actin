@@ -24,7 +24,11 @@ class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<
                 "Panel [${testSpec.testName}${testSpec.versionDate?.let { " version $it" } ?: ""}] is not found in panel specifications. Check curation and map to one " +
                         "of [${molecularTargetsPerTest.keys.joinToString()}] or add this panel to the specification TSV."
             )
-        val mergedTargets = baseTargets + (negativeResults?.associate { it.gene to listOf(it.molecularTestTarget) } ?: emptyMap())
+        val negativeTargets = (negativeResults?.associate { it.gene to listOf(it.molecularTestTarget) } ?: emptyMap())
+        val mergedTargets = (baseTargets.keys + negativeTargets.keys)
+            .associateWith { gene ->
+                (baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())
+            }
         return PanelTargetSpecification(mergedTargets)
     }
 }
