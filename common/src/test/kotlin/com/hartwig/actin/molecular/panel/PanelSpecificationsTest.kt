@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.panel
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedDeletion
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedNegativeResult
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencingTest
@@ -35,8 +36,9 @@ class PanelSpecificationsTest {
     }
 
     @Test
-    fun `Should resolve a panels specification from the set of all specification by name`() {
+    fun `Should resolve a panels specification from the set of all specification by name and negative results`() {
         val panelSpec = PanelTestSpecification("panel", null)
+        val negativeResults = setOf(SequencedNegativeResult(ANOTHER_GENE, MolecularTestTarget.FUSION))
         val specification = PanelSpecifications(
             mapOf(
                 panelSpec to listOf(
@@ -46,15 +48,16 @@ class PanelSpecificationsTest {
                     )
                 )
             )
-        ).panelTargetSpecification(panelSpec)
+        ).panelTargetSpecification(panelSpec, negativeResults)
         assertThat(specification.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION) })
+        assertThat(specification.testsGene(ANOTHER_GENE) { it == listOf(MolecularTestTarget.FUSION) })
     }
 
     @Test
     fun `Should throw illegal state exception when a panel name is not found`() {
         assertThatThrownBy {
             val specifications = PanelSpecifications(emptyMap())
-            specifications.panelTargetSpecification(PanelTestSpecification("panel"))
+            specifications.panelTargetSpecification(PanelTestSpecification("panel"), null)
         }.isInstanceOfAny(IllegalStateException::class.java)
     }
 

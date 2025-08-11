@@ -17,7 +17,7 @@ object PanelSpecificationFunctions {
                         MolecularTestTarget.MUTATION
                     )
                 } +
-                testResults.negativeResults.map { it.gene to listOf(MolecularTestTarget.MUTATION) }
+                testResults.negativeResults.map { it.gene to listOf(it.molecularTestTarget) }
     }
 
     fun determineTestVersion(
