@@ -120,7 +120,7 @@ class PanelFusionAnnotator(
                         sequencedFusion.geneUp?.let { gene ->
                             val canonicalTranscript = canonicalTranscriptForGene(gene)
                             checkCanonicalTranscript(canonicalTranscript, gene, it)
-                            canonicalTranscriptForGene(gene).transcriptName()
+                            canonicalTranscript.transcriptName()
                         } ?: "",
                         it,
                         it
@@ -165,9 +165,9 @@ class PanelFusionAnnotator(
     }
 
     private fun checkCanonicalTranscript(transcript: TranscriptData, gene: String, exonEnd: Int) {
-        val exonSize = transcript.exons().size
-        if (exonEnd !in 1..exonSize) {
-            throw IllegalStateException("Exon $exonEnd is out of canonical transcript range 1-$exonSize for gene $gene")
+        val numberOfExons = transcript.exons().size
+        if (exonEnd !in 1..numberOfExons) {
+            throw IllegalStateException("Exon $exonEnd is out of canonical transcript range 1-$numberOfExons for gene $gene")
         }
     }
 }

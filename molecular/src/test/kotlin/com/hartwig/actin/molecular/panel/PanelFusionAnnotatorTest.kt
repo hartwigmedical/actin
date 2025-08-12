@@ -187,7 +187,7 @@ class PanelFusionAnnotatorTest {
     }
 
     @Test
-    fun `Should return true for promiscuous 5 fusion outside exon range`() {
+    fun `Should return false for promiscuous 5 fusion outside exon range`() {
         val nonMatchingExon = 8
         val fusionNonMatchingExons = FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = nonMatchingExon)
 
