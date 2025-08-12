@@ -15,7 +15,6 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.HAS_ANY_COMPLICATION to hasAnyComplicationCreator(),
             EligibilityRule.HAS_COMPLICATION_WITH_ANY_ICD_TITLE_X to hasSpecificComplicationCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
@@ -38,10 +37,6 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
                 )
             }
         )
-    }
-
-    private fun hasAnyComplicationCreator(): FunctionCreator {
-        return { HasAnyComplication() }
     }
 
     private fun hasSpecificComplicationCreator(): FunctionCreator {
