@@ -6,9 +6,10 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.molecular.util.EnsemblUtil.canonicalTranscriptIdForGeneOrFail
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.molecular.util.FormatFunctions
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
+import com.hartwig.hmftools.common.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
 
@@ -94,7 +95,7 @@ class PanelFusionAnnotator(
         val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
         val transcript = sequencedSkippedExons.transcript ?: run {
             logger.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
-            canonicalTranscriptForGene(sequencedSkippedExons.gene)
+            canonicalTranscriptIdForGeneOrFail(ensembleDataCache, sequencedSkippedExons.gene)
         }
 
         return Fusion(
@@ -112,13 +113,5 @@ class PanelFusionAnnotator(
             fusedExonUp = sequencedSkippedExons.exonStart - 1,
             fusedExonDown = sequencedSkippedExons.exonEnd + 1
         )
-    }
-
-    private fun canonicalTranscriptForGene(gene: String): String {
-        val geneData = ensembleDataCache.findGeneDataByName(gene)
-            ?: throw IllegalArgumentException("No gene data found for gene $gene")
-        val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
-            ?: throw IllegalStateException("No canonical transcript found for gene $gene")
-        return transcript
     }
 }

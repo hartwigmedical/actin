@@ -2,22 +2,22 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
-import com.hartwig.actin.molecular.driverlikelihood.DndsModel
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
+import com.hartwig.actin.molecular.panel.PanelSpecifications
+import com.hartwig.actin.molecular.util.EnsemblUtil.toHmfRefGenomeVersion
+import com.hartwig.hmftools.common.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -74,11 +74,15 @@ object InputDataLoader {
                     doidEntry
                 }
             }
+            //  TODO check v37 vs v38, could we need both in any single run? can we ensure ref genome version is consistent with ensembl cache path?
             val deferredEnsemblDataCache = async {
                 withContext(Dispatchers.IO) {
-                    val ensemblRefGenomeVersion = toEnsemblRefGenomeVersion(clinicalRefGenomeVersion)
+                    val ensemblRefGenomeVersion = toHmfRefGenomeVersion(clinicalRefGenomeVersion)
                     LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
-                    EnsemblDataLoader.load(config.ensemblCachePath, ensemblRefGenomeVersion)
+                    val ensemblCache = EnsemblDataCache(config.ensemblCachePath, ensemblRefGenomeVersion)
+                    ensemblCache.setRequiredData(true, true, true, false)
+                    ensemblCache.load(false)
+                    ensemblCache
                 }
             }
             val deferredDndsDatabase = async {

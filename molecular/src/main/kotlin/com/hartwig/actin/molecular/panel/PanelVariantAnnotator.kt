@@ -20,7 +20,6 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.reversepaver.BaseSequenceChange
 import com.hartwig.actin.molecular.reversepaver.ReversePaver
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
-import com.hartwig.actin.tools.pave.PaveLite
 import org.apache.logging.log4j.LogManager
 
 fun eventString(paveResponse: PaveResponse): String {
@@ -36,7 +35,6 @@ fun eventString(paveResponse: PaveResponse): String {
 class PanelVariantAnnotator(
     private val reversePaver: ReversePaver,
     private val paver: Paver,
-    private val paveLite: PaveLite,
 ) {
 
     private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
@@ -113,8 +111,8 @@ class PanelVariantAnnotator(
         alt = transvarAnnotation.alt,
         type = variantType(transvarAnnotation),
         variantAlleleFrequency = variant.variantAlleleFrequency,
-        canonicalImpact = canonicalImpact(paveResponse.impact, transvarAnnotation),
-        otherImpacts = otherImpacts(paveResponse, transvarAnnotation),
+        canonicalImpact = canonicalImpact(paveResponse.impact, paveResponse.transcriptImpacts),
+        otherImpacts = otherImpacts(paveResponse),
         variantCopyNumber = null,
         totalCopyNumber = null,
         isBiallelic = variant.isBiallelic,
@@ -131,45 +129,39 @@ class PanelVariantAnnotator(
         isAssociatedWithDrugResistance = null
     )
 
-    private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: BaseSequenceChange): TranscriptVariantImpact {
-        val paveLiteAnnotation = paveLite.run(
-            paveImpact.gene,
-            paveImpact.canonicalTranscript,
-            transvarVariant.position
-        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
+    private fun canonicalImpact(paveImpact: PaveImpact, transcriptImpacts: List<PaveTranscriptImpact>): TranscriptVariantImpact {
+
+        val transcriptImpactForCanonicalTranscript = transcriptImpacts
+            .firstOrNull { it.transcript == paveImpact.canonicalTranscript }
+            ?: throw IllegalStateException("No transcript impact found for canonical transcript: ${paveImpact.canonicalTranscript}")
 
         return TranscriptVariantImpact(
             transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
             hgvsProteinImpact = forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
-            affectedCodon = paveLiteAnnotation.affectedCodon(),
-            affectedExon = paveLiteAnnotation.affectedExon(),
+            affectedCodon = transcriptImpactForCanonicalTranscript.affectedCodon,
+            affectedExon = transcriptImpactForCanonicalTranscript.affectedExon,
             inSpliceRegion = paveImpact.spliceRegion,
             effects = paveImpact.canonicalEffects.map { variantEffect(it) }.toSet(),
             codingEffect = codingEffect(paveImpact.canonicalCodingEffect),
         )
     }
 
-    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: BaseSequenceChange): Set<TranscriptVariantImpact> {
+    fun otherImpacts(paveResponse: PaveResponse): Set<TranscriptVariantImpact> {
         return paveResponse.transcriptImpacts
             .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.canonicalTranscript }
-            .map { transcriptImpact(it, transvarVariant) }
+            .map { transcriptImpact(it) }
             .toSet()
     }
 
-    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact, transvarVariant: BaseSequenceChange): TranscriptVariantImpact {
-        val paveLiteAnnotation = paveLite.run(
-            paveTranscriptImpact.gene,
-            paveTranscriptImpact.transcript,
-            transvarVariant.position
-        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
+    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact): TranscriptVariantImpact {
 
         return TranscriptVariantImpact(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
             hgvsProteinImpact = forceSingleLetterAminoAcids(paveTranscriptImpact.hgvsProteinImpact),
-            affectedCodon = paveLiteAnnotation.affectedCodon(),
-            affectedExon = paveLiteAnnotation.affectedExon(),
+            affectedCodon = paveTranscriptImpact.affectedCodon,
+            affectedExon = paveTranscriptImpact.affectedExon,
             inSpliceRegion = paveTranscriptImpact.spliceRegion,
             effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
             codingEffect = codingEffect(

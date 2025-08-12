@@ -10,8 +10,9 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
-import com.hartwig.actin.tools.ensemblcache.TranscriptData
+import com.hartwig.hmftools.common.ensemblcache.EnsemblDataCache
+import com.hartwig.hmftools.common.gene.GeneData
+import com.hartwig.hmftools.common.gene.TranscriptData
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -101,12 +102,28 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     private fun setupEnsemblDataCacheForCopyNumber() {
-        every { ensembleDataCache.findGeneDataByName(GENE) } returns mockk {
-            every { geneId() } returns "geneId"
-        }
-        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
-            every { transcriptName() } returns CANONICAL_TRANSCRIPT
-        }
+        every { ensembleDataCache.getGeneDataByName(GENE) } returns GeneData(
+            "geneId",
+            "geneName",
+            "chr1", 1,
+            100,
+            200,
+            "band"
+        )
+        
+        every { ensembleDataCache.getCanonicalTranscriptData("geneId") } returns TranscriptData(
+            1,
+            CANONICAL_TRANSCRIPT,
+            "geneId",
+            true,
+            1,
+            100,
+            200,
+            null,
+            null,
+            "bioType",
+            "refSeqId"
+        )
     }
 
     private fun check(

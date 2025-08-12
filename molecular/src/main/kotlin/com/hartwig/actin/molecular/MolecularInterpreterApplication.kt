@@ -29,7 +29,6 @@ import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.reversepaver.reversePaverFactory
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
-import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
@@ -41,7 +40,6 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
-import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
@@ -115,9 +113,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val paver = Paver(
             config.ensemblCachePath, config.referenceGenomeFastaPath, paveRefGenomeVersion, config.driverGenePanelPath, config.tempDir
         )
-        val paveLite = PaveLite(inputData.ensemblDataCache, false)
 
-        val panelVariantAnnotator = PanelVariantAnnotator(reversePaver, paver, paveLite)
+        val panelVariantAnnotator = PanelVariantAnnotator(reversePaver, paver)
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()
@@ -228,17 +225,17 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     }
 }
 
-fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
-    return when (refGenomeVersion) {
-        RefGenomeVersion.V37 -> {
-            EnsemblRefGenome.V37
-        }
-
-        RefGenomeVersion.V38 -> {
-            EnsemblRefGenome.V38
-        }
-    }
-}
+//fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
+//    return when (refGenomeVersion) {
+//        RefGenomeVersion.V37 -> {
+//            EnsemblRefGenome.V37
+//        }
+//
+//        RefGenomeVersion.V38 -> {
+//            EnsemblRefGenome.V38
+//        }
+//    }
+//}
 
 fun main(args: Array<String>) {
     val options: Options = MolecularInterpreterConfig.createOptions()

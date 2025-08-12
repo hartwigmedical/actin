@@ -25,8 +25,6 @@
         <serve.version>8.2.0</serve.version>
         <actin-personalization.version>0.28.0</actin-personalization.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
-        <actin-transvar.version>1.0.0</actin-transvar.version>
-        <actin-pave-lite.version>1.0.0</actin-pave-lite.version>
         <actin-feed.version>1.0.1</actin-feed.version>
         <pave.version>local-SNAPSHOT</pave.version>
         <pave-reverse.version>local-SNAPSHOT</pave-reverse.version>
@@ -211,19 +209,9 @@
                 <version>${orange-datamodel.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hartwig.actin</groupId>
-                <artifactId>actin-transvar</artifactId>
-                <version>${actin-transvar.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.hartwig</groupId>
                 <artifactId>pave-reverse</artifactId>
                 <version>${pave-reverse.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig.actin</groupId>
-                <artifactId>actin-pave-lite</artifactId>
-                <version>${actin-pave-lite.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
@@ -384,7 +372,7 @@
             </dependency>
             <dependency>
                 <!-- PAVE depends on an older htsjdk than actin-tools. Since only the PAVE version
-                  is used at runtime, force that version here -->
+                  is used at runtime, force that version here. TODO kz check best version after removing actin-tools-->
                 <groupId>com.github.samtools</groupId>
                 <artifactId>htsjdk</artifactId>
                 <version>2.23.0</version>

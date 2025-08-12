@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.paver
 
-import com.hartwig.actin.tools.validation.VCFWriterFactory
+import com.hartwig.actin.molecular.util.VCFWriterFactory
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder
 import com.hartwig.hmftools.pave.PaveApplication
 import com.hartwig.hmftools.pave.PaveConfig

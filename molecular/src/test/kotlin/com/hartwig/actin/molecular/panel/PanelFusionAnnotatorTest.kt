@@ -7,9 +7,10 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
-import com.hartwig.actin.tools.ensemblcache.TranscriptData
+import com.hartwig.hmftools.common.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
+import com.hartwig.hmftools.common.gene.GeneData
+import com.hartwig.hmftools.common.gene.TranscriptData
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -153,13 +154,29 @@ class PanelFusionAnnotatorTest {
     fun `Should annotate to canonical transcript when no transcript provided for exon skip`() {
         setupKnownFusionCacheForExonDeletion()
 
-        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
-            every { transcriptName() } returns CANONICAL_TRANSCRIPT
-        }
+        every { ensembleDataCache.getCanonicalTranscriptData("geneId") } returns TranscriptData(
+            1,
+            CANONICAL_TRANSCRIPT,
+            "geneId",
+            true,
+            1,
+            100,
+            200,
+            null,
+            null,
+            "bioType",
+            "refSeqId"
+        )
 
-        every { ensembleDataCache.findGeneDataByName(GENE) } returns mockk {
-            every { geneId() } returns "geneId"
-        }
+        every { ensembleDataCache.getGeneDataByName(GENE) } returns GeneData(
+            "geneId",
+            "geneName",
+            "chr1",
+            1,
+            100,
+            200,
+            "band"
+        )
 
         val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, EXON_SKIPPED_UP, EXON_SKIPPED_DOWN, null))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
