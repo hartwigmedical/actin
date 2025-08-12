@@ -17,11 +17,11 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.reversepaver.BaseSequenceChange
+import com.hartwig.actin.molecular.reversepaver.ReversePaver
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.variant.VariantAnnotator
 import org.apache.logging.log4j.LogManager
-import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
 fun eventString(paveResponse: PaveResponse): String {
     return formatVariantImpact(
@@ -34,7 +34,7 @@ fun eventString(paveResponse: PaveResponse): String {
 }
 
 class PanelVariantAnnotator(
-    private val variantResolver: VariantAnnotator,
+    private val reversePaver: ReversePaver,
     private val paver: Paver,
     private val paveLite: PaveLite,
 ) {
@@ -53,36 +53,31 @@ class PanelVariantAnnotator(
         return variants.withIndex().associate { it.index.toString() to it.value }
     }
 
-    private fun resolveVariants(variantExtractions: Map<String, SequencedVariant>): Map<String, TransvarVariant> {
+    private fun resolveVariants(variantExtractions: Map<String, SequencedVariant>): Map<String, BaseSequenceChange> {
         return variantExtractions.mapValues { (_, value) -> transvarAnnotation(value) }
             .mapNotNull { if (it.value != null) it.key to it.value!! else null }
             .toMap()
     }
 
-    private fun transvarAnnotation(sequencedVariant: SequencedVariant): TransvarVariant? {
-        val externalVariantAnnotation =
-            variantResolver.resolve(
-                sequencedVariant.gene,
-                sequencedVariant.transcript,
-                sequencedVariant.hgvsCodingOrProteinImpact()
-            )
+    private fun transvarAnnotation(sequencedVariant: SequencedVariant): BaseSequenceChange? {
+        val preferredImpact = sequencedVariant.hgvsCodingOrProteinImpact()
+        val baseSequenceChange = reversePaver.resolve(sequencedVariant.gene, sequencedVariant.transcript, preferredImpact)
 
-        return externalVariantAnnotation
-            ?: throw IllegalStateException("Unable to resolve variant '$sequencedVariant' in variant annotator.")
+        return baseSequenceChange
     }
 
-    private fun annotateWithPave(transvarVariants: Map<String, TransvarVariant>): Map<String, PaveResponse> {
+    private fun annotateWithPave(transvarVariants: Map<String, BaseSequenceChange>): Map<String, PaveResponse> {
         if (transvarVariants.isEmpty()) {
             return emptyMap()
         }
 
-        val paveQueries = transvarVariants.map { (id, annotation) ->
+        val paveQueries = transvarVariants.map { (id, baseSequenceChange) ->
             PaveQuery(
                 id = id,
-                chromosome = annotation.chromosome(),
-                position = annotation.position(),
-                ref = annotation.ref(),
-                alt = annotation.alt()
+                chromosome = baseSequenceChange.chromosome,
+                position = baseSequenceChange.position,
+                ref = baseSequenceChange.ref,
+                alt = baseSequenceChange.alt
             )
         }
 
@@ -95,7 +90,7 @@ class PanelVariantAnnotator(
     }
 
     private fun createVariants(
-        transvarVariants: Map<String, TransvarVariant>,
+        transvarVariants: Map<String, BaseSequenceChange>,
         paveAnnotations: Map<String, PaveResponse>,
         variantExtractions: Map<String, SequencedVariant>
     ): List<Variant> {
@@ -109,13 +104,13 @@ class PanelVariantAnnotator(
 
     private fun createVariant(
         variant: SequencedVariant,
-        transvarAnnotation: TransvarVariant,
+        transvarAnnotation: BaseSequenceChange,
         paveResponse: PaveResponse
     ) = Variant(
-        chromosome = transvarAnnotation.chromosome(),
-        position = transvarAnnotation.position(),
-        ref = transvarAnnotation.ref(),
-        alt = transvarAnnotation.alt(),
+        chromosome = transvarAnnotation.chromosome,
+        position = transvarAnnotation.position,
+        ref = transvarAnnotation.ref,
+        alt = transvarAnnotation.alt,
         type = variantType(transvarAnnotation),
         variantAlleleFrequency = variant.variantAlleleFrequency,
         canonicalImpact = canonicalImpact(paveResponse.impact, transvarAnnotation),
@@ -136,11 +131,11 @@ class PanelVariantAnnotator(
         isAssociatedWithDrugResistance = null
     )
 
-    private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
+    private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: BaseSequenceChange): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
             paveImpact.gene,
             paveImpact.canonicalTranscript,
-            transvarVariant.position()
+            transvarVariant.position
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
 
         return TranscriptVariantImpact(
@@ -155,18 +150,18 @@ class PanelVariantAnnotator(
         )
     }
 
-    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptVariantImpact> {
+    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: BaseSequenceChange): Set<TranscriptVariantImpact> {
         return paveResponse.transcriptImpacts
             .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.canonicalTranscript }
             .map { transcriptImpact(it, transvarVariant) }
             .toSet()
     }
 
-    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
+    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact, transvarVariant: BaseSequenceChange): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
             paveTranscriptImpact.gene,
             paveTranscriptImpact.transcript,
-            transvarVariant.position()
+            transvarVariant.position
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
 
         return TranscriptVariantImpact(
@@ -185,9 +180,9 @@ class PanelVariantAnnotator(
         )
     }
 
-    private fun variantType(transvarVariant: com.hartwig.actin.tools.variant.Variant): VariantType {
-        val ref = transvarVariant.ref()
-        val alt = transvarVariant.alt()
+    private fun variantType(transvarVariant: BaseSequenceChange): VariantType {
+        val ref = transvarVariant.ref
+        val alt = transvarVariant.alt
         return if (ref.length == alt.length) {
             if (ref.length == 1) {
                 VariantType.SNV

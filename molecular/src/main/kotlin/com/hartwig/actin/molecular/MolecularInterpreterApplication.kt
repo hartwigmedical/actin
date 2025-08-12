@@ -27,13 +27,12 @@ import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.panel.PanelVirusAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.reversepaver.reversePaverFactory
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
-import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -41,6 +40,7 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
@@ -106,16 +106,18 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
 
         LOGGER.info("Interpreting {} prior sequencing test(s)", clinical.sequencingTests.size)
-        val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
-            toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION), config.referenceGenomeFastaPath, inputData.ensemblDataCache
-        )
+
         val paveRefGenomeVersion = toPaveRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)
+
+        // TODO KZ: how do we ensure the ensembl and fasta are CLINICAL_TESTS_REF_GENOME_VERSION? seems fragile, do we assert somewhere?
+        // TODO KZ: should we move construction to parallel loader? reverse-pave does some data loading of the cache
+        val reversePaver = reversePaverFactory(config.referenceGenomeFastaPath, config.ensemblCachePath, CLINICAL_TESTS_REF_GENOME_VERSION)
         val paver = Paver(
             config.ensemblCachePath, config.referenceGenomeFastaPath, paveRefGenomeVersion, config.driverGenePanelPath, config.tempDir
         )
         val paveLite = PaveLite(inputData.ensemblDataCache, false)
 
-        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
+        val panelVariantAnnotator = PanelVariantAnnotator(reversePaver, paver, paveLite)
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()

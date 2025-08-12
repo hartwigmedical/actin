@@ -12,6 +12,8 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.reversepaver.BaseSequenceChange
+import com.hartwig.actin.molecular.reversepaver.ReversePaver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
@@ -20,7 +22,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 private const val TRANSCRIPT = "transcript"
@@ -35,6 +36,12 @@ private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HG
 
 private val TRANSCRIPT_ANNOTATION =
     ImmutableVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
+private val GENOMIC_POSITION_ANNOTATION = BaseSequenceChange(
+    chromosome = CHROMOSOME,
+    position = POSITION,
+    ref = REF,
+    alt = ALT
+)
 
 private val PAVE_QUERY = PaveQuery(
     id = "0",
@@ -68,6 +75,10 @@ class PanelVariantAnnotatorTest {
     private val transvarAnnotator = mockk<VariantAnnotator> {
         every { resolve(any(), null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
     }
+    private val reversePaver = mockk<ReversePaver> {
+        every { resolve(any(), null, HGVS_CODING) } returns GENOMIC_POSITION_ANNOTATION
+    }
+
     private val paveLite = mockk<PaveLite> {
         every { run(any(), TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
     }
@@ -75,7 +86,7 @@ class PanelVariantAnnotatorTest {
         every { run(any<List<PaveQuery>>()) } returns emptyList()
         every { run(listOf(PAVE_QUERY)) } returns listOf(PAVE_ANNOTATION)
     }
-    private val annotator = PanelVariantAnnotator(transvarAnnotator, paver, paveLite)
+    private val annotator = PanelVariantAnnotator(reversePaver, paver, paveLite)
 
     @Test
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
@@ -103,12 +114,6 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
-    fun `Should throw exception on null output from transcript annotator`() {
-        every { transvarAnnotator.resolve(GENE, null, HGVS_CODING) } returns null
-        assertThatThrownBy { annotator.annotate(setOf(ARCHER_VARIANT)) }.isInstanceOf(IllegalStateException::class.java)
-    }
-
-    @Test
     fun `Should annotate variants with affected exon and codon`() {
         every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns
                 ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(2).build()
@@ -126,7 +131,7 @@ class PanelVariantAnnotatorTest {
             )
         )
 
-        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
+        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, GENOMIC_POSITION_ANNOTATION)
         assertThat(transcriptImpact).isEqualTo(emptySet<TranscriptVariantImpact>())
     }
 
@@ -136,7 +141,7 @@ class PanelVariantAnnotatorTest {
 
         every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
 
-        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
+        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, GENOMIC_POSITION_ANNOTATION)
         assertThat(transcriptImpact).containsExactly(transcriptVariantImpact(emptySet(), CodingEffect.NONE))
     }
 
@@ -152,7 +157,7 @@ class PanelVariantAnnotatorTest {
 
         every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
 
-        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
+        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, GENOMIC_POSITION_ANNOTATION)
         assertThat(transcriptImpact).containsExactly(
             transcriptVariantImpact(setOf(VariantEffect.OTHER, VariantEffect.MISSENSE, VariantEffect.INTRONIC), CodingEffect.MISSENSE)
         )
@@ -264,7 +269,10 @@ class PanelVariantAnnotatorTest {
         effects = effects,
         spliceRegion = false,
         hgvsCodingImpact = HGVS_CODING,
-        hgvsProteinImpact = HGVS_PROTEIN_3LETTER
+        hgvsProteinImpact = HGVS_PROTEIN_3LETTER,
+        refSeqId = null,
+        affectedExon = 1,
+        affectedCodon = 1
     )
 
     private fun transcriptVariantImpact(effects: Set<VariantEffect>, codingEffect: CodingEffect): TranscriptVariantImpact =

@@ -28,7 +28,8 @@
         <actin-transvar.version>1.0.0</actin-transvar.version>
         <actin-pave-lite.version>1.0.0</actin-pave-lite.version>
         <actin-feed.version>1.0.1</actin-feed.version>
-        <pave.version>1.6</pave.version>
+        <pave.version>local-SNAPSHOT</pave.version>
+        <pave-reverse.version>local-SNAPSHOT</pave-reverse.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
@@ -213,6 +214,11 @@
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>actin-transvar</artifactId>
                 <version>${actin-transvar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>pave-reverse</artifactId>
+                <version>${pave-reverse.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
