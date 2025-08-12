@@ -36,6 +36,11 @@ class HasLeftSidedColorectalTumorTest {
     }
 
     @Test
+    fun `Should fail when name contains colorectum cecum`() {
+        assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("colorectum cecum"))))
+    }
+
+    @Test
     fun `Should be undetermined when name does not contain a known left or right string`() {
         listOf("", "unknown", "some string").forEach { name: String ->
             assertEvaluation(
