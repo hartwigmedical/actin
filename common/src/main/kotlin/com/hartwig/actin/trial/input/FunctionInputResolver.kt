@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
-import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -16,6 +15,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.doid.DoidModel
@@ -38,7 +38,6 @@ import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.ManyTreatmentCategories
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
-import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -65,6 +64,7 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
+import com.hartwig.actin.trial.input.single.OneTreatmentResponseOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
@@ -130,11 +130,6 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_DOUBLE -> {
                     createOneDoubleInput(function)
-                    return true
-                }
-
-                FunctionInput.ONE_DOUBLE_ONE_GENDER -> {
-                    createOneDoubleOneGenderInput(function)
                     return true
                 }
 
@@ -428,6 +423,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
+                    createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(function)
+                    return true
+                }
+
                 else -> {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
@@ -465,14 +465,6 @@ class FunctionInputResolver(
     fun createOneDoubleInput(function: EligibilityFunction): Double {
         assertParamConfig(function, FunctionInput.ONE_DOUBLE, 1)
         return parameterAsString(function, 0).toDouble()
-    }
-
-    fun createOneDoubleOneGenderInput(function: EligibilityFunction): OneDoubleOneGender {
-        assertParamConfig(function, FunctionInput.ONE_DOUBLE_ONE_GENDER, 2)
-        return OneDoubleOneGender(
-            double = parameterAsString(function, 0).toDouble(),
-            gender = toGender(function.parameters[1] as String)
-        )
     }
 
     fun createTwoDoublesInput(function: EligibilityFunction): TwoDoubles {
@@ -703,6 +695,15 @@ class FunctionInputResolver(
     fun createManyTnmTInput(function: EligibilityFunction): Set<TnmT> {
         assertParamConfig(function, FunctionInput.MANY_TNM_T, 1)
         return toTnmTs(function.parameters.first())
+    }
+
+    fun createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(function: EligibilityFunction): OneTreatmentResponseOneTreatmentCategoryManyTypes {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES, 3)
+        return OneTreatmentResponseOneTreatmentCategoryManyTypes(
+            treatmentResponse = TreatmentResponse.fromString(parameterAsString(function, 0)),
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 1)),
+            types = toTreatmentTypeSet(function.parameters[2]),
+        )
     }
 
     fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {
@@ -955,14 +956,6 @@ class FunctionInputResolver(
     private fun toMedicationCategoryMap(category: String): Pair<String, Set<AtcLevel>> {
         throwExceptionIfAtcCategoryNotMapped(category)
         return medicationCategories.resolveCategoryName(category) to medicationCategories.resolve(category)
-    }
-
-    private fun toGender(genderName: String): Gender {
-        try {
-            return Gender.valueOf(genderName.uppercase(Locale.getDefault()))
-        } catch (e: Exception) {
-            throw IllegalStateException("Gender name not found: $genderName")
-        }
     }
 
     private fun toTnmTs(input: Any): Set<TnmT>{

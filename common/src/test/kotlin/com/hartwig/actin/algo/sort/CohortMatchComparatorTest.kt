@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.sort
 
 import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -21,8 +22,10 @@ class CohortMatchComparatorTest {
             metadata = CohortMetadata(
                 cohortId = id,
                 evaluable = true,
-                open = true,
-                slotsAvailable = true,
+                cohortAvailability = CohortAvailability(
+                    open = true,
+                    slotsAvailable = true
+                ),
                 ignore = false,
                 description = "",
             ),

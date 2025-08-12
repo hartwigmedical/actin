@@ -37,7 +37,7 @@ object PDL1EvaluationFunctions {
             } ?: evaluateNegativeOrPositiveTestScore(ihcTest, pdl1Reference, evaluateMaxPDL1, isLungCancer)
         }.toSet()
 
-        val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
+        val (comparatorMessage, comparatorSign) = if (evaluateMaxPDL1) "below maximum of" to "<=" else "above minimum of" to ">="
 
         return when {
             EvaluationResult.PASS in testEvaluations && (EvaluationResult.FAIL in testEvaluations || EvaluationResult.UNDETERMINED in testEvaluations) -> {
@@ -48,7 +48,10 @@ object PDL1EvaluationFunctions {
             }
 
             EvaluationResult.PASS in testEvaluations -> {
-                EvaluationFactory.pass("PD-L1 expression $comparatorMessage $pdl1Reference", inclusionEvents = setOf("PD-L1 expression"))
+                EvaluationFactory.pass(
+                    "PD-L1 expression $comparatorMessage $pdl1Reference",
+                    inclusionEvents = setOf("PD-L1 $comparatorSign $pdl1Reference")
+                )
             }
 
             EvaluationResult.FAIL in testEvaluations -> {

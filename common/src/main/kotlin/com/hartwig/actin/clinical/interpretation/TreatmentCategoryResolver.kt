@@ -19,7 +19,7 @@ object TreatmentCategoryResolver {
     }
 
     fun toString(category: TreatmentCategory): String {
-        val string = category.toString().replace("_".toRegex(), " ")
+        val string = category.toString().replace("_", " ")
         return string.substring(0, 1).uppercase() + string.substring(1).lowercase()
     }
 }

@@ -17,6 +17,7 @@ object InterpretedCohortFactory {
             val trialWarnings = extractWarnings(trialMatch.evaluations)
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
+            val trialExclusionEvents = extractExclusionEvents(trialMatch.evaluations)
             val identification = trialMatch.identification
             val isMissingMolecularResultForEvaluation = trialMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation }
 
@@ -37,7 +38,8 @@ object InterpretedCohortFactory {
                         hasSlotsAvailable = identification.open,
                         ignore = false,
                         isEvaluable = true,
-                        molecularEvents = trialInclusionEvents,
+                        molecularInclusionEvents = trialInclusionEvents,
+                        molecularExclusionEvents = trialExclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
                         isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
                         warnings = trialWarnings,
@@ -63,7 +65,8 @@ object InterpretedCohortFactory {
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         ignore = cohortMatch.metadata.ignore,
                         isEvaluable = true,
-                        molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
+                        molecularInclusionEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
+                        molecularExclusionEvents = trialExclusionEvents.union(extractExclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
                         isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation ||
                                 cohortMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation },
@@ -94,7 +97,8 @@ object InterpretedCohortFactory {
                     hasSlotsAvailable = cohortMetadata.slotsAvailable,
                     ignore = cohortMetadata.ignore,
                     isEvaluable = false,
-                    molecularEvents = emptySet(),
+                    molecularInclusionEvents = emptySet(),
+                    molecularExclusionEvents = emptySet(),
                     isPotentiallyEligible = false,
                     isMissingMolecularResultForEvaluation = false,
                     warnings = emptySet(),
@@ -106,6 +110,10 @@ object InterpretedCohortFactory {
 
     private fun extractInclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {
         return evaluationMap.values.flatMap(Evaluation::inclusionMolecularEvents).toSet()
+    }
+
+    private fun extractExclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {
+        return evaluationMap.values.flatMap(Evaluation::exclusionMolecularEvents).toSet()
     }
 
     private fun extractWarnings(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {

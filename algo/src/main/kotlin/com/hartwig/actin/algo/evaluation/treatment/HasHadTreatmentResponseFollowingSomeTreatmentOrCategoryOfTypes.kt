@@ -11,7 +11,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 
-class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
+class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+    private val treatmentResponses: Set<TreatmentResponse>,
     private val targetTreatments: List<Treatment>? = null,
     private val category: TreatmentCategory? = null,
     private val types: Set<TreatmentType>? = null
@@ -48,19 +49,33 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
             }
         }
 
-        val treatmentsWithResponse = targetTreatmentsToResponseMap.filterKeys { it in BENEFIT_RESPONSE_SET }.values.flatten()
-        val benefitMessage = " objective benefit from treatment"
+        val evaluateClinicalBenefit = treatmentResponses == TreatmentResponse.BENEFIT_RESPONSES
+
+        val (treatmentsWithResponse, otherResponses) = targetTreatmentsToResponseMap.entries.partition { it.key in treatmentResponses }
+            .let { (withResponse, otherResponse) -> withResponse.flatMap { it.value } to otherResponse.mapNotNull { it.key } }
+
+        val responseMessage =
+            if (evaluateClinicalBenefit) " objective benefit from treatment" else " ${Format.concatWithCommaAndOr(treatmentResponses.map { it.display() })} from treatment"
         val similarDrugMessage = "receive exact treatment but received similar drugs " +
                 "(${treatmentsSimilarToTargetTreatment?.joinToString(",") { it.treatmentDisplay() }})"
         val hadSimilarTreatmentsWithPD = treatmentsSimilarToTargetTreatment.takeIf { !it.isNullOrEmpty() }
             ?.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true }
 
         return when {
-            targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == false -> {
+            !evaluateClinicalBenefit && otherResponses.isNotEmpty() && treatmentsWithResponse.isNotEmpty() -> {
+                EvaluationFactory.warn(
+                    "Uncertain$responseMessage${treatmentDisplay()} - also had ${
+                        Format.concatLowercaseWithCommaAndAnd(
+                            otherResponses.map { it.display() })
+                    }"
+                )
+            }
+
+            evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == false -> {
                 EvaluationFactory.undetermined("Clinical benefit from treatment${treatmentDisplay()} undetermined - did not $similarDrugMessage")
             }
 
-            targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == true -> {
+            evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == true -> {
                 EvaluationFactory.fail("Did not $similarDrugMessage with PD as best response")
             }
 
@@ -69,20 +84,20 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
             }
 
             treatmentsWithResponse.isNotEmpty() -> {
-                EvaluationFactory.pass("Has had$benefitMessage${treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))}")
+                EvaluationFactory.pass("Has had$responseMessage${treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))}")
             }
 
-            TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {
+            evaluateClinicalBenefit && TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
-                    "Uncertain$benefitMessage" +
+                    "Uncertain$responseMessage" +
                             "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.STABLE_DISEASE]))} " +
                             "(best response: stable disease)"
                 )
             }
 
-            TreatmentResponse.MIXED in targetTreatmentsToResponseMap -> {
+            evaluateClinicalBenefit && TreatmentResponse.MIXED in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
-                    "Uncertain$benefitMessage" +
+                    "Uncertain$responseMessage" +
                             "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.MIXED]))} " +
                             "(best response: mixed)"
                 )
@@ -90,12 +105,12 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
 
             targetTreatmentsToResponseMap.containsKey(null) -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined$benefitMessage${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[null]))}"
+                    "Undetermined$responseMessage${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[null]))}"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No$benefitMessage${treatmentDisplay()}")
+                EvaluationFactory.fail("No$responseMessage${treatmentDisplay()}")
             }
         }
     }
@@ -110,13 +125,4 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
     }
 
     private fun treatmentsInHistory(history: List<TreatmentHistoryEntry>?) = history?.flatMap { it.allTreatments() }
-
-    companion object {
-        private val BENEFIT_RESPONSE_SET = setOf(
-            TreatmentResponse.PARTIAL_RESPONSE,
-            TreatmentResponse.NEAR_COMPLETE_RESPONSE,
-            TreatmentResponse.COMPLETE_RESPONSE,
-            TreatmentResponse.REMISSION
-        )
-    }
 }

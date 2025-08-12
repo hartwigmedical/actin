@@ -1,10 +1,10 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
-import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -17,7 +17,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory.createTestResolver
-import com.hartwig.actin.datamodel.clinical.AlbiGrade
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -29,7 +29,6 @@ import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
-import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -1054,21 +1053,6 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one double one gender input`() {
-        val rule = firstOfType(FunctionInput.ONE_DOUBLE_ONE_GENDER)
-        val valid = create(rule, listOf("1.0", "female"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = OneDoubleOneGender(gender = Gender.FEMALE, double = 1.0)
-        assertThat(resolver.createOneDoubleOneGenderInput(valid)).isEqualTo(expected)
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "not a gender")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("een", "female")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("female", "1.0")))).isFalse
-    }
-
-    @Test
     fun `Should resolve functions with one protein one string input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("FGFR2")
         val rule = firstOfType(FunctionInput.ONE_PROTEIN_ONE_STRING)
@@ -1091,6 +1075,34 @@ class FunctionInputResolverTest {
         assertThat(resolver.createManyTnmTInput(valid)).isEqualTo(setOf(TnmT.T2A))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("T2C")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one treatment response one treatment category many types input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES)
+        val treatmentResponse = TreatmentResponse.COMPLETE_RESPONSE
+        val category = TreatmentCategory.IMMUNOTHERAPY
+        val valid = create(rule, listOf(treatmentResponse.toString(), category.display(), "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(valid)
+        assertThat(inputs.treatmentResponse).isEqualTo(treatmentResponse)
+        assertThat(inputs.category).isEqualTo(category)
+        assertThat(inputs.types).isEqualTo(setOf(DrugType.ANTI_PD_L1, DrugType.ANTI_PD_1))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category.display())))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentResponse.toString(), category.display(), "not a type")))).isFalse
+        assertThat(
+            resolver.hasValidInputs(
+                create(
+                    rule,
+                    listOf(treatmentResponse.toString(), "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}", category.display())
+                )
+            )
+        ).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment response", "not a treatment category", "test")))!!).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

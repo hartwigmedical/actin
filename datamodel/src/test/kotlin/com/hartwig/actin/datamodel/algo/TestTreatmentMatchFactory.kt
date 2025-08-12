@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
 import com.hartwig.actin.datamodel.personalization.Population
 import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
 import com.hartwig.actin.datamodel.personalization.TreatmentGroup
+import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -147,8 +148,7 @@ object TestTreatmentMatchFactory {
         return CohortMetadata(
             cohortId = cohortId,
             evaluable = evaluable,
-            open = open,
-            slotsAvailable = slotsAvailable,
+            cohortAvailability = CohortAvailability(open, slotsAvailable),
             ignore = ignore,
             description = "Cohort $cohortId"
         )
@@ -164,7 +164,7 @@ object TestTreatmentMatchFactory {
             CohortMatch(
                 metadata = createTestCohortMetadata("B", true, true, true, false),
                 isPotentiallyEligible = true,
-                evaluations = emptyMap()
+                evaluations = createTestCohortEvaluationsTrial1CohortB()
             ),
             CohortMatch(
                 metadata = createTestCohortMetadata("C", true, false, false, false),
@@ -180,6 +180,15 @@ object TestTreatmentMatchFactory {
                 references = setOf("I-01"),
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList())
             ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
+        )
+    }
+
+    private fun createTestCohortEvaluationsTrial1CohortB(): Map<Eligibility, Evaluation> {
+        return mapOf(
+            Eligibility(
+                references = setOf("I-01"),
+                function = EligibilityFunction(rule = EligibilityRule.HER2_STATUS_IS_POSITIVE, parameters = emptyList())
+            ) to unrecoverable(EvaluationResult.PASS, "HER2 amp", "HER2 amp")
         )
     }
 
@@ -275,15 +284,15 @@ object TestTreatmentMatchFactory {
             Triple("WHO 1", 321.0, 0.25)
         )
 
-        val pfsMap = populationPfsAndDecision.map { (name, pfs, _) ->
+        val pfsMap = populationPfsAndDecision.associate { (name, pfs, _) ->
             name to Measurement(pfs, 100, (pfs / 2).toInt(), (pfs * 2).toInt(), pfs * 0.4)
-        }.toMap()
+        }
 
-        val osMap = populationOsAndDecision.map { (name, os, _) ->
+        val osMap = populationOsAndDecision.associate { (name, os, _) ->
             name to Measurement(os, 100, (os / 2).toInt(), (os * 2).toInt(), os * 0.4)
-        }.toMap()
+        }
 
-        val decisionMap = populationPfsAndDecision.map { (name, _, decision) -> name to Measurement(decision, 100) }.toMap()
+        val decisionMap = populationPfsAndDecision.associate { (name, _, decision) -> name to Measurement(decision, 100) }
 
         val treatmentAnalyses = listOf(
             TreatmentAnalysis(
