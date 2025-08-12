@@ -11,6 +11,8 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
+// TODO update README to reflect changes after ticket complete
+
 class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
