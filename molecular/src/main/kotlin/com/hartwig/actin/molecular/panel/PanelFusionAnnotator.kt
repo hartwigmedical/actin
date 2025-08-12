@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
+import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.common.fusion.KnownFusionType
 import org.apache.logging.log4j.LogManager
@@ -101,7 +102,11 @@ class PanelFusionAnnotator(
                 sequencedFusion.exonDown?.let {
                     knownFusionCache.withinPromiscuousExonRange(
                         KnownFusionType.PROMISCUOUS_3,
-                        sequencedFusion.geneDown?.let { gene -> canonicalTranscriptForGene(gene, it, it) } ?: "",
+                        sequencedFusion.geneDown?.let { gene ->
+                            val canonicalTranscript = canonicalTranscriptForGene(gene)
+                            checkCanonicalTranscript(canonicalTranscript, gene, it)
+                            canonicalTranscript.transcriptName()
+                        } ?: "",
                         it,
                         it
                     )
@@ -112,7 +117,11 @@ class PanelFusionAnnotator(
                 sequencedFusion.exonUp?.let {
                     knownFusionCache.withinPromiscuousExonRange(
                         KnownFusionType.PROMISCUOUS_5,
-                        sequencedFusion.geneUp?.let { gene -> canonicalTranscriptForGene(gene, it, it) } ?: "",
+                        sequencedFusion.geneUp?.let { gene ->
+                            val canonicalTranscript = canonicalTranscriptForGene(gene)
+                            checkCanonicalTranscript(canonicalTranscript, gene, it)
+                            canonicalTranscriptForGene(gene).transcriptName()
+                        } ?: "",
                         it,
                         it
                     )
@@ -128,7 +137,7 @@ class PanelFusionAnnotator(
         val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
         val transcript = sequencedSkippedExons.transcript ?: run {
             logger.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
-            canonicalTranscriptForGene(sequencedSkippedExons.gene, sequencedSkippedExons.exonStart, sequencedSkippedExons.exonEnd)
+            canonicalTranscriptForGene(sequencedSkippedExons.gene).transcriptName()
         }
 
         return Fusion(
@@ -148,18 +157,17 @@ class PanelFusionAnnotator(
         )
     }
 
-    private fun canonicalTranscriptForGene(gene: String, exonStart: Int, exonEnd: Int): String {
+    private fun canonicalTranscriptForGene(gene: String): TranscriptData {
         val geneData = ensembleDataCache.findGeneDataByName(gene)
             ?: throw IllegalArgumentException("No gene data found for gene $gene")
-        val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())
+        return ensembleDataCache.findCanonicalTranscript(geneData.geneId())
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
+    }
 
-        val size = transcript.exons().size
-        if (exonStart !in 1..size || exonEnd !in 1..size) {
-            val exonString = if (exonStart == exonEnd) "exonStart" else "$exonStart or $exonEnd"
-            throw IllegalStateException("Exon $exonString is out of canonical transcript range 1-$size for gene $gene")
+    private fun checkCanonicalTranscript(transcript: TranscriptData, gene: String, exonEnd: Int) {
+        val exonSize = transcript.exons().size
+        if (exonEnd !in 1..exonSize) {
+            throw IllegalStateException("Exon $exonEnd is out of canonical transcript range 1-$exonSize for gene $gene")
         }
-
-        return transcript.transcriptName()
     }
 }
