@@ -39,16 +39,13 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
         listOf(
-            "Gender" to record.patient.gender.display(),
-            "Birth year" to record.patient.birthYear.toString(),
-            "WHO" to whoStatus(record.performanceStatus.latestWho),
-            "Tumor" to record.tumor.name,
-            "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
+            "Gender (birth year, WHO)" to "${record.patient.gender.display()} (${record.patient.birthYear}, WHO ${whoStatus(record.performanceStatus.latestWho)})",
             "Stage" to stage(record.tumor),
-            "Measurable disease (RECIST)" to measurableDisease(record.tumor),
+            "Tumor" to record.tumor.name,
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),
-            "\n" to "\n",
-            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1)
+            "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
+            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1),
+            "Measurable (RECIST)" to measurableDisease(record.tumor)
         ).forEach { (key, value) ->
             clinicalSummaryTable.addCell(createKey(key))
             clinicalSummaryTable.addCell(createValue(value))

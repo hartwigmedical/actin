@@ -104,12 +104,12 @@ object TestTreatmentMatchFactory {
                 generalOs = Measurement(215.0, 90, 121, 470, 110.1),
                 resistanceEvidence = listOf(
                     ResistanceEvidence(
-                        event = "BRAF amp",
+                        event = "NTRK1 fusion promiscuous & NTRK1 G595R",
                         treatmentName = "Pembrolizumab",
-                        resistanceLevel = "A",
+                        resistanceLevel = "B",
                         isTested = null,
                         isFound = false,
-                        evidenceUrls = setOf("website")
+                        evidenceUrls = setOf("website", "website 2")
                     )
                 )
             )
