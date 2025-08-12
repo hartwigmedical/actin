@@ -24,15 +24,25 @@ class HasLeftSidedColorectalTumorTest {
     @Test
     fun `Should pass when name does contain a left string`() {
         HasLeftSidedColorectalTumor.LEFT_SUB_LOCATIONS.forEach { name: String ->
-            assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName("text" + name + "other text")))
+            assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName("text $name other text")))
         }
+    }
+
+    @Test
+    fun `Should pass when name contains rectum`() {
+        assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName(("rectum"))))
     }
 
     @Test
     fun `Should fail when name contains a right string`() {
         HasLeftSidedColorectalTumor.RIGHT_SUB_LOCATIONS.forEach { name: String? ->
-            assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("text" + name + "other text"))))
+            assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("text $name other text"))))
         }
+    }
+
+    @Test
+    fun `Should fail when name contains colorectum cecum`() {
+        assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("colorectum cecum"))))
     }
 
     @Test

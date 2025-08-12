@@ -19,7 +19,7 @@ class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : Evaluation
         } else {
             val name = record.tumor.name
             when {
-                LEFT_SUB_LOCATIONS.any(name.lowercase()::contains) ->
+                LEFT_SUB_LOCATIONS.any { subLocation -> name.lowercase().split(Regex("\\W+")).contains(subLocation) } ->
                     EvaluationFactory.pass("Has left-sided CRC tumor ($name)")
 
                 RIGHT_SUB_LOCATIONS.any(name.lowercase()::contains) ->

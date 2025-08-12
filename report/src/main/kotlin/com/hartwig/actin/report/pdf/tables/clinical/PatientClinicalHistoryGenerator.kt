@@ -176,7 +176,7 @@ class PatientClinicalHistoryGenerator(
             treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
             treatmentHistoryEntry.treatmentHistoryDetails?.switchToTreatments?.ifEmpty { null }?.let { switchToTreatments ->
                 switchToTreatments.joinToString(prefix = "with switch to ", separator = " then ") {
-                    it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
+                    it.treatment.display() + (it.cycles?.let { cycles -> " (${cycles} cycles)" } ?: "")
                 }
             },
             treatmentHistoryEntry.treatmentHistoryDetails?.maintenanceTreatment?.let { maintenanceTreatment ->
