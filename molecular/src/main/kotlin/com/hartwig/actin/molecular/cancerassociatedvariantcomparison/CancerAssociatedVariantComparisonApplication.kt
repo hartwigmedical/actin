@@ -25,7 +25,7 @@ class CancerAssociatedVariantComparisonApplication(private val config: CancerAss
 
         val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
         LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
-        val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, config.usedCombinedProfilesEfficacyEvidence)
+        val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, false)
         LOGGER.info("Loaded evidence and known events from SERVE version {}", serveDatabase.version())
 
         val orange = OrangeJson.getInstance().read(config.orangeJson)

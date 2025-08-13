@@ -13,7 +13,7 @@ class ServeCleanerTest {
         val evidence = TestServeEvidenceFactory.create()
         val database = createServeDatabase(evidence, trial)
 
-        val cleanDatabase = ServeCleaner.cleanServeDatabase(false, database)
+        val cleanDatabase = ServeCleaner.cleanServeDatabase(database, false)
 
         cleanDatabase.records().values.forEach { record ->
             assertThat(record.trials().size).isEqualTo(1)
@@ -27,7 +27,7 @@ class ServeCleanerTest {
         val evidence = TestServeEvidenceFactory.create()
         val database = createServeDatabase(evidence, trial)
 
-        val cleanDatabase = ServeCleaner.cleanServeDatabase(true, database)
+        val cleanDatabase = ServeCleaner.cleanServeDatabase(database, false)
 
         cleanDatabase.records().values.forEach { record ->
             assertThat(record.trials()).isEmpty()
@@ -39,7 +39,7 @@ class ServeCleanerTest {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
         val database = createServeDatabase(evidence, TestServeTrialFactory.createTrialForGene())
 
-        val cleanDatabase = ServeCleaner.cleanServeDatabase(false, database)
+        val cleanDatabase = ServeCleaner.cleanServeDatabase(database, true)
 
         cleanDatabase.records().values.forEach { record ->
             assertThat(record.evidences()).isEmpty()
@@ -47,11 +47,11 @@ class ServeCleanerTest {
     }
 
     @Test
-    fun `Should not completely remove evidence containing combined criteria`() {
+    fun `Should not remove evidence containing combined criteria`() {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
         val database = createServeDatabase(evidence, TestServeTrialFactory.createTrialForGene())
 
-        val cleanDatabase = ServeCleaner.cleanServeDatabase(true, database)
+        val cleanDatabase = ServeCleaner.cleanServeDatabase(database, false)
 
         cleanDatabase.records().values.forEach { record ->
             assertThat(record.evidences().size).isEqualTo(1)
@@ -63,7 +63,7 @@ class ServeCleanerTest {
     fun `Should retain evidences with simple criteria`() {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = SINGLE_PROFILE_1)
         val database = createServeDatabase(evidence, TestServeTrialFactory.createTrialForGene())
-        val cleanDatabase = ServeCleaner.cleanServeDatabase(true, database)
+        val cleanDatabase = ServeCleaner.cleanServeDatabase(database, false)
         cleanDatabase.records().values.forEach { record ->
             assertThat(record.evidences().size).isEqualTo(1)
             assertThat(record.evidences().first().molecularCriterium()).isEqualTo(SINGLE_PROFILE_1)

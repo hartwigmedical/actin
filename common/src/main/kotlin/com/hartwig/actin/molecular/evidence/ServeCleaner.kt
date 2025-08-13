@@ -8,9 +8,9 @@ import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 
 object ServeCleaner {
 
-    fun cleanServeDatabase(usedCombinedProfilesEfficacyEvidence: Boolean, database: ServeDatabase): ServeDatabase {
+    fun cleanServeDatabase(database: ServeDatabase, removeCombinedProfiles: Boolean): ServeDatabase {
         val cleanedRecords = database.records().mapValues { (_, record) ->
-            if (!usedCombinedProfilesEfficacyEvidence) {
+            if (removeCombinedProfiles) {
                 cleanCombinedTrials(cleanCombinedEvidences(record))
             } else {
                 cleanCombinedTrials(record)

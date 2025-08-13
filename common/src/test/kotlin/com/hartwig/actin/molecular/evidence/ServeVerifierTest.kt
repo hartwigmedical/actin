@@ -37,7 +37,7 @@ class ServeVerifierTest {
 
         val database = createServeDatabase(evidence, trial)
 
-        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, true) }
     }
 
     @Test

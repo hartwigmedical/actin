@@ -86,7 +86,7 @@ object InputDataLoader {
             withContext(Dispatchers.IO) {
                 val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
                 LOGGER.info("Loading SERVE database for resistance evidence from {}", serveJsonFilePath)
-                val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, config.usedCombinedProfilesEfficacyEvidence)
+                val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, config.removeCombinedProfiles)
                 LOGGER.info(" Loaded SERVE version {}", serveDatabase.version())
                 serveDatabase
             }
