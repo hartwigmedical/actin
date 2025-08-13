@@ -9,9 +9,21 @@ import com.hartwig.actin.report.pdf.tables.soc.RealWorldTreatmentDecisionsGenera
 import com.hartwig.actin.report.pdf.tables.soc.SurvivalPredictionPerTreatmentGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.AbstractElement
+import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Table
+import org.jetbrains.letsPlot.geom.geomLine
+import org.jetbrains.letsPlot.export.ggsave
+import com.itextpdf.layout.element.IElement
+import com.itextpdf.svg.converter.SvgConverter
+import com.itextpdf.svg.element.SvgImage
+import org.jetbrains.letsPlot.letsPlot
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
 
@@ -82,12 +94,30 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         document.add(table)
     }
 
+    private fun gen(): Image {
+        val data = mapOf(
+            "x" to listOf(0, 1, 2, 3, 4),
+            "y" to listOf(0, 1, 4, 9, 16)
+        )
+        val plot = letsPlot(data) + geomLine {
+            x = "x"
+            y = "y"
+        }
+        
+        val tmpFile = File.createTempFile("./out/plot", ".png")
+        // 2. Export plot to SVG in memory
+        ggsave(plot, tmpFile.absolutePath)
+        val bytes = tmpFile.readBytes()
+        val imageData = ImageDataFactory.create(bytes)
+        return Image(imageData)
+    }
+    
     private fun addSurvivalTable(document: Document) {
         report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
             val table = Tables.createSingleColWithWidth(contentWidth())
             val generator = SurvivalPredictionPerTreatmentGenerator(survivalPredictions)
             TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
-            document.add(table)    
+            document.add(gen())    
         }
     }
 }
