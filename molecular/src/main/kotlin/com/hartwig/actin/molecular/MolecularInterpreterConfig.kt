@@ -12,7 +12,7 @@ data class MolecularInterpreterConfig(
     val clinicalJson: String,
     val orangeJson: String?,
     val serveDirectory: String,
-    val removeCombinedProfiles: Boolean,
+    val removeCombinedProfilesEvidence: Boolean,
     val doidJson: String,
     val oncoDndsDatabasePath: String,
     val tsgDndsDatabasePath: String,
@@ -31,7 +31,7 @@ data class MolecularInterpreterConfig(
         private const val CLINICAL_JSON: String = "clinical_json"
         private const val ORANGE_JSON: String = "orange_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
-        private const val REMOVE_COMBINED_PROFILES: String = "remove_combined_profiles"
+        private const val REMOVE_COMBINED_PROFILES_EVIDENCE: String = "remove_combined_profiles_evidence"
         private const val DOID_JSON: String = "doid_json"
         private const val ONCO_DNDS_DATABASE_PATH: String = "onco_dnds_database_path"
         private const val TSG_DNDS_DATABASE_PATH: String = "tsg_dnds_database_path"
@@ -49,7 +49,7 @@ data class MolecularInterpreterConfig(
             options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed")
             options.addOption(ORANGE_JSON, true, "(Optional) path of the ORANGE json to be interpreted")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
-            options.addOption(REMOVE_COMBINED_PROFILES, false, "If set, the combined profiles for the efficacy evidence from the SERVE database are filtered out")
+            options.addOption(REMOVE_COMBINED_PROFILES_EVIDENCE, false, "If set, the combined profiles for the efficacy evidence from the SERVE database are filtered out")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(ONCO_DNDS_DATABASE_PATH, true, "Path to DNDS values for ONCO genes")
             options.addOption(TSG_DNDS_DATABASE_PATH, true, "Path to DNDS values for TSG genes")
@@ -77,7 +77,7 @@ data class MolecularInterpreterConfig(
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
-                removeCombinedProfiles = cmd.hasOption(REMOVE_COMBINED_PROFILES),
+                removeCombinedProfilesEvidence = cmd.hasOption(REMOVE_COMBINED_PROFILES_EVIDENCE),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 oncoDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, ONCO_DNDS_DATABASE_PATH),
                 tsgDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, TSG_DNDS_DATABASE_PATH),

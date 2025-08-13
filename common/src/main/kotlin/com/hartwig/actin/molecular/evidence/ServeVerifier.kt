@@ -6,22 +6,22 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 
 object ServeVerifier {
 
-    fun verifyServeDatabase(serveDatabase: ServeDatabase, removeCombinedProfiles: Boolean) {
-        verifyNoCombinedMolecularProfiles(serveDatabase, removeCombinedProfiles)
+    fun verifyServeDatabase(serveDatabase: ServeDatabase, removeCombinedProfilesEvidence: Boolean) {
+        verifyNoCombinedMolecularProfiles(serveDatabase, removeCombinedProfilesEvidence)
         verifyAllHotspotsHaveConsistentGenes(serveDatabase)
     }
 
     private fun verifyNoCombinedMolecularProfiles(
         serveDatabase: ServeDatabase,
-        removeCombinedProfiles: Boolean
+        removeCombinedProfilesEvidence: Boolean
     ) {
         serveDatabase.records().values.forEach {
-            verifyNoCombinedMolecularProfiles(it, removeCombinedProfiles)
+            verifyNoCombinedMolecularProfiles(it, removeCombinedProfilesEvidence)
         }
     }
 
     private fun verifyNoCombinedMolecularProfiles(
-        serveRecord: ServeRecord, removeCombinedProfiles: Boolean
+        serveRecord: ServeRecord, removeCombinedProfilesEvidence: Boolean
     ) {
         val hasCombinedEvidence =
             serveRecord.evidences().any { evidence -> isCombinedProfile(evidence.molecularCriterium()) }
@@ -33,7 +33,7 @@ object ServeVerifier {
             throw IllegalStateException("SERVE record contains combined profiles for trials ")
         }
 
-        if (removeCombinedProfiles && hasCombinedEvidence) {
+        if (removeCombinedProfilesEvidence && hasCombinedEvidence) {
             throw IllegalStateException("SERVE record contains combined profiles for evidence")
         }
     }

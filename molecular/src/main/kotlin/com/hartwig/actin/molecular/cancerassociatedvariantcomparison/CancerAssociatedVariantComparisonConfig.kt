@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
-import com.hartwig.actin.molecular.MolecularInterpreterConfig
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
