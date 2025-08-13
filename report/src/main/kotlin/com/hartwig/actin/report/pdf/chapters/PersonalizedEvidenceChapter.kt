@@ -20,6 +20,8 @@ import org.jetbrains.letsPlot.export.ggsave
 import com.itextpdf.layout.element.IElement
 import com.itextpdf.svg.converter.SvgConverter
 import com.itextpdf.svg.element.SvgImage
+import org.jetbrains.letsPlot.ggsize
+import org.jetbrains.letsPlot.label.labs
 import org.jetbrains.letsPlot.letsPlot
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -37,14 +39,14 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
     override fun render(document: Document) {
         addChapterTitle(document)
-        
+
         addPersonalizationTable(document)
         addSurvivalTable(document)
     }
-    
-    private fun addPersonalizationTable(document : Document) {
+
+    private fun addPersonalizationTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        
+
         val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches
             ?.filter(AnnotatedTreatmentMatch::eligible)
             ?.map { it.treatmentCandidate.treatment.name.lowercase() }
@@ -94,30 +96,50 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         document.add(table)
     }
 
-    private fun gen(): Image {
-        val data = mapOf(
-            "x" to listOf(0, 1, 2, 3, 4),
-            "y" to listOf(0, 1, 4, 9, 16)
-        )
-        val plot = letsPlot(data) + geomLine {
-            x = "x"
-            y = "y"
+
+    private fun svgBytesToImage(svgBytes: ByteArray, document: Document): Image {
+        val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(svgBytes), document.pdfDocument)
+        return Image(xObj)
+    }
+
+    private fun gen(document: Document): Image {
+        // Example data: multiple lines
+        val data = mutableMapOf<String, Any>()
+        val x_ = mutableListOf<Double>()
+        val y_ = mutableListOf<Double>()
+        val group = mutableListOf<String>()
+                
+        report.treatmentMatch.survivalPredictionsPerTreatment?.map { (treatment, survivalProbability) ->
+            survivalProbability.filterIndexed { index, _ -> index % 30 == 0 }.forEachIndexed { index, prob -> 
+                x_.add(index.toDouble())
+                y_.add(prob)
+                group.add(treatment)
+            }
         }
-        
-        val tmpFile = File.createTempFile("./out/plot", ".png")
+
+        data["x"] = x_
+        data["y"] = y_
+        data["group"] = group
+
+        val plot = letsPlot(data) { x = x_; y = y_; color = "group" } +
+                geomLine() +
+                labs(x = "Time (months)", y = "Survival Probability") +
+                ggsize(width = 1200, height = 800)
+
+
+        val tmpFile = File.createTempFile("./out/plot", ".svg")
         // 2. Export plot to SVG in memory
         ggsave(plot, tmpFile.absolutePath)
         val bytes = tmpFile.readBytes()
-        val imageData = ImageDataFactory.create(bytes)
-        return Image(imageData)
+        return svgBytesToImage(bytes, document)
     }
-    
+
     private fun addSurvivalTable(document: Document) {
         report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
             val table = Tables.createSingleColWithWidth(contentWidth())
             val generator = SurvivalPredictionPerTreatmentGenerator(survivalPredictions)
             TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
-            document.add(gen())    
+            document.add(gen(document))
         }
     }
 }
