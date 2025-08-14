@@ -9,7 +9,6 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.AbstractElement
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Table
 import org.jetbrains.letsPlot.geom.geomLine
