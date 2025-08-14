@@ -102,7 +102,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val (foundMedicationCategories, foundMedicationNames) = activeMedications.filterNot { medication -> medication.drug in drugsToIgnore }
             .flatMap { medication ->
                 medication.allLevels().flatMap {
-                    categoriesByLevel[it]?.map { category -> category to (medication.drug?.name ?: medication.name) } ?: emptyList()
+                    categoriesByLevel[it]?.map { category -> category to (medication.drug?.display() ?: medication.name) } ?: emptyList()
                 }
             }.unzip()
         return Pair(foundMedicationCategories, foundMedicationNames)
@@ -158,7 +158,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                             }
                         }
                         .filterNot { it in drugsToIgnore }
-                        .map(Drug::name)
+                        .map(Drug::display)
                         .toSet()
                 }
             )
