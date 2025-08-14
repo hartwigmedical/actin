@@ -8,7 +8,7 @@ import com.hartwig.actin.report.trial.EventWithExternalTrial
 object DriverTableFunctions {
 
     fun groupByEvent(externalTrialSummaries: Set<EventWithExternalTrial>): Map<String, String> {
-        return externalTrialSummaries.groupBy { e -> e.event }.mapValues { entry -> entry.value.joinToString(", ") { it.trial.nctId } }
+        return externalTrialSummaries.groupBy { e -> e.aggregatedEvidenceKey.event }.mapValues { entry -> entry.value.joinToString(", ") { it.trial.nctId } }
     }
 
     fun allDrivers(molecularHistory: MolecularHistory): List<Pair<MolecularTest, List<Driver>>> =

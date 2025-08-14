@@ -5,12 +5,13 @@ import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceKey
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 
 const val YOUNG_ADULT_CUT_OFF = 40
 
-data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
+data class EventWithExternalTrial(val aggregatedEvidenceKey: AggregatedEvidenceKey, val trial: ExternalTrial)
 
 class MolecularFilteredExternalTrials(val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
 
@@ -164,7 +165,7 @@ fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpret
 
 fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Set<EventWithExternalTrial>):
         Set<EventWithExternalTrial> {
-    return filterMolecularCriteriaAlreadyPresent(trials.map { it.event }.toSet())
+    return filterMolecularCriteriaAlreadyPresent(trials.map { it.aggregatedEvidenceKey.event }.toSet())
 }
 
 private fun hospitalsForCountry(trial: ExternalTrial, country: Country) =
@@ -185,7 +186,7 @@ fun Set<EventWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReference
 
 private fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<EventWithExternalTrial> {
     return filter {
-        !presentEvents.contains(it.event)
+        !presentEvents.contains(it.aggregatedEvidenceKey.event)
     }.toSet()
 }
 
