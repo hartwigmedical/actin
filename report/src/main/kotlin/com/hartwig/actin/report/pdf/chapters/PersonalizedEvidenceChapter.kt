@@ -3,13 +3,10 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.personalization.MeasurementType
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldSurvivalOutcomesGenerator
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldTreatmentDecisionsGenerator
-import com.hartwig.actin.report.pdf.tables.soc.SurvivalPredictionPerTreatmentGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
-import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AbstractElement
@@ -17,15 +14,15 @@ import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Table
 import org.jetbrains.letsPlot.geom.geomLine
 import org.jetbrains.letsPlot.export.ggsave
-import com.itextpdf.layout.element.IElement
 import com.itextpdf.svg.converter.SvgConverter
-import com.itextpdf.svg.element.SvgImage
 import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.label.labs
 import org.jetbrains.letsPlot.letsPlot
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createTempFile
+import kotlin.io.path.readBytes
+
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
 
@@ -95,51 +92,34 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
         document.add(table)
     }
-
-
-    private fun svgBytesToImage(svgBytes: ByteArray, document: Document): Image {
-        val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(svgBytes), document.pdfDocument)
-        return Image(xObj)
-    }
-
-    private fun gen(document: Document): Image {
-        // Example data: multiple lines
-        val data = mutableMapOf<String, Any>()
-        val x_ = mutableListOf<Double>()
-        val y_ = mutableListOf<Double>()
+    
+    private fun generateSurvivalPlot(survivalPredictions:Map<String, List<Double>>, document: Document): Image {
+        val survivalTime = mutableListOf<Double>()
+        val survivalProbability = mutableListOf<Double>()
         val group = mutableListOf<String>()
                 
-        report.treatmentMatch.survivalPredictionsPerTreatment?.map { (treatment, survivalProbability) ->
-            survivalProbability.filterIndexed { index, _ -> index % 30 == 0 }.forEachIndexed { index, prob -> 
-                x_.add(index.toDouble())
-                y_.add(prob)
+        survivalPredictions.map { (treatment, survivalProbabilities) ->
+            survivalProbabilities.filterIndexed { index, _ -> index % 30 == 0 }.forEachIndexed { index, prob -> 
+                survivalTime.add(index.toDouble())
+                survivalProbability.add(prob)
                 group.add(treatment)
             }
         }
-
-        data["x"] = x_
-        data["y"] = y_
-        data["group"] = group
-
-        val plot = letsPlot(data) { x = x_; y = y_; color = "group" } +
+        val plot = letsPlot { x = survivalTime; y = survivalProbability; color = group } +
                 geomLine() +
                 labs(x = "Time (months)", y = "Survival Probability") +
-                ggsize(width = 1200, height = 800)
-
-
-        val tmpFile = File.createTempFile("./out/plot", ".svg")
-        // 2. Export plot to SVG in memory
-        ggsave(plot, tmpFile.absolutePath)
-        val bytes = tmpFile.readBytes()
-        return svgBytesToImage(bytes, document)
+                ggsize(width = 1500, height = 800)
+        
+        val tmpFile = createTempFile("plot", ".svg")
+        ggsave(plot, tmpFile.absolutePathString())
+        val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
+        return Image(xObj)
     }
 
     private fun addSurvivalTable(document: Document) {
         report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
-            val table = Tables.createSingleColWithWidth(contentWidth())
-            val generator = SurvivalPredictionPerTreatmentGenerator(survivalPredictions)
-            TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
-            document.add(gen(document))
+            val image = generateSurvivalPlot(survivalPredictions, document)
+            document.add(image)
         }
     }
 }
