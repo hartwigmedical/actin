@@ -43,22 +43,26 @@ object PathologyReportFunctions {
                     },
                     listOf(
                         Text(pathologyReport.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
-                        Text(" (${pathologyReport.lab}").addStyle(Styles.tableHighlightStyle())
+                        if (pathologyReport.lab.isNotEmpty()) Text(" (${pathologyReport.lab},").addStyle(Styles.tableHighlightStyle()) else Text(
+                            "( "
+                        )
                     ),
                     pathologyReport.tissueDate?.let {
-                        getTextWithLabel(", Collection date: ", pathologyReport.tissueDate)
+                        getTextWithLabel("Collection date: ,", pathologyReport.tissueDate)
                     },
                     pathologyReport.authorisationDate?.let {
-                        getTextWithLabel(", Authorization date: ", pathologyReport.authorisationDate)
+                        getTextWithLabel("Authorization date: ", pathologyReport.authorisationDate)
                     },
                     pathologyReport.reportDate?.let {
-                        getTextWithLabel(", Report date: ", pathologyReport.reportDate)
+                        getTextWithLabel("Report date: ", pathologyReport.reportDate)
                     },
-                    listOf(
-                        Text(", Diagnosis: "),
-                        Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
-                        Text(")")
-                    )
+                    if (pathologyReport.diagnosis.isNotEmpty()) {
+                        listOf(
+                            Text(", Diagnosis: "),
+                            Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
+                        )
+                    } else null,
+                    listOf(Text(")"))
                 ).flatten()
             )
         ).addStyle(Styles.tableContentStyle())
