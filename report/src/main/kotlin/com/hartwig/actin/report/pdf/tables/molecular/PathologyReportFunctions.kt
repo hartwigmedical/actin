@@ -46,8 +46,9 @@ object PathologyReportFunctions {
                         Text(" ("),
                     ),
                     listOfNotNull(
-                        pathologyReport.lab.takeIf { it.isNotEmpty() }
-                            ?.let { listOf(Text(it).addStyle(Styles.tableHighlightStyle())) },
+                        pathologyReport.lab.takeIf { it.isNotEmpty() }?.let {
+                            listOf(Text(it).addStyle(Styles.tableHighlightStyle()))
+                        },
                         pathologyReport.tissueDate?.let {
                             getTextWithLabel("Collection date: ", pathologyReport.tissueDate)
                         },
