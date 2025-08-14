@@ -40,7 +40,7 @@ class PanelAnnotator(
             PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
 
         val specification = if (input.knownSpecifications) {
-            panelSpecifications.panelTargetSpecification(PanelTestSpecification(input.test, testVersion))
+            panelSpecifications.panelTargetSpecification(PanelTestSpecification(input.test, testVersion), input.negativeResults)
         } else PanelTargetSpecification(
             PanelSpecificationFunctions.derivedGeneTargetMap(input)
         )
