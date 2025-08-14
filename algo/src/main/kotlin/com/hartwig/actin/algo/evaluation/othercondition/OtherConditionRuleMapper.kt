@@ -364,7 +364,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { function: EligibilityFunction ->
             val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
             val targetIcdCodes = targetIcdTitles.map { icdModel().resolveCodeForTitle(it)!! }.toSet()
-            // TODO figure out correct way of dealing with otherConditionTerm
             HasHadOtherConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, Format.concatLowercaseWithCommaAndOr(targetIcdTitles))
         }
     }
