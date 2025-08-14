@@ -3,9 +3,12 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
+import com.itextpdf.layout.Style
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val YEAR = 2023
 private const val MONTH = 1
@@ -13,11 +16,54 @@ private const val MONTH = 1
 class PathologyReportFunctionsTest {
     private val minimalRecord = TestMolecularFactory.createMinimalTestMolecularRecord()
     private val minimalPanel = TestMolecularFactory.createMinimalTestPanelRecord()
+    private val date1 = LocalDate.of(YEAR, MONTH, 1)
+    private val date2 = LocalDate.of(YEAR, MONTH, 2)
+    private val df = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
+
+
+    @Test
+    fun `Should return complete pathology report summary`() {
+        val pathologyReport = pathologyReport(1, date1).copy(authorisationDate = date2, reportDate = date2)
+
+        val cell = PathologyReportFunctions.getPathologyReportSummary(
+            prefix = "Test",
+            prefixStyle = Style(),
+            pathologyReport = pathologyReport
+        )
+
+        with(pathologyReport) {
+            assertThat(CellTestUtil.extractTextFromCell(cell))
+                .isEqualTo(
+                    "Test - T-100001 ($lab, Collection date: ${df.format(tissueDate)}, " +
+                            "Authorization date: ${df.format(authorisationDate)}, " +
+                            "Report date: ${df.format(reportDate)}, Diagnosis: $diagnosis)"
+                )
+        }
+    }
+
+    @Test
+    fun `Should return pathology report summary with unknown tissue and report date only`() {
+        val pathologyReport = pathologyReport(1, date1).copy(
+            tissueId = null,
+            authorisationDate = null,
+            tissueDate = null,
+            reportDate = date1,
+            lab = "",
+            diagnosis = "",
+        )
+
+        val cell = PathologyReportFunctions.getPathologyReportSummary(pathologyReport = pathologyReport)
+
+        with(pathologyReport) {
+            assertThat(CellTestUtil.extractTextFromCell(cell))
+                .isEqualTo(
+                    "Unknown Tissue ID (Report date: ${df.format(reportDate)})"
+                )
+        }
+    }
 
     @Test
     fun `Should group test results by report hash if match available or date otherwise`() {
-        val date1 = LocalDate.of(YEAR, MONTH, 1)
-        val date2 = LocalDate.of(YEAR, MONTH, 2)
         val pathologyReport1 = pathologyReport(1, date1)
         val pathologyReport2 = pathologyReport(2, date2)
         val pathologyReport3 = pathologyReport(3, date2)
@@ -48,7 +94,6 @@ class PathologyReportFunctionsTest {
 
     @Test
     fun `Should only show date matches for the first report with same date`() {
-        val date1 = LocalDate.of(YEAR, MONTH, 1)
         val pathologyReport1 = pathologyReport(1, date1)
         val pathologyReport2 = pathologyReport(2, date1)
 
@@ -74,8 +119,6 @@ class PathologyReportFunctionsTest {
 
     @Test
     fun `Should group unmatched results under null report`() {
-        val date1 = LocalDate.of(YEAR, MONTH, 1)
-        val date2 = LocalDate.of(YEAR, MONTH, 2)
         val pathologyReport1 = pathologyReport(1, date1)
 
         val molecularRecord1 = minimalRecord.copy(date = date2)

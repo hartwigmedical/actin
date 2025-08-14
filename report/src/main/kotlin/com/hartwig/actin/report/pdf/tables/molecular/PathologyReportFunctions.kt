@@ -43,30 +43,36 @@ object PathologyReportFunctions {
                     },
                     listOf(
                         Text(pathologyReport.tissueId?.uppercase() ?: "Unknown Tissue ID").addStyle(Styles.tableTitleStyle()),
-                        if (pathologyReport.lab.isNotEmpty()) Text(" (${pathologyReport.lab},").addStyle(Styles.tableHighlightStyle()) else Text(
-                            "( "
-                        )
+                        Text(" ("),
                     ),
-                    pathologyReport.tissueDate?.let {
-                        getTextWithLabel("Collection date: ,", pathologyReport.tissueDate)
-                    },
-                    pathologyReport.authorisationDate?.let {
-                        getTextWithLabel("Authorization date: ", pathologyReport.authorisationDate)
-                    },
-                    pathologyReport.reportDate?.let {
-                        getTextWithLabel("Report date: ", pathologyReport.reportDate)
-                    },
-                    if (pathologyReport.diagnosis.isNotEmpty()) {
-                        listOf(
-                            Text(", Diagnosis: "),
-                            Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
-                        )
-                    } else null,
+                    listOfNotNull(
+                        pathologyReport.lab.takeIf { it.isNotEmpty() }?.let {
+                            listOf(Text(it).addStyle(Styles.tableHighlightStyle()))
+                        },
+                        pathologyReport.tissueDate?.let {
+                            getTextWithLabel("Collection date: ", pathologyReport.tissueDate)
+                        },
+                        pathologyReport.authorisationDate?.let {
+                            getTextWithLabel("Authorization date: ", pathologyReport.authorisationDate)
+                        },
+                        pathologyReport.reportDate?.let {
+                            getTextWithLabel("Report date: ", pathologyReport.reportDate)
+                        },
+                        pathologyReport.diagnosis.takeIf { it.isNotEmpty() }?.let {
+                            listOf(
+                                Text("Diagnosis: "),
+                                Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
+                            )
+                        }
+                    ).joinWithSeparator(Text(", ")),
                     listOf(Text(")"))
                 ).flatten()
             )
         ).addStyle(Styles.tableContentStyle())
     }
+
+    private fun List<List<Text>>.joinWithSeparator(separator: Text): List<Text> =
+        reduceOrNull { acc, list -> acc + separator + list } ?: emptyList()
 
     private fun getTextWithLabel(label: String, date: LocalDate?) =
         listOf(
