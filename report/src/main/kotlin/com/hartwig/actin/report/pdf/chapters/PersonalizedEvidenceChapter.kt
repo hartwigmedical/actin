@@ -94,17 +94,19 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
     }
     
     private fun generateSurvivalPlot(survivalPredictions:Map<String, List<Double>>, document: Document): Image {
-        val survivalTime = mutableListOf<Double>()
-        val survivalProbability = mutableListOf<Double>()
-        val group = mutableListOf<String>()
-                
-        survivalPredictions.map { (treatment, survivalProbabilities) ->
-            survivalProbabilities.filterIndexed { index, _ -> index % 30 == 0 }.forEachIndexed { index, prob -> 
-                survivalTime.add(index.toDouble())
-                survivalProbability.add(prob)
-                group.add(treatment)
+        val data = survivalPredictions
+            .flatMap { (treatment, probabilities) ->
+                probabilities
+                    .filterIndexed { index, _ -> index % 30 == 0 }
+                    .mapIndexed { index, prob ->
+                        Triple(index.toDouble(), prob, treatment)
+                    }
             }
-        }
+    
+        val survivalTime = data.map { it.first }
+        val survivalProbability = data.map { it.second }
+        val group = data.map { it.third }
+            
         val plot = letsPlot { x = survivalTime; y = survivalProbability; color = group } +
                 geomLine() +
                 labs(x = "Time (months)", y = "Survival Probability") +
