@@ -3,10 +3,14 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.medication.MedicationCategories
 
 class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -98,7 +102,8 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 "thrombo-embolic event"
             ),
             EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasOtherConditionWithIcdCodesFromSetCreator(
-                IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(), "Arterial thrombo-embolic event"
+                IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
+                "Arterial thrombo-embolic event"
             ),
             EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasOtherConditionWithIcdCodesFromSetCreator(
                 IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(), "Venous thrombo-embolic event"
@@ -111,22 +116,34 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             ),
             EligibilityRule.HAS_HISTORY_OF_ULCER to {
                 HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), IcdConstants.ULCER_SET.map { IcdCode(it) }.toSet(), "ulcer", referenceDateProvider().date()
+                    icdModel(),
+                    IcdConstants.ULCER_SET.map { IcdCode(it) }.toSet(),
+                    "ulcer",
+                    referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_BLEEDING to {
                 HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), IcdConstants.BLEEDING_SET.map { IcdCode(it) }.toSet(), "bleeding", referenceDateProvider().date()
+                    icdModel(),
+                    IcdConstants.BLEEDING_SET.map { IcdCode(it) }.toSet(),
+                    "bleeding",
+                    referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_WOUND to {
                 HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), IcdConstants.WOUND_SET.map { IcdCode(it) }.toSet(), "wound", referenceDateProvider().date()
+                    icdModel(),
+                    IcdConstants.WOUND_SET.map { IcdCode(it) }.toSet(),
+                    "wound",
+                    referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_BONE_FRACTURE to {
                 HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), IcdConstants.BONE_FRACTURE_SET.map { IcdCode(it) }.toSet(), "bone fracture", referenceDateProvider().date()
+                    icdModel(),
+                    IcdConstants.BONE_FRACTURE_SET.map { IcdCode(it) }.toSet(),
+                    "bone fracture",
+                    referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION to hasSevereConcomitantIllnessCreator(),
@@ -153,7 +170,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to {
                 HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                     icdModel(),
-                    listOf(IcdConstants.FUNCTIONAL_SWALLOWING_DISORDER_CODE, IcdConstants.DISORDERS_OF_ORAL_MUCOSA_CODE).map { IcdCode(it) }
+                    listOf(
+                        IcdConstants.FUNCTIONAL_SWALLOWING_DISORDER_CODE,
+                        IcdConstants.DISORDERS_OF_ORAL_MUCOSA_CODE
+                    ).map { IcdCode(it) }
                         .toSet(),
                     "potential oral medication difficulties",
                     referenceDateProvider().date()
@@ -165,12 +185,39 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_PET_CT_SCAN to hasContraindicationToCTCreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to hasOtherConditionWithIcdCodesFromSetCreator(
-                setOf(IcdCode(IcdConstants.DIALYSIS_CARE_CODE), IcdCode(IcdConstants.DEPENDENCE_ON_RENAL_DIALYSIS_CODE)), "renal dialysis"
+                setOf(
+                    IcdCode(IcdConstants.DIALYSIS_CARE_CODE),
+                    IcdCode(IcdConstants.DEPENDENCE_ON_RENAL_DIALYSIS_CODE)
+                ), "renal dialysis"
             ),
             EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccesCreator(),
-            EligibilityRule.MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST to { MeetsSixMinuteWalkingTestRequirements() }
+            EligibilityRule.MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST to { MeetsSixMinuteWalkingTestRequirements() },
+            EligibilityRule.HAS_COMPLICATION_WITH_ANY_ICD_TITLE_X to hasHadOtherConditionWithIcdCodeFromSetCreator(),
+            EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
+            EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
+            EligibilityRule.HAS_PLEURAL_EFFUSION to {
+                HasHadOtherConditionWithIcdCodeFromSet(
+                    icdModel(),
+                    setOf(
+                        IcdCode(IcdConstants.PLEURAL_EFFUSION_CODE),
+                        IcdCode(IcdConstants.MALIGNANT_NEOPLASM_METASTASIS_IN_PLEURA_CODE),
+                        IcdCode(IcdConstants.PLEURISY_CODE),
+                    ),
+                    "pleural effusion"
+                )
+            },
+            EligibilityRule.HAS_PERITONEAL_EFFUSION to {
+                HasHadOtherConditionWithIcdCodeFromSet(
+                    icdModel(),
+                    setOf(
+                        IcdCode(IcdConstants.MALIGNANT_NEORPLASM_METASTASIS_IN_RETROPERITONEUM_OR_PERITONEUM_BLOCK),
+                        IcdCode(IcdConstants.ASCITES_CODE),
+                    ),
+                    "peritoneal effusion"
+                )
+            }
         )
     }
 
@@ -186,11 +233,20 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { HasInheritedPredispositionToBleedingOrThrombosis(icdModel()) }
     }
 
-    private fun hasRecentComorbidityWithIcdCodeFromSetCreator(targetIcdCodes: Set<IcdCode>, diseaseDescription: String): FunctionCreator {
+    private fun hasRecentComorbidityWithIcdCodeFromSetCreator(
+        targetIcdCodes: Set<IcdCode>,
+        diseaseDescription: String
+    ): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
-            HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel(), targetIcdCodes, diseaseDescription, minDate, maxMonthsAgo)
+            HasHadOtherConditionWithIcdCodeFromSetRecently(
+                icdModel(),
+                targetIcdCodes,
+                diseaseDescription,
+                minDate,
+                maxMonthsAgo
+            )
         }
     }
 
@@ -200,7 +256,13 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             val targetIcdCode = icdModel().resolveCodeForTitle(input.icdTitle)!!
             val maxMonthsAgo = input.integer
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
-            HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel(), setOf(targetIcdCode), input.icdTitle, minDate, maxMonthsAgo)
+            HasHadOtherConditionWithIcdCodeFromSetRecently(
+                icdModel(),
+                setOf(targetIcdCode),
+                input.icdTitle,
+                minDate,
+                maxMonthsAgo
+            )
         }
     }
 
@@ -295,5 +357,32 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasAdequateVenousAccesCreator(): FunctionCreator {
         return { HasAdequateVenousAccess() }
+    }
+
+
+    private fun hasHadOtherConditionWithIcdCodeFromSetCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
+            val targetIcdCodes = targetIcdTitles.map { icdModel().resolveCodeForTitle(it)!! }.toSet()
+            // TODO figure out correct way of dealing with otherConditionTerm
+            HasHadOtherConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, Format.concatLowercaseWithCommaAndOr(targetIcdTitles))
+        }
+    }
+
+    private fun hasPotentialUncontrolledTumorRelatedPainCreator(): FunctionCreator {
+        val medicationCategories = MedicationCategories.create(atcTree())
+        val selector =
+            MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
+        return {
+            HasPotentialUncontrolledTumorRelatedPain(
+                selector,
+                medicationCategories.resolve("Opioids"),
+                icdModel()
+            )
+        }
+    }
+
+    private fun hasLeptomeningealDiseaseCreator(): FunctionCreator {
+        return { HasLeptomeningealDisease(icdModel()) }
     }
 }

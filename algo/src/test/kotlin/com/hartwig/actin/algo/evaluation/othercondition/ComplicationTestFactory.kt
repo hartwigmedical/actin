@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.complication
+package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
@@ -12,10 +12,6 @@ internal object ComplicationTestFactory {
     
     fun complication(name: String = "", icdCode: IcdCode = IcdCode("")): Complication {
         return Complication(name = name, icdCodes = setOf(icdCode))
-    }
-
-    fun yesInputComplication(): Complication {
-        return complication()
     }
 
     fun withComplication(complication: Complication): PatientRecord {
