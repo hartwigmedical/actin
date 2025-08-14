@@ -16,7 +16,9 @@ object AggregatedEvidenceFactory {
         return if (!molecular.hasSufficientQuality) {
             AggregatedEvidence()
         } else mergeAggregatedEvidenceList(
-            aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers) + aggregateDriverEvidenceVariants(molecular.drivers)
+            aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers) + aggregateDriverEvidenceVariants(
+                molecular.drivers
+            )
         )
     }
 
@@ -76,7 +78,7 @@ object AggregatedEvidenceFactory {
     private fun aggregateDriverEvidenceVariants(drivers: Drivers): List<AggregatedEvidence> {
         return listOf(
             drivers.variants
-        ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.event, it.evidence) } }
+        ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.gene + " " + it.canonicalImpact.hgvsProteinImpact, it.evidence) } }
     }
 
     private fun createAggregatedEvidence(event: String, evidence: ClinicalEvidence?): AggregatedEvidence {
