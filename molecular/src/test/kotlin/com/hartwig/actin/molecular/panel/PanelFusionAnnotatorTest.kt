@@ -214,6 +214,25 @@ class PanelFusionAnnotatorTest {
     }
 
     @Test
+    fun `Should return false if exon is out of canonical transcript range`() {
+        every { ensembleDataCache.findGeneDataByName(GENE_START) } returns mockk {
+            every { geneId() } returns "geneId"
+        }
+
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
+            every { transcriptName() } returns CANONICAL_TRANSCRIPT
+            every { exons().size } returns 5
+        }
+
+        assertThat(
+            annotator.isPromiscuousWithMatchingExons(
+                FusionDriverType.PROMISCUOUS_5,
+                FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = 8)
+            )
+        ).isEqualTo(false)
+    }
+
+    @Test
     fun `Should return false for known fusion pair`() {
         every { knownFusionCache.withinPromiscuousExonRange(KnownFusionType.PROMISCUOUS_5, TRANSCRIPT_END, 1, 1) } returns false
         assertThat(annotator.isPromiscuousWithMatchingExons(FusionDriverType.KNOWN_PAIR, FULLY_SPECIFIED_SEQUENCED_FUSION)).isEqualTo(false)
@@ -346,20 +365,6 @@ class PanelFusionAnnotatorTest {
     fun `Should throw exception if both genes are null`() {
         val fusion = SequencedFusion(geneUp = null, geneDown = null)
         annotator.annotate(setOf(fusion), emptySet())
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun `Should throw exception if exon is out of canonical transcript range`() {
-        every { ensembleDataCache.findGeneDataByName(GENE_START) } returns mockk {
-            every { geneId() } returns "geneId"
-        }
-
-        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
-            every { transcriptName() } returns CANONICAL_TRANSCRIPT
-            every { exons().size } returns 5
-        }
-
-        annotator.isPromiscuousWithMatchingExons(FusionDriverType.PROMISCUOUS_5, FULLY_SPECIFIED_SEQUENCED_FUSION.copy(exonUp = 8))
     }
 
     private fun setupKnownFusionCache() {
