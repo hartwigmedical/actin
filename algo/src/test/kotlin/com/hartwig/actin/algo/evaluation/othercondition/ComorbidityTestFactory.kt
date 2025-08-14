@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -15,7 +16,7 @@ import java.time.LocalDate
 
 internal object ComorbidityTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    
+
     fun withOtherCondition(condition: OtherCondition): PatientRecord {
         return withOtherConditions(listOf(condition))
     }
@@ -70,8 +71,11 @@ internal object ComorbidityTestFactory {
         return withComorbidities(listOf(comorbidity))
     }
 
-    fun withComplications(complications: List<Complication>): PatientRecord {
-        return withComorbidities(complications)
+    fun withComplications(complications: List<Complication>?): PatientRecord {
+        return base.copy(
+            comorbidities = complications ?: emptyList(),
+            clinicalStatus = ClinicalStatus(hasComplications = complications?.isNotEmpty())
+        )
     }
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
@@ -92,5 +96,29 @@ internal object ComorbidityTestFactory {
 
     fun withWHO(who: Int?): PatientRecord {
         return base.copy(performanceStatus = PerformanceStatus(latestWho = who))
+    }
+
+    fun withComplication(complication: Complication): PatientRecord {
+        return withComplications(listOf(complication))
+    }
+
+    fun withCnsLesion(lesion: String): PatientRecord {
+        return base.copy(
+            tumor = base.tumor.copy(
+                hasCnsLesions = true, otherLesions = listOf(lesion)
+            )
+        )
+    }
+
+    fun withSuspectedCnsLesion(lesion: String): PatientRecord {
+        return base.copy(
+            tumor = base.tumor.copy(
+                hasCnsLesions = false, hasSuspectedCnsLesions = true, otherLesions = listOf(lesion)
+            )
+        )
+    }
+
+    fun withMedication(medication: Medication): PatientRecord {
+        return base.copy(medications = listOf(medication))
     }
 }

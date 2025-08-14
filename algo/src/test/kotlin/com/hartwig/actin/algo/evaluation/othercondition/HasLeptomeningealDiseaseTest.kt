@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
 import org.assertj.core.api.Assertions.assertThat
@@ -21,8 +20,8 @@ class HasLeptomeningealDiseaseTest {
     fun `Should pass when record contains complication or non oncological history entry with direct or parent match on target icd code`() {
         listOf(targetNode.code, childOfTargetNode.code).flatMap { code ->
             listOf(
-                ComplicationTestFactory.withComplication(
-                    ComplicationTestFactory.complication(icdCode = IcdCode(code))
+                ComorbidityTestFactory.withComplication(
+                    ComorbidityTestFactory.complication(icdMainCode = code)
                 ),
                 ComorbidityTestFactory.withOtherCondition(
                     ComorbidityTestFactory.otherCondition(icdMainCode = code)
@@ -33,31 +32,31 @@ class HasLeptomeningealDiseaseTest {
 
     @Test
     fun `Should fail when no complications are present`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplications(emptyList())))
     }
 
     @Test
     fun `Should fail when complications do not match leptomeningeal disease icd code`() {
-        val different = ComplicationTestFactory.complication(icdCode = IcdCode("other"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(different)))
+        val different = ComorbidityTestFactory.complication(icdMainCode = "other")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplication(different)))
     }
 
     @Test
     fun `Should fail when CNS lesion is present but no leptomeningeal complications`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withCnsLesion("just a lesion")))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withCnsLesion("just a lesion")))
     }
 
     @Test
     fun `Should warn when CNS lesion suggests leptomeningeal disease`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(ComplicationTestFactory.withCnsLesion("carcinomatous meningitis"))
+            function.evaluate(ComorbidityTestFactory.withCnsLesion("carcinomatous meningitis"))
         )
     }
 
     @Test
     fun `Should warn when suspected CNS lesion suggests leptomeningeal disease`() {
-        val evaluation = function.evaluate(ComplicationTestFactory.withSuspectedCnsLesion("carcinomatous meningitis"))
+        val evaluation = function.evaluate(ComorbidityTestFactory.withSuspectedCnsLesion("carcinomatous meningitis"))
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessagesStrings())
             .containsExactly("Has suspected lesions 'carcinomatous meningitis' potentially indicating leptomeningeal disease")
@@ -65,6 +64,6 @@ class HasLeptomeningealDiseaseTest {
 
     @Test
     fun `Should fail when suspected CNS lesion present but no suggestion of leptomeningeal disease`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withSuspectedCnsLesion("suspected CNS lesion")))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withSuspectedCnsLesion("suspected CNS lesion")))
     }
 }
