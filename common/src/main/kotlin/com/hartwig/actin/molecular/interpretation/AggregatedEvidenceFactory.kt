@@ -78,7 +78,15 @@ object AggregatedEvidenceFactory {
     private fun aggregateDriverEvidenceVariants(drivers: Drivers): List<AggregatedEvidence> {
         return listOf(
             drivers.variants
-        ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.gene + " " + it.canonicalImpact.hgvsProteinImpact, it.evidence) } }
+        ).flatMap { driverSet ->
+            driverSet.map {
+                createAggregatedEvidence(
+                    it.gene + " " + it.canonicalImpact.hgvsProteinImpact.removePrefix(
+                        "p."
+                    ), it.evidence
+                )
+            }
+        }
     }
 
     private fun createAggregatedEvidence(event: String, evidence: ClinicalEvidence?): AggregatedEvidence {
