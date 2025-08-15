@@ -114,38 +114,22 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                     IcdCode(IcdConstants.VEIN_DISEASE_BLOCK)
                 ), "vascular disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_ULCER to {
-                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(),
-                    IcdConstants.ULCER_SET.map { IcdCode(it) }.toSet(),
-                    "ulcer",
-                    referenceDateProvider().date()
-                )
-            },
-            EligibilityRule.HAS_HISTORY_OF_BLEEDING to {
-                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(),
-                    IcdConstants.BLEEDING_SET.map { IcdCode(it) }.toSet(),
-                    "bleeding",
-                    referenceDateProvider().date()
-                )
-            },
-            EligibilityRule.HAS_HISTORY_OF_WOUND to {
-                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(),
-                    IcdConstants.WOUND_SET.map { IcdCode(it) }.toSet(),
-                    "wound",
-                    referenceDateProvider().date()
-                )
-            },
-            EligibilityRule.HAS_HISTORY_OF_BONE_FRACTURE to {
-                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(),
-                    IcdConstants.BONE_FRACTURE_SET.map { IcdCode(it) }.toSet(),
-                    "bone fracture",
-                    referenceDateProvider().date()
-                )
-            },
+            EligibilityRule.HAS_HISTORY_OF_ULCER to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                IcdConstants.ULCER_SET.map { IcdCode(it) }.toSet(),
+                "ulcer"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_BLEEDING to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                IcdConstants.BLEEDING_SET.map { IcdCode(it) }.toSet(),
+                "bleeding"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_WOUND to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                IcdConstants.WOUND_SET.map { IcdCode(it) }.toSet(),
+                "wound"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_BONE_FRACTURE to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                IcdConstants.BONE_FRACTURE_SET.map { IcdCode(it) }.toSet(),
+                "bone fracture"
+            ),
             EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION to hasSevereConcomitantIllnessCreator(),
             EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT to hasHadOrganTransplantCreator(),
             EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS to hasHadOrganTransplantWithinYearsCreator(),
@@ -384,4 +368,17 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     private fun hasLeptomeningealDiseaseCreator(): FunctionCreator {
         return { HasLeptomeningealDisease(icdModel()) }
     }
+
+    private fun hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+        targetIcdCodes: Set<IcdCode>,
+        conditionDescription: String
+    ): FunctionCreator = {
+        HasHadOtherConditionComplicationOrToxicityWithIcdCode(
+            icdModel(),
+            targetIcdCodes,
+            conditionDescription,
+            referenceDateProvider().date()
+        )
+    }
+
 }
