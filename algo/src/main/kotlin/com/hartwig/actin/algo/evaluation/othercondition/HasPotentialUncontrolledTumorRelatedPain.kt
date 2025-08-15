@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.complication
+package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction

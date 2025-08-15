@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapper
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapper
-import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapper
 import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapper
 import com.hartwig.actin.algo.evaluation.infection.InfectionRuleMapper
 import com.hartwig.actin.algo.evaluation.laboratory.LaboratoryRuleMapper
@@ -25,7 +24,6 @@ object FunctionCreatorFactory {
         return listOf(
             BloodTransfusionRuleMapper(resources),
             CardiacFunctionRuleMapper(resources),
-            ComplicationRuleMapper(resources),
             GeneralRuleMapper(resources),
             InfectionRuleMapper(resources),
             LaboratoryRuleMapper(resources),

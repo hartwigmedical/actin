@@ -12,7 +12,7 @@ class HasHadOtherConditionWithIcdCodeFromSet(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.otherConditions, targetIcdCodes)
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.otherConditions + record.complications, targetIcdCodes)
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {

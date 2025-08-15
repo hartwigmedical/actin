@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.complication
+package com.hartwig.actin.algo.evaluation.othercondition
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
