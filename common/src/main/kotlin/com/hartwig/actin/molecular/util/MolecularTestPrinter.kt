@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceKey
 import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.actin.util.DatamodelPrinter.Companion.withDefaultIndentation
 import java.text.DecimalFormat
@@ -118,11 +119,11 @@ class MolecularTestPrinter(private val printer: DatamodelPrinter) {
         }
     }
 
-    private fun keys(map: Map<String, Any>): String {
+    private fun keys(map: Map<AggregatedEvidenceKey, Any>): String {
         return concat(map.keys)
     }
 
-    private fun concat(strings: Iterable<String>): String {
+    private fun concat(strings: Iterable<AggregatedEvidenceKey>): String {
         return strings.joinToString(", ").ifEmpty { "None" }
     }
 
