@@ -39,7 +39,6 @@ object TestReportFactory {
                 includeMolecularEvidenceChapter = true,
                 includeOverviewWithClinicalHistorySummary = true,
                 includeMolecularDetailsChapter = false,
-                includeIneligibleTrialsInSummary = true,
                 includeApprovedTreatmentsInSummary = false,
                 includeSOCLiteratureEfficacyEvidence = true,
                 includeEligibleSOCTreatmentSummary = true,

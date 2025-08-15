@@ -34,11 +34,13 @@ class ResistanceEvidenceMatcher(
                     evidenceUrls = evidence.urls()
                 )
             }
-        }.distinctBy { it.event }
+        }.distinctBy { it.event } // als er meerdere evidence is zoals voor irinotectan / braf v600e, wordt alleen 1e gepakt?
     }
 
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
+
+        // change for complex evidence -> checken hoe dit voor andere evidence gedaan is
 
         with(evidence.molecularCriterium()) {
             return when {
@@ -106,7 +108,6 @@ class ResistanceEvidenceMatcher(
     }
 
     private fun findSourceEvent(evidence: EfficacyEvidence): String {
-        // Assumes there is no combined/complex evidence yet
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {

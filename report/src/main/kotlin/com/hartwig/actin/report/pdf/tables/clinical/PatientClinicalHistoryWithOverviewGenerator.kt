@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import com.hartwig.actin.report.datamodel.Report
@@ -34,7 +34,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     override fun contents(): Table {
         val record = report.patientRecord
-        val pharmaco = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco
+        val molecularRecord = report.patientRecord.molecularHistory.allPanels().first()
+        val pharmaco = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco // Panel record?
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
@@ -54,8 +55,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
-        val molecularRecord = record.molecularHistory.latestOrangeMolecularRecord()
-        clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
+        clinicalHistoryTable.addCell(createValue(molecularRecord.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
         table.addCell(create(clinicalSummaryTable))
         table.addCell(create(clinicalHistoryTable))
@@ -75,7 +75,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return events.ifEmpty { "$geneToFind: No reportable events" }
     }
 
-    private fun msStatus(molecular: MolecularRecord): String {
+    private fun msStatus(molecular: PanelRecord): String {
         return if (molecular.characteristics.microsatelliteStability?.isUnstable == true) "MSI" else "MSS"
     }
 
@@ -96,7 +96,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return pharmaco?.find { it.gene == geneToFind }
     }
 
-    private fun molecularResults(molecular: MolecularRecord): String {
+    private fun molecularResults(molecular: PanelRecord): String {
         val molecularDriversInterpreter =
             MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)

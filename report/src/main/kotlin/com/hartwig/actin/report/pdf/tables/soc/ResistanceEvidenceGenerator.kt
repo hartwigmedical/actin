@@ -35,14 +35,14 @@ class ResistanceEvidenceGenerator(
                         )
                     )
             } else {
-                val table = Tables.createRelativeWidthCols(5f, 6f, 5f, 5f).setWidth(width)
+                val table = Tables.createRelativeWidthCols(2f, 4f, 2f, 3f).setWidth(width)
                 table.addHeaderCell(Cells.createHeader("Treatment"))
                 table.addHeaderCell(Cells.createHeader("Mutation"))
                 table.addHeaderCell(Cells.createHeader("Evidence level"))
                 table.addHeaderCell(Cells.createHeader("Found in molecular analysis"))
                 treatmentToEvidence.forEach { entry ->
                     table.addCell(Cells.createContentBold(entry.key))
-                    val subTable = Tables.createFixedWidthCols(100f, 100f, 1f, 5f, 3f, 110f, 100f).setWidth((width / 3) * 2)
+                    val subTable = Tables.createRelativeWidthCols(200f, 1f, 1f, 1f, 100f, 150f, 100f).setWidth((width / 3) * 2)
                     for (resistanceEvidence in entry.value.distinct().sortedBy { it.resistanceLevel }) {
                         subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 

@@ -81,7 +81,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             ),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
-            EfficacyEvidenceDetailsChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
+            EfficacyEvidenceDetailsChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence && enableExtendedMode),
             MolecularEvidenceChapter(
                 report,
                 treatmentRankingModel.rank(report.patientRecord),
@@ -89,7 +89,6 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             ),
             TrialMatchingOtherResultsChapter(
                 report,
-                report.config.includeIneligibleTrialsInSummary,
                 externalTrialsOnly = report.config.includeOnlyExternalTrialsInTrialMatching,
                 trialsProvider,
                 include = report.config.includeTrialMatchingChapter
@@ -180,9 +179,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
                 report.config.includeTrialMatchingInSummary && it?.cohortSize() != 0
             },
-            nonLocalTrialGenerator
-                .takeIf { report.config.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty() },
-            ineligibleTrialGenerator.takeIf { report.config.includeIneligibleTrialsInSummary }
+            nonLocalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty() },
         )
     }
 }
