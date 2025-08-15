@@ -46,7 +46,7 @@ object PathologyReportFunctions {
                         Text(" ("),
                     ),
                     listOfNotNull(
-                        pathologyReport.lab.takeIf { it.isNotEmpty() }?.let {
+                        pathologyReport.lab?.takeIf { it.isNotBlank() }?.let {
                             listOf(Text(it).addStyle(Styles.tableHighlightStyle()))
                         },
                         pathologyReport.tissueDate?.let {
@@ -58,7 +58,7 @@ object PathologyReportFunctions {
                         pathologyReport.reportDate?.let {
                             getTextWithLabel("Report date: ", pathologyReport.reportDate)
                         },
-                        pathologyReport.diagnosis.takeIf { it.isNotEmpty() }?.let {
+                        pathologyReport.diagnosis?.takeIf { it.isNotBlank() }?.let {
                             listOf(
                                 Text("Diagnosis: "),
                                 Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),

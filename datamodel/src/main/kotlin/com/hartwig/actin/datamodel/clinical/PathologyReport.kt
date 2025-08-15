@@ -4,8 +4,8 @@ import java.time.LocalDate
 
 data class PathologyReport(
     val tissueId: String? = null,
-    val lab: String,
-    val diagnosis: String,
+    val lab: String? = null,
+    val diagnosis: String? = null,
     val tissueDate: LocalDate? = null,
     val authorisationDate: LocalDate? = null,
     val reportDate: LocalDate? = null,
