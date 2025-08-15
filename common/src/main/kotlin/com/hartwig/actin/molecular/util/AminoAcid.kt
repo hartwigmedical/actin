@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange
+package com.hartwig.actin.molecular.util
 
 object AminoAcid {
 

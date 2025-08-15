@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.molecular.util.AminoAcid
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
@@ -113,6 +114,6 @@ class GeneHasVariantWithProteinImpact(
         if (!MolecularInputChecker.isProteinImpact(impact)) {
             logger.warn("Cannot convert hgvs protein impact to a usable protein impact: {}", hgvsProteinImpact)
         }
-        return impact
+        return AminoAcid.forceSingleLetterAminoAcids(impact)
     }
 }
