@@ -22,4 +22,11 @@ class TreatmentEfficacyPredictionJsonTest {
             )
         )
     }
+    
+    @Test
+    fun `Should return empty map when file is empty`() {
+        val emptyFile = ResourceLocator.resourceOnClasspath("personalization" + File.separator + "empty.json")
+        val predictions = TreatmentEfficacyPredictionJson.read(emptyFile)
+        assertThat(predictions).isEmpty()
+    }
 }
