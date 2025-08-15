@@ -6,20 +6,35 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 
 object ServeVerifier {
 
-    fun verifyServeDatabase(serveDatabase: ServeDatabase) {
-        verifyNoCombinedMolecularProfiles(serveDatabase)
+    fun verifyServeDatabase(serveDatabase: ServeDatabase, removeCombinedProfilesEvidence: Boolean) {
+        verifyNoCombinedMolecularProfiles(serveDatabase, removeCombinedProfilesEvidence)
         verifyAllHotspotsHaveConsistentGenes(serveDatabase)
     }
 
-    private fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase) {
-        serveDatabase.records().values.forEach { verifyNoCombinedMolecularProfiles(it) }
+    private fun verifyNoCombinedMolecularProfiles(
+        serveDatabase: ServeDatabase,
+        removeCombinedProfilesEvidence: Boolean
+    ) {
+        serveDatabase.records().values.forEach {
+            verifyNoCombinedMolecularProfiles(it, removeCombinedProfilesEvidence)
+        }
     }
 
-    private fun verifyNoCombinedMolecularProfiles(serveRecord: ServeRecord) {
-        val hasCombinedTrials = serveRecord.trials().any { trial -> trial.anyMolecularCriteria().any { isCombinedProfile(it) } }
+    private fun verifyNoCombinedMolecularProfiles(
+        serveRecord: ServeRecord, removeCombinedProfilesEvidence: Boolean
+    ) {
+        val hasCombinedEvidence =
+            serveRecord.evidences().any { evidence -> isCombinedProfile(evidence.molecularCriterium()) }
+        val hasCombinedTrials =
+            serveRecord.trials().any { trial -> trial.anyMolecularCriteria().any { isCombinedProfile(it) } }
+
 
         if (hasCombinedTrials) {
-            throw IllegalStateException("SERVE record contains combined profiles")
+            throw IllegalStateException("SERVE record contains combined profiles for trials ")
+        }
+
+        if (removeCombinedProfilesEvidence && hasCombinedEvidence) {
+            throw IllegalStateException("SERVE record contains combined profiles for evidence")
         }
     }
 
