@@ -98,38 +98,35 @@ class PanelFusionAnnotator(
 
     fun isPromiscuousWithMatchingExons(driverType: FusionDriverType, sequencedFusion: SequencedFusion): Boolean? {
         return when (driverType) {
-            FusionDriverType.PROMISCUOUS_3 -> {
-                sequencedFusion.exonDown?.let {
-                    knownFusionCache.withinPromiscuousExonRange(
-                        KnownFusionType.PROMISCUOUS_3,
-                        sequencedFusion.geneDown?.let { gene ->
-                            val canonicalTranscript = canonicalTranscriptForGene(gene)
-                            if (!exonOnCanonicalTranscript(canonicalTranscript, gene, it)) return false
-                            canonicalTranscript.transcriptName()
-                        } ?: "",
-                        it,
-                        it
-                    )
-                }
-            }
+            FusionDriverType.PROMISCUOUS_3 -> checkPromiscuousExonRange(
+                sequencedFusion.geneDown,
+                sequencedFusion.exonDown,
+                KnownFusionType.PROMISCUOUS_3
+            )
 
-            FusionDriverType.PROMISCUOUS_5 -> {
-                sequencedFusion.exonUp?.let {
-                    knownFusionCache.withinPromiscuousExonRange(
-                        KnownFusionType.PROMISCUOUS_5,
-                        sequencedFusion.geneUp?.let { gene ->
-                            val canonicalTranscript = canonicalTranscriptForGene(gene)
-                            if (!exonOnCanonicalTranscript(canonicalTranscript, gene, it)) return false
-                            canonicalTranscript.transcriptName()
-                        } ?: "",
-                        it,
-                        it
-                    )
-                }
-            }
-
+            FusionDriverType.PROMISCUOUS_5 -> checkPromiscuousExonRange(
+                sequencedFusion.geneUp,
+                sequencedFusion.exonUp,
+                KnownFusionType.PROMISCUOUS_5
+            )
             else -> false
         }
+    }
+
+    private fun checkPromiscuousExonRange(
+        gene: String?,
+        exon: Int?,
+        fusionType: KnownFusionType
+    ): Boolean? {
+        if (gene == null || exon == null) return null
+        val canonicalTranscript = canonicalTranscriptForGene(gene)
+        if (!exonOnCanonicalTranscript(canonicalTranscript, gene, exon)) return false
+        return knownFusionCache.withinPromiscuousExonRange(
+            fusionType,
+            canonicalTranscript.transcriptName(),
+            exon,
+            exon
+        )
     }
 
     private fun createFusionFromExonSkip(sequencedSkippedExons: SequencedSkippedExons): Fusion {
@@ -164,7 +161,7 @@ class PanelFusionAnnotator(
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
     }
 
-    private fun exonOnCanonicalTranscript(transcript: TranscriptData, gene: String, exonEnd: Int): Boolean {
+    private fun exonOnCanonicalTranscript(transcript: TranscriptData, gene: String, exonEnd: Int?): Boolean {
         val numberOfExons = transcript.exons().size
         if (exonEnd !in 1..numberOfExons) {
             logger.warn("Exon $exonEnd is out of canonical transcript range 1-$numberOfExons for gene $gene")
