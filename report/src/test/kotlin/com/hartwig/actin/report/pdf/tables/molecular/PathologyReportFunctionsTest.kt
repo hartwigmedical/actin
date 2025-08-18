@@ -48,8 +48,8 @@ class PathologyReportFunctionsTest {
             authorisationDate = null,
             tissueDate = null,
             reportDate = date1,
-            lab = "",
-            diagnosis = "",
+            lab = null,
+            diagnosis = null,
         )
 
         val cell = PathologyReportFunctions.getPathologyReportSummary(pathologyReport = pathologyReport)
