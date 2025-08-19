@@ -378,6 +378,9 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE(FunctionInput.NONE),
     HAS_CD4_POSITIVE_CELLS_MILLIONS_PER_LITER_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
 
+    // Rules related to comorbidities
+    HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X(FunctionInput.MANY_ICD_TITLES),
+
     // Rules related to other conditions
     HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS(FunctionInput.ONE_ICD_TITLE_ONE_INTEGER),
     HAS_HISTORY_OF_AUTOIMMUNE_DISEASE(FunctionInput.NONE),
@@ -540,7 +543,4 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_PLANNED_SURGERY(FunctionInput.NONE),
     HAS_HAD_CYTOREDUCTIVE_SURGERY(FunctionInput.NONE),
     HAS_HAD_ONCOLOGICAL_SURGERY_TO_ANY_BODY_LOCATION_X(FunctionInput.MANY_BODY_LOCATIONS),
-
-    // Rules related to all conditions
-    HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X(FunctionInput.MANY_ICD_TITLES),
 }

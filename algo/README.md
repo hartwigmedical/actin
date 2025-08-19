@@ -532,6 +532,12 @@ Notes:
   to `(recoverable) UNDETERMINED `
 - If the most recent lab value is out of the requested range and outside the margin of error, the evaluation resolves to `FAIL`.
 
+#### Rules related to all conditions
+
+| Rule                                 | When does a patient pass evaluation?                             | Note |
+|--------------------------------------|------------------------------------------------------------------|------|
+| HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X | comorbidities > equal to or child of any icd node specified in X |      |
+
 ##### Rules related to other conditions
 
 | Rule                                                               | When does a patient pass evaluation?                                                                                                                                                                                                                                                                                                                                         | Note                                                                                                                                                |
@@ -758,12 +764,6 @@ Note for all TOXICITY rules:
 - For all EHR toxicities, only the most recent toxicity examination per toxicity is considered for evaluation.
 - In case toxicity evaluation resolves to `PASS` without support of at least one questionnaire toxicity, the evaluation resolves to `WARN`
   instead.
-
-#### Rules related to all conditions
-
-| Rule                               | When does a patient pass evaluation?                         |
-|------------------------------------|--------------------------------------------------------------|
-| HAS_CONDITION_WITH_ANY_ICD_TITLE_X | condition > equal to or child of any icd node specified in Y |                                                                                                                                                                           | `UNDETERMINED` in case complication details unknown                                                   |
 
 ##### Rules related to vital function / body weight measurements
 
