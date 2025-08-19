@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.molecular.util.FormatFunctions
+import com.hartwig.actin.util.FormatFunctions
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption

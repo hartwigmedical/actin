@@ -1,7 +1,8 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
-import com.hartwig.actin.molecular.util.FormatFunctions.formatFusionEvent
+import com.hartwig.actin.util.FormatFunctions
+import com.hartwig.actin.util.FormatFunctions.formatVariantImpact
+import com.hartwig.actin.util.FormatFunctions.formatFusionEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -15,7 +16,7 @@ class FormatFunctionsTest {
     @Test
     fun `Should format variant impact with protein impact`() {
         val result = formatVariantImpact("p.Met1Leu", "", false, false, "")
-        assertThat(result).isEqualTo("Met1Leu")
+        assertThat(FormatFunctions.removePrefix(result)).isEqualTo("Met1Leu")
     }
 
     @Test
@@ -45,19 +46,19 @@ class FormatFunctionsTest {
     @Test
     fun `Should prioritize protein impact over coding impact`() {
         val result = formatVariantImpact("p.Met1Leu", "c.123A>T", false, false, "")
-        assertThat(result).isEqualTo("Met1Leu")
+        assertThat(FormatFunctions.removePrefix(result)).isEqualTo("Met1Leu")
     }
 
     @Test
     fun `Should prioritize protein impact over upstream`() {
         val result = formatVariantImpact("p.Met1Leu", "", false, true, "")
-        assertThat(result).isEqualTo("Met1Leu")
+        assertThat(FormatFunctions.removePrefix(result)).isEqualTo("Met1Leu")
     }
 
     @Test
     fun `Should prioritize protein impact over effects`() {
         val result = formatVariantImpact("p.Met1Leu", "", false, false, "some_effect")
-        assertThat(result).isEqualTo("Met1Leu")
+        assertThat(FormatFunctions.removePrefix(result)).isEqualTo("Met1Leu")
     }
 
     @Test

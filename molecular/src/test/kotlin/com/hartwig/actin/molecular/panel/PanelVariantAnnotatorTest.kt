@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.util.FormatFunctions
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
@@ -169,7 +170,7 @@ class PanelVariantAnnotatorTest {
     fun `Should describe variant event using protein HGVS`() {
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
         val annotated = annotator.annotate(variants).first()
-        assertThat(annotated.event).isEqualTo("$GENE ${HGVS_PROTEIN_3LETTER.removePrefix("p.")}")
+        assertThat(annotated.event).isEqualTo("$GENE ${HGVS_PROTEIN_3LETTER}")
     }
 
     @Test
@@ -209,7 +210,7 @@ class PanelVariantAnnotatorTest {
                     )
                 )
             )
-        ).isEqualTo("P_MUTATION")
+        ).isEqualTo("p.P_MUTATION")
 
         assertThat(
             eventString(

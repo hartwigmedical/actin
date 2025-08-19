@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory
+import com.hartwig.actin.util.FormatFunctions
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleGainDeletion
@@ -17,8 +18,8 @@ class DriverEventFactoryTest {
 
     @Test
     fun `Should generate events for variants`() {
-        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu"))).isEqualTo("BRAF Val600Glu")
-        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.V600E"))).isEqualTo("BRAF V600E")
+        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu"))).isEqualTo("BRAF p.Val600Glu")
+        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.V600E"))).isEqualTo("BRAF p.V600E")
         assertThat(DriverEventFactory.variantEvent(variant("BRAF", "V600E"))).isEqualTo("BRAF V600E")
 
         assertThat(

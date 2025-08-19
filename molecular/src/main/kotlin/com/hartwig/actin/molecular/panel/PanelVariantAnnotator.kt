@@ -16,7 +16,7 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
+import com.hartwig.actin.util.FormatFunctions.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import org.apache.logging.log4j.LogManager
