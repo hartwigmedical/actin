@@ -17,7 +17,7 @@ object ToxicityFunctions {
 
         return dropOutdatedEHRToxicities(record.toxicities)
             .filter { it.endDate?.isAfter(referenceDate) != false }
-            .filter { it.source != ToxicitySource.EHR || it.icdCodes !in (icdCodesToExclude) }
+            .filter { it.source != ToxicitySource.EHR || it.icdCodes !in icdCodesToExclude }
             .filterNot { it.icdCodes.any { code -> code.mainCode in ignoredIcdMainCodes } }
     }
 

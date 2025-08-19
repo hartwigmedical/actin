@@ -22,8 +22,8 @@ private const val diseaseDescription = "parent disease"
 class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
     private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent", "extension"))
     private val referenceDate = LocalDate.of(2024, 12, 6)
-    private val function = HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-        icdModel, setOf(IcdCode(parentCode)), diseaseDescription, referenceDate
+    private val function = HasHadComorbiditiesWithIcdCode(
+        icdModel, setOf(IcdCode(parentCode)), diseaseDescription
     )
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
@@ -86,8 +86,8 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
 
     @Test
     fun `Should evaluate to undetermined when ICD main code matches but extension code is unknown`() {
-        val function = HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-            icdModel, setOf(IcdCode(parentCode, "extensionCode")), diseaseDescription, referenceDate
+        val function = HasHadComorbiditiesWithIcdCode(
+            icdModel, setOf(IcdCode(parentCode, "extensionCode")), diseaseDescription
         )
 
         assertEvaluation(
