@@ -3,10 +3,10 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.comorbidity.HasHadComorbiditiesWithIcdCode
+import com.hartwig.actin.algo.evaluation.comorbidity.HasSpecificFamilyHistory
+import com.hartwig.actin.algo.evaluation.comorbidity.UndeterminedFamilyConditions
 import com.hartwig.actin.algo.evaluation.composite.Or
-import com.hartwig.actin.algo.evaluation.othercondition.HasHadComorbiditiesWithIcdCode
-import com.hartwig.actin.algo.evaluation.othercondition.HasSpecificFamilyHistory
-import com.hartwig.actin.algo.evaluation.othercondition.UndeterminedFamilyConditions
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction

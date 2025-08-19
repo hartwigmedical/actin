@@ -380,8 +380,6 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
 
     // Rules related to comorbidities
     HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X(FunctionInput.MANY_ICD_TITLES),
-
-    // Rules related to other conditions
     HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS(FunctionInput.ONE_ICD_TITLE_ONE_INTEGER),
     HAS_HISTORY_OF_AUTOIMMUNE_DISEASE(FunctionInput.NONE),
     HAS_HISTORY_OF_CARDIAC_DISEASE(FunctionInput.NONE),

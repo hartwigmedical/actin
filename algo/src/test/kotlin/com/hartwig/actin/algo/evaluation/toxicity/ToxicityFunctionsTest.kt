@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
+import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource

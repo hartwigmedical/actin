@@ -5,12 +5,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.comorbidity.HasPotentialSymptomaticHypercalcemia
+import com.hartwig.actin.algo.evaluation.comorbidity.OtherConditionFunctionFactory
 import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Fallback
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
-import com.hartwig.actin.algo.evaluation.othercondition.HasPotentialSymptomaticHypercalcemia
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctionFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
