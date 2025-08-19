@@ -16,7 +16,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X to hasPriorConditionWithConfiguredIcdTitleCreator(),
             EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet(),
                 "autoimmune disease"
@@ -178,7 +177,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccessCreator(),
             EligibilityRule.MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST to { MeetsSixMinuteWalkingTestRequirements() },
-            EligibilityRule.HAS_COMPLICATION_WITH_ANY_ICD_TITLE_X to hasHadOtherConditionWithIcdCodeFromSetCreator(),
+            EligibilityRule.HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X to hasHadOtherConditionWithIcdCodeFromSetCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
             EligibilityRule.HAS_PLEURAL_EFFUSION to
@@ -200,19 +199,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                     )
 
         )
-    }
-
-    private fun hasPriorConditionWithConfiguredIcdTitleCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val targetIcdTitle = functionInputResolver().createOneIcdTitleInput(function)
-            val icdCode = icdModel().resolveCodeForTitle(targetIcdTitle)!!
-            HasHadOtherConditionComplicationOrToxicityWithIcdCode(
-                icdModel(),
-                setOf(icdCode),
-                targetIcdTitle,
-                referenceDateProvider().date()
-            )
-        }
     }
 
     private fun hasInheritedPredispositionToBleedingOrThrombosisCreator(): FunctionCreator {
