@@ -27,7 +27,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCode(
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || toxicity.source == ToxicitySource.QUESTIONNAIRE }
 
         val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            record.otherConditions + record.complications + relevantToxicities,
+            record.otherConditions + record.complications + record.comorbidities + relevantToxicities,
             targetIcdCodes
         )
 
