@@ -42,6 +42,6 @@ class HasPotentialSymptomaticHypercalcemia(private val minValidDate: LocalDate) 
     private fun evaluateLabValue(mostRecent: LabValue?, measurement: LabMeasurement): LabEvaluation.LabEvaluationResult {
         return if (LabEvaluation.isValid(mostRecent, measurement, minValidDate) && mostRecent != null) {
             LabEvaluation.evaluateVersusMaxULN(mostRecent, 1.0)
-        } else LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED
+        } else CANNOT_BE_DETERMINED
     }
 }
