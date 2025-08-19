@@ -176,32 +176,29 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             ),
             EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
-            EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccesCreator(),
+            EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccessCreator(),
             EligibilityRule.MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST to { MeetsSixMinuteWalkingTestRequirements() },
             EligibilityRule.HAS_COMPLICATION_WITH_ANY_ICD_TITLE_X to hasHadOtherConditionWithIcdCodeFromSetCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
-            EligibilityRule.HAS_PLEURAL_EFFUSION to {
-                HasHadOtherConditionWithIcdCodeFromSet(
-                    icdModel(),
-                    setOf(
-                        IcdCode(IcdConstants.PLEURAL_EFFUSION_CODE),
-                        IcdCode(IcdConstants.MALIGNANT_NEOPLASM_METASTASIS_IN_PLEURA_CODE),
-                        IcdCode(IcdConstants.PLEURISY_CODE),
+            EligibilityRule.HAS_PLEURAL_EFFUSION to
+                    hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                        setOf(
+                            IcdCode(IcdConstants.PLEURAL_EFFUSION_CODE),
+                            IcdCode(IcdConstants.MALIGNANT_NEOPLASM_METASTASIS_IN_PLEURA_CODE),
+                            IcdCode(IcdConstants.PLEURISY_CODE),
+                        ),
+                        "pleural effusion"
                     ),
-                    "pleural effusion"
-                )
-            },
-            EligibilityRule.HAS_PERITONEAL_EFFUSION to {
-                HasHadOtherConditionWithIcdCodeFromSet(
-                    icdModel(),
-                    setOf(
-                        IcdCode(IcdConstants.MALIGNANT_NEORPLASM_METASTASIS_IN_RETROPERITONEUM_OR_PERITONEUM_BLOCK),
-                        IcdCode(IcdConstants.ASCITES_CODE),
-                    ),
-                    "peritoneal effusion"
-                )
-            }
+            EligibilityRule.HAS_PERITONEAL_EFFUSION to
+                    hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                        setOf(
+                            IcdCode(IcdConstants.MALIGNANT_NEORPLASM_METASTASIS_IN_RETROPERITONEUM_OR_PERITONEUM_BLOCK),
+                            IcdCode(IcdConstants.ASCITES_CODE),
+                        ),
+                        "peritoneal effusion"
+                    )
+
         )
     }
 
@@ -209,7 +206,12 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { function: EligibilityFunction ->
             val targetIcdTitle = functionInputResolver().createOneIcdTitleInput(function)
             val icdCode = icdModel().resolveCodeForTitle(targetIcdTitle)!!
-            HasHadOtherConditionWithIcdCodeFromSet(icdModel(), setOf(icdCode), targetIcdTitle)
+            HasHadOtherConditionComplicationOrToxicityWithIcdCode(
+                icdModel(),
+                setOf(icdCode),
+                targetIcdTitle,
+                referenceDateProvider().date()
+            )
         }
     }
 
@@ -243,7 +245,12 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         otherConditionTerm: String
     ): FunctionCreator {
         return {
-            HasHadOtherConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, otherConditionTerm)
+            HasHadOtherConditionComplicationOrToxicityWithIcdCode(
+                icdModel(),
+                targetIcdCodes,
+                otherConditionTerm,
+                referenceDateProvider().date()
+            )
         }
     }
 
@@ -327,7 +334,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { HasPotentialContraIndicationForStereotacticRadiosurgery() }
     }
 
-    private fun hasAdequateVenousAccesCreator(): FunctionCreator {
+    private fun hasAdequateVenousAccessCreator(): FunctionCreator {
         return { HasAdequateVenousAccess() }
     }
 
@@ -336,7 +343,12 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { function: EligibilityFunction ->
             val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
             val targetIcdCodes = targetIcdTitles.map { icdModel().resolveCodeForTitle(it)!! }.toSet()
-            HasHadOtherConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, Format.concatLowercaseWithCommaAndOr(targetIcdTitles))
+            HasHadOtherConditionComplicationOrToxicityWithIcdCode(
+                icdModel(),
+                targetIcdCodes,
+                Format.concatLowercaseWithCommaAndOr(targetIcdTitles),
+                referenceDateProvider().date()
+            )
         }
     }
 
