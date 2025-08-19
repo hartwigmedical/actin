@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
+import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.MolecularHistoryAdapter
 import com.hartwig.actin.util.json.TreatmentAdapter
 import java.io.BufferedWriter
@@ -50,7 +51,7 @@ object PatientRecordJson {
     }
 
     private fun gsonBuilder(): GsonBuilder {
-        val gsonBuilder = GsonBuilder()
+        val gsonBuilder = GsonSerializer.createBuilder()
         return gsonBuilder.serializeNulls()
             .enableComplexMapKeySerialization()
             .serializeSpecialFloatingPointValues()

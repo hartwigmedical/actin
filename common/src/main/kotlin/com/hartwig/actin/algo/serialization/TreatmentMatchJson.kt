@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.serialization
 
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.hartwig.actin.clinical.serialization.TreatmentAdapter
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
@@ -9,15 +9,11 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.EvaluationMessageAdapter
-import com.hartwig.actin.util.json.GsonLocalDateAdapter
-import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
-import com.hartwig.actin.util.json.GsonSetAdapter
+import com.hartwig.actin.util.json.GsonSerializer
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
-import java.time.LocalDate
-import java.time.LocalDateTime
 import org.apache.logging.log4j.LogManager
 
 object TreatmentMatchJson {
@@ -47,16 +43,13 @@ object TreatmentMatchJson {
         return gsonBuilder().fromJson(json, TreatmentMatch::class.java)
     }
 
-    private fun gsonBuilder() = GsonBuilder().serializeNulls()
-        .enableComplexMapKeySerialization()
-        .serializeSpecialFloatingPointValues()
-        .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
-        .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
-        .registerTypeHierarchyAdapter(Set::class.java, GsonSetAdapter<Any>())
-        .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
-        .registerTypeAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter())
-        .registerTypeHierarchyAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter())
-        .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
-        .create()
+    private fun gsonBuilder(): Gson {
+        val gsonBuilder = GsonSerializer.createBuilder()
+        return gsonBuilder.registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
+            .registerTypeAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
+            .registerTypeHierarchyAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
+            .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
+            .create()
+    }
 
 }

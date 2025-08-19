@@ -1,20 +1,15 @@
 package com.hartwig.actin.trial.serialization
 
-import com.google.gson.GsonBuilder
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
-import com.hartwig.actin.util.json.GsonLocalDateAdapter
-import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
-import com.hartwig.actin.util.json.GsonSetAdapter
+import com.hartwig.actin.util.json.GsonSerializer
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Files
-import java.time.LocalDate
-import java.time.LocalDateTime
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -37,7 +32,7 @@ object TrialJson {
     fun trialFileId(trialId: String): String {
         return trialId.replace("[ /]".toRegex(), "_")
     }
-    
+
     fun readFromDir(directory: String): List<Trial> {
         val files = File(directory).listFiles() ?: throw IllegalArgumentException("Could not retrieve files from $directory")
         return files.filter { it.getName().endsWith(TRIAL_JSON_EXTENSION) }.map(::fromJsonFile)
@@ -51,15 +46,9 @@ object TrialJson {
         return gsonBuilder().fromJson(json, Trial::class.java)
     }
 
-    private fun gsonBuilder() = GsonBuilder().serializeNulls()
-        .enableComplexMapKeySerialization()
-        .serializeSpecialFloatingPointValues()
-        .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
-        .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
-        .registerTypeHierarchyAdapter(Set::class.java, GsonSetAdapter<Any>())
+    private fun gsonBuilder() = GsonSerializer.createBuilder()
         .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
         .create()
-
 
     private fun fromJsonFile(file: File): Trial {
         try {
