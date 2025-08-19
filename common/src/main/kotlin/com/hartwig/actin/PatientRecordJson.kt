@@ -21,13 +21,13 @@ import java.time.LocalDateTime
 import org.apache.logging.log4j.LogManager
 
 object PatientRecordJson {
-    private val LOGGER = LogManager.getLogger(PatientRecordJson::class.java)
+    private val logger = LogManager.getLogger(PatientRecordJson::class.java)
     private const val PATIENT_RECORD_JSON_EXTENSION = ".patient_record.json"
 
     fun write(patientRecord: PatientRecord, directory: String) {
         val path = Paths.forceTrailingFileSeparator(directory)
         val jsonFile = path + patientRecord.patientId + PATIENT_RECORD_JSON_EXTENSION
-        LOGGER.info("Writing patient record to {}", jsonFile)
+        logger.info("Writing patient record to {}", jsonFile)
         val writer = BufferedWriter(FileWriter(jsonFile))
         writer.write(toJson(patientRecord))
         writer.close()

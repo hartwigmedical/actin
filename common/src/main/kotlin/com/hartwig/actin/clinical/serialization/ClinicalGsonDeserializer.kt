@@ -33,6 +33,7 @@ object ClinicalGsonDeserializer {
     private fun gsonBuilder(): GsonBuilder {
         return GsonBuilder().serializeNulls()
             .enableComplexMapKeySerialization()
+            .serializeSpecialFloatingPointValues()
             .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())

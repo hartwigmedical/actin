@@ -5,25 +5,29 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
-import com.hartwig.actin.util.json.GsonSerializer
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import com.hartwig.actin.util.json.GsonLocalDateAdapter
+import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
+import com.hartwig.actin.util.json.GsonSetAdapter
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Files
+import java.time.LocalDate
+import java.time.LocalDateTime
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 object TrialJson {
 
-    private val LOGGER: Logger = LogManager.getLogger(TrialJson::class.java)
+    private val logger: Logger = LogManager.getLogger(TrialJson::class.java)
     private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
 
     fun write(trials: List<Trial>, directory: String) {
         val path: String = Paths.forceTrailingFileSeparator(directory)
         for (trial: Trial in trials) {
             val jsonFile = path + trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION
-            LOGGER.info(" Writing '{} ({})' to {}", trial.identification.trialId, trial.identification.acronym, jsonFile)
+            logger.info(" Writing '{} ({})' to {}", trial.identification.trialId, trial.identification.acronym, jsonFile)
             val writer = BufferedWriter(FileWriter(jsonFile))
             writer.write(toJson(trial))
             writer.close()
@@ -40,14 +44,22 @@ object TrialJson {
     }
 
     fun toJson(trial: Trial): String {
-        return GsonSerializer.create().toJson(trial)
+        return gsonBuilder().toJson(trial)
     }
 
     fun fromJson(json: String): Trial {
-        val gson = GsonBuilder().registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer()).create()
-        
-        return gson.fromJson(json, Trial::class.java)
+        return gsonBuilder().fromJson(json, Trial::class.java)
     }
+
+    private fun gsonBuilder() = GsonBuilder().serializeNulls()
+        .enableComplexMapKeySerialization()
+        .serializeSpecialFloatingPointValues()
+        .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
+        .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
+        .registerTypeHierarchyAdapter(Set::class.java, GsonSetAdapter<Any>())
+        .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
+        .create()
+
 
     private fun fromJsonFile(file: File): Trial {
         try {
