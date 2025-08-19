@@ -30,7 +30,6 @@ private const val OTHER_GENE = "other_gene"
 private const val OTHER_GENE_ID = "other_gene_id"
 private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
-private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
 private val TRANSCRIPT_ANNOTATION =
@@ -89,7 +88,7 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
         assertThat(annotated.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
         assertThat(annotated.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
-        assertThat(annotated.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
+        assertThat(annotated.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_3LETTER)
         assertThat(annotated.canonicalImpact.inSpliceRegion).isFalse()
         assertThat(annotated.otherImpacts).isEmpty()
         assertThat(annotated.isBiallelic).isNull()
@@ -170,7 +169,7 @@ class PanelVariantAnnotatorTest {
     fun `Should describe variant event using protein HGVS`() {
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
         val annotated = annotator.annotate(variants).first()
-        assertThat(annotated.event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
+        assertThat(annotated.event).isEqualTo("$GENE ${HGVS_PROTEIN_3LETTER.removePrefix("p.")}")
     }
 
     @Test
@@ -271,7 +270,7 @@ class PanelVariantAnnotatorTest {
         TranscriptVariantImpact(
             transcriptId = OTHER_TRANSCRIPT,
             hgvsCodingImpact = HGVS_CODING,
-            hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
+            hgvsProteinImpact = HGVS_PROTEIN_3LETTER,
             affectedCodon = 1,
             affectedExon = 1,
             inSpliceRegion = false,

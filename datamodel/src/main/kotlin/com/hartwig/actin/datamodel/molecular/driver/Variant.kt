@@ -34,9 +34,5 @@ data class Variant(
             .thenComparing({ it.canonicalImpact.hgvsCodingImpact }, String::compareTo)
             .compare(this, other)
     }
-
-    fun to1LetterEvent(event: String): String {
-        // convert to 1 letter event, which should be used in places where event is currently used in ACTIN
-    }
 }
 

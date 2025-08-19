@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.util.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery

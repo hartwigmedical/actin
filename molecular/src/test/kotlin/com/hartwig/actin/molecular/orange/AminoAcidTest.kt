@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.molecular.util.AminoAcid
+import com.hartwig.actin.datamodel.molecular.AminoAcid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

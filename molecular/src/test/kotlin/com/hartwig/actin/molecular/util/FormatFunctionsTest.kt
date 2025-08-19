@@ -15,7 +15,7 @@ class FormatFunctionsTest {
     @Test
     fun `Should format variant impact with protein impact`() {
         val result = formatVariantImpact("p.Met1Leu", "", false, false, "")
-        assertThat(result).isEqualTo("M1L")
+        assertThat(result).isEqualTo("Met1Leu")
     }
 
     @Test
@@ -45,19 +45,19 @@ class FormatFunctionsTest {
     @Test
     fun `Should prioritize protein impact over coding impact`() {
         val result = formatVariantImpact("p.Met1Leu", "c.123A>T", false, false, "")
-        assertThat(result).isEqualTo("M1L")
+        assertThat(result).isEqualTo("Met1Leu")
     }
 
     @Test
     fun `Should prioritize protein impact over upstream`() {
         val result = formatVariantImpact("p.Met1Leu", "", false, true, "")
-        assertThat(result).isEqualTo("M1L")
+        assertThat(result).isEqualTo("Met1Leu")
     }
 
     @Test
     fun `Should prioritize protein impact over effects`() {
         val result = formatVariantImpact("p.Met1Leu", "", false, false, "some_effect")
-        assertThat(result).isEqualTo("M1L")
+        assertThat(result).isEqualTo("Met1Leu")
     }
 
     @Test

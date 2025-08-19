@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.util
+package com.hartwig.actin.datamodel.molecular
 
 object AminoAcid {
 
@@ -26,6 +26,7 @@ object AminoAcid {
     )
 
     fun forceSingleLetterAminoAcids(impact: String): String {
+        // convert to 1 letter event, which should be used in places where event is currently used in ACTIN
         return TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER.entries.fold(impact) { acc, (key, value) -> acc.replace(key, value) }
     }
 }

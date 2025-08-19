@@ -17,7 +17,7 @@ class DriverEventFactoryTest {
 
     @Test
     fun `Should generate events for variants`() {
-        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu"))).isEqualTo("BRAF V600E")
+        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu"))).isEqualTo("BRAF Val600Glu")
         assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.V600E"))).isEqualTo("BRAF V600E")
         assertThat(DriverEventFactory.variantEvent(variant("BRAF", "V600E"))).isEqualTo("BRAF V600E")
 
