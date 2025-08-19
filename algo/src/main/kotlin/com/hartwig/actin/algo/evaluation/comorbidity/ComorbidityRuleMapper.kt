@@ -158,6 +158,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     ).map { IcdCode(it) }
                         .toSet(),
                     "potential oral medication difficulties",
+                    referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT to hasContraindicationToCTCreator(),
@@ -245,6 +246,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 icdModel(),
                 targetIcdCodes,
                 otherConditionTerm,
+                referenceDateProvider().date()
             )
         }
     }
@@ -255,6 +257,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 icdModel(),
                 IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
                 "cardiac disease",
+                referenceDateProvider().date()
             )
         }
     }
@@ -272,6 +275,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 icdModel(),
                 setOf(IcdConstants.EYE_DISEASE_CHAPTER).map { IcdCode(it) }.toSet(),
                 "eye disease",
+                referenceDateProvider().date()
             )
         }
     }
@@ -282,6 +286,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 icdModel(),
                 IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
                 "CVA",
+                referenceDateProvider().date()
             )
         }
     }
@@ -338,6 +343,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 icdModel(),
                 targetIcdCodes,
                 Format.concatLowercaseWithCommaAndOr(targetIcdTitles),
+                referenceDateProvider().date()
             )
         }
     }
@@ -367,6 +373,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
             icdModel(),
             targetIcdCodes,
             conditionDescription,
+            referenceDateProvider().date()
         )
     }
 

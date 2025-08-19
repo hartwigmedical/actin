@@ -307,7 +307,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                     icdModel(),
                     setOf(IcdCode(IcdConstants.HYPOKALEMIA_CODE)),
-                    "potential hypokalemia"
+                    "potential hypokalemia",
+                    referenceDateProvider().date()
                 )
             Or(listOf(potassiumBelowLLN, hasHadPriorHypokalemia))
         }
@@ -320,7 +321,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
                 setOf(IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)),
-                "potential hypomagnesemia"
+                "potential hypomagnesemia",
+                referenceDateProvider().date()
             )
             Or(listOf(magnesiumBelowLLN, hasHadPriorHypomagnesemia))
         }
@@ -332,7 +334,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val hasHadPriorHypocalcemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
                 setOf(IcdCode(IcdConstants.CALCIUM_DEFICIENCY_CODE)),
-                "potential hypocalcemia"
+                "potential hypocalcemia",
+                referenceDateProvider().date()
             )
             Or(listOf(calciumBelowLLN, hasHadPriorHypocalcemia))
         }

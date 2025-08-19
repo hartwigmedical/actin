@@ -37,7 +37,8 @@ class HasHadComorbidityWithIcdCodeTest {
         HasHadComorbidityWithIcdCode(
             icdModel,
             targetIcdCodes + setOf(IcdCode(parentCode)),
-            diseaseDescription
+            diseaseDescription,
+            referenceDate
         )
 
 
@@ -53,7 +54,8 @@ class HasHadComorbidityWithIcdCodeTest {
         val function = HasHadComorbidityWithIcdCode(
             TestIcdFactory.createTestModel(),
             setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, "extensionCode")),
-            "respiratory compromise"
+            "respiratory compromise",
+            referenceDate
         )
         val conditions = ComorbidityTestFactory.otherCondition(
             "pneumonitis",
@@ -125,7 +127,10 @@ class HasHadComorbidityWithIcdCodeTest {
     @Test
     fun `Should evaluate to undetermined when ICD main code matches but extension code is unknown`() {
         val function = HasHadComorbidityWithIcdCode(
-            icdModel, setOf(IcdCode(parentCode, "extensionCode")), diseaseDescription
+            icdModel,
+            setOf(IcdCode(parentCode, "extensionCode")),
+            diseaseDescription,
+            referenceDate
         )
 
         assertEvaluation(
