@@ -7,10 +7,27 @@ import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.entry
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
 
 class TreatmentDatabaseTest {
+    
+    @Test
+    fun `Should return map of displayable drug names to keys`() {
+        assertThat(treatmentDatabase().drugDisplayableNamesToKeys()).containsExactly(
+            entry("capecitabine", "CAPECITABINE"),
+            entry("oxaliplatin", "OXALIPLATIN"),
+            entry("trifluridine", "TRIFLURIDINE"),
+            entry("pertuzumab trastuzumab", "PERTUZUMAB_TRASTUZUMAB")
+        )
+    }
+
+    @Test
+    fun `Should return map of displayable treatment names to keys`() {
+        assertThat(treatmentDatabase().treatmentDisplayableNamesToKeys())
+            .containsExactly(entry("Capecitabine+Oxaliplatin", "CAPECITABINE+OXALIPLATIN"))
+    }
 
     @Test
     fun `Should find existing treatment by name`() {
