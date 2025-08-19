@@ -541,6 +541,6 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_HAD_CYTOREDUCTIVE_SURGERY(FunctionInput.NONE),
     HAS_HAD_ONCOLOGICAL_SURGERY_TO_ANY_BODY_LOCATION_X(FunctionInput.MANY_BODY_LOCATIONS),
 
-    // Rules related to all comorbidities
+    // Rules related to all conditions
     HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X(FunctionInput.MANY_ICD_TITLES),
 }
