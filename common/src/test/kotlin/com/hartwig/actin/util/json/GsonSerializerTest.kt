@@ -13,7 +13,7 @@ import org.junit.Test
 
 class GsonSerializerTest {
 
-    private val gson = GsonSerializer.create()
+    private val gson = GsonSerializer.createBuilder().create()
 
     @Test
     fun `Should sort comparable sets`() {

@@ -9,7 +9,7 @@ class GsonLocalDateTimeAdapterTest {
     @Test
     fun `Should serialize LocalDateTime object`() {
         val dateTime = LocalDateTime.of(2022, 10, 20, 11, 12, 13)
-        val serializer = GsonSerializer.create()
+        val serializer = GsonSerializer.createBuilder().create()
         assertThat(serializer.fromJson(serializer.toJson(dateTime), LocalDateTime::class.java)).isEqualTo(dateTime)
         assertThat(serializer.fromJson(serializer.toJson(null as LocalDateTime?), LocalDateTime::class.java)).isNull()
     }

@@ -36,14 +36,14 @@ object TreatmentMatchJson {
     }
 
     fun toJson(match: TreatmentMatch): String {
-        return gsonBuilder().toJson(match)
+        return gson().toJson(match)
     }
 
     fun fromJson(json: String): TreatmentMatch {
-        return gsonBuilder().fromJson(json, TreatmentMatch::class.java)
+        return gson().fromJson(json, TreatmentMatch::class.java)
     }
 
-    private fun gsonBuilder(): Gson {
+    private fun gson(): Gson {
         val gsonBuilder = GsonSerializer.createBuilder()
         return gsonBuilder.registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
             .registerTypeAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))

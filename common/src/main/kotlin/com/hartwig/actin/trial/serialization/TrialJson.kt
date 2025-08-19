@@ -39,14 +39,14 @@ object TrialJson {
     }
 
     fun toJson(trial: Trial): String {
-        return gsonBuilder().toJson(trial)
+        return gson().toJson(trial)
     }
 
     fun fromJson(json: String): Trial {
-        return gsonBuilder().fromJson(json, Trial::class.java)
+        return gson().fromJson(json, Trial::class.java)
     }
 
-    private fun gsonBuilder() = GsonSerializer.createBuilder()
+    private fun gson() = GsonSerializer.createBuilder()
         .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
         .create()
 
