@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.comorbidity.HasHadComorbiditiesWithIcdCode
+import com.hartwig.actin.algo.evaluation.comorbidity.HasHadComorbidityWithIcdCode
 import com.hartwig.actin.algo.evaluation.comorbidity.HasSpecificFamilyHistory
 import com.hartwig.actin.algo.evaluation.comorbidity.UndeterminedFamilyConditions
 import com.hartwig.actin.algo.evaluation.composite.Or
@@ -38,7 +38,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             Or(
                 listOf(
                     HasEcgAberration(icdModel()),
-                    HasHadComorbiditiesWithIcdCode(
+                    HasHadComorbidityWithIcdCode(
                         icdModel(),
                         IcdConstants.HEART_DISEASE_SET.filterNot { it == IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK }.map { IcdCode(it) }
                             .toSet(),

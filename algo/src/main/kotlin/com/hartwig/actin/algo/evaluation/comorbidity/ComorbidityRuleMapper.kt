@@ -150,7 +150,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
             EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS to hasInheritedPredispositionToBleedingOrThrombosisCreator(),
             EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES to hasPotentialAbsorptionDifficultiesCreator(),
             EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to {
-                HasHadComorbiditiesWithIcdCode(
+                HasHadComorbidityWithIcdCode(
                     icdModel(),
                     listOf(
                         IcdConstants.FUNCTIONAL_SWALLOWING_DISORDER_CODE,
@@ -241,7 +241,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         otherConditionTerm: String
     ): FunctionCreator {
         return {
-            HasHadComorbiditiesWithIcdCode(
+            HasHadComorbidityWithIcdCode(
                 icdModel(),
                 targetIcdCodes,
                 otherConditionTerm,
@@ -251,7 +251,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
         return {
-            HasHadComorbiditiesWithIcdCode(
+            HasHadComorbidityWithIcdCode(
                 icdModel(),
                 IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
                 "cardiac disease",
@@ -268,7 +268,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
         return {
-            HasHadComorbiditiesWithIcdCode(
+            HasHadComorbidityWithIcdCode(
                 icdModel(),
                 setOf(IcdConstants.EYE_DISEASE_CHAPTER).map { IcdCode(it) }.toSet(),
                 "eye disease",
@@ -278,7 +278,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasHistoryOfStrokeCreator(): FunctionCreator {
         return {
-            HasHadComorbiditiesWithIcdCode(
+            HasHadComorbidityWithIcdCode(
                 icdModel(),
                 IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
                 "CVA",
@@ -334,7 +334,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         return { function: EligibilityFunction ->
             val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
             val targetIcdCodes = targetIcdTitles.map { icdModel().resolveCodeForTitle(it)!! }.toSet()
-            HasHadComorbiditiesWithIcdCode(
+            HasHadComorbidityWithIcdCode(
                 icdModel(),
                 targetIcdCodes,
                 Format.concatLowercaseWithCommaAndOr(targetIcdTitles),
@@ -363,7 +363,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         targetIcdCodes: Set<IcdCode>,
         conditionDescription: String
     ): FunctionCreator = {
-        HasHadComorbiditiesWithIcdCode(
+        HasHadComorbidityWithIcdCode(
             icdModel(),
             targetIcdCodes,
             conditionDescription,

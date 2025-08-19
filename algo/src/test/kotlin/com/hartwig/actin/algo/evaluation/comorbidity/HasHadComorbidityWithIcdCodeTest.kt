@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -19,22 +20,59 @@ private const val childCode = "childCode"
 private const val parentCode = "childParentCode"
 private const val diseaseDescription = "parent disease"
 
-class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
-    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent", "extension"))
+class HasHadComorbidityWithIcdCodeTest {
+    private val targetIcdCodes = IcdConstants.RESPIRATORY_COMPROMISE_SET.map { IcdCode(it) }.toSet()
+    private val icdModel =
+        TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent", "extension", parentCode))
     private val referenceDate = LocalDate.of(2024, 12, 6)
-    private val function = HasHadComorbiditiesWithIcdCode(
-        icdModel, setOf(IcdCode(parentCode)), diseaseDescription
-    )
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
-
     private val complicationWithTargetCode = ComorbidityTestFactory.complication(icdMainCode = parentCode, name = COMPLICATION_NAME)
     private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
-
     private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(
         name = OTHER_CONDITION_NAME,
         icdMainCode = parentCode
     )
     private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
+    private val function =
+        HasHadComorbidityWithIcdCode(
+            icdModel,
+            targetIcdCodes + setOf(IcdCode(parentCode)),
+            diseaseDescription
+        )
+
+
+    @Test
+    fun `Should pass if condition with correct ICD code in history`() {
+        val conditions =
+            ComorbidityTestFactory.otherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined for condition with unknown extension`() {
+        val function = HasHadComorbidityWithIcdCode(
+            TestIcdFactory.createTestModel(),
+            setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, "extensionCode")),
+            "respiratory compromise"
+        )
+        val conditions = ComorbidityTestFactory.otherCondition(
+            "pneumonitis",
+            icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
+            icdExtensionCode = null
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
+    }
+
+    @Test
+    fun `Should fail if no conditions with correct ICD code in history`() {
+        val conditions = ComorbidityTestFactory.otherCondition("stroke", icdMainCode = IcdConstants.CEREBRAL_ISCHAEMIA_BLOCK)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
+    }
+
+    @Test
+    fun `Should fail if no conditions present in history`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
+    }
 
     @Test
     fun `Should fail when no matching ICD code in other conditions, complications or toxicities`() {
@@ -86,7 +124,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
 
     @Test
     fun `Should evaluate to undetermined when ICD main code matches but extension code is unknown`() {
-        val function = HasHadComorbiditiesWithIcdCode(
+        val function = HasHadComorbidityWithIcdCode(
             icdModel, setOf(IcdCode(parentCode, "extensionCode")), diseaseDescription
         )
 

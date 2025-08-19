@@ -11,6 +11,6 @@ object OtherConditionFunctionFactory {
         targetIcdCodes: Set<IcdCode>,
         conditionTerm: String
     ): EvaluationFunction {
-        return HasHadOtherConditionWithIcdCodeFromSet(icdModel, targetIcdCodes, conditionTerm)
+        return HasHadComorbidityWithIcdCode(icdModel, targetIcdCodes, conditionTerm)
     }
 }

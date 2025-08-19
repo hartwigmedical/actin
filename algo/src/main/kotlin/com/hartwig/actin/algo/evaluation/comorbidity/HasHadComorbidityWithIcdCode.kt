@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasHadComorbiditiesWithIcdCode(
+class HasHadComorbidityWithIcdCode(
     private val icdModel: IcdModel,
     private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
