@@ -1,14 +1,13 @@
 package com.hartwig.actin
 
-import com.hartwig.actin.datamodel.Displayable
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
 class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val treatmentsByName: Map<String, Treatment>) {
 
-    fun drugDisplayableNamesToKeys() = uniqueDisplayNamesToKeysFromMap(drugsByName, Drug::name)
+    fun drugs() = drugsByName.values.toSet()
 
-    fun treatmentDisplayableNamesToKeys() = uniqueDisplayNamesToKeysFromMap(treatmentsByName, Treatment::name)
+    fun treatments() = treatmentsByName.values.toSet()
 
     fun findTreatmentByName(treatmentName: String): Treatment? {
         return treatmentsByName[treatmentName.replace(" ", "_").lowercase()]
@@ -21,7 +20,4 @@ class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val 
     fun findDrugByAtcName(atcName: String): Drug? {
         return findDrugByName(atcName.lowercase().replace(" and ", "_").split(", ").first())
     }
-
-    private fun <T : Displayable> uniqueDisplayNamesToKeysFromMap(map: Map<String, T>, name: T.() -> String) =
-        map.values.toSet().associate { it.display() to it.name() }
 }
