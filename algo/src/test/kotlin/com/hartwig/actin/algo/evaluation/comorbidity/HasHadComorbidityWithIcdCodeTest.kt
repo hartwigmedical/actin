@@ -43,41 +43,35 @@ class HasHadComorbidityWithIcdCodeTest {
 
 
     @Test
-    fun `Should pass if condition with correct ICD code in history`() {
-        val conditions =
+    fun `Should pass if comorbidity with correct ICD code in history`() {
+        val comorbidities =
             ComorbidityTestFactory.otherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)))
     }
 
     @Test
-    fun `Should evaluate to undetermined for condition with unknown extension`() {
+    fun `Should evaluate to undetermined for comorbidity with unknown extension`() {
         val function = HasHadComorbidityWithIcdCode(
             TestIcdFactory.createTestModel(),
             setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, "extensionCode")),
             "respiratory compromise",
             referenceDate
         )
-        val conditions = ComorbidityTestFactory.otherCondition(
+        val comorbidities = ComorbidityTestFactory.otherCondition(
             "pneumonitis",
             icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
             icdExtensionCode = null
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)))
     }
 
     @Test
-    fun `Should fail if no conditions with correct ICD code in history`() {
-        val conditions = ComorbidityTestFactory.otherCondition("stroke", icdMainCode = IcdConstants.CEREBRAL_ISCHAEMIA_BLOCK)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
-    }
-
-    @Test
-    fun `Should fail if no conditions present in history`() {
+    fun `Should fail when patient has no comorbidities`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
     }
 
     @Test
-    fun `Should fail when no matching ICD code in other conditions, complications or toxicities`() {
+    fun `Should fail when no matching ICD code in other comorbidities, complications or toxicities`() {
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessagesStrings())
