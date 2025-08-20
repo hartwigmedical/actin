@@ -47,7 +47,7 @@ data class Evaluation(
             warnMessages = warnMessages + other.warnMessages,
             undeterminedMessages = undeterminedMessages + other.undeterminedMessages,
             failMessages = failMessages + other.failMessages,
-            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation || other.isMissingMolecularResultForEvaluation
+            isMissingMolecularResultForEvaluation = if (result == EvaluationResult.PASS) false else isMissingMolecularResultForEvaluation || other.isMissingMolecularResultForEvaluation
         )
     }
 }
