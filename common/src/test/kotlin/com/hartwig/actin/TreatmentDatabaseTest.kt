@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
@@ -11,6 +12,18 @@ import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
 
 class TreatmentDatabaseTest {
+    
+    @Test
+    fun `Should return set of all drugs`() {
+        assertThat(treatmentDatabase().drugs().map(Drug::name)).containsExactly(
+            "CAPECITABINE", "OXALIPLATIN", "TRIFLURIDINE", "PERTUZUMAB_TRASTUZUMAB"
+        )
+    }
+
+    @Test
+    fun `Should return set of all treatments`() {
+        assertThat(treatmentDatabase().treatments().map(Treatment::name)).containsExactly("CAPECITABINE+OXALIPLATIN")
+    }
 
     @Test
     fun `Should find existing treatment by name`() {
