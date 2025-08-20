@@ -3,15 +3,25 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.personalization.MeasurementType
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldSurvivalOutcomesGenerator
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldTreatmentDecisionsGenerator
-import com.hartwig.actin.report.pdf.tables.soc.SurvivalPredictionPerTreatmentGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Table
+import com.itextpdf.svg.converter.SvgConverter
+import org.jetbrains.letsPlot.export.ggsave
+import org.jetbrains.letsPlot.geom.geomLine
+import org.jetbrains.letsPlot.ggsize
+import org.jetbrains.letsPlot.label.labs
+import org.jetbrains.letsPlot.letsPlot
+import java.io.ByteArrayInputStream
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createTempFile
+import kotlin.io.path.readBytes
+
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
 
@@ -25,14 +35,14 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
     override fun render(document: Document) {
         addChapterTitle(document)
-        
+
         addPersonalizationTable(document)
         addSurvivalTable(document)
     }
-    
-    private fun addPersonalizationTable(document : Document) {
+
+    private fun addPersonalizationTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        
+
         val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches
             ?.filter(AnnotatedTreatmentMatch::eligible)
             ?.map { it.treatmentCandidate.treatment.name.lowercase() }
@@ -82,13 +92,35 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         document.add(table)
     }
 
+    private fun generateSurvivalPlot(survivalPredictions: Map<String, List<Double>>, document: Document): Image {
+        val data = survivalPredictions
+            .flatMap { (treatment, probabilities) ->
+                probabilities
+                    .filterIndexed { index, _ -> index % 30 == 0 }
+                    .mapIndexed { index, prob ->
+                        Triple(index.toDouble(), prob, treatment)
+                    }
+            }
+
+        val survivalTime = data.map { it.first }
+        val survivalProbability = data.map { it.second }
+        val group = data.map { it.third }
+
+        val plot = letsPlot { x = survivalTime; y = survivalProbability; color = group } +
+                geomLine() +
+                labs(x = "Time (months)", y = "Survival Probability") +
+                ggsize(width = 1500, height = 800)
+
+        val tmpFile = createTempFile("plot", ".svg")
+        ggsave(plot, tmpFile.absolutePathString())
+        val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
+        return Image(xObj)
+    }
+
     private fun addSurvivalTable(document: Document) {
         report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
-            val table = Tables.createSingleColWithWidth(contentWidth())
-            val generator = SurvivalPredictionPerTreatmentGenerator(survivalPredictions)
-            TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
-            document.add(table)    
+            val image = generateSurvivalPlot(survivalPredictions, document)
+            document.add(image)
         }
     }
 }
-
