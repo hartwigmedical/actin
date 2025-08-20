@@ -1,6 +1,6 @@
 package com.hartwig.actin
 
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.clinical.serialization.ComorbidityAdapter
 import com.hartwig.actin.datamodel.PatientRecord
@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
-import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
+import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.MolecularHistoryAdapter
 import com.hartwig.actin.util.json.TreatmentAdapter
 import java.io.BufferedWriter
@@ -17,17 +17,16 @@ import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
 import java.time.LocalDate
-import java.time.LocalDateTime
 import org.apache.logging.log4j.LogManager
 
 object PatientRecordJson {
-    private val LOGGER = LogManager.getLogger(PatientRecordJson::class.java)
+    private val logger = LogManager.getLogger(PatientRecordJson::class.java)
     private const val PATIENT_RECORD_JSON_EXTENSION = ".patient_record.json"
 
     fun write(patientRecord: PatientRecord, directory: String) {
         val path = Paths.forceTrailingFileSeparator(directory)
         val jsonFile = path + patientRecord.patientId + PATIENT_RECORD_JSON_EXTENSION
-        LOGGER.info("Writing patient record to {}", jsonFile)
+        logger.info("Writing patient record to {}", jsonFile)
         val writer = BufferedWriter(FileWriter(jsonFile))
         writer.write(toJson(patientRecord))
         writer.close()
@@ -38,26 +37,20 @@ object PatientRecordJson {
     }
 
     fun toJson(patientRecord: PatientRecord): String {
-        return gsonBuilder()
-            .create()
-            .toJson(patientRecord)
+        return gson().toJson(patientRecord)
     }
 
     fun fromJson(json: String): PatientRecord {
-        return gsonBuilder()
-            .create()
-            .fromJson(json, PatientRecord::class.java)
+        return gson().fromJson(json, PatientRecord::class.java)
     }
 
-    private fun gsonBuilder(): GsonBuilder {
-        val gsonBuilder = GsonBuilder()
-        return gsonBuilder.serializeNulls()
-            .enableComplexMapKeySerialization()
-            .serializeSpecialFloatingPointValues()
+    private fun gson(): Gson {
+        val gsonBuilder = GsonSerializer.createBuilder()
+        return gsonBuilder
             .registerTypeAdapter(object : TypeToken<LocalDate?>() {}.type, GsonLocalDateAdapter())
-            .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter(gsonBuilder.create()))
             .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
             .registerTypeAdapter(MolecularHistory::class.java, MolecularHistoryAdapter(gsonBuilder.create()))
+            .create()
     }
 }
