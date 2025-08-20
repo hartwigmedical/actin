@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.datamodel
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
@@ -37,14 +36,14 @@ object TestReportFactory {
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
             config = ReportConfiguration(
                 includeMolecularEvidenceChapter = true,
-                includeOverviewWithClinicalHistorySummary = true,
-                includeMolecularDetailsChapter = false,
-                includeApprovedTreatmentsInSummary = false,
-                includeSOCLiteratureEfficacyEvidence = true,
-                includeEligibleSOCTreatmentSummary = true,
-                molecularSummaryType = MolecularSummaryType.NONE,
-                includePatientHeader = false,
-                filterOnSOCExhaustionAndTumorType = true
+//                includeOverviewWithClinicalHistorySummary = true,
+//                includeMolecularDetailsChapter = false,
+//                includeApprovedTreatmentsInSummary = false,
+//                includeSOCLiteratureEfficacyEvidence = true,
+//                includeEligibleSOCTreatmentSummary = true,
+//                molecularSummaryType = MolecularSummaryType.NONE,
+//                includePatientHeader = false,
+//                filterOnSOCExhaustionAndTumorType = true
             )
         )
     }
