@@ -31,7 +31,7 @@ class HasHadComorbidityWithIcdCode(
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
-                val messages = setOf("Has history of ${icdMatches.fullMatches.map { it.display() }}")
+                val messages = setOf("Has history of ${Format.concat(icdMatches.fullMatches.map { it.display() })}")
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
