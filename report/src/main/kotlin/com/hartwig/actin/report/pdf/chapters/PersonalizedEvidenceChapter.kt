@@ -124,4 +124,3 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         }
     }
 }
-
