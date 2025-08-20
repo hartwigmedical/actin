@@ -21,7 +21,7 @@ import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 
 data class PatientRecord(
     val patientId: String,
@@ -41,7 +41,7 @@ data class PatientRecord(
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
     val pathologyReports: List<PathologyReport>?,
-    val molecularHistory: MolecularHistory
+    val molecularHistory: List<MolecularTest>
 ) {
 
     val otherConditions: List<OtherCondition>
