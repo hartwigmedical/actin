@@ -34,8 +34,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     override fun contents(): Table {
         val record = report.patientRecord
-        val molecularRecord = report.patientRecord.molecularHistory.allPanels().first()
-        val pharmaco = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco // Panel record?
+        val pharmaco =
+            report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco //TODO: Currently no pharmaco in panel record?
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
@@ -54,8 +54,9 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
+        val molecularRecord = report.patientRecord.molecularHistory.allPanels().firstOrNull()
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
-        clinicalHistoryTable.addCell(createValue(molecularRecord.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
+        clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
         table.addCell(create(clinicalSummaryTable))
         table.addCell(create(clinicalHistoryTable))
