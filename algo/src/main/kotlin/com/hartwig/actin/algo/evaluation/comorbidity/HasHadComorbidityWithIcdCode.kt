@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
@@ -24,13 +25,13 @@ class HasHadComorbidityWithIcdCode(
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || toxicity.source == ToxicitySource.QUESTIONNAIRE }
 
         val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            (record.comorbidities - record.toxicities) + relevantToxicities,
+            record.comorbidities.filter { it !is Toxicity } + relevantToxicities,
             targetIcdCodes
         )
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
-                val messages = setOf(OtherConditionMessages.pass(icdMatches.fullMatches.map { it.display() }))
+                val messages = setOf("Has history of ${icdMatches.fullMatches.map { it.display() }}")
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
@@ -43,7 +44,7 @@ class HasHadComorbidityWithIcdCode(
                         "but undetermined if history of $diseaseDescription"
             )
 
-            else -> EvaluationFactory.fail(OtherConditionMessages.fail(diseaseDescription))
+            else -> EvaluationFactory.fail("Has no other condition belonging to category $diseaseDescription")
         }
     }
 }

@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-object OtherConditionFunctionFactory {
+object ComorbidityFunctionFactory {
 
     fun createPriorConditionWithIcdCodeFunction(
         icdModel: IcdModel,
@@ -14,7 +14,9 @@ object OtherConditionFunctionFactory {
         referenceDate: LocalDate
     ): EvaluationFunction {
         return HasHadComorbidityWithIcdCode(
-            icdModel, targetIcdCodes, conditionTerm,
+            icdModel,
+            targetIcdCodes,
+            conditionTerm,
             referenceDate
         )
     }
