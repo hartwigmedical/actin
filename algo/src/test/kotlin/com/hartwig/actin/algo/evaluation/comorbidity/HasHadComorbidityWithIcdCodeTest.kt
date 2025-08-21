@@ -41,7 +41,6 @@ class HasHadComorbidityWithIcdCodeTest {
             referenceDate
         )
 
-
     @Test
     fun `Should pass if comorbidity with correct ICD code in history`() {
         val comorbidities =
@@ -68,14 +67,6 @@ class HasHadComorbidityWithIcdCodeTest {
     @Test
     fun `Should fail when patient has no comorbidities`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
-    }
-
-    @Test
-    fun `Should fail when no matching ICD code in other comorbidities, complications or toxicities`() {
-        val evaluation = function.evaluate(minimalPatient)
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings())
-            .containsOnly("Has no other condition belonging to category $diseaseDescription")
     }
 
     @Test

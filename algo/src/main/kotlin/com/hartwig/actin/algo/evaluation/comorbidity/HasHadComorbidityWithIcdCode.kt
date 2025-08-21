@@ -44,7 +44,7 @@ class HasHadComorbidityWithIcdCode(
                         "but undetermined if history of $diseaseDescription"
             )
 
-            else -> EvaluationFactory.fail("Has no other condition belonging to category $diseaseDescription")
+            else -> EvaluationFactory.fail("Has no comorbidity belonging to category $diseaseDescription")
         }
     }
 }
