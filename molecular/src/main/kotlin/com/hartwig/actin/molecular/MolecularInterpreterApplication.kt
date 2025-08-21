@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
@@ -156,7 +155,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         panelVirusAnnotator: PanelVirusAnnotator,
         panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
         panelSpecifications: PanelSpecifications,
-        panelRecordEvidenceAnnotator: EvidenceAnnotator<PanelRecord>
+        panelRecordEvidenceAnnotator: EvidenceAnnotator
     ): List<MolecularTest> {
         return MolecularInterpreter(
             extractor = object : MolecularExtractor<SequencingTest, SequencingTest> {
@@ -180,7 +179,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun interpretIhcMolecularTests(
         ihcTests: List<IhcTest>,
         panelFusionAnnotator: PanelFusionAnnotator,
-        panelRecordEvidenceAnnotator: EvidenceAnnotator<PanelRecord>
+        panelRecordEvidenceAnnotator: EvidenceAnnotator
     ): List<MolecularTest> {
         return MolecularInterpreter(
             extractor = IhcExtractor(),

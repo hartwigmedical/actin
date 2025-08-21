@@ -18,11 +18,11 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
         LOGGER.info("Loading patient record from {}", config.patientJson)
         val patientRecord = PatientRecordJson.read(config.patientJson)
 
-        patientRecord.molecularTests.latestOrangeMolecularRecord()?.let { molecularRecord ->
-            val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
+        patientRecord.molecularTests.latestOrangeMolecularRecord()?.let { molecularTest ->
+            val access = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
-            LOGGER.info("Writing molecular record for {}", molecularRecord.sampleId)
-            access.writeMolecularRecord(patientRecord.patientId, molecularRecord)
+            LOGGER.info("Writing molecular test for {}", molecularTest.sampleId)
+            access.writeMolecularTest(patientRecord.patientId, molecularTest)
 
             LOGGER.info("Done!")
         } ?: LOGGER.warn("No WGS record found in molecular history for ${patientRecord.patientId}")

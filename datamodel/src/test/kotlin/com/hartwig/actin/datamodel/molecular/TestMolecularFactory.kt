@@ -66,6 +66,7 @@ object TestMolecularFactory {
         return MolecularTest(
             date = null,
             sampleId = TestPatientFactory.TEST_SAMPLE,
+            reportHash = null,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = "minimal panel",
             targetSpecification = PanelTargetSpecification(emptyMap()),
@@ -87,6 +88,7 @@ object TestMolecularFactory {
         return MolecularTest(
             date = null,
             sampleId = TestPatientFactory.TEST_SAMPLE,
+            reportHash = null,
             experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
             testTypeDisplay = "minimal whole genome",
             targetSpecification = null,

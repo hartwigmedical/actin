@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
@@ -142,7 +143,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : 
     }
 
     private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: PharmacoGene): String {
-        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
+        val wgsMolecular = if (molecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME) molecular else null
         if (wgsMolecular?.isContaminated == true) {
             return Formats.VALUE_NOT_AVAILABLE
         } else {

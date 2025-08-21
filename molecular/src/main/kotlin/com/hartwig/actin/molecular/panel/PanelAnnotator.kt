@@ -56,6 +56,7 @@ class PanelAnnotator(
         return MolecularTest(
             date = input.date,
             sampleId = input.reportHash,
+            reportHash = input.reportHash,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
             targetSpecification = specification,

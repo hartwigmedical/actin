@@ -1,7 +1,7 @@
 package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.Driver
@@ -25,8 +25,8 @@ import org.jooq.Record
 
 class MolecularDAO(private val context: DSLContext) {
 
-    fun clear(record: MolecularRecord) {
-        val sampleId = record.sampleId
+    fun clear(test: MolecularTest) {
+        val sampleId = test.sampleId!!
         val molecularResults =
             context.select(Tables.MOLECULAR.ID).from(Tables.MOLECULAR).where(Tables.MOLECULAR.SAMPLEID.eq(sampleId)).fetch()
 
@@ -103,22 +103,22 @@ class MolecularDAO(private val context: DSLContext) {
         context.delete(Tables.MOLECULAR).where(Tables.MOLECULAR.SAMPLEID.eq(sampleId)).execute()
     }
 
-    fun writeMolecularRecord(patientId: String, record: MolecularRecord) {
-        writeMolecularDetails(patientId, record)
-        val sampleId = record.sampleId
-        val drivers = record.drivers
+    fun writeMolecularTest(patientId: String, test: MolecularTest) {
+        writeMolecularDetails(patientId, test)
+        val sampleId = test.sampleId!!
+        val drivers = test.drivers
         writeVariants(sampleId, drivers.variants)
         writeCopyNumbers(sampleId, drivers.copyNumbers)
         writeHomozygousDisruptions(sampleId, drivers.homozygousDisruptions)
         writeDisruptions(sampleId, drivers.disruptions)
         writeFusions(sampleId, drivers.fusions)
         writeViruses(sampleId, drivers.viruses)
-        writeImmunology(sampleId, record.immunology)
-        writePharmaco(sampleId, record.pharmaco)
+        writeImmunology(sampleId, test.immunology)
+        writePharmaco(sampleId, test.pharmaco)
     }
 
-    private fun writeMolecularDetails(patientId: String, record: MolecularRecord) {
-        val predictedTumorOrigin = record.characteristics.predictedTumorOrigin
+    private fun writeMolecularDetails(patientId: String, test: MolecularTest) {
+        val predictedTumorOrigin = test.characteristics.predictedTumorOrigin
         val molecularId = context.insertInto(
             Tables.MOLECULAR,
             Tables.MOLECULAR.PATIENTID,
@@ -144,33 +144,33 @@ class MolecularDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
-                record.sampleId,
-                record.experimentType.toString(),
-                record.refGenomeVersion.toString(),
-                record.date,
-                record.evidenceSource,
-                record.externalTrialSource,
-                record.containsTumorCells,
-                record.hasSufficientQuality,
-                record.characteristics.purity,
-                record.characteristics.ploidy,
+                test.sampleId,
+                test.experimentType.toString(),
+                test.refGenomeVersion.toString(),
+                test.date,
+                test.evidenceSource,
+                test.externalTrialSource,
+                test.containsTumorCells,
+                test.hasSufficientQuality,
+                test.characteristics.purity,
+                test.characteristics.ploidy,
                 predictedTumorOrigin?.cancerType(),
                 predictedTumorOrigin?.likelihood(),
-                record.characteristics.microsatelliteStability?.isUnstable,
-                record.characteristics.homologousRecombination?.score,
-                record.characteristics.homologousRecombination?.isDeficient,
-                record.characteristics.tumorMutationalBurden?.score,
-                record.characteristics.tumorMutationalBurden?.isHigh,
-                record.characteristics.tumorMutationalLoad?.score,
-                record.characteristics.tumorMutationalLoad?.isHigh
+                test.characteristics.microsatelliteStability?.isUnstable,
+                test.characteristics.homologousRecombination?.score,
+                test.characteristics.homologousRecombination?.isDeficient,
+                test.characteristics.tumorMutationalBurden?.score,
+                test.characteristics.tumorMutationalBurden?.isHigh,
+                test.characteristics.tumorMutationalLoad?.score,
+                test.characteristics.tumorMutationalLoad?.isHigh
             )
             .returning(Tables.MOLECULAR.ID)
             .fetchOne()!!
             .getValue(Tables.MOLECULAR.ID)
-        writeMicrosatelliteEvidence(molecularId, record.characteristics.microsatelliteStability?.evidence)
-        writeHomologousRecombinationEvidence(molecularId, record.characteristics.homologousRecombination?.evidence)
-        writeTumorMutationalBurdenEvidence(molecularId, record.characteristics.tumorMutationalBurden?.evidence)
-        writeTumorMutationalLoadEvidence(molecularId, record.characteristics.tumorMutationalLoad?.evidence)
+        writeMicrosatelliteEvidence(molecularId, test.characteristics.microsatelliteStability?.evidence)
+        writeHomologousRecombinationEvidence(molecularId, test.characteristics.homologousRecombination?.evidence)
+        writeTumorMutationalBurdenEvidence(molecularId, test.characteristics.tumorMutationalBurden?.evidence)
+        writeTumorMutationalLoadEvidence(molecularId, test.characteristics.tumorMutationalLoad?.evidence)
     }
 
     private fun writeMicrosatelliteEvidence(molecularId: Int, evidence: ClinicalEvidence?) {

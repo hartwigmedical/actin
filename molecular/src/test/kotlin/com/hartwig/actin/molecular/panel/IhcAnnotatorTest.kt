@@ -47,6 +47,7 @@ class IhcAnnotatorTest {
             MolecularTest(
                 date = TEST_DATE,
                 sampleId = null,
+                reportHash = null,
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
                 targetSpecification = PanelTargetSpecification(mapOf("ALK" to listOf(MolecularTestTarget.FUSION))),
@@ -79,6 +80,7 @@ class IhcAnnotatorTest {
             MolecularTest(
                 date = TEST_DATE,
                 sampleId = null,
+                reportHash = null,
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
                 targetSpecification = PanelTargetSpecification(mapOf(NEGATIVE_FUSION_GENE to listOf(MolecularTestTarget.FUSION))),

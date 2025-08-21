@@ -2,7 +2,7 @@ package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.trial.Trial
 import org.apache.logging.log4j.LogManager
 import org.jooq.SQLDialect
@@ -26,11 +26,11 @@ class DatabaseAccess private constructor(
         }
     }
 
-    fun writeMolecularRecord(patientId: String, record: MolecularRecord) {
-        LOGGER.info(" Clearing molecular data for {}", record.sampleId)
-        molecularDAO.clear(record)
-        LOGGER.info(" Writing molecular data for {}", record.sampleId)
-        molecularDAO.writeMolecularRecord(patientId, record)
+    fun writeMolecularTest(patientId: String, test: MolecularTest) {
+        LOGGER.info(" Clearing molecular data for {}", test.sampleId)
+        molecularDAO.clear(test)
+        LOGGER.info(" Writing molecular data for {}", test.sampleId)
+        molecularDAO.writeMolecularTest(patientId, test)
     }
 
     fun writeTrials(trials: List<Trial>) {

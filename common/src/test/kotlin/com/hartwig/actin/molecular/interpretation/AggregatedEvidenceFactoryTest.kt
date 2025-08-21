@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.interpretation
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
@@ -115,11 +115,11 @@ class AggregatedEvidenceFactoryTest {
         assertThat(evidence.treatmentEvidencePerEvent).hasSize(1)
     }
 
-    private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularRecord {
+    private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularTest {
         return TestMolecularFactory.createMinimalWholeGenomeTest().copy(characteristics = characteristics)
     }
 
-    private fun withDrivers(drivers: Drivers): MolecularRecord {
+    private fun withDrivers(drivers: Drivers): MolecularTest {
         return TestMolecularFactory.createMinimalWholeGenomeTest().copy(drivers = drivers)
     }
 }

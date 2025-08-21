@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
@@ -86,10 +85,9 @@ object PathologyReportFunctions {
         ihcTests: List<IhcTest>,
         pathologyReports: List<PathologyReport>?
     ): Map<PathologyReport?, MolecularTestGroup> {
-
         val reportKeys = pathologyReports.orEmpty().flatMap { listOfNotNull(it.date.toString(), it.reportHash) }.toSet()
         val orangeResultsByKey = orangeMolecularRecords.groupBy { findReportKey(reportKeys, it.date) }
-        val molecularTestsByKey = molecularTests.groupBy { findReportKey(reportKeys, it.date, (it as? PanelRecord)?.reportHash) }
+        val molecularTestsByKey = molecularTests.groupBy { findReportKey(reportKeys, it.date, it.sampleId) }
         val ihcTestsByKey = ihcTests.groupBy { findReportKey(reportKeys, it.measureDate, it.reportHash) }
 
         val matchedReports: Map<PathologyReport, MolecularTestGroup> =

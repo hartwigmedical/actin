@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
@@ -27,48 +27,47 @@ class DriversInterpreterTest {
 
     @Test
     fun `Should include non-actionable reportable drivers`() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
-        assertCountForRecord(1, record)
+        val test = createMolecularTestWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
+        assertCountForMolecularTest(1, test)
     }
 
     @Test
     fun `Should skip non-actionable not-reportable drivers`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
-        assertCountForRecord(0, record)
+        val test = createMolecularTestWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
+        assertCountForMolecularTest(0, test)
     }
 
     @Test
     fun `Should include non-reportable drivers with ACTIN trial matches`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
-        assertCountForRecordAndCohorts(
+        val test = createMolecularTestWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
+        assertCountForMolecularTestAndCohorts(
             1,
-            record,
+            test,
             createCohortsForEvents(listOf(EVENT_VARIANT, EVENT_CN, EVENT_HD, EVENT_DISRUPTION, EVENT_FUSION, EVENT_VIRUS))
         )
     }
 
     @Test
     fun `Should include non-reportable drivers with approved treatment matches`() {
-        val record =
-            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.withApprovedTreatment("treatment"))
-        assertCountForRecord(1, record)
+        val test =
+            createMolecularTestWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.withApprovedTreatment("treatment"))
+        assertCountForMolecularTest(1, test)
     }
 
     @Test
     fun `Should include non-reportable drivers with external trial matches`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
+        val test = createMolecularTestWithNonReportableDriverWithEvidence(
             TestClinicalEvidenceFactory.withEligibleTrial(TestExternalTrialFactory.createTestTrial())
         )
-        assertCountForRecord(1, record)
+        assertCountForMolecularTest(1, test)
     }
 
-    private fun assertCountForRecord(expectedCount: Int, molecularRecord: MolecularRecord) {
-        assertCountForRecordAndCohorts(expectedCount, molecularRecord, emptyList())
+    private fun assertCountForMolecularTest(expectedCount: Int, molecularTest: MolecularTest) {
+        assertCountForMolecularTestAndCohorts(expectedCount, molecularTest, emptyList())
     }
 
-    private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<InterpretedCohort>) {
-        val interpreter =
-            MolecularDriversInterpreter(molecularRecord.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
+    private fun assertCountForMolecularTestAndCohorts(expectedCount: Int, molecularTest: MolecularTest, cohorts: List<InterpretedCohort>) {
+        val interpreter = MolecularDriversInterpreter(molecularTest.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         assertThat(interpreter.filteredVariants()).hasSize(expectedCount)
         assertThat(interpreter.filteredCopyNumbers()).hasSize(expectedCount)
         assertThat(interpreter.filteredHomozygousDisruptions()).hasSize(expectedCount)
@@ -77,11 +76,11 @@ class DriversInterpreterTest {
         assertThat(interpreter.filteredViruses()).hasSize(expectedCount)
     }
 
-    private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ClinicalEvidence): MolecularRecord {
-        return createTestMolecularRecordWithDriverEvidence(evidence, false)
+    private fun createMolecularTestWithNonReportableDriverWithEvidence(evidence: ClinicalEvidence): MolecularTest {
+        return createMolecularTestWithDriverEvidence(evidence, false)
     }
 
-    private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
+    private fun createMolecularTestWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularTest {
         return TestMolecularFactory.createMinimalWholeGenomeTest().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 

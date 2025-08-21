@@ -11,8 +11,9 @@ import java.util.function.Predicate
 data class MolecularTest(
     val date: LocalDate?,
     val sampleId: String?,
+    val reportHash: String?,
     val experimentType: ExperimentType,
-    val testTypeDisplay: String? = null,
+    val testTypeDisplay: String?,
     val targetSpecification: PanelTargetSpecification?,
     val refGenomeVersion: RefGenomeVersion,
     val containsTumorCells: Boolean,
@@ -27,7 +28,7 @@ data class MolecularTest(
     val externalTrialSource: String
 ) {
     
-    fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean {
+    fun testsGene(gene: String, targets: Predicate<List<MolecularTestTarget>>): Boolean {
         if (experimentType == ExperimentType.HARTWIG_WHOLE_GENOME) return true
 
         if (targetSpecification == null) {
@@ -35,7 +36,7 @@ data class MolecularTest(
                 "If experiment type is not ${ExperimentType.HARTWIG_WHOLE_GENOME} then a panel specification must be included"
             )
         } else {
-            return targetSpecification.testsGene(gene, molecularTestTargets)
+            return targetSpecification.testsGene(gene, targets)
         }
     }
 

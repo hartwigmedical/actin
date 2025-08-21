@@ -18,6 +18,7 @@ class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
         return MolecularTest(
             date = input.date,
             sampleId = null,
+            reportHash = null,
             experimentType = ExperimentType.IHC,
             testTypeDisplay = ExperimentType.IHC.display(),
             targetSpecification = PanelTargetSpecification((input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith {

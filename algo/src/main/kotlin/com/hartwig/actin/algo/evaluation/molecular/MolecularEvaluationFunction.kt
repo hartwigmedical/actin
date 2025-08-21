@@ -21,7 +21,7 @@ abstract class MolecularEvaluationFunction(
     private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recentMolecularTests = molecularTestFilter.apply(record.molecularTests.molecularTests)
+        val recentMolecularTests = molecularTestFilter.apply(record.molecularTests)
 
         return if (recentMolecularTests.isEmpty()) {
             noMolecularTestEvaluation() ?: noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
@@ -29,7 +29,6 @@ abstract class MolecularEvaluationFunction(
                 isMissingMolecularResultForEvaluation = true
             )
         } else {
-
             if (gene?.let { g -> recentMolecularTests.any { t -> t.testsGene(g, targetCoveragePredicate) } } == false)
                 return Evaluation(
                     recoverable = false,
