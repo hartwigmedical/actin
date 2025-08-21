@@ -40,8 +40,6 @@ class ResistanceEvidenceMatcher(
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
 
-        // change for complex evidence -> checken hoe dit voor andere evidence gedaan is
-
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
@@ -89,8 +87,7 @@ class ResistanceEvidenceMatcher(
         }
     }
 
-    private fun hasEvidence(it: Actionable, matches: MatchesForActionable) =
-        matches[it]?.evidenceMatches?.isNotEmpty() == true
+    private fun hasEvidence(it: Actionable, matches: MatchesForActionable) = matches[it]?.evidenceMatches?.isNotEmpty() == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
         return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))
