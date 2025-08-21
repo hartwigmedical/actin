@@ -25,6 +25,7 @@ data class ClinicalConfiguration(
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
+    val includeIneligibleTrialsInSummary: Boolean = false,
     val includeSOCLiteratureEfficacyEvidence: Boolean = false,
     val includeEligibleSOCTreatmentSummary: Boolean = false,
     val molecularSummaryType: MolecularSummaryType = MolecularSummaryType.STANDARD,

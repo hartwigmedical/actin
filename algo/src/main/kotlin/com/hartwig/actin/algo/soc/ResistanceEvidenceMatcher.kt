@@ -13,6 +13,8 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 
 class ResistanceEvidenceMatcher(
@@ -21,6 +23,8 @@ class ResistanceEvidenceMatcher(
     private val actionabilityMatcher: ActionabilityMatcher,
     private val molecularHistory: MolecularHistory
 ) {
+
+    val LOGGER: Logger = LogManager.getLogger(ResistanceEvidenceMatcher::class.java)
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
         return candidateEvidences.mapNotNull { evidence ->
@@ -39,6 +43,7 @@ class ResistanceEvidenceMatcher(
 
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
+        LOGGER.warn("molecularTestsAndMatches: $molecularTestsAndMatches")
 
         with(evidence.molecularCriterium()) {
             return when {
