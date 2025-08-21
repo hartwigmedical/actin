@@ -70,6 +70,15 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
+    fun `Should fail if no conditions with correct ICD code in history`() {
+        val conditions = ComorbidityTestFactory.otherCondition("stroke", icdMainCode = IcdConstants.CEREBRAL_ISCHAEMIA_BLOCK)
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions))
+        )
+    }
+
+    @Test
     fun `Should pass when ICD code or parent code of other condition matches code of target title`() {
         listOf(conditionWithTargetCode, conditionWithChildOfTargetCode).forEach {
             assertPassEvaluationWithMessages(
