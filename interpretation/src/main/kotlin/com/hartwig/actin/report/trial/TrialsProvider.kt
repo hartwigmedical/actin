@@ -110,7 +110,8 @@ class TrialsProvider(
             treatmentMatch: TreatmentMatch,
             countryOfReference: Country,
             enableExtendedMode: Boolean,
-            filterOnSOCExhaustionAndTumorType: Boolean
+            filterOnSOCExhaustionAndTumorType: Boolean,
+            externalTrials: Set<EventWithExternalTrial> = externalEligibleTrials(patientRecord)
         ): TrialsProvider {
             val isYoungAdult = (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF
             val cohorts = InterpretedCohortFactory.createEvaluableCohorts(
@@ -120,7 +121,7 @@ class TrialsProvider(
             val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
             val internalTrialIds = treatmentMatch.trialMatches.mapNotNull { it.identification.nctId }.toSet()
             return TrialsProvider(
-                externalEligibleTrials(patientRecord), cohorts, nonEvaluableCohorts, internalTrialIds, isYoungAdult,
+                externalTrials, cohorts, nonEvaluableCohorts, internalTrialIds, isYoungAdult,
                 countryOfReference,
                 enableExtendedMode
             )
