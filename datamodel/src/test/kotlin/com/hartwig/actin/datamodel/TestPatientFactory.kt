@@ -17,21 +17,21 @@ object TestPatientFactory {
     fun createMinimalTestWGSPatientRecord(): PatientRecord {
         return create(
             TestClinicalFactory.createMinimalTestClinicalRecord(),
-            TestMolecularFactory.createMinimalTestMolecularHistory()
+            TestMolecularFactory.createMinimalMolecularTests()
         )
     }
 
     fun createProperTestPatientRecord(): PatientRecord {
         return create(
             TestClinicalFactory.createProperTestClinicalRecord(),
-            TestMolecularFactory.createProperTestMolecularHistory()
+            TestMolecularFactory.createProperMolecularTests()
         )
     }
 
     fun createExhaustiveTestPatientRecord(): PatientRecord {
         return create(
             TestClinicalFactory.createExhaustiveTestClinicalRecord(),
-            TestMolecularFactory.createExhaustiveTestMolecularHistory()
+            TestMolecularFactory.createExhaustiveMolecularTests()
         )
     }
 
@@ -54,7 +54,7 @@ object TestPatientFactory {
             medications = clinical.medications,
             ihcTests = clinical.ihcTests,
             pathologyReports = clinical.pathologyReports,
-            molecularHistory = molecular ?: MolecularHistory.empty()
+            molecularTests = molecular ?: MolecularHistory.empty()
         )
     }
 }

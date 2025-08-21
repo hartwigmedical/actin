@@ -29,7 +29,7 @@ class EligibleApprovedTreatmentGeneratorTest {
 
         val molecularHistory = MolecularHistory(
             listOf(
-                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
                     characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                         predictedTumorOrigin = PredictedTumorOrigin(
                             listOf(

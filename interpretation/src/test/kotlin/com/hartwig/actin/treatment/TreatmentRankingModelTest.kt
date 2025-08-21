@@ -199,9 +199,9 @@ class TreatmentRankingModelTest {
     private fun patientRecord(
         vararg variants: Variant
     ) = TestPatientFactory.createProperTestPatientRecord().copy(
-        molecularHistory = MolecularHistory(
+        molecularTests = MolecularHistory(
             listOf(
-                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
                     drivers = Drivers(
                         variants = variants.toList(),
                         copyNumbers = emptyList(),

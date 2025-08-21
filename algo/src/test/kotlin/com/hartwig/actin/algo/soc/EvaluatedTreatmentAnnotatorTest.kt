@@ -29,7 +29,7 @@ class EvaluatedTreatmentAnnotatorTest {
         emptySet(),
         evidences,
         treatmentDatabase,
-        TestMolecularFactory.createMinimalTestMolecularHistory(),
+        TestMolecularFactory.createMinimalMolecularTests(),
         mockk()
     )
     private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, resistanceEvidenceMatcher)

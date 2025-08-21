@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val molecularHistory = record.molecularHistory
+        val molecularHistory = record.molecularTests
         val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
             .partition { it.containsTumorCells }
 

@@ -2,10 +2,11 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import io.mockk.every
@@ -43,16 +44,23 @@ class IhcAnnotatorTest {
         val result = ihcAnnotator.annotate(ihcExtraction)
 
         assertThat(result).isEqualTo(
-            PanelRecord(
+            MolecularTest(
                 date = TEST_DATE,
-                targetSpecification = PanelTargetSpecification(mapOf("ALK" to listOf(MolecularTestTarget.FUSION))),
+                sampleId = null,
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
+                targetSpecification = PanelTargetSpecification(mapOf("ALK" to listOf(MolecularTestTarget.FUSION))),
+                refGenomeVersion = RefGenomeVersion.V37,
+                containsTumorCells = true,
+                hasSufficientPurity = true,
+                hasSufficientQuality = true,
+                isContaminated = false,
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(fusions = listOf(fusion)),
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics(),
+                immunology = TestMolecularFactory.createMinimalTestImmunology(),
+                pharmaco = emptySet(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
-                hasSufficientPurity = true,
-                hasSufficientQuality = true
+                externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
             )
         )
     }
@@ -68,16 +76,23 @@ class IhcAnnotatorTest {
         val result = ihcAnnotator.annotate(ihcExtraction)
 
         assertThat(result).isEqualTo(
-            PanelRecord(
+            MolecularTest(
                 date = TEST_DATE,
-                targetSpecification = PanelTargetSpecification(mapOf(NEGATIVE_FUSION_GENE to listOf(MolecularTestTarget.FUSION))),
+                sampleId = null,
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
+                targetSpecification = PanelTargetSpecification(mapOf(NEGATIVE_FUSION_GENE to listOf(MolecularTestTarget.FUSION))),
+                refGenomeVersion = RefGenomeVersion.V37,
+                containsTumorCells = true,
+                hasSufficientPurity = true,
+                hasSufficientQuality = true,
+                isContaminated = false,
                 drivers = TestMolecularFactory.createMinimalTestDrivers(),
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics(),
+                immunology = TestMolecularFactory.createMinimalTestImmunology(),
+                pharmaco = emptySet(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
-                hasSufficientPurity = true,
-                hasSufficientQuality = true
+                externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
             )
         )
     }

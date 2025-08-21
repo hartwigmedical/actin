@@ -135,7 +135,7 @@ class ReportContentProviderTest {
         val cupTumor = TumorDetails(name = "Some ${TumorDetailsInterpreter.CUP_STRING}")
         val molecularHistory = MolecularHistory(
             listOf(
-                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
                     characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
                         .copy(predictedTumorOrigin = TestMolecularFactory.createHighConfidenceCupPrediction())
                 )
@@ -146,7 +146,7 @@ class ReportContentProviderTest {
             report.copy(
                 patientRecord = report.patientRecord.copy(
                     tumor = cupTumor,
-                    molecularHistory = molecularHistory
+                    molecularTests = molecularHistory
                 )
             )
         )
@@ -163,7 +163,7 @@ class ReportContentProviderTest {
     @Test
     fun `Should omit molecular table and external tables from summary when molecular results not available`() {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
-            patientRecord = proper.patientRecord.copy(molecularHistory = MolecularHistory.empty())
+            patientRecord = proper.patientRecord.copy(molecularTests = MolecularHistory.empty())
         )
         val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, emptyList())
 

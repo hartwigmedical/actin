@@ -18,7 +18,7 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
         LOGGER.info("Loading patient record from {}", config.patientJson)
         val patientRecord = PatientRecordJson.read(config.patientJson)
 
-        patientRecord.molecularHistory.latestOrangeMolecularRecord()?.let { molecularRecord ->
+        patientRecord.molecularTests.latestOrangeMolecularRecord()?.let { molecularRecord ->
             val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
             LOGGER.info("Writing molecular record for {}", molecularRecord.sampleId)

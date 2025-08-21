@@ -5,7 +5,6 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.SequencingTest
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
@@ -27,13 +26,13 @@ import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.panel.PanelVirusAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
+import com.hartwig.actin.molecular.util.MolecularTestPrinter
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
+import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
-import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -41,6 +40,7 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
 private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
@@ -64,10 +64,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val clinicalMolecularTests =
             interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
 
-        val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
-        MolecularHistoryPrinter.print(history)
+        val allTests = orangeMolecularTests + clinicalMolecularTests
+        MolecularTestPrinter(DatamodelPrinter.withDefaultIndentation()).print(allTests)
 
-        val patientRecord = PatientRecordFactory.fromInputs(inputData.clinical, history)
+        val patientRecord = PatientRecordFactory.fromInputs(inputData.clinical, allTests)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
 
         LOGGER.info("Done!")

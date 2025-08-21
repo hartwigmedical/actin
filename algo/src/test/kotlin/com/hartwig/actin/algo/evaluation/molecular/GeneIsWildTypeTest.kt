@@ -254,9 +254,9 @@ class GeneIsWildTypeTest {
     fun `Should pass for tested gene having no event in panel `() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(
-                molecularHistory = MolecularHistory(
+                molecularTests = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord()
+                        TestMolecularFactory.createMinimalPanelTest()
                             .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
@@ -269,9 +269,9 @@ class GeneIsWildTypeTest {
     fun `Should be undetermined for gene not tested in panel`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(
-                molecularHistory = MolecularHistory(
+                molecularTests = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord()
+                        TestMolecularFactory.createMinimalPanelTest()
                             .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                     )
                 )
@@ -284,9 +284,9 @@ class GeneIsWildTypeTest {
     fun `Should fail for gene with variant in panels`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(
-                molecularHistory = MolecularHistory(
+                molecularTests = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                        TestMolecularFactory.createMinimalPanelTest().copy(
                             targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
@@ -311,9 +311,9 @@ class GeneIsWildTypeTest {
     fun `Should fail for gene with fusion in panels`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(
-                molecularHistory = MolecularHistory(
+                molecularTests = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                        TestMolecularFactory.createMinimalPanelTest().copy(
                             targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 fusions = listOf(
@@ -338,9 +338,9 @@ class GeneIsWildTypeTest {
     fun `Should return FAIL when at least one test FAILs`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(
-                molecularHistory = MolecularHistory(
+                molecularTests = MolecularHistory(
                     molecularTests = listOf(
-                        TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                        TestMolecularFactory.createMinimalPanelTest().copy(
                             targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
@@ -360,7 +360,7 @@ class GeneIsWildTypeTest {
                                         )
                                 )
                             ),
-                        ), TestMolecularFactory.createMinimalTestPanelRecord().copy(
+                        ), TestMolecularFactory.createMinimalPanelTest().copy(
                             targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")),
                             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                                 variants = listOf(
@@ -386,7 +386,7 @@ class GeneIsWildTypeTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

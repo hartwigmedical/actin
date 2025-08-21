@@ -10,13 +10,13 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 
-class EvidenceAnnotator<T : MolecularTest>(
+class EvidenceAnnotator(
     private val clinicalEvidenceFactory: ClinicalEvidenceFactory,
     private val actionabilityMatcher: ActionabilityMatcher,
-    private val annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
-) : MolecularAnnotator<T, T> {
+    private val annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics) -> MolecularTest
+) : MolecularAnnotator<MolecularTest> {
 
-    override fun annotate(input: T): T {
+    override fun annotate(input: MolecularTest): MolecularTest {
         val matchesForActionable = actionabilityMatcher.match(input)
         return annotationFunction.invoke(
             input,

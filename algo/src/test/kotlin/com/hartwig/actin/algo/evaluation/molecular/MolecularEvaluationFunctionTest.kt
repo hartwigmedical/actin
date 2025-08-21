@@ -68,7 +68,7 @@ class MolecularEvaluationFunctionTest {
     }
 
     private fun emptyArcher(testDate: LocalDate? = null) =
-        TestMolecularFactory.createMinimalTestPanelRecord().copy(experimentType = ExperimentType.PANEL, date = testDate)
+        TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL, date = testDate)
 
     @Test
     fun `Should execute rule when ORANGE molecular data`() {
@@ -113,9 +113,9 @@ class MolecularEvaluationFunctionTest {
         val evaluation =
             functionWithGenesAndTarget.evaluate(
                 patient.copy(
-                    molecularHistory = MolecularHistory(
+                    molecularTests = MolecularHistory(
                         listOf(
-                            TestMolecularFactory.createMinimalTestPanelRecord()
+                            TestMolecularFactory.createMinimalPanelTest()
                                 .copy(
                                     targetSpecification = TestMolecularFactory.panelSpecifications(
                                         setOf("GENE"),
@@ -149,7 +149,7 @@ class MolecularEvaluationFunctionTest {
 
     private fun withPanelTest(vararg testDates: LocalDate = arrayOf(MAX_AGE.plusYears(1))) =
         TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory(testDates.map { emptyArcher(it) }))
+            .copy(molecularTests = MolecularHistory(testDates.map { emptyArcher(it) }))
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)

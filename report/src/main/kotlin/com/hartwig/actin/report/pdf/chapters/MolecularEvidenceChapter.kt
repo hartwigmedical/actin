@@ -17,7 +17,7 @@ class MolecularEvidenceChapter(
     override val include: Boolean
 ) : ReportChapter {
 
-    private val molecularHistory = report.patientRecord.molecularHistory
+    private val molecularHistory = report.patientRecord.molecularTests
 
     override fun name(): String {
         return "Molecular Evidence"

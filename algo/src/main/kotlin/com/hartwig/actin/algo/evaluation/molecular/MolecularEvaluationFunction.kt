@@ -21,7 +21,7 @@ abstract class MolecularEvaluationFunction(
     private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
+        val recentMolecularTests = molecularTestFilter.apply(record.molecularTests.molecularTests)
 
         return if (recentMolecularTests.isEmpty()) {
             noMolecularTestEvaluation() ?: noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
@@ -44,8 +44,8 @@ abstract class MolecularEvaluationFunction(
                 return MolecularEvaluation.combine(testEvaluation, evaluationPrecedence())
             }
 
-            evaluate(record.molecularHistory)
-                ?: record.molecularHistory.latestOrangeMolecularRecord()?.let(::evaluate)
+            evaluate(record.molecularTests)
+                ?: record.molecularTests.latestOrangeMolecularRecord()?.let(::evaluate)
                 ?: noMolecularRecordEvaluation()
                 ?: EvaluationFactory.undetermined(
                     "Insufficient molecular data",

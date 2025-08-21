@@ -128,7 +128,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 molecularTestFilter = MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE &&
-                        report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
+                        report.patientRecord.molecularTests.molecularTests.isNotEmpty()
             },
             SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.config.includeEligibleSOCTreatmentSummary },
             approvedTreatmentsGenerator.takeIf { report.config.includeApprovedTreatmentsInSummary && approvedTreatmentsGenerator.showTable() }

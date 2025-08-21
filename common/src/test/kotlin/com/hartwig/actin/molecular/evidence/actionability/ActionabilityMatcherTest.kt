@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
@@ -82,7 +82,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(criterium))
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant)))
         val matches = matcher.match(molecularTest)
 
@@ -98,7 +98,7 @@ class ActionabilityMatcherTest {
         val variant = brafMolecularTestVariant.copy(driverLikelihood = null)
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(variant)))
         val matches = matcher.match(molecularTest)
 
@@ -115,7 +115,7 @@ class ActionabilityMatcherTest {
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers()
                 .copy(variants = listOf(brafMolecularTestVariant, krasMolecularTestVariant))
         )
@@ -137,7 +137,7 @@ class ActionabilityMatcherTest {
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
         )
 
@@ -155,7 +155,7 @@ class ActionabilityMatcherTest {
         val variant = brafMolecularTestVariant.copy(
             canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(
                     variant
@@ -185,7 +185,7 @@ class ActionabilityMatcherTest {
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(variantOnInapplicableGene)))
 
         val matches = matcher.match(molecularTest)
@@ -211,7 +211,7 @@ class ActionabilityMatcherTest {
 
         val matcher = matcherFactory(listOf(evidence1, evidence2), listOf(trial1, trial2))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
         )
 
@@ -233,7 +233,7 @@ class ActionabilityMatcherTest {
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(brafMolecularTestVariant), fusions = listOf(molecularTestFusion)
             )
@@ -257,7 +257,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(krasMolecularTestVariant),  // different variant
                 fusions = listOf(molecularTestFusion)
@@ -278,7 +278,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
         )
 
@@ -299,7 +299,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val virus = TestMolecularFactory.createMinimalVirus().copy(type = VirusType.HPV, driverLikelihood = DriverLikelihood.HIGH)
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 viruses = listOf(virus)
             )
@@ -321,7 +321,7 @@ class ActionabilityMatcherTest {
 
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
 
         // Immunology is only present in MolecularRecord (Orange) but not MolecularTest (shared interface),
         // so we won't be able to match this for now
@@ -347,7 +347,7 @@ class ActionabilityMatcherTest {
 
         val matcher = ActionabilityMatcher(listOf(evidence1, evidence2), listOf(trial1, trial2))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
         )
 
@@ -376,7 +376,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val emptyTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val emptyTest = TestMolecularFactory.createMinimalPanelTest()
         assertThat(emptyTest.characteristics.microsatelliteStability).isNull()  // test precondition
 
         val evidenceMatches = matcher.match(emptyTest)
@@ -414,7 +414,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
         )
 
@@ -471,7 +471,7 @@ class ActionabilityMatcherTest {
         val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
-        val matches = matcher.match(TestMolecularFactory.createMinimalTestPanelRecord())
+        val matches = matcher.match(TestMolecularFactory.createMinimalPanelTest())
         assertThat(matches).isEmpty()
     }
 
@@ -480,7 +480,7 @@ class ActionabilityMatcherTest {
         val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.MICROSATELLITE_STABLE)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
-        val matches = matcher.match(TestMolecularFactory.createMinimalTestPanelRecord())
+        val matches = matcher.match(TestMolecularFactory.createMinimalPanelTest())
         assertThat(matches).isEmpty()
     }
 
@@ -491,7 +491,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
         val tumorMutationalLoad = TumorMutationalLoad(score = 185, isHigh = true, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalLoad = tumorMutationalLoad
                 )
@@ -508,7 +508,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
         val tumorMutationalLoad = TumorMutationalLoad(score = 5, isHigh = false, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalLoad = tumorMutationalLoad
                 )
@@ -525,7 +525,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
         val tumorMutationalLoad = TumorMutationalLoad(score = 5, isHigh = false, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalLoad = tumorMutationalLoad
                 )
@@ -541,7 +541,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
         val tumorMutationalLoad = TumorMutationalLoad(score = 185, isHigh = true, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalLoad = tumorMutationalLoad
                 )
@@ -559,7 +559,7 @@ class ActionabilityMatcherTest {
             score = 100.0, isHigh = true, evidence = TestClinicalEvidenceFactory.createEmpty()
         )
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalBurden = tumorMutationalBurden
                 )
@@ -576,7 +576,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
         val tumorMutationalBurden = TumorMutationalBurden(score = 1.0, isHigh = false, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalBurden = tumorMutationalBurden
                 )
@@ -593,7 +593,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
         val tumorMutationalBurden = TumorMutationalBurden(score = 1.0, isHigh = false, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalBurden = tumorMutationalBurden
                 )
@@ -610,7 +610,7 @@ class ActionabilityMatcherTest {
         val tumorMutationalBurden =
             TumorMutationalBurden(score = 100.0, isHigh = true, evidence = TestClinicalEvidenceFactory.createEmpty())
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     tumorMutationalBurden = tumorMutationalBurden
                 )
@@ -624,7 +624,7 @@ class ActionabilityMatcherTest {
         val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
-        val matches = matcher.match(TestMolecularFactory.createMinimalTestPanelRecord())
+        val matches = matcher.match(TestMolecularFactory.createMinimalPanelTest())
         assertThat(matches).isEmpty()
     }
 
@@ -633,7 +633,7 @@ class ActionabilityMatcherTest {
         val evidence = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
-        val matches = matcher.match(TestMolecularFactory.createMinimalTestPanelRecord())
+        val matches = matcher.match(TestMolecularFactory.createMinimalPanelTest())
         assertThat(matches).isEmpty()
     }
 
@@ -653,7 +653,7 @@ class ActionabilityMatcherTest {
 
         val homologousRecombination = minimalHrdCharacteristic().copy(isDeficient = true)
         val matches = matcher.match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                     homologousRecombination = homologousRecombination
                 )
@@ -672,7 +672,7 @@ class ActionabilityMatcherTest {
         val variant = brafMolecularTestVariant.copy(
             canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(variant)
             )
@@ -689,7 +689,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(
                     brafMolecularTestVariant.copy(
@@ -713,7 +713,7 @@ class ActionabilityMatcherTest {
         val variant = brafMolecularTestVariant.copy(
             gene = gene, canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(variant)
             )
@@ -733,7 +733,7 @@ class ActionabilityMatcherTest {
         val variant = brafMolecularTestVariant.copy(
             canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(variant)
             )
@@ -749,7 +749,7 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 fusions = listOf(molecularTestFusion)
             )
@@ -766,8 +766,9 @@ class ActionabilityMatcherTest {
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
-        val disruption = TestMolecularFactory.createMinimalDisruption().copy(gene = "BRAF", isReportable = true, geneRole = GeneRole.UNKNOWN)
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val disruption =
+            TestMolecularFactory.createMinimalDisruption().copy(gene = "BRAF", isReportable = true, geneRole = GeneRole.UNKNOWN)
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(disruptions = listOf(disruption))
         )
 
@@ -784,7 +785,7 @@ class ActionabilityMatcherTest {
 
         val homDisruption =
             TestMolecularFactory.createMinimalHomozygousDisruption().copy(gene = "BRAF", isReportable = true, geneRole = GeneRole.UNKNOWN)
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption))
         )
 
@@ -801,7 +802,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val homDisruption = TestMolecularFactory.createMinimalHomozygousDisruption().copy(gene = gene, isReportable = true)
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption)))
 
         val matches = matcher.match(molecularTest)
@@ -817,7 +818,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val homDisruption = TestMolecularFactory.createMinimalHomozygousDisruption().copy(gene = gene, isReportable = true)
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(homozygousDisruptions = listOf(homDisruption)))
 
         val matches = matcher.match(molecularTest)
@@ -834,7 +835,7 @@ class ActionabilityMatcherTest {
             gene = "EGFR",
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN),
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 copyNumbers = listOf(copyNumber)
             )
@@ -855,7 +856,7 @@ class ActionabilityMatcherTest {
             gene = "EGFR",
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord().copy(
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 copyNumbers = listOf(copyNumber)
             )
@@ -877,7 +878,7 @@ class ActionabilityMatcherTest {
             gene = gene,
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
 
         val matches = matcher.match(molecularTest)
@@ -896,7 +897,7 @@ class ActionabilityMatcherTest {
             gene = gene,
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
         )
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
 
         val matches = matcher.match(molecularTest)
@@ -940,7 +941,7 @@ class ActionabilityMatcherTest {
         )
         val highTmb = TumorMutationalBurden(11.0, true, ClinicalEvidence(emptySet(), emptySet()))
         val matches = matcherFactory(emptyList(), listOf(trial)).match(
-            TestMolecularFactory.createMinimalTestPanelRecord().copy(
+            TestMolecularFactory.createMinimalPanelTest().copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant)),
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(tumorMutationalBurden = highTmb)
             )
@@ -977,11 +978,13 @@ class ActionabilityMatcherTest {
             .addAllTrials(trials).build()
     }
 
-    private fun panelTestWithMsi(isUnstable: Boolean): PanelRecord {
-        return TestMolecularFactory.createMinimalTestPanelRecord().copy(
+    private fun panelTestWithMsi(isUnstable: Boolean): MolecularTest {
+        return TestMolecularFactory.createMinimalPanelTest().copy(
             characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                 microsatelliteStability = MicrosatelliteStability(
-                    microsatelliteIndelsPerMb = 0.0, isUnstable = isUnstable, evidence = TestClinicalEvidenceFactory.createEmpty()
+                    microsatelliteIndelsPerMb = 0.0,
+                    isUnstable = isUnstable,
+                    evidence = TestClinicalEvidenceFactory.createEmpty()
                 )
             )
         )

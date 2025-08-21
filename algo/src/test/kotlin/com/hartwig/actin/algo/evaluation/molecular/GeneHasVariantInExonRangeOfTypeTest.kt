@@ -342,7 +342,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient and exon range`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
@@ -353,7 +353,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient and single exon`() {
         val result = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON, VariantTypeInput.INSERT).evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

@@ -84,7 +84,7 @@ class StandardOfCareEvaluatorTest {
         )
     ).create()
 
-    private val minimalMolecularRecord = TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+    private val minimalMolecularRecord = TestMolecularFactory.createMinimalWholeGenomeTest().copy(
         characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
             microsatelliteStability = MicrosatelliteStability(
                 microsatelliteIndelsPerMb = 0.4,
@@ -93,7 +93,7 @@ class StandardOfCareEvaluatorTest {
             )
         )
     )
-    private val molecularRecordWithBrafV600e = TestMolecularFactory.createProperTestMolecularRecord()
+    private val molecularRecordWithBrafV600e = TestMolecularFactory.createProperWholeGenomeTest()
     private val msiMolecularRecord = minimalMolecularRecord.copy(
         characteristics = minimalMolecularRecord.characteristics.copy(
             microsatelliteStability = MicrosatelliteStability(
@@ -116,7 +116,7 @@ class StandardOfCareEvaluatorTest {
     )
 
     private val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
-        .copy(molecularHistory = MolecularHistory(listOf(minimalMolecularRecord)))
+        .copy(molecularTests = MolecularHistory(listOf(minimalMolecularRecord)))
 
     private val minimalCrcPatientRecord = minimalPatientRecord.copy(
         tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
@@ -455,9 +455,9 @@ class StandardOfCareEvaluatorTest {
         val pastTreatmentNames = listOf(FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE, CETUXIMAB, "TARGETED_THERAPY")
         val patientWithNtrkFusionAndSocExhaustion = patientWithNtrkFusion.copy(
             oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
-            molecularHistory = MolecularHistory(
+            molecularTests = MolecularHistory(
                 listOf(
-                    patientWithNtrkFusion.molecularHistory.latestOrangeMolecularRecord()!!
+                    patientWithNtrkFusion.molecularTests.latestOrangeMolecularRecord()!!
                         .copy(characteristics = minimalMolecularRecord.characteristics)
                 )
             )
@@ -533,7 +533,7 @@ class StandardOfCareEvaluatorTest {
         return minimalPatientRecord.copy(
             tumor = tumorDetails,
             oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
-            molecularHistory = MolecularHistory(listOf(molecularRecord))
+            molecularTests = MolecularHistory(listOf(molecularRecord))
         )
     }
 

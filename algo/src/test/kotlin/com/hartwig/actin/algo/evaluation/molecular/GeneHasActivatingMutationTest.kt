@@ -198,7 +198,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             functionNotIgnoringCodons.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = MolecularHistory.empty())
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularTests = MolecularHistory.empty())
             )
         )
     }
@@ -207,7 +207,7 @@ class GeneHasActivatingMutationTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = functionNotIgnoringCodons.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

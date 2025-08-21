@@ -14,8 +14,8 @@ class HasKnownHPVStatus : EvaluationFunction {
         val (indeterminateIhcTestsForHpv, determinateIhcTestsForHpv) = record.ihcTests
             .filter { (it.item.contains("HPV") || it.item.contains("Human papillomavirus")) }
             .partition(IhcTest::impliesPotentialIndeterminateStatus)
-        val molecularRecords = record.molecularHistory.allOrangeMolecularRecords()
-        val molecularTests = record.molecularHistory.molecularTests
+        val molecularRecords = record.molecularTests.allOrangeMolecularRecords()
+        val molecularTests = record.molecularTests.molecularTests
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {

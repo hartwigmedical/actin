@@ -9,24 +9,35 @@ import java.time.LocalDate
 import java.util.function.Predicate
 
 data class MolecularTest(
-    val sampleId: String,
-    val refGenomeVersion: RefGenomeVersion,
-    val externalTrialSource: String,
-    val containsTumorCells: Boolean,
-    val isContaminated: Boolean,
-    val immunology: MolecularImmunology,
-    val pharmaco: Set<PharmacoEntry>,
+    val date: LocalDate?,
+    val sampleId: String?,
+    val experimentType: ExperimentType,
+    val testTypeDisplay: String? = null,
     val targetSpecification: PanelTargetSpecification?,
+    val refGenomeVersion: RefGenomeVersion,
+    val containsTumorCells: Boolean,
     val hasSufficientPurity: Boolean,
     val hasSufficientQuality: Boolean,
-    val testTypeDisplay: String? = null,
-    val experimentType: ExperimentType,
-    val date: LocalDate?,
+    val isContaminated: Boolean,
     val drivers: Drivers,
     val characteristics: MolecularCharacteristics,
-    val evidenceSource: String)
-{
-    fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean
+    val immunology: MolecularImmunology,
+    val pharmaco: Set<PharmacoEntry>,
+    val evidenceSource: String,
+    val externalTrialSource: String
+) {
+    
+    fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>): Boolean {
+        if (experimentType == ExperimentType.HARTWIG_WHOLE_GENOME) return true
+
+        if (targetSpecification == null) {
+            throw IllegalStateException(
+                "If experiment type is not ${ExperimentType.HARTWIG_WHOLE_GENOME} then a panel specification must be included"
+            )
+        } else {
+            return targetSpecification.testsGene(gene, molecularTestTargets)
+        }
+    }
 
     fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity
@@ -35,5 +46,4 @@ data class MolecularTest(
     fun hasSufficientQualityButLowPurity(): Boolean {
         return hasSufficientQuality && !hasSufficientPurity
     }
-    
 }

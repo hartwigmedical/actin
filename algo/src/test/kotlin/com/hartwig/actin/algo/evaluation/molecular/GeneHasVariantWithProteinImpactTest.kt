@@ -143,7 +143,7 @@ class GeneHasVariantWithProteinImpactTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

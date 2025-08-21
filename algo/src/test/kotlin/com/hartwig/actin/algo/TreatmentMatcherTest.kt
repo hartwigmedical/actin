@@ -51,7 +51,7 @@ class TreatmentMatcherTest {
         emptySet(),
         evidences,
         treatmentDatabase,
-        TestMolecularFactory.createMinimalTestMolecularHistory(),
+        TestMolecularFactory.createMinimalMolecularTests(),
         mockk<ActionabilityMatcher>()
     )
     
@@ -105,7 +105,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should match without molecular input`() {
-        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty())
+        val patientWithoutMolecular = patient.copy(molecularTests = MolecularHistory.empty())
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }

@@ -23,7 +23,7 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should create molecular driver entries`() {
-        val record = TestMolecularFactory.createExhaustiveTestMolecularRecord()
+        val record = TestMolecularFactory.createExhaustiveWholeGenomeTest()
         val factory = createFactoryForMolecularRecord(record)
         val entries = factory.create()
         assertThat(entries).hasSize(13)
@@ -70,7 +70,7 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should match actin trial to molecular drivers`() {
-        val record = TestMolecularFactory.createProperTestMolecularRecord()
+        val record = TestMolecularFactory.createProperWholeGenomeTest()
         assertThat(record.drivers.variants).isNotEmpty
         val firstVariant = record.drivers.variants.iterator().next()
         val driverToFind = firstVariant.event
@@ -246,7 +246,7 @@ class MolecularDriverEntryFactoryTest {
             TestMolecularFactory.createProperVariant()
                 .copy(gene = "GENE1", driverLikelihood = DriverLikelihood.MEDIUM, isCancerAssociatedVariant = false)
         )
-        val record = TestMolecularFactory.createProperTestMolecularRecord()
+        val record = TestMolecularFactory.createProperWholeGenomeTest()
             .copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = variants, copyNumbers = emptyList()))
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo("Mutation (gain of function)")
@@ -262,7 +262,7 @@ class MolecularDriverEntryFactoryTest {
                 .copy(gene = "GENE2", driverLikelihood = DriverLikelihood.MEDIUM, isCancerAssociatedVariant = false),
             TestMolecularFactory.createProperVariant().copy(gene = "GENE3", driverLikelihood = null, isCancerAssociatedVariant = false)
         )
-        val record = TestMolecularFactory.createProperTestMolecularRecord()
+        val record = TestMolecularFactory.createProperWholeGenomeTest()
             .copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = variants, copyNumbers = emptyList()))
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo("Mutation (gain of function)")
@@ -275,7 +275,7 @@ class MolecularDriverEntryFactoryTest {
         val copyNumbers = listOf(TestMolecularFactory.createProperCopyNumber())
         val disruptions = listOf(TestDisruptionFactory.createMinimal().copy(isReportable = true))
         val homozygousDisruptions = listOf(TestMolecularFactory.createMinimalHomozygousDisruption().copy(isReportable = true))
-        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
+        val record = TestMolecularFactory.createProperWholeGenomeTest().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(
                     variants = emptyList(),
@@ -298,7 +298,7 @@ class MolecularDriverEntryFactoryTest {
                 .copy(driverLikelihood = DriverLikelihood.LOW, driverType = FusionDriverType.PROMISCUOUS_3)
         )
         val viruses = listOf(TestVirusFactory.createMinimal().copy(isReportable = true, driverLikelihood = DriverLikelihood.MEDIUM))
-        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
+        val record = TestMolecularFactory.createProperWholeGenomeTest().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(variants = emptyList(), copyNumbers = emptyList(), viruses = viruses, fusions = fusions)
         )
@@ -309,7 +309,7 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun assertVariantType(variant: Variant, expectedDriverType: String) {
-        val record = TestMolecularFactory.createProperTestMolecularRecord()
+        val record = TestMolecularFactory.createProperWholeGenomeTest()
             .copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = listOf(variant), copyNumbers = emptyList()))
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)
@@ -318,7 +318,7 @@ class MolecularDriverEntryFactoryTest {
     private fun assertCopyNumberType(copyNumberType: CopyNumberType, expectedDriverType: String) {
         val copyNumber = TestMolecularFactory.createProperCopyNumber()
             .copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(copyNumberType))
-        val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
+        val record = TestMolecularFactory.createProperWholeGenomeTest().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(variants = emptyList(), copyNumbers = listOf(copyNumber))
         )
@@ -341,7 +341,7 @@ class MolecularDriverEntryFactoryTest {
                 maxCopies = maxCopies
             )
         )
-        val record = TestMolecularFactory.createProperTestMolecularRecord()
+        val record = TestMolecularFactory.createProperWholeGenomeTest()
             .copy(drivers = TestMolecularFactory.createProperTestDrivers().copy(variants = emptyList(), copyNumbers = listOf(copyNumber)))
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].description).isEqualTo(expectedDescription)
@@ -352,11 +352,11 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
-        return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
+        return TestMolecularFactory.createMinimalWholeGenomeTest().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 
     private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
-        return TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
+        return TestMolecularFactory.createMinimalWholeGenomeTest().drivers.copy(
             viruses = listOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
         )
     }

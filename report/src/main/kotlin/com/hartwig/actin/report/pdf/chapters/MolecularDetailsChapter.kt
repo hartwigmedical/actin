@@ -52,8 +52,8 @@ class MolecularDetailsChapter(
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
-        val orangeMolecularRecord = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
-        val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
+        val orangeMolecularRecord = report.patientRecord.molecularTests.latestOrangeMolecularRecord()
+        val externalPanelResults = report.patientRecord.molecularTests.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             listOfNotNull(orangeMolecularRecord),

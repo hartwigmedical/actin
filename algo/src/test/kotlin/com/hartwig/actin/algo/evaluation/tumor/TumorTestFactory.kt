@@ -17,7 +17,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 
 internal object TumorTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalWholeGenomeTest()
 
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))
@@ -34,7 +34,7 @@ internal object TumorTestFactory {
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            molecularHistory = MolecularHistory(
+            molecularTests = MolecularHistory(
                 listOf(
                     baseMolecular.copy(
                         characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
@@ -67,7 +67,7 @@ internal object TumorTestFactory {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
             ihcTests = ihcTests,
-            molecularHistory = MolecularHistory(
+            molecularTests = MolecularHistory(
                 listOf(
                     baseMolecular.copy(
                         characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
@@ -305,7 +305,7 @@ internal object TumorTestFactory {
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(experimentType = type))))
+        return base.copy(molecularTests = MolecularHistory(listOf(baseMolecular.copy(experimentType = type))))
     }
 
     fun withIhcTestsAndDoids(ihcTests: List<IhcTest>, doids: Set<String>?): PatientRecord {

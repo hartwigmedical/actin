@@ -22,14 +22,14 @@ class PatientRecordFactoryTest {
         assertThat(
             PatientRecordFactory.fromInputs(
                 TestClinicalFactory.createMinimalTestClinicalRecord(),
-                TestMolecularFactory.createMinimalTestMolecularHistory()
+                TestMolecularFactory.createMinimalMolecularTests()
             )
         ).isNotNull
 
         assertThat(
             PatientRecordFactory.fromInputs(
                 TestClinicalFactory.createProperTestClinicalRecord(),
-                TestMolecularFactory.createProperTestMolecularHistory()
+                TestMolecularFactory.createProperMolecularTests()
             )
         ).isNotNull
     }

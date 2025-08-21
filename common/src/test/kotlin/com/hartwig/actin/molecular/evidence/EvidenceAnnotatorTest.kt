@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
@@ -58,7 +58,7 @@ class EvidenceAnnotatorTest {
 
         val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
             )
@@ -84,7 +84,7 @@ class EvidenceAnnotatorTest {
             ActionabilityMatcher(emptyList(), emptyList())
         )
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                     variants = listOf(
