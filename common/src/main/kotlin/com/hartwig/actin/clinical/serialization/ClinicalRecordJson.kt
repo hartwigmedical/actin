@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.serialization
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.util.Paths.forceTrailingFileSeparator
-import com.hartwig.actin.util.json.GsonSerializer.create
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -37,7 +36,7 @@ object ClinicalRecordJson {
     }
 
     fun toJson(record: ClinicalRecord): String {
-        return create().toJson(record)
+        return ClinicalGsonDeserializer.create().toJson(record)
     }
 
     fun fromJson(json: String): ClinicalRecord {

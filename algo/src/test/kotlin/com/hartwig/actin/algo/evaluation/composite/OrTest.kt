@@ -134,6 +134,27 @@ class OrTest {
         assertThat(result.failMessagesStrings()).containsExactly("fail 1")
     }
 
+    @Test
+    fun `Should return isMissingMolecularResultForEvaluation is false when result is PASS`() {
+        val undetermined = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.UNDETERMINED,
+                recoverable = true,
+                inclusionMolecularEvents = setOf("inclusion event"),
+                isMissingMolecularResultForEvaluation = true
+            )
+        }
+        val pass = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.PASS,
+                recoverable = true,
+                isMissingMolecularResultForEvaluation = false
+            )
+        }
+        val result: Evaluation = Or(listOf(undetermined, pass)).evaluate(TEST_PATIENT)
+        assertThat(result.isMissingMolecularResultForEvaluation).isFalse()
+    }
+
     @Test(expected = IllegalStateException::class)
     fun `Should crash on no functions to evaluate`() {
         Or(emptyList()).evaluate(TEST_PATIENT)
