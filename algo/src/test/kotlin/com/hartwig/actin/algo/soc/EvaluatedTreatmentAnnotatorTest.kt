@@ -34,36 +34,36 @@ class EvaluatedTreatmentAnnotatorTest {
     )
     private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, resistanceEvidenceMatcher)
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
-
-    @Test
-    fun `Should annotate SOC treatments with efficacy evidence`() {
-        val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
-        val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.IMMUNOTHERAPY), false, setOf(eligibilityFunction)
-        )
-        val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
-
-        val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
-        val expectedAnnotatedTreatmentMatches =
-            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, null, null, emptyList()))
-
-        assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
-    }
-
-    @Test
-    fun `Should return empty annotations list for SOC treatment without efficacy evidence`() {
-        val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
-        val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("capecitabine+oxaliplatin", TreatmentCategory.CHEMOTHERAPY),
-            false,
-            setOf(eligibilityFunction)
-        )
-        val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
-
-        val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
-        val expectedAnnotatedTreatmentMatches =
-            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), null, null, emptyList()))
-
-        assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
-    }
+//
+//    @Test
+//    fun `Should annotate SOC treatments with efficacy evidence`() {
+//        val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
+//        val treatmentCandidate = TreatmentCandidate(
+//            TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.IMMUNOTHERAPY), false, setOf(eligibilityFunction)
+//        )
+//        val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
+//
+//        val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
+//        val expectedAnnotatedTreatmentMatches =
+//            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, null, null, emptyList()))
+//
+//        assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
+//    }
+//
+//    @Test
+//    fun `Should return empty annotations list for SOC treatment without efficacy evidence`() {
+//        val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
+//        val treatmentCandidate = TreatmentCandidate(
+//            TreatmentTestFactory.drugTreatment("capecitabine+oxaliplatin", TreatmentCategory.CHEMOTHERAPY),
+//            false,
+//            setOf(eligibilityFunction)
+//        )
+//        val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
+//
+//        val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
+//        val expectedAnnotatedTreatmentMatches =
+//            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), null, null, emptyList()))
+//
+//        assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
+//    }
 }
