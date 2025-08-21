@@ -94,7 +94,8 @@ internal object ComorbidityTestFactory {
     fun withWHO(who: Int?): PatientRecord {
         return base.copy(
             performanceStatus = PerformanceStatus(
-                whoStatuses = who?.let { listOf(WhoStatus(LocalDate.now(), it)) } ?: emptyList()
+                whoStatuses = who?.let { listOf(WhoStatus(LocalDate.now(), it)) } ?: emptyList(),
+                emptyList()
             )
         )
     }

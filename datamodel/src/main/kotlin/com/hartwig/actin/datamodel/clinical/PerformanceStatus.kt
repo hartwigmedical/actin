@@ -1,8 +1,8 @@
 package com.hartwig.actin.datamodel.clinical
 
 data class PerformanceStatus(
-    val whoStatuses: List<WhoStatus> = emptyList(),
-    val asaScores: List<AsaScore> = emptyList()
+    val whoStatuses: List<WhoStatus>,
+    val asaScores: List<AsaScore>
 ) {
     
     val latestWho: Int?
