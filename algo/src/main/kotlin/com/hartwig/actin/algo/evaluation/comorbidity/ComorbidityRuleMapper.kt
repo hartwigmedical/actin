@@ -19,7 +19,11 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet(),
                 "autoimmune disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to hasHistoryOfCardiacDiseaseCreator(),
+            EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
+
+                IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
+                "cardiac disease"
+            ),
             EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
                 setOf(IcdCode(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)),
                 "cardiovascular disease"
@@ -32,7 +36,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     )
                 ), "CNS disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE to hasHistoryOfEyeDiseaseCreator(),
+            EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
+                setOf(IcdConstants.EYE_DISEASE_CHAPTER).map { IcdCode(it) }.toSet(),
+                "eye disease"
+            ),
             EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
                 setOf(
                     IcdCode(
@@ -76,7 +83,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
                 setOf(IcdCode(IcdConstants.ACUTE_MYOCARDIAL_INFARCT_CODE)), "myocardial infarct"
             ),
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasRecentComorbidityWithConfiguredIcdCodeCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasHadComorbiditiesWithIcdCodeCreator(
                 setOf(
                     IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK),
@@ -86,7 +93,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 ),
                 "pneumonitis"
             ),
-            EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
+            EligibilityRule.HAS_HISTORY_OF_STROKE to hasHadComorbiditiesWithIcdCodeCreator(
+                IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
+                "CVA"
+            ),
             EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
                 IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
                 "CVA"
@@ -112,19 +122,19 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     IcdCode(IcdConstants.VEIN_DISEASE_BLOCK)
                 ), "vascular disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_ULCER to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+            EligibilityRule.HAS_HISTORY_OF_ULCER to hasHadComorbiditiesWithIcdCodeCreator(
                 IcdConstants.ULCER_SET.map { IcdCode(it) }.toSet(),
                 "ulcer"
             ),
-            EligibilityRule.HAS_HISTORY_OF_BLEEDING to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+            EligibilityRule.HAS_HISTORY_OF_BLEEDING to hasHadComorbiditiesWithIcdCodeCreator(
                 IcdConstants.BLEEDING_SET.map { IcdCode(it) }.toSet(),
                 "bleeding"
             ),
-            EligibilityRule.HAS_HISTORY_OF_WOUND to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+            EligibilityRule.HAS_HISTORY_OF_WOUND to hasHadComorbiditiesWithIcdCodeCreator(
                 IcdConstants.WOUND_SET.map { IcdCode(it) }.toSet(),
                 "wound"
             ),
-            EligibilityRule.HAS_HISTORY_OF_BONE_FRACTURE to hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+            EligibilityRule.HAS_HISTORY_OF_BONE_FRACTURE to hasHadComorbiditiesWithIcdCodeCreator(
                 IcdConstants.BONE_FRACTURE_SET.map { IcdCode(it) }.toSet(),
                 "bone fracture"
             ),
@@ -180,7 +190,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
             EligibilityRule.HAS_PLEURAL_EFFUSION to
-                    hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                    hasHadComorbiditiesWithIcdCodeCreator(
                         setOf(
                             IcdCode(IcdConstants.PLEURAL_EFFUSION_CODE),
                             IcdCode(IcdConstants.MALIGNANT_NEOPLASM_METASTASIS_IN_PLEURA_CODE),
@@ -189,7 +199,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                         "pleural effusion"
                     ),
             EligibilityRule.HAS_PERITONEAL_EFFUSION to
-                    hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+                    hasHadComorbiditiesWithIcdCodeCreator(
                         setOf(
                             IcdCode(IcdConstants.MALIGNANT_NEORPLASM_METASTASIS_IN_RETROPERITONEUM_OR_PERITONEUM_BLOCK),
                             IcdCode(IcdConstants.ASCITES_CODE),
@@ -221,7 +231,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         }
     }
 
-    private fun hasRecentComorbidityWithConfiguredIcdCodeCreator(): FunctionCreator {
+    private fun hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIcdTitleOneIntegerInput(function)
             val targetIcdCode = icdModel().resolveCodeForTitle(input.icdTitle)!!
@@ -237,57 +247,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         }
     }
 
-    private fun hasHadComorbiditiesWithIcdCodeCreator(
-        targetIcdCodes: Set<IcdCode>,
-        otherConditionTerm: String
-    ): FunctionCreator {
-        return {
-            HasHadComorbidityWithIcdCode(
-                icdModel(),
-                targetIcdCodes,
-                otherConditionTerm,
-                referenceDateProvider().date()
-            )
-        }
-    }
-
-    private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
-        return {
-            HasHadComorbidityWithIcdCode(
-                icdModel(),
-                IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
-                "cardiac disease",
-                referenceDateProvider().date()
-            )
-        }
-    }
-
     private fun hasHistoryOfCongestiveHeartFailureWithNYHACreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneNyhaClassInput(function)
             HasHistoryOfCongestiveHeartFailureWithNYHA(input, icdModel())
-        }
-    }
-
-    private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
-        return {
-            HasHadComorbidityWithIcdCode(
-                icdModel(),
-                setOf(IcdConstants.EYE_DISEASE_CHAPTER).map { IcdCode(it) }.toSet(),
-                "eye disease",
-                referenceDateProvider().date()
-            )
-        }
-    }
-
-    private fun hasHistoryOfStrokeCreator(): FunctionCreator {
-        return {
-            HasHadComorbidityWithIcdCode(
-                icdModel(),
-                IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
-                "CVA",
-                referenceDateProvider().date()
-            )
         }
     }
 
@@ -365,16 +328,18 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         return { HasLeptomeningealDisease(icdModel()) }
     }
 
-    private fun hasHadOtherConditionComplicationOrToxicityWithIcdCodeCreator(
+    private fun hasHadComorbiditiesWithIcdCodeCreator(
         targetIcdCodes: Set<IcdCode>,
-        conditionDescription: String
-    ): FunctionCreator = {
-        HasHadComorbidityWithIcdCode(
-            icdModel(),
-            targetIcdCodes,
-            conditionDescription,
-            referenceDateProvider().date()
-        )
+        otherConditionTerm: String
+    ): FunctionCreator {
+        return {
+            HasHadComorbidityWithIcdCode(
+                icdModel(),
+                targetIcdCodes,
+                otherConditionTerm,
+                referenceDateProvider().date()
+            )
+        }
     }
 
 }
