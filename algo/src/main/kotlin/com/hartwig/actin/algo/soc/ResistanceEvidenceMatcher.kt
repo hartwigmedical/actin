@@ -27,6 +27,9 @@ class ResistanceEvidenceMatcher(
     val LOGGER: Logger = LogManager.getLogger(ResistanceEvidenceMatcher::class.java)
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
+        val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
+        LOGGER.warn("molecularTestsAndMatches: $molecularTestsAndMatches")
+
         return candidateEvidences.mapNotNull { evidence ->
             findTreatmentInDatabase(evidence.treatment(), treatment)?.let { treatmentName ->
                 ResistanceEvidence(
@@ -43,7 +46,6 @@ class ResistanceEvidenceMatcher(
 
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
-        LOGGER.warn("molecularTestsAndMatches: $molecularTestsAndMatches")
 
         with(evidence.molecularCriterium()) {
             return when {
