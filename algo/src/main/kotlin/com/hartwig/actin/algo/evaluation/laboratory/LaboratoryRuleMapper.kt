@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityFunctionFactory
+import com.hartwig.actin.algo.evaluation.comorbidity.HasHadComorbidityWithIcdCode
 import com.hartwig.actin.algo.evaluation.comorbidity.HasPotentialSymptomaticHypercalcemia
 import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Fallback
@@ -304,7 +304,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val potassiumBelowLLN: EvaluationFunction =
                 Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0), false))
             val hasHadPriorHypokalemia =
-                ComorbidityFunctionFactory.createPriorConditionWithIcdCodeFunction(
+                HasHadComorbidityWithIcdCode(
                     icdModel(),
                     setOf(IcdCode(IcdConstants.HYPOKALEMIA_CODE)),
                     "potential hypokalemia",
@@ -318,7 +318,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return {
             val magnesiumBelowLLN: EvaluationFunction =
                 Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0), false))
-            val hasHadPriorHypomagnesemia = ComorbidityFunctionFactory.createPriorConditionWithIcdCodeFunction(
+            val hasHadPriorHypomagnesemia = HasHadComorbidityWithIcdCode(
                 icdModel(),
                 setOf(IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)),
                 "potential hypomagnesemia",
@@ -331,7 +331,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasPotentialHypocalcemiaCreator(): FunctionCreator {
         return {
             val calciumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.CALCIUM, HasSufficientLabValueLLN(1.0), false))
-            val hasHadPriorHypocalcemia = ComorbidityFunctionFactory.createPriorConditionWithIcdCodeFunction(
+            val hasHadPriorHypocalcemia = HasHadComorbidityWithIcdCode(
                 icdModel(),
                 setOf(IcdCode(IcdConstants.CALCIUM_DEFICIENCY_CODE)),
                 "potential hypocalcemia",
