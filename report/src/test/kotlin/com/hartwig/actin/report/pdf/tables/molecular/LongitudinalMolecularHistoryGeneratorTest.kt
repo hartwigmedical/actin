@@ -13,7 +13,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-val FIRST_TEST = TestMolecularFactory.createMinimalWholeGenomeTest().copy(date = LocalDate.of(2024, 7, 21))
+val FIRST_TEST = TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+    date = LocalDate.of(2024, 7, 21),
+    testTypeDisplay = "Hartwig WGS"
+)
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
 val VARIANT = TestMolecularFactory.createProperVariant().copy(variantAlleleFrequency = 10.0)
 val FUSION = TestMolecularFactory.createProperFusion()
