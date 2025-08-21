@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -173,11 +172,9 @@ class HasMolecularDriverEventInNsclcTest {
     fun `Should pass for multiple correct events and should display correct messages`() {
         val variants = listOf(BASE_SPECIFIC_VARIANT.copy(canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)), BASE_ACTIVATING_MUTATION)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            molecularTests = MolecularHistory(
-                listOf(
-                    TestMolecularFactory.createMinimalWholeGenomeTest().copy(
-                        drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
-                    )
+            molecularTests = listOf(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+                    drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
                 )
             )
         )
@@ -190,11 +187,9 @@ class HasMolecularDriverEventInNsclcTest {
     fun `Should fail for multiple correct drivers if both are on exclude list`() {
         val variants = listOf(BASE_SPECIFIC_VARIANT.copy(canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)), BASE_ACTIVATING_MUTATION)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            molecularTests = MolecularHistory(
-                listOf(
-                    TestMolecularFactory.createMinimalWholeGenomeTest().copy(
-                        drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
-                    )
+            molecularTests = listOf(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+                    drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
                 )
             )
         )
@@ -262,11 +257,9 @@ class HasMolecularDriverEventInNsclcTest {
     fun `Should pass for activating mutation in correct gene if warnForMatchesOutsideGenesToInclude is true and there is one event in include list and one for which would be warned`() {
         val variants = listOf(BASE_SPECIFIC_VARIANT.copy(gene = "KRAS"), BASE_ACTIVATING_MUTATION)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            molecularTests = MolecularHistory(
-                listOf(
-                    TestMolecularFactory.createMinimalWholeGenomeTest().copy(
-                        drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
-                    )
+            molecularTests = listOf(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+                    drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = variants)
                 )
             )
         )

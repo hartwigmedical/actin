@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Variant
@@ -14,7 +13,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class LongitudinalMolecularHistoryGenerator(private val molecularHistory: MolecularHistory, private val cohorts: List<InterpretedCohort>) :
+class LongitudinalMolecularHistoryGenerator(private val molecularTests: List<MolecularTest>, private val cohorts: List<InterpretedCohort>) :
     TableGenerator {
 
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
@@ -32,7 +31,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     }
 
     override fun contents(): Table {
-        val eventVAFMapByTest = molecularHistory.molecularTests.sortedBy { it.date }
+        val eventVAFMapByTest = molecularTests.sortedBy { it.date }
             .associateWith { test ->
                 DriverTableFunctions.allDrivers(test).associate { it.event to (it as? Variant)?.variantAlleleFrequency }
             }
@@ -43,7 +42,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         val headers = listOf("Event", "Description") + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
-        val allDrivers = molecularHistory.molecularTests.map(MolecularTest::drivers)
+        val allDrivers = molecularTests.map(MolecularTest::drivers)
             .fold(Drivers(emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()), Drivers::combine)
         val molecularDriversInterpreter = MolecularDriversInterpreter(allDrivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
 

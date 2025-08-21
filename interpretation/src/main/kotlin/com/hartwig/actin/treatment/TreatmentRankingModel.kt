@@ -27,7 +27,7 @@ data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, v
 class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
 
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
-        val actionables = record.molecularTests.molecularTests.asSequence().flatMap {
+        val actionables = record.molecularTests.asSequence().flatMap {
             it.drivers.fusions + it.drivers.variants + it.drivers.copyNumbers +
                     it.drivers.homozygousDisruptions + it.drivers.disruptions + it.drivers.viruses +
                     it.characteristics.microsatelliteStability + it.characteristics.homologousRecombination +

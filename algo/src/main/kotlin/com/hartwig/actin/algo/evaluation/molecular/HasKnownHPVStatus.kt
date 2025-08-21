@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 
 class HasKnownHPVStatus : EvaluationFunction {
@@ -14,15 +15,14 @@ class HasKnownHPVStatus : EvaluationFunction {
         val (indeterminateIhcTestsForHpv, determinateIhcTestsForHpv) = record.ihcTests
             .filter { (it.item.contains("HPV") || it.item.contains("Human papillomavirus")) }
             .partition(IhcTest::impliesPotentialIndeterminateStatus)
-        val molecularRecords = record.molecularTests.allOrangeMolecularRecords()
-        val molecularTests = record.molecularTests.molecularTests
+        val molecularRecords = MolecularHistory(record.molecularTests).allOrangeMolecularRecords()
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
                 EvaluationFactory.pass("HPV status known (by WGS test)")
             }
 
-            molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> EvaluationFactory.pass("HPV status known")
+            record.molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> EvaluationFactory.pass("HPV status known")
 
             determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass("HPV status known (by IHC test)")
 

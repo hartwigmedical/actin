@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomo
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicrosatelliteStabilityAndVariant
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -353,7 +352,7 @@ class GeneIsInactivatedTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
+                molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
         )
         Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

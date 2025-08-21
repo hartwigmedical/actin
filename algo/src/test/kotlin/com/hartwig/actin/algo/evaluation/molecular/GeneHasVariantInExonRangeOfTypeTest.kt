@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
@@ -342,7 +341,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient and exon range`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
+                molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
@@ -353,7 +352,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient and single exon`() {
         val result = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON, VariantTypeInput.INSERT).evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
+                molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

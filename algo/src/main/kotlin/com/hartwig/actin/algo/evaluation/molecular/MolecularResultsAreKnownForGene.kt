@@ -7,15 +7,16 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 
 class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecularTests.molecularTests.isEmpty()) {
+        if (record.molecularTests.isEmpty()) {
             return EvaluationFactory.undetermined("No molecular data")
         }
 
-        val orangeMolecular = record.molecularTests.latestOrangeMolecularRecord()
+        val orangeMolecular = MolecularHistory(record.molecularTests).latestOrangeMolecularRecord()
         if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && orangeMolecular.containsTumorCells) {
             return EvaluationFactory.pass("WGS results available for $gene")
         }
@@ -66,7 +67,7 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
         }
     }
 
-    private fun isGeneTestedInPanel(molecularHistory: MolecularHistory): Boolean {
-        return molecularHistory.allPanels().any { it.testsGene(gene, any("Test coverage of")) }
+    private fun isGeneTestedInPanel(molecularTests: List<MolecularTest>): Boolean {
+        return MolecularHistory(molecularTests).allPanels().any { it.testsGene(gene, any("Test coverage of")) }
     }
 }

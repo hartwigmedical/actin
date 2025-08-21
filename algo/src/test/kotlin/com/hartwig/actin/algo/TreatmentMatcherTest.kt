@@ -16,7 +16,6 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -105,7 +104,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should match without molecular input`() {
-        val patientWithoutMolecular = patient.copy(molecularTests = MolecularHistory.empty())
+        val patientWithoutMolecular = patient.copy(molecularTests = emptyList())
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }

@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
@@ -27,7 +27,7 @@ object WGSSummaryGeneratorFunctions {
         summaryType: SummaryType,
         patientRecord: PatientRecord,
         molecular: MolecularTest,
-        wgsMolecular: MolecularRecord?,
+        wgsMolecular: MolecularTest?,
         keyWidth: Float,
         valueWidth: Float,
         summarizer: MolecularDriversSummarizer
@@ -130,7 +130,7 @@ object WGSSummaryGeneratorFunctions {
     fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
         val originSummary = TumorOriginInterpreter.create(molecular).generateSummaryString()
 
-        val wgsMolecular = molecular as? MolecularRecord
+        val wgsMolecular = MolecularHistory(listOf(molecular)).latestOrangeMolecularRecord()
         val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
         if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {
             paragraph.add(Text(" (low purity)").addStyle(Styles.tableNoticeStyle()))

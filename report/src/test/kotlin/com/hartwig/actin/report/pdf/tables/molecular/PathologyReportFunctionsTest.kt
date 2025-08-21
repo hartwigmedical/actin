@@ -14,12 +14,12 @@ private const val YEAR = 2023
 private const val MONTH = 1
 
 class PathologyReportFunctionsTest {
-    private val minimalRecord = TestMolecularFactory.createMinimalWholeGenomeTest()
-    private val minimalPanel = TestMolecularFactory.createMinimalPanelTest()
+    
+    private val minimalWholeGenomeTest = TestMolecularFactory.createMinimalWholeGenomeTest()
+    private val minimalPanelTest = TestMolecularFactory.createMinimalPanelTest()
     private val date1 = LocalDate.of(YEAR, MONTH, 1)
     private val date2 = LocalDate.of(YEAR, MONTH, 2)
     private val df = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
-
 
     @Test
     fun `Should return complete pathology report summary`() {
@@ -68,28 +68,28 @@ class PathologyReportFunctionsTest {
         val pathologyReport2 = pathologyReport(2, date2)
         val pathologyReport3 = pathologyReport(3, date2)
 
-        val molecularRecord1 = minimalRecord.copy(date = date1)
-        val molecularTest1 = minimalPanel.copy(date = date1)
-        val molecularTest2 = minimalPanel.copy(date = date2, reportHash = "hash2")
-        val molecularTest3 = minimalPanel.copy(date = date2, reportHash = "hash3")
+        val wholeGenomeTest1 = minimalWholeGenomeTest.copy(date = date1)
+        val panelTest1 = minimalPanelTest.copy(date = date1)
+        val panelTest2 = minimalPanelTest.copy(date = date2, reportHash = "hash2")
+        val panelTest3 = minimalPanelTest.copy(date = date2, reportHash = "hash3")
         val ihcTest1 = ihcTest(measureDate = date1, reportHash = "unknown")
         val ihcTest2 = ihcTest(reportHash = "hash1")
         val ihcTest3 = ihcTest(measureDate = date2, reportHash = "hash2")
         val ihcTest4 = ihcTest(reportHash = "hash3")
 
         val result = PathologyReportFunctions.groupTestsByPathologyReport(
-            orangeMolecularRecords = listOf(molecularRecord1),
-            molecularTests = listOf(molecularTest1, molecularTest2, molecularTest3),
+            orangeMolecularRecords = listOf(wholeGenomeTest1),
+            molecularTests = listOf(panelTest1, panelTest2, panelTest3),
             ihcTests = listOf(ihcTest1, ihcTest2, ihcTest3, ihcTest4),
             pathologyReports = listOf(pathologyReport1, pathologyReport2, pathologyReport3)
         )
 
         assertThat(result[pathologyReport1])
-            .isEqualTo(MolecularTestGroup(listOf(molecularRecord1), listOf(molecularTest1), listOf(ihcTest1, ihcTest2)))
+            .isEqualTo(MolecularTestGroup(listOf(wholeGenomeTest1), listOf(panelTest1), listOf(ihcTest1, ihcTest2)))
         assertThat(result[pathologyReport2])
-            .isEqualTo(MolecularTestGroup(emptyList(), listOf(molecularTest2), listOf(ihcTest3)))
+            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest2), listOf(ihcTest3)))
         assertThat(result[pathologyReport3])
-            .isEqualTo(MolecularTestGroup(emptyList(), listOf(molecularTest3), listOf(ihcTest4)))
+            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest3), listOf(ihcTest4)))
     }
 
     @Test
@@ -97,44 +97,44 @@ class PathologyReportFunctionsTest {
         val pathologyReport1 = pathologyReport(1, date1)
         val pathologyReport2 = pathologyReport(2, date1)
 
-        val molecularRecord1 = minimalRecord.copy(date = date1)
-        val molecularTest1 = minimalPanel.copy(date = date1)
-        val molecularTest2 = minimalPanel.copy(date = date1, reportHash = "hash2")
+        val wholeGenomeTest1 = minimalWholeGenomeTest.copy(date = date1)
+        val panelTest1 = minimalPanelTest.copy(date = date1)
+        val panelTest2 = minimalPanelTest.copy(date = date1, reportHash = "hash2")
         val ihcTest1 = ihcTest(measureDate = date1)
         val ihcTest2 = ihcTest(reportHash = "hash1")
         val ihcTest3 = ihcTest(measureDate = date1, reportHash = "hash2")
 
         val result = PathologyReportFunctions.groupTestsByPathologyReport(
-            orangeMolecularRecords = listOf(molecularRecord1),
-            molecularTests = listOf(molecularTest1, molecularTest2),
+            orangeMolecularRecords = listOf(wholeGenomeTest1),
+            molecularTests = listOf(panelTest1, panelTest2),
             ihcTests = listOf(ihcTest1, ihcTest2, ihcTest3),
             pathologyReports = listOf(pathologyReport1, pathologyReport2)
         )
 
         assertThat(result[pathologyReport1])
-            .isEqualTo(MolecularTestGroup(listOf(molecularRecord1), listOf(molecularTest1), listOf(ihcTest1, ihcTest2)))
+            .isEqualTo(MolecularTestGroup(listOf(wholeGenomeTest1), listOf(panelTest1), listOf(ihcTest1, ihcTest2)))
         assertThat(result[pathologyReport2])
-            .isEqualTo(MolecularTestGroup(emptyList(), listOf(molecularTest2), listOf(ihcTest3)))
+            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest2), listOf(ihcTest3)))
     }
 
     @Test
     fun `Should group unmatched results under null report`() {
         val pathologyReport1 = pathologyReport(1, date1)
 
-        val molecularRecord1 = minimalRecord.copy(date = date2)
-        val molecularTest1 = minimalPanel.copy(date = date2)
-        val molecularTest2 = minimalPanel.copy(reportHash = "unknown")
+        val wholeGenomeTest1 = minimalWholeGenomeTest.copy(date = date2)
+        val panelTest1 = minimalPanelTest.copy(date = date2)
+        val panelTest2 = minimalPanelTest.copy(reportHash = "unknown")
         val ihcTest1 = ihcTest(measureDate = date2, reportHash = "unknown")
 
         val result = PathologyReportFunctions.groupTestsByPathologyReport(
-            orangeMolecularRecords = listOf(molecularRecord1),
-            molecularTests = listOf(molecularTest1, molecularTest2),
+            orangeMolecularRecords = listOf(wholeGenomeTest1),
+            molecularTests = listOf(panelTest1, panelTest2),
             ihcTests = listOf(ihcTest1),
             pathologyReports = listOf(pathologyReport1)
         )
 
         assertThat(result[null])
-            .isEqualTo(MolecularTestGroup(listOf(molecularRecord1), listOf(molecularTest1, molecularTest2), listOf(ihcTest1)))
+            .isEqualTo(MolecularTestGroup(listOf(wholeGenomeTest1), listOf(panelTest1, panelTest2), listOf(ihcTest1)))
     }
 
     private fun pathologyReport(idx: Int, date: LocalDate): PathologyReport = PathologyReport(

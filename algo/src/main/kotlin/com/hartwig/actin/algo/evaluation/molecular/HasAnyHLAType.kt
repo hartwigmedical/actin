@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import java.time.LocalDate
@@ -15,10 +15,11 @@ class HasAnyHLAType(
 ) : MolecularEvaluationFunction(maxTestAge, true) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val molecular = test as? MolecularRecord ?: return EvaluationFactory.undetermined(
+        val molecular = MolecularHistory(listOf(test)).latestOrangeMolecularRecord() ?: return EvaluationFactory.undetermined(
             "HLA type not tested",
             isMissingMolecularResultForEvaluation = true
         )
+        
         val immunology = molecular.immunology
         if (!immunology.isReliable) {
             return EvaluationFactory.undetermined("HLA typing unreliable", isMissingMolecularResultForEvaluation = true)

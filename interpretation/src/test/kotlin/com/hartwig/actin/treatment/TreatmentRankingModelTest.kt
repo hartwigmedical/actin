@@ -1,7 +1,6 @@
 package com.hartwig.actin.treatment
 
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
@@ -199,26 +198,25 @@ class TreatmentRankingModelTest {
     private fun patientRecord(
         vararg variants: Variant
     ) = TestPatientFactory.createProperTestPatientRecord().copy(
-        molecularTests = MolecularHistory(
-            listOf(
-                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
-                    drivers = Drivers(
-                        variants = variants.toList(),
-                        copyNumbers = emptyList(),
-                        homozygousDisruptions = emptyList(),
-                        disruptions = emptyList(),
-                        fusions = emptyList(),
-                        viruses = emptyList()
-                    ),
-                    characteristics = MolecularCharacteristics(
-                        homologousRecombination = null,
-                        purity = null,
-                        ploidy = null,
-                        predictedTumorOrigin = null,
-                        microsatelliteStability = null,
-                        tumorMutationalBurden = null,
-                        tumorMutationalLoad = null
-                    )
+        molecularTests =
+        listOf(
+            TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+                drivers = Drivers(
+                    variants = variants.toList(),
+                    copyNumbers = emptyList(),
+                    homozygousDisruptions = emptyList(),
+                    disruptions = emptyList(),
+                    fusions = emptyList(),
+                    viruses = emptyList()
+                ),
+                characteristics = MolecularCharacteristics(
+                    homologousRecombination = null,
+                    purity = null,
+                    ploidy = null,
+                    predictedTumorOrigin = null,
+                    microsatelliteStability = null,
+                    tumorMutationalBurden = null,
+                    tumorMutationalLoad = null
                 )
             )
         )

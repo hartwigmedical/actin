@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
@@ -17,7 +17,7 @@ import java.util.function.Consumer
 
 class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : TableGenerator {
 
-    private val wgsMolecular = molecular as? MolecularRecord
+    private val wgsMolecular = MolecularHistory(listOf(molecular)).latestOrangeMolecularRecord()
 
     override fun title(): String {
         return "General"

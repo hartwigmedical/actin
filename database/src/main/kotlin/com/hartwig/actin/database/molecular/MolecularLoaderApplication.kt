@@ -2,6 +2,7 @@ package com.hartwig.actin.database.molecular
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.database.dao.DatabaseAccess
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -18,7 +19,7 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
         LOGGER.info("Loading patient record from {}", config.patientJson)
         val patientRecord = PatientRecordJson.read(config.patientJson)
 
-        patientRecord.molecularTests.latestOrangeMolecularRecord()?.let { molecularTest ->
+        MolecularHistory(patientRecord.molecularTests).latestOrangeMolecularRecord()?.let { molecularTest ->
             val access = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
             LOGGER.info("Writing molecular test for {}", molecularTest.sampleId)

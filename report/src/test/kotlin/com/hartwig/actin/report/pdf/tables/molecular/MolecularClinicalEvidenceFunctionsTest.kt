@@ -1,7 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
@@ -22,7 +20,7 @@ class MolecularClinicalEvidenceFunctionsTest {
         val variant = TestMolecularFactory.createProperVariant().copy(evidence = CLINICAL_EVIDENCE)
         val events =
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                molecularHistory(
+                listOf(
                     BASE_MOLECULAR_TEST.copy(
                         drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(variant))
                     )
@@ -35,7 +33,7 @@ class MolecularClinicalEvidenceFunctionsTest {
     fun `Should return mss and msi events and associated evidence`() {
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                molecularHistory(
+                listOf(
                     BASE_MOLECULAR_TEST.copy(
                         characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
                             microsatelliteStability = MicrosatelliteStability(
@@ -51,7 +49,7 @@ class MolecularClinicalEvidenceFunctionsTest {
 
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                molecularHistory(
+                listOf(
                     BASE_MOLECULAR_TEST.copy(
                         characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
                             microsatelliteStability = MicrosatelliteStability(
@@ -70,18 +68,16 @@ class MolecularClinicalEvidenceFunctionsTest {
     fun `Should return hrd and hrp events and associated evidence`() {
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                MolecularHistory(
-                    molecularTests = listOf(
-                        BASE_MOLECULAR_TEST.copy(
-                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
-                                homologousRecombination = HomologousRecombination(
-                                    isDeficient = true,
-                                    score = 1.0,
-                                    type = HomologousRecombinationType.BRCA1_TYPE,
-                                    brca1Value = 1.0,
-                                    brca2Value = 0.0,
-                                    evidence = CLINICAL_EVIDENCE
-                                )
+                listOf(
+                    BASE_MOLECULAR_TEST.copy(
+                        characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                            homologousRecombination = HomologousRecombination(
+                                isDeficient = true,
+                                score = 1.0,
+                                type = HomologousRecombinationType.BRCA1_TYPE,
+                                brca1Value = 1.0,
+                                brca2Value = 0.0,
+                                evidence = CLINICAL_EVIDENCE
                             )
                         )
                     )
@@ -94,15 +90,13 @@ class MolecularClinicalEvidenceFunctionsTest {
     fun `Should return tml and tmb events and associated evidence`() {
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                MolecularHistory(
-                    molecularTests = listOf(
-                        BASE_MOLECULAR_TEST.copy(
-                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
-                                tumorMutationalBurden = TumorMutationalBurden(
-                                    score = 61.0,
-                                    isHigh = true,
-                                    evidence = CLINICAL_EVIDENCE
-                                )
+                listOf(
+                    BASE_MOLECULAR_TEST.copy(
+                        characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                            tumorMutationalBurden = TumorMutationalBurden(
+                                score = 61.0,
+                                isHigh = true,
+                                evidence = CLINICAL_EVIDENCE
                             )
                         )
                     )
@@ -112,15 +106,13 @@ class MolecularClinicalEvidenceFunctionsTest {
 
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                MolecularHistory(
-                    molecularTests = listOf(
-                        BASE_MOLECULAR_TEST.copy(
-                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
-                                tumorMutationalLoad = TumorMutationalLoad(
-                                    score = 160,
-                                    isHigh = true,
-                                    evidence = CLINICAL_EVIDENCE
-                                )
+                listOf(
+                    BASE_MOLECULAR_TEST.copy(
+                        characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                            tumorMutationalLoad = TumorMutationalLoad(
+                                score = 160,
+                                isHigh = true,
+                                evidence = CLINICAL_EVIDENCE
                             )
                         )
                     )
@@ -133,24 +125,22 @@ class MolecularClinicalEvidenceFunctionsTest {
     fun `Should remove any duplicate events and evidence`() {
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                MolecularHistory(
-                    molecularTests = listOf(
-                        BASE_MOLECULAR_TEST.copy(
-                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
-                                tumorMutationalBurden = TumorMutationalBurden(
-                                    score = 61.0,
-                                    isHigh = true,
-                                    evidence = CLINICAL_EVIDENCE
-                                )
+                listOf(
+                    BASE_MOLECULAR_TEST.copy(
+                        characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                            tumorMutationalBurden = TumorMutationalBurden(
+                                score = 61.0,
+                                isHigh = true,
+                                evidence = CLINICAL_EVIDENCE
                             )
-                        ),
-                        BASE_MOLECULAR_TEST.copy(
-                            characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
-                                tumorMutationalBurden = TumorMutationalBurden(
-                                    score = 61.0,
-                                    isHigh = true,
-                                    evidence = CLINICAL_EVIDENCE
-                                )
+                        )
+                    ),
+                    BASE_MOLECULAR_TEST.copy(
+                        characteristics = BASE_MOLECULAR_TEST.characteristics.copy(
+                            tumorMutationalBurden = TumorMutationalBurden(
+                                score = 61.0,
+                                isHigh = true,
+                                evidence = CLINICAL_EVIDENCE
                             )
                         )
                     )
@@ -158,8 +148,4 @@ class MolecularClinicalEvidenceFunctionsTest {
             )
         ).containsExactly("TMB High" to CLINICAL_EVIDENCE)
     }
-
-    private fun molecularHistory(molecularRecord: MolecularRecord) = MolecularHistory(
-        molecularTests = listOf(molecularRecord)
-    )
 }

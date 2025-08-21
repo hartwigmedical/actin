@@ -15,8 +15,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -84,7 +83,7 @@ class StandardOfCareEvaluatorTest {
         )
     ).create()
 
-    private val minimalMolecularRecord = TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+    private val minimalMolecularTest = TestMolecularFactory.createMinimalWholeGenomeTest().copy(
         characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
             microsatelliteStability = MicrosatelliteStability(
                 microsatelliteIndelsPerMb = 0.4,
@@ -93,9 +92,9 @@ class StandardOfCareEvaluatorTest {
             )
         )
     )
-    private val molecularRecordWithBrafV600e = TestMolecularFactory.createProperWholeGenomeTest()
-    private val msiMolecularRecord = minimalMolecularRecord.copy(
-        characteristics = minimalMolecularRecord.characteristics.copy(
+    private val molecularTestWithBrafV600e = TestMolecularFactory.createProperWholeGenomeTest()
+    private val msiMolecularTest = minimalMolecularTest.copy(
+        characteristics = minimalMolecularTest.characteristics.copy(
             microsatelliteStability = MicrosatelliteStability(
                 microsatelliteIndelsPerMb = 10.2,
                 isUnstable = true,
@@ -104,8 +103,8 @@ class StandardOfCareEvaluatorTest {
         )
     )
 
-    private val molecularRecordWithOtherBrafMutation = minimalMolecularRecord.copy(
-        drivers = minimalMolecularRecord.drivers.copy(
+    private val molecularTestWithOtherBrafMutation = minimalMolecularTest.copy(
+        drivers = minimalMolecularTest.drivers.copy(
             variants = listOf(
                 TestVariantFactory.createMinimal().copy(
                     canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = "p.D594A"),
@@ -116,7 +115,7 @@ class StandardOfCareEvaluatorTest {
     )
 
     private val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
-        .copy(molecularTests = MolecularHistory(listOf(minimalMolecularRecord)))
+        .copy(molecularTests = listOf(minimalMolecularTest))
 
     private val minimalCrcPatientRecord = minimalPatientRecord.copy(
         tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
@@ -278,7 +277,7 @@ class StandardOfCareEvaluatorTest {
     fun `Should not recommend anti-EGFR therapy for patients matching molecular criteria but with right sided tumor`() {
         val antiEgfrTreatments = setOf(CETUXIMAB, PANITUMUMAB)
         assertThat(
-            resultsForPatientWithHistoryAndMolecular(listOf(CAPOX), minimalMolecularRecord, "Ascending colon")
+            resultsForPatientWithHistoryAndMolecular(listOf(CAPOX), minimalMolecularTest, "Ascending colon")
                 .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
     }
 
@@ -322,7 +321,7 @@ class StandardOfCareEvaluatorTest {
 
     @Test
     fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in first line`() {
-        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), molecularRecordWithOtherBrafMutation, "rectum")
+        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), molecularTestWithOtherBrafMutation, "rectum")
         val firstLineEgfrTherapies = listOf(
             FOLFOX_CETUXIMAB, FOLFOX_PANITUMUMAB, FOLFIRI_CETUXIMAB, FOLFIRI_PANITUMUMAB, IRINOTECAN_CETUXIMAB, IRINOTECAN_PANITUMUMAB
         ).map(treatmentDatabase::findTreatmentByName)
@@ -334,7 +333,7 @@ class StandardOfCareEvaluatorTest {
     @Test
     fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in second line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY"), molecularRecordWithOtherBrafMutation, "rectum"
+            listOf("CHEMOTHERAPY"), molecularTestWithOtherBrafMutation, "rectum"
         )
         val expectedAdditionalTherapies = listOf(
             FOLFIRI_CETUXIMAB, FOLFIRI_PANITUMUMAB, IRINOTECAN_CETUXIMAB, IRINOTECAN_PANITUMUMAB, CETUXIMAB, PANITUMUMAB, IRINOTECAN
@@ -347,7 +346,7 @@ class StandardOfCareEvaluatorTest {
     @Test
     fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in third line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), molecularRecordWithOtherBrafMutation, "rectum"
+            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), molecularTestWithOtherBrafMutation, "rectum"
         )
         val expectedAdditionalTherapies = listOf(
             CETUXIMAB,
@@ -363,14 +362,14 @@ class StandardOfCareEvaluatorTest {
 
     @Test
     fun `Should recommend expected treatments for patient with BRAF V600E in first line`() {
-        val firstLinePatientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), molecularRecordWithBrafV600e)
+        val firstLinePatientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), molecularTestWithBrafV600e)
         assertThat(firstLinePatientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(alwaysAvailableTreatments + commonFirstLineTherapies)
     }
 
     @Test
     fun `Should recommend expected treatments for patient with BRAF V600E in second line`() {
-        val secondLinePatientResults = resultsForPatientWithHistoryAndMolecular(listOf("CHEMOTHERAPY"), molecularRecordWithBrafV600e)
+        val secondLinePatientResults = resultsForPatientWithHistoryAndMolecular(listOf("CHEMOTHERAPY"), molecularTestWithBrafV600e)
         val expectedAdditionalSecondLineCandidates =
             listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN).map(treatmentDatabase::findTreatmentByName)
         assertThat(secondLinePatientResults.map(TreatmentCandidate::treatment))
@@ -380,7 +379,7 @@ class StandardOfCareEvaluatorTest {
     @Test
     fun `Should recommend expected treatments for patient with BRAF V600E in third line`() {
         val thirdLinePatientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), molecularRecordWithBrafV600e
+            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), molecularTestWithBrafV600e
         )
         val expectedAdditionalCandidates = listOf(
             ENCORAFENIB_CETUXIMAB,
@@ -394,7 +393,7 @@ class StandardOfCareEvaluatorTest {
 
     @Test
     fun `Should recommend expected treatments for BRAF V600E wildtype patients who don't qualify for EGFR therapy in first line`() {
-        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), minimalMolecularRecord, "ascending colon")
+        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), minimalMolecularTest, "ascending colon")
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(alwaysAvailableTreatments + commonFirstLineTherapies)
@@ -403,7 +402,7 @@ class StandardOfCareEvaluatorTest {
     @Test
     fun `Should recommend expected treatments for BRAF V600E wildtype patients who don't qualify for EGFR therapy in second line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY"), minimalMolecularRecord, "ascending colon"
+            listOf("CHEMOTHERAPY"), minimalMolecularTest, "ascending colon"
         )
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(alwaysAvailableTreatments + treatmentDatabase.findTreatmentByName(IRINOTECAN))
@@ -412,7 +411,7 @@ class StandardOfCareEvaluatorTest {
     @Test
     fun `Should recommend expected treatments for BRAF V600E wildtype patients who don't qualify for EGFR therapy in third line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), minimalMolecularRecord, "ascending colon"
+            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), minimalMolecularTest, "ascending colon"
         )
         val expectedAdditionalCandidates =
             listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL, TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB).map(treatmentDatabase::findTreatmentByName)
@@ -422,7 +421,7 @@ class StandardOfCareEvaluatorTest {
 
     @Test
     fun `Should recommend Pembrolizumab for MSI patients in first line`() {
-        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), msiMolecularRecord)
+        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), msiMolecularTest)
         assertThat(patientResults.map(TreatmentCandidate::treatment)).contains(treatmentDatabase.findTreatmentByName(PEMBROLIZUMAB))
     }
 
@@ -430,11 +429,11 @@ class StandardOfCareEvaluatorTest {
     fun `Should recommend Pembrolizumab and Nivolumab for MSI patients after first line`() {
         val expectedAdditionalTreatments = listOf(PEMBROLIZUMAB, NIVOLUMAB).map(treatmentDatabase::findTreatmentByName)
 
-        val secondLinePatientResults = resultsForPatientWithHistoryAndMolecular(listOf("CHEMOTHERAPY"), msiMolecularRecord)
+        val secondLinePatientResults = resultsForPatientWithHistoryAndMolecular(listOf("CHEMOTHERAPY"), msiMolecularTest)
         assertThat(secondLinePatientResults.map(TreatmentCandidate::treatment)).containsAll(expectedAdditionalTreatments)
 
         val thirdLinePatientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), msiMolecularRecord
+            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), msiMolecularTest
         )
         assertThat(thirdLinePatientResults.map(TreatmentCandidate::treatment)).containsAll(expectedAdditionalTreatments)
     }
@@ -455,11 +454,9 @@ class StandardOfCareEvaluatorTest {
         val pastTreatmentNames = listOf(FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE, CETUXIMAB, "TARGETED_THERAPY")
         val patientWithNtrkFusionAndSocExhaustion = patientWithNtrkFusion.copy(
             oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
-            molecularTests = MolecularHistory(
-                listOf(
-                    patientWithNtrkFusion.molecularTests.latestOrangeMolecularRecord()!!
-                        .copy(characteristics = minimalMolecularRecord.characteristics)
-                )
+            molecularTests = listOf(
+                patientWithNtrkFusion.molecularTests.first()
+                    .copy(characteristics = minimalMolecularTest.characteristics)
             )
         )
         assertThat(socEvaluator.patientHasExhaustedStandardOfCare(patientWithNtrkFusionAndSocExhaustion)).isTrue
@@ -513,17 +510,17 @@ class StandardOfCareEvaluatorTest {
     }
 
     private fun resultsForPatientWithHistoryAndMolecular(
-        pastTreatmentNames: List<String>, molecularRecord: MolecularRecord, name: String = ""
+        pastTreatmentNames: List<String>, molecularTest: MolecularTest, name: String = ""
     ): List<TreatmentCandidate> {
-        return resultsForPatient(patientRecordWithHistoryAndMolecular(pastTreatmentNames, molecularRecord, name))
+        return resultsForPatient(patientRecordWithHistoryAndMolecular(pastTreatmentNames, molecularTest, name))
     }
 
     private fun patientRecordWithTreatmentHistory(pastTreatmentNames: List<String>): PatientRecord {
-        return patientRecordWithHistoryAndMolecular(pastTreatmentNames, minimalMolecularRecord)
+        return patientRecordWithHistoryAndMolecular(pastTreatmentNames, minimalMolecularTest)
     }
 
     private fun patientRecordWithHistoryAndMolecular(
-        pastTreatmentNames: List<String>, molecularRecord: MolecularRecord, name: String = ""
+        pastTreatmentNames: List<String>, molecularTest: MolecularTest, name: String = ""
     ): PatientRecord {
         val tumorDetails = TumorDetails(
             doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID),
@@ -533,7 +530,7 @@ class StandardOfCareEvaluatorTest {
         return minimalPatientRecord.copy(
             tumor = tumorDetails,
             oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
-            molecularTests = MolecularHistory(listOf(molecularRecord))
+            molecularTests = listOf(molecularTest)
         )
     }
 

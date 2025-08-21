@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
@@ -21,10 +20,10 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
         maxTestAge = maxTestAge
     ) {
 
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-        val exonSkippingFusions = molecularHistory.molecularTests.flatMap(::findExonSkippingFusions).toSet()
-        val exonSplicingVariants = molecularHistory.molecularTests.flatMap { findExonSplicingVariants(it, true) }.toSet()
-        val potentialExonSplicingVariants = molecularHistory.molecularTests.flatMap { findExonSplicingVariants(it, false) }.toSet()
+    override fun evaluate(test: MolecularTest): Evaluation {
+        val exonSkippingFusions = findExonSkippingFusions(test)
+        val exonSplicingVariants = findExonSplicingVariants(test, true)
+        val potentialExonSplicingVariants = findExonSplicingVariants(test, false)
 
         return when {
             exonSkippingFusions.isNotEmpty() && exonSplicingVariants.isEmpty() -> {

@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
@@ -38,7 +38,7 @@ class MolecularSummaryGenerator(
     override fun contents(): Table {
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching =
-            molecularTestFilter.apply(patientRecord.molecularTests.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
+            molecularTestFilter.apply(patientRecord.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
         val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }
@@ -74,7 +74,8 @@ class MolecularSummaryGenerator(
         table: Table
     ) {
         for (molecularTest in molecularTests.sortedByDescending { it.date }) {
-            if ((molecularTest as? MolecularRecord)?.hasSufficientQuality != false) {
+            val wgsMolecular = MolecularHistory(listOf(molecularTest)).latestOrangeMolecularRecord()
+            if (wgsMolecular?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     logger.warn("Generating WGS results for non-WGS sample")
                 }

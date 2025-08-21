@@ -2,7 +2,7 @@ package com.hartwig.actin.datamodel
 
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 
 object TestPatientFactory {
@@ -11,7 +11,7 @@ object TestPatientFactory {
     const val TEST_SAMPLE = TEST_PATIENT + "T"
 
     fun createEmptyMolecularTestPatientRecord(): PatientRecord {
-        return create(TestClinicalFactory.createProperTestClinicalRecord(), null)
+        return create(TestClinicalFactory.createProperTestClinicalRecord(), emptyList())
     }
 
     fun createMinimalTestWGSPatientRecord(): PatientRecord {
@@ -35,7 +35,7 @@ object TestPatientFactory {
         )
     }
 
-    private fun create(clinical: ClinicalRecord, molecular: MolecularHistory?): PatientRecord {
+    private fun create(clinical: ClinicalRecord, molecularTests: List<MolecularTest>): PatientRecord {
         return PatientRecord(
             patientId = clinical.patientId,
             patient = clinical.patient,
@@ -54,7 +54,7 @@ object TestPatientFactory {
             medications = clinical.medications,
             ihcTests = clinical.ihcTests,
             pathologyReports = clinical.pathologyReports,
-            molecularTests = molecular ?: MolecularHistory.empty()
+            molecularTests = molecularTests
         )
     }
 }

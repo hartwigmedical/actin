@@ -5,8 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import java.time.LocalDate
@@ -24,7 +22,7 @@ abstract class MolecularEvaluationFunction(
         val recentMolecularTests = molecularTestFilter.apply(record.molecularTests)
 
         return if (recentMolecularTests.isEmpty()) {
-            noMolecularTestEvaluation() ?: noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
+            noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
                 "No molecular results of sufficient quality",
                 isMissingMolecularResultForEvaluation = true
             )
@@ -43,21 +41,16 @@ abstract class MolecularEvaluationFunction(
                 return MolecularEvaluation.combine(testEvaluation, evaluationPrecedence())
             }
 
-            evaluate(record.molecularTests)
-                ?: record.molecularTests.latestOrangeMolecularRecord()?.let(::evaluate)
-                ?: noMolecularRecordEvaluation()
-                ?: EvaluationFactory.undetermined(
-                    "Insufficient molecular data",
-                    isMissingMolecularResultForEvaluation = true
-                )
+            return noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
+                "Insufficient molecular data",
+                isMissingMolecularResultForEvaluation = true
+            )
         }
     }
 
     open fun noMolecularTestEvaluation(): Evaluation? = null
-    open fun noMolecularRecordEvaluation(): Evaluation? = null
-    open fun evaluate(molecularHistory: MolecularHistory): Evaluation? = null
-    open fun evaluate(molecular: MolecularRecord): Evaluation? = null
     open fun evaluate(test: MolecularTest): Evaluation? = null
+
     open fun evaluationPrecedence(): (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? =
         { MolecularEvaluation.defaultEvaluationPrecedence(it) }
 }

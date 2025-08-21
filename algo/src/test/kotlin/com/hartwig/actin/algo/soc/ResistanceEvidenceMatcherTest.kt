@@ -163,7 +163,7 @@ class ResistanceEvidenceMatcherTest {
             .copy(geneStart = "gene 2", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
         val hasOtherFusion = MolecularTestFactory.withFusion(otherFusion).molecularTests
 
-        every { actionabilityMatcher.match(hasFusion.molecularTests.first()) } returns mapOf(
+        every { actionabilityMatcher.match(hasFusion.first()) } returns mapOf(
             fusion to ActionabilityMatch(
                 listOf(
                     fusionWithResistanceEvidence
@@ -173,7 +173,7 @@ class ResistanceEvidenceMatcherTest {
         val fusionFound = resistanceEvidenceMatcher(listOf(fusionWithResistanceEvidence)).isFound(fusionWithResistanceEvidence, hasFusion)
         assertThat(fusionFound).isTrue()
 
-        every { actionabilityMatcher.match(hasOtherFusion.molecularTests.first()) } returns emptyMap()
+        every { actionabilityMatcher.match(hasOtherFusion.first()) } returns emptyMap()
         val anotherFusionFound =
             resistanceEvidenceMatcher(listOf(fusionWithResistanceEvidence)).isFound(fusionWithResistanceEvidence, hasOtherFusion)
         assertThat(anotherFusionFound).isFalse()

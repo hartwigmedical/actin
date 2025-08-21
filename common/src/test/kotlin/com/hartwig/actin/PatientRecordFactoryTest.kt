@@ -8,13 +8,13 @@ import org.junit.Test
 class PatientRecordFactoryTest {
 
     @Test
-    fun `Should create patient record without molecular record`() {
+    fun `Should create patient record without molecular tests`() {
         assertThat(
             PatientRecordFactory.fromInputs(
                 TestClinicalFactory.createMinimalTestClinicalRecord(),
-                null
+                emptyList()
             )
-        ).isNotNull
+        ).isNotNull()
     }
 
     @Test
@@ -24,13 +24,13 @@ class PatientRecordFactoryTest {
                 TestClinicalFactory.createMinimalTestClinicalRecord(),
                 TestMolecularFactory.createMinimalMolecularTests()
             )
-        ).isNotNull
+        ).isNotNull()
 
         assertThat(
             PatientRecordFactory.fromInputs(
                 TestClinicalFactory.createProperTestClinicalRecord(),
                 TestMolecularFactory.createProperMolecularTests()
             )
-        ).isNotNull
+        ).isNotNull()
     }
 }

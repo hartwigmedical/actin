@@ -34,7 +34,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
             DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_CRC_TUMOR_DOIDS intersect tumorDoids).isEmpty()
 
         return when {
-            record.molecularTests.molecularTests.isEmpty() -> EvaluationFactory.fail("No molecular data")
+            record.molecularTests.isEmpty() -> EvaluationFactory.fail("No molecular data")
 
             isNsclc -> {
                 val evaluation = HasMolecularDriverEventInNsclc(

@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.PathologyReport
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
@@ -21,9 +21,8 @@ class WGSSummaryGenerator(
     private val valueWidth: Float,
 ) : TableGenerator {
 
-    private val summarizer: MolecularDriversSummarizer =
-        MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
-    private val wgsMolecular = molecular as? MolecularRecord
+    private val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
+    private val wgsMolecular = MolecularHistory(listOf(molecular)).latestOrangeMolecularRecord()
 
     override fun title(): String {
         val title = molecular.testTypeDisplay ?: molecular.experimentType.display()

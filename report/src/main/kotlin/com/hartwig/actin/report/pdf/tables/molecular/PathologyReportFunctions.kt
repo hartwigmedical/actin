@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -14,7 +13,7 @@ import com.itextpdf.layout.element.Text
 import java.time.LocalDate
 
 data class MolecularTestGroup(
-    val records: List<MolecularRecord>,
+    val records: List<MolecularTest>,
     val tests: List<MolecularTest>,
     val ihc: List<IhcTest>
 )
@@ -80,14 +79,14 @@ object PathologyReportFunctions {
         )
 
     fun groupTestsByPathologyReport(
-        orangeMolecularRecords: List<MolecularRecord>,
+        orangeMolecularRecords: List<MolecularTest>,
         molecularTests: List<MolecularTest>,
         ihcTests: List<IhcTest>,
         pathologyReports: List<PathologyReport>?
     ): Map<PathologyReport?, MolecularTestGroup> {
         val reportKeys = pathologyReports.orEmpty().flatMap { listOfNotNull(it.date.toString(), it.reportHash) }.toSet()
         val orangeResultsByKey = orangeMolecularRecords.groupBy { findReportKey(reportKeys, it.date) }
-        val molecularTestsByKey = molecularTests.groupBy { findReportKey(reportKeys, it.date, it.sampleId) }
+        val molecularTestsByKey = molecularTests.groupBy { findReportKey(reportKeys, it.date, it.reportHash) }
         val ihcTestsByKey = ihcTests.groupBy { findReportKey(reportKeys, it.measureDate, it.reportHash) }
 
         val matchedReports: Map<PathologyReport, MolecularTestGroup> =
@@ -124,7 +123,7 @@ object PathologyReportFunctions {
         listOfNotNull(reportHash, date.toString()).find(reportKeys::contains)
 
     private fun resultsForKeys(
-        orangeResultsByKey: Map<String?, List<MolecularRecord>>,
+        orangeResultsByKey: Map<String?, List<MolecularTest>>,
         molecularTestsByKey: Map<String?, List<MolecularTest>>,
         ihcTestsByKey: Map<String?, List<IhcTest>>,
         keys: List<String>

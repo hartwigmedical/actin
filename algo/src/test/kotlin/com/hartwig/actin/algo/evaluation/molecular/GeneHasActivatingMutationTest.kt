@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -198,7 +197,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             functionNotIgnoringCodons.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularTests = MolecularHistory.empty())
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularTests = emptyList())
             )
         )
     }
@@ -207,7 +206,7 @@ class GeneHasActivatingMutationTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = functionNotIgnoringCodons.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularTests = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
+                molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

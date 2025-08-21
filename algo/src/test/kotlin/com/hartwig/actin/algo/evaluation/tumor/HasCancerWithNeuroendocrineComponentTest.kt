@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
@@ -51,20 +50,19 @@ class HasCancerWithNeuroendocrineComponentTest {
     private fun createWithNeuroendocrineProfile(): PatientRecord {
         val baseMolecular = TestMolecularFactory.createMinimalWholeGenomeTest()
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            molecularTests = MolecularHistory(
-                listOf(
-                    baseMolecular.copy(
-                        drivers = baseMolecular.drivers.copy(
-                            copyNumbers = listOf(
-                                TestCopyNumberFactory.createMinimal().copy(
-                                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
-                                    isReportable = true,
-                                    gene = "TP53"
-                                )
-                            ),
-                            homozygousDisruptions = listOf(
-                                TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1")
+            molecularTests =
+            listOf(
+                baseMolecular.copy(
+                    drivers = baseMolecular.drivers.copy(
+                        copyNumbers = listOf(
+                            TestCopyNumberFactory.createMinimal().copy(
+                                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+                                isReportable = true,
+                                gene = "TP53"
                             )
+                        ),
+                        homozygousDisruptions = listOf(
+                            TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1")
                         )
                     )
                 )
