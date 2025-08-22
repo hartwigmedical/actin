@@ -103,6 +103,6 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         val driverEntries = factory.create()
         val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(driverEntries, it) }
-        return listOfNotNull(drivers + msStatus(molecular)).joinToString(", ")
+        return listOfNotNull(drivers, msStatus(molecular)).joinToString(", ")
     }
 }
