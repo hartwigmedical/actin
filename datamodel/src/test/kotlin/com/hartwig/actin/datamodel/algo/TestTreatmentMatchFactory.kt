@@ -104,28 +104,12 @@ object TestTreatmentMatchFactory {
                 generalOs = Measurement(215.0, 90, 121, 470, 110.1),
                 resistanceEvidence = listOf(
                     ResistanceEvidence(
-                        event = "KRAS mut",
-                        treatmentName = "Irinotecan",
-                        resistanceLevel = "A",
-                        isTested = null,
-                        isFound = false,
-                        evidenceUrls = setOf("website")
-                    ),
-                    ResistanceEvidence(
                         event = "BRAF amp",
                         treatmentName = "Pembrolizumab",
                         resistanceLevel = "A",
                         isTested = null,
                         isFound = false,
-                        evidenceUrls = setOf("website", "website2")
-                    ),
-                    ResistanceEvidence(
-                        event = "BRAF mut",
-                        treatmentName = "Bevacizumab",
-                        resistanceLevel = "A",
-                        isTested = null,
-                        isFound = false,
-                        evidenceUrls = setOf("website")
+                        evidenceUrls = setOf("website1", "website2")
                     )
                 )
             )
