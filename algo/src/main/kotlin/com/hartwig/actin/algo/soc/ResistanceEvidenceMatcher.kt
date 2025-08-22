@@ -44,31 +44,31 @@ class ResistanceEvidenceMatcher(
             return when {
                 hotspots().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second, evidence) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 codons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second, evidence) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 exons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second, evidence) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 genes().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         with(molecularTest.first.drivers) {
-                            val variantMatch = variants.any { hasEvidence(it, molecularTest.second, evidence) }
-                            val fusionMatch = fusions.any { hasEvidence(it, molecularTest.second, evidence) }
+                            val variantMatch = variants.any { hasEvidence(it, evidence, molecularTest.second) }
+                            val fusionMatch = fusions.any { hasEvidence(it, evidence, molecularTest.second) }
                             variantMatch || fusionMatch ||
-                                    copyNumbers.any { hasEvidence(it, molecularTest.second, evidence) } ||
-                                    homozygousDisruptions.any { hasEvidence(it, molecularTest.second, evidence) } ||
-                                    disruptions.any { hasEvidence(it, molecularTest.second, evidence) }
+                                    copyNumbers.any { hasEvidence(it, evidence, molecularTest.second) } ||
+                                    homozygousDisruptions.any { hasEvidence(it, evidence, molecularTest.second) } ||
+                                    disruptions.any { hasEvidence(it, evidence, molecularTest.second) }
                         }
                     }
                 }
@@ -76,7 +76,7 @@ class ResistanceEvidenceMatcher(
                 fusions().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         molecularTest.first.drivers.fusions.any {
-                            hasEvidence(it, molecularTest.second, evidence)
+                            hasEvidence(it, evidence, molecularTest.second)
                         }
                     }
                 }
@@ -87,7 +87,7 @@ class ResistanceEvidenceMatcher(
         }
     }
 
-    private fun hasEvidence(it: Actionable, matches: MatchesForActionable, evidence: EfficacyEvidence) =
+    private fun hasEvidence(it: Actionable, evidence: EfficacyEvidence, matches: MatchesForActionable) =
         matches[it]?.evidenceMatches?.contains(evidence) == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
