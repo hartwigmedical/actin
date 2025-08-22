@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchDetails
@@ -18,9 +19,10 @@ import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.Treatment
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import com.hartwig.serve.datamodel.trial.GenderCriterium
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
-class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver) {
+class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver, private  val patientGender: Gender?) {
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
@@ -83,15 +85,17 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         return matchingCriteriaAndIndicationsPerEligibleTrial.mapValues { (actionableTrial, matchingCriteriaAndIndications) ->
             val matchingCriteria = matchingCriteriaAndIndications.first
             val matchingIndications = matchingCriteriaAndIndications.second
+            val gender = actionableTrial.genderCriterium()
 
-            createExternalTrial(actionableTrial, matchingCriteria, matchingIndications)
+            createExternalTrial(actionableTrial, matchingCriteria, matchingIndications, gender)
         }.values.toSet()
     }
 
     private fun createExternalTrial(
         trial: ActionableTrial,
         matchingCriteria: Set<MolecularCriterium>,
-        matchingIndications: Set<Indication>
+        matchingIndications: Set<Indication>,
+        gender: GenderCriterium?
     ): ExternalTrial {
         val countries = trial.countries().map {
             CountryDetails(
@@ -114,10 +118,13 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val url = trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
             ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
 
+        val matchGender = if (gender != null && patientGender != null) patientGender.name.equals(gender.name) else null
+
         return ExternalTrial(
             nctId = trial.nctId(),
             title = trial.title(),
             acronym = trial.acronym(),
+            genderMatch = matchGender,
             treatments = trial.therapyNames(),
             countries = countries,
             molecularMatches = molecularMatches,

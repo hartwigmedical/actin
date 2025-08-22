@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -48,7 +49,7 @@ class EvidenceAnnotatorTest {
         val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver> {
             every { resolve(indication) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
         }
-        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, Gender.FEMALE)
         val trial = TestServeTrialFactory.create(
             anyMolecularCriteria = setOf(molecularCriterium),
             indications = setOf(indication),
@@ -77,7 +78,7 @@ class EvidenceAnnotatorTest {
     fun `Should not fail annotating variants without evidence`() {
         val tumorDoids = setOf("DOID:162", "DOID:14502")
         val cancerTypeResolver = CancerTypeApplicabilityResolver(tumorDoids)
-        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, Gender.FEMALE)
 
         val evidenceAnnotator = evidenceAnnotator(
             clinicalEvidenceFactory,

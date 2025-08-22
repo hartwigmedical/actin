@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.Country
@@ -34,7 +35,7 @@ private val BASE_ACTIONABLE_EVENT = TestServeMolecularFactory.createActionableEv
 class ClinicalEvidenceFactoryTest {
 
     private val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver>()
-    val factory = ClinicalEvidenceFactory(cancerTypeResolver)
+    val factory = ClinicalEvidenceFactory(cancerTypeResolver, Gender.FEMALE)
 
     @Test
     fun `Should convert SERVE specifically applicable cancer type hotspot evidence to treatment evidence`() {

@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
@@ -17,9 +18,10 @@ object EvidenceAnnotatorFactory {
     fun createPanelRecordAnnotator(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        patientGender: Gender
     ): EvidenceAnnotator<PanelRecord> {
-        return create(serveRecord, doidEntry, tumorDoids) { input, drivers, molecularCharacteristics ->
+        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
     }
@@ -29,7 +31,7 @@ object EvidenceAnnotatorFactory {
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): EvidenceAnnotator<MolecularRecord> {
-        return create(serveRecord, doidEntry, tumorDoids) { input, drivers, molecularCharacteristics ->
+        return create(serveRecord, doidEntry, tumorDoids, null) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
     }
@@ -38,11 +40,12 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
+        patientGender: Gender?,
         annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
     ): EvidenceAnnotator<T> {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
-        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, patientGender)
         val actionabilityMatcher = ActionabilityMatcherFactory.create(serveRecord)
 
         return EvidenceAnnotator(

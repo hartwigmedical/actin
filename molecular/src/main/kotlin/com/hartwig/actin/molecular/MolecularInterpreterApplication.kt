@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
@@ -61,8 +62,9 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         }
 
         val orangeMolecularTests = interpretOrangeRecord(tumorDoids, inputData)
+        val patientGender = inputData.clinical.patient.gender
         val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
+            interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData, patientGender)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
@@ -97,7 +99,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         config: MolecularInterpreterConfig,
         clinical: ClinicalRecord,
         tumorDoids: Set<String>,
-        inputData: MolecularInterpreterInputData
+        inputData: MolecularInterpreterInputData,
+        patientGender: Gender
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
@@ -121,7 +124,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVirusAnnotator = PanelVirusAnnotator()
         val panelDriverAttributeAnnotator =
             PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), inputData.dndsDatabase)
-        val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids)
+        val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids, patientGender)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical,
