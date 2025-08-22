@@ -13,8 +13,6 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 
 class ResistanceEvidenceMatcher(
@@ -24,12 +22,7 @@ class ResistanceEvidenceMatcher(
     private val molecularHistory: MolecularHistory
 ) {
 
-    val LOGGER: Logger = LogManager.getLogger(ResistanceEvidenceMatcher::class.java)
-
     fun match(treatment: Treatment): List<ResistanceEvidence> {
-        val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
-        LOGGER.warn("molecularTestsAndMatches: ${molecularTestsAndMatches.first().second}")
-
         return candidateEvidences.mapNotNull { evidence ->
             findTreatmentInDatabase(evidence.treatment(), treatment)?.let { treatmentName ->
                 ResistanceEvidence(
@@ -51,31 +44,31 @@ class ResistanceEvidenceMatcher(
             return when {
                 hotspots().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second, evidence) }
                     }
                 }
 
                 codons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second, evidence) }
                     }
                 }
 
                 exons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second, evidence) }
                     }
                 }
 
                 genes().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         with(molecularTest.first.drivers) {
-                            val variantMatch = variants.any { hasEvidence(it, molecularTest.second) }
-                            val fusionMatch = fusions.any { hasEvidence(it, molecularTest.second) }
+                            val variantMatch = variants.any { hasEvidence(it, molecularTest.second, evidence) }
+                            val fusionMatch = fusions.any { hasEvidence(it, molecularTest.second, evidence) }
                             variantMatch || fusionMatch ||
-                                    copyNumbers.any { hasEvidence(it, molecularTest.second) } ||
-                                    homozygousDisruptions.any { hasEvidence(it, molecularTest.second) } ||
-                                    disruptions.any { hasEvidence(it, molecularTest.second) }
+                                    copyNumbers.any { hasEvidence(it, molecularTest.second, evidence) } ||
+                                    homozygousDisruptions.any { hasEvidence(it, molecularTest.second, evidence) } ||
+                                    disruptions.any { hasEvidence(it, molecularTest.second, evidence) }
                         }
                     }
                 }
@@ -83,7 +76,7 @@ class ResistanceEvidenceMatcher(
                 fusions().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         molecularTest.first.drivers.fusions.any {
-                            hasEvidence(it, molecularTest.second)
+                            hasEvidence(it, molecularTest.second, evidence)
                         }
                     }
                 }
@@ -94,7 +87,8 @@ class ResistanceEvidenceMatcher(
         }
     }
 
-    private fun hasEvidence(it: Actionable, matches: MatchesForActionable) = matches[it]?.evidenceMatches?.isNotEmpty() == true
+    private fun hasEvidence(it: Actionable, matches: MatchesForActionable, evidence: EfficacyEvidence) =
+        matches[it]?.evidenceMatches?.contains(evidence) == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
         return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))

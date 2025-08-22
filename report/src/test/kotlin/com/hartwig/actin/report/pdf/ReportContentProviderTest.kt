@@ -31,8 +31,8 @@ private const val VALUE_WIDTH = 200f
 
 class ReportContentProviderTest {
 
-//    private val proper = TestReportFactory.createProperTestReport()
-//
+    private val proper = TestReportFactory.createProperTestReport()
+
 //    @Test
 //    fun `Should match total cohort size between report and input`() {
 //        val report = TestReportFactory.createExhaustiveTestReport()
@@ -172,17 +172,17 @@ class ReportContentProviderTest {
 //            EligibleTrialGenerator::class
 //        )
 //    }
-//
-//    private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
-//        val trialMatchingOtherResultsChapter =
-//            ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingOtherResultsChapter>().first()
-//        val generators = trialMatchingOtherResultsChapter.createTrialTableGenerators()
-//        val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
-//
-//        val totalCohortSizeOnReport =
-//            eligibleTrialGenerators.sumOf { it.cohortSize() } + trialTableGenerators.sumOf { it.cohortSize() }
-//        val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
-//
-//        assertThat(totalCohortSizeInput).isEqualTo(totalCohortSizeOnReport)
-//    }
+
+    private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
+        val trialMatchingOtherResultsChapter =
+            ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingOtherResultsChapter>().first()
+        val generators = trialMatchingOtherResultsChapter.createTrialTableGenerators()
+        val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
+
+        val totalCohortSizeOnReport =
+            eligibleTrialGenerators.sumOf { it.cohortSize() } + trialTableGenerators.sumOf { it.cohortSize() }
+        val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
+
+        assertThat(totalCohortSizeInput).isEqualTo(totalCohortSizeOnReport)
+    }
 }
