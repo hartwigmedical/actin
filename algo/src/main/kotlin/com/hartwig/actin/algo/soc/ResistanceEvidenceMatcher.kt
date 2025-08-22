@@ -28,7 +28,7 @@ class ResistanceEvidenceMatcher(
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
         val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
-        LOGGER.warn("molecularTestsAndMatches: $molecularTestsAndMatches")
+        LOGGER.warn("molecularTestsAndMatches: ${molecularTestsAndMatches.first().second}")
 
         return candidateEvidences.mapNotNull { evidence ->
             findTreatmentInDatabase(evidence.treatment(), treatment)?.let { treatmentName ->
