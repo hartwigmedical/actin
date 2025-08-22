@@ -3,11 +3,12 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.comorbidity.HasHadComorbidityWithIcdCode
+import com.hartwig.actin.algo.evaluation.comorbidity.HasSpecificFamilyHistory
+import com.hartwig.actin.algo.evaluation.comorbidity.UndeterminedFamilyConditions
 import com.hartwig.actin.algo.evaluation.composite.Or
-import com.hartwig.actin.algo.evaluation.othercondition.HasHadOtherConditionComplicationOrToxicityWithIcdCode
-import com.hartwig.actin.algo.evaluation.othercondition.HasSpecificFamilyHistory
-import com.hartwig.actin.algo.evaluation.othercondition.UndeterminedFamilyConditions
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -21,9 +22,9 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             EligibilityRule.HAS_LVEF_OF_AT_LEAST_X to hasSufficientLVEFCreator(),
             EligibilityRule.HAS_QTC_OF_AT_MOST_X to hasLimitedQTCFCreator(),
             EligibilityRule.HAS_QTCF_OF_AT_MOST_X to hasLimitedQTCFCreator(),
-            EligibilityRule.HAS_QTCF_OF_AT_MOST_X_WITH_GENDER_Y to hasLimitedQTCFWithGenderCreator(),
+            EligibilityRule.HAS_QTCF_OF_AT_MOST_X_FOR_FEMALE_OR_Y_FOR_MALE to hasLimitedQTCFWithGenderCreator(),
             EligibilityRule.HAS_QTCF_OF_AT_LEAST_X to hasSufficientQTCFCreator(),
-            EligibilityRule.HAS_QTCF_OF_AT_LEAST_X_WITH_GENDER_Y to hasSufficientQTCFWithGenderCreator(),
+            EligibilityRule.HAS_QTCF_OF_AT_LEAST_X_FOR_FEMALE_OR_Y_FOR_MALE to hasSufficientQTCFWithGenderCreator(),
             EligibilityRule.HAS_JTC_OF_AT_LEAST_X to hasSufficientJTcCreator(),
             EligibilityRule.HAS_LONG_QT_SYNDROME to hasLongQTSyndromeCreator(),
             EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE to hasNormalCardiacFunctionByMUGAOrTTECreator(),
@@ -38,7 +39,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             Or(
                 listOf(
                     HasEcgAberration(icdModel()),
-                    HasHadOtherConditionComplicationOrToxicityWithIcdCode(
+                    HasHadComorbidityWithIcdCode(
                         icdModel(),
                         IcdConstants.HEART_DISEASE_SET.filterNot { it == IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK }.map { IcdCode(it) }
                             .toSet(),
@@ -68,8 +69,13 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasLimitedQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (maxQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
-            HasQtcfWithGender(maxQTCF, gender, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
+            val (femaleQTCF, maleQTCF) = functionInputResolver().createTwoDoublesInput(function)
+            Or(
+                listOf(
+                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf),
+                    HasQtcfWithGender(maleQTCF, Gender.MALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
+                )
+            )
         }
     }
 
@@ -81,8 +87,13 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (minQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
-            HasQtcfWithGender(minQTCF, gender, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
+            val (femaleQTCF, maleQTCF) = functionInputResolver().createTwoDoublesInput(function)
+            Or(
+                listOf(
+                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf),
+                    HasQtcfWithGender(maleQTCF, Gender.MALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
+                )
+            )
         }
     }
 

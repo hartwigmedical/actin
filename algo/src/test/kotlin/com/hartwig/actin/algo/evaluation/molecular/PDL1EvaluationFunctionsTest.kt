@@ -81,9 +81,10 @@ class PDL1EvaluationFunctionsTest {
     // Tests specific for evaluateLimitedPDL1byIHC
     @Test
     fun `Should pass when test value is below max`() {
-        val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.minus(0.5)))
-        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.minus(0.5)))
+        val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.inclusionMolecularEvents).containsExactly("PD-L1 <= 2.0")
     }
 
     @Test
@@ -122,7 +123,9 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should pass when test value is equal to minimum value`() {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE))
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
+        val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.inclusionMolecularEvents).containsExactly("PD-L1 >= 2.0")
     }
 
     @Test

@@ -76,7 +76,7 @@ class InterpretedCohortsSummarizerTest {
             acronym = name,
             isPotentiallyEligible = isEligible,
             isOpen = isOpen,
-            molecularEvents = setOf(event),
+            molecularInclusionEvents = setOf(event),
             locations = locations
         )
     }

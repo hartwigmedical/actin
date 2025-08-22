@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <serve.version>8.2.0</serve.version>
-        <actin-personalization.version>0.28.0</actin-personalization.version>
+        <actin-personalization.version>0.30.2</actin-personalization.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.0.0</actin-transvar.version>
         <actin-pave-lite.version>1.0.0</actin-pave-lite.version>
@@ -60,6 +60,8 @@
         <kotlinx-coroutines-core.version>1.8.0</kotlinx-coroutines-core.version>
         <commons-math3.version>3.6.1</commons-math3.version>
         <jsonschema-generator.version>4.36.0</jsonschema-generator.version>
+        <letsplot.version>4.7.0</letsplot.version>
+        <letsplot-kotlin.version>4.11.0</letsplot-kotlin.version>
 
     </properties>
 
@@ -285,6 +287,11 @@
                 <version>${itext.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>svg</artifactId>
+                <version>${itext.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
@@ -319,6 +326,16 @@
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
             </dependency>
+        <dependency>
+            <groupId>org.jetbrains.lets-plot</groupId>
+            <artifactId>lets-plot-image-export</artifactId>
+            <version>${letsplot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.lets-plot</groupId>
+            <artifactId>lets-plot-kotlin-jvm</artifactId>
+            <version>${letsplot-kotlin.version}</version>
+        </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>

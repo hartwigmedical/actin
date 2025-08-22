@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 class TreatmentCategoryInput(val mappedCategory: TreatmentCategory, val mappedType: TreatmentType? = null) : Displayable {
 
     override fun display(): String {
-        return this.toString().replace("_".toRegex(), " ").lowercase()
+        return this.toString().replace("_", " ").lowercase()
     }
 
     companion object {

@@ -25,8 +25,10 @@ class HasExperiencedImmunotherapyRelatedAdverseEvents(private val icdModel: IcdM
             }.toSet()
         )
 
-        val potentialImmunotherapyAdverseEvents = matchingComorbidities.fullMatches +
-                icdModel.findInstancesMatchingAnyExtensionCode(record.intolerances + record.toxicities, IcdConstants.IMMUNOTHERAPY_DRUG_SET)
+        val potentialImmunotherapyAdverseEvents = (matchingComorbidities.fullMatches + icdModel.findInstancesMatchingAnyExtensionCode(
+            record.intolerances + record.toxicities,
+            IcdConstants.IMMUNOTHERAPY_DRUG_SET
+        )).toSet()
         val unknownDrugIntolerances = matchingComorbidities.mainCodeMatchesWithUnknownExtension
 
         val warnMessageStart = "Possible immunotherapy related adverse events in history"

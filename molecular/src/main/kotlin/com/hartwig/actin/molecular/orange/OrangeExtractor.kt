@@ -44,7 +44,7 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record),
             targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
-                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL, LocalDate.of(2024, 12, 9)))
+                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL, LocalDate.of(2024, 12, 9)), null)
             } else null
         )
     }

@@ -45,7 +45,7 @@ class HasHadProgressionFollowingLatestTreatmentLine(
             }
 
             else -> {
-                EvaluationFactory.undetermined("Radiological progression following latest treatment line undetermined")
+                EvaluationFactory.recoverableUndetermined("Radiological progression following latest treatment line undetermined")
             }
         }
     }

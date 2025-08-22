@@ -24,14 +24,17 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
         val hasSmallCellComponent =
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, record.tumor.doids, record.tumor.name)
 
-        val ihcTestEvaluation = IhcTestEvaluation.create(item = "SCLC transformation", ihcTests = record.ihcTests)
+        val ihcTestEvaluations =
+            listOf("SCLC transformation", "small cell transformation").map { IhcTestEvaluation.create(it, record.ihcTests) }
 
         val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
 
         return when {
-            isNsclc && ihcTestEvaluation.hasCertainPositiveResultsForItem() -> EvaluationFactory.pass("Has SCLC transformation")
+            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainPositiveResultsForItem) -> {
+                EvaluationFactory.pass("Has SCLC transformation", inclusionEvents = setOf("small cell transformation"))
+            }
 
-            isNsclc && ihcTestEvaluation.hasPossiblePositiveResultsForItem() -> {
+            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasPossiblePositiveResultsForItem) -> {
                 EvaluationFactory.warn("Has NSCLC with potential SCLC transformation (unclear results)")
             }
 

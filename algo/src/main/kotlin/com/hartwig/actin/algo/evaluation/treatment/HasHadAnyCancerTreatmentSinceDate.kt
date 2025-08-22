@@ -4,11 +4,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import java.time.LocalDate
 
 class HasHadAnyCancerTreatmentSinceDate(
@@ -16,6 +19,8 @@ class HasHadAnyCancerTreatmentSinceDate(
     private val monthsAgo: Int,
     private val atcLevelsToFind: Set<AtcLevel>,
     private val interpreter: MedicationStatusInterpreter,
+    private val categoryToIgnore: TreatmentCategory?,
+    private val typesToIgnore: Set<TreatmentType>,
     private val onlySystemicTreatments: Boolean
 ) : EvaluationFunction {
 
@@ -25,8 +30,16 @@ class HasHadAnyCancerTreatmentSinceDate(
                 ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
 
         val effectiveTreatmentHistory = (record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments)
-            .filter { entry -> !onlySystemicTreatments || entry.allTreatments().any { it.isSystemic } }
+            .filter { entry ->
+                val treatments = entry.allTreatments().filterNot { treatment ->
+                    treatment.categories().contains(categoryToIgnore) && treatment.types().any { it in typesToIgnore }
+                }
+                (!onlySystemicTreatments && treatments.isNotEmpty()) || treatments.any { it.isSystemic }
+            }
+
         val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
+
+        val ignoringString = if (typesToIgnore.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(typesToIgnore)}" else ""
 
         return when {
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, false) } -> {
@@ -42,11 +55,11 @@ class HasHadAnyCancerTreatmentSinceDate(
             }
 
             effectiveTreatmentHistory.isEmpty() -> {
-                EvaluationFactory.fail("Has not received$systemicMessage anti-cancer therapy within $monthsAgo months")
+                EvaluationFactory.fail("Has not received$systemicMessage anti-cancer therapy within $monthsAgo months$ignoringString")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had any prior$systemicMessage cancer treatment")
+                EvaluationFactory.fail("Has not had any prior$systemicMessage cancer treatment$ignoringString")
             }
         }
     }

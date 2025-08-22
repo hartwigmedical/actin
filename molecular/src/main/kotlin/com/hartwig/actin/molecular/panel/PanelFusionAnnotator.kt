@@ -9,7 +9,9 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
+import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
+import com.hartwig.hmftools.common.fusion.KnownFusionType
 import org.apache.logging.log4j.LogManager
 
 class PanelFusionAnnotator(
@@ -23,11 +25,13 @@ class PanelFusionAnnotator(
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
     }
 
-    fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood {
-        return when (driverType) {
-            FusionDriverType.KNOWN_PAIR,
-            FusionDriverType.KNOWN_PAIR_IG,
-            FusionDriverType.KNOWN_PAIR_DEL_DUP -> DriverLikelihood.HIGH
+    fun fusionDriverLikelihood(driverType: FusionDriverType, isPromiscuousWithMatchingExons: Boolean?): DriverLikelihood {
+        return when {
+            isPromiscuousWithMatchingExons == true || driverType in setOf(
+                FusionDriverType.KNOWN_PAIR,
+                FusionDriverType.KNOWN_PAIR_IG,
+                FusionDriverType.KNOWN_PAIR_DEL_DUP
+            ) -> DriverLikelihood.HIGH
 
             else -> DriverLikelihood.LOW
         }
@@ -56,7 +60,10 @@ class PanelFusionAnnotator(
                 geneDown = sequencedFusion.geneDown,
                 exonDown = sequencedFusion.exonDown
             ),
-            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
+            driverLikelihood = if (isReportable) fusionDriverLikelihood(
+                driverType,
+                isPromiscuousWithMatchingExons(driverType, sequencedFusion)
+            ) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = sequencedFusion.transcriptUp,
@@ -89,12 +96,45 @@ class PanelFusionAnnotator(
         return FusionDriverType.NONE
     }
 
+    fun isPromiscuousWithMatchingExons(driverType: FusionDriverType, sequencedFusion: SequencedFusion): Boolean? {
+        return when (driverType) {
+            FusionDriverType.PROMISCUOUS_3 -> checkPromiscuousExonRange(
+                sequencedFusion.geneDown,
+                sequencedFusion.exonDown,
+                KnownFusionType.PROMISCUOUS_3
+            )
+
+            FusionDriverType.PROMISCUOUS_5 -> checkPromiscuousExonRange(
+                sequencedFusion.geneUp,
+                sequencedFusion.exonUp,
+                KnownFusionType.PROMISCUOUS_5
+            )
+            else -> false
+        }
+    }
+
+    private fun checkPromiscuousExonRange(
+        gene: String?,
+        exon: Int?,
+        fusionType: KnownFusionType
+    ): Boolean? {
+        if (gene == null || exon == null) return null
+        val canonicalTranscript = canonicalTranscriptForGene(gene)
+        if (!exonOnCanonicalTranscript(canonicalTranscript, gene, exon)) return false
+        return knownFusionCache.withinPromiscuousExonRange(
+            fusionType,
+            canonicalTranscript.transcriptName(),
+            exon,
+            exon
+        )
+    }
+
     private fun createFusionFromExonSkip(sequencedSkippedExons: SequencedSkippedExons): Fusion {
         val isReportable = true
         val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
         val transcript = sequencedSkippedExons.transcript ?: run {
             logger.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
-            canonicalTranscriptForGene(sequencedSkippedExons.gene)
+            canonicalTranscriptForGene(sequencedSkippedExons.gene).transcriptName()
         }
 
         return Fusion(
@@ -104,7 +144,7 @@ class PanelFusionAnnotator(
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
             event = sequencedSkippedExons.display(),
-            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
+            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType, false) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = transcript,
@@ -114,11 +154,19 @@ class PanelFusionAnnotator(
         )
     }
 
-    private fun canonicalTranscriptForGene(gene: String): String {
+    private fun canonicalTranscriptForGene(gene: String): TranscriptData {
         val geneData = ensembleDataCache.findGeneDataByName(gene)
             ?: throw IllegalArgumentException("No gene data found for gene $gene")
-        val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
+        return ensembleDataCache.findCanonicalTranscript(geneData.geneId())
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
-        return transcript
+    }
+
+    private fun exonOnCanonicalTranscript(transcript: TranscriptData, gene: String, exonEnd: Int?): Boolean {
+        val numberOfExons = transcript.exons().size
+        if (exonEnd !in 1..numberOfExons) {
+            logger.warn("Exon $exonEnd is out of canonical transcript range 1-$numberOfExons for gene $gene")
+            return false
+        }
+        return true
     }
 }
