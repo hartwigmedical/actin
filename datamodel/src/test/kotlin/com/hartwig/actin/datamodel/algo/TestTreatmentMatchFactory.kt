@@ -109,7 +109,7 @@ object TestTreatmentMatchFactory {
                         resistanceLevel = "A",
                         isTested = null,
                         isFound = false,
-                        evidenceUrls = setOf("website1", "website2")
+                        evidenceUrls = setOf("website")
                     )
                 )
             )
