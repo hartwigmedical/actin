@@ -41,7 +41,7 @@ class ResistanceEvidenceMatcher(
                     evidenceUrls = evidence.urls()
                 )
             }
-        }.distinctBy { it.event } // als er meerdere evidence is zoals voor irinotectan / braf v600e, wordt alleen 1e gepakt?
+        }
     }
 
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {

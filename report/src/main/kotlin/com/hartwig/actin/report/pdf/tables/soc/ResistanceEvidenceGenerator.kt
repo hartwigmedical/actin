@@ -43,7 +43,7 @@ class ResistanceEvidenceGenerator(
                 table.addHeaderCell(Cells.createHeader("Found in molecular analysis"))
                 treatmentToEvidence.forEach { entry ->
                     table.addCell(Cells.createContentBold(entry.key))
-                    val subTable = Tables.createFixedWidthCols(120f, 1f, 1f, 1f, 1f, 40f, 40f).setWidth(350f)
+                    val subTable = Tables.createRelativeWidthCols(660f, 1f, 1f, 1f, 250f, 400f, 400f).setWidth((width / 3) * 2)
                     for (resistanceEvidence in entry.value.distinct().sortedBy { it.resistanceLevel }) {
                         subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 
@@ -58,13 +58,14 @@ class ResistanceEvidenceGenerator(
                         }
 
                         repeat(4 - resistanceEvidence.evidenceUrls.size) {
-                            subTable.addCell(Cells.createEmpty())
+                            subTable.addCell(Cells.createContentNoBorder(""))
                         }
 
                         subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.resistanceLevel))
                         subTable.addCell(Cells.createContentNoBorder(booleanToString(resistanceEvidence.isFound)))
                     }
                     table.addCell(Cells.createContent(subTable))
+                    table.addCell(Cells.createContent(""))
                     table.addCell(Cells.createContent(""))
                     table.addCell(Cells.createContent(""))
                 }

@@ -37,14 +37,14 @@ object TestReportFactory {
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
             config = ReportConfiguration(
                 includeMolecularEvidenceChapter = true,
-//                includeOverviewWithClinicalHistorySummary = true,
-//                includeMolecularDetailsChapter = false,
-//                includeApprovedTreatmentsInSummary = false,
-//                includeSOCLiteratureEfficacyEvidence = true,
-//                includeEligibleSOCTreatmentSummary = true,
-//                molecularSummaryType = MolecularSummaryType.NONE,
-//                includePatientHeader = false,
-//                filterOnSOCExhaustionAndTumorType = true
+                includeOverviewWithClinicalHistorySummary = true,
+                includeMolecularDetailsChapter = false,
+                includeApprovedTreatmentsInSummary = false,
+                includeSOCLiteratureEfficacyEvidence = true,
+                includeEligibleSOCTreatmentSummary = true,
+                molecularSummaryType = MolecularSummaryType.NONE,
+                includePatientHeader = false,
+                filterOnSOCExhaustionAndTumorType = true
             )
         )
     }
