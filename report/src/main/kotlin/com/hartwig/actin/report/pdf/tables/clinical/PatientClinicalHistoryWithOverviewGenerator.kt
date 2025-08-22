@@ -76,8 +76,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return events.ifEmpty { "$geneToFind: No reportable events" }
     }
 
-    private fun msStatus(molecular: PanelRecord): String {
-        return if (molecular.characteristics.microsatelliteStability?.isUnstable == true) "MSI" else "MSS"
+    private fun msStatus(molecular: PanelRecord): String? {
+        return molecular.characteristics.microsatelliteStability?.let { if (it.isUnstable) "MSI" else "MSS" }
     }
 
     private fun measurableDisease(tumor: TumorDetails): String {
@@ -103,6 +103,6 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         val driverEntries = factory.create()
         val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(driverEntries, it) }
-        return (drivers + msStatus(molecular)).joinToString(", ")
+        return listOfNotNull(drivers + msStatus(molecular)).joinToString(", ")
     }
 }
