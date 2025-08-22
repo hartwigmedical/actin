@@ -5,6 +5,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
 class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val treatmentsByName: Map<String, Treatment>) {
 
+    fun drugs() = drugsByName.values.toSet()
+
+    fun treatments() = treatmentsByName.values.toSet()
+
     fun findTreatmentByName(treatmentName: String): Treatment? {
         return treatmentsByName[treatmentName.replace(" ", "_").lowercase()]
     }

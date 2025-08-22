@@ -20,7 +20,6 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import org.apache.logging.log4j.LogManager
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
 fun eventString(paveResponse: PaveResponse): String {
@@ -38,8 +37,6 @@ class PanelVariantAnnotator(
     private val paver: Paver,
     private val paveLite: PaveLite,
 ) {
-
-    private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
         val variantExtractions = indexVariantExtractionsToUniqueIds(sequencedVariants)

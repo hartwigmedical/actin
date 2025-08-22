@@ -13,12 +13,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import com.hartwig.actin.util.json.GsonLocalDateAdapter
-import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
+import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.StrictEnumDeserializer
 import java.lang.reflect.Type
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 object ClinicalGsonDeserializer {
 
@@ -31,10 +28,7 @@ object ClinicalGsonDeserializer {
     }
 
     private fun gsonBuilder(): GsonBuilder {
-        return GsonBuilder().serializeNulls()
-            .enableComplexMapKeySerialization()
-            .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
-            .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
+        return GsonSerializer.createBuilder()
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
             .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
             .registerTypeAdapter(DrugType::class.java, StrictEnumDeserializer(DrugType::class.java))
