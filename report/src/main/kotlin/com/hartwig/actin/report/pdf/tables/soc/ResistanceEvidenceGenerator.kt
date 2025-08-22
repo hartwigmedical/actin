@@ -58,7 +58,7 @@ class ResistanceEvidenceGenerator(
                         }
 
                         repeat(4 - resistanceEvidence.evidenceUrls.size) {
-                            subTable.addCell(Cells.createContentNoBorder(""))
+                            subTable.addCell(Cells.createContentNoBorder("[0]").setFontColor(Styles.PALETTE_WHITE))
                         }
 
                         subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.resistanceLevel))
