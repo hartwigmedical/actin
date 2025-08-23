@@ -110,9 +110,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <jvmTarget>${kotlin.jvm.target}</jvmTarget>
-                </configuration>
             </plugin>
         </plugins>
     </build>
