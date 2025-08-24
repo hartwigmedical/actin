@@ -21,6 +21,7 @@ data class TreatmentMatcherConfig(
     val personalizationDataPath: String?,
     val treatmentEfficacyPredictionJson: String?,
     val serveDirectory: String,
+    val removeCombinedProfilesEvidence: Boolean,
     val outputDirectory: String,
     val runHistorically: Boolean,
     val overridesYaml: String?
@@ -39,6 +40,7 @@ data class TreatmentMatcherConfig(
         private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
         private const val TREATMENT_EFFICACY_PREDICTION_JSON = "treatment_efficacy_prediction_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
+        private const val REMOVE_COMBINED_PROFILES_EVIDENCE: String = "remove_combined_profiles_evidence"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
         private const val TRIAL_SOURCE = "trial_source"
@@ -56,6 +58,8 @@ data class TreatmentMatcherConfig(
             options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
             options.addOption(TREATMENT_EFFICACY_PREDICTION_JSON, true, "Path to treatment efficacy prediction JSON file")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
+            options.addOption(REMOVE_COMBINED_PROFILES_EVIDENCE, false, "If set, the combined profiles for the efficacy evidence from the SERVE database are filtered out")
+
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to")
             options.addOption(
                 RUN_HISTORICALLY,
@@ -94,6 +98,7 @@ data class TreatmentMatcherConfig(
                 personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
                 treatmentEfficacyPredictionJson = ApplicationConfig.optionalFile(cmd, TREATMENT_EFFICACY_PREDICTION_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
+                removeCombinedProfilesEvidence = cmd.hasOption(REMOVE_COMBINED_PROFILES_EVIDENCE),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 runHistorically = runHistorically,
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
