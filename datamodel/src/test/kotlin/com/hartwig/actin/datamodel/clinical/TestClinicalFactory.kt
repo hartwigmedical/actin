@@ -58,7 +58,7 @@ object TestClinicalFactory {
             patient = createTestPatientDetails(),
             tumor = TumorDetails(),
             clinicalStatus = ClinicalStatus(),
-            performanceStatus = PerformanceStatus(),
+            performanceStatus = PerformanceStatus(emptyList(), emptyList()),
             oncologicalHistory = emptyList(),
             priorPrimaries = emptyList(),
             comorbidities = emptyList(),
@@ -133,7 +133,7 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPerformanceStatus() = PerformanceStatus(latestWho = 1)
+    private fun createTestPerformanceStatus() = PerformanceStatus(whoStatuses = listOf(WhoStatus(FIXED_DATE, 1)), emptyList())
 
     private fun drug(name: String, drugType: DrugType, category: TreatmentCategory): Drug {
         return Drug(name = name, drugTypes = setOf(drugType), category = category)

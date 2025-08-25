@@ -35,7 +35,13 @@
     "hasComplications": false
   },
   "performanceStatus": {
-    "latestWho": 0
+    "whoStatuses": [
+      {
+        "date": "2024-09-01",
+        "status": 0
+      }
+    ],
+    "asaScores": []
   },
   "oncologicalHistory": [
     {
