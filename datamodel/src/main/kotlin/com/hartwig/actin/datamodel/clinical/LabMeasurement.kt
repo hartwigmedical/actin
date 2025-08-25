@@ -224,6 +224,7 @@ enum class LabMeasurement(val display: String, val defaultUnit: LabUnit) : Displ
     REVERSE_TRIIODOTHYRONINE("reverse T3", LabUnit.NANOMOLES_PER_LITER),
     ROD_GRANULOCYTES_ABS("absolute rod-shaped granulocytes count", LabUnit.BILLIONS_PER_LITER),
     ROD_GRANULOCYTES_PCT("rod-shaped granulocytes percentage", LabUnit.PERCENTAGE),
+    SB100("SB100", LabUnit.NANOGRAMS_PER_LITER),
     SEGMENTS_ABS("absolute segments count", LabUnit.BILLIONS_PER_LITER),
     SEGMENTS_PCT("segments percentage", LabUnit.PERCENTAGE),
     SEROTONIN("serotonin", LabUnit.MICROMOLES_PER_LITER),
