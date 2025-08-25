@@ -54,7 +54,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
-        val molecularRecord = report.patientRecord.molecularHistory.allPanels().firstOrNull()
+        
+        val molecularRecord = MolecularHistory(report.patientRecord.molecularTests).allPanels().firstOrNull()
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
         clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
