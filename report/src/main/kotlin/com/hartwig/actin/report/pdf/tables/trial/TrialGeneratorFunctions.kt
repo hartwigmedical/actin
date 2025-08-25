@@ -53,8 +53,7 @@ object TrialGeneratorFunctions {
         externalTrials.forEach { trial ->
             val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId
             val contentFunction = when {
-                useSmallerSize -> Cells::createContentSmall
-                cohorts.isEmpty() -> Cells::createContent
+                useSmallerSize -> Cells::createContentSmallItalic
                 else -> Cells::createContentMediumItalic
             }
             table.addCell(contentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
