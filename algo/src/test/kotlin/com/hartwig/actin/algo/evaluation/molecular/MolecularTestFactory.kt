@@ -143,8 +143,8 @@ internal object MolecularTestFactory {
     fun withHlaAlleleAndInsufficientQuality(hlaAllele: HlaAllele): PatientRecord {
         return withMolecularTest(
             baseMolecular.copy(
-                immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaAllele)),
-                hasSufficientQuality = false
+                hasSufficientQuality = false,
+                immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaAllele))
             )
         )
     }

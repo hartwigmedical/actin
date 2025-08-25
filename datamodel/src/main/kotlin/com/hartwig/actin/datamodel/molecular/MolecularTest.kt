@@ -22,7 +22,7 @@ data class MolecularTest(
     val isContaminated: Boolean,
     val drivers: Drivers,
     val characteristics: MolecularCharacteristics,
-    val immunology: MolecularImmunology,
+    val immunology: MolecularImmunology?,
     val pharmaco: Set<PharmacoEntry>,
     val evidenceSource: String,
     val externalTrialSource: String

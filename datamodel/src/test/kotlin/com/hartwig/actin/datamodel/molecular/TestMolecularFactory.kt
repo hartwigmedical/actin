@@ -77,7 +77,7 @@ object TestMolecularFactory {
             isContaminated = false,
             drivers = createMinimalTestDrivers(),
             characteristics = createMinimalTestCharacteristics(),
-            immunology = createMinimalTestImmunology(),
+            immunology = null,
             pharmaco = emptySet(),
             evidenceSource = "",
             externalTrialSource = ""

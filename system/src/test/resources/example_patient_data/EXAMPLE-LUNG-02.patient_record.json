@@ -594,10 +594,7 @@
         },
         "tumorMutationalLoad": null
       },
-      "immunology": {
-        "isReliable": false,
-        "hlaAlleles": []
-      },
+      "immunology": null,
       "pharmaco": [],
       "evidenceSource": "External",
       "externalTrialSource": "Hartwig"

@@ -20,7 +20,7 @@ class HasAnyHLAType(
             isMissingMolecularResultForEvaluation = true
         )
         
-        val immunology = molecular.immunology
+        val immunology = molecular.immunology!!
         if (!immunology.isReliable) {
             return EvaluationFactory.undetermined("HLA typing unreliable", isMissingMolecularResultForEvaluation = true)
         }

@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -43,7 +42,7 @@ class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
                 viruses = emptyList()
             ),
             characteristics = emptyCharacteristics(),
-            immunology = emptyImmunology(),
+            immunology = null,
             pharmaco = emptySet(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
@@ -60,9 +59,5 @@ class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
             tumorMutationalBurden = null,
             tumorMutationalLoad = null
         )
-    }
-
-    private fun emptyImmunology(): MolecularImmunology {
-        return MolecularImmunology(isReliable = false, hlaAlleles = emptySet())
     }
 }

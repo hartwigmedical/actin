@@ -682,6 +682,8 @@
         },
         "tumorMutationalLoad": null
       },
+      "immunology": null,
+      "pharmaco": [],
       "evidenceSource": "External",
       "externalTrialSource": "Hartwig"
     }

@@ -113,7 +113,7 @@ class MolecularDAO(private val context: DSLContext) {
         writeDisruptions(sampleId, drivers.disruptions)
         writeFusions(sampleId, drivers.fusions)
         writeViruses(sampleId, drivers.viruses)
-        writeImmunology(sampleId, test.immunology)
+        writeImmunology(sampleId, test.immunology!!)
         writePharmaco(sampleId, test.pharmaco)
     }
 

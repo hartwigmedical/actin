@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStabi
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
@@ -104,7 +103,7 @@ class PanelAnnotator(
                 },
                 tumorMutationalLoad = null
             ),
-            immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
+            immunology = null,
             pharmaco = emptySet(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()

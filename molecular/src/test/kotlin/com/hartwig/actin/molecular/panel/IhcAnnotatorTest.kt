@@ -58,7 +58,7 @@ class IhcAnnotatorTest {
                 isContaminated = false,
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(fusions = listOf(fusion)),
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics(),
-                immunology = TestMolecularFactory.createMinimalTestImmunology(),
+                immunology = null,
                 pharmaco = emptySet(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
                 externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
@@ -91,7 +91,7 @@ class IhcAnnotatorTest {
                 isContaminated = false,
                 drivers = TestMolecularFactory.createMinimalTestDrivers(),
                 characteristics = TestMolecularFactory.createMinimalTestCharacteristics(),
-                immunology = TestMolecularFactory.createMinimalTestImmunology(),
+                immunology = null,
                 pharmaco = emptySet(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
                 externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
