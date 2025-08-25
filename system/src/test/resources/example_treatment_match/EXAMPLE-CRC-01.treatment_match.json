@@ -18,7 +18,7 @@
         ],
         "url": "https://hartwigmedicalfoundation.nl"
       },
-      "isPotentiallyEligible": true,
+      "isPotentiallyEligible": false,
       "evaluations": [
         [
           {
@@ -156,20 +156,20 @@
             }
           },
           {
-            "result": "PASS",
+            "result": "FAIL",
             "recoverable": false,
-            "inclusionMolecularEvents": [
-              "PD-L1 \u003e\u003d 50.0"
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [
+              "PD-L1 < 50.0"
             ],
-            "exclusionMolecularEvents": [],
-            "passMessages": [
-              {
-                "message": "PD-L1 expression above minimum of 50.0"
-              }
-            ],
+            "passMessages": [],
             "warnMessages": [],
             "undeterminedMessages": [],
-            "failMessages": [],
+            "failMessages": [
+              {
+                "message": "PD-L1 expression below minimum of 50.0"
+              }
+            ],
             "isMissingMolecularResultForEvaluation": false
           }
         ],
@@ -260,7 +260,7 @@
             "open": true,
             "slotsAvailable": true
           },
-          "isPotentiallyEligible": true,
+          "isPotentiallyEligible": false,
           "evaluations": [
             [
               {
@@ -297,18 +297,18 @@
     },
     {
       "identification": {
-        "trialId": "METC 05",
-        "open": false,
-        "acronym": "PICKME3CA",
-        "title": "A phase 1/2 trial of ABC123 +/- platinum doublet in PIK3CA-mutated solid cancer",
-        "nctId": "NCT00000020",
+        "trialId": "METC 01",
+        "open": true,
+        "acronym": "IEMOEN",
+        "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
+        "nctId": "NCT00000001",
         "phase": null,
         "source": null,
         "sourceId": null,
         "locations": [],
         "url": null
       },
-      "isPotentiallyEligible": false,
+      "isPotentiallyEligible": true,
       "evaluations": [
         [
           {
@@ -344,14 +344,23 @@
               "I-02"
             ],
             "function": {
-              "rule": "OR",
+              "rule": "AND",
               "parameters": [
                 {
-                  "rule": "HAS_LOCALLY_ADVANCED_CANCER",
-                  "parameters": []
+                  "rule": "OR",
+                  "parameters": [
+                    {
+                      "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                      "parameters": []
+                    },
+                    {
+                      "rule": "HAS_METASTATIC_CANCER",
+                      "parameters": []
+                    }
+                  ]
                 },
                 {
-                  "rule": "HAS_METASTATIC_CANCER",
+                  "rule": "HAS_SOLID_PRIMARY_TUMOR",
                   "parameters": []
                 }
               ]
@@ -363,6 +372,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
+              {
+                "message": "Has solid primary tumor"
+              },
               {
                 "message": "Stage IV is considered metastatic"
               }
@@ -379,24 +391,31 @@
               "I-03"
             ],
             "function": {
-              "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
+              "rule": "WARN_IF",
               "parameters": [
-                "3",
-                "5"
+                {
+                  "rule": "NOT",
+                  "parameters": [
+                    {
+                      "rule": "HAS_EXHAUSTED_SOC_TREATMENTS",
+                      "parameters": []
+                    }
+                  ]
+                }
               ]
             }
           },
           {
-            "result": "PASS",
-            "recoverable": true,
+            "result": "WARN",
+            "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passMessages": [
+            "passMessages": [],
+            "warnMessages": [
               {
-                "message": "ASAT and ALAT below max of 3*ULN(3*33) and 3*ULN(3*56)"
+                "message": "Has not exhausted SOC"
               }
             ],
-            "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [],
             "isMissingMolecularResultForEvaluation": false
@@ -405,41 +424,13 @@
         [
           {
             "references": [
-              "I-04"
-            ],
-            "function": {
-              "rule": "ACTIVATING_MUTATION_IN_ANY_GENES_X",
-              "parameters": [
-                "PIK3CA"
-              ]
-            }
-          },
-          {
-            "result": "FAIL",
-            "recoverable": false,
-            "inclusionMolecularEvents": [],
-            "exclusionMolecularEvents": [],
-            "passMessages": [],
-            "warnMessages": [],
-            "undeterminedMessages": [],
-            "failMessages": [
-              {
-                "message": "No PIK3CA activating mutation(s)"
-              }
-            ],
-            "isMissingMolecularResultForEvaluation": false
-          }
-        ],
-        [
-          {
-            "references": [
-              "I-05"
+              "E-01"
             ],
             "function": {
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_HISTORY_OF_CARDIAC_DISEASE",
+                  "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
                   "parameters": []
                 }
               ]
@@ -452,7 +443,63 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has no other condition belonging to category cardiac disease"
+                "message": "Has no other condition belonging to category autoimmune disease"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-02"
+            ],
+            "function": {
+              "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
+              "parameters": [
+                "6"
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": true,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Hemoglobin above 6 mmol/L"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-03"
+            ],
+            "function": {
+              "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
+              "parameters": [
+                "1.5"
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": true,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Neutrophils above 1.5"
               }
             ],
             "warnMessages": [],
@@ -470,7 +517,7 @@
                 {
                   "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
                   "parameters": [
-                    "PICKME3CA"
+                    "IEMOEN"
                   ]
                 }
               ]
@@ -483,7 +530,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial PICKME3CA"
+                "message": "Has not participated in trial IEMOEN"
               }
             ],
             "warnMessages": [],
@@ -497,102 +544,30 @@
         {
           "metadata": {
             "cohortId": "A",
-            "description": "Dose expansion - monotherapy - NSCLC",
+            "description": "Dose escalation - monotherapy",
             "cohortAvailability": null,
             "availabilityByLocation": null,
             "evaluable": true,
             "ignore": false,
             "open": false,
-            "slotsAvailable": true
+            "slotsAvailable": false
           },
-          "isPotentiallyEligible": false,
-          "evaluations": [
-            [
-              {
-                "references": [
-                  "I-03"
-                ],
-                "function": {
-                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
-                  "parameters": [
-                    "Lung non-small cell carcinoma"
-                  ]
-                }
-              },
-              {
-                "result": "FAIL",
-                "recoverable": false,
-                "inclusionMolecularEvents": [],
-                "exclusionMolecularEvents": [],
-                "passMessages": [],
-                "warnMessages": [],
-                "undeterminedMessages": [],
-                "failMessages": [
-                  {
-                    "message": "No lung non-small cell carcinoma"
-                  }
-                ],
-                "isMissingMolecularResultForEvaluation": false
-              }
-            ]
-          ]
+          "isPotentiallyEligible": true,
+          "evaluations": {}
         },
         {
           "metadata": {
             "cohortId": "B",
-            "description": "Dose expansion - monotherapy - Other cancer types",
+            "description": "Dose expansion - monotherapy",
             "cohortAvailability": null,
             "availabilityByLocation": null,
             "evaluable": true,
             "ignore": false,
-            "open": true,
-            "slotsAvailable": true
+            "open": false,
+            "slotsAvailable": false
           },
-          "isPotentiallyEligible": false,
-          "evaluations": [
-            [
-              {
-                "references": [
-                  "I-03"
-                ],
-                "function": {
-                  "rule": "AND",
-                  "parameters": [
-                    {
-                      "rule": "NOT",
-                      "parameters": [
-                        {
-                          "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
-                          "parameters": [
-                            "Lung non-small cell carcinoma"
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "rule": "HAS_SOLID_PRIMARY_TUMOR",
-                      "parameters": []
-                    }
-                  ]
-                }
-              },
-              {
-                "result": "PASS",
-                "recoverable": false,
-                "inclusionMolecularEvents": [],
-                "exclusionMolecularEvents": [],
-                "passMessages": [
-                  {
-                    "message": "No lung non-small cell carcinoma"
-                  }
-                ],
-                "warnMessages": [],
-                "undeterminedMessages": [],
-                "failMessages": [],
-                "isMissingMolecularResultForEvaluation": false
-              }
-            ]
-          ]
+          "isPotentiallyEligible": true,
+          "evaluations": {}
         }
       ],
       "nonEvaluableCohorts": []

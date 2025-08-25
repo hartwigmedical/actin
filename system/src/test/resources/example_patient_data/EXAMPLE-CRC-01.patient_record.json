@@ -57,35 +57,15 @@
     {
       "treatments": [
         {
-          "name": "CAPOX",
-          "drugs": [
-            {
-              "name": "CAPECITABINE",
-              "drugTypes": [
-                "ANTIMETABOLITE",
-                "FLUOROPYRIMIDINE",
-                "PYRIMIDINE_ANTAGONIST"
-              ],
-              "category": "CHEMOTHERAPY",
-              "displayOverride": null
-            },
-            {
-              "name": "OXALIPLATIN",
-              "drugTypes": [
-                "PLATINUM_COMPOUND"
-              ],
-              "category": "CHEMOTHERAPY",
-              "displayOverride": null
-            }
+          "name": "HEMICOLECTOMY_RIGHT",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "categories": [
+            "SURGERY"
           ],
-          "synonyms": [
-            "CAPECITABINE+OXALIPLATIN",
-            "OXALIPLATIN+CAPECITABINE"
-          ],
-          "displayOverride": "CAPOX",
-          "isSystemic": true,
-          "maxCycles": null,
-          "treatmentClass": "DRUG_TREATMENT"
+          "types": [],
+          "treatmentClass": "OTHER_TREATMENT"
         }
       ],
       "startYear": 2021,
@@ -94,46 +74,24 @@
       "isTrial": false,
       "trialAcronym": null,
       "treatmentHistoryDetails": {
-        "stopYear": 2022,
-        "stopMonth": 2,
+        "stopYear": 2021,
+        "stopMonth": 11,
         "maxStopYear": null,
         "maxStopMonth": null,
         "ongoingAsOf": null,
         "cycles": null,
-        "bestResponse": "PARTIAL_RESPONSE",
-        "stopReason": "PROGRESSIVE_DISEASE",
-        "stopReasonDetail": "PD",
-        "switchToTreatments": [
-          {
-            "treatment": {
-              "name": "CAPECITABINE",
-              "drugs": [
-                {
-                  "name": "CAPECITABINE",
-                  "drugTypes": [
-                    "ANTIMETABOLITE",
-                    "FLUOROPYRIMIDINE",
-                    "PYRIMIDINE_ANTAGONIST"
-                  ],
-                  "category": "CHEMOTHERAPY",
-                  "displayOverride": null
-                }
-              ],
-              "synonyms": [],
-              "displayOverride": null,
-              "isSystemic": true,
-              "maxCycles": null,
-              "treatmentClass": "DRUG_TREATMENT"
-            },
-            "cycles": null,
-            "startYear": null,
-            "startMonth": null
-          }
-        ],
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
         "maintenanceTreatment": null,
-        "toxicities": [],
-        "bodyLocationCategories": null,
-        "bodyLocations": null
+        "toxicities": null,
+        "bodyLocationCategories": [
+          "COLORECTUM"
+        ],
+        "bodyLocations": [
+          "Cecum"
+        ]
       }
     }
   ],
@@ -193,7 +151,7 @@
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,
-      "scoreValuePrefix": ">",
+      "scoreValuePrefix": "<",
       "scoreValue": 50,
       "scoreValueUnit": "%",
       "impliesPotentialIndeterminateStatus": false
@@ -437,7 +395,7 @@
   "surgeries": [
     {
       "name": "Hemicolectomy right",
-      "endDate": "2021-07-12",
+      "endDate": "2021-11-12",
       "status": "FINISHED"
     }
   ],
@@ -715,7 +673,7 @@
           },
           "tumorMutationalLoad": null
         },
-        "evidenceSource": "CKB",
+        "evidenceSource": "External",
         "hasSufficientPurity": true,
         "hasSufficientQuality": true,
         "reportHash": null
