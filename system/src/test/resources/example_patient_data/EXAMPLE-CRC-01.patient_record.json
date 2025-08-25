@@ -552,132 +552,148 @@
       "isTrialMedication": false
     }
   ],
-  "molecularHistory": {
-    "molecularTests": [
-      {
-        "targetSpecification": {
-          "geneTargetMap": []
+  "molecularTests": [
+    {
+      "date": "2023-01-15",
+      "sampleId": "EXAMPLE-CRC-01-T",
+      "reportHash": null,
+      "experimentType": "PANEL",
+      "testTypeDisplay": "NGS & MSI Panel",
+      "targetSpecification": {
+        "geneTargetMap": []
+      },
+      "refGenomeVersion": "V37",
+      "containsTumorCells": true,
+      "hasSufficientPurity": true,
+      "hasSufficientQuality": true,
+      "isContaminated": false,
+      "drivers": {
+        "variants": [
+          {
+            "chromosome": "12",
+            "position": 25398284,
+            "ref": "C",
+            "alt": "T",
+            "type": "SNV",
+            "variantAlleleFrequency": 0.2232,
+            "canonicalImpact": {
+              "transcriptId": "ENST00000256078",
+              "hgvsCodingImpact": "c.35G\u003eA",
+              "hgvsProteinImpact": "p.G12D",
+              "affectedCodon": 12,
+              "affectedExon": 2,
+              "inSpliceRegion": false,
+              "effects": [
+                "MISSENSE"
+              ],
+              "codingEffect": "MISSENSE"
+            },
+            "otherImpacts": [],
+            "variantCopyNumber": null,
+            "totalCopyNumber": null,
+            "isBiallelic": null,
+            "clonalLikelihood": null,
+            "phaseGroups": null,
+            "isCancerAssociatedVariant": true,
+            "isReportable": true,
+            "event": "KRAS G12D",
+            "driverLikelihood": "HIGH",
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": [
+                {
+                  "nctId": "NCT00000009",
+                  "title": "KRAS-G12D-TRIAL",
+                  "treatments": [],
+                  "molecularMatches": [
+                    {
+                      "sourceDate": "2012-01-01",
+                      "sourceEvent": "KRAS G12D",
+                      "sourceEvidenceType": "ACTIVATION",
+                      "sourceUrl": ""
+                    }
+                  ],
+                  "applicableCancerTypes": [
+                    {
+                      "matchedCancerType": "Colorectal cancer",
+                      "excludedCancerSubTypes": []
+                    }
+                  ],
+                  "countries": [
+                    {
+                      "country": "GERMANY",
+                      "hospitalsPerCity": {
+                        "Stuttgart": [
+                          {
+                            "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "country": "NETHERLANDS",
+                      "hospitalsPerCity": {
+                        "Utrecht": [
+                          {
+                            "name": "UMC Utrecht"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "url": "https://hartwigmedicalfoundation.nl"
+                }
+              ]
+            },
+            "gene": "KRAS",
+            "geneRole": "ONCO",
+            "proteinEffect": "LOSS_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": null
+          }
+        ],
+        "copyNumbers": [],
+        "homozygousDisruptions": [],
+        "disruptions": [],
+        "fusions": [],
+        "viruses": []
+      },
+      "characteristics": {
+        "purity": null,
+        "ploidy": null,
+        "predictedTumorOrigin": null,
+        "microsatelliteStability": {
+          "isUnstable": false,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
         },
-        "experimentType": "PANEL",
-        "testTypeDisplay": "NGS & MSI Panel",
-        "date": "2023-01-15",
-        "drivers": {
-          "variants": [
+        "homologousRecombination": null,
+        "tumorMutationalBurden": {
+          "score": 8.0,
+          "isHigh": false,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
+        },
+        "tumorMutationalLoad": null
+      },
+      "immunology": null,
+      "pharmaco": [
+        {
+          "gene": "DPYD",
+          "haplotypes": [
             {
-              "chromosome": "12",
-              "position": 25398284,
-              "ref": "C",
-              "alt": "T",
-              "type": "SNV",
-              "variantAlleleFrequency": 0.2232,
-              "canonicalImpact": {
-                "transcriptId": "ENST00000256078",
-                "hgvsCodingImpact": "c.35G\u003eA",
-                "hgvsProteinImpact": "p.G12D",
-                "affectedCodon": 12,
-                "affectedExon": 2,
-                "inSpliceRegion": false,
-                "effects": [
-                  "MISSENSE"
-                ],
-                "codingEffect": "MISSENSE"
-              },
-              "otherImpacts": [],
-              "variantCopyNumber": null,
-              "totalCopyNumber": null,
-              "isBiallelic": null,
-              "clonalLikelihood": null,
-              "phaseGroups": null,
-              "isCancerAssociatedVariant": true,
-              "isReportable": true,
-              "event": "KRAS G12D",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": [
-                  {
-                    "nctId": "NCT00000009",
-                    "title": "KRAS-G12D-TRIAL",
-                    "treatments": [],
-                    "molecularMatches": [
-                      {
-                        "sourceDate": "2012-01-01",
-                        "sourceEvent": "KRAS G12D",
-                        "sourceEvidenceType": "ACTIVATION",
-                        "sourceUrl": ""
-                      }
-                    ],
-                    "applicableCancerTypes": [
-                      {
-                        "matchedCancerType": "Colorectal cancer",
-                        "excludedCancerSubTypes": []
-                      }
-                    ],
-                    "countries": [
-                      {
-                        "country": "GERMANY",
-                        "hospitalsPerCity": {
-                          "Stuttgart": [
-                            {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "country": "NETHERLANDS",
-                        "hospitalsPerCity": {
-                          "Utrecht": [
-                            {
-                              "name": "UMC Utrecht"
-                            }
-                          ]
-                        }
-                      }
-                    ],
-                    "url": "https://hartwigmedicalfoundation.nl"
-                  }
-                ]
-              },
-              "gene": "KRAS",
-              "geneRole": "ONCO",
-              "proteinEffect": "LOSS_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": null
+              "allele": "*1",
+              "alleleCount": 2,
+              "function": "NORMAL_FUNCTION"
             }
-          ],
-          "copyNumbers": [],
-          "homozygousDisruptions": [],
-          "disruptions": [],
-          "fusions": [],
-          "viruses": []
-        },
-        "characteristics": {
-          "purity": null,
-          "ploidy": null,
-          "predictedTumorOrigin": null,
-          "microsatelliteStability": {
-            "isUnstable": false,
-            "evidence": {
-              "treatmentEvidence": [],
-              "eligibleTrials": []
-            }
-          },
-          "homologousRecombination": null,
-          "tumorMutationalBurden": {
-            "score": 8.0,
-            "isHigh": false,
-            "evidence": {
-              "treatmentEvidence": [],
-              "eligibleTrials": []
-            }
-          },
-          "tumorMutationalLoad": null
-        },
-        "evidenceSource": "External",
-        "hasSufficientPurity": true,
-        "hasSufficientQuality": true,
-        "reportHash": null
-      }
-    ]
-  }
+          ]
+        }
+      ],
+      "evidenceSource": "External",
+      "externalTrialSource": "Hartwig"
+    }
+  ]
 }
