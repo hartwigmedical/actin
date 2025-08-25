@@ -472,213 +472,218 @@
       }
     }
   ],
-  "molecularHistory": {
-    "molecularTests": [
-      {
-        "targetSpecification": {
-          "geneTargetMap": []
-        },
-        "experimentType": "PANEL",
-        "testTypeDisplay": "Small NGS Lung Panel",
-        "date": "2024-09-15",
-        "drivers": {
-          "variants": [
-            {
-              "chromosome": "17",
-              "position": 7577120,
-              "ref": "C",
-              "alt": "T",
-              "type": "SNV",
-              "variantAlleleFrequency": 0.5,
-              "canonicalImpact": {
-                "transcriptId": "",
-                "hgvsCodingImpact": "c.818G>A",
-                "hgvsProteinImpact": "p.R273H",
-                "affectedCodon": 273,
-                "affectedExon": 7,
-                "inSpliceRegion": false,
-                "effects": [
-                  "MISSENSE"
-                ],
-                "codingEffect": "MISSENSE"
-              },
-              "otherImpacts": [],
-              "variantCopyNumber": null,
-              "totalCopyNumber": null,
-              "isBiallelic": null,
-              "clonalLikelihood": null,
-              "phaseGroups": null,
-              "isCancerAssociatedVariant": true,
-              "isReportable": true,
-              "event": "TP53 R273H",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": [
-                  {
-                    "nctId": "NCT00000026",
-                    "title": "TP53-TRIAL",
-                    "treatments": [],
-                    "countries": [
-                      {
-                        "country": "NETHERLANDS",
-                        "hospitalsPerCity": {
-                          "Tilburg": [
-                            {
-                              "name": "Elisabeth-TweeSteden Ziekenhuis",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "country": "GERMANY",
-                        "hospitalsPerCity": {
-                          "Stuttgart": [
-                            {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
-                            }
-                          ]
-                        }
-                      }
-                    ],
-                    "molecularMatches": [
-                      {
-                        "sourceDate":"2015-01-01",
-                        "sourceEvent": "TP53 mutations",
-                        "sourceEvidenceType": "HOTSPOT_MUTATION",
-                        "sourceUrl": ""
-                      }
-                    ],
-                    "applicableCancerTypes": [
-                      {
-                        "matchedCancerType": "Lung cancer",
-                        "excludedCancerSubTypes": []
-                      }
-                    ],
-                    "url": "https://hartwigmedicalfoundation.nl"
-                  }
-                ]
-              },
-              "gene": "TP53",
-              "geneRole": "TSG",
-              "proteinEffect": "LOSS_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": null
+  "molecularTests": [
+    {
+      "date": "2024-09-15",
+      "sampleId": null,
+      "reportHash": null,
+      "experimentType": "PANEL",
+      "testTypeDisplay": "Small NGS Lung Panel",
+      "targetSpecification": {
+        "geneTargetMap": []
+      },
+      "containsTumorCells": true,
+      "hasSufficientPurity": true,
+      "hasSufficientQuality": true,
+      "isContaminated": false,
+      "drivers": {
+        "variants": [
+          {
+            "chromosome": "17",
+            "position": 7577120,
+            "ref": "C",
+            "alt": "T",
+            "type": "SNV",
+            "variantAlleleFrequency": 0.5,
+            "canonicalImpact": {
+              "transcriptId": "",
+              "hgvsCodingImpact": "c.818G>A",
+              "hgvsProteinImpact": "p.R273H",
+              "affectedCodon": 273,
+              "affectedExon": 7,
+              "inSpliceRegion": false,
+              "effects": [
+                "MISSENSE"
+              ],
+              "codingEffect": "MISSENSE"
             },
-            {
-              "chromosome": "19",
-              "position": 7577120,
-              "ref": "C",
-              "alt": "T",
-              "type": "SNV",
-              "variantAlleleFrequency": 0.5,
-              "canonicalImpact": {
-                "transcriptId": "",
-                "hgvsCodingImpact": "c.2729CT",
-                "hgvsProteinImpact": "p.T910M",
-                "affectedCodon": 910,
-                "affectedExon": 18,
-                "inSpliceRegion": false,
-                "effects": [
-                  "MISSENSE"
-                ],
-                "codingEffect": "MISSENSE"
-              },
-              "otherImpacts": [],
-              "variantCopyNumber": null,
-              "totalCopyNumber": null,
-              "isBiallelic": null,
-              "clonalLikelihood": null,
-              "phaseGroups": null,
-              "isCancerAssociatedVariant": true,
-              "isReportable": true,
-              "event": "SMARCA4 T910M",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": [
-                  {
-                    "nctId": "NCT00000036",
-                    "title": "SMARCA4-TRIAL",
-                    "treatments": [],
-                    "countries": [
-                      {
-                        "country": "NETHERLANDS",
-                        "hospitalsPerCity": {
-                          "Tilburg": [
-                            {
-                              "name": "Elisabeth-TweeSteden Ziekenhuis",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "country": "GERMANY",
-                        "hospitalsPerCity": {
-                          "Stuttgart": [
-                            {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      }
-                    ],
-                    "molecularMatches": [
-                      {
-                        "sourceDate": "2015-01-01",
-                        "sourceEvent": "SMARCA4 mutations",
-                        "sourceEvidenceType": "HOTSPOT_MUTATION",
-                        "sourceUrl": ""
-                      }
-                    ],
-                    "applicableCancerTypes": [
-                      {
-                        "matchedCancerType": "Lung cancer",
-                        "excludedCancerSubTypes": []
-                      }
-                    ],
-                    "url": "https://hartwigmedicalfoundation.nl"
-                  }
-                ]
-              },
-              "gene": "SMARCA4",
-              "geneRole": "TSG",
-              "proteinEffect": "LOSS_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": null
-            }
-          ],
-          "copyNumbers": [],
-          "homozygousDisruptions": [],
-          "disruptions": [],
-          "fusions": [],
-          "viruses": []
-        },
-        "characteristics": {
-          "purity": null,
-          "ploidy": 2.0,
-          "predictedTumorOrigin": null,
-          "microsatelliteStability": {
-            "isUnstable": false,
+            "otherImpacts": [],
+            "variantCopyNumber": null,
+            "totalCopyNumber": null,
+            "isBiallelic": null,
+            "clonalLikelihood": null,
+            "phaseGroups": null,
+            "isCancerAssociatedVariant": true,
+            "isReportable": true,
+            "event": "TP53 R273H",
+            "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
-              "eligibleTrials": []
-            }
+              "eligibleTrials": [
+                {
+                  "nctId": "NCT00000026",
+                  "title": "TP53-TRIAL",
+                  "treatments": [],
+                  "countries": [
+                    {
+                      "country": "NETHERLANDS",
+                      "hospitalsPerCity": {
+                        "Tilburg": [
+                          {
+                            "name": "Elisabeth-TweeSteden Ziekenhuis",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "country": "GERMANY",
+                      "hospitalsPerCity": {
+                        "Stuttgart": [
+                          {
+                            "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "molecularMatches": [
+                    {
+                      "sourceDate": "2015-01-01",
+                      "sourceEvent": "TP53 mutations",
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
+                    }
+                  ],
+                  "applicableCancerTypes": [
+                    {
+                      "matchedCancerType": "Lung cancer",
+                      "excludedCancerSubTypes": []
+                    }
+                  ],
+                  "url": "https://hartwigmedicalfoundation.nl"
+                }
+              ]
+            },
+            "gene": "TP53",
+            "geneRole": "TSG",
+            "proteinEffect": "LOSS_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": null
           },
-          "homologousRecombination": null,
-          "tumorMutationalBurden": {
-            "score": 8.0,
-            "isHigh": false,
+          {
+            "chromosome": "19",
+            "position": 7577120,
+            "ref": "C",
+            "alt": "T",
+            "type": "SNV",
+            "variantAlleleFrequency": 0.5,
+            "canonicalImpact": {
+              "transcriptId": "",
+              "hgvsCodingImpact": "c.2729CT",
+              "hgvsProteinImpact": "p.T910M",
+              "affectedCodon": 910,
+              "affectedExon": 18,
+              "inSpliceRegion": false,
+              "effects": [
+                "MISSENSE"
+              ],
+              "codingEffect": "MISSENSE"
+            },
+            "otherImpacts": [],
+            "variantCopyNumber": null,
+            "totalCopyNumber": null,
+            "isBiallelic": null,
+            "clonalLikelihood": null,
+            "phaseGroups": null,
+            "isCancerAssociatedVariant": true,
+            "isReportable": true,
+            "event": "SMARCA4 T910M",
+            "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
-              "eligibleTrials": []
-            }
-          },
-          "tumorMutationalLoad": null
+              "eligibleTrials": [
+                {
+                  "nctId": "NCT00000036",
+                  "title": "SMARCA4-TRIAL",
+                  "treatments": [],
+                  "countries": [
+                    {
+                      "country": "NETHERLANDS",
+                      "hospitalsPerCity": {
+                        "Tilburg": [
+                          {
+                            "name": "Elisabeth-TweeSteden Ziekenhuis",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "country": "GERMANY",
+                      "hospitalsPerCity": {
+                        "Stuttgart": [
+                          {
+                            "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "molecularMatches": [
+                    {
+                      "sourceDate": "2015-01-01",
+                      "sourceEvent": "SMARCA4 mutations",
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
+                    }
+                  ],
+                  "applicableCancerTypes": [
+                    {
+                      "matchedCancerType": "Lung cancer",
+                      "excludedCancerSubTypes": []
+                    }
+                  ],
+                  "url": "https://hartwigmedicalfoundation.nl"
+                }
+              ]
+            },
+            "gene": "SMARCA4",
+            "geneRole": "TSG",
+            "proteinEffect": "LOSS_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": null
+          }
+        ],
+        "copyNumbers": [],
+        "homozygousDisruptions": [],
+        "disruptions": [],
+        "fusions": [],
+        "viruses": []
+      },
+      "characteristics": {
+        "purity": null,
+        "ploidy": 2.0,
+        "predictedTumorOrigin": null,
+        "microsatelliteStability": {
+          "isUnstable": false,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
         },
-        "evidenceSource": "Hartwig"
-      }
-    ]
-  }
+        "homologousRecombination": null,
+        "tumorMutationalBurden": {
+          "score": 8.0,
+          "isHigh": false,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
+        },
+        "tumorMutationalLoad": null
+      },
+      "evidenceSource": "External",
+      "externalTrialSource": "Hartwig"
+    }
+  ]
 }
