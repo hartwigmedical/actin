@@ -17,7 +17,7 @@ class MolecularEvidenceChapter(
     override val include: Boolean
 ) : ReportChapter {
 
-    private val molecularHistory = report.patientRecord.molecularHistory
+    private val molecularTests = report.patientRecord.molecularTests
 
     override fun name(): String {
         return "Molecular Evidence"
@@ -36,15 +36,15 @@ class MolecularEvidenceChapter(
 
     private fun addMolecularEvidenceTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularHistory)
-        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularHistory)
+        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularTests)
+        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularTests)
         TableGeneratorFunctions.addGenerators(listOf(onLabelGenerator, offLabelGenerator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
 
     private fun addEfficacyDescriptionTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = MolecularEfficacyDescriptionGenerator(molecularHistory)
+        val generator = MolecularEfficacyDescriptionGenerator(molecularTests)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }

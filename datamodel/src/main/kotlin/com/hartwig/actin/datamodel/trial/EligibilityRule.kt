@@ -382,8 +382,8 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE(FunctionInput.NONE),
     HAS_CD4_POSITIVE_CELLS_MILLIONS_PER_LITER_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
 
-    // Rules related to other conditions
-    HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X(FunctionInput.ONE_ICD_TITLE),
+    // Rules related to comorbidities
+    HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X(FunctionInput.MANY_ICD_TITLES),
     HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS(FunctionInput.ONE_ICD_TITLE_ONE_INTEGER),
     HAS_HISTORY_OF_AUTOIMMUNE_DISEASE(FunctionInput.NONE),
     HAS_HISTORY_OF_CARDIAC_DISEASE(FunctionInput.NONE),
@@ -503,8 +503,6 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS(FunctionInput.NONE),
 
     // Rules related to complications
-    HAS_ANY_COMPLICATION(FunctionInput.NONE),
-    HAS_COMPLICATION_WITH_ANY_ICD_TITLE_X(FunctionInput.MANY_ICD_TITLES),
     HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN(FunctionInput.NONE),
     HAS_LEPTOMENINGEAL_DISEASE(FunctionInput.NONE),
     HAS_PLEURAL_EFFUSION(FunctionInput.NONE),

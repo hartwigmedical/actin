@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import java.time.LocalDate
@@ -10,15 +10,15 @@ import java.time.LocalDate
 class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(maxTestAge, true) {
 
-    override fun noMolecularRecordEvaluation(): Evaluation {
+    override fun noMolecularTestEvaluation(): Evaluation {
         return EvaluationFactory.undetermined(
             "No molecular data to determine UGT1A1 haplotype",
             isMissingMolecularResultForEvaluation = true
         )
     }
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.UGT1A1 }
+    override fun evaluate(test: MolecularTest): Evaluation {
+        val pharmaco = test.pharmaco.firstOrNull { it.gene == PharmacoGene.UGT1A1 }
             ?: return EvaluationFactory.undetermined("UGT1A1 haplotype undetermined", isMissingMolecularResultForEvaluation = true)
 
         return if (hasUGT1A1Type(pharmaco, haplotypeToFind)) {

@@ -2,26 +2,34 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 
-class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : MolecularAnnotator<IhcExtraction, PanelRecord> {
+class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : MolecularAnnotator<IhcExtraction> {
 
-    override fun annotate(input: IhcExtraction): PanelRecord {
-        return PanelRecord(
+    override fun annotate(input: IhcExtraction): MolecularTest {
+        return MolecularTest(
             date = input.date,
+            sampleId = null,
+            reportHash = null,
+            experimentType = ExperimentType.IHC,
+            testTypeDisplay = ExperimentType.IHC.display(),
             targetSpecification = PanelTargetSpecification((input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith {
                 listOf(
                     MolecularTestTarget.FUSION
                 )
             }),
-            experimentType = ExperimentType.IHC,
-            testTypeDisplay = ExperimentType.IHC.display(),
+            refGenomeVersion = RefGenomeVersion.V37,
+            containsTumorCells = true,
+            hasSufficientPurity = true,
+            hasSufficientQuality = true,
+            isContaminated = false,
             drivers = Drivers(
                 variants = emptyList(),
                 copyNumbers = emptyList(),
@@ -34,9 +42,10 @@ class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
                 viruses = emptyList()
             ),
             characteristics = emptyCharacteristics(),
+            immunology = null,
+            pharmaco = emptySet(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
-            hasSufficientPurity = true,
-            hasSufficientQuality = true
+            externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
         )
     }
 

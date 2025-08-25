@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
@@ -51,7 +51,7 @@ class TumorOriginInterpreter(private val hasSufficientQuality: Boolean?, private
 
     companion object {
         fun create(molecular: MolecularTest): TumorOriginInterpreter {
-            val wgsMolecular = molecular as? MolecularRecord
+            val wgsMolecular = MolecularHistory(listOf(molecular)).latestOrangeMolecularRecord()
 
             return TumorOriginInterpreter(
                 hasSufficientQuality = wgsMolecular?.hasSufficientQuality,

@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -15,14 +15,12 @@ import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class MolecularRecordAnnotator(private val knownEventResolver: KnownEventResolver) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
+class MolecularRecordAnnotator(private val knownEventResolver: KnownEventResolver) : MolecularAnnotator<MolecularTest> {
 
     private val logger: Logger = LogManager.getLogger(MolecularRecordAnnotator::class.java)
 
-    override fun annotate(input: MolecularRecord): MolecularRecord {
-        return input.copy(
-            drivers = annotateDrivers(input.drivers)
-        )
+    override fun annotate(input: MolecularTest): MolecularTest {
+        return input.copy(drivers = annotateDrivers(input.drivers))
     }
 
     private fun annotateDrivers(drivers: Drivers): Drivers {

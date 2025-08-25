@@ -28,7 +28,7 @@ class TumorOriginInterpreterTest {
         ),
     )
 
-    private val conclusivePredictedTumorOrigin = TestMolecularFactory.createProperTestMolecularRecord().characteristics.predictedTumorOrigin
+    private val conclusivePredictedTumorOrigin = TestMolecularFactory.createProperWholeGenomeTest().characteristics.predictedTumorOrigin
     private val inconclusivePredictedTumorOrigin = PredictedTumorOrigin(inconclusivePredictions)
 
     private val conclusiveInterpreter =

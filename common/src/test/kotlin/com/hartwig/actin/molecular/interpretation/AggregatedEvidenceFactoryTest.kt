@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.interpretation
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
@@ -22,13 +22,13 @@ class AggregatedEvidenceFactoryTest {
 
     @Test
     fun `Should find no evidence on minimal record`() {
-        val minimalRecord = TestMolecularFactory.createMinimalTestMolecularRecord()
+        val minimalRecord = TestMolecularFactory.createMinimalWholeGenomeTest()
         assertThat(AggregatedEvidenceFactory.create(minimalRecord).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
     fun `Should find no evidence on no evidence`() {
-        val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
+        val characteristics = TestMolecularFactory.createMinimalWholeGenomeTest().characteristics.copy(
             microsatelliteStability = MicrosatelliteStability(
                 microsatelliteIndelsPerMb = 10.2,
                 isUnstable = true,
@@ -50,14 +50,14 @@ class AggregatedEvidenceFactoryTest {
     fun `Should find no external eligible trials when hasSufficientQuality is false`() {
         assertThat(
             AggregatedEvidenceFactory.create(
-                TestMolecularFactory.createMinimalTestMolecularRecord().copy(hasSufficientQuality = false)
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(hasSufficientQuality = false)
             ).eligibleTrialsPerEvent
         ).isEmpty()
     }
 
     @Test
     fun `Should aggregate characteristics`() {
-        val characteristics = TestMolecularFactory.createExhaustiveTestMolecularRecord().characteristics
+        val characteristics = TestMolecularFactory.createExhaustiveWholeGenomeTest().characteristics
         val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
 
         assertThat(evidence.treatmentEvidencePerEvent).hasSize(2)
@@ -65,7 +65,7 @@ class AggregatedEvidenceFactoryTest {
 
     @Test
     fun `Should aggregate drivers`() {
-        val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
+        val drivers = TestMolecularFactory.createMinimalWholeGenomeTest().drivers.copy(
             variants = listOf(
                 TestVariantFactory.createMinimal().copy(
                     event = "variant", evidence = TestClinicalEvidenceFactory.createExhaustive()
@@ -108,18 +108,18 @@ class AggregatedEvidenceFactoryTest {
             event = "variant",
             evidence = TestClinicalEvidenceFactory.createExhaustive(),
         )
-        val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
+        val drivers = TestMolecularFactory.createMinimalWholeGenomeTest().drivers.copy(
             variants = listOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
         assertThat(evidence.treatmentEvidencePerEvent).hasSize(1)
     }
 
-    private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularRecord {
-        return TestMolecularFactory.createMinimalTestMolecularRecord().copy(characteristics = characteristics)
+    private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularTest {
+        return TestMolecularFactory.createMinimalWholeGenomeTest().copy(characteristics = characteristics)
     }
 
-    private fun withDrivers(drivers: Drivers): MolecularRecord {
-        return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = drivers)
+    private fun withDrivers(drivers: Drivers): MolecularTest {
+        return TestMolecularFactory.createMinimalWholeGenomeTest().copy(drivers = drivers)
     }
 }

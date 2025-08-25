@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -11,7 +12,7 @@ import com.itextpdf.layout.element.Table
 class EligibleApprovedTreatmentGenerator(report: Report) : TableGenerator {
 
     private val isCUP = TumorDetailsInterpreter.hasCancerOfUnknownPrimary(report.patientRecord.tumor.name)
-    private val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
+    private val molecular = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
     private val hasConfidentPrediction =
         molecular?.let { TumorOriginInterpreter.create(molecular).hasConfidentPrediction() } ?: false
 

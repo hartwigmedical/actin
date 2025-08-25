@@ -10,7 +10,7 @@ class MolecularRecordTest {
     fun `Should check panel specification for tested gene and target when targeted`() {
         val targets = listOf(MolecularTestTarget.MUTATION)
         val gene = "gene"
-        val record = TestMolecularFactory.createMinimalTestMolecularRecord()
+        val record = TestMolecularFactory.createMinimalWholeGenomeTest()
             .copy(experimentType = ExperimentType.HARTWIG_TARGETED, targetSpecification = PanelTargetSpecification(mapOf(gene to targets)))
         assertThat(record.testsGene(gene) { it == targets }).isTrue()
         assertThat(record.testsGene(gene) { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
@@ -19,7 +19,7 @@ class MolecularRecordTest {
     @Test
     fun `Should always return gene is tested for any target when WGS`() {
         val record =
-            TestMolecularFactory.createMinimalTestMolecularRecord().copy(targetSpecification = null)
+            TestMolecularFactory.createMinimalWholeGenomeTest().copy(targetSpecification = null)
         assertThat(record.testsGene("gene") { it == listOf(MolecularTestTarget.FUSION) }).isTrue()
     }
 }

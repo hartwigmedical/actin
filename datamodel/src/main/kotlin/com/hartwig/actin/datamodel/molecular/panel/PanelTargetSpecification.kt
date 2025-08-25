@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import java.util.function.Predicate
 
 data class PanelTargetSpecification(private val geneTargetMap: Map<String, List<MolecularTestTarget>>) {
+    
     fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
         geneTargetMap[gene]?.let { molecularTestTargets.test(it) } ?: false
 }

@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
@@ -51,12 +51,12 @@ class MolecularDetailsChapter(
     private fun addMolecularDetails(document: Document) {
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-
-        val orangeMolecularRecord = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
-        val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
+        
+        val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
+        val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
-            listOfNotNull(orangeMolecularRecord),
+            listOfNotNull(orangeMolecularTest),
             externalPanelResults,
             filteredIhcTests,
             report.patientRecord.pathologyReports
@@ -89,7 +89,7 @@ class MolecularDetailsChapter(
 
     private fun contentPerPathologyReport(
         pathologyReport: PathologyReport?,
-        orangeMolecularRecord: List<MolecularRecord>,
+        orangeMolecularRecord: List<MolecularTest>,
         externalPanelResults: List<MolecularTest>,
         ihcTests: List<IhcTest>,
         cohorts: List<InterpretedCohort>,

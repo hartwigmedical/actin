@@ -73,7 +73,7 @@ class MolecularCharacteristicsGeneratorTest {
         brca1Value: Double = 0.0,
         brca2Value: Double = 0.0
     ): MolecularTest {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+        val base = TestMolecularFactory.createMinimalWholeGenomeTest()
         return base.copy(
             characteristics = base.characteristics.copy(
                 homologousRecombination = HomologousRecombination(
@@ -92,7 +92,7 @@ class MolecularCharacteristicsGeneratorTest {
         isHigh: Boolean,
         value: Int,
     ): MolecularTest {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+        val base = TestMolecularFactory.createMinimalWholeGenomeTest()
         return base.copy(
             characteristics = base.characteristics.copy(
                 tumorMutationalLoad = TumorMutationalLoad(
