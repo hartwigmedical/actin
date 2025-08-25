@@ -861,7 +861,7 @@
                     "both or unknown": 3.0,
                     "right": 19.0
                   },
-                  "mutations": "KRAS exon 2 wild-type 169/169",
+                  "mutations": "KRAS exon 2 wild-type 100/100",
                   "patientsWithPrimaryTumorRemovedComplete": null,
                   "patientsWithPrimaryTumorRemovedPartial": null,
                   "patientsWithPrimaryTumorRemoved": 90,
@@ -922,41 +922,41 @@
                     "maxCycles": null,
                     "treatmentClass": "DRUG_TREATMENT"
                   },
-                  "priorSystemicTherapy": "34",
+                  "priorSystemicTherapy": "30",
                   "patientsWithMSI": null,
-                  "medianFollowUpForSurvival": "71",
-                  "medianFollowUpPFS": "71",
+                  "medianFollowUpForSurvival": "70",
+                  "medianFollowUpPFS": "70",
                   "analysisGroups": [
                     {
-                      "id": 120,
+                      "id": 1,
                       "name": "Cetuximab",
-                      "Patients": 169,
+                      "Patients": 100,
                       "endPoints": [
                         {
-                          "id": 469,
+                          "id": 2,
                           "name": "Median Overall Survival",
-                          "value": 33.0,
+                          "value": 35.0,
                           "unitOfMeasure": "MONTHS",
                           "confidenceInterval": {
-                            "lowerLimit": 26.0,
-                            "upperLimit": 38.0
+                            "lowerLimit": 25.0,
+                            "upperLimit": 40.0
                           },
                           "type": "SECONDARY",
                           "derivedMetrics": [
                             {
-                              "relativeMetricId": 470,
+                              "relativeMetricId": 3,
                               "value": 0.75,
                               "type": "Hazard ratio",
                               "confidenceInterval": {
-                                "lowerLimit": 0.59,
-                                "upperLimit": 0.94
+                                "lowerLimit": 0.60,
+                                "upperLimit": 0.95
                               },
                               "pValue": "0.011"
                             }
                           ]
                         },
                         {
-                          "id": 471,
+                          "id": 4,
                           "name": "Median Progression-Free Survival",
                           "value": 10.0,
                           "unitOfMeasure": "MONTHS",
@@ -967,12 +967,12 @@
                           "type": "SECONDARY",
                           "derivedMetrics": [
                             {
-                              "relativeMetricId": 472,
+                              "relativeMetricId": 5,
                               "value": 0.99,
                               "type": "Hazard ratio",
                               "confidenceInterval": {
-                                "lowerLimit": 0.81,
-                                "upperLimit": 1.24
+                                "lowerLimit": 0.80,
+                                "upperLimit": 1.25
                               },
                               "pValue": "1"
                             }
@@ -990,28 +990,28 @@
                 {
                   "name": "FOLFIRI",
                   "isControl": false,
-                  "ageMin": 31,
-                  "ageMax": 76,
-                  "ageMedian": 64.0,
-                  "numberOfPatients": 183,
-                  "numberOfMale": 121,
-                  "numberOfFemale": 62,
-                  "patientsWithWho0": 98,
-                  "patientsWithWho1": 82,
-                  "patientsWithWho2": 3,
+                  "ageMin": 30,
+                  "ageMax": 75,
+                  "ageMedian": 65.0,
+                  "numberOfPatients": 200,
+                  "numberOfMale": 120,
+                  "numberOfFemale": 80,
+                  "patientsWithWho0": 100,
+                  "patientsWithWho1": 80,
+                  "patientsWithWho2": 20,
                   "patientsWithWho3": 0,
                   "patientsWithWho4": 0,
                   "patientsWithWho0to1": null,
                   "patientsWithWho1to2": null,
                   "patientsPerPrimaryTumorLocation": {
-                    "left": 136.0,
-                    "both or unknown": 2.0,
+                    "left": 145.0,
+                    "both or unknown": 10.0,
                     "right": 45.0
                   },
-                  "mutations": "KRAS exon 2 wild-type 183/183",
+                  "mutations": "KRAS exon 2 wild-type 200/200",
                   "patientsWithPrimaryTumorRemovedComplete": null,
                   "patientsWithPrimaryTumorRemovedPartial": null,
-                  "patientsWithPrimaryTumorRemoved": 163,
+                  "patientsWithPrimaryTumorRemoved": 165,
                   "patientsPerMetastaticSites": {
                     "Liver only": {
                       "value": 58,
@@ -1060,32 +1060,32 @@
                     "maxCycles": null,
                     "treatmentClass": "DRUG_TREATMENT"
                   },
-                  "priorSystemicTherapy": "34",
+                  "priorSystemicTherapy": "35",
                   "patientsWithMSI": null,
-                  "medianFollowUpForSurvival": "76",
-                  "medianFollowUpPFS": "76",
+                  "medianFollowUpForSurvival": "75",
+                  "medianFollowUpPFS": "75",
                   "analysisGroups": [
                     {
-                      "id": 121,
+                      "id": 6,
                       "name": "Bevacizumab",
-                      "nPatients": 183,
+                      "nPatients": 200,
                       "endPoints": [
                         {
-                          "id": 470,
+                          "id": 3,
                           "name": "Median Overall Survival",
-                          "value": 26.0,
+                          "value": 25.0,
                           "unitOfMeasure": "MONTHS",
                           "confidenceInterval": {
-                            "lowerLimit": 24.0,
-                            "upperLimit": 29.0
+                            "lowerLimit": 25.0,
+                            "upperLimit": 30.0
                           },
                           "type": "SECONDARY",
                           "derivedMetrics": []
                         },
                         {
-                          "id": 472,
+                          "id": 5,
                           "name": "Median Progression-Free Survival",
-                          "value": 11.0,
+                          "value": 10.0,
                           "unitOfMeasure": "MONTHS",
                           "confidenceInterval": {
                             "lowerLimit": 10.0,
@@ -1100,7 +1100,7 @@
                   "priorTherapies": "Adjuvant chemotherapy",
                   "patientsPerRace": null,
                   "patientsPerRegion": {
-                    "Europe": 183
+                    "Europe": 200
                   }
                 }
               ],
@@ -1110,18 +1110,18 @@
         }
       ],
       "generalPfs": {
-        "value": 406.0,
-        "numPatients": 74,
-        "min": 67,
-        "max": 1749,
-        "iqr": 387.0
+        "value": 405.0,
+        "numPatients": 75,
+        "min": 70,
+        "max": 1750,
+        "iqr": 385.0
       },
       "generalOs": {
-        "value": 673.0,
-        "numPatients": 127,
-        "min": 53,
-        "max": 2234,
-        "iqr": 754.0
+        "value": 675.0,
+        "numPatients": 125,
+        "min": 55,
+        "max": 2235,
+        "iqr": 755.0
       },
       "resistanceEvidence": [
         {
