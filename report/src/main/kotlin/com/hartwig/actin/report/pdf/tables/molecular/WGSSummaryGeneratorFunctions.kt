@@ -1,7 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
@@ -26,7 +27,7 @@ object WGSSummaryGeneratorFunctions {
         summaryType: SummaryType,
         patientRecord: PatientRecord,
         molecular: MolecularTest,
-        wgsMolecular: MolecularRecord?,
+        wgsMolecular: MolecularTest?,
         keyWidth: Float,
         valueWidth: Float,
         summarizer: MolecularDriversSummarizer
@@ -113,7 +114,7 @@ object WGSSummaryGeneratorFunctions {
     private fun biopsySummary(patientRecord: PatientRecord, molecular: MolecularTest): Cell {
         val biopsyLocation = patientRecord.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN
         val purity = molecular.characteristics.purity
-        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
+        val wgsMolecular = if (molecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME) molecular else null
         return if (wgsMolecular != null && purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
@@ -129,7 +130,7 @@ object WGSSummaryGeneratorFunctions {
     fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
         val originSummary = TumorOriginInterpreter.create(molecular).generateSummaryString()
 
-        val wgsMolecular = molecular as? MolecularRecord
+        val wgsMolecular = MolecularHistory(listOf(molecular)).latestOrangeMolecularRecord()
         val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
         if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {
             paragraph.add(Text(" (low purity)").addStyle(Styles.tableNoticeStyle()))
@@ -140,7 +141,7 @@ object WGSSummaryGeneratorFunctions {
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular: MolecularTest, status: String): Cell {
         val paragraph = Paragraph(Text(status).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
-        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
+        val wgsMolecular = if (molecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME) molecular else null
         if (wgsMolecular != null && purity != null && wgsMolecular.hasSufficientQualityButLowPurity()) {
             val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
             paragraph.add(purityText)

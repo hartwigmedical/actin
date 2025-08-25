@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.datamodel.algo.ResistanceEvidence
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
@@ -19,7 +19,7 @@ class ResistanceEvidenceMatcher(
     private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
     private val actionabilityMatcher: ActionabilityMatcher,
-    private val molecularHistory: MolecularHistory
+    private val molecularTests: List<MolecularTest>
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
@@ -30,15 +30,15 @@ class ResistanceEvidenceMatcher(
                     treatmentName = treatmentName,
                     resistanceLevel = evidence.evidenceLevel().toString(),
                     isTested = null,
-                    isFound = isFound(evidence, molecularHistory),
+                    isFound = isFound(evidence, molecularTests),
                     evidenceUrls = evidence.urls()
                 )
             }
         }.distinctBy { it.event }
     }
 
-    fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
-        val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
+    fun isFound(evidence: EfficacyEvidence, molecularTests: List<MolecularTest>): Boolean? {
+        val molecularTestsAndMatches = molecularTests.map { it to actionabilityMatcher.match(it) }
 
         with(evidence.molecularCriterium()) {
             return when {
@@ -148,7 +148,7 @@ class ResistanceEvidenceMatcher(
             tumorDoids: Set<String>,
             evidences: List<EfficacyEvidence>,
             treatmentDatabase: TreatmentDatabase,
-            molecularHistory: MolecularHistory,
+            molecularTests: List<MolecularTest>,
             actionabilityMatcher: ActionabilityMatcher
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
@@ -158,7 +158,7 @@ class ResistanceEvidenceMatcher(
                 onLabelNonPositiveEvidence,
                 treatmentDatabase,
                 actionabilityMatcher,
-                molecularHistory
+                molecularTests
             )
         }
 

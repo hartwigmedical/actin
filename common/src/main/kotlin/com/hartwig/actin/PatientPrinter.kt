@@ -1,7 +1,7 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
+import com.hartwig.actin.molecular.util.MolecularTestPrinter
 import com.hartwig.actin.util.DatamodelPrinter
 
 class PatientPrinter(private val printer: DatamodelPrinter) {
@@ -13,7 +13,7 @@ class PatientPrinter(private val printer: DatamodelPrinter) {
         printer.print("Primary tumor: " + record.tumor.name)
         printer.print("WHO status: " + record.performanceStatus.latestWho)
 
-        MolecularHistoryPrinter.print(record.molecularHistory)
+        MolecularTestPrinter(printer).print(record.molecularTests)
     }
 
     companion object {

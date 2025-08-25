@@ -10,7 +10,6 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
@@ -128,7 +127,7 @@ class LocalExampleTreatmentMatchApplication {
                 drugsByName = emptyMap(),
                 treatmentsByName = emptyMap()
             ),
-            molecularHistory = MolecularHistory(molecularTests = emptyList()),
+            molecularTests = emptyList(),
             ActionabilityMatcher(emptyList(), emptyList())
         )
     }

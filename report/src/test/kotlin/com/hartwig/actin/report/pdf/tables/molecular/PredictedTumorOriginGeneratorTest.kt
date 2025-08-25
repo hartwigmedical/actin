@@ -11,7 +11,7 @@ import org.junit.Test
 class PredictedTumorOriginGeneratorTest {
     @Test
     fun `Should display (WGTS) expressionPairWiseClassifier and altSjCohortClassifier variables if CUPPA ran in WGTS mode`() {
-        val molecular = TestMolecularFactory.createExhaustiveTestMolecularRecord()
+        val molecular = TestMolecularFactory.createExhaustiveWholeGenomeTest()
         val molecularWTGS = molecular.copy(
             characteristics = molecular.characteristics.copy(
                 predictedTumorOrigin = PredictedTumorOrigin(

@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -108,7 +108,7 @@ class HasKnownSclcTransformationTest {
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val record = base.copy(
             tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
-            molecularHistory = MolecularTestFactory.withCopyNumber(copyNumber).molecularHistory
+            molecularTests = MolecularTestFactory.withCopyNumber(copyNumber).molecularTests
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)

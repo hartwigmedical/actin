@@ -17,7 +17,8 @@ class MolecularInterpreterTest {
             return input
         }
     }
-    private val annotator = object : MolecularAnnotator<SequencingTest, MolecularTest> {
+    
+    private val annotator = object : MolecularAnnotator<SequencingTest> {
         override fun annotate(input: SequencingTest): MolecularTest {
             annotatorCalled = true
             return output

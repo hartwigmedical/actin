@@ -3,13 +3,13 @@ package com.hartwig.actin.molecular.orange
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
@@ -54,7 +54,7 @@ class OrangeExtractorTest {
         assertThat(drivers.fusions).hasSize(1)
         assertThat(drivers.viruses).hasSize(1)
 
-        val immunology = record.immunology
+        val immunology = record.immunology!!
         assertThat(immunology.isReliable).isTrue
         assertThat(immunology.hlaAlleles).hasSize(1)
         assertThat(record.pharmaco).hasSize(1)

@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
@@ -14,7 +14,7 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHistory) : TableGenerator {
+class MolecularEfficacyDescriptionGenerator(val molecularTests: List<MolecularTest>) : TableGenerator {
 
     override fun title(): String {
         return "Efficacy evidence description"
@@ -26,7 +26,7 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
 
     override fun contents(): Table {
         val table = Tables.createSingleCol()
-        val sortedEvidence = DriverTableFunctions.allDrivers(molecularHistory)
+        val sortedEvidence = DriverTableFunctions.allDrivers(molecularTests)
             .flatMap { it.second }
             .flatMap { filterTreatmentEvidence(it.evidence.treatmentEvidence, null) }
             .let { sortTreatmentEvidence(it) }

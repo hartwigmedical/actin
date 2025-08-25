@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -11,7 +11,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, private val isOnLabel: Boolean) : TableGenerator {
+class MolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>, private val isOnLabel: Boolean) : TableGenerator {
 
     override fun title(): String {
         val titleEnd = "label clinical evidence"
@@ -36,7 +36,7 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
 
-        for ((event, evidence) in MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(molecularHistory)) {
+        for ((event, evidence) in MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(molecularTests)) {
             val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence, isOnLabel)
             if (filteredEvidence.isNotEmpty()) {
                 val groupedBySourceEvent = TreatmentEvidenceFunctions.groupBySourceEvent(filteredEvidence)

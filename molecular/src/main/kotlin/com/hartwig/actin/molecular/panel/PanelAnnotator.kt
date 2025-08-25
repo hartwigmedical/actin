@@ -2,14 +2,15 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
-import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
+import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
@@ -27,15 +28,15 @@ class PanelAnnotator(
     private val panelVirusAnnotator: PanelVirusAnnotator,
     private val panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
     private val panelSpecifications: PanelSpecifications
-) : MolecularAnnotator<SequencingTest, PanelRecord> {
+) : MolecularAnnotator<SequencingTest> {
 
-    override fun annotate(input: SequencingTest): PanelRecord {
+    override fun annotate(input: SequencingTest): MolecularTest {
         return input
             .let(::interpret)
             .let(panelDriverAttributeAnnotator::annotate)
     }
 
-    private fun interpret(input: SequencingTest): PanelRecord {
+    private fun interpret(input: SequencingTest): MolecularTest {
         val testVersion =
             PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
 
@@ -51,11 +52,18 @@ class PanelAnnotator(
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
         val annotatedViruses = panelVirusAnnotator.annotate(input.viruses)
         
-        return PanelRecord(
-            targetSpecification = specification,
+        return MolecularTest(
+            date = input.date,
+            sampleId = null,
+            reportHash = input.reportHash,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.test,
-            date = input.date,
+            targetSpecification = specification,
+            refGenomeVersion = RefGenomeVersion.V37,
+            containsTumorCells = true,
+            hasSufficientPurity = true,
+            hasSufficientQuality = true,
+            isContaminated = false,
             drivers = Drivers(
                 variants = annotatedVariants,
                 copyNumbers = annotatedAmplifications + annotatedDeletions,
@@ -95,10 +103,10 @@ class PanelAnnotator(
                 },
                 tumorMutationalLoad = null
             ),
+            immunology = null,
+            pharmaco = emptySet(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
-            hasSufficientPurity = true,
-            hasSufficientQuality = true,
-            reportHash = input.reportHash
+            externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
         )
     }
 }
