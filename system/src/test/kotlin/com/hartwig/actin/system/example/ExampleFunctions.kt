@@ -74,7 +74,6 @@ object ExampleFunctions {
             report = ReportConfiguration(
                 includeOverviewWithClinicalHistorySummary = true,
                 includeMolecularDetailsChapter = true,
-                includeIneligibleTrialsInSummary = true,
                 includeSOCLiteratureEfficacyEvidence = true,
                 includeEligibleSOCTreatmentSummary = true,
                 molecularSummaryType = MolecularSummaryType.STANDARD,

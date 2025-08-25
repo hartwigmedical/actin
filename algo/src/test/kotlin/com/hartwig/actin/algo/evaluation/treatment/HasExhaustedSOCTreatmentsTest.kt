@@ -141,7 +141,7 @@ class HasExhaustedSOCTreatmentsTest {
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(nonEmptyTreatmentList)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
         assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessagesStrings())
-            .containsExactly("Has not exhausted SOC (remaining options: pembrolizumab)")
+            .containsExactly("Has not exhausted SOC (remaining options: Pembrolizumab)")
     }
 
     @Test
@@ -161,7 +161,7 @@ class HasExhaustedSOCTreatmentsTest {
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessagesStrings())
-            .containsExactly("Has potentially not exhausted SOC (pembrolizumab) but some corresponding molecular results are missing")
+            .containsExactly("Has potentially not exhausted SOC (Pembrolizumab) but some corresponding molecular results are missing")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
 

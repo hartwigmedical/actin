@@ -20,7 +20,7 @@ class HasExhaustedSOCTreatments(
             standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(record) -> {
                 val treatmentEvaluation = standardOfCareEvaluator.evaluateRequiredTreatments(record)
                 val remainingNonOptionalTreatments = treatmentEvaluation.potentiallyEligibleTreatments()
-                    .joinToString(", ") { it.treatmentCandidate.treatment.name.lowercase() }
+                    .joinToString(", ") { it.treatmentCandidate.treatment.display() }
                 when {
                     remainingNonOptionalTreatments.isEmpty() -> {
                         EvaluationFactory.pass("Has exhausted SOC")

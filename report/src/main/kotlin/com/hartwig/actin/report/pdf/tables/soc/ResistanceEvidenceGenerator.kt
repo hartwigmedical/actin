@@ -35,14 +35,15 @@ class ResistanceEvidenceGenerator(
                         )
                     )
             } else {
-                val table = Tables.createRelativeWidthCols(3f, 2f, 3f, 2f).setWidth(width)
+                val table = Tables.createRelativeWidthCols(3f, 3f, 2f, 2f, 3f).setWidth(width)
                 table.addHeaderCell(Cells.createHeader("Treatment"))
                 table.addHeaderCell(Cells.createHeader("Mutation"))
+                table.addHeaderCell(Cells.createHeader("Evidence source"))
                 table.addHeaderCell(Cells.createHeader("Evidence level"))
                 table.addHeaderCell(Cells.createHeader("Found in molecular analysis"))
                 treatmentToEvidence.forEach { entry ->
                     table.addCell(Cells.createContentBold(entry.key))
-                    val subTable = Tables.createFixedWidthCols(100f, 22f, 22f, 22f, 125f, 70f, 10f).setWidth((width / 3) * 2)
+                    val subTable = Tables.createRelativeWidthCols(660f, 1f, 1f, 1f, 250f, 400f, 400f).setWidth((width / 3) * 2)
                     for (resistanceEvidence in entry.value.distinct().sortedBy { it.resistanceLevel }) {
                         subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 
@@ -57,13 +58,14 @@ class ResistanceEvidenceGenerator(
                         }
 
                         repeat(4 - resistanceEvidence.evidenceUrls.size) {
-                            subTable.addCell(Cells.createEmpty())
+                            subTable.addCell(Cells.createContentNoBorder("[0]").setFontColor(Styles.PALETTE_WHITE))
                         }
 
                         subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.resistanceLevel))
                         subTable.addCell(Cells.createContentNoBorder(booleanToString(resistanceEvidence.isFound)))
                     }
                     table.addCell(Cells.createContent(subTable))
+                    table.addCell(Cells.createContent(""))
                     table.addCell(Cells.createContent(""))
                     table.addCell(Cells.createContent(""))
                 }

@@ -45,7 +45,15 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
     private fun createTrialInformation(): Table {
         val table = Tables.createFixedWidthCols(100f, 250f).setWidth(350f)
         table.addCell(Cells.createValue("Study: "))
-        table.addCell(Cells.createKey(annotation.acronym + ", " + annotation.phase + ", " + annotation.therapeuticSetting?.display()))
+        table.addCell(
+            Cells.createKey(
+                listOfNotNull(
+                    annotation.acronym,
+                    annotation.phase,
+                    annotation.therapeuticSetting?.display()
+                ).joinToString(", ")
+            )
+        )
         table.addCell(Cells.createValue("Molecular requirements: "))
         if (annotation.variantRequirements.isNotEmpty()) {
             val variantRequirements =
@@ -57,7 +65,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
             table.addCell(Cells.createKey("None"))
         }
         table.addCell(Cells.createValue("Therapies: "))
-        table.addCell(Cells.createKey(annotation.treatments.joinToString(", ") { it.name }))
+        table.addCell(Cells.createKey(annotation.treatments.joinToString(", ") { it.display() }))
         table.addCell(Cells.createValue("Patient characteristics: "))
         table.addCell(Cells.createKey(""))
         return table
@@ -70,7 +78,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
     }
 
     private fun createPatientCharacteristics(patientPopulations: List<PatientPopulation>): Table {
-        val table = Tables.createFixedWidthCols(200f, 200f, 200f).setWidth(600f)
+        val table = Tables.createFixedWidthCols(200f, 350f, 350f).setWidth(700f)
         table.addCell(Cells.createHeader(""))
         table.addCell(Cells.createHeader(patientPopulations[0].name + " (n=" + patientPopulations[0].numberOfPatients + ")"))
         table.addCell(Cells.createHeader(patientPopulations[1].name + " (n=" + patientPopulations[1].numberOfPatients + ")"))
@@ -103,7 +111,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
     private fun createEndPointTable(
         patientPopulations: List<PatientPopulation>, title: String, endPointType: EndPointType
     ): Table {
-        val table = Tables.createFixedWidthCols(200f, 100f, 100f, 100f, 100f).setWidth(600f)
+        val table = Tables.createFixedWidthCols(200f, 140f, 140f, 140f, 80f).setWidth(700f)
         table.addCell(Cells.createValue(title))
         table.addCell(Cells.createKey(""))
         table.addCell(Cells.createKey(""))

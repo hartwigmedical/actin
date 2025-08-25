@@ -34,7 +34,7 @@ class ResistanceEvidenceMatcher(
                     evidenceUrls = evidence.urls()
                 )
             }
-        }.distinctBy { it.event }
+        }
     }
 
     fun isFound(evidence: EfficacyEvidence, molecularTests: List<MolecularTest>): Boolean? {
@@ -44,31 +44,31 @@ class ResistanceEvidenceMatcher(
             return when {
                 hotspots().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 codons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 exons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 genes().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         with(molecularTest.first.drivers) {
-                            val variantMatch = variants.any { hasEvidence(it, molecularTest.second) }
-                            val fusionMatch = fusions.any { hasEvidence(it, molecularTest.second) }
+                            val variantMatch = variants.any { hasEvidence(it, evidence, molecularTest.second) }
+                            val fusionMatch = fusions.any { hasEvidence(it, evidence, molecularTest.second) }
                             variantMatch || fusionMatch ||
-                                    copyNumbers.any { hasEvidence(it, molecularTest.second) } ||
-                                    homozygousDisruptions.any { hasEvidence(it, molecularTest.second) } ||
-                                    disruptions.any { hasEvidence(it, molecularTest.second) }
+                                    copyNumbers.any { hasEvidence(it, evidence, molecularTest.second) } ||
+                                    homozygousDisruptions.any { hasEvidence(it, evidence, molecularTest.second) } ||
+                                    disruptions.any { hasEvidence(it, evidence, molecularTest.second) }
                         }
                     }
                 }
@@ -76,7 +76,7 @@ class ResistanceEvidenceMatcher(
                 fusions().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         molecularTest.first.drivers.fusions.any {
-                            hasEvidence(it, molecularTest.second)
+                            hasEvidence(it, evidence, molecularTest.second)
                         }
                     }
                 }
@@ -87,8 +87,8 @@ class ResistanceEvidenceMatcher(
         }
     }
 
-    private fun hasEvidence(it: Actionable, matches: MatchesForActionable) =
-        matches[it]?.evidenceMatches?.isNotEmpty() == true
+    private fun hasEvidence(it: Actionable, evidence: EfficacyEvidence, matches: MatchesForActionable) =
+        matches[it]?.evidenceMatches?.contains(evidence) == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
         return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))
@@ -106,7 +106,6 @@ class ResistanceEvidenceMatcher(
     }
 
     private fun findSourceEvent(evidence: EfficacyEvidence): String {
-        // Assumes there is no combined/complex evidence yet
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
