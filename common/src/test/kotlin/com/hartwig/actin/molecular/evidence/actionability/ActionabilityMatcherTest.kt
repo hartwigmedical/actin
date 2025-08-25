@@ -323,8 +323,6 @@ class ActionabilityMatcherTest {
 
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
 
-        // Immunology is only present in MolecularRecord (Orange) but not MolecularTest (shared interface),
-        // so we won't be able to match this for now
         val matches = matcher.match(molecularTest)
         assertThat(matches).isEmpty()
     }
