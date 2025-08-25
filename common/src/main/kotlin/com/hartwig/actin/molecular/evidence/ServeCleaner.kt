@@ -8,14 +8,29 @@ import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 
 object ServeCleaner {
 
-    fun cleanServeDatabase(database: ServeDatabase): ServeDatabase {
+    fun cleanServeDatabase(database: ServeDatabase, removeCombinedProfilesEvidence: Boolean): ServeDatabase {
         val cleanedRecords = database.records().mapValues { (_, record) ->
-            cleanCombinedTrials(record)
+            if (removeCombinedProfilesEvidence) {
+                cleanCombinedTrials(cleanCombinedEvidences(record))
+            } else {
+                cleanCombinedTrials(record)
+            }
         }
 
         return ImmutableServeDatabase.builder()
             .from(database)
             .records(cleanedRecords)
+            .build()
+    }
+
+    private fun cleanCombinedEvidences(record: ServeRecord): ServeRecord {
+        val cleanedEvidences = record.evidences().filterNot { evidence ->
+            ServeVerifier.isCombinedProfile(evidence.molecularCriterium())
+        }
+
+        return ImmutableServeRecord.builder()
+            .from(record)
+            .evidences(cleanedEvidences)
             .build()
     }
 

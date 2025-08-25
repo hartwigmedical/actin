@@ -68,6 +68,7 @@ class HasMolecularDriverEventInNsclc(
             failMessages = writeFailMessage(evaluation.failMessagesStrings()),
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
+            isMissingMolecularResultForEvaluation = false
         )
     }
 
