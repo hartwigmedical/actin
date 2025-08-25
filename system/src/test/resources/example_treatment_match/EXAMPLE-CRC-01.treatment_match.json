@@ -1126,7 +1126,7 @@
       "resistanceEvidence": [
         {
           "event": "GENE S11C",
-          "treatmentName": "FOLIRI",
+          "treatmentName": "FOLFIRI",
           "resistanceLevel": "D",
           "isTested": null,
           "isFound": true,
