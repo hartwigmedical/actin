@@ -9,8 +9,8 @@ data class MolecularEvaluation(
     val test: MolecularTest,
     val evaluation: Evaluation
 ) {
+    
     companion object {
-
         fun defaultEvaluationPrecedence(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
             (groupedEvaluationsByResult[EvaluationResult.PASS]
                 ?: groupedEvaluationsByResult[EvaluationResult.WARN]
@@ -21,7 +21,6 @@ data class MolecularEvaluation(
             evaluations: List<MolecularEvaluation?>,
             precedence: (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? = ::defaultEvaluationPrecedence
         ): Evaluation {
-
             val groupedEvaluationsByResult = evaluations.filterNotNull()
                 .groupBy { evaluation -> evaluation.evaluation.result }
 

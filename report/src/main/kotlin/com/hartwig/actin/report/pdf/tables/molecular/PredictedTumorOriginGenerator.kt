@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -15,7 +15,7 @@ private const val ADDITIONAL_EMPTY_COLS = 1
 private const val PADDING_LEFT = 20
 private const val PADDING_RIGHT = 25
 
-class PredictedTumorOriginGenerator(private val molecular: MolecularRecord) : TableGenerator {
+class PredictedTumorOriginGenerator(private val molecular: MolecularTest) : TableGenerator {
 
     override fun title(): String {
         val cuppaModeIsWGTS = if (isWGTS()) " (WGTS)" else ""

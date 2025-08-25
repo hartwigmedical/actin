@@ -170,7 +170,7 @@ class MolecularResultsAreKnownForGeneTest {
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
-                            TestMolecularFactory.createMinimalTestPanelRecord()
+                            TestMolecularFactory.createMinimalPanelTest()
                                 .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                         )
                     )
@@ -187,7 +187,7 @@ class MolecularResultsAreKnownForGeneTest {
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
-                            TestMolecularFactory.createMinimalTestPanelRecord()
+                            TestMolecularFactory.createMinimalPanelTest()
                                 .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("EGFR")))
                         )
                     )
@@ -202,7 +202,7 @@ class MolecularResultsAreKnownForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(TestMolecularFactory.createMinimalTestPanelRecord())
+                    listOf(TestMolecularFactory.createMinimalPanelTest())
                 )
             )
         )

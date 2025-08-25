@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
@@ -16,7 +16,7 @@ import com.hartwig.actin.report.trial.EventWithExternalTrial
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
-    private val molecular: MolecularRecord,
+    private val molecular: MolecularTest,
     private val cohorts: List<InterpretedCohort>,
     private val externalTrials: Set<EventWithExternalTrial>,
     private val title: String

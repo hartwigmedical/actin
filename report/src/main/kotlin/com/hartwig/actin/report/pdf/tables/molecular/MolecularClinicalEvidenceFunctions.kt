@@ -1,44 +1,44 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 
 object MolecularClinicalEvidenceFunctions {
 
-    fun molecularEvidenceByEvent(molecularHistory: MolecularHistory): Set<Pair<String, ClinicalEvidence>> {
+    fun molecularEvidenceByEvent(molecularTests: List<MolecularTest>): Set<Pair<String, ClinicalEvidence>> {
         val allDrivers =
-            DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }.toSortedSet(Comparator.comparing { it.event })
+            DriverTableFunctions.allDrivers(molecularTests).flatMap { it.second }.toSortedSet(Comparator.comparing { it.event })
         val allMSI =
             extractCharacteristics(
-                molecularHistory,
+                molecularTests,
                 { "MS ${MolecularCharacteristicFormat.formatMicrosatelliteStability(it)}" },
                 { it.microsatelliteStability?.evidence })
         val allTML =
             extractCharacteristics(
-                molecularHistory,
+                molecularTests,
                 { MolecularCharacteristicFormat.formatTumorMutationalLoad(it, false) },
                 { it.tumorMutationalLoad?.evidence })
         val allTMB =
             extractCharacteristics(
-                molecularHistory,
+                molecularTests,
                 { MolecularCharacteristicFormat.formatTumorMutationalBurden(it, false) },
                 { it.tumorMutationalBurden?.evidence })
         val allHRD =
             extractCharacteristics(
-                molecularHistory,
+                molecularTests,
                 { "HR ${MolecularCharacteristicFormat.formatHomologousRecombination(it, false)}" },
                 { it.homologousRecombination?.evidence })
         return allMSI + allTMB + allTML + allHRD + allDrivers.map { it.event to it.evidence }
     }
 
     private fun extractCharacteristics(
-        molecularHistory: MolecularHistory,
+        molecularTests: List<MolecularTest>,
         eventFormatter: (MolecularCharacteristics) -> String,
         extractor: (MolecularCharacteristics) -> ClinicalEvidence?
     ): Set<Pair<String, ClinicalEvidence>> =
-        molecularHistory.molecularTests.mapNotNull {
+        molecularTests.mapNotNull {
             extractor.invoke(it.characteristics)?.let { e -> eventFormatter.invoke(it.characteristics) to e }
         }.toSet()
 }

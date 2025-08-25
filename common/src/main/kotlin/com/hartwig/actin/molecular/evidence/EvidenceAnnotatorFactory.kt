@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.doid.DoidModelFactory
@@ -18,7 +16,7 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
-    ): EvidenceAnnotator<PanelRecord> {
+    ): EvidenceAnnotator {
         return create(serveRecord, doidEntry, tumorDoids) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
@@ -28,18 +26,18 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
-    ): EvidenceAnnotator<MolecularRecord> {
+    ): EvidenceAnnotator {
         return create(serveRecord, doidEntry, tumorDoids) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
     }
 
-    private fun <T : MolecularTest> create(
+    private fun create(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
-        annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
-    ): EvidenceAnnotator<T> {
+        annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics) -> MolecularTest
+    ): EvidenceAnnotator {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)

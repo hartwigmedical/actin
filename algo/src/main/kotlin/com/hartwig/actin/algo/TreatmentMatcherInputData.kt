@@ -4,6 +4,7 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.TreatmentMatcherConfig
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.doid.DoidModel
@@ -18,7 +19,6 @@ import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -103,7 +103,8 @@ object InputDataLoader {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val icdModel = IcdModel.create(icdNodes)
 
-        val refGenomeVersion = patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37
+        val refGenomeVersion =
+            MolecularHistory(patient.molecularTests).latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37
         val serveRefGenomeVersion = ServeLoader.toServeRefGenomeVersion(refGenomeVersion)
 
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]

@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
@@ -133,20 +132,19 @@ class ReportContentProviderTest {
     @Test
     fun `Should show eligible approved treatments options for CUP with high prediction`() {
         val cupTumor = TumorDetails(name = "Some ${TumorDetailsInterpreter.CUP_STRING}")
-        val molecularHistory = MolecularHistory(
+        val molecularTests =
             listOf(
-                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
                     characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
                         .copy(predictedTumorOrigin = TestMolecularFactory.createHighConfidenceCupPrediction())
                 )
             )
-        )
         val report = TestReportFactory.createExhaustiveTestReport()
         val tables = ReportContentProvider(
             report.copy(
                 patientRecord = report.patientRecord.copy(
                     tumor = cupTumor,
-                    molecularHistory = molecularHistory
+                    molecularTests = molecularTests
                 )
             )
         )
@@ -163,7 +161,7 @@ class ReportContentProviderTest {
     @Test
     fun `Should omit molecular table and external tables from summary when molecular results not available`() {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
-            patientRecord = proper.patientRecord.copy(molecularHistory = MolecularHistory.empty())
+            patientRecord = proper.patientRecord.copy(molecularTests = emptyList())
         )
         val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, emptyList())
 

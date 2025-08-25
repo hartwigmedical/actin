@@ -1,7 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import com.hartwig.actin.report.datamodel.Report
@@ -34,8 +35,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     override fun contents(): Table {
         val record = report.patientRecord
-        val pharmaco =
-            report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco //TODO: Currently no pharmaco in panel record?
+        val pharmaco = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()?.pharmaco
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
@@ -76,8 +76,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return events.ifEmpty { "$geneToFind: No reportable events" }
     }
 
-    private fun msStatus(molecular: PanelRecord): String? {
-        return molecular.characteristics.microsatelliteStability?.let { if (it.isUnstable) "MSI" else "MSS" }
+    private fun msStatus(molecular: MolecularTest): String {
+        return if (molecular.characteristics.microsatelliteStability?.isUnstable == true) "MSI" else "MSS"
     }
 
     private fun measurableDisease(tumor: TumorDetails): String {
@@ -97,7 +97,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return pharmaco?.find { it.gene == geneToFind }
     }
 
-    private fun molecularResults(molecular: PanelRecord): String {
+    private fun molecularResults(molecular: MolecularTest): String {
         val molecularDriversInterpreter =
             MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)

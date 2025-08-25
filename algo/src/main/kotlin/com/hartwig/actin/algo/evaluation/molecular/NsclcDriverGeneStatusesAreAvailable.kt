@@ -4,11 +4,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 
 class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val molecularHistory = record.molecularHistory
+        val molecularHistory = MolecularHistory(record.molecularTests)
         val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
             .partition { it.containsTumorCells }
 

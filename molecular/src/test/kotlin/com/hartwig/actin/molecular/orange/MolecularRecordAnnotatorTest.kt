@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantAlterationFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.evidence.known.TestKnownEventResolverFactory
 import io.mockk.every
@@ -29,7 +28,7 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should retain characteristics during annotation that are originally present`() {
-        val annotated = annotator.annotate(TestMolecularFactory.createProperTestMolecularRecord())
+        val annotated = annotator.annotate(TestMolecularFactory.createProperWholeGenomeTest())
         with(annotated.characteristics) {
             assertThat(microsatelliteStability?.evidence).isNotNull()
             assertThat(homologousRecombination?.evidence).isNotNull()
@@ -40,7 +39,7 @@ class MolecularRecordAnnotatorTest {
 
     @Test
     fun `Should not create characteristics during annotation that are originally missing`() {
-        val annotated = annotator.annotate(TestMolecularFactory.createMinimalTestMolecularRecord())
+        val annotated = annotator.annotate(TestMolecularFactory.createMinimalWholeGenomeTest())
         with(annotated.characteristics) {
             assertThat(microsatelliteStability).isNull()
             assertThat(homologousRecombination).isNull()

@@ -7,8 +7,6 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -23,23 +21,17 @@ private val MAX_AGE = LocalDate.of(2023, 9, 6)
 class MolecularEvaluationFunctionTest {
 
     private val function = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun evaluate(molecular: MolecularRecord): Evaluation {
+        override fun evaluate(test: MolecularTest): Evaluation {
             return EvaluationFactory.fail(FAIL_MESSAGE)
         }
     }
 
     private val functionWithOverride = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun evaluate(molecular: MolecularRecord): Evaluation {
+        override fun evaluate(test: MolecularTest): Evaluation {
             return EvaluationFactory.pass("OK")
         }
 
-        override fun noMolecularRecordEvaluation() = EvaluationFactory.fail(OVERRIDE_MESSAGE)
-    }
-
-    private val functionOnMolecularHistory = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
-        override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-            return EvaluationFactory.fail(FAIL_MESSAGE)
-        }
+        override fun noMolecularTestEvaluation() = EvaluationFactory.fail(OVERRIDE_MESSAGE)
     }
 
     private val functionWithGene = object : MolecularEvaluationFunction(gene = "GENE", useInsufficientQualityRecords = false) {}
@@ -58,17 +50,9 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No molecular results of sufficient quality")
     }
-
-    @Test
-    fun `Should return insufficient molecular data when no ORANGE but other molecular data`() {
-        val patient = withPanelTest()
-        val evaluation = function.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Insufficient molecular data")
-    }
-
-    private fun emptyArcher(testDate: LocalDate? = null) =
-        TestMolecularFactory.createMinimalTestPanelRecord().copy(experimentType = ExperimentType.PANEL, date = testDate)
+    
+    private fun emptyPanel(testDate: LocalDate? = null) =
+        TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL, date = testDate)
 
     @Test
     fun `Should execute rule when ORANGE molecular data`() {
@@ -83,27 +67,15 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
         assertOverrideEvaluation(patient)
     }
-
-    @Test
-    fun `Should use override message when provided for patient with no ORANGE record but other data`() {
-        val patient = withPanelTest()
-        assertOverrideEvaluation(patient)
-    }
-
-    @Test
-    fun `Should evaluate molecular history when available`() {
-        val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
-        val evaluation = functionOnMolecularHistory.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly(FAIL_MESSAGE)
-    }
-
+    
     @Test
     fun `Should return undetermined when genes have not been tested which are mandatory`() {
         val patient = withPanelTest()
         val evaluation = functionWithGene.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
+            "gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)"
+        )
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 
@@ -113,16 +85,15 @@ class MolecularEvaluationFunctionTest {
         val evaluation =
             functionWithGenesAndTarget.evaluate(
                 patient.copy(
-                    molecularHistory = MolecularHistory(
-                        listOf(
-                            TestMolecularFactory.createMinimalTestPanelRecord()
-                                .copy(
-                                    targetSpecification = TestMolecularFactory.panelSpecifications(
-                                        setOf("GENE"),
-                                        listOf(MolecularTestTarget.MUTATION)
-                                    )
+                    molecularTests =
+                    listOf(
+                        TestMolecularFactory.createMinimalPanelTest()
+                            .copy(
+                                targetSpecification = TestMolecularFactory.panelSpecifications(
+                                    setOf("GENE"),
+                                    listOf(MolecularTestTarget.MUTATION)
                                 )
-                        )
+                            )
                     )
                 )
             )
@@ -149,7 +120,7 @@ class MolecularEvaluationFunctionTest {
 
     private fun withPanelTest(vararg testDates: LocalDate = arrayOf(MAX_AGE.plusYears(1))) =
         TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory(testDates.map { emptyArcher(it) }))
+            .copy(molecularTests = testDates.map { emptyPanel(it) })
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)

@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
@@ -12,14 +12,12 @@ import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 
-typealias PanelRecordWithDriverAttributes = PanelRecord
-
 class PanelDriverAttributeAnnotator(
     private val knownEventResolver: KnownEventResolver,
     private val dndsDatabase: DndsDatabase,
-) : MolecularAnnotator<PanelRecord, PanelRecordWithDriverAttributes> {
+) : MolecularAnnotator<MolecularTest> {
 
-    override fun annotate(input: PanelRecord): PanelRecordWithDriverAttributes {
+    override fun annotate(input: MolecularTest): MolecularTest {
         val geneDriverLikelihoodModel =
             GeneDriverLikelihoodModel(DndsModel.create(dndsDatabase, input.characteristics.tumorMutationalBurden))
         return input.copy(

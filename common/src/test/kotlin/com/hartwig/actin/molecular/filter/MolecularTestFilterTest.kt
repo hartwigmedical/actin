@@ -9,8 +9,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private val BASE_PANEL_TEST = TestMolecularFactory.createMinimalTestPanelRecord()
-private val BASE_WGS_TEST = TestMolecularFactory.createMinimalTestMolecularRecord()
+private val BASE_PANEL_TEST = TestMolecularFactory.createMinimalPanelTest()
+private val BASE_WGS_TEST = TestMolecularFactory.createMinimalWholeGenomeTest()
 private val ONE_YEAR_AGO = LocalDate.of(2023, 9, 9)
 
 class MolecularTestFilterTest {

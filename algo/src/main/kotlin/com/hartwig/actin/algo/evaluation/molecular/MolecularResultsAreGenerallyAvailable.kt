@@ -9,7 +9,7 @@ class MolecularResultsAreGenerallyAvailable : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
         return when {
-            record.molecularHistory.molecularTests.isNotEmpty() -> EvaluationFactory.recoverablePass("There are molecular results available")
+            record.molecularTests.isNotEmpty() -> EvaluationFactory.recoverablePass("There are molecular results available")
             else -> EvaluationFactory.recoverableFail("No molecular results available")
         }
     }
