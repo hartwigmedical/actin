@@ -1,5 +1,7 @@
 package com.hartwig.actin.system.regression
 
+import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
 import com.hartwig.actin.system.example.LocalExampleReportApplication
@@ -10,23 +12,15 @@ import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import org.junit.runners.Parameterized.Parameters
 import java.time.LocalDate
 import java.util.Locale
 
-@RunWith(Parameterized::class)
-class ReportRegressionTest(private val exampleName: String) {
+class ReportRegressionTest {
 
     private val logLevelRecorder = LogLevelRecorder()
 
     companion object {
         private val originalLocale = Locale.getDefault()
-
-        @Parameters
-        @JvmStatic
-        fun examples() = listOf(LUNG_01_EXAMPLE)
 
         @BeforeClass
         @JvmStatic
@@ -48,7 +42,16 @@ class ReportRegressionTest(private val exampleName: String) {
     }
 
     @Test
-    fun `Regress report textually and visually`() {
+    fun `Regress trial report textually and visually`() {
+        regressReport(exampleName = LUNG_01_EXAMPLE) { ExampleFunctions.createExhaustiveEnvironmentConfiguration() }
+    }
+
+    @Test
+    fun `Regress CRC report textually and visually`() {
+        regressReport(exampleName = CRC_01_EXAMPLE) { ExampleFunctions.createExampleEnvironmentConfigurationCrc() }
+    }
+
+    private fun regressReport(exampleName: String, environmentConfigProvider: () -> EnvironmentConfiguration) {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
         val localExampleReportApplication = LocalExampleReportApplication()
 
@@ -57,7 +60,7 @@ class ReportRegressionTest(private val exampleName: String) {
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
             outputDirectory,
-            ExampleFunctions.createExhaustiveEnvironmentConfiguration()
+            environmentConfigProvider()
         )
 
         assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))

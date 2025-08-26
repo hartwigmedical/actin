@@ -12,7 +12,8 @@ import java.time.LocalDate
 import java.util.Locale
 import kotlin.system.exitProcess
 
-private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
+private const val TRIAL_EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
+private const val CRC_EXAMPLE_TO_RUN = CRC_01_EXAMPLE
 
 class LocalExampleReportApplication {
 
@@ -38,30 +39,40 @@ class LocalExampleReportApplication {
         LOGGER.info("Done!")
     }
 
+    fun runExample(
+        exampleToRun: String,
+        environmentConfigProvider: () -> EnvironmentConfiguration
+    ) {
+        val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
+
+        try {
+            val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(exampleToRun)
+            val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(exampleToRun)
+            val localExampleReportApplication = LocalExampleReportApplication()
+            localExampleReportApplication.run(
+                LocalDate.now(),
+                examplePatientRecordJson,
+                exampleTreatmentMatchJson,
+                localOutputPath,
+                environmentConfigProvider()
+            )
+        } catch (exception: ParseException) {
+            LOGGER.warn(exception)
+            exitProcess(1)
+        }
+    }
+
     companion object {
         val LOGGER: Logger = LogManager.getLogger(LocalExampleReportApplication::class.java)
     }
 }
 
 fun main() {
-    LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
     Locale.setDefault(Locale.US)
-    val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
-    
-    try {
-        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
-        val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(EXAMPLE_TO_RUN)
 
-        val localExampleReportApplication = LocalExampleReportApplication()
-        localExampleReportApplication.run(
-            LocalDate.now(),
-            examplePatientRecordJson,
-            exampleTreatmentMatchJson,
-            localOutputPath,
-            ExampleFunctions.createExampleEnvironmentConfiguration()
-        )
-    } catch (exception: ParseException) {
-        LocalExampleReportApplication.LOGGER.warn(exception)
-        exitProcess(1)
-    }
+    LocalExampleReportApplication.LOGGER.info("Running ACTIN Trial Example Reporter")
+    LocalExampleReportApplication().runExample(TRIAL_EXAMPLE_TO_RUN) { ExampleFunctions.createExampleEnvironmentConfiguration() }
+
+    LocalExampleReportApplication.LOGGER.info("Running ACTIN CRC Example Reporter")
+    LocalExampleReportApplication().runExample(CRC_EXAMPLE_TO_RUN) { ExampleFunctions.createExampleEnvironmentConfigurationCrc() }
 }

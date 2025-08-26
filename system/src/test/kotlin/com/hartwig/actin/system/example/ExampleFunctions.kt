@@ -67,6 +67,25 @@ object ExampleFunctions {
         )
     }
 
+    fun createExampleEnvironmentConfigurationCrc(): EnvironmentConfiguration {
+        val base = EnvironmentConfiguration.create(null)
+        return base.copy(
+            requestingHospital = REQUESTING_HOSPITAL,
+            algo = AlgoConfiguration(),
+            report = ReportConfiguration(
+                includeOverviewWithClinicalHistorySummary = true,
+                includeMolecularDetailsChapter = false,
+                includeApprovedTreatmentsInSummary = false,
+                includeSOCLiteratureEfficacyEvidence = true,
+                includeEligibleSOCTreatmentSummary = true,
+                molecularSummaryType = MolecularSummaryType.NONE,
+                includePatientHeader = false,
+                filterOnSOCExhaustionAndTumorType = true,
+                countryOfReference = Country.NETHERLANDS
+            )
+        )
+    }
+
     fun createExhaustiveEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
