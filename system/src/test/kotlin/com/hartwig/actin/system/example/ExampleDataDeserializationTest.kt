@@ -10,7 +10,7 @@ class ExampleDataDeserializationTest {
 
     @Test
     fun `Should be able to deserialize example data`() {
-        listOf(LUNG_01_EXAMPLE, LUNG_02_EXAMPLE, LUNG_03_EXAMPLE, LUNG_04_EXAMPLE).forEach {
+        listOf(LUNG_01_EXAMPLE, LUNG_02_EXAMPLE, LUNG_03_EXAMPLE, LUNG_04_EXAMPLE, CRC_01_EXAMPLE).forEach {
             val recordJson = ExampleFunctions.resolveExamplePatientRecordJson(it)
             assertThat(PatientRecordJson.read(recordJson)).isNotNull()
         }

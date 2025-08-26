@@ -12,6 +12,7 @@ const val LUNG_01_EXAMPLE = "LUNG-01"
 const val LUNG_02_EXAMPLE = "LUNG-02"
 const val LUNG_03_EXAMPLE = "LUNG-03"
 const val LUNG_04_EXAMPLE = "LUNG-04"
+const val CRC_01_EXAMPLE = "CRC-01"
 
 private const val EXAMPLE_NAME_ = "<example_name>"
 
