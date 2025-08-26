@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.PerformanceStatus
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
+import com.hartwig.actin.datamodel.clinical.WhoStatus
+import java.time.LocalDate
 
 internal object GeneralTestFactory {
 
@@ -18,7 +20,11 @@ internal object GeneralTestFactory {
     }
 
     fun withWHO(who: Int?): PatientRecord {
-        return withPerformanceStatus(TestClinicalFactory.createMinimalTestClinicalRecord().performanceStatus.copy(latestWho = who))
+        return withPerformanceStatus(
+            TestClinicalFactory.createMinimalTestClinicalRecord().performanceStatus.copy(
+                whoStatuses = who?.let { listOf(WhoStatus(LocalDate.now(), it)) } ?: emptyList()
+            )
+        )
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {

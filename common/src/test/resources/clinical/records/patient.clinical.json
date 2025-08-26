@@ -28,7 +28,13 @@
     "lvef": null
   },
   "performanceStatus": {
-    "latestWho": 0
+    "whoStatuses": [
+      {
+        "date": "2021-08-01",
+        "status": 0
+      }
+    ],
+    "asaScores": []
   },
   "oncologicalHistory": [
     {

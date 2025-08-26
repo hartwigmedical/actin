@@ -1,8 +1,14 @@
 package com.hartwig.actin.datamodel.clinical
 
 data class PerformanceStatus(
-    val latestWho: Int? = null,
-    val latestAsa: Int? = null,
-    val whoStatuses: List<WhoStatus> = emptyList(),
-    val asaScores: List<AsaScore> = emptyList()
-)
+    val whoStatuses: List<WhoStatus>,
+    val asaScores: List<AsaScore>
+) {
+    
+    val latestWho: Int?
+        get() = whoStatuses.maxByOrNull(WhoStatus::date)?.status
+
+    val latestAsa: Int?
+        get() = asaScores.maxByOrNull(AsaScore::date)?.score
+
+}
