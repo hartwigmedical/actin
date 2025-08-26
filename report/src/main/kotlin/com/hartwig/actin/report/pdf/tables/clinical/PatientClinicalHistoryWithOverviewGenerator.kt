@@ -40,16 +40,13 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
         listOf(
-            "Gender" to record.patient.gender.display(),
-            "Birth year" to record.patient.birthYear.toString(),
-            "WHO" to whoStatus(record.performanceStatus.latestWho),
-            "Tumor" to record.tumor.name,
-            "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
+            "Gender (birth year, WHO)" to "${record.patient.gender.display()} (${record.patient.birthYear}, WHO ${whoStatus(record.performanceStatus.latestWho)})",
             "Stage" to stage(record.tumor),
-            "Measurable disease (RECIST)" to measurableDisease(record.tumor),
+            "Tumor" to record.tumor.name,
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),
-            "\n" to "\n",
-            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1)
+            "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
+            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1),
+            "Measurable (RECIST)" to measurableDisease(record.tumor)
         ).forEach { (key, value) ->
             clinicalSummaryTable.addCell(createKey(key))
             clinicalSummaryTable.addCell(createValue(value))
@@ -57,9 +54,10 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
+        
+        val molecularRecord = MolecularHistory(report.patientRecord.molecularTests).allPanels().firstOrNull()
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
-        val molecularTest = MolecularHistory(record.molecularTests).latestOrangeMolecularRecord()
-        clinicalHistoryTable.addCell(createValue(molecularTest?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
+        clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
         table.addCell(create(clinicalSummaryTable))
         table.addCell(create(clinicalHistoryTable))
@@ -106,6 +104,6 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         val driverEntries = factory.create()
         val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(driverEntries, it) }
-        return (drivers + msStatus(molecular)).joinToString(", ")
+        return listOfNotNull(drivers, msStatus(molecular)).joinToString(", ")
     }
 }

@@ -95,7 +95,7 @@ class LocalExampleTreatmentMatchApplication {
                 medicationCategories = MedicationCategories.create(atcTree)
             )
 
-        val environmentConfiguration = ExampleFunctions.createExampleEnvironmentConfiguration()
+        val environmentConfiguration = ExampleFunctions.createTrialMatchingEnvironmentConfiguration()
 
         return RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
