@@ -13,7 +13,7 @@ import java.util.Locale
 import kotlin.system.exitProcess
 
 private const val TRIAL_EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
-private const val CRC_EXAMPLE_TO_RUN = CRC_01_EXAMPLE
+private const val PERSONALIZATION_EXAMPLE_TO_RUN = CRC_01_EXAMPLE
 
 class LocalExampleReportApplication {
 
@@ -71,8 +71,10 @@ fun main() {
     Locale.setDefault(Locale.US)
 
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Trial Example Reporter")
-    LocalExampleReportApplication().runExample(TRIAL_EXAMPLE_TO_RUN) { ExampleFunctions.createExampleEnvironmentConfiguration() }
+    LocalExampleReportApplication().runExample(TRIAL_EXAMPLE_TO_RUN) { ExampleFunctions.createTrialMatchingEnvironmentConfiguration() }
 
-    LocalExampleReportApplication.LOGGER.info("Running ACTIN CRC Example Reporter")
-    LocalExampleReportApplication().runExample(CRC_EXAMPLE_TO_RUN) { ExampleFunctions.createExampleEnvironmentConfigurationCrc() }
+    LocalExampleReportApplication.LOGGER.info("Running ACTIN Personalization Example Reporter")
+    LocalExampleReportApplication().runExample(PERSONALIZATION_EXAMPLE_TO_RUN) {
+        ExampleFunctions.createPersonalizationEnvironmentConfiguration()
+    }
 }

@@ -53,7 +53,7 @@ object ExampleFunctions {
         return listOf(systemTestResourcesDirectory(), EXAMPLE_TREATMENT_MATCH_DIRECTORY).joinToString(File.separator)
     }
 
-    fun createExampleEnvironmentConfiguration(): EnvironmentConfiguration {
+    fun createTrialMatchingEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,
@@ -67,7 +67,7 @@ object ExampleFunctions {
         )
     }
 
-    fun createExampleEnvironmentConfigurationCrc(): EnvironmentConfiguration {
+    fun createPersonalizationEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,

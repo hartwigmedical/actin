@@ -42,13 +42,13 @@ class ReportRegressionTest {
     }
 
     @Test
-    fun `Regress trial report textually and visually`() {
+    fun `Regress trial matching report textually and visually`() {
         regressReport(exampleName = LUNG_01_EXAMPLE) { ExampleFunctions.createExhaustiveEnvironmentConfiguration() }
     }
 
     @Test
-    fun `Regress CRC report textually and visually`() {
-        regressReport(exampleName = CRC_01_EXAMPLE) { ExampleFunctions.createExampleEnvironmentConfigurationCrc() }
+    fun `Regress personalization report textually and visually`() {
+        regressReport(exampleName = CRC_01_EXAMPLE) { ExampleFunctions.createPersonalizationEnvironmentConfiguration() }
     }
 
     private fun regressReport(exampleName: String, environmentConfigProvider: () -> EnvironmentConfiguration) {
