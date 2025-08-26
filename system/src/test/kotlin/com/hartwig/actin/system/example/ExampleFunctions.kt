@@ -1,12 +1,20 @@
 package com.hartwig.actin.system.example
 
+import com.hartwig.actin.PatientRecordJson
+import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.report.datamodel.ReportFactory
+import com.hartwig.actin.report.pdf.ReportWriterFactory
 import com.hartwig.actin.testutil.ResourceLocator
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
 import java.io.File
+import java.time.LocalDate
+import kotlin.system.exitProcess
 
 const val LUNG_01_EXAMPLE = "LUNG-01"
 const val LUNG_02_EXAMPLE = "LUNG-02"
@@ -17,6 +25,8 @@ const val CRC_01_EXAMPLE = "CRC-01"
 private const val EXAMPLE_NAME_ = "<example_name>"
 
 object ExampleFunctions {
+
+    private val LOGGER = LogManager.getLogger(ExampleFunctions::class.java)
 
     private const val REQUESTING_HOSPITAL = "Example"
 
@@ -114,6 +124,44 @@ object ExampleFunctions {
                 countryOfReference = Country.NETHERLANDS
             )
         )
+    }
+
+    fun runExample(
+        exampleToRun: String,
+        environmentConfigProvider: () -> EnvironmentConfiguration
+    ) {
+        val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
+
+        try {
+            val examplePatientRecordJson = resolveExamplePatientRecordJson(exampleToRun)
+            val exampleTreatmentMatchJson = resolveExampleTreatmentMatchJson(exampleToRun)
+            run(LocalDate.now(), examplePatientRecordJson, exampleTreatmentMatchJson, localOutputPath, environmentConfigProvider())
+        } catch (exception: ParseException) {
+            LOGGER.warn(exception)
+            exitProcess(1)
+        }
+    }
+
+    fun run(
+        reportDate: LocalDate,
+        examplePatientRecordJson: String,
+        exampleTreatmentMatchJson: String,
+        outputDirectory: String,
+        environmentConfiguration: EnvironmentConfiguration
+    ) {
+        LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
+        val patient = PatientRecordJson.read(examplePatientRecordJson)
+
+        LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
+        val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
+
+        val report = ReportFactory.create(reportDate, patient, treatmentMatch, environmentConfiguration)
+        val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
+
+        writer.write(report, enableExtendedMode = false)
+        writer.write(report, enableExtendedMode = true)
+
+        LOGGER.info("Done!")
     }
 
     private fun systemTestResourcesDirectory(): String {
