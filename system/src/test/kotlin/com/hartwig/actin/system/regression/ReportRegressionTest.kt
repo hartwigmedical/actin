@@ -4,7 +4,6 @@ import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
-import com.hartwig.actin.system.example.LocalExampleReportApplication
 import org.apache.logging.log4j.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
@@ -53,9 +52,8 @@ class ReportRegressionTest {
 
     private fun regressReport(exampleName: String, environmentConfigProvider: () -> EnvironmentConfiguration) {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
-        val localExampleReportApplication = LocalExampleReportApplication()
 
-        localExampleReportApplication.run(
+        ExampleFunctions.run(
             LocalDate.of(2025, 4, 17),
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
