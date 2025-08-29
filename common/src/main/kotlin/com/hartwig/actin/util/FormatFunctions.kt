@@ -1,9 +1,15 @@
-package com.hartwig.actin.molecular.util
-
-import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
+package com.hartwig.actin.util
 
 object FormatFunctions {
-    
+
+    fun removePrefix(
+        hgvsProteinImpact: String,
+        ): String {
+
+        return if (hgvsProteinImpact.isNotEmpty() && hgvsProteinImpact != "p.?")
+            return hgvsProteinImpact.removePrefix("p.") else hgvsProteinImpact
+    }
+
     fun formatVariantImpact(
         hgvsProteinImpact: String,
         hgvsCodingImpact: String,
@@ -12,7 +18,7 @@ object FormatFunctions {
         effects: String
     ): String {
         if (hgvsProteinImpact.isNotEmpty() && hgvsProteinImpact != "p.?") {
-            return forceSingleLetterAminoAcids(hgvsProteinImpact.removePrefix("p."))
+            return hgvsProteinImpact
         }
 
         if (hgvsCodingImpact.isNotEmpty()) {

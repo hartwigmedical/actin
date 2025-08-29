@@ -7,15 +7,16 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.util.FormatFunctions
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
 
-private const val MATCHING_PROTEIN_IMPACT = "V600E"
+private const val MATCHING_PROTEIN_IMPACT = "p.V600E"
 
 class GeneHasVariantWithProteinImpactTest {
-    private val function = GeneHasVariantWithProteinImpact(MATCHING_GENE, setOf(MATCHING_PROTEIN_IMPACT, "V600K"))
+    private val function = GeneHasVariantWithProteinImpact(MATCHING_GENE, setOf(FormatFunctions.removePrefix(MATCHING_PROTEIN_IMPACT), "V600K"))
 
     @Test
     fun `Should fail when gene not present`() {
@@ -47,8 +48,8 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P"))
+                        canonicalImpact = proteinImpact(FormatFunctions.removePrefix("p.V600P")),
+                        otherImpacts = setOf(proteinImpact(FormatFunctions.removePrefix("p.V600P")))
                     )
                 )
             )
@@ -64,9 +65,8 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = "gene B",
                         isReportable = true,
-                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                        canonicalImpact = proteinImpact(FormatFunctions.removePrefix(MATCHING_PROTEIN_IMPACT))
                     )
-
                 )
             )
         )
@@ -81,7 +81,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                        canonicalImpact = proteinImpact(FormatFunctions.removePrefix(MATCHING_PROTEIN_IMPACT))
                     )
                 )
             )
@@ -97,7 +97,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = false,
-                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                        canonicalImpact = proteinImpact(FormatFunctions.removePrefix(MATCHING_PROTEIN_IMPACT))
                     )
                 )
             )
@@ -114,7 +114,7 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         clonalLikelihood = 0.3,
-                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                        canonicalImpact = proteinImpact(FormatFunctions.removePrefix(MATCHING_PROTEIN_IMPACT))
                     )
                 )
             )
@@ -130,8 +130,8 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT))
+                        canonicalImpact = proteinImpact(FormatFunctions.removePrefix("p.V600P")),
+                        otherImpacts = setOf(proteinImpact(FormatFunctions.removePrefix("p.V600P")), proteinImpact(FormatFunctions.removePrefix(MATCHING_PROTEIN_IMPACT)))
                     )
                 )
             )
