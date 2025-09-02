@@ -133,7 +133,7 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         val features = sortedShapData.map { it.first }
         val shapValues = sortedShapData.map { it.second.shapValue }
         val featureValues = sortedShapData.map { it.second.featureValue }
-        val yLabels = features.zip(featureValues) { feature, value -> "$feature = $value" }
+        val yLabels = features.zip(featureValues) { feature, value -> "$feature = %.2f".format(value) }
 
         val plot = letsPlot { x = shapValues; y = yLabels; fill = shapValues } +
                 geomBar(
@@ -145,8 +145,9 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
                     high = "red",    // positive values
                     midpoint = 0.0
                 ) +
-                ggtitle("SHAP values for treatment: $treatmentName")
-        
+                ggtitle("SHAP values for treatment: $treatmentName") +
+                ggsize(width = 1500, height = 800)
+
         val tmpFile = createTempFile("shap_plot", ".svg")
         ggsave(plot, tmpFile.absolutePathString())
         val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
