@@ -4,20 +4,50 @@
       0.91,
       0.84,
       0.27
-    ]
+    ],
+    "shap_values": {
+      "age": {
+        "feature_value": 45,
+        "shap_value": -0.02
+      },
+        "bmi": {
+            "feature_value": 22,
+            "shap_value": -0.01
+        }
+    }
   },
   "Treatment 1": {
     "survival_probs": [
       0.93,
       0.87,
       0.54
-    ]
+    ],
+    "shap_values": {
+      "age": {
+        "feature_value": 45,
+        "shap_value": 0.01
+      },
+        "bmi": {
+            "feature_value": 22,
+            "shap_value": 0.02
+        }
+    }
   },
   "Treatment 2": {
     "survival_probs": [
       0.96,
       0.88,
       0.75
-    ]
+    ],
+    "shap_values": {
+      "age": {
+        "feature_value": 45,
+        "shap_value": 0.03
+      },
+        "bmi": {
+            "feature_value": 22,
+            "shap_value": -0.04
+        }
+    }
   }
 }

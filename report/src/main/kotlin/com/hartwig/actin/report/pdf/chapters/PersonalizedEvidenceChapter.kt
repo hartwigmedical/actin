@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
+import com.hartwig.actin.datamodel.algo.TreatmentEfficacyPrediction
 import com.hartwig.actin.datamodel.personalization.MeasurementType
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldSurvivalOutcomesGenerator
@@ -12,15 +13,20 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Table
 import com.itextpdf.svg.converter.SvgConverter
+import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.export.ggsave
+import org.jetbrains.letsPlot.geom.geomBar
 import org.jetbrains.letsPlot.geom.geomLine
 import org.jetbrains.letsPlot.ggsize
+import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.label.labs
 import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.scale.scaleFillGradient2
 import java.io.ByteArrayInputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempFile
 import kotlin.io.path.readBytes
+import kotlin.math.abs
 
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
@@ -117,9 +123,43 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         return Image(xObj)
     }
 
+    private fun generateShapPlot(
+        treatmentName: String,
+        shapDetails: Map<String, TreatmentEfficacyPrediction.ShapDetail>,
+        document: Document
+    ): Image {
+        val sortedShapData = shapDetails.toList().sortedByDescending { abs(it.second.shapValue) }.take(10)
+
+        val features = sortedShapData.map { it.first }
+        val shapValues = sortedShapData.map { it.second.shapValue }
+        val featureValues = sortedShapData.map { it.second.featureValue }
+        val yLabels = features.zip(featureValues) { feature, value -> "$feature = $value" }
+
+        val plot = letsPlot { x = shapValues; y = yLabels; fill = shapValues } +
+                geomBar(
+                    stat = Stat.identity,
+                ) +
+                scaleFillGradient2(
+                    low = "blue",    // negative values
+                    mid = "white",   // zero
+                    high = "red",    // positive values
+                    midpoint = 0.0
+                ) +
+                ggtitle("SHAP values for treatment: $treatmentName")
+        
+        val tmpFile = createTempFile("shap_plot", ".svg")
+        ggsave(plot, tmpFile.absolutePathString())
+        val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
+        return Image(xObj)
+    }
+
     private fun addSurvivalTable(document: Document) {
         report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
-            val image = generateSurvivalPlot(survivalPredictions, document)
+            val image = generateSurvivalPlot(survivalPredictions.mapValues { it.value.survivalProbs }, document)
+            document.add(image)
+        }
+        report.treatmentMatch.survivalPredictionsPerTreatment?.map { (treatment, prediction) ->
+            val image = generateShapPlot(treatment, prediction.shapValues, document)
             document.add(image)
         }
     }
