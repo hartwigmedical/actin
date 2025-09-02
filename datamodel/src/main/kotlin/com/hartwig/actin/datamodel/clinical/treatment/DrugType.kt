@@ -6,6 +6,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ABL_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ABL TKI"),
     ABL1_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ABL1 TKI"),
     ADENOSINE_TARGETING(TreatmentCategory.IMMUNOTHERAPY),
+    AKT_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "AKT inhibitor"),
     ALK_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ALK inhibitor"),
     ALK_INHIBITOR_GEN_1(TreatmentCategory.TARGETED_THERAPY, "ALK inhibitor (1st gen)"),
     ALK_INHIBITOR_GEN_2(TreatmentCategory.TARGETED_THERAPY, "ALK inhibitor (2nd gen)"),

@@ -44,6 +44,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabMeasurement.HEMOGLOBIN,
                 LabUnit.MILLIMOLES_PER_LITER
             ),
+            EligibilityRule.HAS_HEMOGLOBIN_A1C_PERCENTAGE_OF_AT_MOST_X to hasLimitedLabValueCreator(
+                LabMeasurement.HEMOGLOBIN_A1C,
+                LabUnit.PERCENTAGE
+            ),
             EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO),
             EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME),
             EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.PROTHROMBIN_TIME),

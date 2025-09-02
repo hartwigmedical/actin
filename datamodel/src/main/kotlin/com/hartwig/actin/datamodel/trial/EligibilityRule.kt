@@ -310,6 +310,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
+    HAS_HEMOGLOBIN_A1C_PERCENTAGE_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_INR_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_PT_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS(FunctionInput.NONE),
@@ -431,6 +432,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_CHILD_PUGH_SCORE_X(FunctionInput.ONE_STRING),
     HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY(FunctionInput.NONE),
     HAS_ADEQUATE_VENOUS_ACCESS(FunctionInput.NONE),
+    HAS_SIGNS_OF_IMMINENT_ORGAN_FAILURE(FunctionInput.NONE),
     MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST(FunctionInput.NONE),
 
     //Rules related to cardiac function

@@ -173,6 +173,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to
                     hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccessCreator(),
+            EligibilityRule.HAS_SIGNS_OF_IMMINENT_ORGAN_FAILURE to hasSignsOfImminentOrganFailureCreator(),
             EligibilityRule.MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST to { MeetsSixMinuteWalkingTestRequirements() },
             EligibilityRule.HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X to hasHadComorbiditiesWithIcdCodeCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
@@ -284,6 +285,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasAdequateVenousAccessCreator(): FunctionCreator {
         return { HasAdequateVenousAccess() }
+    }
+
+    private fun hasSignsOfImminentOrganFailureCreator(): FunctionCreator {
+        return { HasSignsOfImminentOrganFailure() }
     }
 
     private fun hasHadComorbiditiesWithIcdCodeCreator(): FunctionCreator {
