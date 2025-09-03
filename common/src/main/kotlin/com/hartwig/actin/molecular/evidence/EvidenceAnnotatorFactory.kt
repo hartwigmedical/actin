@@ -29,9 +29,10 @@ object EvidenceAnnotatorFactory {
     fun createMolecularRecordAnnotator(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        patientGender: Gender
     ): EvidenceAnnotator<MolecularRecord> {
-        return create(serveRecord, doidEntry, tumorDoids, null) { input, drivers, molecularCharacteristics ->
+        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
     }
