@@ -65,7 +65,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val orangeMolecularTests = interpretOrangeRecord(tumorDoids, inputData, patientGender)
 
         val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData, patientGender)
+            interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.print(history)
@@ -101,8 +101,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         config: MolecularInterpreterConfig,
         clinical: ClinicalRecord,
         tumorDoids: Set<String>,
-        inputData: MolecularInterpreterInputData,
-        patientGender: Gender
+        inputData: MolecularInterpreterInputData
     ): List<MolecularTest> {
         LOGGER.info(
             "Creating evidence database for clinical molecular tests "
@@ -126,6 +125,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVirusAnnotator = PanelVirusAnnotator()
         val panelDriverAttributeAnnotator =
             PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), inputData.dndsDatabase)
+
+        val patientGender = inputData.clinical.patient.gender
         val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids, patientGender)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
