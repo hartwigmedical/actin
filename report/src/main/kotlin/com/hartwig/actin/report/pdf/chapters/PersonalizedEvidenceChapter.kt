@@ -21,12 +21,14 @@ import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.label.labs
 import org.jetbrains.letsPlot.letsPlot
-import org.jetbrains.letsPlot.scale.scaleFillGradient2
+import org.jetbrains.letsPlot.scale.guides
+import org.jetbrains.letsPlot.scale.scaleFillManual
 import java.io.ByteArrayInputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempFile
 import kotlin.io.path.readBytes
 import kotlin.math.abs
+import kotlin.math.sign
 
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
@@ -43,7 +45,7 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         addChapterTitle(document)
 
         addPersonalizationTable(document)
-        addSurvivalTable(document)
+        addSurvivalPlot(document)
     }
 
     private fun addPersonalizationTable(document: Document) {
@@ -135,16 +137,18 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         val featureValues = sortedShapData.map { it.second.featureValue }
         val yLabels = features.zip(featureValues) { feature, value -> "$feature = %.2f".format(value) }
 
-        val plot = letsPlot { x = shapValues; y = yLabels; fill = shapValues } +
+        val plot = letsPlot { x = shapValues; y = yLabels; fill = shapValues.map { sign(it) } } +
                 geomBar(
                     stat = Stat.identity,
                 ) +
-                scaleFillGradient2(
-                    low = "blue",    // negative values
-                    mid = "white",   // zero
-                    high = "red",    // positive values
-                    midpoint = 0.0
+                scaleFillManual(
+                    values = mapOf(
+                        -1.0 to "blue",
+                        0.0 to "white",
+                        1.0 to "red",
+                    )
                 ) +
+                guides(fill = "none") +
                 ggtitle("SHAP values for treatment: $treatmentName") +
                 ggsize(width = 1500, height = 800)
 
@@ -154,13 +158,13 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         return Image(xObj)
     }
 
-    private fun addSurvivalTable(document: Document) {
+    private fun addSurvivalPlot(document: Document) {
         report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
-            val image = generateSurvivalPlot(survivalPredictions.mapValues { it.value.survivalProbs }, document)
+            val image = generateSurvivalPlot(survivalPredictions.associate { it.treatment to it.survivalProbs }, document)
             document.add(image)
         }
-        report.treatmentMatch.survivalPredictionsPerTreatment?.map { (treatment, prediction) ->
-            val image = generateShapPlot(treatment, prediction.shapValues, document)
+        report.treatmentMatch.survivalPredictionsPerTreatment?.map { prediction ->
+            val image = generateShapPlot(prediction.treatment, prediction.shapValues, document)
             document.add(image)
         }
     }

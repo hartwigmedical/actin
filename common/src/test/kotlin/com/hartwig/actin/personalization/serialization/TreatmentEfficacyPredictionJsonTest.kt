@@ -16,22 +16,25 @@ class TreatmentEfficacyPredictionJsonTest {
         val predictions = TreatmentEfficacyPredictionJson.read(treatmentEfficacyPredictionJson)
 
         assertThat(predictions).isEqualTo(
-            mapOf(
-                "No Treatment" to TreatmentEfficacyPrediction(
+            listOf(
+                TreatmentEfficacyPrediction(
+                    treatment = "No Treatment",
                     survivalProbs = listOf(0.91, 0.84, 0.27),
                     shapValues = mapOf(
                         "age" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = -0.02),
                         "bmi" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = -0.01)
                     )
                 ),
-                "Treatment 1" to TreatmentEfficacyPrediction(
+                TreatmentEfficacyPrediction(
+                    treatment = "Treatment 1",
                     survivalProbs = listOf(0.93, 0.87, 0.54),
                     shapValues = mapOf(
                         "age" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = 0.01),
                         "bmi" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = 0.02)
                     )
                 ),
-                "Treatment 2" to TreatmentEfficacyPrediction(
+                TreatmentEfficacyPrediction(
+                    treatment = "Treatment 2",
                     survivalProbs = listOf(0.96, 0.88, 0.75),
                     shapValues = mapOf(
                         "age" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = 0.03),

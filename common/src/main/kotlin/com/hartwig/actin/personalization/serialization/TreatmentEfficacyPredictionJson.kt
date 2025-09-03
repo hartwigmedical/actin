@@ -14,13 +14,13 @@ object TreatmentEfficacyPredictionJson {
     private val logger = LogManager.getLogger(TreatmentEfficacyPredictionJson::class.java)
     private val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
-    fun read(treatmentEfficacyPredictionJson: String): Map<String, TreatmentEfficacyPrediction> {
+    fun read(treatmentEfficacyPredictionJson: String): List<TreatmentEfficacyPrediction> {
         logger.info("Loading treatment efficacy predictions from $treatmentEfficacyPredictionJson")
 
         val json = Files.readString(File(treatmentEfficacyPredictionJson).toPath())
-        val results = mapper.readValue<Map<String, TreatmentEfficacyPrediction>>(json)
+        val results = mapper.readValue<List<TreatmentEfficacyPrediction>>(json)
 
-        logger.info(" Loaded treatment efficacy predictions for ${results.keys.size} treatments")
+        logger.info(" Loaded treatment efficacy predictions for ${results.size} treatments")
 
         return results
     }
