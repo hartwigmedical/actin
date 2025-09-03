@@ -119,9 +119,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val url = trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
             ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
 
-        val matchGender =if (gender != null && !Gender.valueOf(patientGender.name).equals(Gender.BOTH)) patientGender.name.equals(
-                gender.name
-            ) else null
+        val matchGender = if (gender != null && Gender.valueOf(patientGender.name) != Gender.UNKNOWN) patientGender.name == gender.name else null
 
         return ExternalTrial(
             nctId = trial.nctId(),
