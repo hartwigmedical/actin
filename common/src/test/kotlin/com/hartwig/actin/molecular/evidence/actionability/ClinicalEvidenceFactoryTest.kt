@@ -21,6 +21,7 @@ import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import com.hartwig.serve.datamodel.trial.GenderCriterium
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -36,6 +37,20 @@ class ClinicalEvidenceFactoryTest {
 
     private val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver>()
     val factory = ClinicalEvidenceFactory(cancerTypeResolver, Gender.FEMALE)
+
+    @Test
+    fun `Should correctly match gender`() {
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, Gender.FEMALE)).isEqualTo(true)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, Gender.MALE)).isEqualTo(true)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, Gender.FEMALE)).isEqualTo(false)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, Gender.MALE)).isEqualTo(false)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.FEMALE)).isEqualTo(true)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.MALE)).isEqualTo(true)
+
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, Gender.UNKNOWN)).isEqualTo(null)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.UNKNOWN)).isEqualTo(null)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, Gender.UNKNOWN)).isEqualTo(null)
+    }
 
     @Test
     fun `Should convert SERVE specifically applicable cancer type hotspot evidence to treatment evidence`() {
