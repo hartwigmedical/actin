@@ -20,9 +20,10 @@ import com.hartwig.serve.datamodel.efficacy.Treatment
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.GenderCriterium
+import kotlin.text.equals
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
-class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver, private  val patientGender: Gender?) {
+class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver, private  val patientGender: Gender) {
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
@@ -118,7 +119,9 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val url = trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
             ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
 
-        val matchGender = if (gender != null && patientGender != null) patientGender.name.equals(gender.name) else null
+        val matchGender =if (gender != null && !Gender.valueOf(patientGender.name).equals(Gender.BOTH)) patientGender.name.equals(
+                gender.name
+            ) else null
 
         return ExternalTrial(
             nctId = trial.nctId(),

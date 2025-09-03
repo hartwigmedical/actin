@@ -41,7 +41,7 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
-        patientGender: Gender?,
+        patientGender: Gender,
         annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
     ): EvidenceAnnotator<T> {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
