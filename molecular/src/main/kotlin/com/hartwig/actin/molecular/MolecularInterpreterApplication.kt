@@ -126,7 +126,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelDriverAttributeAnnotator =
             PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), inputData.dndsDatabase)
 
-        val patientGender = inputData.clinical.patient.gender
+        val patientGender = clinical.patient.gender
         val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids, patientGender)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
