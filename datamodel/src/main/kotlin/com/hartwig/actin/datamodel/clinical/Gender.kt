@@ -4,7 +4,8 @@ import com.hartwig.actin.datamodel.Displayable
 
 enum class Gender(private val display: String) : Displayable {
     MALE("Male"),
-    FEMALE("Female");
+    FEMALE("Female"),
+    BOTH("");
 
     override fun display(): String {
         return display
