@@ -2860,7 +2860,417 @@
         0.11839582771062851,
         0.11839582771062851,
         0.11839582771062851
-      ]
+      ],
+      "shapValues": {
+        "Sex": {
+          "featureValue": 1.0,
+          "shapValue": 0.016339668929576945
+        },
+        "ageAtMetastaticDiagnosis": {
+          "featureValue": -2.1398424713548,
+          "shapValue": -0.9160968121886254
+        },
+        "numberOfPriorTumors": {
+          "featureValue": -0.2899910463615237,
+          "shapValue": 0.018438796003659757
+        },
+        "Double primary": {
+          "featureValue": 0.0,
+          "shapValue": 0.007350128690401562
+        },
+        "Tumor\u2013ARV distance": {
+          "featureValue": 0.042206632594068726,
+          "shapValue": -0.005524907310803906
+        },
+        "MRF clear": {
+          "featureValue": 0.0,
+          "shapValue": 0.0058761055270831015
+        },
+        "MRF distance (mm)": {
+          "featureValue": -0.11089652754109713,
+          "shapValue": 0.008524113297462646
+        },
+        "differentiationGrade": {
+          "featureValue": -0.3271402518151148,
+          "shapValue": -0.09396120369434342
+        },
+        "clinicalTnmT": {
+          "featureValue": 0.10652126617498524,
+          "shapValue": -0.015180833041668063
+        },
+        "clinicalTnmN": {
+          "featureValue": 0.36463453141398444,
+          "shapValue": 0.03430457750956206
+        },
+        "clinicalTnmM": {
+          "featureValue": 0.34329835212212717,
+          "shapValue": 0.031158566474914478
+        },
+        "pathologicalTnmT": {
+          "featureValue": 0.17980841278849222,
+          "shapValue": 0.00988036274909961
+        },
+        "pathologicalTnmN": {
+          "featureValue": 0.13227423487956536,
+          "shapValue": 0.011076322595278354
+        },
+        "pathologicalTnmM": {
+          "featureValue": -0.7146939007063521,
+          "shapValue": -0.09235355496406543
+        },
+        "clinicalTumorStage": {
+          "featureValue": 0.3072890859924163,
+          "shapValue": -0.029524999658266715
+        },
+        "pathologicalTumorStage": {
+          "featureValue": 0.022815420936757716,
+          "shapValue": -0.008333243330319817
+        },
+        "investigatedLymphNodesCountPrimaryDiagnosis": {
+          "featureValue": -0.365874430309077,
+          "shapValue": 0.07950657725334187
+        },
+        "positiveLymphNodesCountPrimaryDiagnosis": {
+          "featureValue": -0.21366927345756068,
+          "shapValue": -0.022476721604665222
+        },
+        "Ileus at presentation": {
+          "featureValue": 0.0,
+          "shapValue": -0.016276085972785737
+        },
+        "Perforation": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "daysBetweenPrimaryAndMetastaticDiagnosis": {
+          "featureValue": -0.23228463736608304,
+          "shapValue": -0.006906976699829093
+        },
+        "hasLiverOrIntrahepaticBileDuctMetastases": {
+          "featureValue": 1.0,
+          "shapValue": -0.04558674097061136
+        },
+        "# liver mets": {
+          "featureValue": 0.36623459024832217,
+          "shapValue": 0.20414171497027067
+        },
+        "Max liver met (mm)": {
+          "featureValue": -0.13760531910630583,
+          "shapValue": -0.0892705706755319
+        },
+        "hasLymphNodeMetastases": {
+          "featureValue": 0.0,
+          "shapValue": -0.04426818370819078
+        },
+        "investigatedLymphNodesCountMetastaticDiagnosis": {
+          "featureValue": -0.24551255961237317,
+          "shapValue": -0.03846164981524147
+        },
+        "positiveLymphNodesCountMetastaticDiagnosis": {
+          "featureValue": -0.164051568432414,
+          "shapValue": 0.03326333085695913
+        },
+        "hasPeritonealMetastases": {
+          "featureValue": 0.0,
+          "shapValue": 0.021939896146456306
+        },
+        "hasBronchusOrLungMetastases": {
+          "featureValue": 0.0,
+          "shapValue": -0.12035694797833751
+        },
+        "hasBrainMetastases": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasOtherMetastases": {
+          "featureValue": 0.0,
+          "shapValue": -0.15720672865708663
+        },
+        "whoAssessmentAtMetastaticDiagnosis": {
+          "featureValue": 0.0004563406012986885,
+          "shapValue": -0.20793222904205302
+        },
+        "asaAssessmentAtMetastaticDiagnosis": {
+          "featureValue": -0.19628058355846278,
+          "shapValue": -0.1828967189788817
+        },
+        "lactateDehydrogenaseAtMetastaticDiagnosis": {
+          "featureValue": -0.4273822990274822,
+          "shapValue": -0.08205352256695424
+        },
+        "alkalinePhosphataseAtMetastaticDiagnosis": {
+          "featureValue": -0.19912165426104467,
+          "shapValue": -0.058010190029938936
+        },
+        "leukocytesAbsoluteAtMetastaticDiagnosis": {
+          "featureValue": -0.08478008987757144,
+          "shapValue": 0.004339349468549229
+        },
+        "carcinoembryonicAntigenAtMetastaticDiagnosis": {
+          "featureValue": -0.23855182395887134,
+          "shapValue": -0.02631477574507383
+        },
+        "albumineAtMetastaticDiagnosis": {
+          "featureValue": 0.0039634420620549065,
+          "shapValue": 0.0008304817477859938
+        },
+        "neutrophilsAbsoluteAtMetastaticDiagnosis": {
+          "featureValue": -0.0176825768441058,
+          "shapValue": 6.0367782910593824e-05
+        },
+        "hasHadPrimarySurgeryPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.00105689346790309
+        },
+        "hasHadPrimarySurgeryDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadGastroenterologySurgeryPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadGastroenterologySurgeryDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadHipecPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadHipecDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadPrimaryRadiotherapyPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": -3.8286050160577885e-06
+        },
+        "hasHadPrimaryRadiotherapyDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadMetastaticSurgery": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadMetastaticRadiotherapy": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "charlsonComorbidityIndex": {
+          "featureValue": 0.020188658668742185,
+          "shapValue": -3.656556208938196e-05
+        },
+        "hasAids": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasCongestiveHeartFailure": {
+          "featureValue": 0.0,
+          "shapValue": -0.0006942331790924516
+        },
+        "hasCollagenosis": {
+          "featureValue": 0.0,
+          "shapValue": 0.0007256255547203327
+        },
+        "hasCopd": {
+          "featureValue": 0.0,
+          "shapValue": 0.005446260770161933
+        },
+        "hasCerebrovascularDisease": {
+          "featureValue": 0.0,
+          "shapValue": -0.0006209266185761564
+        },
+        "hasDementia": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasDiabetesMellitus": {
+          "featureValue": 0.0,
+          "shapValue": -0.0064520315329233595
+        },
+        "hasDiabetesMellitusWithEndOrganDamage": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasOtherMalignancy": {
+          "featureValue": 1.0,
+          "shapValue": -0.03215091089407577
+        },
+        "hasOtherMetastaticSolidTumor": {
+          "featureValue": 0.0,
+          "shapValue": 0.0042882172266645036
+        },
+        "hasMyocardialInfarct": {
+          "featureValue": 0.0,
+          "shapValue": -0.010591863592465556
+        },
+        "hasMildLiverDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHemiplegiaOrParaplegia": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasPeripheralVascularDisease": {
+          "featureValue": 0.0,
+          "shapValue": -0.0026146674156189618
+        },
+        "hasRenalDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasLiverDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasUlcerDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "MSI": {
+          "featureValue": 0.0,
+          "shapValue": 0.0028264361619947387
+        },
+        "BRAF mut.": {
+          "featureValue": 0.0,
+          "shapValue": 0.005965758363406071
+        },
+        "BRAF V600E": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "RAS mut.": {
+          "featureValue": 0.0,
+          "shapValue": 0.16373590389887518
+        },
+        "KRAS G12C": {
+          "featureValue": 0.0,
+          "shapValue": -0.008161414861679095
+        },
+        "5-FU": {
+          "featureValue": 0.0,
+          "shapValue": 0.19442034145196282
+        },
+        "Oxaliplatin": {
+          "featureValue": 0.0,
+          "shapValue": 0.03549254357814783
+        },
+        "Irinotecan": {
+          "featureValue": 0.0,
+          "shapValue": 0.00415879090627036
+        },
+        "Bevacizumab": {
+          "featureValue": 0.0,
+          "shapValue": 0.08490681846936539
+        },
+        "Panitumumab": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "Pembrolizumab": {
+          "featureValue": 0.0,
+          "shapValue": -0.0009900514284769308
+        },
+        "Nivolumab": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasTreatment": {
+          "featureValue": 0.0,
+          "shapValue": -4.169921080291831e-05
+        },
+        "primaryTumorType_CRC_ADENOCARCINOMA": {
+          "featureValue": 0.0,
+          "shapValue": 0.6815490834911664
+        },
+        "primaryTumorType_CRC_MUCINOUS": {
+          "featureValue": 0.0,
+          "shapValue": 0.06993325551350889
+        },
+        "primaryTumorType_CRC_OTHER": {
+          "featureValue": 0.0,
+          "shapValue": 0.04048921207586923
+        },
+        "primaryTumorType_CRC_SIGNET_RING_CELL": {
+          "featureValue": 0.0,
+          "shapValue": -0.03539539376894655
+        },
+        "primaryTumorLocation_APPENDIX": {
+          "featureValue": 0.0,
+          "shapValue": -0.008358771800995054
+        },
+        "primaryTumorLocation_ASCENDING_COLON": {
+          "featureValue": 0.0,
+          "shapValue": 0.10647862732410429
+        },
+        "primaryTumorLocation_COECUM": {
+          "featureValue": 0.0,
+          "shapValue": -0.02149179915587096
+        },
+        "primaryTumorLocation_COLON_NOS": {
+          "featureValue": 0.0,
+          "shapValue": 0.001499711871147169
+        },
+        "primaryTumorLocation_COLON_OVERLAPPING": {
+          "featureValue": 0.0,
+          "shapValue": -0.007006553808848255
+        },
+        "primaryTumorLocation_DESCENDING_COLON": {
+          "featureValue": 0.0,
+          "shapValue": -0.0014043972889584329
+        },
+        "primaryTumorLocation_FLEXURA_HEPATICA": {
+          "featureValue": 0.0,
+          "shapValue": -0.0065246659517290695
+        },
+        "primaryTumorLocation_FLEXURA_LIENALIS": {
+          "featureValue": 0.0,
+          "shapValue": -0.006521956125895234
+        },
+        "primaryTumorLocation_RECTOSIGMOID": {
+          "featureValue": 0.0,
+          "shapValue": -0.01249044656753521
+        },
+        "primaryTumorLocation_RECTUM": {
+          "featureValue": 0.0,
+          "shapValue": -0.030809479355811947
+        },
+        "primaryTumorLocation_SIGMOID_COLON": {
+          "featureValue": 0.0,
+          "shapValue": 0.03423793991406776
+        },
+        "primaryTumorLocation_TRANSVERSE_COLON": {
+          "featureValue": 0.0,
+          "shapValue": 0.022092041174570642
+        },
+        "sidedness_LEFT": {
+          "featureValue": 0.0,
+          "shapValue": -0.05176539083321874
+        },
+        "sidedness_RIGHT": {
+          "featureValue": 0.0,
+          "shapValue": 0.07852892319361364
+        },
+        "EMI >5mm": {
+          "featureValue": 0.0,
+          "shapValue": 0.00017084081967685036
+        },
+        "EMI <5mm": {
+          "featureValue": 0.0,
+          "shapValue": -0.00025162339210504925
+        },
+        "EMI: NA": {
+          "featureValue": 0.0,
+          "shapValue": 0.005802945097287478
+        },
+        "tumorRegression": {
+          "featureValue": -19.75463818130002,
+          "shapValue": -2.8495979653795565
+        }
+      }
     },
     {
       "treatment": "FOLFIRI",
@@ -4422,7 +4832,417 @@
         0.12622590363025665,
         0.12622590363025665,
         0.12622590363025665
-      ]
+      ],
+      "shapValues": {
+        "Sex": {
+          "featureValue": 1.0,
+          "shapValue": 0.016821344892184082
+        },
+        "ageAtMetastaticDiagnosis": {
+          "featureValue": -2.1398424713548,
+          "shapValue": -0.6733280464013419
+        },
+        "numberOfPriorTumors": {
+          "featureValue": -0.2899910463615237,
+          "shapValue": 0.013788944085438922
+        },
+        "Double primary": {
+          "featureValue": 0.0,
+          "shapValue": 0.0029624334971112276
+        },
+        "Tumor\u2013ARV distance": {
+          "featureValue": 0.042206632594068726,
+          "shapValue": -0.005252439181010075
+        },
+        "MRF clear": {
+          "featureValue": 0.0,
+          "shapValue": 0.003900785446167232
+        },
+        "MRF distance (mm)": {
+          "featureValue": -0.11089652754109713,
+          "shapValue": 0.006516327063242455
+        },
+        "differentiationGrade": {
+          "featureValue": -0.3271402518151148,
+          "shapValue": -0.10607297599315631
+        },
+        "clinicalTnmT": {
+          "featureValue": 0.10652126617498524,
+          "shapValue": -0.008509604334831167
+        },
+        "clinicalTnmN": {
+          "featureValue": 0.36463453141398444,
+          "shapValue": 0.03334895968437183
+        },
+        "clinicalTnmM": {
+          "featureValue": 0.34329835212212717,
+          "shapValue": 0.02386062065760301
+        },
+        "pathologicalTnmT": {
+          "featureValue": 0.17980841278849222,
+          "shapValue": 0.007056500911712726
+        },
+        "pathologicalTnmN": {
+          "featureValue": 0.13227423487956536,
+          "shapValue": 0.010361328124999977
+        },
+        "pathologicalTnmM": {
+          "featureValue": -0.7146939007063521,
+          "shapValue": -0.06258491019407912
+        },
+        "clinicalTumorStage": {
+          "featureValue": 0.3072890859924163,
+          "shapValue": -0.025181404749552366
+        },
+        "pathologicalTumorStage": {
+          "featureValue": 0.022815420936757716,
+          "shapValue": -0.003493892947832792
+        },
+        "investigatedLymphNodesCountPrimaryDiagnosis": {
+          "featureValue": -0.365874430309077,
+          "shapValue": 0.05356246411800384
+        },
+        "positiveLymphNodesCountPrimaryDiagnosis": {
+          "featureValue": -0.21366927345756068,
+          "shapValue": -0.015132246613502431
+        },
+        "Ileus at presentation": {
+          "featureValue": 0.0,
+          "shapValue": -0.014027974208196051
+        },
+        "Perforation": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "daysBetweenPrimaryAndMetastaticDiagnosis": {
+          "featureValue": -0.23228463736608304,
+          "shapValue": -0.006088850100835226
+        },
+        "hasLiverOrIntrahepaticBileDuctMetastases": {
+          "featureValue": 1.0,
+          "shapValue": -0.050938693086306164
+        },
+        "# liver mets": {
+          "featureValue": 0.36623459024832217,
+          "shapValue": 0.17123740077018712
+        },
+        "Max liver met (mm)": {
+          "featureValue": -0.13760531910630583,
+          "shapValue": -0.04228922148545585
+        },
+        "hasLymphNodeMetastases": {
+          "featureValue": 0.0,
+          "shapValue": -0.03325489401817324
+        },
+        "investigatedLymphNodesCountMetastaticDiagnosis": {
+          "featureValue": -0.24551255961237317,
+          "shapValue": -0.03884785552819536
+        },
+        "positiveLymphNodesCountMetastaticDiagnosis": {
+          "featureValue": -0.164051568432414,
+          "shapValue": 0.030079379677772522
+        },
+        "hasPeritonealMetastases": {
+          "featureValue": 0.0,
+          "shapValue": 0.010873057643572492
+        },
+        "hasBronchusOrLungMetastases": {
+          "featureValue": 0.0,
+          "shapValue": -0.0753590919574103
+        },
+        "hasBrainMetastases": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasOtherMetastases": {
+          "featureValue": 0.0,
+          "shapValue": -0.10449578622976936
+        },
+        "whoAssessmentAtMetastaticDiagnosis": {
+          "featureValue": 0.0004563406012986885,
+          "shapValue": -0.14956834425528834
+        },
+        "asaAssessmentAtMetastaticDiagnosis": {
+          "featureValue": -0.19628058355846278,
+          "shapValue": -0.20434007207552587
+        },
+        "lactateDehydrogenaseAtMetastaticDiagnosis": {
+          "featureValue": -0.4273822990274822,
+          "shapValue": -0.06515259484450035
+        },
+        "alkalinePhosphataseAtMetastaticDiagnosis": {
+          "featureValue": -0.19912165426104467,
+          "shapValue": -0.04712139805157974
+        },
+        "leukocytesAbsoluteAtMetastaticDiagnosis": {
+          "featureValue": -0.08478008987757144,
+          "shapValue": 0.015994822482268023
+        },
+        "carcinoembryonicAntigenAtMetastaticDiagnosis": {
+          "featureValue": -0.23855182395887134,
+          "shapValue": -0.02369609832763671
+        },
+        "albumineAtMetastaticDiagnosis": {
+          "featureValue": 0.0039634420620549065,
+          "shapValue": 0.000833457112312271
+        },
+        "neutrophilsAbsoluteAtMetastaticDiagnosis": {
+          "featureValue": -0.0176825768441058,
+          "shapValue": 4.811028639487939e-05
+        },
+        "hasHadPrimarySurgeryPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0037173606952030833
+        },
+        "hasHadPrimarySurgeryDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadGastroenterologySurgeryPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadGastroenterologySurgeryDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadHipecPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadHipecDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadPrimaryRadiotherapyPriorToMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": -3.303686777700321e-06
+        },
+        "hasHadPrimaryRadiotherapyDuringMetastaticTreatment": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadMetastaticSurgery": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHadMetastaticRadiotherapy": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "charlsonComorbidityIndex": {
+          "featureValue": 0.020188658668742185,
+          "shapValue": -2.4535655975377324e-05
+        },
+        "hasAids": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasCongestiveHeartFailure": {
+          "featureValue": 0.0,
+          "shapValue": -0.0003760723272960102
+        },
+        "hasCollagenosis": {
+          "featureValue": 0.0,
+          "shapValue": 0.0006856618324915983
+        },
+        "hasCopd": {
+          "featureValue": 0.0,
+          "shapValue": 0.004687553445498094
+        },
+        "hasCerebrovascularDisease": {
+          "featureValue": 0.0,
+          "shapValue": -0.0005287539958955442
+        },
+        "hasDementia": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasDiabetesMellitus": {
+          "featureValue": 0.0,
+          "shapValue": -0.003203855355580728
+        },
+        "hasDiabetesMellitusWithEndOrganDamage": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasOtherMalignancy": {
+          "featureValue": 1.0,
+          "shapValue": -0.025453370014826504
+        },
+        "hasOtherMetastaticSolidTumor": {
+          "featureValue": 0.0,
+          "shapValue": 0.0037884773810705763
+        },
+        "hasMyocardialInfarct": {
+          "featureValue": 0.0,
+          "shapValue": -0.008245599468549228
+        },
+        "hasMildLiverDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasHemiplegiaOrParaplegia": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasPeripheralVascularDisease": {
+          "featureValue": 0.0,
+          "shapValue": -0.0021175046761829166
+        },
+        "hasRenalDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasLiverDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasUlcerDisease": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "MSI": {
+          "featureValue": 0.0,
+          "shapValue": 0.0023347743352253314
+        },
+        "BRAF mut.": {
+          "featureValue": 0.0,
+          "shapValue": 0.0043233187993366355
+        },
+        "BRAF V600E": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "RAS mut.": {
+          "featureValue": 0.0,
+          "shapValue": 0.10794491310914356
+        },
+        "KRAS G12C": {
+          "featureValue": 0.0,
+          "shapValue": -0.006143304705619745
+        },
+        "5-FU": {
+          "featureValue": 1.0,
+          "shapValue": -0.18910001158714276
+        },
+        "Oxaliplatin": {
+          "featureValue": 0.0,
+          "shapValue": 0.034732584158579494
+        },
+        "Irinotecan": {
+          "featureValue": 0.0,
+          "shapValue": 0.0025112378597260676
+        },
+        "Bevacizumab": {
+          "featureValue": 0.0,
+          "shapValue": 0.09062615652879073
+        },
+        "Panitumumab": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "Pembrolizumab": {
+          "featureValue": 0.0,
+          "shapValue": -0.000855111281076996
+        },
+        "Nivolumab": {
+          "featureValue": 0.0,
+          "shapValue": 0.0
+        },
+        "hasTreatment": {
+          "featureValue": 1.0,
+          "shapValue": 3.55519851049646e-05
+        },
+        "primaryTumorType_CRC_ADENOCARCINOMA": {
+          "featureValue": 0.0,
+          "shapValue": 0.5034246037403741
+        },
+        "primaryTumorType_CRC_MUCINOUS": {
+          "featureValue": 0.0,
+          "shapValue": 0.05478096187114723
+        },
+        "primaryTumorType_CRC_OTHER": {
+          "featureValue": 0.0,
+          "shapValue": 0.023028013507525074
+        },
+        "primaryTumorType_CRC_SIGNET_RING_CELL": {
+          "featureValue": 0.0,
+          "shapValue": -0.03826687912146243
+        },
+        "primaryTumorLocation_APPENDIX": {
+          "featureValue": 0.0,
+          "shapValue": -0.007268497546514041
+        },
+        "primaryTumorLocation_ASCENDING_COLON": {
+          "featureValue": 0.0,
+          "shapValue": 0.05238468825817114
+        },
+        "primaryTumorLocation_COECUM": {
+          "featureValue": 0.0,
+          "shapValue": -0.02226089636484796
+        },
+        "primaryTumorLocation_COLON_NOS": {
+          "featureValue": 0.0,
+          "shapValue": 0.00044389406840017465
+        },
+        "primaryTumorLocation_COLON_OVERLAPPING": {
+          "featureValue": 0.0,
+          "shapValue": -0.00916811406612387
+        },
+        "primaryTumorLocation_DESCENDING_COLON": {
+          "featureValue": 0.0,
+          "shapValue": -0.0007921741406123154
+        },
+        "primaryTumorLocation_FLEXURA_HEPATICA": {
+          "featureValue": 0.0,
+          "shapValue": -0.005723397334416773
+        },
+        "primaryTumorLocation_FLEXURA_LIENALIS": {
+          "featureValue": 0.0,
+          "shapValue": -0.00517323772112525
+        },
+        "primaryTumorLocation_RECTOSIGMOID": {
+          "featureValue": 0.0,
+          "shapValue": -0.0054311867554982145
+        },
+        "primaryTumorLocation_RECTUM": {
+          "featureValue": 0.0,
+          "shapValue": -0.027200215856234333
+        },
+        "primaryTumorLocation_SIGMOID_COLON": {
+          "featureValue": 0.0,
+          "shapValue": 0.03633973757425953
+        },
+        "primaryTumorLocation_TRANSVERSE_COLON": {
+          "featureValue": 0.0,
+          "shapValue": 0.019523086150487146
+        },
+        "sidedness_LEFT": {
+          "featureValue": 0.0,
+          "shapValue": -0.03245530923207599
+        },
+        "sidedness_RIGHT": {
+          "featureValue": 0.0,
+          "shapValue": 0.07518990119298286
+        },
+        "EMI >5mm": {
+          "featureValue": 0.0,
+          "shapValue": -0.0007140584786731926
+        },
+        "EMI <5mm": {
+          "featureValue": 0.0,
+          "shapValue": -0.00047555665175106715
+        },
+        "EMI: NA": {
+          "featureValue": 0.0,
+          "shapValue": 0.005490474502245639
+        },
+        "tumorRegression": {
+          "featureValue": -19.75463818130002,
+          "shapValue": -2.760068790316582
+        }
+      }
     }
   ],
   "maxMolecularTestAge": null
