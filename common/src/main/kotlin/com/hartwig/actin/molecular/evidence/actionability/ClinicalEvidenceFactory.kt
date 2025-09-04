@@ -86,9 +86,9 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         return matchingCriteriaAndIndicationsPerEligibleTrial.mapValues { (actionableTrial, matchingCriteriaAndIndications) ->
             val matchingCriteria = matchingCriteriaAndIndications.first
             val matchingIndications = matchingCriteriaAndIndications.second
-            val gender = actionableTrial.genderCriterium()
+            val genderCriterium = actionableTrial.genderCriterium()
 
-            createExternalTrial(actionableTrial, matchingCriteria, matchingIndications, gender)
+            createExternalTrial(actionableTrial, matchingCriteria, matchingIndications, genderCriterium)
         }.values.toSet()
     }
 
@@ -96,7 +96,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         trial: ActionableTrial,
         matchingCriteria: Set<MolecularCriterium>,
         matchingIndications: Set<Indication>,
-        gender: GenderCriterium?
+        genderCriterium: GenderCriterium?
     ): ExternalTrial {
         val countries = trial.countries().map {
             CountryDetails(
@@ -119,7 +119,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val url = trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
             ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
 
-        val matchGender = matchGender(gender, patientGender)
+        val matchGender = matchGender(genderCriterium, patientGender)
 
         return ExternalTrial(
             nctId = trial.nctId(),
@@ -135,16 +135,15 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
     }
 
     companion object {
-        fun matchGender(gender: GenderCriterium?, patientGender: Gender): Boolean? {
-            if (gender == GenderCriterium.BOTH && (Gender.valueOf(patientGender.name) == Gender.FEMALE || Gender.valueOf(patientGender.name) == Gender.MALE) )
-                return true
-            else if (gender != null && Gender.valueOf(patientGender.name) != Gender.UNKNOWN)
-                return patientGender.name == gender.name
+        fun matchGender(genderCriterium: GenderCriterium?, patientGender: Gender): Boolean? {
+            return if (genderCriterium == GenderCriterium.BOTH && patientGender in setOf(Gender.FEMALE, Gender.MALE))
+                true
+            else if (genderCriterium != null && patientGender != Gender.UNKNOWN)
+                patientGender.name == genderCriterium.name
             else
-                return null
+                null
         }
     }
-
 
     private fun convertHospital(serveHospital: ServeHospital): Hospital {
         return Hospital(
