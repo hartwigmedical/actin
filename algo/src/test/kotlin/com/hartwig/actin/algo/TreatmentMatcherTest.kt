@@ -32,7 +32,7 @@ import java.time.LocalDate
 private val MAX_AGE = LocalDate.of(2023, 12, 10)
 
 class TreatmentMatcherTest {
-    
+
     private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())
     private val trialMatches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
@@ -45,15 +45,16 @@ class TreatmentMatcherTest {
     private val evidences: List<EfficacyEvidence> = emptyList()
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+    private val actionabilityMatcher = mockk<ActionabilityMatcher>(relaxed = true)
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
         evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalMolecularTests(),
-        mockk<ActionabilityMatcher>()
+        actionabilityMatcher
     )
-    
+
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher = trialMatcher,
         standardOfCareEvaluator = standardOfCareEvaluator,
@@ -64,7 +65,7 @@ class TreatmentMatcherTest {
         treatmentEfficacyPredictionPath = null,
         maxMolecularTestAge = MAX_AGE
     )
-    
+
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
         referenceDate = LocalDate.now(),

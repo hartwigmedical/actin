@@ -9,22 +9,16 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
-import java.util.concurrent.ConcurrentHashMap
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 
 class ResistanceEvidenceMatcher(
     private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
-    private val actionabilityMatcher: ActionabilityMatcher,
-    private val molecularTests: List<MolecularTest>
+    private val molecularTestsAndMatches: List<Pair<MolecularTest, MatchesForActionable>>
 ) {
-
-    // Memoize matches per MolecularTest to avoid repeated expensive matching (thread-safe)
-    private val matchCache: ConcurrentHashMap<MolecularTest, MatchesForActionable> = ConcurrentHashMap()
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
         return candidateEvidences.mapNotNull { evidence ->
@@ -34,18 +28,14 @@ class ResistanceEvidenceMatcher(
                     treatmentName = treatmentName,
                     resistanceLevel = evidence.evidenceLevel().toString(),
                     isTested = null,
-                    isFound = isFound(evidence, molecularTests),
+                    isFound = isFound(evidence),
                     evidenceUrls = evidence.urls()
                 )
             }
         }
     }
 
-    fun isFound(evidence: EfficacyEvidence, molecularTests: List<MolecularTest>): Boolean? {
-        val molecularTestsAndMatches = molecularTests.map { test ->
-            val matches = matchCache.computeIfAbsent(test) { t -> actionabilityMatcher.match(t) }
-            test to matches
-        }
+    fun isFound(evidence: EfficacyEvidence): Boolean? {
 
         with(evidence.molecularCriterium()) {
             return when {
@@ -155,17 +145,14 @@ class ResistanceEvidenceMatcher(
             evidences: List<EfficacyEvidence>,
             treatmentDatabase: TreatmentDatabase,
             molecularTests: List<MolecularTest>,
-            actionabilityMatcher: ActionabilityMatcher
+            actionabilityMatcher: com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
 
-            return ResistanceEvidenceMatcher(
-                onLabelNonPositiveEvidence,
-                treatmentDatabase,
-                actionabilityMatcher,
-                molecularTests
-            )
+            val molecularTestsAndMatches = molecularTests.map { it to actionabilityMatcher.match(it) }
+
+            return ResistanceEvidenceMatcher(onLabelNonPositiveEvidence, treatmentDatabase, molecularTestsAndMatches)
         }
 
         private fun isOnLabel(event: EfficacyEvidence, expandedTumorDoids: Set<String>): Boolean {

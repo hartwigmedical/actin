@@ -24,13 +24,14 @@ class EvaluatedTreatmentAnnotatorTest {
     private val evidences: List<EfficacyEvidence> = emptyList()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    private val actionabilityMatcher = mockk<com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher>(relaxed = true)
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
         evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalMolecularTests(),
-        mockk()
+        actionabilityMatcher
     )
     private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, resistanceEvidenceMatcher)
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
