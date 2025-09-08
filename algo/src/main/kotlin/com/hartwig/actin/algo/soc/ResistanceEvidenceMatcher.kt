@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
+import java.util.concurrent.ConcurrentHashMap
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 
 class ResistanceEvidenceMatcher(
@@ -21,6 +22,9 @@ class ResistanceEvidenceMatcher(
     private val actionabilityMatcher: ActionabilityMatcher,
     private val molecularTests: List<MolecularTest>
 ) {
+
+    // Memoize matches per MolecularTest to avoid repeated expensive matching (thread-safe)
+    private val matchCache: ConcurrentHashMap<MolecularTest, MatchesForActionable> = ConcurrentHashMap()
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
         return candidateEvidences.mapNotNull { evidence ->
@@ -38,7 +42,10 @@ class ResistanceEvidenceMatcher(
     }
 
     fun isFound(evidence: EfficacyEvidence, molecularTests: List<MolecularTest>): Boolean? {
-        val molecularTestsAndMatches = molecularTests.map { it to actionabilityMatcher.match(it) }
+        val molecularTestsAndMatches = molecularTests.map { test ->
+            val matches = matchCache.computeIfAbsent(test) { t -> actionabilityMatcher.match(t) }
+            test to matches
+        }
 
         with(evidence.molecularCriterium()) {
             return when {
