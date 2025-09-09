@@ -16,6 +16,7 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -45,7 +46,10 @@ class TreatmentMatcherTest {
     private val evidences: List<EfficacyEvidence> = emptyList()
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    private val actionabilityMatcher = mockk<ActionabilityMatcher>(relaxed = true)
+    private val actionabilityMatcher = mockk<ActionabilityMatcher> {
+        every { match(any<MolecularTest>()) } returns emptyMap()
+    }
+
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
