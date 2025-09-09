@@ -18,8 +18,7 @@ import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 class ResistanceEvidenceMatcher(
     private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
-    private val actionabilityMatcher: ActionabilityMatcher,
-    private val molecularTests: List<MolecularTest>
+    private val molecularTestsAndMatches: List<Pair<MolecularTest, MatchesForActionable>>
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
@@ -30,15 +29,14 @@ class ResistanceEvidenceMatcher(
                     treatmentName = treatmentName,
                     resistanceLevel = evidence.evidenceLevel().toString(),
                     isTested = null,
-                    isFound = isFound(evidence, molecularTests),
+                    isFound = isFound(evidence),
                     evidenceUrls = evidence.urls()
                 )
             }
         }
     }
 
-    fun isFound(evidence: EfficacyEvidence, molecularTests: List<MolecularTest>): Boolean? {
-        val molecularTestsAndMatches = molecularTests.map { it to actionabilityMatcher.match(it) }
+    fun isFound(evidence: EfficacyEvidence): Boolean? {
 
         with(evidence.molecularCriterium()) {
             return when {
@@ -152,12 +150,12 @@ class ResistanceEvidenceMatcher(
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
+            val molecularTestsAndMatches = molecularTests.map { it to actionabilityMatcher.match(it) }
 
             return ResistanceEvidenceMatcher(
                 onLabelNonPositiveEvidence,
                 treatmentDatabase,
-                actionabilityMatcher,
-                molecularTests
+                molecularTestsAndMatches
             )
         }
 

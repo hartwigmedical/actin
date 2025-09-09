@@ -9,11 +9,14 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.efficacy.TestExtendedEvidenceEntryFactory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -24,13 +27,16 @@ class EvaluatedTreatmentAnnotatorTest {
     private val evidences: List<EfficacyEvidence> = emptyList()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    private val actionabilityMatcher = mockk<ActionabilityMatcher> {
+        every { match(any<MolecularTest>()) } returns emptyMap()
+    }
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
         evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalMolecularTests(),
-        mockk()
+        actionabilityMatcher
     )
     private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, resistanceEvidenceMatcher)
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
