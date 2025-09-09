@@ -155,7 +155,8 @@ class ResistanceEvidenceMatcher(
             return ResistanceEvidenceMatcher(
                 onLabelNonPositiveEvidence,
                 treatmentDatabase,
-                molecularTestsAndMatches)
+                molecularTestsAndMatches
+            )
         }
 
         private fun isOnLabel(event: EfficacyEvidence, expandedTumorDoids: Set<String>): Boolean {

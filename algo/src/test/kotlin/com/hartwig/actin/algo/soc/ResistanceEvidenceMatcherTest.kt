@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.ResistanceEvidence
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -228,7 +229,7 @@ class ResistanceEvidenceMatcherTest {
 
     private fun resistanceEvidenceMatcher(
         efficacyEvidence: List<EfficacyEvidence> = emptyList(),
-        molecularTests: List<com.hartwig.actin.datamodel.molecular.MolecularTest> = MOLECULAR_HISTORY
+        molecularTests: List<MolecularTest> = MOLECULAR_HISTORY
     ) = ResistanceEvidenceMatcher.create(
         DOID_MODEL,
         TUMOR_DOIDS,
