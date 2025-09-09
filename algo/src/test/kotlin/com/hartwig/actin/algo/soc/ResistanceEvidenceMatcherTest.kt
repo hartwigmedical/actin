@@ -21,15 +21,12 @@ import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
-import io.mockk.every
-import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -50,7 +47,7 @@ private val TREATMENT_DATABASE = TestTreatmentDatabaseFactory.createProper()
 private val MOLECULAR_HISTORY = TestMolecularFactory.createMinimalMolecularTests()
 
 class ResistanceEvidenceMatcherTest {
-    
+
     @Test
     fun `Should match resistance evidence to SOC treatments`() {
         val socTreatment =
@@ -129,7 +126,6 @@ class ResistanceEvidenceMatcherTest {
                 )
         ).molecularTests
 
-        
 
         val hasOtherHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()

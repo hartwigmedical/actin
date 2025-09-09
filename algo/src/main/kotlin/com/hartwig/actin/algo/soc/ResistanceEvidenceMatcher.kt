@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
@@ -145,14 +146,16 @@ class ResistanceEvidenceMatcher(
             evidences: List<EfficacyEvidence>,
             treatmentDatabase: TreatmentDatabase,
             molecularTests: List<MolecularTest>,
-            actionabilityMatcher: com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
+            actionabilityMatcher: ActionabilityMatcher
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
-
             val molecularTestsAndMatches = molecularTests.map { it to actionabilityMatcher.match(it) }
 
-            return ResistanceEvidenceMatcher(onLabelNonPositiveEvidence, treatmentDatabase, molecularTestsAndMatches)
+            return ResistanceEvidenceMatcher(
+                onLabelNonPositiveEvidence,
+                treatmentDatabase,
+                molecularTestsAndMatches)
         }
 
         private fun isOnLabel(event: EfficacyEvidence, expandedTumorDoids: Set<String>): Boolean {
