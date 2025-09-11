@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
-import com.hartwig.actin.datamodel.algo.TreatmentEfficacyPrediction
+import com.hartwig.actin.datamodel.algo.PersonalizedTreatmentSummary
 import com.hartwig.actin.datamodel.personalization.MeasurementType
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldSurvivalOutcomesGenerator
@@ -21,8 +21,10 @@ import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.label.labs
 import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.pos.positionDodge
 import org.jetbrains.letsPlot.scale.guides
 import org.jetbrains.letsPlot.scale.scaleFillManual
+import org.jetbrains.letsPlot.scale.scaleYContinuous
 import java.io.ByteArrayInputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempFile
@@ -127,7 +129,7 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
     private fun generateShapPlot(
         treatmentName: String,
-        shapDetails: Map<String, TreatmentEfficacyPrediction.ShapDetail>,
+        shapDetails: Map<String, PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail>,
         document: Document
     ): Image {
         val sortedShapData = shapDetails.toList().sortedByDescending { abs(it.second.shapValue) }.take(10)
@@ -157,14 +159,51 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
         return Image(xObj)
     }
+    
+    private fun generateTreatmentDistributionPlot(
+        similarPatientsSummary: PersonalizedTreatmentSummary.SimilarPatientsSummary,
+        document: Document
+    ): Image {
+        val categories = similarPatientsSummary.overallTreatmentProportion.map { it.treatment }
+
+        val overallProportion = similarPatientsSummary.overallTreatmentProportion.map { it.proportion }
+        val similarPatientsProportion = similarPatientsSummary.similarPatientsTreatmentProportion.map { it.proportion }
+    
+        val data = mapOf(
+            "treatment" to (categories + categories), // repeat categories
+            "proportion" to (overallProportion + similarPatientsProportion),
+            "group" to (List(categories.size) { "Overall" } + List(categories.size) { "Similar Patients" })
+        )
+    
+        val plot = letsPlot(data) +
+            geomBar(stat = Stat.identity, position = positionDodge(width = 0.8)) {
+                x = "treatment"
+                y = "proportion"
+                fill = "group"
+            } +
+            scaleYContinuous(limits = 0.0 to 1.0) +
+            ggsize(600, 400)
+
+        val tmpFile = createTempFile("treatment_distribution_plot", ".svg")
+        ggsave(plot, tmpFile.absolutePathString())
+        val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
+        return Image(xObj)
+    }
 
     private fun addSurvivalPlot(document: Document) {
-        report.treatmentMatch.survivalPredictionsPerTreatment?.let { survivalPredictions ->
-            val image = generateSurvivalPlot(survivalPredictions.associate { it.treatment to it.survivalProbs }, document)
+        report.treatmentMatch.personalizedTreatmentSummary?.predictions?.let { predictions ->
+            val image = generateSurvivalPlot(predictions.associate { it.treatment to it.survivalProbs }, document)
             document.add(image)
         }
-        report.treatmentMatch.survivalPredictionsPerTreatment?.map { prediction ->
+        report.treatmentMatch.personalizedTreatmentSummary?.predictions?.map { prediction ->
             val image = generateShapPlot(prediction.treatment, prediction.shapValues, document)
+            document.add(image)
+        }
+        report.treatmentMatch.personalizedTreatmentSummary?.similarPatientsSummary?.let { similarPatientsSummary -> 
+            val image = generateTreatmentDistributionPlot(
+                similarPatientsSummary,
+                document
+            )
             document.add(image)
         }
     }

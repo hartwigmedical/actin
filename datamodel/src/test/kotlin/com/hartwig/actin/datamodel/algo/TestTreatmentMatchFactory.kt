@@ -30,7 +30,7 @@ object TestTreatmentMatchFactory {
             trialMatches = emptyList(),
             standardOfCareMatches = null,
             personalizedDataAnalysis = null,
-            survivalPredictionsPerTreatment = null,
+            personalizedTreatmentSummary = null,
             maxMolecularTestAge = null
         )
     }
