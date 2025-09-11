@@ -1,56 +1,88 @@
-[
-  {
-    "treatment": "No Treatment",
-    "survivalProbs": [
-      0.91,
-      0.84,
-      0.27
-    ],
-    "shapValues": {
-      "age": {
-        "featureValue": 45,
-        "shapValue": -0.02
-      },
-      "bmi": {
-        "featureValue": 22,
-        "shapValue": -0.01
+{
+  "predictions": [
+    {
+      "treatment": "No Treatment",
+      "survivalProbs": [
+        0.91,
+        0.84,
+        0.27
+      ],
+      "shapValues": {
+        "age": {
+          "featureValue": 45,
+          "shapValue": -0.02
+        },
+        "bmi": {
+          "featureValue": 22,
+          "shapValue": -0.01
+        }
+      }
+    },
+    {
+      "treatment": "Treatment 1",
+      "survivalProbs": [
+        0.93,
+        0.87,
+        0.54
+      ],
+      "shapValues": {
+        "age": {
+          "featureValue": 45,
+          "shapValue": 0.01
+        },
+        "bmi": {
+          "featureValue": 22,
+          "shapValue": 0.02
+        }
+      }
+    },
+    {
+      "treatment": "Treatment 2",
+      "survivalProbs": [
+        0.96,
+        0.88,
+        0.75
+      ],
+      "shapValues": {
+        "age": {
+          "featureValue": 45,
+          "shapValue": 0.03
+        },
+        "bmi": {
+          "featureValue": 22,
+          "shapValue": -0.04
+        }
       }
     }
-  },
-  {
-    "treatment": "Treatment 1",
-    "survivalProbs": [
-      0.93,
-      0.87,
-      0.54
-    ],
-    "shapValues": {
-      "age": {
-        "featureValue": 45,
-        "shapValue": 0.01
+  ],
+  "similarPatientsSummary": {
+    "overallTreatmentProportion": [
+      {
+        "treatment": "No Treatment",
+        "proportion": 0.5
       },
-      "bmi": {
-        "featureValue": 22,
-        "shapValue": 0.02
-      }
-    }
-  },
-  {
-    "treatment": "Treatment 2",
-    "survivalProbs": [
-      0.96,
-      0.88,
-      0.75
-    ],
-    "shapValues": {
-      "age": {
-        "featureValue": 45,
-        "shapValue": 0.03
+      {
+        "treatment": "Treatment 1",
+        "proportion": 0.2
       },
-      "bmi": {
-        "featureValue": 22,
-        "shapValue": -0.04
+      {
+        "treatment": "Treatment 2",
+        "proportion": 0.3
       }
-    }
+    ],
+    "similarPatientsTreatmentProportion": [
+      {
+        "treatment": "No Treatment",
+        "proportion": 0.0
+      },
+      {
+        "treatment": "Treatment 1",
+        "proportion": 0.4
+      },
+      {
+        "treatment": "Treatment 2",
+        "proportion": 0.6
+      }
+    ]
   }
-]
+}
