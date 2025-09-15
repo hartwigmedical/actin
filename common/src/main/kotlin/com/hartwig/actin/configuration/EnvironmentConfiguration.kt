@@ -18,10 +18,6 @@ data class AlgoConfiguration(
     val maxMolecularTestAgeInDays: Int? = null
 )
 
-data class ClinicalConfiguration(
-    val useOnlyPriorOtherConditions: Boolean = false
-)
-
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
@@ -54,8 +50,7 @@ const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration ov
 
 data class EnvironmentConfiguration(
     val algo: AlgoConfiguration = AlgoConfiguration(),
-    val report: ReportConfiguration = ReportConfiguration(),
-    val clinical: ClinicalConfiguration = ClinicalConfiguration()
+    val report: ReportConfiguration = ReportConfiguration()
 ) {
 
     companion object {
