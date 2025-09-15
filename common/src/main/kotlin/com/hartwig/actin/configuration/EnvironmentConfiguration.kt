@@ -69,7 +69,7 @@ data class EnvironmentConfiguration(
             return create(environmentConfigFile).algo
         }
         
-        fun create(environmentConfigFile: String?): EnvironmentConfiguration {
+        private fun create(environmentConfigFile: String?): EnvironmentConfiguration {
             val configuration = environmentConfigFile?.let { readEnvironmentConfigYaml(it) } ?: EnvironmentConfiguration()
             val configSource = environmentConfigFile?.let { "file $it" } ?: "defaults"
 
