@@ -28,7 +28,7 @@ object ExampleFunctions {
 
     private val LOGGER = LogManager.getLogger(ExampleFunctions::class.java)
 
-    private const val REQUESTING_HOSPITAL = "Example"
+    private const val HOSPITAL_OF_REFERENCE = "Example"
 
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"
     private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
@@ -66,13 +66,13 @@ object ExampleFunctions {
     fun createTrialMatchingEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
-            requestingHospital = REQUESTING_HOSPITAL,
             algo = AlgoConfiguration(),
             report = ReportConfiguration(
                 includeApprovedTreatmentsInSummary = false,
                 includeMolecularDetailsChapter = false,
                 includeClinicalDetailsChapter = false,
-                countryOfReference = Country.NETHERLANDS
+                countryOfReference = Country.NETHERLANDS,
+                hospitalOfReference = HOSPITAL_OF_REFERENCE
             )
         )
     }
@@ -80,7 +80,6 @@ object ExampleFunctions {
     fun createPersonalizationEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
-            requestingHospital = REQUESTING_HOSPITAL,
             algo = AlgoConfiguration(),
             report = ReportConfiguration(
                 includeOverviewWithClinicalHistorySummary = true,
@@ -91,7 +90,8 @@ object ExampleFunctions {
                 molecularSummaryType = MolecularSummaryType.NONE,
                 includePatientHeader = false,
                 filterOnSOCExhaustionAndTumorType = true,
-                countryOfReference = Country.NETHERLANDS
+                countryOfReference = Country.NETHERLANDS,
+                hospitalOfReference = HOSPITAL_OF_REFERENCE
             )
         )
     }
@@ -99,7 +99,6 @@ object ExampleFunctions {
     fun createExhaustiveEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
-            requestingHospital = REQUESTING_HOSPITAL,
             algo = AlgoConfiguration(),
             report = ReportConfiguration(
                 includeOverviewWithClinicalHistorySummary = true,
@@ -121,7 +120,8 @@ object ExampleFunctions {
                 includeMolecularEvidenceChapter = true,
                 includeRawPathologyReport = true,
                 includeTreatmentEvidenceRanking = true,
-                countryOfReference = Country.NETHERLANDS
+                countryOfReference = Country.NETHERLANDS,
+                hospitalOfReference = HOSPITAL_OF_REFERENCE
             )
         )
     }

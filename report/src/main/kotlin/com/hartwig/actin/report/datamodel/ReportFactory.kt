@@ -21,7 +21,6 @@ object ReportFactory {
         return Report(
             reportDate = reportDate,
             patientId = patient.patientId,
-            requestingHospital = config.requestingHospital,
             patientRecord = patient,
             treatmentMatch = treatmentMatch,
             config = config.report,

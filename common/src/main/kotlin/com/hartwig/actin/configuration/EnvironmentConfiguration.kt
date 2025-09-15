@@ -45,14 +45,14 @@ data class ReportConfiguration(
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
     val includeTreatmentEvidenceRanking: Boolean = false,
-    val countryOfReference: Country = Country.OTHER
+    val countryOfReference: Country = Country.OTHER,
+    val hospitalOfReference: String? = null
 )
 
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
 const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration overrides"
 
 data class EnvironmentConfiguration(
-    val requestingHospital: String? = null,
     val algo: AlgoConfiguration = AlgoConfiguration(),
     val report: ReportConfiguration = ReportConfiguration(),
     val clinical: ClinicalConfiguration = ClinicalConfiguration()
