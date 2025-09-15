@@ -25,9 +25,9 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val config = ReportConfiguration.create(config.overrideYaml)
+        val reportConfig = ReportConfiguration.create(config.overrideYaml)
 
-        val report = ReportFactory.create(this.config.reportDate?: LocalDate.now(), patient, treatmentMatch, config)
+        val report = ReportFactory.create(this.config.reportDate ?: LocalDate.now(), patient, treatmentMatch, reportConfig)
         val writer = ReportWriterFactory.createProductionReportWriter(this.config.outputDirectory)
         writer.write(report, this.config.enableExtendedMode)
         LOGGER.info("Done!")
