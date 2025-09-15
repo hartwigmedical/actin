@@ -112,7 +112,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val trialTableGenerators = createTrialTableGenerators(
             cohorts = cohorts,
             externalTrials = trialsProvider.externalTrials(),
-            requestingSource = TrialSource.fromDescription(report.requestingHospital)
+            requestingSource = TrialSource.fromDescription(report.config.hospitalOfReference)
         ).filterNotNull()
 
         val approvedTreatmentsGenerator = EligibleApprovedTreatmentGenerator(report)

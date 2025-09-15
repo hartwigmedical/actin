@@ -14,5 +14,5 @@ fun main() {
     Locale.setDefault(Locale.US)
 
     LocalTrialMatchingExampleReportApplication.LOGGER.info("Running ACTIN Trial Example Reporter")
-    ExampleFunctions.runExample(TRIAL_EXAMPLE_TO_RUN) { ExampleFunctions.createTrialMatchingEnvironmentConfiguration() }
+    ExampleFunctions.runExample(TRIAL_EXAMPLE_TO_RUN) { ExampleFunctions.createTrialMatchingReportConfiguration() }
 }

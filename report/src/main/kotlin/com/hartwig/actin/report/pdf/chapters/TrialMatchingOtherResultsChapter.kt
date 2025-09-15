@@ -40,7 +40,7 @@ class TrialMatchingOtherResultsChapter(
     }
 
     fun createTrialTableGenerators(): List<TableGenerator> {
-        val requestingSource = TrialSource.fromDescription(report.requestingHospital)
+        val requestingSource = TrialSource.fromDescription(report.config.hospitalOfReference)
         val externalTrials = trialsProvider.externalTrials()
 
         val localTrialGenerators = createTrialTableGenerators(
