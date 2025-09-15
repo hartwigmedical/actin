@@ -1,29 +1,21 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.clinical.Gender
-import com.hartwig.actin.datamodel.molecular.evidence.CancerType
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
-import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchDetails
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
-import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
-import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
-import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.datamodel.molecular.evidence.*
+import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.Treatment
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.GenderCriterium
-import kotlin.text.equals
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
-class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver, private val patientGender: Gender?) {
+class ClinicalEvidenceFactory(
+    private val cancerTypeResolver: CancerTypeApplicabilityResolver,
+    private val patientGender: Gender?
+) {
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
@@ -68,18 +60,19 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         )
     }
 
-    private fun determineTreatmentTypes(treatment: Treatment) : Set<String> {
+    private fun determineTreatmentTypes(treatment: Treatment): Set<String> {
         return treatment.treatmentApproachesDrugClass().ifEmpty { treatment.treatmentApproachesTherapy() }
     }
 
     private fun determineOnLabelTrials(matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>):
             Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
         return matchingCriteriaPerTrialMatch.mapValues { (trial, criteria) ->
-            criteria to trial.indications().filter { cancerTypeResolver.resolve(it) == CancerTypeMatchApplicability.SPECIFIC_TYPE }.toSet()
+            criteria to trial.indications()
+                .filter { cancerTypeResolver.resolve(it) == CancerTypeMatchApplicability.SPECIFIC_TYPE }.toSet()
         }
             .filter { (_, criteriaAndIndications) -> criteriaAndIndications.second.isNotEmpty() }
     }
-    
+
     private fun convertToExternalTrials(
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): Set<ExternalTrial> {
@@ -119,30 +112,18 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
         val url = trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
             ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
 
-        val matchGender = matchGender(genderCriterium, patientGender)
 
         return ExternalTrial(
             nctId = trial.nctId(),
             title = trial.title(),
             acronym = trial.acronym(),
-            genderMatch = matchGender,
+            genderMatch = matchGender(genderCriterium, patientGender),
             treatments = trial.therapyNames(),
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
             url = url,
         )
-    }
-
-    companion object {
-        fun matchGender(genderCriterium: GenderCriterium?, patientGender: Gender?): Boolean? {
-            return if (genderCriterium == GenderCriterium.BOTH && patientGender in setOf(Gender.FEMALE, Gender.MALE))
-                true
-            else if (genderCriterium != null && patientGender != null)
-                patientGender.name == genderCriterium.name
-            else
-                null
-        }
     }
 
     private fun convertHospital(serveHospital: ServeHospital): Hospital {
@@ -171,6 +152,17 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
             "United Kingdom" -> Country.UK
             "United States" -> Country.USA
             else -> Country.OTHER
+        }
+    }
+
+    companion object {
+        fun matchGender(genderCriterium: GenderCriterium?, patientGender: Gender?): Boolean? {
+            return if (genderCriterium == GenderCriterium.BOTH && patientGender in setOf(Gender.FEMALE, Gender.MALE))
+                true
+            else if (genderCriterium != null && patientGender != null)
+                patientGender.name == genderCriterium.name
+            else
+                null
         }
     }
 }
