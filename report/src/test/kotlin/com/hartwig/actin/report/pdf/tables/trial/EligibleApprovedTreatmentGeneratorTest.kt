@@ -68,7 +68,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             LocalDate.of(2025, 7, 1),
             PatientRecordFactory.fromInputs(clinicalRecord, molecularTests),
             treatmentMatch,
-            EnvironmentConfiguration.create(null)
+            EnvironmentConfiguration.createReportConfig(null)
         )
         return EligibleApprovedTreatmentGenerator(report).contents()
     }

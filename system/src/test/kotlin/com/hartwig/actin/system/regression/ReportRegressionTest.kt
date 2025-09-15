@@ -1,6 +1,6 @@
 package com.hartwig.actin.system.regression
 
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
@@ -42,15 +42,15 @@ class ReportRegressionTest {
 
     @Test
     fun `Regress trial matching report textually and visually`() {
-        regressReport(exampleName = LUNG_01_EXAMPLE) { ExampleFunctions.createExhaustiveEnvironmentConfiguration() }
+        regressReport(exampleName = LUNG_01_EXAMPLE) { ExampleFunctions.createExhaustiveReportConfiguration() }
     }
 
     @Test
     fun `Regress personalization report textually and visually`() {
-        regressReport(exampleName = CRC_01_EXAMPLE) { ExampleFunctions.createPersonalizationEnvironmentConfiguration() }
+        regressReport(exampleName = CRC_01_EXAMPLE) { ExampleFunctions.createPersonalizationReportConfiguration() }
     }
 
-    private fun regressReport(exampleName: String, environmentConfigProvider: () -> EnvironmentConfiguration) {
+    private fun regressReport(exampleName: String, reportConfigProvider: () -> ReportConfiguration) {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
 
         ExampleFunctions.run(
@@ -58,7 +58,7 @@ class ReportRegressionTest {
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
             outputDirectory,
-            environmentConfigProvider()
+            reportConfigProvider()
         )
 
         assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))

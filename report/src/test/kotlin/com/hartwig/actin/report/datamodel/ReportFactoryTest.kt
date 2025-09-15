@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.datamodel
 
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.report.datamodel.ReportFactory.create
@@ -18,7 +18,7 @@ class ReportFactoryTest {
                 reportDate,
                 TestPatientFactory.createMinimalTestWGSPatientRecord(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-                EnvironmentConfiguration()
+                ReportConfiguration()
             )
         ).isNotNull()
 
@@ -27,7 +27,7 @@ class ReportFactoryTest {
                 reportDate,
                 TestPatientFactory.createProperTestPatientRecord(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch(),
-                EnvironmentConfiguration()
+                ReportConfiguration()
             )
         ).isNotNull()
     }
@@ -37,6 +37,6 @@ class ReportFactoryTest {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(patientId = "clinical")
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(patientId = "treatment-match")
 
-        assertThat(create(reportDate, patient, treatmentMatch, EnvironmentConfiguration()).patientId).isEqualTo("clinical")
+        assertThat(create(reportDate, patient, treatmentMatch, ReportConfiguration()).patientId).isEqualTo("clinical")
     }
 }

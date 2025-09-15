@@ -41,7 +41,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val functionInputResolver =
             FunctionInputResolver(inputData.doidModel, inputData.icdModel, molecularInputChecker,
                 treatmentDatabase, MedicationCategories.create(inputData.atcTree))
-        val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
+        val configuration = EnvironmentConfiguration.createAlgoConfig(config.overridesYaml)
         LOGGER.info(" Loaded algo config: $configuration")
 
         val maxMolecularTestAge = configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }

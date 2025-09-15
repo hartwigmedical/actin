@@ -53,7 +53,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val functionInputResolver = FunctionInputResolver(
             doidModel, icdModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )
-        val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
+        val configuration = EnvironmentConfiguration.createAlgoConfig(config.overridesYaml)
         LOGGER.info(" Loaded algo config: $configuration")
 
         val resources = RuleMappingResources(

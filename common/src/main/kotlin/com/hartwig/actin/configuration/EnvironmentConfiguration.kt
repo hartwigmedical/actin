@@ -61,6 +61,14 @@ data class EnvironmentConfiguration(
     companion object {
         private val LOGGER = LogManager.getLogger(EnvironmentConfiguration::class.java)
 
+        fun createReportConfig(environmentConfigFile: String?): ReportConfiguration {
+            return create(environmentConfigFile).report
+        }
+
+        fun createAlgoConfig(environmentConfigFile: String?): AlgoConfiguration {
+            return create(environmentConfigFile).algo
+        }
+        
         fun create(environmentConfigFile: String?): EnvironmentConfiguration {
             val configuration = environmentConfigFile?.let { readEnvironmentConfigYaml(it) } ?: EnvironmentConfiguration()
             val configSource = environmentConfigFile?.let { "file $it" } ?: "defaults"

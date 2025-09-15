@@ -12,20 +12,25 @@ class EnvironmentConfigurationTest {
     
     @Test
     fun `Should load proper config from file`() {
-        val config = EnvironmentConfiguration.create(properConfigFile)
-        assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isFalse()
-        assertThat(config.report.hospitalOfReference).isEqualTo("Erasmus MC")
+        val reportConfig = EnvironmentConfiguration.createReportConfig(properConfigFile)
+        assertThat(reportConfig.hospitalOfReference).isEqualTo("Erasmus MC")
+
+        val algoConfig = EnvironmentConfiguration.createAlgoConfig(properConfigFile)
+        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isFalse()
     }
     
     @Test
     fun `Should use defaults for fields not provided in file`() {
-        val config = EnvironmentConfiguration.create(minimalConfigFile)
-        assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isTrue()
-        assertThat(config.report.hospitalOfReference).isNull()
+        val reportConfig = EnvironmentConfiguration.createReportConfig(minimalConfigFile)
+        assertThat(reportConfig.hospitalOfReference).isNull()
+
+        val algoConfig = EnvironmentConfiguration.createAlgoConfig(minimalConfigFile)
+        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isTrue()
     }
 
     @Test
     fun `Should create default configuration when provided file is null`() {
-        assertThat(EnvironmentConfiguration.create(null)).isEqualTo(defaultConfig)
+        assertThat(EnvironmentConfiguration.createReportConfig(null)).isEqualTo(defaultConfig.report)
+        assertThat(EnvironmentConfiguration.createAlgoConfig(null)).isEqualTo(defaultConfig.algo)
     }
 }
