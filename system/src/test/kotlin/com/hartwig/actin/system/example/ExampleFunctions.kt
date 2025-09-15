@@ -2,7 +2,6 @@ package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.molecular.evidence.Country
@@ -63,7 +62,7 @@ object ExampleFunctions {
     }
 
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
-        return EnvironmentConfiguration.createReportConfig(null).copy(
+        return ReportConfiguration().copy(
             includeApprovedTreatmentsInSummary = false,
             includeMolecularDetailsChapter = false,
             includeClinicalDetailsChapter = false,
@@ -73,7 +72,7 @@ object ExampleFunctions {
     }
 
     fun createPersonalizationReportConfiguration(): ReportConfiguration {
-        return EnvironmentConfiguration.createReportConfig(null).copy(
+        return ReportConfiguration().copy(
             includeOverviewWithClinicalHistorySummary = true,
             includeMolecularDetailsChapter = false,
             includeApprovedTreatmentsInSummary = false,
@@ -88,7 +87,7 @@ object ExampleFunctions {
     }
 
     fun createExhaustiveReportConfiguration(): ReportConfiguration {
-        return EnvironmentConfiguration.createReportConfig(null).copy(
+        return ReportConfiguration().copy(
             includeOverviewWithClinicalHistorySummary = true,
             includeMolecularDetailsChapter = true,
             includeSOCLiteratureEfficacyEvidence = true,

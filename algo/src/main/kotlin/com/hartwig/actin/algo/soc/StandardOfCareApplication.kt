@@ -5,7 +5,7 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
@@ -53,8 +53,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val functionInputResolver = FunctionInputResolver(
             doidModel, icdModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )
-        val configuration = EnvironmentConfiguration.createAlgoConfig(config.overridesYaml)
-        LOGGER.info(" Loaded algo config: $configuration")
+        val configuration = AlgoConfiguration.create(config.overridesYaml)
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,

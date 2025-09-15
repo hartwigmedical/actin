@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
@@ -41,7 +41,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val functionInputResolver =
             FunctionInputResolver(inputData.doidModel, inputData.icdModel, molecularInputChecker,
                 treatmentDatabase, MedicationCategories.create(inputData.atcTree))
-        val configuration = EnvironmentConfiguration.createAlgoConfig(config.overridesYaml)
+        val configuration = AlgoConfiguration.create(config.overridesYaml)
         LOGGER.info(" Loaded algo config: $configuration")
 
         val maxMolecularTestAge = configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }

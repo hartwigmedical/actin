@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
@@ -68,7 +68,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             LocalDate.of(2025, 7, 1),
             PatientRecordFactory.fromInputs(clinicalRecord, molecularTests),
             treatmentMatch,
-            EnvironmentConfiguration.createReportConfig(null)
+            ReportConfiguration()
         )
         return EligibleApprovedTreatmentGenerator(report).contents()
     }
