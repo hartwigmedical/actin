@@ -39,7 +39,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
         listOf(
-            "Gender" to record.patient.gender.display(),
+            "Gender" to (record.patient.gender?.display() ?: Formats.VALUE_UNKNOWN),
             "Birth year" to record.patient.birthYear.toString(),
             "WHO" to whoStatus(record.performanceStatus.latestWho),
             "Tumor" to record.tumor.name,

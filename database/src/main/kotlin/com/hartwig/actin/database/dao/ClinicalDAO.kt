@@ -86,7 +86,7 @@ class ClinicalDAO(private val context: DSLContext) {
             .values(
                 patientId,
                 patient.birthYear,
-                patient.gender.display(),
+                patient.gender?.display(),
                 patient.registrationDate,
                 patient.questionnaireDate
             )

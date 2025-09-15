@@ -19,7 +19,7 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
-        patientGender: Gender
+        patientGender: Gender?
     ): EvidenceAnnotator<PanelRecord> {
         return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
@@ -30,7 +30,7 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
-        patientGender: Gender
+        patientGender: Gender?
     ): EvidenceAnnotator<MolecularRecord> {
         return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
@@ -41,7 +41,7 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
-        patientGender: Gender,
+        patientGender: Gender?,
         annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
     ): EvidenceAnnotator<T> {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)

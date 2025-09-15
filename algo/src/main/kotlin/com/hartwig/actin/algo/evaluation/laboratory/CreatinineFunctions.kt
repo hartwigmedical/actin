@@ -10,7 +10,7 @@ internal object CreatinineFunctions {
     private const val DEFAULT_MIN_WEIGHT_FEMALE = 50.0
     private const val DEFAULT_MIN_WEIGHT_MALE = 65.0
 
-    fun calcMDRD(birthYear: Int, referenceYear: Int, gender: Gender, creatinine: LabValue): List<Double> {
+    fun calcMDRD(birthYear: Int, referenceYear: Int, gender: Gender?, creatinine: LabValue): List<Double> {
         val age = referenceYear - birthYear
         val base = 175 * (creatinine.value / 88.4).pow(-1.154) * age.toDouble().pow(-0.203)
         val adjusted = if (gender == Gender.FEMALE) base * 0.742 else base
@@ -18,7 +18,7 @@ internal object CreatinineFunctions {
         return listOf(adjusted, adjusted * 1.212)
     }
 
-    fun calcCKDEPI(birthYear: Int, referenceYear: Int, gender: Gender, creatinine: LabValue): List<Double> {
+    fun calcCKDEPI(birthYear: Int, referenceYear: Int, gender: Gender?, creatinine: LabValue): List<Double> {
         val age = referenceYear - birthYear
         val isFemale = gender == Gender.FEMALE
         val correction = if (isFemale) 61.9 else 79.6
@@ -41,7 +41,7 @@ internal object CreatinineFunctions {
     }
 
     fun calcCockcroftGault(
-        birthYear: Int, referenceYear: Int, gender: Gender, weight: Double?,
+        birthYear: Int, referenceYear: Int, gender: Gender?, weight: Double?,
         creatinine: LabValue
     ): Double {
         val isFemale = gender == Gender.FEMALE

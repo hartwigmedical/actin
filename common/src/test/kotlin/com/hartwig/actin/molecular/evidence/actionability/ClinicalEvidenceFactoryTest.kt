@@ -47,9 +47,9 @@ class ClinicalEvidenceFactoryTest {
         assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.FEMALE)).isEqualTo(true)
         assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.MALE)).isEqualTo(true)
 
-        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, Gender.UNKNOWN)).isEqualTo(null)
-        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.UNKNOWN)).isEqualTo(null)
-        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, Gender.UNKNOWN)).isEqualTo(null)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, null)).isNull()
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, null)).isNull()
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, null)).isNull()
     }
 
     @Test

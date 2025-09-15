@@ -23,7 +23,7 @@ import com.hartwig.serve.datamodel.trial.GenderCriterium
 import kotlin.text.equals
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
-class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver, private  val patientGender: Gender) {
+class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicabilityResolver, private val patientGender: Gender?) {
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
@@ -135,10 +135,10 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
     }
 
     companion object {
-        fun matchGender(genderCriterium: GenderCriterium?, patientGender: Gender): Boolean? {
+        fun matchGender(genderCriterium: GenderCriterium?, patientGender: Gender?): Boolean? {
             return if (genderCriterium == GenderCriterium.BOTH && patientGender in setOf(Gender.FEMALE, Gender.MALE))
                 true
-            else if (genderCriterium != null && patientGender != Gender.UNKNOWN)
+            else if (genderCriterium != null && patientGender != null)
                 patientGender.name == genderCriterium.name
             else
                 null

@@ -79,7 +79,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun interpretOrangeRecord(
         tumorDoids: Set<String>,
         inputData: MolecularInterpreterInputData,
-        patientGender: Gender
+        patientGender: Gender?
     ): List<MolecularTest> {
         return if (inputData.orange != null) {
             val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.orange.refGenomeVersion())
