@@ -1,9 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.clinical.Gender
-import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.evidence.*
-import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.Treatment
@@ -157,12 +155,11 @@ class ClinicalEvidenceFactory(
 
     companion object {
         fun matchGender(genderCriterium: GenderCriterium?, patientGender: Gender?): Boolean? {
-            return if (genderCriterium == GenderCriterium.BOTH && patientGender in setOf(Gender.FEMALE, Gender.MALE))
-                true
-            else if (genderCriterium != null && patientGender != null)
-                patientGender.name == genderCriterium.name
-            else
-                null
+            return when {
+                genderCriterium == GenderCriterium.BOTH && patientGender in setOf(Gender.FEMALE, Gender.MALE) -> true
+                genderCriterium == null || patientGender == null -> null
+                else -> patientGender.name == genderCriterium.name
+            }
         }
     }
 }
