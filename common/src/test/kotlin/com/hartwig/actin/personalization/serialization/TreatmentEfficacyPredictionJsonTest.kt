@@ -13,7 +13,7 @@ class TreatmentEfficacyPredictionJsonTest {
 
     @Test
     fun `Should be able to read a treatment efficacy prediction json`() {
-        val predictions = TreatmentEfficacyPredictionJson.read(treatmentEfficacyPredictionJson)
+        val predictions = PersonalizedTreatmentSummaryJson.read(treatmentEfficacyPredictionJson)
 
         assertThat(predictions).isEqualTo(
             PersonalizedTreatmentSummary(
@@ -62,7 +62,7 @@ class TreatmentEfficacyPredictionJsonTest {
     @Test
     fun `Should return empty map when file is empty`() {
         val emptyFile = ResourceLocator.resourceOnClasspath("personalization" + File.separator + "empty.json")
-        val summary = TreatmentEfficacyPredictionJson.read(emptyFile)
+        val summary = PersonalizedTreatmentSummaryJson.read(emptyFile)
         assertThat(summary.predictions).isNull()
         assertThat(summary.similarPatientsSummary).isNull()
     }

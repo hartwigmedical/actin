@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
-import com.hartwig.actin.personalization.serialization.TreatmentEfficacyPredictionJson
+import com.hartwig.actin.personalization.serialization.PersonalizedTreatmentSummaryJson
 import java.time.LocalDate
 
 class TreatmentMatcher(
@@ -32,7 +32,7 @@ class TreatmentMatcher(
             if (standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient)) {
                 val evaluatedTreatments = standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient).evaluatedTreatments
                 val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
-                val personalizedTreatmentSummary = treatmentEfficacyPredictionPath?.let(TreatmentEfficacyPredictionJson::read)
+                val personalizedTreatmentSummary = treatmentEfficacyPredictionPath?.let(PersonalizedTreatmentSummaryJson::read)
                 Triple(
                     evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
                     personalizedDataAnalysis,

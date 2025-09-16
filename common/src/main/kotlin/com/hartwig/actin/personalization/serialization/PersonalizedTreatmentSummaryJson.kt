@@ -9,9 +9,9 @@ import java.io.File
 import java.nio.file.Files
 
 
-object TreatmentEfficacyPredictionJson {
+object PersonalizedTreatmentSummaryJson {
 
-    private val logger = LogManager.getLogger(TreatmentEfficacyPredictionJson::class.java)
+    private val logger = LogManager.getLogger(PersonalizedTreatmentSummaryJson::class.java)
     private val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
     fun read(treatmentEfficacyPredictionJson: String): PersonalizedTreatmentSummary {
