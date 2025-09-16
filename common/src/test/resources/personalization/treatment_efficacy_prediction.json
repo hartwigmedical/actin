@@ -1,23 +1,56 @@
-{
-  "No Treatment": {
-    "survival_probs": [
+[
+  {
+    "treatment": "No Treatment",
+    "survivalProbs": [
       0.91,
       0.84,
       0.27
-    ]
+    ],
+    "shapValues": {
+      "age": {
+        "featureValue": 45,
+        "shapValue": -0.02
+      },
+      "bmi": {
+        "featureValue": 22,
+        "shapValue": -0.01
+      }
+    }
   },
-  "Treatment 1": {
-    "survival_probs": [
+  {
+    "treatment": "Treatment 1",
+    "survivalProbs": [
       0.93,
       0.87,
       0.54
-    ]
+    ],
+    "shapValues": {
+      "age": {
+        "featureValue": 45,
+        "shapValue": 0.01
+      },
+      "bmi": {
+        "featureValue": 22,
+        "shapValue": 0.02
+      }
+    }
   },
-  "Treatment 2": {
-    "survival_probs": [
+  {
+    "treatment": "Treatment 2",
+    "survivalProbs": [
       0.96,
       0.88,
       0.75
-    ]
+    ],
+    "shapValues": {
+      "age": {
+        "featureValue": 45,
+        "shapValue": 0.03
+      },
+      "bmi": {
+        "featureValue": 22,
+        "shapValue": -0.04
+      }
+    }
   }
-}
+]

@@ -1,3 +1,4 @@
-requestingHospital: "Erasmus MC"
+report:
+  hospitalOfReference: "Erasmus MC"
 algo:
   warnIfToxicitiesNotFromQuestionnaire: false

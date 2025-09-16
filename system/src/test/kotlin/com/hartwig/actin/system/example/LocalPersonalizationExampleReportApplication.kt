@@ -14,5 +14,5 @@ fun main() {
     Locale.setDefault(Locale.US)
 
     LocalPersonalizationExampleReportApplication.LOGGER.info("Running ACTIN Personalization Example Reporter")
-    ExampleFunctions.runExample(PERSONALIZATION_EXAMPLE_TO_RUN) { ExampleFunctions.createPersonalizationEnvironmentConfiguration() }
+    ExampleFunctions.runExample(PERSONALIZATION_EXAMPLE_TO_RUN) { ExampleFunctions.createPersonalizationReportConfiguration() }
 }

@@ -2,8 +2,9 @@
 
 ## Example patients
 
-Example treatment matches and reports can be made using the `LocalExampleTreatmentMatchApplication` and `LocalExampleReportApplication`
-respectively by assigning the `EXAMPLE_TO_RUN` to the ID of the example patient.
+Example treatment matches can be made using the `LocalExampleTreatmentMatchApplication` application.
+
+For reports one can either use `LocalPersonalizationExampleReportApplication` or `LocalTrialMatchingExampleReportApplication`.
 
 | ID      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 |---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

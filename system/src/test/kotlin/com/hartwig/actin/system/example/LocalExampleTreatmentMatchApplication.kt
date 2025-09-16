@@ -10,6 +10,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
+import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
@@ -95,7 +96,7 @@ class LocalExampleTreatmentMatchApplication {
                 medicationCategories = MedicationCategories.create(atcTree)
             )
 
-        val environmentConfiguration = ExampleFunctions.createTrialMatchingEnvironmentConfiguration()
+        val algoConfiguration = AlgoConfiguration()
 
         return RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
@@ -106,8 +107,8 @@ class LocalExampleTreatmentMatchApplication {
             treatmentDatabase = treatmentDatabase,
             personalizationDataPath = null,
             treatmentEfficacyPredictionJson = null,
-            algoConfiguration = environmentConfiguration.algo,
-            maxMolecularTestAge = environmentConfiguration.algo.maxMolecularTestAgeInDays?.let {
+            algoConfiguration = algoConfiguration,
+            maxMolecularTestAge = algoConfiguration.maxMolecularTestAgeInDays?.let {
                 referenceDateProvider.date().minus(Period.ofDays(it))
             }
         )
