@@ -1,22 +1,26 @@
 package com.hartwig.actin.datamodel.molecular
 
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import java.time.LocalDate
 
-data class MolecularHistory(
-    val molecularTests: List<MolecularTest>
+class MolecularHistory(
+    private val molecularTests: List<MolecularTest>
 ) {
 
-    fun allOrangeMolecularRecords(): List<MolecularRecord> {
-        return molecularTests.filterIsInstance<MolecularRecord>()
+    fun allOrangeMolecularRecords(): List<MolecularTest> {
+        return molecularTests.filter { isHartwigTest(it) }
     }
 
-    fun allPanels(): List<PanelRecord> {
-        return molecularTests.filterIsInstance<PanelRecord>()
-    }
-
-    fun latestOrangeMolecularRecord(): MolecularRecord? {
+    fun latestOrangeMolecularRecord(): MolecularTest? {
         return allOrangeMolecularRecords().maxByOrNull { it.date ?: LocalDate.MIN }
+    }
+
+    fun allPanels(): List<MolecularTest> {
+        return molecularTests.filter { !isHartwigTest(it) }
+    }
+
+    private fun isHartwigTest(test: MolecularTest): Boolean {
+        return test.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME ||
+                test.experimentType == ExperimentType.HARTWIG_TARGETED
     }
 
     companion object {

@@ -1,23 +1,32 @@
 package com.hartwig.actin.system.example
 
-import com.hartwig.actin.configuration.AlgoConfiguration
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.PatientRecordJson
+import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.report.datamodel.ReportFactory
+import com.hartwig.actin.report.pdf.ReportWriterFactory
 import com.hartwig.actin.testutil.ResourceLocator
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
 import java.io.File
+import java.time.LocalDate
+import kotlin.system.exitProcess
 
 const val LUNG_01_EXAMPLE = "LUNG-01"
 const val LUNG_02_EXAMPLE = "LUNG-02"
 const val LUNG_03_EXAMPLE = "LUNG-03"
 const val LUNG_04_EXAMPLE = "LUNG-04"
+const val CRC_01_EXAMPLE = "CRC-01"
 
 private const val EXAMPLE_NAME_ = "<example_name>"
 
 object ExampleFunctions {
 
-    private const val REQUESTING_HOSPITAL = "Example"
+    private val LOGGER = LogManager.getLogger(ExampleFunctions::class.java)
+
+    private const val HOSPITAL_OF_REFERENCE = "Example"
 
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"
     private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
@@ -52,49 +61,90 @@ object ExampleFunctions {
         return listOf(systemTestResourcesDirectory(), EXAMPLE_TREATMENT_MATCH_DIRECTORY).joinToString(File.separator)
     }
 
-    fun createExampleEnvironmentConfiguration(): EnvironmentConfiguration {
-        val base = EnvironmentConfiguration.create(null)
-        return base.copy(
-            requestingHospital = REQUESTING_HOSPITAL,
-            algo = AlgoConfiguration(),
-            report = ReportConfiguration(
-                includeApprovedTreatmentsInSummary = false,
-                includeMolecularDetailsChapter = false,
-                includeClinicalDetailsChapter = false,
-                countryOfReference = Country.NETHERLANDS
-            )
+    fun createTrialMatchingReportConfiguration(): ReportConfiguration {
+        return ReportConfiguration().copy(
+            includeApprovedTreatmentsInSummary = false,
+            includeMolecularDetailsChapter = false,
+            includeClinicalDetailsChapter = false,
+            countryOfReference = Country.NETHERLANDS,
+            hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
     }
 
-    fun createExhaustiveEnvironmentConfiguration(): EnvironmentConfiguration {
-        val base = EnvironmentConfiguration.create(null)
-        return base.copy(
-            requestingHospital = REQUESTING_HOSPITAL,
-            algo = AlgoConfiguration(),
-            report = ReportConfiguration(
-                includeOverviewWithClinicalHistorySummary = true,
-                includeMolecularDetailsChapter = true,
-                includeIneligibleTrialsInSummary = true,
-                includeSOCLiteratureEfficacyEvidence = true,
-                includeEligibleSOCTreatmentSummary = true,
-                molecularSummaryType = MolecularSummaryType.STANDARD,
-                includeOtherOncologicalHistoryInSummary = true,
-                includePatientHeader = true,
-                includeRelevantNonOncologicalHistoryInSummary = true,
-                includeApprovedTreatmentsInSummary = true,
-                includeTrialMatchingInSummary = true,
-                includeExternalTrialsInSummary = true,
-                filterOnSOCExhaustionAndTumorType = true,
-                includeClinicalDetailsChapter = true,
-                includeTrialMatchingChapter = true,
-                includeOnlyExternalTrialsInTrialMatching = true,
-                includeLongitudinalMolecularChapter = true,
-                includeMolecularEvidenceChapter = true,
-                includeRawPathologyReport = true,
-                includeTreatmentEvidenceRanking = true,
-                countryOfReference = Country.NETHERLANDS
-            )
+    fun createPersonalizationReportConfiguration(): ReportConfiguration {
+        return ReportConfiguration().copy(
+            includeOverviewWithClinicalHistorySummary = true,
+            includeMolecularDetailsChapter = false,
+            includeApprovedTreatmentsInSummary = false,
+            includeSOCLiteratureEfficacyEvidence = true,
+            includeEligibleSOCTreatmentSummary = true,
+            molecularSummaryType = MolecularSummaryType.NONE,
+            includePatientHeader = false,
+            filterOnSOCExhaustionAndTumorType = true,
+            countryOfReference = Country.NETHERLANDS,
+            hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
+    }
+
+    fun createExhaustiveReportConfiguration(): ReportConfiguration {
+        return ReportConfiguration().copy(
+            includeOverviewWithClinicalHistorySummary = true,
+            includeMolecularDetailsChapter = true,
+            includeSOCLiteratureEfficacyEvidence = true,
+            includeEligibleSOCTreatmentSummary = true,
+            molecularSummaryType = MolecularSummaryType.STANDARD,
+            includeOtherOncologicalHistoryInSummary = true,
+            includePatientHeader = true,
+            includeRelevantNonOncologicalHistoryInSummary = true,
+            includeApprovedTreatmentsInSummary = true,
+            includeTrialMatchingInSummary = true,
+            includeExternalTrialsInSummary = true,
+            filterOnSOCExhaustionAndTumorType = true,
+            includeClinicalDetailsChapter = true,
+            includeTrialMatchingChapter = true,
+            includeOnlyExternalTrialsInTrialMatching = true,
+            includeLongitudinalMolecularChapter = true,
+            includeMolecularEvidenceChapter = true,
+            includeRawPathologyReport = true,
+            includeTreatmentEvidenceRanking = true,
+            countryOfReference = Country.NETHERLANDS,
+            hospitalOfReference = HOSPITAL_OF_REFERENCE
+        )
+    }
+
+    fun runExample(exampleToRun: String, reportConfigProvider: () -> ReportConfiguration) {
+        val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
+
+        try {
+            val examplePatientRecordJson = resolveExamplePatientRecordJson(exampleToRun)
+            val exampleTreatmentMatchJson = resolveExampleTreatmentMatchJson(exampleToRun)
+            run(LocalDate.now(), examplePatientRecordJson, exampleTreatmentMatchJson, localOutputPath, reportConfigProvider())
+        } catch (exception: ParseException) {
+            LOGGER.warn(exception)
+            exitProcess(1)
+        }
+    }
+
+    fun run(
+        reportDate: LocalDate,
+        examplePatientRecordJson: String,
+        exampleTreatmentMatchJson: String,
+        outputDirectory: String,
+        reportConfiguration: ReportConfiguration
+    ) {
+        LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
+        val patient = PatientRecordJson.read(examplePatientRecordJson)
+
+        LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
+        val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
+
+        val report = ReportFactory.create(reportDate, patient, treatmentMatch, reportConfiguration)
+        val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
+
+        writer.write(report, enableExtendedMode = false)
+        writer.write(report, enableExtendedMode = true)
+
+        LOGGER.info("Done!")
     }
 
     private fun systemTestResourcesDirectory(): String {

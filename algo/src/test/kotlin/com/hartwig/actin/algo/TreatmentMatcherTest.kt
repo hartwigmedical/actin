@@ -16,7 +16,7 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -33,7 +33,7 @@ import java.time.LocalDate
 private val MAX_AGE = LocalDate.of(2023, 12, 10)
 
 class TreatmentMatcherTest {
-    
+
     private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())
     private val trialMatches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
@@ -46,15 +46,19 @@ class TreatmentMatcherTest {
     private val evidences: List<EfficacyEvidence> = emptyList()
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+    private val actionabilityMatcher = mockk<ActionabilityMatcher> {
+        every { match(any<MolecularTest>()) } returns emptyMap()
+    }
+
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
         evidences,
         treatmentDatabase,
-        TestMolecularFactory.createMinimalTestMolecularHistory(),
-        mockk<ActionabilityMatcher>()
+        TestMolecularFactory.createMinimalMolecularTests(),
+        actionabilityMatcher
     )
-    
+
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher = trialMatcher,
         standardOfCareEvaluator = standardOfCareEvaluator,
@@ -65,7 +69,7 @@ class TreatmentMatcherTest {
         treatmentEfficacyPredictionPath = null,
         maxMolecularTestAge = MAX_AGE
     )
-    
+
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
         referenceDate = LocalDate.now(),
@@ -105,7 +109,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should match without molecular input`() {
-        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty())
+        val patientWithoutMolecular = patient.copy(molecularTests = emptyList())
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }

@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -296,7 +295,7 @@ class GeneIsAmplifiedTest {
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
         val result = GeneIsAmplified(GENE, 2).evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory(molecularTests = listOf(TestMolecularFactory.createMinimalTestPanelRecord()))
+                molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)

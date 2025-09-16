@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -120,24 +120,24 @@ class PanelDriverAttributeAnnotatorTest {
         assertThat(annotatedCopyNumber.isAssociatedWithDrugResistance).isTrue
     }
 
-    private fun panelRecordWith(variant: Variant): PanelRecord {
-        return TestMolecularFactory.createMinimalTestPanelRecord().copy(
+    private fun panelRecordWith(variant: Variant): MolecularTest {
+        return TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 variants = listOf(variant)
             )
         )
     }
 
-    private fun panelRecordWith(fusion: Fusion): PanelRecord {
-        return TestMolecularFactory.createMinimalTestPanelRecord().copy(
+    private fun panelRecordWith(fusion: Fusion): MolecularTest {
+        return TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 fusions = listOf(fusion)
             )
         )
     }
 
-    private fun panelRecordWith(copyNumber: CopyNumber): PanelRecord {
-        return TestMolecularFactory.createMinimalTestPanelRecord().copy(
+    private fun panelRecordWith(copyNumber: CopyNumber): MolecularTest {
+        return TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                 copyNumbers = listOf(copyNumber)
             )

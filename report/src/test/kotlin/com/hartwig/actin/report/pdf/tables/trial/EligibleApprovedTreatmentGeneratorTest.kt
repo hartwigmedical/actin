@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
@@ -27,9 +27,9 @@ class EligibleApprovedTreatmentGeneratorTest {
         val cupTumor = TumorDetails(name = "Some $CUP_STRING")
         val clinicalRecord = TestClinicalFactory.createProperTestClinicalRecord().copy(tumor = cupTumor)
 
-        val molecularHistory = MolecularHistory(
+        val molecularTests =
             listOf(
-                TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
                     characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
                         predictedTumorOrigin = PredictedTumorOrigin(
                             listOf(
@@ -48,9 +48,8 @@ class EligibleApprovedTreatmentGeneratorTest {
                     )
                 )
             )
-        )
 
-        val contents = eligibleTreatmentsTable(clinicalRecord, molecularHistory)
+        val contents = eligibleTreatmentsTable(clinicalRecord, molecularTests)
         assertThat(getCellContents(contents, 0, 0)).isEqualTo("Potential SOC for colorectal")
     }
 
@@ -62,14 +61,14 @@ class EligibleApprovedTreatmentGeneratorTest {
 
     private fun eligibleTreatmentsTable(
         clinicalRecord: ClinicalRecord = TestClinicalFactory.createMinimalTestClinicalRecord(),
-        molecularHistory: MolecularHistory = MolecularHistory.empty(),
+        molecularTests: List<MolecularTest> = emptyList(),
         treatmentMatch: TreatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
     ): Table {
         val report = ReportFactory.create(
             LocalDate.of(2025, 7, 1),
-            PatientRecordFactory.fromInputs(clinicalRecord, molecularHistory),
+            PatientRecordFactory.fromInputs(clinicalRecord, molecularTests),
             treatmentMatch,
-            EnvironmentConfiguration.create(null)
+            ReportConfiguration()
         )
         return EligibleApprovedTreatmentGenerator(report).contents()
     }

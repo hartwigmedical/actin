@@ -35,7 +35,13 @@
     "hasComplications": false
   },
   "performanceStatus": {
-    "latestWho": 0
+    "whoStatuses": [
+      {
+        "date": "2024-09-01",
+        "status": 0
+      }
+    ],
+    "asaScores": []
   },
   "oncologicalHistory": [
     {
@@ -374,469 +380,469 @@
       "isTrialMedication": false
     }
   ],
-  "molecularHistory": {
-    "molecularTests": [
-      {
-        "sampleId": "TEST-NSCLC-WGS-T",
-        "refGenomeVersion": "V37",
-        "externalTrialSource": "Hartwig",
-        "containsTumorCells": true,
-        "isContaminated": false,
-        "immunology": {
-          "isReliable": true,
-          "hlaAlleles": [
-            {
-              "name": "A*01:01",
-              "tumorCopyNumber": 1.0,
-              "hasSomaticMutations": false
-            },
-            {
-              "name": "A*02:01",
-              "tumorCopyNumber": 0,
-              "hasSomaticMutations": false
-            },
-            {
-              "name": "B*01:01",
-              "tumorCopyNumber": 1.0,
-              "hasSomaticMutations": false
-            },
-            {
-              "name": "B*02:01",
-              "tumorCopyNumber": 1.3,
-              "hasSomaticMutations": false
-            },
-            {
-              "name": "C*01:01",
-              "tumorCopyNumber": 1.0,
-              "hasSomaticMutations": false
-            },
-            {
-              "name": "C*02:01",
-              "tumorCopyNumber": 1.3,
-              "hasSomaticMutations": false
-            }
-          ]
-        },
-        "pharmaco": [
+  "molecularTests": [
+    {
+      "date": "2024-09-01",
+      "sampleId": "TEST-NSCLC-WGS-T",
+      "reportHash": null,
+      "experimentType": "HARTWIG_WHOLE_GENOME",
+      "testTypeDisplay": null,
+      "targetSpecification": null,
+      "refGenomeVersion": "V37",
+      "containsTumorCells": true,
+      "hasSufficientPurity": true,
+      "hasSufficientQuality": true,
+      "isContaminated": false,
+      "drivers": {
+        "variants": [
           {
-            "gene": "DPYD",
-            "haplotypes": [
-              {
-                "allele": "*1",
-                "alleleCount": 2,
-                "function": "NORMAL_FUNCTION"
-              }
-            ]
+            "chromosome": "7",
+            "position": 55259515,
+            "ref": "T",
+            "alt": "G",
+            "type": "SNV",
+            "variantAlleleFrequency": 0.5,
+            "canonicalImpact": {
+              "transcriptId": "",
+              "hgvsCodingImpact": "c.2573T>G",
+              "hgvsProteinImpact": "p.L858R",
+              "affectedCodon": 858,
+              "affectedExon": 21,
+              "inSpliceRegion": false,
+              "effects": [
+                "MISSENSE"
+              ],
+              "codingEffect": "MISSENSE"
+            },
+            "otherImpacts": [],
+            "variantCopyNumber": 2,
+            "totalCopyNumber": 4,
+            "isBiallelic": false,
+            "clonalLikelihood": 1.0,
+            "phaseGroups": null,
+            "isCancerAssociatedVariant": true,
+            "isReportable": true,
+            "event": "EGFR L858R",
+            "driverLikelihood": "HIGH",
+            "evidence": {
+              "treatmentEvidence": [
+                {
+                  "treatment": "OSIMERTINIB",
+                  "treatmentTypes": [],
+                  "molecularMatch": {
+                    "sourceDate": "2012-01-01",
+                    "sourceEvent": "EGFR L858R",
+                    "sourceEvidenceType": "HOTSPOT_MUTATION",
+                    "sourceUrl": ""
+                  },
+                  "cancerTypeMatch": {
+                    "cancerType": {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    },
+                    "applicability": "SPECIFIC_TYPE"
+                  },
+                  "evidenceLevel": "A",
+                  "evidenceLevelDetails": "GUIDELINE",
+                  "evidenceDirection": {
+                    "hasPositiveResponse": true,
+                    "hasBenefit": true,
+                    "isResistant": false,
+                    "isCertain": true
+                  },
+                  "evidenceYear": 2016,
+                  "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations"
+                },
+                {
+                  "treatment": "AFATINIB",
+                  "treatmentTypes": [],
+                  "molecularMatch": {
+                    "sourceDate": "2012-01-01",
+                    "sourceEvent": "EGFR L858R",
+                    "sourceEvidenceType": "HOTSPOT_MUTATION",
+                    "sourceUrl": ""
+                  },
+                  "cancerTypeMatch": {
+                    "cancerType": {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    },
+                    "applicability": "SPECIFIC_TYPE"
+                  },
+                  "evidenceLevel": "A",
+                  "evidenceLevelDetails": "GUIDELINE",
+                  "evidenceDirection": {
+                    "hasPositiveResponse": true,
+                    "hasBenefit": true,
+                    "isResistant": false,
+                    "isCertain": true
+                  },
+                  "evidenceYear": 2013,
+                  "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations"
+                }
+              ],
+              "eligibleTrials": [
+                {
+                  "nctId": "NCT00000006",
+                  "title": "EGFR-L858R-TRIAL",
+                  "treatments": [],
+                  "countries": [
+                    {
+                      "country": "NETHERLANDS",
+                      "hospitalsPerCity": {
+                        "Tilburg": [
+                          {
+                            "name": "Elisabeth-TweeSteden Ziekenhuis",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "country": "GERMANY",
+                      "hospitalsPerCity": {
+                        "Stuttgart": [
+                          {
+                            "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "molecularMatches": [
+                    {
+                      "sourceDate": "2012-01-01",
+                      "sourceEvent": "EGFR L858R",
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
+                    }
+                  ],
+                  "applicableCancerTypes": [
+                    {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    }
+                  ],
+                  "url": "https://hartwigmedicalfoundation.nl"
+                }
+              ]
+            },
+            "gene": "EGFR",
+            "geneRole": "ONCO",
+            "proteinEffect": "GAIN_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": false
           },
           {
-            "gene": "UGT1A1",
-            "haplotypes": [
-              {
-                "allele": "*1",
-                "alleleCount": 2,
-                "function": "NORMAL_FUNCTION"
-              }
-            ]
-          }
-        ],
-        "hasSufficientPurity": true,
-        "hasSufficientQuality": true,
-        "testTypeDisplay": null,
-        "experimentType": "HARTWIG_WHOLE_GENOME",
-        "date": "2024-09-01",
-        "drivers": {
-          "variants": [
-            {
-              "chromosome": "7",
-              "position": 55259515,
-              "ref": "T",
-              "alt": "G",
-              "type": "SNV",
-              "variantAlleleFrequency": 0.5,
-              "canonicalImpact": {
-                "transcriptId": "",
-                "hgvsCodingImpact": "c.2573T>G",
-                "hgvsProteinImpact": "p.L858R",
-                "affectedCodon": 858,
-                "affectedExon": 21,
-                "inSpliceRegion": false,
-                "effects": [
-                  "MISSENSE"
-                ],
-                "codingEffect": "MISSENSE"
-              },
-              "otherImpacts": [],
-              "variantCopyNumber": 2,
-              "totalCopyNumber": 4,
-              "isBiallelic": false,
-              "clonalLikelihood": 1.0,
-              "phaseGroups": null,
-              "isCancerAssociatedVariant": true,
-              "isReportable": true,
-              "event": "EGFR L858R",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [
-                  {
-                    "treatment": "OSIMERTINIB",
-                    "treatmentTypes": [],
-                    "molecularMatch": {
-                      "sourceDate": "2012-01-01",
-                      "sourceEvent": "EGFR L858R",
-                      "sourceEvidenceType": "HOTSPOT_MUTATION",
-                      "sourceUrl": ""
-                    },
-                    "cancerTypeMatch": {
-                      "cancerType": {
-                        "matchedCancerType": "Lung non-small cell carcinoma",
-                        "excludedCancerSubTypes": []
-                      },
-                      "applicability": "SPECIFIC_TYPE"
-                    },
-                    "evidenceLevel": "A",
-                    "evidenceLevelDetails": "GUIDELINE",
-                    "evidenceDirection": {
-                      "hasPositiveResponse": true,
-                      "hasBenefit": true,
-                      "isResistant": false,
-                      "isCertain": true
-                    },
-                    "evidenceYear": 2016,
-                    "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations"
-                  },
-                  {
-                    "treatment": "AFATINIB",
-                    "treatmentTypes": [],
-                    "molecularMatch": {
-                      "sourceDate": "2012-01-01",
-                      "sourceEvent": "EGFR L858R",
-                      "sourceEvidenceType": "HOTSPOT_MUTATION",
-                      "sourceUrl": ""
-                    },
-                    "cancerTypeMatch": {
-                      "cancerType": {
-                        "matchedCancerType": "Lung non-small cell carcinoma",
-                        "excludedCancerSubTypes": []
-                      },
-                      "applicability": "SPECIFIC_TYPE"
-                    },
-                    "evidenceLevel": "A",
-                    "evidenceLevelDetails": "GUIDELINE",
-                    "evidenceDirection": {
-                      "hasPositiveResponse": true,
-                      "hasBenefit": true,
-                      "isResistant": false,
-                      "isCertain": true
-                    },
-                    "evidenceYear": 2013,
-                    "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations"
-                  }
-                ],
-                "eligibleTrials": [
-                  {
-                    "nctId": "NCT00000006",
-                    "title": "EGFR-L858R-TRIAL",
-                    "treatments": [],
-                    "countries": [
-                      {
-                        "country": "NETHERLANDS",
-                        "hospitalsPerCity": {
-                          "Tilburg": [
-                            {
-                              "name": "Elisabeth-TweeSteden Ziekenhuis",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "country": "GERMANY",
-                        "hospitalsPerCity": {
-                          "Stuttgart": [
-                            {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      }
-                    ],
-                    "molecularMatches": [
-                      {
-                        "sourceDate": "2012-01-01",
-                        "sourceEvent": "EGFR L858R",
-                        "sourceEvidenceType": "HOTSPOT_MUTATION",
-                        "sourceUrl": ""
-                      }
-                    ],
-                    "applicableCancerTypes": [
-                      {
-                        "matchedCancerType": "Lung non-small cell carcinoma",
-                        "excludedCancerSubTypes": []
-                      }
-                    ],
-                    "url": "https://hartwigmedicalfoundation.nl"
-                  }
-                ]
-              },
-              "gene": "EGFR",
-              "geneRole": "ONCO",
-              "proteinEffect": "GAIN_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": false
+            "chromosome": "7",
+            "position": 55249091,
+            "ref": "T",
+            "alt": "A",
+            "type": "SNV",
+            "variantAlleleFrequency": 0.25,
+            "canonicalImpact": {
+              "transcriptId": "",
+              "hgvsCodingImpact": "c.2389T>A",
+              "hgvsProteinImpact": "p.C797S",
+              "affectedCodon": 797,
+              "affectedExon": 20,
+              "inSpliceRegion": false,
+              "effects": [
+                "MISSENSE"
+              ],
+              "codingEffect": "MISSENSE"
             },
-            {
-              "chromosome": "7",
-              "position": 55249091,
-              "ref": "T",
-              "alt": "A",
-              "type": "SNV",
-              "variantAlleleFrequency": 0.25,
-              "canonicalImpact": {
-                "transcriptId": "",
-                "hgvsCodingImpact": "c.2389T>A",
-                "hgvsProteinImpact": "p.C797S",
-                "affectedCodon": 797,
-                "affectedExon": 20,
-                "inSpliceRegion": false,
-                "effects": [
-                  "MISSENSE"
-                ],
-                "codingEffect": "MISSENSE"
-              },
-              "otherImpacts": [],
-              "variantCopyNumber": 1,
-              "totalCopyNumber": 4,
-              "isBiallelic": false,
-              "clonalLikelihood": 1.0,
-              "phaseGroups": null,
-              "isCancerAssociatedVariant": true,
-              "isReportable": true,
-              "event": "EGFR C797S",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [
-                  {
-                    "treatment": "AFATINIB",
-                    "treatmentTypes": [],
-                    "molecularMatch": {
+            "otherImpacts": [],
+            "variantCopyNumber": 1,
+            "totalCopyNumber": 4,
+            "isBiallelic": false,
+            "clonalLikelihood": 1.0,
+            "phaseGroups": null,
+            "isCancerAssociatedVariant": true,
+            "isReportable": true,
+            "event": "EGFR C797S",
+            "driverLikelihood": "HIGH",
+            "evidence": {
+              "treatmentEvidence": [
+                {
+                  "treatment": "AFATINIB",
+                  "treatmentTypes": [],
+                  "molecularMatch": {
+                    "sourceDate": "2012-01-01",
+                    "sourceEvent": "EGFR C797S",
+                    "sourceEvidenceType": "HOTSPOT_MUTATION",
+                    "sourceUrl": ""
+                  },
+                  "cancerTypeMatch": {
+                    "cancerType": {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    },
+                    "applicability": "SPECIFIC_TYPE"
+                  },
+                  "evidenceLevel": "D",
+                  "evidenceLevelDetails": "CASE_REPORTS_SERIES",
+                  "evidenceDirection": {
+                    "hasPositiveResponse": true,
+                    "hasBenefit": true,
+                    "isResistant": false,
+                    "isCertain": true
+                  },
+                  "evidenceYear": 2015,
+                  "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer."
+                }
+              ],
+              "eligibleTrials": [
+                {
+                  "nctId": "NCT00000007",
+                  "title": "EGFR-C797S-TRIAL",
+                  "treatments": [],
+                  "countries": [
+                    {
+                      "country": "NETHERLANDS",
+                      "hospitalsPerCity": {
+                        "Tilburg": [
+                          {
+                            "name": "Elisabeth-TweeSteden Ziekenhuis",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "country": "GERMANY",
+                      "hospitalsPerCity": {
+                        "Stuttgart": [
+                          {
+                            "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "molecularMatches": [
+                    {
                       "sourceDate": "2012-01-01",
                       "sourceEvent": "EGFR C797S",
                       "sourceEvidenceType": "HOTSPOT_MUTATION",
                       "sourceUrl": ""
-                    },
-                    "cancerTypeMatch": {
-                      "cancerType": {
-                        "matchedCancerType": "Lung non-small cell carcinoma",
-                        "excludedCancerSubTypes": []
-                      },
-                      "applicability": "SPECIFIC_TYPE"
-                    },
-                    "evidenceLevel": "D",
-                    "evidenceLevelDetails": "CASE_REPORTS_SERIES",
-                    "evidenceDirection": {
-                      "hasPositiveResponse": true,
-                      "hasBenefit": true,
-                      "isResistant": false,
-                      "isCertain": true
-                    },
-                    "evidenceYear": 2015,
-                    "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer."
-                  }
-                ],
-                "eligibleTrials": [
-                  {
-                    "nctId": "NCT00000007",
-                    "title": "EGFR-C797S-TRIAL",
-                    "treatments": [],
-                    "countries": [
-                      {
-                        "country": "NETHERLANDS",
-                        "hospitalsPerCity": {
-                          "Tilburg": [
-                            {
-                              "name": "Elisabeth-TweeSteden Ziekenhuis",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "country": "GERMANY",
-                        "hospitalsPerCity": {
-                          "Stuttgart": [
-                            {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
-                            }
-                          ]
-                        }
-                      }
-                    ],
-                    "molecularMatches": [
-                      {
-                        "sourceDate": "2012-01-01",
-                        "sourceEvent": "EGFR C797S",
-                        "sourceEvidenceType": "HOTSPOT_MUTATION",
-                        "sourceUrl": ""
-                      }
-                    ],
-                    "applicableCancerTypes": [
-                      {
-                        "matchedCancerType": "Lung non-small cell carcinoma",
-                        "excludedCancerSubTypes": []
-                      }
-                    ],
-                    "url": "https://hartwigmedicalfoundation.nl"
-                  }
-                ]
-              },
-              "gene": "EGFR",
-              "geneRole": "ONCO",
-              "proteinEffect": "GAIN_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": null
+                    }
+                  ],
+                  "applicableCancerTypes": [
+                    {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    }
+                  ],
+                  "url": "https://hartwigmedicalfoundation.nl"
+                }
+              ]
             },
-            {
-              "chromosome": "12",
-              "position": 25398284,
-              "ref": "C",
-              "alt": "T",
-              "type": "SNV",
-              "variantAlleleFrequency": 0.15,
-              "canonicalImpact": {
-                "transcriptId": "",
-                "hgvsCodingImpact": "c.35G>A",
-                "hgvsProteinImpact": "p.G12D",
-                "affectedCodon": 12,
-                "affectedExon": 2,
-                "inSpliceRegion": false,
-                "effects": [
-                  "MISSENSE"
-                ],
-                "codingEffect": "MISSENSE"
-              },
-              "otherImpacts": [],
-              "variantCopyNumber": 0.3,
-              "totalCopyNumber": 2,
-              "isBiallelic": false,
-              "clonalLikelihood": 0.4,
-              "phaseGroups": null,
-              "isCancerAssociatedVariant": true,
-              "isReportable": true,
-              "event": "KRAS G12D",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "eligibleTrials": [],
-                "treatmentEvidence": []
-              },
-              "gene": "KRAS",
-              "geneRole": "ONCO",
-              "proteinEffect": "GAIN_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": null
-            }
-          ],
-          "copyNumbers": [
-            {
-              "canonicalImpact": {
-                "transcriptId": "",
-                "type": "DEL",
-                "minCopies": 0,
-                "maxCopies": 0
-              },
-              "otherImpacts": [],
-              "isReportable": true,
-              "event": "TP53 del",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": []
-              },
-              "gene": "TP53",
-              "geneRole": "TSG",
-              "proteinEffect": "UNKNOWN",
-              "isAssociatedWithDrugResistance": null
-            }
-          ],
-          "homozygousDisruptions": [],
-          "disruptions": [],
-          "fusions": [
-            {
-              "geneStart": "MET",
-              "geneEnd": "MET",
-              "driverType": "KNOWN_PAIR",
-              "proteinEffect": "GAIN_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": true,
-              "geneTranscriptStart": "116312446",
-              "geneTranscriptEnd": "116438440",
-              "fusedExonUp": 14,
-              "fusedExonDown": 14,
-              "isReportable": true,
-              "event": "MET_MET",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": []
-              }
-            }
-          ],
-          "viruses": []
-        },
-        "characteristics": {
-          "purity": 0.5,
-          "ploidy": 2.3,
-          "predictedTumorOrigin": {
-            "predictions": [
-              {
-                "cancerType": "Lung: Non-small cell: LUAD",
-                "likelihood": 0.98,
-                "snvPairwiseClassifier": 0.6,
-                "genomicPositionClassifier": 0.7,
-                "featureClassifier": 0.8,
-                "cuppaMode": "WGS"
-              },
-              {
-                "cancerType": "Colorectum/Small intestine/Appendix",
-                "likelihood": 0.02,
-                "snvPairwiseClassifier": 0.01,
-                "genomicPositionClassifier": 0.02,
-                "featureClassifier": 0.03,
-                "cuppaMode": "WGS"
-              }
-            ]
+            "gene": "EGFR",
+            "geneRole": "ONCO",
+            "proteinEffect": "GAIN_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": null
           },
-          "microsatelliteStability": {
-            "microsatelliteIndelsPerMb": null,
-            "isUnstable": false,
+          {
+            "chromosome": "12",
+            "position": 25398284,
+            "ref": "C",
+            "alt": "T",
+            "type": "SNV",
+            "variantAlleleFrequency": 0.15,
+            "canonicalImpact": {
+              "transcriptId": "",
+              "hgvsCodingImpact": "c.35G>A",
+              "hgvsProteinImpact": "p.G12D",
+              "affectedCodon": 12,
+              "affectedExon": 2,
+              "inSpliceRegion": false,
+              "effects": [
+                "MISSENSE"
+              ],
+              "codingEffect": "MISSENSE"
+            },
+            "otherImpacts": [],
+            "variantCopyNumber": 0.3,
+            "totalCopyNumber": 2,
+            "isBiallelic": false,
+            "clonalLikelihood": 0.4,
+            "phaseGroups": null,
+            "isCancerAssociatedVariant": true,
+            "isReportable": true,
+            "event": "KRAS G12D",
+            "driverLikelihood": "HIGH",
+            "evidence": {
+              "eligibleTrials": [],
+              "treatmentEvidence": []
+            },
+            "gene": "KRAS",
+            "geneRole": "ONCO",
+            "proteinEffect": "GAIN_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": null
+          }
+        ],
+        "copyNumbers": [
+          {
+            "canonicalImpact": {
+              "transcriptId": "",
+              "type": "DEL",
+              "minCopies": 0,
+              "maxCopies": 0
+            },
+            "otherImpacts": [],
+            "isReportable": true,
+            "event": "TP53 del",
+            "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
-            }
-          },
-          "homologousRecombination": {
-            "isDeficient": false,
-            "score": 0.0,
-            "evidence": {
-              "treatmentEvidence": [],
-              "eligibleTrials": []
-            }
-          },
-          "tumorMutationalBurden": {
-            "score": 14.0,
-            "isHigh": true,
-            "evidence": {
-              "treatmentEvidence": [],
-              "eligibleTrials": []
-            }
-          },
-          "tumorMutationalLoad": {
-            "score": 160,
-            "isHigh": true,
+            },
+            "gene": "TP53",
+            "geneRole": "TSG",
+            "proteinEffect": "UNKNOWN",
+            "isAssociatedWithDrugResistance": null
+          }
+        ],
+        "homozygousDisruptions": [],
+        "disruptions": [],
+        "fusions": [
+          {
+            "geneStart": "MET",
+            "geneEnd": "MET",
+            "driverType": "KNOWN_PAIR",
+            "proteinEffect": "GAIN_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": true,
+            "geneTranscriptStart": "116312446",
+            "geneTranscriptEnd": "116438440",
+            "fusedExonUp": 14,
+            "fusedExonDown": 14,
+            "isReportable": true,
+            "event": "MET_MET",
+            "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
             }
           }
+        ],
+        "viruses": []
+      },
+      "characteristics": {
+        "purity": 0.5,
+        "ploidy": 2.3,
+        "predictedTumorOrigin": {
+          "predictions": [
+            {
+              "cancerType": "Lung: Non-small cell: LUAD",
+              "likelihood": 0.98,
+              "snvPairwiseClassifier": 0.6,
+              "genomicPositionClassifier": 0.7,
+              "featureClassifier": 0.8,
+              "cuppaMode": "WGS"
+            },
+            {
+              "cancerType": "Colorectum/Small intestine/Appendix",
+              "likelihood": 0.02,
+              "snvPairwiseClassifier": 0.01,
+              "genomicPositionClassifier": 0.02,
+              "featureClassifier": 0.03,
+              "cuppaMode": "WGS"
+            }
+          ]
         },
-        "evidenceSource": "External"
-      }
-    ]
-  }
+        "microsatelliteStability": {
+          "microsatelliteIndelsPerMb": null,
+          "isUnstable": false,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
+        },
+        "homologousRecombination": {
+          "isDeficient": false,
+          "score": 0.0,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
+        },
+        "tumorMutationalBurden": {
+          "score": 14.0,
+          "isHigh": true,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
+        },
+        "tumorMutationalLoad": {
+          "score": 160,
+          "isHigh": true,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
+        }
+      },
+      "immunology": {
+        "isReliable": true,
+        "hlaAlleles": [
+          {
+            "name": "A*01:01",
+            "tumorCopyNumber": 1.0,
+            "hasSomaticMutations": false
+          },
+          {
+            "name": "A*02:01",
+            "tumorCopyNumber": 0,
+            "hasSomaticMutations": false
+          },
+          {
+            "name": "B*01:01",
+            "tumorCopyNumber": 1.0,
+            "hasSomaticMutations": false
+          },
+          {
+            "name": "B*02:01",
+            "tumorCopyNumber": 1.3,
+            "hasSomaticMutations": false
+          },
+          {
+            "name": "C*01:01",
+            "tumorCopyNumber": 1.0,
+            "hasSomaticMutations": false
+          },
+          {
+            "name": "C*02:01",
+            "tumorCopyNumber": 1.3,
+            "hasSomaticMutations": false
+          }
+        ]
+      },
+      "pharmaco": [
+        {
+          "gene": "DPYD",
+          "haplotypes": [
+            {
+              "allele": "*1",
+              "alleleCount": 2,
+              "function": "NORMAL_FUNCTION"
+            }
+          ]
+        },
+        {
+          "gene": "UGT1A1",
+          "haplotypes": [
+            {
+              "allele": "*1",
+              "alleleCount": 2,
+              "function": "NORMAL_FUNCTION"
+            }
+          ]
+        }
+      ],
+      "evidenceSource": "External",
+      "externalTrialSource": "Hartwig"
+    }
+  ]
 }

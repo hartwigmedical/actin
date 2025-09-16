@@ -14,12 +14,11 @@ object TestReportFactory {
 
     fun createMinimalTestReport(): Report {
         return Report(
+            reportDate = LocalDate.now(),
             patientId = TestPatientFactory.TEST_PATIENT,
             patientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-            config = ReportConfiguration(),
-            reportDate = LocalDate.now(),
-            requestingHospital = "NKI-AvL"
+            config = ReportConfiguration()
         )
     }
 
@@ -40,7 +39,7 @@ object TestReportFactory {
 
     fun createExhaustiveTestReportWithoutMolecular(): Report {
         return createMinimalTestReport().copy(
-            patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), null),
+            patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), emptyList()),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
             config = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )

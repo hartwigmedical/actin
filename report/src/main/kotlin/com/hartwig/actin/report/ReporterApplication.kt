@@ -2,7 +2,7 @@ package com.hartwig.actin.report
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
-import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import org.apache.commons.cli.DefaultParser
@@ -25,12 +25,11 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val envConfig = EnvironmentConfiguration.create(config.overrideYaml)
-        LOGGER.info(" Loaded config: $envConfig")
+        val reportConfig = ReportConfiguration.create(config.overrideYaml)
 
-        val report = ReportFactory.create(config.reportDate?: LocalDate.now(), patient, treatmentMatch, envConfig)
-        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
-        writer.write(report, config.enableExtendedMode)
+        val report = ReportFactory.create(this.config.reportDate ?: LocalDate.now(), patient, treatmentMatch, reportConfig)
+        val writer = ReportWriterFactory.createProductionReportWriter(this.config.outputDirectory)
+        writer.write(report, this.config.enableExtendedMode)
         LOGGER.info("Done!")
     }
 

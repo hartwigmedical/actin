@@ -36,7 +36,13 @@
     "hasComplications": false
   },
   "performanceStatus": {
-    "latestWho": 1
+    "whoStatuses": [
+      {
+        "date": "2024-09-01",
+        "status": 1
+      }
+    ],
+    "asaScores": []
   },
   "oncologicalHistory": [
     {
@@ -422,174 +428,182 @@
       "isTrialMedication": false
     }
   ],
-  "molecularHistory": {
-    "molecularTests": [
-      {
-        "targetSpecification": {
-          "geneTargetMap": []
-        },
-        "experimentType": "PANEL",
-        "testTypeDisplay": "NGS Lung Panel 1.2",
-        "date": "2024-09-15",
-        "drivers": {
-          "variants": [
-            {
-              "chromosome": "3",
-              "position": 178936091,
-              "ref": "G",
-              "alt": "A",
-              "type": "SNV",
-              "variantAlleleFrequency": 0.5,
-              "canonicalImpact": {
-                "transcriptId": "",
-                "hgvsCodingImpact": "c.1633G>A",
-                "hgvsProteinImpact": "p.E545K",
-                "affectedCodon": 545,
-                "affectedExon": 9,
-                "inSpliceRegion": false,
-                "effects": [
-                  "MISSENSE"
-                ],
-                "codingEffect": "MISSENSE"
-              },
-              "otherImpacts": [],
-              "variantCopyNumber": null,
-              "totalCopyNumber": null,
-              "isBiallelic": null,
-              "clonalLikelihood": null,
-              "phaseGroups": null,
-              "isCancerAssociatedVariant": true,
-              "isReportable": true,
-              "event": "PIK3CA E545K",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": [
-                  {
-                    "nctId": "NCT00000016",
-                    "title": "PIK3CA-TRIAL",
-                    "acronym": null,
-                    "treatments": [],
-                    "countries": [
-                      {
-                        "country": "NETHERLANDS",
-                        "hospitalsPerCity": {
-                          "Tilburg": [
-                            {
-                              "name": "Elisabeth-TweeSteden Ziekenhuis",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "country": "GERMANY",
-                        "hospitalsPerCity": {
-                          "Stuttgart": [
-                            {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
-                              "isChildrensHospital": false
-                            }
-                          ]
-                        }
-                      }
-                    ],
-                    "molecularMatches": [
-                      {
-                        "sourceDate": "2012-01-01",
-                        "sourceEvent": "PIK3CA activating mutations",
-                        "sourceEvidenceType": "HOTSPOT_MUTATION",
-                        "sourceUrl": ""
-                      }
-                    ],
-                    "applicableCancerTypes": [
-                      {
-                        "matchedCancerType": "Lung cancer",
-                        "excludedCancerSubTypes": []
-                      }
-                    ],
-                    "url": "https://hartwigmedicalfoundation.nl"
-                  }
-                ]
-              },
-              "gene": "PIK3CA",
-              "geneRole": "ONCO",
-              "proteinEffect": "GAIN_OF_FUNCTION",
-              "isAssociatedWithDrugResistance": null
-            }
-          ],
-          "copyNumbers": [
-            {
-              "canonicalImpact": {
-                "transcriptId": "",
-                "type": "DEL",
-                "minCopies": 0,
-                "maxCopies": 0
-              },
-              "otherImpacts": [],
-              "isReportable": true,
-              "event": "TP53 del",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": []
-              },
-              "gene": "TP53",
-              "geneRole": "TSG",
-              "proteinEffect": "UNKNOWN",
-              "isAssociatedWithDrugResistance": null
+  "molecularTests": [
+    {
+      "date": "2024-09-15",
+      "sampleId": null,
+      "reportHash": null,
+      "experimentType": "PANEL",
+      "testTypeDisplay": "NGS Lung Panel 1.2",
+      "targetSpecification": {
+        "geneTargetMap": []
+      },
+      "refGenomeVersion": "V37",
+      "containsTumorCells": true,
+      "hasSufficientPurity": true,
+      "hasSufficientQuality": true,
+      "isContaminated": false,
+      "drivers": {
+        "variants": [
+          {
+            "chromosome": "3",
+            "position": 178936091,
+            "ref": "G",
+            "alt": "A",
+            "type": "SNV",
+            "variantAlleleFrequency": 0.5,
+            "canonicalImpact": {
+              "transcriptId": "",
+              "hgvsCodingImpact": "c.1633G>A",
+              "hgvsProteinImpact": "p.E545K",
+              "affectedCodon": 545,
+              "affectedExon": 9,
+              "inSpliceRegion": false,
+              "effects": [
+                "MISSENSE"
+              ],
+              "codingEffect": "MISSENSE"
             },
-            {
-              "canonicalImpact": {
-                "transcript": "",
-                "type": "DEL",
-                "minCopies": 0,
-                "maxCopies": 0
-              },
-              "otherImpacts": [],
-              "isReportable": true,
-              "event": "KEAP1 del",
-              "driverLikelihood": "HIGH",
-              "evidence": {
-                "treatmentEvidence": [],
-                "eligibleTrials": []
-              },
-              "gene": "KEAP1",
-              "geneRole": "TSG",
-              "proteinEffect": "UNKNOWN",
-              "isAssociatedWithDrugResistance": null
-            }
-          ],
-          "homozygousDisruptions": [],
-          "disruptions": [],
-          "fusions": [],
-          "viruses": []
-        },
-        "characteristics": {
-          "purity": null,
-          "ploidy": 2.0,
-          "predictedTumorOrigin": null,
-          "microsatelliteStability": {
-            "microsatelliteIndelsPerMb": null,
-            "isUnstable": false,
+            "otherImpacts": [],
+            "variantCopyNumber": null,
+            "totalCopyNumber": null,
+            "isBiallelic": null,
+            "clonalLikelihood": null,
+            "phaseGroups": null,
+            "isCancerAssociatedVariant": true,
+            "isReportable": true,
+            "event": "PIK3CA E545K",
+            "driverLikelihood": "HIGH",
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": [
+                {
+                  "nctId": "NCT00000016",
+                  "title": "PIK3CA-TRIAL",
+                  "acronym": null,
+                  "treatments": [],
+                  "countries": [
+                    {
+                      "country": "NETHERLANDS",
+                      "hospitalsPerCity": {
+                        "Tilburg": [
+                          {
+                            "name": "Elisabeth-TweeSteden Ziekenhuis",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "country": "GERMANY",
+                      "hospitalsPerCity": {
+                        "Stuttgart": [
+                          {
+                            "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
+                            "isChildrensHospital": false
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "molecularMatches": [
+                    {
+                      "sourceDate": "2012-01-01",
+                      "sourceEvent": "PIK3CA activating mutations",
+                      "sourceEvidenceType": "HOTSPOT_MUTATION",
+                      "sourceUrl": ""
+                    }
+                  ],
+                  "applicableCancerTypes": [
+                    {
+                      "matchedCancerType": "Lung cancer",
+                      "excludedCancerSubTypes": []
+                    }
+                  ],
+                  "url": "https://hartwigmedicalfoundation.nl"
+                }
+              ]
+            },
+            "gene": "PIK3CA",
+            "geneRole": "ONCO",
+            "proteinEffect": "GAIN_OF_FUNCTION",
+            "isAssociatedWithDrugResistance": null
+          }
+        ],
+        "copyNumbers": [
+          {
+            "canonicalImpact": {
+              "transcriptId": "",
+              "type": "DEL",
+              "minCopies": 0,
+              "maxCopies": 0
+            },
+            "otherImpacts": [],
+            "isReportable": true,
+            "event": "TP53 del",
+            "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
-            }
+            },
+            "gene": "TP53",
+            "geneRole": "TSG",
+            "proteinEffect": "UNKNOWN",
+            "isAssociatedWithDrugResistance": null
           },
-          "homologousRecombination": null,
-          "tumorMutationalBurden": {
-            "score": 8.0,
-            "isHigh": false,
+          {
+            "canonicalImpact": {
+              "transcript": "",
+              "type": "DEL",
+              "minCopies": 0,
+              "maxCopies": 0
+            },
+            "otherImpacts": [],
+            "isReportable": true,
+            "event": "KEAP1 del",
+            "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
-            }
-          },
-          "tumorMutationalLoad": null
+            },
+            "gene": "KEAP1",
+            "geneRole": "TSG",
+            "proteinEffect": "UNKNOWN",
+            "isAssociatedWithDrugResistance": null
+          }
+        ],
+        "homozygousDisruptions": [],
+        "disruptions": [],
+        "fusions": [],
+        "viruses": []
+      },
+      "characteristics": {
+        "purity": null,
+        "ploidy": 2.0,
+        "predictedTumorOrigin": null,
+        "microsatelliteStability": {
+          "microsatelliteIndelsPerMb": null,
+          "isUnstable": false,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
         },
-        "evidenceSource": "Hartwig"
-      }
-    ]
-  }
+        "homologousRecombination": null,
+        "tumorMutationalBurden": {
+          "score": 8.0,
+          "isHigh": false,
+          "evidence": {
+            "treatmentEvidence": [],
+            "eligibleTrials": []
+          }
+        },
+        "tumorMutationalLoad": null
+      },
+      "immunology": null,
+      "pharmaco": [],
+      "evidenceSource": "External",
+      "externalTrialSource": "Hartwig"
+    }
+  ]
 }

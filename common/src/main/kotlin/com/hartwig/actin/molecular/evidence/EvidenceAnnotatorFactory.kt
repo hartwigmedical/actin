@@ -1,9 +1,7 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.clinical.Gender
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.doid.DoidModelFactory
@@ -20,7 +18,7 @@ object EvidenceAnnotatorFactory {
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
         patientGender: Gender?
-    ): EvidenceAnnotator<PanelRecord> {
+    ): EvidenceAnnotator {
         return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
@@ -31,19 +29,19 @@ object EvidenceAnnotatorFactory {
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
         patientGender: Gender?
-    ): EvidenceAnnotator<MolecularRecord> {
+    ): EvidenceAnnotator {
         return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
     }
 
-    private fun <T : MolecularTest> create(
+    private fun create(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
         patientGender: Gender?,
-        annotationFunction: (T, Drivers, MolecularCharacteristics) -> T
-    ): EvidenceAnnotator<T> {
+        annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics) -> MolecularTest
+    ): EvidenceAnnotator {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, patientGender)

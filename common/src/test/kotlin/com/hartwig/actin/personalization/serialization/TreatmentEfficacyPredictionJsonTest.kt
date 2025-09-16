@@ -1,5 +1,6 @@
 package com.hartwig.actin.personalization.serialization
 
+import com.hartwig.actin.datamodel.algo.TreatmentEfficacyPrediction
 import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -15,10 +16,31 @@ class TreatmentEfficacyPredictionJsonTest {
         val predictions = TreatmentEfficacyPredictionJson.read(treatmentEfficacyPredictionJson)
 
         assertThat(predictions).isEqualTo(
-            mapOf(
-                "No Treatment" to listOf(0.91, 0.84, 0.27),
-                "Treatment 1" to listOf(0.93, 0.87, 0.54),
-                "Treatment 2" to listOf(0.96, 0.88, 0.75),
+            listOf(
+                TreatmentEfficacyPrediction(
+                    treatment = "No Treatment",
+                    survivalProbs = listOf(0.91, 0.84, 0.27),
+                    shapValues = mapOf(
+                        "age" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = -0.02),
+                        "bmi" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = -0.01)
+                    )
+                ),
+                TreatmentEfficacyPrediction(
+                    treatment = "Treatment 1",
+                    survivalProbs = listOf(0.93, 0.87, 0.54),
+                    shapValues = mapOf(
+                        "age" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = 0.01),
+                        "bmi" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = 0.02)
+                    )
+                ),
+                TreatmentEfficacyPrediction(
+                    treatment = "Treatment 2",
+                    survivalProbs = listOf(0.96, 0.88, 0.75),
+                    shapValues = mapOf(
+                        "age" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = 0.03),
+                        "bmi" to TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = -0.04)
+                    )
+                )
             )
         )
     }

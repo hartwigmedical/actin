@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.ResistanceEvidence
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -21,15 +22,12 @@ import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
-import io.mockk.every
-import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -47,12 +45,10 @@ private val EFFICACY_EVIDENCE = TestServeEvidenceFactory.create(
 private val DOID_MODEL = TestDoidModelFactory.createMinimalTestDoidModel()
 private val TUMOR_DOIDS = setOf(INDICATION.applicableType().doid())
 private val TREATMENT_DATABASE = TestTreatmentDatabaseFactory.createProper()
-private val MOLECULAR_HISTORY = TestMolecularFactory.createMinimalTestMolecularHistory()
+private val MOLECULAR_HISTORY = TestMolecularFactory.createMinimalMolecularTests()
 
 class ResistanceEvidenceMatcherTest {
 
-    private val actionabilityMatcher = mockk<ActionabilityMatcher>()
-    
     @Test
     fun `Should match resistance evidence to SOC treatments`() {
         val socTreatment =
@@ -92,7 +88,7 @@ class ResistanceEvidenceMatcherTest {
                 canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN),
                 isReportable = true
             )
-        ).molecularHistory
+        ).molecularTests
 
         val hasDel = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
@@ -100,15 +96,17 @@ class ResistanceEvidenceMatcherTest {
                 canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
                 isReportable = true
             )
-        ).molecularHistory
+        ).molecularTests
 
         val resistanceEvidenceMatcher =
-            resistanceEvidenceMatcher(listOf(amplificationWithResistanceEvidence))
+            resistanceEvidenceMatcher(efficacyEvidence = listOf(amplificationWithResistanceEvidence), molecularTests = hasAmplification)
 
-        val amplificationFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasAmplification)
+        val amplificationFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence)
         assertThat(amplificationFound).isTrue()
 
-        val amplificationNotFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasDel)
+        val anotherResistanceEvidenceMatcher =
+            resistanceEvidenceMatcher(efficacyEvidence = listOf(amplificationWithResistanceEvidence), molecularTests = hasDel)
+        val amplificationNotFound = anotherResistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence)
         assertThat(amplificationNotFound).isFalse()
     }
 
@@ -127,10 +125,8 @@ class ResistanceEvidenceMatcherTest {
                     driverLikelihood = DriverLikelihood.HIGH,
                     isReportable = true
                 )
-        ).molecularHistory
+        ).molecularTests
 
-        val resistanceEvidenceMatcher =
-            resistanceEvidenceMatcher(listOf(hotspotWithResistanceEvidence))
 
         val hasOtherHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()
@@ -143,12 +139,16 @@ class ResistanceEvidenceMatcherTest {
                     driverLikelihood = DriverLikelihood.HIGH,
                     isReportable = true
                 )
-        ).molecularHistory
+        ).molecularTests
 
-        val hotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence, hasHotspot)
+        val resistanceEvidenceMatcher =
+            resistanceEvidenceMatcher(efficacyEvidence = listOf(hotspotWithResistanceEvidence), molecularTests = hasHotspot)
+        val hotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence)
         assertThat(hotspotFound).isTrue()
 
-        val anotherHotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence, hasOtherHotspot)
+        val anotherResistanceEvidenceMatcher =
+            resistanceEvidenceMatcher(efficacyEvidence = listOf(hotspotWithResistanceEvidence), molecularTests = hasOtherHotspot)
+        val anotherHotspotFound = anotherResistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence)
         assertThat(anotherHotspotFound).isFalse()
     }
 
@@ -157,25 +157,24 @@ class ResistanceEvidenceMatcherTest {
         val fusionWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.FUSION)
         val fusion =
             TestFusionFactory.createMinimal().copy(geneStart = "gene 1", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
-        val hasFusion = MolecularTestFactory.withFusion(fusion).molecularHistory
+        val hasFusion = MolecularTestFactory.withFusion(fusion).molecularTests
 
         val otherFusion = TestFusionFactory.createMinimal()
             .copy(geneStart = "gene 2", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
-        val hasOtherFusion = MolecularTestFactory.withFusion(otherFusion).molecularHistory
+        val hasOtherFusion = MolecularTestFactory.withFusion(otherFusion).molecularTests
 
-        every { actionabilityMatcher.match(hasFusion.molecularTests.first()) } returns mapOf(
-            fusion to ActionabilityMatch(
-                listOf(
-                    fusionWithResistanceEvidence
-                ), emptyMap()
-            )
+        val fusionMatcher = resistanceEvidenceMatcher(
+            efficacyEvidence = listOf(fusionWithResistanceEvidence),
+            molecularTests = hasFusion
         )
-        val fusionFound = resistanceEvidenceMatcher(listOf(fusionWithResistanceEvidence)).isFound(fusionWithResistanceEvidence, hasFusion)
+        val fusionFound = fusionMatcher.isFound(fusionWithResistanceEvidence)
         assertThat(fusionFound).isTrue()
 
-        every { actionabilityMatcher.match(hasOtherFusion.molecularTests.first()) } returns emptyMap()
-        val anotherFusionFound =
-            resistanceEvidenceMatcher(listOf(fusionWithResistanceEvidence)).isFound(fusionWithResistanceEvidence, hasOtherFusion)
+        val otherFusionMatcher = resistanceEvidenceMatcher(
+            efficacyEvidence = listOf(fusionWithResistanceEvidence),
+            molecularTests = hasOtherFusion
+        )
+        val anotherFusionFound = otherFusionMatcher.isFound(fusionWithResistanceEvidence)
         assertThat(anotherFusionFound).isFalse()
     }
 
@@ -200,7 +199,7 @@ class ResistanceEvidenceMatcherTest {
                 driverLikelihood = DriverLikelihood.HIGH,
                 isReportable = true
             )
-        ).molecularHistory
+        ).molecularTests
 
         val hasAnotherRange = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
@@ -210,24 +209,33 @@ class ResistanceEvidenceMatcherTest {
                 isReportable = true,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
-        ).molecularHistory
+        ).molecularTests
 
-        val resistanceEvidenceMatcher = resistanceEvidenceMatcher(listOf(rangeWithResistanceEvidence))
+        val resistanceEvidenceMatcher = resistanceEvidenceMatcher(
+            efficacyEvidence = listOf(rangeWithResistanceEvidence),
+            molecularTests = hasRange
+        )
 
-        val rangeFound = resistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence, hasRange)
+        val rangeFound = resistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence)
         assertThat(rangeFound).isTrue()
 
-        val anotherRangeFound = resistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence, hasAnotherRange)
+        val anotherResistanceEvidenceMatcher = resistanceEvidenceMatcher(
+            efficacyEvidence = listOf(rangeWithResistanceEvidence),
+            molecularTests = hasAnotherRange
+        )
+        val anotherRangeFound = anotherResistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence)
         assertThat(anotherRangeFound).isFalse()
     }
 
-    private fun resistanceEvidenceMatcher(efficacyEvidence: List<EfficacyEvidence> = emptyList()) =
-        ResistanceEvidenceMatcher.create(
-            DOID_MODEL,
-            TUMOR_DOIDS,
-            listOf(EFFICACY_EVIDENCE),
-            TREATMENT_DATABASE,
-            MOLECULAR_HISTORY,
-            ActionabilityMatcher(evidences = efficacyEvidence, emptyList())
-        )
+    private fun resistanceEvidenceMatcher(
+        efficacyEvidence: List<EfficacyEvidence> = emptyList(),
+        molecularTests: List<MolecularTest> = MOLECULAR_HISTORY
+    ) = ResistanceEvidenceMatcher.create(
+        DOID_MODEL,
+        TUMOR_DOIDS,
+        listOf(EFFICACY_EVIDENCE),
+        TREATMENT_DATABASE,
+        molecularTests,
+        ActionabilityMatcher(evidences = efficacyEvidence, emptyList())
+    )
 }

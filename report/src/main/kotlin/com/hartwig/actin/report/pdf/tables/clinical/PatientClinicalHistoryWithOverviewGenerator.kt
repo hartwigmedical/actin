@@ -1,7 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import com.hartwig.actin.report.datamodel.Report
@@ -34,21 +35,18 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     override fun contents(): Table {
         val record = report.patientRecord
-        val pharmaco = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco
+        val pharmaco = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()?.pharmaco
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
         listOf(
-            "Gender" to (record.patient.gender?.display() ?: Formats.VALUE_UNKNOWN),
-            "Birth year" to record.patient.birthYear.toString(),
-            "WHO" to whoStatus(record.performanceStatus.latestWho),
-            "Tumor" to record.tumor.name,
-            "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
+            "Gender (birth year, WHO)" to "${(record.patient.gender?.display() ?: "Unknown gender")} (${record.patient.birthYear}, WHO ${whoStatus(record.performanceStatus.latestWho)})",
             "Stage" to stage(record.tumor),
-            "Measurable disease (RECIST)" to measurableDisease(record.tumor),
+            "Tumor" to record.tumor.name,
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),
-            "\n" to "\n",
-            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1)
+            "Lesions" to TumorDetailsInterpreter.lesionString(record.tumor),
+            "UGT1A1" to createPeachSummaryForGene(pharmaco, PharmacoGene.UGT1A1),
+            "Measurable (RECIST)" to measurableDisease(record.tumor)
         ).forEach { (key, value) ->
             clinicalSummaryTable.addCell(createKey(key))
             clinicalSummaryTable.addCell(createValue(value))
@@ -56,8 +54,9 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
+
+        val molecularRecord = MolecularHistory(report.patientRecord.molecularTests).allPanels().firstOrNull()
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
-        val molecularRecord = record.molecularHistory.latestOrangeMolecularRecord()
         clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
         table.addCell(create(clinicalSummaryTable))
@@ -78,7 +77,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return events.ifEmpty { "$geneToFind: No reportable events" }
     }
 
-    private fun msStatus(molecular: MolecularRecord): String {
+    private fun msStatus(molecular: MolecularTest): String {
         return if (molecular.characteristics.microsatelliteStability?.isUnstable == true) "MSI" else "MSS"
     }
 
@@ -99,12 +98,12 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return pharmaco?.find { it.gene == geneToFind }
     }
 
-    private fun molecularResults(molecular: MolecularRecord): String {
+    private fun molecularResults(molecular: MolecularTest): String {
         val molecularDriversInterpreter =
             MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         val driverEntries = factory.create()
         val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(driverEntries, it) }
-        return (drivers + msStatus(molecular)).joinToString(", ")
+        return listOfNotNull(drivers, msStatus(molecular)).joinToString(", ")
     }
 }

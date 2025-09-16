@@ -31,7 +31,7 @@ private const val VIRUS_INTEGRATIONS = 3
 
 class MolecularDriversSummarizerTest {
 
-    private val minimalDrivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers
+    private val minimalDrivers = TestMolecularFactory.createMinimalWholeGenomeTest().drivers
 
     @Test
     fun `Should return key variants`() {
@@ -217,7 +217,7 @@ class MolecularDriversSummarizerTest {
         val lowDriverCopyNumber = TestMolecularFactory.createProperCopyNumber().copy(driverLikelihood = DriverLikelihood.LOW)
         val nullDriverCopyNumber = TestMolecularFactory.createProperCopyNumber().copy(driverLikelihood = null)
 
-        val molecularRecord = TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+        val molecularRecord = TestMolecularFactory.createMinimalWholeGenomeTest().copy(
             drivers = TestMolecularFactory.createProperTestDrivers().copy(
                 variants = listOf(highDriverVariant, mediumDriverVariant, lowDriverVariant, nullDriverVariant),
                 copyNumbers = listOf(highDriverCopyNumber, mediumDriverCopyNumber, lowDriverCopyNumber, nullDriverCopyNumber)

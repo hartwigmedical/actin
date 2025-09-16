@@ -38,7 +38,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
@@ -51,82 +50,94 @@ object TestMolecularFactory {
     private val TODAY = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
-    fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createMinimalTestMolecularRecord(), createMinimalTestPanelRecord()))
+    fun createMinimalMolecularTests(): List<MolecularTest> {
+        return listOf(createMinimalWholeGenomeTest(), createMinimalPanelTest())
     }
 
-    fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createProperTestMolecularRecord(), createProperTestPanelRecord()))
+    fun createProperMolecularTests(): List<MolecularTest> {
+        return listOf(createProperWholeGenomeTest(), createProperPanelTest())
     }
 
-    fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), createExhaustiveTestPanelRecord()))
+    fun createExhaustiveMolecularTests(): List<MolecularTest> {
+        return listOf(createExhaustiveWholeGenomeTest(), createExhaustivePanelTest())
     }
 
-    fun createMinimalTestPanelRecord(): PanelRecord {
-        return PanelRecord(
-            targetSpecification = PanelTargetSpecification(emptyMap()),
+    fun createMinimalPanelTest(): MolecularTest {
+        return MolecularTest(
+            date = null,
+            sampleId = TestPatientFactory.TEST_SAMPLE,
+            reportHash = null,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = "minimal panel",
-            date = null,
-            drivers = createMinimalTestDrivers(),
-            characteristics = createMinimalTestCharacteristics(),
-            evidenceSource = "",
-            hasSufficientPurity = true,
-            hasSufficientQuality = true
-        )
-    }
-
-    fun createMinimalTestMolecularRecord(): MolecularRecord {
-        return MolecularRecord(
-            sampleId = TestPatientFactory.TEST_SAMPLE,
-            experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
+            targetSpecification = PanelTargetSpecification(emptyMap()),
             refGenomeVersion = RefGenomeVersion.V37,
-            evidenceSource = "",
-            externalTrialSource = "",
             containsTumorCells = true,
-            isContaminated = false,
             hasSufficientPurity = true,
             hasSufficientQuality = true,
+            isContaminated = false,
             drivers = createMinimalTestDrivers(),
             characteristics = createMinimalTestCharacteristics(),
-            immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
-            date = null,
+            immunology = null,
             pharmaco = emptySet(),
-            targetSpecification = null
+            evidenceSource = "",
+            externalTrialSource = ""
         )
     }
 
-    fun createProperTestPanelRecord(): PanelRecord {
-        return createMinimalTestPanelRecord().copy(
+    fun createMinimalWholeGenomeTest(): MolecularTest {
+        return MolecularTest(
+            date = null,
+            sampleId = TestPatientFactory.TEST_SAMPLE,
+            reportHash = null,
+            experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
+            testTypeDisplay = "minimal whole genome",
+            targetSpecification = null,
+            refGenomeVersion = RefGenomeVersion.V37,
+            containsTumorCells = true,
+            hasSufficientPurity = true,
+            hasSufficientQuality = true,
+            isContaminated = false,
+            drivers = createMinimalTestDrivers(),
+            characteristics = createMinimalTestCharacteristics(),
+            immunology = createMinimalTestImmunology(),
+            pharmaco = emptySet(),
+            evidenceSource = "",
+            externalTrialSource = ""
+        )
+    }
+
+    fun createProperPanelTest(): MolecularTest {
+        return createMinimalPanelTest().copy(
+            date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
+            testTypeDisplay = "proper panel",
             targetSpecification = PanelTargetSpecification(
                 mapOf(
                     "BRAF" to listOf(MolecularTestTarget.MUTATION),
                     "PTEN" to listOf(MolecularTestTarget.MUTATION)
                 )
             ),
-            testTypeDisplay = "proper panel",
-            date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
             drivers = createProperTestDrivers(),
             characteristics = createProperTestCharacteristics(),
             evidenceSource = "kb",
         )
     }
 
-    fun createProperTestMolecularRecord(): MolecularRecord {
-        return createMinimalTestMolecularRecord().copy(
+    fun createProperWholeGenomeTest(): MolecularTest {
+        return createMinimalWholeGenomeTest().copy(
             date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
-            evidenceSource = "kb",
-            externalTrialSource = "trial kb",
+            testTypeDisplay = "proper whole genome",
             drivers = createProperTestDrivers(),
             characteristics = createProperTestCharacteristics(),
             immunology = createProperTestImmunology(),
-            pharmaco = createProperTestPharmaco()
+            pharmaco = createProperTestPharmaco(),
+            evidenceSource = "kb",
+            externalTrialSource = "trial kb"
         )
     }
 
-    fun createExhaustiveTestPanelRecord(): PanelRecord {
-        return createProperTestPanelRecord().copy(
+    fun createExhaustivePanelTest(): MolecularTest {
+        return createProperPanelTest().copy(
+            testTypeDisplay = "exhaustive panel",
             targetSpecification = PanelTargetSpecification(setOf(
                 "BRAF",
                 "PTEN",
@@ -135,15 +146,15 @@ object TestMolecularFactory {
                 "EML4",
                 "ALK"
             ).associateWith { listOf(MolecularTestTarget.MUTATION) }),
-            testTypeDisplay = "exhaustive panel",
             drivers = createExhaustiveTestDrivers(),
             characteristics = createExhaustiveTestCharacteristics()
         )
     }
 
-    fun createExhaustiveTestMolecularRecord(): MolecularRecord {
-        return createProperTestMolecularRecord().copy(
-            drivers = createExhaustiveTestDrivers(), characteristics = createExhaustiveTestCharacteristics()
+    fun createExhaustiveWholeGenomeTest(): MolecularTest {
+        return createProperWholeGenomeTest().copy(
+            drivers = createExhaustiveTestDrivers(),
+            characteristics = createExhaustiveTestCharacteristics()
         )
     }
 
@@ -157,6 +168,10 @@ object TestMolecularFactory {
             tumorMutationalBurden = null,
             tumorMutationalLoad = null
         )
+    }
+
+    fun createMinimalTestImmunology(): MolecularImmunology {
+        return MolecularImmunology(isReliable = false, hlaAlleles = emptySet())
     }
 
     fun panelSpecifications(genes: Set<String>, targets: List<MolecularTestTarget> = listOf(MolecularTestTarget.MUTATION)) =

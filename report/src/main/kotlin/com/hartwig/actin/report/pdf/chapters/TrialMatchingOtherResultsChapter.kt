@@ -15,7 +15,6 @@ import com.itextpdf.layout.Document
 
 class TrialMatchingOtherResultsChapter(
     private val report: Report,
-    private val includeIneligibleTrialsInSummary: Boolean,
     private val externalTrialsOnly: Boolean,
     private val trialsProvider: TrialsProvider,
     override val include: Boolean
@@ -41,7 +40,7 @@ class TrialMatchingOtherResultsChapter(
     }
 
     fun createTrialTableGenerators(): List<TableGenerator> {
-        val requestingSource = TrialSource.fromDescription(report.requestingHospital)
+        val requestingSource = TrialSource.fromDescription(report.config.hospitalOfReference)
         val externalTrials = trialsProvider.externalTrials()
 
         val localTrialGenerators = createTrialTableGenerators(
@@ -80,9 +79,10 @@ class TrialMatchingOtherResultsChapter(
             ignoredCohorts, nonEvaluableCohorts, source
         )
 
-        return listOfNotNull(
-            eligibleTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
-            ineligibleTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
-            nonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) })
+        return listOf(
+            eligibleTrialsClosedCohortsGenerator,
+            ineligibleTrialsGenerator,
+            nonEvaluableAndIgnoredCohortsGenerator
+        ).takeIf { !externalTrialsOnly } ?: emptyList()
     }
 }

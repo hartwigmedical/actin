@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.datamodel.algo.ResistanceEvidence
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
@@ -18,8 +18,7 @@ import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 class ResistanceEvidenceMatcher(
     private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
-    private val actionabilityMatcher: ActionabilityMatcher,
-    private val molecularHistory: MolecularHistory
+    private val molecularTestsAndMatches: List<Pair<MolecularTest, MatchesForActionable>>
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
@@ -30,45 +29,44 @@ class ResistanceEvidenceMatcher(
                     treatmentName = treatmentName,
                     resistanceLevel = evidence.evidenceLevel().toString(),
                     isTested = null,
-                    isFound = isFound(evidence, molecularHistory),
+                    isFound = isFound(evidence),
                     evidenceUrls = evidence.urls()
                 )
             }
-        }.distinctBy { it.event }
+        }
     }
 
-    fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
-        val molecularTestsAndMatches = molecularHistory.molecularTests.map { it to actionabilityMatcher.match(it) }
+    fun isFound(evidence: EfficacyEvidence): Boolean? {
 
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 codons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 exons().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
-                        molecularTest.first.drivers.variants.any { hasEvidence(it, molecularTest.second) }
+                        molecularTest.first.drivers.variants.any { hasEvidence(it, evidence, molecularTest.second) }
                     }
                 }
 
                 genes().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         with(molecularTest.first.drivers) {
-                            val variantMatch = variants.any { hasEvidence(it, molecularTest.second) }
-                            val fusionMatch = fusions.any { hasEvidence(it, molecularTest.second) }
+                            val variantMatch = variants.any { hasEvidence(it, evidence, molecularTest.second) }
+                            val fusionMatch = fusions.any { hasEvidence(it, evidence, molecularTest.second) }
                             variantMatch || fusionMatch ||
-                                    copyNumbers.any { hasEvidence(it, molecularTest.second) } ||
-                                    homozygousDisruptions.any { hasEvidence(it, molecularTest.second) } ||
-                                    disruptions.any { hasEvidence(it, molecularTest.second) }
+                                    copyNumbers.any { hasEvidence(it, evidence, molecularTest.second) } ||
+                                    homozygousDisruptions.any { hasEvidence(it, evidence, molecularTest.second) } ||
+                                    disruptions.any { hasEvidence(it, evidence, molecularTest.second) }
                         }
                     }
                 }
@@ -76,7 +74,7 @@ class ResistanceEvidenceMatcher(
                 fusions().isNotEmpty() -> {
                     molecularTestsAndMatches.any { molecularTest ->
                         molecularTest.first.drivers.fusions.any {
-                            hasEvidence(it, molecularTest.second)
+                            hasEvidence(it, evidence, molecularTest.second)
                         }
                     }
                 }
@@ -87,8 +85,8 @@ class ResistanceEvidenceMatcher(
         }
     }
 
-    private fun hasEvidence(it: Actionable, matches: MatchesForActionable) =
-        matches[it]?.evidenceMatches?.isNotEmpty() == true
+    private fun hasEvidence(it: Actionable, evidence: EfficacyEvidence, matches: MatchesForActionable) =
+        matches[it]?.evidenceMatches?.contains(evidence) == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
         return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))
@@ -106,7 +104,6 @@ class ResistanceEvidenceMatcher(
     }
 
     private fun findSourceEvent(evidence: EfficacyEvidence): String {
-        // Assumes there is no combined/complex evidence yet
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
@@ -148,17 +145,17 @@ class ResistanceEvidenceMatcher(
             tumorDoids: Set<String>,
             evidences: List<EfficacyEvidence>,
             treatmentDatabase: TreatmentDatabase,
-            molecularHistory: MolecularHistory,
+            molecularTests: List<MolecularTest>,
             actionabilityMatcher: ActionabilityMatcher
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
+            val molecularTestsAndMatches = molecularTests.map { it to actionabilityMatcher.match(it) }
 
             return ResistanceEvidenceMatcher(
                 onLabelNonPositiveEvidence,
                 treatmentDatabase,
-                actionabilityMatcher,
-                molecularHistory
+                molecularTestsAndMatches
             )
         }
 

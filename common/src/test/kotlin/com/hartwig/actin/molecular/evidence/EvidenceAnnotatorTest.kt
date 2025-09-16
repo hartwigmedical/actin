@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.clinical.Gender
-import com.hartwig.actin.datamodel.molecular.panel.PanelRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
@@ -14,7 +13,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactor
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import io.mockk.every
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val brafActionableHotspot = TestServeMolecularFactory.hotspot(
@@ -44,7 +43,7 @@ class EvidenceAnnotatorTest {
         )
 
         val variant = TestMolecularFactory.createProperVariant()
-        Assertions.assertThat(variant.evidence.treatmentEvidence).isNotEmpty
+        assertThat(variant.evidence.treatmentEvidence).isNotEmpty
         val indication = evidence.indication()
         val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver> {
             every { resolve(indication) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
@@ -59,19 +58,19 @@ class EvidenceAnnotatorTest {
 
         val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
             )
 
         val updatedTest = evidenceAnnotator.annotate(molecularTest)
-        Assertions.assertThat(updatedTest.drivers.variants).hasSize(1)
+        assertThat(updatedTest.drivers.variants).hasSize(1)
 
         val annotatedVariant = updatedTest.drivers.variants.first()
 
-        Assertions.assertThat(clearEvidence(annotatedVariant)).isEqualTo(clearEvidence(brafMolecularTestVariant))
-        Assertions.assertThat(annotatedVariant.evidence.treatmentEvidence.first().treatment).isEqualTo("treatment")  // replaced Vemurafenib
-        Assertions.assertThat(annotatedVariant.evidence.eligibleTrials.first().title).isEqualTo("title")
+        assertThat(clearEvidence(annotatedVariant)).isEqualTo(clearEvidence(brafMolecularTestVariant))
+        assertThat(annotatedVariant.evidence.treatmentEvidence.first().treatment).isEqualTo("treatment")
+        assertThat(annotatedVariant.evidence.eligibleTrials.first().title).isEqualTo("title")
     }
 
     @Test
@@ -85,7 +84,7 @@ class EvidenceAnnotatorTest {
             ActionabilityMatcher(emptyList(), emptyList())
         )
 
-        val molecularTest = TestMolecularFactory.createMinimalTestPanelRecord()
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
                     variants = listOf(
@@ -97,17 +96,14 @@ class EvidenceAnnotatorTest {
             )
 
         val updatedTest = evidenceAnnotator.annotate(molecularTest)
-        Assertions.assertThat(updatedTest.drivers.variants).hasSize(1)
-        Assertions.assertThat(updatedTest.drivers.variants).isEqualTo(molecularTest.drivers.variants)
+        assertThat(updatedTest.drivers.variants).hasSize(1)
+        assertThat(updatedTest.drivers.variants).isEqualTo(molecularTest.drivers.variants)
     }
 
     private fun evidenceAnnotator(
         clinicalEvidenceFactory: ClinicalEvidenceFactory,
         actionabilityMatcher: ActionabilityMatcher
-    ) = EvidenceAnnotator<PanelRecord>(
-        clinicalEvidenceFactory,
-        actionabilityMatcher
-    ) { input, drivers, characteristics ->
+    ) = EvidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher) { input, drivers, characteristics ->
         input.copy(drivers = drivers, characteristics = characteristics)
     }
 

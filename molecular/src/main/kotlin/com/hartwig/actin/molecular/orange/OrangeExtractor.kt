@@ -1,13 +1,13 @@
 package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.molecular.panel.PanelSpecifications
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
@@ -18,34 +18,36 @@ import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentT
 private const val ONCO_PANEL = "OncoPanel"
 
 class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpecifications: PanelSpecifications) :
-    MolecularExtractor<OrangeRecord, MolecularRecord> {
+    MolecularExtractor<OrangeRecord, MolecularTest> {
 
-    override fun extract(input: List<OrangeRecord>): List<MolecularRecord> {
+    override fun extract(input: List<OrangeRecord>): List<MolecularTest> {
         return input.map(::interpret)
     }
 
-    fun interpret(record: OrangeRecord): MolecularRecord {
+    fun interpret(record: OrangeRecord): MolecularTest {
         validateOrangeRecord(record)
         val driverExtractor = DriverExtractor.create(geneFilter)
 
-        return MolecularRecord(
-            sampleId = record.sampleId(),
-            experimentType = determineExperimentType(record.experimentType()),
-            refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
+        return MolecularTest(
             date = record.samplingDate(),
-            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
-            externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
+            sampleId = record.sampleId(),
+            reportHash = null,
+            experimentType = determineExperimentType(record.experimentType()),
+            testTypeDisplay = null,
+            targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
+                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL, LocalDate.of(2024, 12, 9)), null)
+            } else null,
+            refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
             containsTumorCells = containsTumorCells(record),
-            isContaminated = isContaminated(record),
             hasSufficientPurity = hasSufficientPurity(record),
             hasSufficientQuality = hasSufficientQuality(record),
+            isContaminated = isContaminated(record),
             characteristics = CharacteristicsExtraction.extract(record),
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record),
-            targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
-                panelSpecifications.panelTargetSpecification(PanelTestSpecification(ONCO_PANEL, LocalDate.of(2024, 12, 9)), null)
-            } else null
+            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+            externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
         )
     }
 

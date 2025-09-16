@@ -27,7 +27,7 @@ class LongitudinalMolecularHistoryChapter(
 
     private fun addLongitudinalMolecularHistoryTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularHistory, cohorts)
+        val generator = LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularTests, cohorts)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }

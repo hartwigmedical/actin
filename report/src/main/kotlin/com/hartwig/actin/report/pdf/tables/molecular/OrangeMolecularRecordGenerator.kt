@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.clinical.PathologyReport
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -17,7 +17,7 @@ class OrangeMolecularRecordGenerator(
     private val trials: Set<EventWithExternalTrial>,
     private val cohorts: List<InterpretedCohort>,
     private val width: Float,
-    private val molecular: MolecularRecord,
+    private val molecular: MolecularTest,
     private val pathologyReport: PathologyReport?
 ) : TableGenerator {
 
@@ -61,7 +61,7 @@ class OrangeMolecularRecordGenerator(
     }
 
     private fun tumorDetailsGenerators(
-        molecular: MolecularRecord,
+        molecular: MolecularTest,
         evaluated: List<InterpretedCohort>,
         trials: Set<EventWithExternalTrial>
     ): List<TableGenerator> {

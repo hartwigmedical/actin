@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.molecular.ExperimentType
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -17,7 +16,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 
 internal object TumorTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalWholeGenomeTest()
 
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))
@@ -34,23 +33,22 @@ internal object TumorTestFactory {
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            molecularHistory = MolecularHistory(
-                listOf(
-                    baseMolecular.copy(
-                        characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
-                        drivers = baseMolecular.drivers.copy(
-                            copyNumbers = listOf(
-                                TestCopyNumberFactory.createMinimal().copy(
-                                    isReportable = true,
-                                    gene = amplifiedGene,
-                                    geneRole = GeneRole.ONCO,
-                                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                                        CopyNumberType.FULL_GAIN,
-                                        20,
-                                        20
-                                    ),
-                                )
+            molecularTests =
+            listOf(
+                baseMolecular.copy(
+                    characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
+                    drivers = baseMolecular.drivers.copy(
+                        copyNumbers = listOf(
+                            TestCopyNumberFactory.createMinimal().copy(
+                                isReportable = true,
+                                gene = amplifiedGene,
+                                geneRole = GeneRole.ONCO,
+                                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                                    CopyNumberType.FULL_GAIN,
+                                    20,
+                                    20
+                                ),
                             )
                         )
                     )
@@ -67,23 +65,22 @@ internal object TumorTestFactory {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
             ihcTests = ihcTests,
-            molecularHistory = MolecularHistory(
-                listOf(
-                    baseMolecular.copy(
-                        characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
-                        drivers = baseMolecular.drivers.copy(
-                            copyNumbers = listOf(
-                                TestCopyNumberFactory.createMinimal().copy(
-                                    isReportable = true,
-                                    gene = amplifiedGene,
-                                    geneRole = GeneRole.ONCO,
-                                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                                        CopyNumberType.FULL_GAIN,
-                                        20,
-                                        20
-                                    ),
-                                )
+            molecularTests =
+            listOf(
+                baseMolecular.copy(
+                    characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
+                    drivers = baseMolecular.drivers.copy(
+                        copyNumbers = listOf(
+                            TestCopyNumberFactory.createMinimal().copy(
+                                isReportable = true,
+                                gene = amplifiedGene,
+                                geneRole = GeneRole.ONCO,
+                                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                                    CopyNumberType.FULL_GAIN,
+                                    20,
+                                    20
+                                ),
                             )
                         )
                     )
@@ -104,12 +101,7 @@ internal object TumorTestFactory {
         val doids = doid?.let(::setOf)
         return withTumorDetails(TumorDetails(stage = stage, doids = doids))
     }
-
-    fun withTumorStageAndDerivedStagesAndDoid(stage: TumorStage?, derivedStages: Set<TumorStage>, doid: String?): PatientRecord {
-        val doids = doid?.let(::setOf)
-        return withTumorDetails(TumorDetails(stage = stage, derivedStages = derivedStages, doids = doids))
-    }
-
+    
     fun withMeasurableDisease(hasMeasurableDisease: Boolean?): PatientRecord {
         return withTumorDetails(TumorDetails(hasMeasurableDisease = hasMeasurableDisease))
     }
@@ -305,7 +297,7 @@ internal object TumorTestFactory {
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(experimentType = type))))
+        return base.copy(molecularTests = listOf(baseMolecular.copy(experimentType = type)))
     }
 
     fun withIhcTestsAndDoids(ihcTests: List<IhcTest>, doids: Set<String>?): PatientRecord {

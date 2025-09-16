@@ -84,8 +84,8 @@ object Cells {
         return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(MEDIUM_FONT)
     }
 
-    fun createContentSmall(text: String): Cell {
-        return createContent(Paragraph(text)).setFontSize(SMALL_FONT)
+    fun createContentSmallItalic(text: String): Cell {
+        return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
     }
     
     fun createContentBold(text: String): Cell {

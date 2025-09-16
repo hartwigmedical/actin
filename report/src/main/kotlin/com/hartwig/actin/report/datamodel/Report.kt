@@ -8,7 +8,6 @@ import java.time.LocalDate
 data class Report(
     val reportDate: LocalDate,
     val patientId: String,
-    val requestingHospital: String?,
     val patientRecord: PatientRecord,
     val treatmentMatch: TreatmentMatch,
     val config: ReportConfiguration
