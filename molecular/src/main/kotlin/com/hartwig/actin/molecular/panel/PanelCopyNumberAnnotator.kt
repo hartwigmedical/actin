@@ -69,16 +69,17 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
             logger.warn("No transcript provided for panel deletion in gene ${sequencedDeletion.gene}, using canonical transcript")
             canonicalTranscript
         }
+        //TODO; Should we make a distinction here between partial and full deletion?
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
-            type = if (isCanonicalTranscript) CopyNumberType.DEL else CopyNumberType.NONE,
+            type = if (isCanonicalTranscript) CopyNumberType.FULL_DEL else CopyNumberType.NONE,
             minCopies = if (isCanonicalTranscript) 0 else null,
             maxCopies = if (isCanonicalTranscript) 0 else null
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
-                type = CopyNumberType.DEL,
+                type = CopyNumberType.FULL_DEL,
                 minCopies = 0,
                 maxCopies = 0
             )

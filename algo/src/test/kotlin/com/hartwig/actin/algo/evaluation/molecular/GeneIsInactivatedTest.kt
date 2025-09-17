@@ -37,7 +37,7 @@ class GeneIsInactivatedTest {
         isReportable = true,
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
     )
 
     private val matchingVariant = TestVariantFactory.createMinimal().copy(
@@ -205,7 +205,7 @@ class GeneIsInactivatedTest {
                 MolecularTestFactory.withCopyNumber(
                     matchingDel.copy(
                         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
-                        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL))
+                        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL))
                     )
                 )
             )

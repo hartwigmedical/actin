@@ -42,7 +42,7 @@ class DriverExtractorTest {
         val copyNumbers = listOf(
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "gene 1",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
                 isReportable = true
             ),
             TestCopyNumberFactory.createMinimal().copy(
@@ -52,7 +52,7 @@ class DriverExtractorTest {
             ),
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "gene 3",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
                 isReportable = false
             )
         )

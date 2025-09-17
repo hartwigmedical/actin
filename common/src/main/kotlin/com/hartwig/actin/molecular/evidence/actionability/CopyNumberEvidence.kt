@@ -26,7 +26,9 @@ class CopyNumberEvidence {
         }
 
         fun isDeletionMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return copyNumber.canonicalImpact.type == CopyNumberType.DEL && copyNumber.gene == actionableGene.gene()
+            return (copyNumber.canonicalImpact.type == CopyNumberType.PARTIAL_DEL ||
+                    copyNumber.canonicalImpact.type == CopyNumberType.FULL_DEL)
+                    && copyNumber.gene == actionableGene.gene()
         }
     }
 }

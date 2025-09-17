@@ -21,7 +21,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
         val nonBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == false }
         val unknownBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == null }
 
-        val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in GeneConstants.MMR_GENES && it.canonicalImpact.type == CopyNumberType.DEL }
+        val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in GeneConstants.MMR_GENES && it.canonicalImpact.type in GeneConstants.DELETION }
         val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in GeneConstants.MMR_GENES }
         val msiGenesWithBiallelicDriver = genesFrom(biallelicMsiVariants, msiCopyNumbers, msiHomozygousDisruptions)
 

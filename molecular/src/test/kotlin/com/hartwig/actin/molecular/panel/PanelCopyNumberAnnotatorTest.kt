@@ -80,7 +80,7 @@ class PanelCopyNumberAnnotatorTest {
         setupEnsemblDataCacheForCopyNumber()
 
         val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, CANONICAL_TRANSCRIPT)))
-        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
+        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 0, maxCopies = 0)
         val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
         check(annotatedPanel, canonicalImpact, otherImpacts, "del")
@@ -94,7 +94,7 @@ class PanelCopyNumberAnnotatorTest {
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = null, maxCopies = null)
         val otherImpacts = setOf(
-            TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
+            TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
                 .copy(transcriptId = NON_CANONICAL_TRANSCRIPT, minCopies = 0, maxCopies = 0)
         )
         check(annotatedPanel, canonicalImpact, otherImpacts, "del")

@@ -34,7 +34,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
                 }
             }
             for (copyNumber in test.drivers.copyNumbers) {
-                if (copyNumber.canonicalImpact.type == CopyNumberType.DEL && copyNumber.gene == gene) {
+                if (copyNumber.canonicalImpact.type in GeneConstants.DELETION && copyNumber.gene == gene) {
                     hrdGenesWithBiallelicDriver.add(gene)
                 }
             }

@@ -54,7 +54,7 @@ data class HomologousRecombinationDeficiencyGeneSummary(
                 .mapValues { it.value.toSet() }
 
             val hrdGenesWithDeletionOrPartialDel = drivers.copyNumbers
-                .filter { it.canonicalImpact.type == CopyNumberType.DEL && it.gene in GeneConstants.HR_GENES }
+                .filter { it.canonicalImpact.type in GeneConstants.DELETION && it.gene in GeneConstants.HR_GENES }
                 .map(GeneAlteration::gene)
                 .toSet()
             val hrdGenesWithHomozygousDisruption = drivers.homozygousDisruptions.filter { it.gene in GeneConstants.HR_GENES }
