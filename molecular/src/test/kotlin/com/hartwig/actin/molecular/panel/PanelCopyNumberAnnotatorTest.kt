@@ -76,10 +76,10 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     @Test
-    fun `Should convert sequenced deletion to del copy number for canonical transcript`() {
+    fun `Should convert sequenced deletion to full del copy number for canonical transcript`() {
         setupEnsemblDataCacheForCopyNumber()
 
-        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, CANONICAL_TRANSCRIPT)))
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, CANONICAL_TRANSCRIPT, false)))
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 0, maxCopies = 0)
         val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
@@ -87,11 +87,36 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     @Test
-    fun `Should convert sequenced deletion to del copy number for non-canonical transcript`() {
+    fun `Should convert sequenced deletion to parital del copy number for canonical transcript`() {
         setupEnsemblDataCacheForCopyNumber()
 
-        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, NON_CANONICAL_TRANSCRIPT)))
-        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE)
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, CANONICAL_TRANSCRIPT, true)))
+        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL)
+            .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 0, maxCopies = 0)
+        val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
+        check(annotatedPanel, canonicalImpact, otherImpacts, "del")
+    }
+
+    @Test
+    fun `Should convert sequenced deletion to partial del copy number for non-canonical transcript`() {
+        setupEnsemblDataCacheForCopyNumber()
+
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, NON_CANONICAL_TRANSCRIPT, true)))
+        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL)
+            .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = null, maxCopies = null)
+        val otherImpacts = setOf(
+            TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL)
+                .copy(transcriptId = NON_CANONICAL_TRANSCRIPT, minCopies = 0, maxCopies = 0)
+        )
+        check(annotatedPanel, canonicalImpact, otherImpacts, "del")
+    }
+
+    @Test
+    fun `Should convert sequenced deletion to full del copy number for non-canonical transcript`() {
+        setupEnsemblDataCacheForCopyNumber()
+
+        val annotatedPanel = annotator.annotate(setOf(SequencedDeletion(GENE, NON_CANONICAL_TRANSCRIPT, false)))
+        val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = null, maxCopies = null)
         val otherImpacts = setOf(
             TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
