@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomBar
 import org.jetbrains.letsPlot.geom.geomLine
+import org.jetbrains.letsPlot.geom.geomPoint
 import org.jetbrains.letsPlot.geom.geomVLine
 import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.label.ggtitle
@@ -212,7 +213,7 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
         val patientTreatment = featureDistribution.patientValue
         val patientIndex = categories.indexOf(patientTreatment)
-        val dodgeWidth = 0.8  
+        val dodgeWidth = 0.8
         val patientXPosition = patientIndex.toDouble()  // base x position (category index)
 
         val plot = letsPlot(data) +
@@ -237,6 +238,58 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         return Image(xObj)
     }
 
+    private fun generateFeatureDistributionLinePlot(
+        featureDistribution: FeatureDistribution,
+        document: Document
+    ): Image {
+        val categories = (featureDistribution.overallDistribution.keys + featureDistribution.neighborsDistribution.keys)
+            .toSet().toList()
+
+        val overallProportion = categories.map { featureDistribution.overallDistribution[it] ?: 0.0 }
+        val neighborsProportion = categories.map { featureDistribution.neighborsDistribution[it] ?: 0.0 }
+
+        // Combine data in "long" format
+        val data = mapOf(
+            "treatment" to (categories + categories),
+            "proportion" to (overallProportion + neighborsProportion),
+            "group" to (List(categories.size) { "Overall" } + List(categories.size) { "Similar Patients" })
+        )
+
+        // Patient indicator
+        val patientTreatment = featureDistribution.patientValue
+        val patientIndex = categories.indexOf(patientTreatment)
+        val patientXPosition = patientIndex.toDouble()
+
+        val plot = letsPlot(data) +
+                geomLine {
+                    x = "treatment"
+                    y = "proportion"
+                    group = "group"  // separate line per group
+                    color = "group"
+                } +
+                geomPoint {
+                    x = "treatment"
+                    y = "proportion"
+                    group = "group"
+                    color = "group"
+                } +
+                geomVLine(
+                    xintercept = patientXPosition,
+                    color = "red",
+                    linetype = "dashed",
+                    size = 1.5
+                ) +
+                ggtitle("Distribution of ${featureDistribution.feature} (Patient Indicated)") +
+                scaleYContinuous(limits = 0.0 to 1.0) +
+                ggsize(1500, 800)
+
+        val tmpFile = createTempFile("treatment_distribution_plot", ".svg")
+        ggsave(plot, tmpFile.absolutePathString())
+        val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
+        return Image(xObj)
+    }
+
+
     private fun addSurvivalPlot(document: Document) {
         report.treatmentMatch.personalizedTreatmentSummary?.predictions?.let { predictions ->
             val image = generateSurvivalPlot(predictions.associate { it.treatment to it.survivalProbs }, document)
@@ -256,6 +309,9 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         report.treatmentMatch.personalizedTreatmentSummary?.similarPatientsSummary?.similarPatientsFeatureDistribution?.map { featureDistribution ->
             if (featureDistribution.overallDistribution.size < 10) {
                 val image = generateFeatureDistributionPlot(featureDistribution, document)
+                document.add(image)
+            } else {
+                val image = generateFeatureDistributionLinePlot(featureDistribution, document)
                 document.add(image)
             }
         }
