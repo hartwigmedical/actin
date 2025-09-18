@@ -14,7 +14,3 @@ data class TreatmentMatch(
     val maxMolecularTestAge: LocalDate? = null
 )
 
-data class PersonalizedTreatmentSummary(
-    val predictions: List<TreatmentEfficacyPrediction>?,
-    val similarPatientsSummary: SimilarPatientsSummary?
-)
