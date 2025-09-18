@@ -1,6 +1,10 @@
 package com.hartwig.actin.personalization.serialization
 
 import com.hartwig.actin.datamodel.algo.PersonalizedTreatmentSummary
+import com.hartwig.actin.datamodel.algo.ShapDetail
+import com.hartwig.actin.datamodel.algo.SimilarPatientsSummary
+import com.hartwig.actin.datamodel.algo.TreatmentEfficacyPrediction
+import com.hartwig.actin.datamodel.algo.TreatmentProportion
 import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -18,41 +22,41 @@ class TreatmentEfficacyPredictionJsonTest {
         assertThat(predictions).isEqualTo(
             PersonalizedTreatmentSummary(
                 listOf(
-                    PersonalizedTreatmentSummary.TreatmentEfficacyPrediction(
+                    TreatmentEfficacyPrediction(
                         treatment = "No Treatment",
                         survivalProbs = listOf(0.91, 0.84, 0.27),
                         shapValues = mapOf(
-                            "age" to PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = -0.02),
-                            "bmi" to PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = -0.01)
+                            "age" to ShapDetail(featureValue = 45.0, shapValue = -0.02),
+                            "bmi" to ShapDetail(featureValue = 22.0, shapValue = -0.01)
                         )
                     ),
-                    PersonalizedTreatmentSummary.TreatmentEfficacyPrediction(
+                    TreatmentEfficacyPrediction(
                         treatment = "Treatment 1",
                         survivalProbs = listOf(0.93, 0.87, 0.54),
                         shapValues = mapOf(
-                            "age" to PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = 0.01),
-                            "bmi" to PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = 0.02)
+                            "age" to ShapDetail(featureValue = 45.0, shapValue = 0.01),
+                            "bmi" to ShapDetail(featureValue = 22.0, shapValue = 0.02)
                         )
                     ),
-                    PersonalizedTreatmentSummary.TreatmentEfficacyPrediction(
+                    TreatmentEfficacyPrediction(
                         treatment = "Treatment 2",
                         survivalProbs = listOf(0.96, 0.88, 0.75),
                         shapValues = mapOf(
-                            "age" to PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail(featureValue = 45.0, shapValue = 0.03),
-                            "bmi" to PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail(featureValue = 22.0, shapValue = -0.04)
+                            "age" to ShapDetail(featureValue = 45.0, shapValue = 0.03),
+                            "bmi" to ShapDetail(featureValue = 22.0, shapValue = -0.04)
                         )
                     )
                 ),
-                PersonalizedTreatmentSummary.SimilarPatientsSummary(
+                SimilarPatientsSummary(
                     overallTreatmentProportion = listOf(
-                        PersonalizedTreatmentSummary.SimilarPatientsSummary.TreatmentProportion(treatment = "No Treatment", proportion = 0.5),
-                        PersonalizedTreatmentSummary.SimilarPatientsSummary.TreatmentProportion(treatment = "Treatment 1", proportion = 0.2),
-                        PersonalizedTreatmentSummary.SimilarPatientsSummary.TreatmentProportion(treatment = "Treatment 2", proportion = 0.3)
+                        TreatmentProportion(treatment = "No Treatment", proportion = 0.5),
+                        TreatmentProportion(treatment = "Treatment 1", proportion = 0.2),
+                        TreatmentProportion(treatment = "Treatment 2", proportion = 0.3)
                     ),
                     similarPatientsTreatmentProportion = listOf(
-                        PersonalizedTreatmentSummary.SimilarPatientsSummary.TreatmentProportion(treatment = "No Treatment", proportion = 0.0),
-                        PersonalizedTreatmentSummary.SimilarPatientsSummary.TreatmentProportion(treatment = "Treatment 1", proportion = 0.4),
-                        PersonalizedTreatmentSummary.SimilarPatientsSummary.TreatmentProportion(treatment = "Treatment 2", proportion = 0.6)
+                        TreatmentProportion(treatment = "No Treatment", proportion = 0.0),
+                        TreatmentProportion(treatment = "Treatment 1", proportion = 0.4),
+                        TreatmentProportion(treatment = "Treatment 2", proportion = 0.6)
                     )
                 )
             )

@@ -1,7 +1,8 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
-import com.hartwig.actin.datamodel.algo.PersonalizedTreatmentSummary
+import com.hartwig.actin.datamodel.algo.ShapDetail
+import com.hartwig.actin.datamodel.algo.SimilarPatientsSummary
 import com.hartwig.actin.datamodel.personalization.MeasurementType
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldSurvivalOutcomesGenerator
@@ -129,7 +130,7 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
     private fun generateShapPlot(
         treatmentName: String,
-        shapDetails: Map<String, PersonalizedTreatmentSummary.TreatmentEfficacyPrediction.ShapDetail>,
+        shapDetails: Map<String, ShapDetail>,
         document: Document
     ): Image {
         val sortedShapData = shapDetails.toList().sortedByDescending { abs(it.second.shapValue) }.take(10)
@@ -161,7 +162,7 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
     }
 
     private fun generateTreatmentDistributionPlot(
-        similarPatientsSummary: PersonalizedTreatmentSummary.SimilarPatientsSummary,
+        similarPatientsSummary: SimilarPatientsSummary,
         document: Document
     ): Image {
         val categories = similarPatientsSummary.overallTreatmentProportion.map { it.treatment }
