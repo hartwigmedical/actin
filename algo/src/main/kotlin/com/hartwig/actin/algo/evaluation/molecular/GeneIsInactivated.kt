@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -29,7 +28,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val evidenceSource = test.evidenceSource
 
         sequenceOf(
-            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type in GeneConstants.DELETION } }
+            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type.isDeletion} }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver -> inactivationEventsOnNonCanonicalTranscript.add(geneAlterationDriver.event) }
@@ -37,7 +36,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val drivers = test.drivers
         sequenceOf(
             drivers.homozygousDisruptions.asSequence(),
-            drivers.copyNumbers.asSequence().filter { it.canonicalImpact.type in GeneConstants.DELETION }
+            drivers.copyNumbers.asSequence().filter { it.canonicalImpact.type.isDeletion }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver ->
