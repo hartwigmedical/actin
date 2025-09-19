@@ -65,7 +65,7 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
             copyNumbers = listOf(
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "BRCA2",
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
                 ),
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "BRCA1",
@@ -73,7 +73,7 @@ class HomologousRecombinationDeficiencyGeneSummaryTest {
                 ),
                 TestCopyNumberFactory.createMinimal().copy(
                     gene = "Unmatched",
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL)
                 )
             ),
             homozygousDisruptions = listOf(

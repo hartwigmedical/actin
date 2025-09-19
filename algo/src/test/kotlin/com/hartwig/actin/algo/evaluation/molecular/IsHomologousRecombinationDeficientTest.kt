@@ -53,7 +53,7 @@ class IsHomologousRecombinationDeficientTest {
                 MolecularTestFactory.withHomologousRecombinationAndDeletion(
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
-                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
                         gene = hrGene
                     )
                 )

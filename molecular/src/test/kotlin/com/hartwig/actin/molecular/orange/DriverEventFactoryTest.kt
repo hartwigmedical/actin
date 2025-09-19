@@ -48,17 +48,17 @@ class DriverEventFactoryTest {
 
     @Test
     fun `Should generate events for copy numbers`() {
-        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.FULL_GAIN))).isEqualTo("MYC amp")
-        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.PARTIAL_GAIN))).isEqualTo("MYC partial amp")
-        assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.FULL_DEL))).isEqualTo("PTEN del")
-        assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.PARTIAL_DEL))).isEqualTo("PTEN del")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.FULL_GAIN))).isEqualTo("MYC amplification")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("MYC", CopyNumberInterpretation.PARTIAL_GAIN))).isEqualTo("MYC partial amplification")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.FULL_DEL))).isEqualTo("PTEN deletion")
+        assertThat(DriverEventFactory.gainDelEvent(gainDel("PTEN", CopyNumberInterpretation.PARTIAL_DEL))).isEqualTo("PTEN partial deletion")
     }
 
     @Test
     fun `Should generate events for disruptions`() {
         assertThat(
             DriverEventFactory.homozygousDisruptionEvent(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
-        ).isEqualTo("TP53 hom disruption")
+        ).isEqualTo("TP53 homozygous disruption")
 
         assertThat(DriverEventFactory.disruptionEvent(TestLinxFactory.breakendBuilder().gene("TP53").build())).isEqualTo("TP53 disruption")
     }

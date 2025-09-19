@@ -68,7 +68,7 @@ class IsMicrosatelliteUnstableTest {
                 MolecularTestFactory.withMicrosatelliteStabilityAndDeletion(
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
-                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
                         gene = mmrGene
                     )
                 )

@@ -33,9 +33,10 @@ object DriverEventFactory {
 
     fun gainDelEvent(gainDel: PurpleGainDeletion): String {
         return when (gainDel.interpretation()) {
-            CopyNumberInterpretation.PARTIAL_GAIN -> gainDel.gene() + " partial amp"
-            CopyNumberInterpretation.FULL_GAIN -> gainDel.gene() + " amp"
-            CopyNumberInterpretation.PARTIAL_DEL, CopyNumberInterpretation.FULL_DEL -> gainDel.gene() + " del"
+            CopyNumberInterpretation.PARTIAL_GAIN -> gainDel.gene() + " partial amplification"
+            CopyNumberInterpretation.FULL_GAIN -> gainDel.gene() + " amplification"
+            CopyNumberInterpretation.PARTIAL_DEL -> gainDel.gene() + " partial deletion"
+            CopyNumberInterpretation.FULL_DEL -> gainDel.gene() + " deletion"
         }
     }
 
@@ -44,7 +45,7 @@ object DriverEventFactory {
     }
 
     fun homozygousDisruptionEvent(linxHomozygousDisruption: LinxHomozygousDisruption): String {
-        return linxHomozygousDisruption.gene() + " hom disruption"
+        return linxHomozygousDisruption.gene() + " homozygous disruption"
     }
 
     fun disruptionEvent(breakend: LinxBreakend): String {

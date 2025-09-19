@@ -337,7 +337,7 @@ object TestMolecularFactory {
         gene = "PTEN",
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
         otherImpacts = emptySet(),
         isAssociatedWithDrugResistance = null
     )

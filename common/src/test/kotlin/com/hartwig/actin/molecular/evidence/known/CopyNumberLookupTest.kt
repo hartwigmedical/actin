@@ -22,10 +22,10 @@ class CopyNumberLookupTest {
         val ampOnGene2 = create("gene 2", CopyNumberType.FULL_GAIN)
         assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene2)).isNull()
 
-        val delOnGene1 = create("gene 1", CopyNumberType.DEL)
+        val delOnGene1 = create("gene 1", CopyNumberType.FULL_DEL)
         assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene1)).isNull()
 
-        val delOnGene2 = create("gene 2", CopyNumberType.DEL)
+        val delOnGene2 = create("gene 2", CopyNumberType.PARTIAL_DEL)
         assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene2)).isEqualTo(del)
 
         val noneOnGene1 = create("gene 1", CopyNumberType.NONE)

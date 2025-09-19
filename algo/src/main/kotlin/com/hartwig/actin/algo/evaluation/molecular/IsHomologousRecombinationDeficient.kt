@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
@@ -34,7 +33,7 @@ class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : Molecu
                 }
             }
             for (copyNumber in test.drivers.copyNumbers) {
-                if (copyNumber.canonicalImpact.type == CopyNumberType.DEL && copyNumber.gene == gene) {
+                if (copyNumber.canonicalImpact.type.isDeletion && copyNumber.gene == gene) {
                     hrdGenesWithBiallelicDriver.add(gene)
                 }
             }
