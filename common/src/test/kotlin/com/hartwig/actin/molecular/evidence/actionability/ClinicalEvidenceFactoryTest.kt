@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.Country
@@ -20,6 +21,7 @@ import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import com.hartwig.serve.datamodel.trial.GenderCriterium
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -34,7 +36,21 @@ private val BASE_ACTIONABLE_EVENT = TestServeMolecularFactory.createActionableEv
 class ClinicalEvidenceFactoryTest {
 
     private val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver>()
-    val factory = ClinicalEvidenceFactory(cancerTypeResolver)
+    val factory = ClinicalEvidenceFactory(cancerTypeResolver, Gender.FEMALE)
+
+    @Test
+    fun `Should correctly match gender`() {
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, Gender.FEMALE)).isEqualTo(true)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, Gender.MALE)).isEqualTo(true)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, Gender.FEMALE)).isEqualTo(false)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, Gender.MALE)).isEqualTo(false)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.FEMALE)).isEqualTo(true)
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, Gender.MALE)).isEqualTo(true)
+
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.MALE, null)).isNull()
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.BOTH, null)).isNull()
+        assertThat(ClinicalEvidenceFactory.matchGender(GenderCriterium.FEMALE, null)).isNull()
+    }
 
     @Test
     fun `Should convert SERVE specifically applicable cancer type hotspot evidence to treatment evidence`() {

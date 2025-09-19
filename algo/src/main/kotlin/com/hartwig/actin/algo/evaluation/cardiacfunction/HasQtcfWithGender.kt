@@ -18,7 +18,7 @@ class HasQtcfWithGender(
         } else {
             EvaluationFactory.fail(
                 "${gender.display()} QTCF acceptable bound not applicable for ${
-                    record.patient.gender.display().lowercase()
+                    record.patient.gender?.display()?.lowercase() ?: "unknown gender"
                 }"
             )
         }
