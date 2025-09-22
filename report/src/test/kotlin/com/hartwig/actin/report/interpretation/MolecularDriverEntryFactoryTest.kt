@@ -98,7 +98,7 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should assign correct driver description to copy number drivers`() {
         assertCopyNumberDescription(CopyNumberType.FULL_DEL, "PTEN del", 0, 0, "PTEN del, 0 copies")
-        assertCopyNumberDescription(CopyNumberType.PARTIAL_DEL, "PTEN del", 0, 0, "PTEN del, 0 copies")
+        assertCopyNumberDescription(CopyNumberType.PARTIAL_DEL, "PTEN del", 0, 1, "PTEN del, 0 copies")
         assertCopyNumberDescription(CopyNumberType.FULL_GAIN, "PTEN amp", 3, 3, "PTEN amp, 3 copies")
         assertCopyNumberDescription(CopyNumberType.PARTIAL_GAIN, "PTEN partial amp", 1, 3, "PTEN partial amp, 3 copies (1 full copies)")
         assertCopyNumberDescription(CopyNumberType.NONE, "PTEN copy number", 1, 3, "PTEN copy number, 1 copies")

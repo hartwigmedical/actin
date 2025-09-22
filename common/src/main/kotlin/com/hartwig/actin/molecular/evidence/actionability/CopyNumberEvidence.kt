@@ -20,14 +20,14 @@ class CopyNumberEvidence {
         }
 
         fun isAmplificationMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return (copyNumber.canonicalImpact.type == CopyNumberType.FULL_GAIN
-                    || copyNumber.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN)
+            return (copyNumber.canonicalImpact.type.isGain
+                    || copyNumber.canonicalImpact.type.isGain)
                     && copyNumber.gene == actionableGene.gene()
         }
 
         fun isDeletionMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return (copyNumber.canonicalImpact.type == CopyNumberType.PARTIAL_DEL ||
-                    copyNumber.canonicalImpact.type == CopyNumberType.FULL_DEL)
+            return (copyNumber.canonicalImpact.type.isDeletion ||
+                    copyNumber.canonicalImpact.type.isDeletion)
                     && copyNumber.gene == actionableGene.gene()
         }
     }

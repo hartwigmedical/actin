@@ -25,7 +25,7 @@ data class SequencedVariant(
 
 data class SequencedAmplification(val gene: String, val transcript: String? = null, val copies: Int? = null, val isPartial: Boolean? = null)
 
-data class SequencedDeletion(val gene: String, val transcript: String? = null, val isPartial: Boolean? = null)
+data class SequencedDeletion(val gene: String, val transcript: String? = null, val copies: Int? = null, val isPartial: Boolean? = null)
 
 data class SequencedFusion(
     val geneUp: String? = null,

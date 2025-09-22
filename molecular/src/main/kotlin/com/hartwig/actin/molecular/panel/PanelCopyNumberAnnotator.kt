@@ -69,31 +69,16 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
             logger.warn("No transcript provided for panel deletion in gene ${sequencedDeletion.gene}, using canonical transcript")
             canonicalTranscript
         }
-        var type = CopyNumberType.NONE
-        if (isCanonicalTranscript) {
-            if (sequencedDeletion.isPartial == true) {
-                type = CopyNumberType.PARTIAL_DEL
-            } else {
-                type = CopyNumberType.FULL_DEL
-            }
-        } else {
-            if (sequencedDeletion.isPartial == true) {
-                type = CopyNumberType.PARTIAL_DEL
-            } else {
-                type = CopyNumberType.FULL_DEL
-            }
-        }
-
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
-            type = type,
+            type = resolveCanonicalDelType(isCanonicalTranscript, sequencedDeletion.isPartial),
             minCopies = if (isCanonicalTranscript) 0 else null,
             maxCopies = if (isCanonicalTranscript) 0 else null
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
-                type = type,
+                type = if (sequencedDeletion.isPartial == true) CopyNumberType.PARTIAL_DEL else CopyNumberType.FULL_DEL,
                 minCopies = 0,
                 maxCopies = 0
             )
@@ -124,6 +109,14 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         return when {
             isCanonicalTranscript && isPartial == true -> CopyNumberType.PARTIAL_GAIN
             isCanonicalTranscript -> CopyNumberType.FULL_GAIN
+            else -> CopyNumberType.NONE
+        }
+    }
+
+    private fun resolveCanonicalDelType(isCanonicalTranscript: Boolean, isPartial: Boolean?): CopyNumberType {
+        return when {
+            isCanonicalTranscript && isPartial == true -> CopyNumberType.PARTIAL_DEL
+            isCanonicalTranscript -> CopyNumberType.FULL_DEL
             else -> CopyNumberType.NONE
         }
     }
