@@ -46,9 +46,7 @@ class HasHadComorbidityWithIcdCode(
                 )
             }
 
-            icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() ->
-
-                EvaluationFactory.undetermined(
+            icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
                 "Has history of ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension, true)} " +
                         "but undetermined if history of $diseaseDescription"
             )
