@@ -79,8 +79,8 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
                 type = if (sequencedDeletion.isPartial == true) CopyNumberType.PARTIAL_DEL else CopyNumberType.FULL_DEL,
-                minCopies = 0,
-                maxCopies = 0
+                minCopies = sequencedDeletion.copies,
+                maxCopies = sequencedDeletion.copies
             )
         )
 
