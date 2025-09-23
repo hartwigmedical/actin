@@ -123,15 +123,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             emptyList()
         }
 
-//        val disruptionMatches = if (DisruptionEvidence.isDisruptionEvent(gene.event())) {
-//            molecularTest.drivers.disruptions
-//                .filter { disruption ->
-//                    DisruptionEvidence.isDisruptionMatch(gene, disruption)
-//                }
-//        } else {
-//            emptyList()
-//        }
-
         val homozygousDisruptionMatches =
             if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene)) {
                 molecularTest.drivers.homozygousDisruptions.filter { homozygousDisruption ->
