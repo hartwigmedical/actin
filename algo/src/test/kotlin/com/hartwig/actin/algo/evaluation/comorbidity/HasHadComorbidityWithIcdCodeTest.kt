@@ -99,6 +99,27 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
+    fun `Should pass when ICD code or parent code of intolerance matches code of target title`() {
+        val intoleranceWithTargetCode = ComorbidityTestFactory.intolerance(icdMainCode = parentCode, name = "intolerance")
+        val intoleranceWithChildOfTargetCode = intoleranceWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
+        listOf(intoleranceWithChildOfTargetCode, intoleranceWithTargetCode).forEach {
+            val evaluation = function.evaluate(ComorbidityTestFactory.withIntolerances(listOf(it)))
+            assertEvaluation(EvaluationResult.PASS, evaluation)
+            assertThat(evaluation.passMessagesStrings()).containsOnly("Has intolerance to intolerance")
+        }
+    }
+
+    @Test
+    fun `Should pass when ICD code or parent code of intolerance and other condition matches code of target title`() {
+        val intoleranceWithTargetCode = ComorbidityTestFactory.intolerance(icdMainCode = parentCode, name = "intolerance")
+        val otherConditionWithTargetCode = ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "other condition")
+        val evaluation =
+            function.evaluate(ComorbidityTestFactory.withComorbidities(listOf(intoleranceWithTargetCode, otherConditionWithTargetCode)))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessagesStrings()).containsAll(setOf("Has intolerance to intolerance", "Has history of other condition"))
+    }
+
+    @Test
     fun `Should pass when ICD code or parent code of toxicity from questionnaire matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(

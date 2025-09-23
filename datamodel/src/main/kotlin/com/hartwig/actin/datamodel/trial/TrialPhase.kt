@@ -2,7 +2,7 @@ package com.hartwig.actin.datamodel.trial
 
 import com.hartwig.actin.datamodel.Displayable
 
-enum class TrialPhase(private val text: String, private val includePrefix: Boolean = true) : Displayable {
+enum class TrialPhase(val text: String, private val includePrefix: Boolean = true) : Displayable {
     PHASE_4("4"),
     PHASE_3("3"),
     PHASE_2_3("2/3"),
