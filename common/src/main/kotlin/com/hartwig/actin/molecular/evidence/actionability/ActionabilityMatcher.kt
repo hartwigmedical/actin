@@ -123,14 +123,14 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             emptyList()
         }
 
-        val disruptionMatches = if (DisruptionEvidence.isDisruptionEvent(gene.event())) {
-            molecularTest.drivers.disruptions
-                .filter { disruption ->
-                    DisruptionEvidence.isDisruptionMatch(gene, disruption)
-                }
-        } else {
-            emptyList()
-        }
+//        val disruptionMatches = if (DisruptionEvidence.isDisruptionEvent(gene.event())) {
+//            molecularTest.drivers.disruptions
+//                .filter { disruption ->
+//                    DisruptionEvidence.isDisruptionMatch(gene, disruption)
+//                }
+//        } else {
+//            emptyList()
+//        }
 
         val homozygousDisruptionMatches =
             if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene)) {
@@ -158,7 +158,7 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
             }
 
         return successWhenNotEmpty(
-            variantMatches + promiscuousFusionMatches + disruptionMatches + homozygousDisruptionMatches
+            variantMatches + promiscuousFusionMatches + homozygousDisruptionMatches
                     + copyNumberAmplificationMatches + copyNumberDeletionMatches
         )
     }
@@ -202,9 +202,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
                 )
             }
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = true)
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> ActionabilityMatchResult.Failure
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = false)
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> ActionabilityMatchResult.Failure
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, requireTmbHigh = true)
 
@@ -262,16 +262,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         return molecularTest.characteristics.microsatelliteStability?.let { msi ->
             if (requireMicrosatelliteUnstable && msi.isUnstable || !requireMicrosatelliteUnstable && !msi.isUnstable) {
                 ActionabilityMatchResult.Success(listOf(msi))
-            } else {
-                ActionabilityMatchResult.Failure
-            }
-        } ?: ActionabilityMatchResult.Failure
-    }
-
-    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, requireTmlHigh: Boolean): ActionabilityMatchResult {
-        return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-            if (requireTmlHigh && tml.isHigh || !requireTmlHigh && !tml.isHigh) {
-                ActionabilityMatchResult.Success(listOf(tml))
             } else {
                 ActionabilityMatchResult.Failure
             }
