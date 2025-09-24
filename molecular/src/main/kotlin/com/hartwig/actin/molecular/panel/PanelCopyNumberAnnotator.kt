@@ -72,15 +72,15 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
             type = resolveCanonicalDelType(isCanonicalTranscript, sequencedDeletion.isPartial),
-            minCopies = if (isCanonicalTranscript) sequencedDeletion.copies else null,
-            maxCopies = if (isCanonicalTranscript) sequencedDeletion.copies else null
+            minCopies = if (isCanonicalTranscript) 0 else null,
+            maxCopies = if (isCanonicalTranscript) resolveMaxCopiesDel(sequencedDeletion.isPartial) else null
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
                 type = if (sequencedDeletion.isPartial == true) CopyNumberType.PARTIAL_DEL else CopyNumberType.FULL_DEL,
-                minCopies = sequencedDeletion.copies,
-                maxCopies = sequencedDeletion.copies
+                minCopies = 0,
+                maxCopies = resolveMaxCopiesDel(sequencedDeletion.isPartial)
             )
         )
 
@@ -120,4 +120,6 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
             else -> CopyNumberType.NONE
         }
     }
+
+    private fun resolveMaxCopiesDel(isPartial: Boolean?) = if (isPartial == true) 1 else 0
 }
