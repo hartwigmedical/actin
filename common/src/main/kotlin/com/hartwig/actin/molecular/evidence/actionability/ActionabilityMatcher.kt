@@ -193,9 +193,9 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
                 )
             }
 
-            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> ActionabilityMatchResult.Failure
+            TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = true)
 
-            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> ActionabilityMatchResult.Failure
+            TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD -> matchTumorMutationalLoad(molecularTest, requireTmlHigh = false)
 
             TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN -> matchTumorMutationalBurden(molecularTest, requireTmbHigh = true)
 
@@ -263,6 +263,17 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
         return molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
             if (requireTmbHigh && tmb.isHigh || !requireTmbHigh && !tmb.isHigh) {
                 ActionabilityMatchResult.Success(listOf(tmb))
+            } else {
+                ActionabilityMatchResult.Failure
+            }
+        } ?: ActionabilityMatchResult.Failure
+    }
+
+    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, requireTmlHigh: Boolean): ActionabilityMatchResult {
+        //TML should not match for CKB entries because TML is not (anymore) present in the CKB evidence database
+        return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
+            if (requireTmlHigh && tml.isHigh || !requireTmlHigh && !tml.isHigh) {
+                ActionabilityMatchResult.Success(listOf(tml))
             } else {
                 ActionabilityMatchResult.Failure
             }
