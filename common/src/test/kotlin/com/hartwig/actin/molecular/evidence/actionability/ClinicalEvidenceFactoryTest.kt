@@ -52,9 +52,8 @@ class ClinicalEvidenceFactoryTest {
         every { cancerTypeResolver.resolve(evidence.indication()) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
         val result = factory.create(
             actionabilityMatch = ActionabilityMatch(
-                listOf(
-                    evidence
-                ), emptyMap()
+                evidenceMatches = listOf(evidence),
+                matchingCriteriaPerTrialMatch = emptyMap()
             )
         )
 
@@ -77,6 +76,34 @@ class ClinicalEvidenceFactoryTest {
     }
 
     @Test
+    fun `Should convert related evidence to indirect treatment evidence`() {
+        val evidence = TestServeEvidenceFactory.create(
+            treatment = "related",
+            indication = TestServeFactory.createIndicationWithTypeAndExcludedTypes(
+                type = "related type",
+                excludedTypes = emptySet()
+            ),
+            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(BASE_ACTIONABLE_EVENT)
+        )
+        every { cancerTypeResolver.resolve(evidence.indication()) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+
+        val result = factory.create(
+            actionabilityMatch = ActionabilityMatch(
+                evidenceMatches = emptyList(),
+                indirectEvidenceMatches = listOf(evidence),
+                matchingCriteriaPerTrialMatch = emptyMap()
+            )
+        )
+
+        assertThat(result.treatmentEvidence).isEmpty()
+        assertThat(result.indirectTreatmentEvidence).hasSize(1)
+        val indirectTreatment = result.indirectTreatmentEvidence.first()
+        assertThat(indirectTreatment.treatment).isEqualTo("related")
+        assertThat(indirectTreatment.cancerTypeMatch.applicability).isEqualTo(CancerTypeMatchApplicability.SPECIFIC_TYPE)
+        assertThat(indirectTreatment.cancerTypeMatch.cancerType.matchedCancerType).isEqualTo("related type")
+    }
+
+    @Test
     fun `Should convert SERVE other applicable cancer type range evidence to treatment evidence`() {
         val indication = TestServeFactory.createIndicationWithTypeAndExcludedTypes(
             type = "off-label type",
@@ -86,7 +113,7 @@ class ClinicalEvidenceFactoryTest {
         val result =
             factory.create(
                 ActionabilityMatch(
-                    listOf(
+                    evidenceMatches = listOf(
                         TestServeEvidenceFactory.create(
                             treatment = "off-label",
                             indication = indication,
@@ -95,7 +122,8 @@ class ClinicalEvidenceFactoryTest {
                             evidenceLevelDetails = ServeEvidenceLevelDetails.CLINICAL_STUDY,
                             evidenceDirection = EvidenceDirection.RESPONSIVE
                         )
-                    ), emptyMap()
+                    ),
+                    matchingCriteriaPerTrialMatch = emptyMap()
                 )
             )
 
@@ -127,7 +155,7 @@ class ClinicalEvidenceFactoryTest {
         val result =
             factory.create(
                 ActionabilityMatch(
-                    listOf(
+                    evidenceMatches = listOf(
                         TestServeEvidenceFactory.create(
                             treatment = "off-label",
                             indication = indication,
@@ -136,7 +164,8 @@ class ClinicalEvidenceFactoryTest {
                             evidenceLevelDetails = ServeEvidenceLevelDetails.CLINICAL_STUDY,
                             evidenceDirection = EvidenceDirection.RESPONSIVE
                         )
-                    ), emptyMap()
+                    ),
+                    matchingCriteriaPerTrialMatch = emptyMap()
                 )
             )
 
@@ -270,7 +299,12 @@ class ClinicalEvidenceFactoryTest {
 
         every { cancerTypeResolver.resolve(indication1) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
         every { cancerTypeResolver.resolve(indication2) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
-        val result = factory.create(ActionabilityMatch(emptyList(), matchesPerTrial))
+        val result = factory.create(
+            ActionabilityMatch(
+                evidenceMatches = emptyList(),
+                matchingCriteriaPerTrialMatch = matchesPerTrial
+            )
+        )
 
         val expectedClinicalEvidence = TestClinicalEvidenceFactory.withEligibleTrials(
             setOf(
@@ -321,7 +355,8 @@ class ClinicalEvidenceFactoryTest {
         assertThatIllegalStateException().isThrownBy {
             factory.create(
                 ActionabilityMatch(
-                    emptyList(), createTestMatchingCriteriaAndIndicationMap(invalidUrlTrial)
+                    evidenceMatches = emptyList(),
+                    matchingCriteriaPerTrialMatch = createTestMatchingCriteriaAndIndicationMap(invalidUrlTrial)
                 )
             )
         }
@@ -335,7 +370,8 @@ class ClinicalEvidenceFactoryTest {
         assertThatIllegalStateException().isThrownBy {
             factory.create(
                 ActionabilityMatch(
-                    emptyList(), createTestMatchingCriteriaAndIndicationMap(emptyUrlTrial)
+                    evidenceMatches = emptyList(),
+                    matchingCriteriaPerTrialMatch = createTestMatchingCriteriaAndIndicationMap(emptyUrlTrial)
                 )
             )
         }

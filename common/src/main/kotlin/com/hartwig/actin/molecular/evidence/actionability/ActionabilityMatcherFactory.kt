@@ -10,7 +10,11 @@ import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 object ActionabilityMatcherFactory {
 
     fun create(serveRecord: ServeRecord): ActionabilityMatcher {
-        return ActionabilityMatcher(filterEvidences(serveRecord.evidences()), filterTrials(serveRecord.trials()))
+        return ActionabilityMatcher(
+            filterEvidences(serveRecord.evidences()),
+            filterTrials(serveRecord.trials()),
+            IndirectEvidenceMatcher.create(serveRecord)
+        )
     }
 
     private fun filterEvidences(evidences: List<EfficacyEvidence>): List<EfficacyEvidence> {

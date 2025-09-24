@@ -83,6 +83,6 @@ class EvidenceAnnotator(
     private fun matchEvidence(actionable: Actionable, matchesForActionable: MatchesForActionable): ClinicalEvidence {
         val actionabilityMatch = matchesForActionable[actionable]
         val clinicalEvidence = actionabilityMatch?.let { clinicalEvidenceFactory.create(it) }
-        return clinicalEvidence ?: ClinicalEvidence(emptySet(), emptySet())
+        return clinicalEvidence ?: ClinicalEvidence(emptySet(), emptySet(), emptySet())
     }
 }
