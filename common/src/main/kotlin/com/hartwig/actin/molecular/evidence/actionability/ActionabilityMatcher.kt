@@ -270,7 +270,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
     }
 
     private fun matchTumorMutationalLoad(molecularTest: MolecularTest, requireTmlHigh: Boolean): ActionabilityMatchResult {
-        //TML should not match for CKB entries because TML is not (anymore) present in the CKB evidence database
         return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
             if (requireTmlHigh && tml.isHigh || !requireTmlHigh && !tml.isHigh) {
                 ActionabilityMatchResult.Success(listOf(tml))
