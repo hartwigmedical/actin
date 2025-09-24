@@ -35,8 +35,7 @@ object DriverEventFactory {
         return when (gainDel.interpretation()) {
             CopyNumberInterpretation.PARTIAL_GAIN -> gainDel.gene() + " partial amp"
             CopyNumberInterpretation.FULL_GAIN -> gainDel.gene() + " amp"
-            CopyNumberInterpretation.PARTIAL_DEL -> gainDel.gene() + " del"
-            CopyNumberInterpretation.FULL_DEL -> gainDel.gene() + " del"
+            CopyNumberInterpretation.PARTIAL_DEL, CopyNumberInterpretation.FULL_DEL -> gainDel.gene() + " del"
         }
     }
 

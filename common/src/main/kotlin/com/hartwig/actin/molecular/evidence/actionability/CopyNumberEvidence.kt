@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
@@ -20,14 +19,12 @@ class CopyNumberEvidence {
         }
 
         fun isAmplificationMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return (copyNumber.canonicalImpact.type.isGain
-                    || copyNumber.canonicalImpact.type.isGain)
+            return (copyNumber.canonicalImpact.type.isGain)
                     && copyNumber.gene == actionableGene.gene()
         }
 
         fun isDeletionMatch(actionableGene: ActionableGene, copyNumber: CopyNumber): Boolean {
-            return (copyNumber.canonicalImpact.type.isDeletion ||
-                    copyNumber.canonicalImpact.type.isDeletion)
+            return (copyNumber.canonicalImpact.type.isDeletion)
                     && copyNumber.gene == actionableGene.gene()
         }
     }
