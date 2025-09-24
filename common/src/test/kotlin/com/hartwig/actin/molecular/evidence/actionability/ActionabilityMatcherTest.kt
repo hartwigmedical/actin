@@ -759,7 +759,7 @@ class ActionabilityMatcherTest {
     }
 
     @Test
-    fun `Should match disruption`() {
+    fun `Should not match gene disruption`() {
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.ANY_MUTATION)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
@@ -771,8 +771,7 @@ class ActionabilityMatcherTest {
         )
 
         val matches = matcher.match(molecularTest)
-        assertThat(matches).hasSize(1)
-        assertThat(matches[disruption]).isEqualTo(actionabilityMatch(evidence, trial))
+        assertThat(matches).isEmpty()
     }
 
     @Test
