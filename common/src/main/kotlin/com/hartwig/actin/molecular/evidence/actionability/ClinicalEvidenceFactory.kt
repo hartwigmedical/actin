@@ -25,6 +25,7 @@ class ClinicalEvidenceFactory(private val cancerTypeResolver: CancerTypeApplicab
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
             treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches),
+            indirectTreatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.indirectEvidenceMatches),
             eligibleTrials = convertToExternalTrials(determineOnLabelTrials(actionabilityMatch.matchingCriteriaPerTrialMatch))
         )
     }

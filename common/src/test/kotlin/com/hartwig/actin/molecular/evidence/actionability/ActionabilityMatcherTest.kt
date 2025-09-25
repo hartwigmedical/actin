@@ -26,6 +26,8 @@ import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
+import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
@@ -39,6 +41,12 @@ import org.junit.Test
 private val brafActionableHotspot = TestServeMolecularFactory.hotspot(
     TestServeMolecularFactory.createVariantAnnotation(
         gene = "BRAF", chromosome = "7", position = 140453136, ref = "T", alt = "A"
+    )
+)
+
+private val relatedBrafActionableHotspot = TestServeMolecularFactory.hotspot(
+    TestServeMolecularFactory.createVariantAnnotation(
+        gene = "BRAF", chromosome = "7", position = 140453139, ref = "G", alt = "C"
     )
 )
 
@@ -123,7 +131,10 @@ class ActionabilityMatcherTest {
         val matches = matcher.match(molecularTest)
         assertThat(matches).isNotEmpty
         assertThat(matches).hasSize(2)
-        val actionabilityMatch = ActionabilityMatch(listOf(evidence), mapOf(trial to setOf(molecularCriterium)))
+        val actionabilityMatch = ActionabilityMatch(
+            evidenceMatches = listOf(evidence),
+            matchingCriteriaPerTrialMatch = mapOf(trial to setOf(molecularCriterium))
+        )
         assertThat(matches[brafMolecularTestVariant]).isEqualTo(actionabilityMatch)
         assertThat(matches[krasMolecularTestVariant]).isEqualTo(actionabilityMatch)
     }
@@ -164,7 +175,10 @@ class ActionabilityMatcherTest {
         )
 
         val matches = matcher.match(molecularTest)
-        val actionabilityMatch = ActionabilityMatch(listOf(evidence), mapOf(trial to setOf(molecularCriterium)))
+        val actionabilityMatch = ActionabilityMatch(
+            evidenceMatches = listOf(evidence),
+            matchingCriteriaPerTrialMatch = mapOf(trial to setOf(molecularCriterium))
+        )
         assertThat(matches[variant]).isEqualTo(actionabilityMatch)
     }
 
@@ -219,7 +233,8 @@ class ActionabilityMatcherTest {
         assertThat(matches.size).isEqualTo(1)
         assertThat(matches[brafMolecularTestVariant]).isEqualTo(
             ActionabilityMatch(
-                listOf(evidence1, evidence2), mapOf(trial1 to setOf(criterium), trial2 to setOf(criterium))
+                evidenceMatches = listOf(evidence1, evidence2),
+                matchingCriteriaPerTrialMatch = mapOf(trial1 to setOf(criterium), trial2 to setOf(criterium))
             )
         )
     }
@@ -242,7 +257,10 @@ class ActionabilityMatcherTest {
         val matches = matcher.match(molecularTest)
         assertThat(matches).isNotEmpty
         assertThat(matches).hasSize(2)
-        val expectedMatch = ActionabilityMatch(listOf(evidence), mapOf(trial to setOf(molecularCriterium)))
+        val expectedMatch = ActionabilityMatch(
+            evidenceMatches = listOf(evidence),
+            matchingCriteriaPerTrialMatch = mapOf(trial to setOf(molecularCriterium))
+        )
         assertThat(matches[brafMolecularTestVariant]).isEqualTo(expectedMatch)
         assertThat(matches[molecularTestFusion]).isEqualTo(expectedMatch)
     }
@@ -287,6 +305,33 @@ class ActionabilityMatcherTest {
     }
 
     @Test
+    fun `Should match evidence on hotspot related to but not directly matching molecular test hotspot`() {
+        val criterium = ImmutableMolecularCriterium.builder().addAllHotspots(listOf(relatedBrafActionableHotspot)).build()
+        val baseEvidence = TestServeEvidenceFactory.create(treatment = "Treatment 1", molecularCriterium = criterium)
+        val evidence = ImmutableEfficacyEvidence.builder()
+            .from(baseEvidence)
+            .treatment(
+                ImmutableTreatment.builder()
+                    .from(baseEvidence.treatment())
+                    .treatmentApproachesDrugClass(listOf("BRAF Inhibitor"))
+                    .build()
+            )
+            .build()
+
+        val indirectEvidenceMatcher = IndirectEvidenceMatcher(
+            mapOf(TreatmentKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect) to setOf(evidence))
+        )
+        val matcher = ActionabilityMatcher(emptyList(), emptyList(), indirectEvidenceMatcher)
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant)))
+
+        val matches = matcher.match(molecularTest)
+
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches[brafMolecularTestVariant]).isEqualTo(indirectActionabilityMatch(evidence))
+    }
+
+    @Test
     fun `Should match virus characteristics`() {
         val molecularCriterium = ImmutableMolecularCriterium.builder().characteristics(
             listOf(
@@ -306,7 +351,12 @@ class ActionabilityMatcherTest {
         )
 
         val matches = matcher.match(molecularTest)
-        assertThat(matches[virus]).isEqualTo(ActionabilityMatch(listOf(evidence), mapOf(trial to setOf(molecularCriterium))))
+        assertThat(matches[virus]).isEqualTo(
+            ActionabilityMatch(
+                evidenceMatches = listOf(evidence),
+                matchingCriteriaPerTrialMatch = mapOf(trial to setOf(molecularCriterium))
+            )
+        )
     }
 
     @Test
@@ -353,7 +403,8 @@ class ActionabilityMatcherTest {
         assertThat(matches).hasSize(1)
         assertThat(matches[brafMolecularTestVariant]).isEqualTo(
             ActionabilityMatch(
-                listOf(evidence1, evidence2), mapOf(trial1 to setOf(molecularCriterium), trial2 to setOf(molecularCriterium))
+                evidenceMatches = listOf(evidence1, evidence2),
+                matchingCriteriaPerTrialMatch = mapOf(trial1 to setOf(molecularCriterium), trial2 to setOf(molecularCriterium))
             )
         )
     }
@@ -635,12 +686,25 @@ class ActionabilityMatcherTest {
         assertThat(matches).isEmpty()
     }
 
+    private fun actionabilityMatch(evidence: EfficacyEvidence) =
+        ActionabilityMatch(
+            evidenceMatches = listOf(evidence),
+            matchingCriteriaPerTrialMatch = emptyMap()
+        )
+
+    private fun indirectActionabilityMatch(evidence: EfficacyEvidence) =
+        ActionabilityMatch(
+            evidenceMatches = emptyList(),
+            indirectEvidenceMatches = listOf(evidence),
+            matchingCriteriaPerTrialMatch = emptyMap()
+        )
+
     private fun actionabilityMatch(
         evidence: EfficacyEvidence,
         trial: ActionableTrial
     ) = ActionabilityMatch(
-        listOf(evidence),
-        mapOf(trial to setOf(evidence.molecularCriterium()))
+        evidenceMatches = listOf(evidence),
+        matchingCriteriaPerTrialMatch = mapOf(trial to setOf(evidence.molecularCriterium()))
     )
 
     @Test
@@ -937,7 +1001,7 @@ class ActionabilityMatcherTest {
                 matchingHotspotCriterium
             )
         )
-        val highTmb = TumorMutationalBurden(11.0, true, ClinicalEvidence(emptySet(), emptySet()))
+        val highTmb = TumorMutationalBurden(11.0, true, ClinicalEvidence(emptySet(), emptySet(), emptySet()))
         val matches = matcherFactory(emptyList(), listOf(trial)).match(
             TestMolecularFactory.createMinimalPanelTest().copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant)),
@@ -955,20 +1019,64 @@ class ActionabilityMatcherTest {
         assertThat(matches).hasSize(2)
         assertThat(matches[brafMolecularTestVariant]).isEqualTo(
             ActionabilityMatch(
-                emptyList(),
-                mapOf(filteredTrial to setOf(matchingHotspotAndCharacteristicCriterium, matchingHotspotCriterium))
+                evidenceMatches = emptyList(),
+                matchingCriteriaPerTrialMatch = mapOf(
+                    filteredTrial to setOf(matchingHotspotAndCharacteristicCriterium, matchingHotspotCriterium)
+                )
             )
         )
         assertThat(matches[highTmb]).isEqualTo(
             ActionabilityMatch(
-                emptyList(),
-                mapOf(filteredTrial to setOf(matchingHotspotAndCharacteristicCriterium))
+                evidenceMatches = emptyList(),
+                matchingCriteriaPerTrialMatch = mapOf(
+                    filteredTrial to setOf(matchingHotspotAndCharacteristicCriterium)
+                )
             )
         )
     }
 
+    @Test
+    fun `Should include only generic inhibitors as indirect evidence matches`() {
+        val genericIndirect = evidenceWithDrugClass("Treatment", "KRAS Inhibitor")
+
+        val indirectEvidenceMatcher = IndirectEvidenceMatcher(
+            mapOf(
+                TreatmentKey(krasMolecularTestVariant.gene, krasMolecularTestVariant.proteinEffect) to
+                        linkedSetOf(genericIndirect)
+            )
+        )
+
+        val matcher = ActionabilityMatcher(
+            evidences = emptyList(),
+            trials = emptyList(),
+            indirectEvidenceMatcher = indirectEvidenceMatcher
+        )
+
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(krasMolecularTestVariant))
+        )
+
+        val matches = matcher.match(molecularTest)
+        val indirectMatches = matches[krasMolecularTestVariant]?.indirectEvidenceMatches
+
+        assertThat(indirectMatches).containsExactly(genericIndirect)
+    }
+
     private fun matcherFactory(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial> = emptyList()): ActionabilityMatcher {
         return ActionabilityMatcherFactory.create(serveRecord(evidences, trials))
+    }
+
+    private fun evidenceWithDrugClass(name: String, drugClass: String): EfficacyEvidence {
+        val base = TestServeEvidenceFactory.create(treatment = name)
+        val treatment = ImmutableTreatment.builder()
+            .from(base.treatment())
+            .treatmentApproachesDrugClass(listOf(drugClass))
+            .build()
+
+        return ImmutableEfficacyEvidence.builder()
+            .from(base)
+            .treatment(treatment)
+            .build()
     }
 
     private fun serveRecord(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial> = emptyList()): ServeRecord {

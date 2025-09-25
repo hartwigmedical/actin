@@ -2,12 +2,17 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 data class ClinicalEvidence(
     val treatmentEvidence: Set<TreatmentEvidence>,
+    // TODO putting indirect evidence here to keep it separate, but might make sense to
+    //  add a flag to TreatmentEvidence or TreatmentEvidence.MolecularMatchDetails instead,
+    //  and just maintain the one collection
+    val indirectTreatmentEvidence: Set<TreatmentEvidence> = emptySet(),
     val eligibleTrials: Set<ExternalTrial>,
 ) : Comparable<ClinicalEvidence> {
 
     operator fun plus(other: ClinicalEvidence): ClinicalEvidence {
         return ClinicalEvidence(
             treatmentEvidence + other.treatmentEvidence,
+            indirectTreatmentEvidence + other.indirectTreatmentEvidence,
             eligibleTrials + other.eligibleTrials
         )
     }
