@@ -57,7 +57,8 @@ class TreatmentEfficacyPredictionJsonTest {
                         TreatmentProportion(treatment = "No Treatment", proportion = 0.0),
                         TreatmentProportion(treatment = "Treatment 1", proportion = 0.4),
                         TreatmentProportion(treatment = "Treatment 2", proportion = 0.6)
-                    )
+                    ),
+                    similarPatientsFeatureDistribution = listOf()
                 )
             )
         )
