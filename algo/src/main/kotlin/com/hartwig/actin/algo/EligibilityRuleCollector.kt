@@ -114,15 +114,11 @@ class InputTranslator {
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER] =
             listOf(one(Type.STRING, treatmentCategoryOrTypeValues), one(Type.INTEGER))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES] =
-            listOf(one(Type.STRING, treatmentCategoryValues), one(Type.STRING, treatmentTypesValues))
+            listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, treatmentTypesValues))
         mappings[FunctionInput.TWO_TREATMENT_CATEGORIES_MANY_TYPES] =
             listOf(two(Type.STRING, treatmentCategoryValues), many(Type.STRING, typeValues))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER] =
-            listOf(
-                one(Type.STRING, treatmentCategoryValues),
-                one(Type.STRING, treatmentTypesValues),
-                one(Type.INTEGER)
-            )
+            listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, treatmentTypesValues), one(Type.INTEGER))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS] =
             listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, intentValues))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER] =
@@ -158,8 +154,8 @@ class InputTranslator {
         mappings[FunctionInput.MANY_TNM_T] = listOf(many(Type.STRING, tnmtValues))
         mappings[FunctionInput.MANY_BODY_LOCATIONS] = listOf(many(Type.STRING, bodyLocationValues))
         mappings[FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION] = listOf(one(Type.INTEGER), one(Type.STRING, bodyLocationValues))
-        mappings[FunctionInput.ONE_INTEGER_MANY_DOID_TERMS] = listOf(one(Type.INTEGER), one(Type.STRING, doidTermValues))
-        mappings[FunctionInput.ONE_INTEGER_MANY_ICD_TITLES] = listOf(one(Type.INTEGER), one(Type.STRING, icdTitleValues))
+        mappings[FunctionInput.ONE_INTEGER_MANY_DOID_TERMS] = listOf(one(Type.INTEGER), many(Type.STRING, doidTermValues))
+        mappings[FunctionInput.ONE_INTEGER_MANY_ICD_TITLES] = listOf(one(Type.INTEGER), many(Type.STRING, icdTitleValues))
         mappings[FunctionInput.ONE_GENE] = listOf(one(Type.STRING, geneValues))
         mappings[FunctionInput.MANY_GENES] = listOf(many(Type.STRING, geneValues))
         mappings[FunctionInput.ONE_GENE_ONE_INTEGER] = listOf(one(Type.STRING, geneValues), one(Type.INTEGER))
