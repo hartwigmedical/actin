@@ -13,6 +13,10 @@
     <version>local-SNAPSHOT</version>
     <name>Hartwig ACTIN - Algo</name>
 
+    <properties>
+        <actin-trial-client.version>local-SNAPSHOT</actin-trial-client.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
@@ -21,6 +25,11 @@
         <dependency>
             <groupId>com.hartwig.actin.personalization</groupId>
             <artifactId>similarity</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin.trial</groupId>
+            <artifactId>api-client</artifactId>
+            <version>${actin-trial-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
