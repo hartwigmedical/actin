@@ -62,7 +62,7 @@ class EvidenceAnnotatorTest {
             indications = setOf(indication),
             title = "title"
         )
-        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial))
+        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial), IndirectEvidenceMatcher.empty())
 
         val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
 
@@ -89,7 +89,7 @@ class EvidenceAnnotatorTest {
 
         val evidenceAnnotator = evidenceAnnotator(
             clinicalEvidenceFactory,
-            ActionabilityMatcher(emptyList(), emptyList())
+            ActionabilityMatcher(emptyList(), emptyList(), IndirectEvidenceMatcher.empty())
         )
 
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()

@@ -393,7 +393,7 @@ class ActionabilityMatcherTest {
         val trial1 = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
         val trial2 = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
 
-        val matcher = ActionabilityMatcher(listOf(evidence1, evidence2), listOf(trial1, trial2))
+        val matcher = ActionabilityMatcher(listOf(evidence1, evidence2), listOf(trial1, trial2), IndirectEvidenceMatcher.empty())
 
         val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))

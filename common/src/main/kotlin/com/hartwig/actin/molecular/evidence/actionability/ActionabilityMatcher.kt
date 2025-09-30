@@ -25,7 +25,7 @@ typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 class ActionabilityMatcher(
     private val evidences: List<EfficacyEvidence>,
     private val trials: List<ActionableTrial>,
-    private val indirectEvidenceMatcher: IndirectEvidenceMatcher = IndirectEvidenceMatcher.empty()
+    private val indirectEvidenceMatcher: IndirectEvidenceMatcher
 ) {
 
     val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
