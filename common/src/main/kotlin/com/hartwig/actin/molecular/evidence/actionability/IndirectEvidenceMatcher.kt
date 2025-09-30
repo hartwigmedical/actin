@@ -60,9 +60,7 @@ class IndirectEvidenceMatcher(private val treatmentByGeneEffectForHotspots: Map<
             val treatmentByGeneEffect = serveRecord.evidences()
                 .asSequence()
                 .filter { it.source() == Knowledgebase.CKB }
-                .filterNot { isCombinedProfile(it.molecularCriterium()) }
-                .filter { it.molecularCriterium().hotspots().any() }
-                .mapNotNull { evidence -> matchableEvidence(evidence, knownResistantHotspotsByPosition) }
+                .mapNotNull { evidence -> indirectMatchCandidate(evidence, knownResistantHotspotsByPosition) }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, evidences) -> evidences.toCollection(HashSet()) }
 
@@ -89,12 +87,19 @@ class IndirectEvidenceMatcher(private val treatmentByGeneEffectForHotspots: Map<
             return groupedByPosition.mapValues { (_, hotspots) -> hotspots.first() }
         }
 
-        private fun matchableEvidence(
+        private fun indirectMatchCandidate(
             evidence: EfficacyEvidence,
             knownHotspotsByVariant: Map<HotspotKey, KnownHotspot>
         ): Pair<GeneEffectKey, EfficacyEvidence>? {
+            if (isCombinedProfile(evidence.molecularCriterium())) {
+                return null
+            }
+
             return evidence.molecularCriterium().hotspots().firstOrNull()
                 ?.takeIf { ApplicabilityFiltering.isApplicable(it) }
+                // The hotspot variants are alternate genomic encodings for the same protein change,
+                // so we can safely inspect the first one, each genomic representation has a matching
+                // KnownHotspot entry with the same protein effect.
                 ?.variants()?.firstOrNull()
                 ?.let { variant -> knownHotspotsByVariant[variant.toHotspotKey()] }
                 ?.takeIf { hotspot -> hotspot.associatedWithDrugResistance() != true }
