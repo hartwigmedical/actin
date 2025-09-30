@@ -12,7 +12,7 @@ import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.client.models.EligibilityRule as ApiRule
 
 class EligibilityRuleCollector(private val eligibilityApi: ActinEligibilityRulesApi) {
-    val inputTranslator = InputTranslator()
+    val inputTranslator = InputTranslator(eligibilityApi)
     fun publish() {
         val version = EligibilityRuleCollector::class.java.getPackage().implementationVersion ?: "local-SNAPSHOT"
         val rules = collectRules()
@@ -38,22 +38,10 @@ class EligibilityRuleCollector(private val eligibilityApi: ActinEligibilityRules
     private fun compositeRules(): List<ApiRule> {
         val allComposites = EligibilityRule.entries.filter { CompositeRules.isComposite(it) }
         val mapped = listOf(
-            ApiRule(
-                EligibilityRule.AND.name,
-                listOf(EligibilityRuleParameter(countFloor = 2, countCeiling = Integer.MAX_VALUE, EligibilityRuleParameter.Type.RULE))
-            ),
-            ApiRule(
-                EligibilityRule.OR.name,
-                listOf(EligibilityRuleParameter(countFloor = 2, countCeiling = Integer.MAX_VALUE, EligibilityRuleParameter.Type.RULE))
-            ),
-            ApiRule(
-                EligibilityRule.NOT.name,
-                listOf(EligibilityRuleParameter(countFloor = 1, countCeiling = 1, EligibilityRuleParameter.Type.RULE))
-            ),
-            ApiRule(
-                EligibilityRule.WARN_IF.name,
-                listOf(EligibilityRuleParameter(countFloor = 1, countCeiling = 1, EligibilityRuleParameter.Type.RULE))
-            )
+            ApiRule(EligibilityRule.AND.name, listOf(EligibilityRuleParameter(Type.MULTINOMIAL_RULE))),
+            ApiRule(EligibilityRule.OR.name, listOf(EligibilityRuleParameter(Type.MULTINOMIAL_RULE))),
+            ApiRule(EligibilityRule.NOT.name, listOf(EligibilityRuleParameter(Type.UNARY_RULE))),
+            ApiRule(EligibilityRule.WARN_IF.name, listOf(EligibilityRuleParameter(Type.UNARY_RULE)))
         )
         val mappedNames = mapped.map { it.name }
         val unmapped = allComposites - allComposites.filter { it.name in mappedNames }
@@ -66,129 +54,137 @@ class EligibilityRuleCollector(private val eligibilityApi: ActinEligibilityRules
     companion object
 }
 
-class InputTranslator {
+class InputTranslator(private val api: ActinEligibilityRulesApi) {
     private val mappings = mutableMapOf<FunctionInput, List<EligibilityRuleParameter>>()
 
+
     init {
-        val albiGradeValues = EligibilityRuleParameterValueConstraint(allowedValues = listOf("a", "l", "b", "i"))
-        val bodyLocationValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val codonValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val cypValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val doidTermValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val drugValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val geneValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val haplotypeValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val hlaAlleleValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val hlaGroupValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val icdTitleValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val intentValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val medicationCategoryValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val nyhaValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val proteinImpactValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val proteinValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val receptorTypeValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val specificDrugValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val specificTreatmentValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val systemicTreatmentValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val tnmtValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val transporterValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val treatmentCategoryOrTypeValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val treatmentCategoryValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val treatmentResponseValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val treatmentTypesValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val treatmentTypeValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val tumorStagesValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val tumorTypeValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val typeValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
-        val variantTypeValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList())
+        val albiGradeValues = save("albiGrade", listOf("a", "l", "b", "i"))
+        val bodyLocationValues = save(allowedValues = emptyList(), name = "bodyLocation")
+        val codonValues = save(allowedValues = emptyList(), name = "codon")
+        val cypValues = save(allowedValues = emptyList(), name = "cyp")
+        val doidTermValues = save(allowedValues = emptyList(), name = "doidTerm")
+        val drugValues = save(allowedValues = emptyList(), name = "drug")
+        val geneValues = save(allowedValues = emptyList(), name = "gene")
+        val haplotypeValues = save(allowedValues = emptyList(), name = "haplotype")
+        val hlaAlleleValues = save(allowedValues = emptyList(), name = "hlaAllele")
+        val hlaGroupValues = save(allowedValues = emptyList(), name = "hlaGroup")
+        val icdTitleValues = save(allowedValues = emptyList(), name = "icdTitle")
+        val intentValues = save(allowedValues = emptyList(), name = "intent")
+        val medicationCategoryValues = save(allowedValues = emptyList(), name = "medicationCategory")
+        val nyhaValues = save(allowedValues = emptyList(), name = "nyha")
+        val proteinImpactValues = save(allowedValues = emptyList(), name = "proteinImpact")
+        val proteinValues = EligibilityRuleParameterValueConstraint(allowedValues = emptyList(), name = "protein")
+        val receptorTypeValues = save(allowedValues = emptyList(), name = "receptorType")
+        val specificDrugValues = save(allowedValues = emptyList(), name = "specificDrug")
+        val specificTreatmentValues = save(allowedValues = emptyList(), name = "specificTreatment")
+        val systemicTreatmentValues = save(allowedValues = emptyList(), name = "systemicTreatment")
+        val tnmtValues = save(allowedValues = emptyList(), name = "tnmt")
+        val transporterValues = save(allowedValues = emptyList(), name = "transporter")
+        val treatmentCategoryOrTypeValues =
+            save(allowedValues = emptyList(), name = "treatmentCategoryOrType")
+        val treatmentCategoryValues = save(allowedValues = emptyList(), name = "treatmentCategory")
+        val treatmentResponseValues = save(allowedValues = emptyList(), name = "treatmentResponse")
+        val treatmentTypesValues = save(allowedValues = emptyList(), name = "treatmentTypes")
+        val treatmentTypeValues = save(allowedValues = emptyList(), name = "treatmentType")
+        val tumorStagesValues = save(allowedValues = emptyList(), name = "tumorStages")
+        val tumorTypeValues = save(allowedValues = emptyList(), name = "tumorType")
+        val typeValues = save(allowedValues = emptyList(), name = "type")
+        val variantTypeValues = save(allowedValues = emptyList(), name = "variantType")
 
-        mappings[FunctionInput.NONE] = listOf(param(countFloor = 0, countCeiling = 0, Type.NONE))
-        mappings[FunctionInput.ONE_INTEGER] = listOf(one(Type.INTEGER))
-        mappings[FunctionInput.TWO_INTEGERS] = listOf(two(Type.INTEGER))
-        mappings[FunctionInput.MANY_INTEGERS] = listOf(many(Type.INTEGER))
-        mappings[FunctionInput.ONE_DOUBLE] = listOf(one(Type.DOUBLE))
-        mappings[FunctionInput.TWO_DOUBLES] = listOf(two(Type.DOUBLE))
-        mappings[FunctionInput.ONE_ALBI_GRADE] = listOf(one(Type.STRING, albiGradeValues))
-        mappings[FunctionInput.ONE_SYSTEMIC_TREATMENT] = listOf(one(Type.STRING, systemicTreatmentValues))
-        mappings[FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE] = listOf(one(Type.STRING, treatmentCategoryOrTypeValues))
+        mappings[FunctionInput.NONE] = emptyList()
+        mappings[FunctionInput.ONE_INTEGER] = listOf(param(Type.INTEGER))
+        mappings[FunctionInput.TWO_INTEGERS] = listOf(param(Type.INTEGER), param(Type.INTEGER))
+        mappings[FunctionInput.MANY_INTEGERS] = listOf(param(Type.MULTI_INTEGER))
+        mappings[FunctionInput.ONE_DOUBLE] = listOf(param(Type.DOUBLE))
+        mappings[FunctionInput.TWO_DOUBLES] = listOf(param(Type.DOUBLE), param(Type.DOUBLE))
+        mappings[FunctionInput.ONE_ALBI_GRADE] = listOf(manyStringsFrom(albiGradeValues))
+        mappings[FunctionInput.ONE_SYSTEMIC_TREATMENT] = listOf(manyStringsFrom(systemicTreatmentValues))
+        mappings[FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE] = listOf(manyStringsFrom(treatmentCategoryOrTypeValues))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER] =
-            listOf(one(Type.STRING, treatmentCategoryOrTypeValues), one(Type.INTEGER))
+            listOf(manyStringsFrom(treatmentCategoryOrTypeValues), param(Type.INTEGER))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES] =
-            listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, treatmentTypesValues))
+            listOf(manyStringsFrom(treatmentCategoryValues), manyStringsFrom(treatmentTypesValues))
         mappings[FunctionInput.TWO_TREATMENT_CATEGORIES_MANY_TYPES] =
-            listOf(two(Type.STRING, treatmentCategoryValues), many(Type.STRING, typeValues))
+            listOf(
+                manyStringsFrom(treatmentCategoryValues), manyStringsFrom(typeValues),
+                manyStringsFrom(treatmentCategoryValues), manyStringsFrom(typeValues)
+            )
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER] =
-            listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, treatmentTypesValues), one(Type.INTEGER))
+            listOf(manyStringsFrom(treatmentCategoryValues), manyStringsFrom(treatmentTypesValues), param(Type.INTEGER))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS] =
-            listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, intentValues))
+            listOf(manyStringsFrom(treatmentCategoryValues), manyStringsFrom(intentValues))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER] =
-            listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, intentValues), one(Type.INTEGER))
-        mappings[FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER] = listOf(one(Type.STRING, treatmentTypeValues), one(Type.INTEGER))
-        mappings[FunctionInput.MANY_TREATMENT_CATEGORIES] = listOf(many(Type.STRING, treatmentCategoryValues))
-        mappings[FunctionInput.ONE_SPECIFIC_TREATMENT] = listOf(one(Type.STRING, specificTreatmentValues))
-        mappings[FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER] = listOf(one(Type.STRING, specificTreatmentValues), one(Type.INTEGER))
+            listOf(manyStringsFrom(treatmentCategoryValues), manyStringsFrom(intentValues), param(Type.INTEGER))
+        mappings[FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER] = listOf(manyStringsFrom(treatmentTypeValues), param(Type.INTEGER))
+        mappings[FunctionInput.MANY_TREATMENT_CATEGORIES] = listOf(manyStringsFrom(treatmentCategoryValues))
+        mappings[FunctionInput.ONE_SPECIFIC_TREATMENT] = listOf(manyStringsFrom(specificTreatmentValues))
+        mappings[FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER] =
+            listOf(manyStringsFrom(specificTreatmentValues), param(Type.INTEGER))
 
-        mappings[FunctionInput.MANY_SPECIFIC_TREATMENTS] = listOf(many(Type.STRING, specificTreatmentValues))
+        mappings[FunctionInput.MANY_SPECIFIC_TREATMENTS] = listOf(manyStringsFrom(specificTreatmentValues))
         mappings[FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS] =
-            listOf(many(Type.STRING, specificTreatmentValues), two(Type.INTEGER))
+            listOf(manyStringsFrom(specificTreatmentValues), param(Type.INTEGER), param(Type.INTEGER))
         mappings[FunctionInput.ONE_SPECIFIC_DRUG_ONE_TREATMENT_CATEGORY_MANY_TYPES] =
-            listOf(one(Type.STRING, specificDrugValues), one(Type.STRING, treatmentCategoryValues), many(Type.STRING, typeValues))
+            listOf(manyStringsFrom(specificDrugValues), manyStringsFrom(treatmentCategoryValues), manyStringsFrom(typeValues))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS] =
-            listOf(one(Type.STRING, treatmentCategoryValues), many(Type.STRING, drugValues))
+            listOf(manyStringsFrom(treatmentCategoryValues), manyStringsFrom(drugValues))
         mappings[FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_MANY_DRUGS] = listOf(
-            one(Type.STRING, treatmentCategoryValues),
-            many(Type.STRING, treatmentTypesValues),
-            many(Type.STRING, drugValues)
+            manyStringsFrom(treatmentCategoryValues),
+            manyStringsFrom(treatmentTypesValues),
+            manyStringsFrom(drugValues)
         )
-        mappings[FunctionInput.MANY_DRUGS] = listOf(many(Type.STRING, drugValues))
-        mappings[FunctionInput.MANY_DRUGS_ONE_INTEGER] = listOf(many(Type.STRING, drugValues), one(Type.INTEGER))
-        mappings[FunctionInput.MANY_DRUGS_TWO_INTEGERS] = listOf(many(Type.STRING, drugValues), two(Type.INTEGER))
-        mappings[FunctionInput.ONE_ICD_TITLE] = listOf(one(Type.STRING, icdTitleValues))
-        mappings[FunctionInput.MANY_ICD_TITLES] = listOf(many(Type.STRING, icdTitleValues))
-        mappings[FunctionInput.ONE_NYHA_CLASS] = listOf(one(Type.STRING, nyhaValues))
-        mappings[FunctionInput.ONE_TUMOR_TYPE] = listOf(one(Type.STRING, tumorTypeValues))
-        mappings[FunctionInput.ONE_STRING] = listOf(one(Type.STRING))
-        mappings[FunctionInput.TWO_STRINGS] = listOf(two(Type.STRING))
-        mappings[FunctionInput.MANY_STRINGS] = listOf(many(Type.STRING))
-        mappings[FunctionInput.ONE_STRING_ONE_INTEGER] = listOf(one(Type.STRING), one(Type.INTEGER))
-        mappings[FunctionInput.MANY_TNM_T] = listOf(many(Type.STRING, tnmtValues))
-        mappings[FunctionInput.MANY_BODY_LOCATIONS] = listOf(many(Type.STRING, bodyLocationValues))
-        mappings[FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION] = listOf(one(Type.INTEGER), one(Type.STRING, bodyLocationValues))
-        mappings[FunctionInput.ONE_INTEGER_MANY_DOID_TERMS] = listOf(one(Type.INTEGER), many(Type.STRING, doidTermValues))
-        mappings[FunctionInput.ONE_INTEGER_MANY_ICD_TITLES] = listOf(one(Type.INTEGER), many(Type.STRING, icdTitleValues))
-        mappings[FunctionInput.ONE_GENE] = listOf(one(Type.STRING, geneValues))
-        mappings[FunctionInput.MANY_GENES] = listOf(many(Type.STRING, geneValues))
-        mappings[FunctionInput.ONE_GENE_ONE_INTEGER] = listOf(one(Type.STRING, geneValues), one(Type.INTEGER))
+        mappings[FunctionInput.MANY_DRUGS] = listOf(manyStringsFrom(drugValues))
+        mappings[FunctionInput.MANY_DRUGS_ONE_INTEGER] = listOf(manyStringsFrom(drugValues), param(Type.INTEGER))
+        mappings[FunctionInput.MANY_DRUGS_TWO_INTEGERS] = listOf(manyStringsFrom(drugValues), param(Type.INTEGER), param(Type.INTEGER))
+        mappings[FunctionInput.ONE_ICD_TITLE] = listOf(param(Type.STRING, icdTitleValues))
+        mappings[FunctionInput.MANY_ICD_TITLES] = listOf(manyStringsFrom(icdTitleValues))
+        mappings[FunctionInput.ONE_NYHA_CLASS] = listOf(param(Type.STRING, nyhaValues))
+        mappings[FunctionInput.ONE_TUMOR_TYPE] = listOf(param(Type.STRING, tumorTypeValues))
+        mappings[FunctionInput.ONE_STRING] = listOf(param(Type.STRING))
+        mappings[FunctionInput.TWO_STRINGS] = listOf(param(Type.STRING), param(Type.STRING))
+        mappings[FunctionInput.MANY_STRINGS] = listOf(param(Type.MULTI_STRING))
+        mappings[FunctionInput.ONE_STRING_ONE_INTEGER] = listOf(param(Type.STRING), param(Type.INTEGER))
+        mappings[FunctionInput.MANY_TNM_T] = listOf(manyStringsFrom(tnmtValues))
+        mappings[FunctionInput.MANY_BODY_LOCATIONS] = listOf(manyStringsFrom(bodyLocationValues))
+        mappings[FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION] = listOf(param(Type.INTEGER), param(Type.STRING, bodyLocationValues))
+        mappings[FunctionInput.ONE_INTEGER_MANY_DOID_TERMS] = listOf(param(Type.INTEGER), manyStringsFrom(doidTermValues))
+        mappings[FunctionInput.ONE_INTEGER_MANY_ICD_TITLES] = listOf(param(Type.INTEGER), manyStringsFrom(icdTitleValues))
+        mappings[FunctionInput.ONE_GENE] = listOf(param(Type.STRING, geneValues))
+        mappings[FunctionInput.MANY_GENES] = listOf(manyStringsFrom(geneValues))
+        mappings[FunctionInput.ONE_GENE_ONE_INTEGER] = listOf(param(Type.STRING, geneValues), param(Type.INTEGER))
         mappings[FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE] =
-            listOf(one(Type.STRING, geneValues), one(Type.INTEGER), one(Type.STRING, variantTypeValues))
-        mappings[FunctionInput.ONE_GENE_TWO_INTEGERS] = listOf(one(Type.STRING, geneValues), two(Type.INTEGER))
-        mappings[FunctionInput.ONE_GENE_MANY_CODONS] = listOf(one(Type.STRING, geneValues), many(Type.STRING, codonValues))
-        mappings[FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS] = listOf(one(Type.STRING, geneValues), many(Type.STRING, proteinImpactValues))
-        mappings[FunctionInput.MANY_HLA_ALLELES] = listOf(many(Type.STRING, hlaAlleleValues))
-        mappings[FunctionInput.ONE_HLA_GROUP] = listOf(one(Type.STRING, hlaGroupValues))
-        mappings[FunctionInput.ONE_DOID_TERM] = listOf(one(Type.STRING, doidTermValues))
-        mappings[FunctionInput.MANY_DOID_TERMS] = listOf(many(Type.STRING, doidTermValues))
-        mappings[FunctionInput.ONE_ICD_TITLE_ONE_INTEGER] = listOf(one(Type.STRING, icdTitleValues), one(Type.INTEGER))
-        mappings[FunctionInput.MANY_TUMOR_STAGES] = listOf(many(Type.STRING, tumorStagesValues))
-        mappings[FunctionInput.ONE_HAPLOTYPE] = listOf(one(Type.STRING, haplotypeValues))
-        mappings[FunctionInput.ONE_RECEPTOR_TYPE] = listOf(one(Type.STRING, receptorTypeValues))
-        mappings[FunctionInput.MANY_INTENTS] = listOf(many(Type.STRING, intentValues))
-        mappings[FunctionInput.MANY_INTENTS_ONE_INTEGER] = listOf(many(Type.STRING, intentValues), one(Type.INTEGER))
-        mappings[FunctionInput.ONE_MEDICATION_CATEGORY] = listOf(one(Type.STRING, medicationCategoryValues))
-        mappings[FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER] = listOf(one(Type.STRING, medicationCategoryValues), one(Type.INTEGER))
+            listOf(param(Type.STRING, geneValues), param(Type.INTEGER), param(Type.STRING, variantTypeValues))
+        mappings[FunctionInput.ONE_GENE_TWO_INTEGERS] = listOf(param(Type.STRING, geneValues), param(Type.INTEGER), param(Type.INTEGER))
+        mappings[FunctionInput.ONE_GENE_MANY_CODONS] = listOf(param(Type.STRING, geneValues), manyStringsFrom(codonValues))
+        mappings[FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS] =
+            listOf(param(Type.STRING, geneValues), manyStringsFrom(proteinImpactValues))
+        mappings[FunctionInput.MANY_HLA_ALLELES] = listOf(manyStringsFrom(hlaAlleleValues))
+        mappings[FunctionInput.ONE_HLA_GROUP] = listOf(param(Type.STRING, hlaGroupValues))
+        mappings[FunctionInput.ONE_DOID_TERM] = listOf(param(Type.STRING, doidTermValues))
+        mappings[FunctionInput.MANY_DOID_TERMS] = listOf(manyStringsFrom(doidTermValues))
+        mappings[FunctionInput.ONE_ICD_TITLE_ONE_INTEGER] = listOf(param(Type.STRING, icdTitleValues), param(Type.INTEGER))
+        mappings[FunctionInput.MANY_TUMOR_STAGES] = listOf(manyStringsFrom(tumorStagesValues))
+        mappings[FunctionInput.ONE_HAPLOTYPE] = listOf(param(Type.STRING, haplotypeValues))
+        mappings[FunctionInput.ONE_RECEPTOR_TYPE] = listOf(param(Type.STRING, receptorTypeValues))
+        mappings[FunctionInput.MANY_INTENTS] = listOf(manyStringsFrom(intentValues))
+        mappings[FunctionInput.MANY_INTENTS_ONE_INTEGER] = listOf(manyStringsFrom(intentValues), param(Type.INTEGER))
+        mappings[FunctionInput.ONE_MEDICATION_CATEGORY] = listOf(param(Type.STRING, medicationCategoryValues))
+        mappings[FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER] =
+            listOf(param(Type.STRING, medicationCategoryValues), param(Type.INTEGER))
         mappings[FunctionInput.MANY_MEDICATION_CATEGORIES_ONE_INTEGER] =
-            listOf(many(Type.STRING, medicationCategoryValues), one(Type.INTEGER))
+            listOf(manyStringsFrom(medicationCategoryValues), param(Type.INTEGER))
         mappings[FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS] =
-            listOf(many(Type.STRING, medicationCategoryValues), two(Type.INTEGER))
-        mappings[FunctionInput.ONE_CYP] = listOf(one(Type.STRING, cypValues))
-        mappings[FunctionInput.ONE_CYP_ONE_INTEGER] = listOf(one(Type.STRING, cypValues), one(Type.INTEGER))
-        mappings[FunctionInput.ONE_TRANSPORTER] = listOf(one(Type.STRING, transporterValues))
-        mappings[FunctionInput.ONE_PROTEIN] = listOf(one(Type.STRING, proteinValues))
-        mappings[FunctionInput.ONE_PROTEIN_ONE_INTEGER] = listOf(one(Type.STRING, proteinValues), one(Type.INTEGER))
-        mappings[FunctionInput.ONE_PROTEIN_ONE_STRING] = listOf(one(Type.STRING, proteinValues), one(Type.STRING))
+            listOf(manyStringsFrom(medicationCategoryValues), param(Type.INTEGER), param(Type.INTEGER))
+        mappings[FunctionInput.ONE_CYP] = listOf(param(Type.STRING, cypValues))
+        mappings[FunctionInput.ONE_CYP_ONE_INTEGER] = listOf(param(Type.STRING, cypValues), param(Type.INTEGER))
+        mappings[FunctionInput.ONE_TRANSPORTER] = listOf(param(Type.STRING, transporterValues))
+        mappings[FunctionInput.ONE_PROTEIN] = listOf(param(Type.STRING, proteinValues))
+        mappings[FunctionInput.ONE_PROTEIN_ONE_INTEGER] = listOf(param(Type.STRING, proteinValues), param(Type.INTEGER))
+        mappings[FunctionInput.ONE_PROTEIN_ONE_STRING] = listOf(param(Type.STRING, proteinValues), param(Type.STRING))
         mappings[FunctionInput.ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES] = listOf(
-            one(Type.STRING, treatmentResponseValues),
-            one(Type.STRING, treatmentCategoryValues), many(Type.STRING, typeValues)
+            param(Type.STRING, treatmentResponseValues),
+            param(Type.STRING, treatmentCategoryValues), manyStringsFrom(typeValues)
         )
 
         val unmapped = FunctionInput.entries - mappings.keys
@@ -197,30 +193,19 @@ class InputTranslator {
         }
     }
 
-    fun one(type: Type, allowedValues: EligibilityRuleParameterValueConstraint? = null): EligibilityRuleParameter {
-        return param(1, 1, type, allowedValues)
+    fun save(name: String, allowedValues: List<String>): EligibilityRuleParameterValueConstraint {
+        return api.createEligibilityRuleParameterValueConstraint(EligibilityRuleParameterValueConstraint(name, allowedValues))
     }
 
-    fun two(type: Type, allowedValues: EligibilityRuleParameterValueConstraint? = null): EligibilityRuleParameter {
-        return param(2, 2, type, allowedValues)
-    }
-
-    fun many(
-        type: Type,
-        allowedValues: EligibilityRuleParameterValueConstraint? = null
-    ): EligibilityRuleParameter {
-        return param(2, Integer.MAX_VALUE, type, allowedValues)
+    fun manyStringsFrom(allowedValues: EligibilityRuleParameterValueConstraint): EligibilityRuleParameter {
+        return param(Type.MULTI_STRING, allowedValues)
     }
 
     fun param(
-        countFloor: Int,
-        countCeiling: Int,
         type: Type,
         allowedValues: EligibilityRuleParameterValueConstraint? = null
     ): EligibilityRuleParameter {
         return EligibilityRuleParameter(
-            countFloor = countFloor,
-            countCeiling = countCeiling,
             type = type,
             allowedValues = allowedValues
         )
