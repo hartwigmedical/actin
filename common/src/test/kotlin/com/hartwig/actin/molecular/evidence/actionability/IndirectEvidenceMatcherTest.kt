@@ -147,6 +147,81 @@ class IndirectEvidenceMatcherTest {
         assertThat(matcher.findIndirectEvidence(unknownEffectVariantDriver)).isEmpty()
     }
 
+    @Test
+    fun `Should exclude direct hotspot matches`() {
+        val directVariant = variantAnnotation(
+            gene = "KRAS",
+            chromosome = "12",
+            position = 25245350,
+            ref = "C",
+            alt = "T"
+        )
+        val indirectVariant = variantAnnotation(
+            gene = "KRAS",
+            chromosome = "12",
+            position = 25245351,
+            ref = "C",
+            alt = "A"
+        )
+
+        val directEvidenceBase = TestServeEvidenceFactory.create(
+            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
+                variants = setOf(directVariant)
+            ),
+            treatment = "Direct Treatment"
+        )
+        val directEvidence = ImmutableEfficacyEvidence.builder()
+            .from(directEvidenceBase)
+            .treatment(
+                ImmutableTreatment.builder()
+                    .from(directEvidenceBase.treatment())
+                    .treatmentApproachesDrugClass(listOf("KRAS Inhibitor"))
+                    .build()
+            )
+            .build()
+
+        val indirectEvidenceBase = TestServeEvidenceFactory.create(
+            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
+                variants = setOf(indirectVariant)
+            ),
+            treatment = "Indirect Treatment"
+        )
+        val indirectEvidence = ImmutableEfficacyEvidence.builder()
+            .from(indirectEvidenceBase)
+            .treatment(
+                ImmutableTreatment.builder()
+                    .from(indirectEvidenceBase.treatment())
+                    .treatmentApproachesDrugClass(listOf("KRAS Inhibitor"))
+                    .build()
+            )
+            .build()
+
+        val serveRecord = ImmutableServeRecord.builder()
+            .knownEvents(
+                ImmutableKnownEvents.builder()
+                    .addHotspots(knownHotspot(directVariant, ProteinEffect.GAIN_OF_FUNCTION))
+                    .addHotspots(knownHotspot(indirectVariant, ProteinEffect.GAIN_OF_FUNCTION))
+                    .build()
+            )
+            .addEvidences(directEvidence)
+            .addEvidences(indirectEvidence)
+            .build()
+
+        val actinProteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+        val matcher = IndirectEvidenceMatcher.create(serveRecord)
+
+        val patientVariant = TestVariantFactory.createMinimal().copy(
+            gene = directVariant.gene(),
+            proteinEffect = actinProteinEffect,
+            chromosome = directVariant.chromosome(),
+            position = directVariant.position(),
+            ref = directVariant.ref(),
+            alt = directVariant.alt()
+        )
+
+        assertThat(matcher.findIndirectEvidence(patientVariant)).containsExactly(indirectEvidence)
+    }
+
     private fun variantAnnotation(
         gene: String,
         chromosome: String,

@@ -34,14 +34,16 @@ private val SUPPORTED_PROTEIN_EFFECTS = setOf(
     ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
 )
 
-class IndirectEvidenceMatcher(
-    private val treatmentByGeneEffectForHotspots: Map<GeneEffectKey, Set<EfficacyEvidence>>
-) {
+class IndirectEvidenceMatcher(private val treatmentByGeneEffectForHotspots: Map<GeneEffectKey, Set<EfficacyEvidence>>) {
 
-    // TODO: Actually this returns indirect but also direct hits, caller needs to filter out direct hits.
-    //  better name?
     fun findIndirectEvidence(variant: Variant): Set<EfficacyEvidence> {
-        return findIndirectEvidence(variant.gene, variant.proteinEffect)
+        val matches = findIndirectEvidence(variant.gene, variant.proteinEffect)
+
+        val hotspotKey = variant.toHotspotKey()
+        return matches
+            .asSequence()
+            .filterNot { evidence -> evidence.containsHotspot(hotspotKey) }
+            .toCollection(HashSet())
     }
 
     private fun findIndirectEvidence(gene: String, proteinEffect: ProteinEffect): Set<EfficacyEvidence> {
@@ -74,7 +76,7 @@ class IndirectEvidenceMatcher(
                 .asSequence()
                 .filter { it.sources().contains(Knowledgebase.CKB) }
                 .filterNot { it.associatedWithDrugResistance() == true }
-                .groupBy { it.toKey() }
+                .groupBy { it.toHotspotKey() }
 
             groupedByPosition
                 .filter { (_, hotspots) -> hotspots.size > 1 }
@@ -94,7 +96,7 @@ class IndirectEvidenceMatcher(
             return evidence.molecularCriterium().hotspots().firstOrNull()
                 ?.takeIf { ApplicabilityFiltering.isApplicable(it) }
                 ?.variants()?.firstOrNull()
-                ?.let { variant -> knownHotspotsByVariant[variant.toKey()] }
+                ?.let { variant -> knownHotspotsByVariant[variant.toHotspotKey()] }
                 ?.takeIf { hotspot -> hotspot.associatedWithDrugResistance() != true }
                 ?.takeIf { GenericInhibitorFiltering.isGenericInhibitor(evidence.treatment()) }
                 ?.let { knownHotspot ->
@@ -103,13 +105,25 @@ class IndirectEvidenceMatcher(
                         ?.let { GeneEffectKey(knownHotspot.gene(), it) to evidence }
                 }
         }
-
-        private fun VariantAnnotation.toKey(): HotspotKey {
-            return HotspotKey(gene(), chromosome(), position(), ref(), alt())
-        }
-
-        private fun KnownHotspot.toKey(): HotspotKey {
-            return HotspotKey(gene(), chromosome(), position(), ref(), alt())
-        }
     }
+}
+
+private fun EfficacyEvidence.containsHotspot(key: HotspotKey): Boolean {
+    return molecularCriterium().hotspots()
+        .asSequence()
+        .flatMap { it.variants().asSequence() }
+        .map { it.toHotspotKey() }
+        .any { it == key }
+}
+
+private fun VariantAnnotation.toHotspotKey(): HotspotKey {
+    return HotspotKey(gene(), chromosome(), position(), ref(), alt())
+}
+
+private fun KnownHotspot.toHotspotKey(): HotspotKey {
+    return HotspotKey(gene(), chromosome(), position(), ref(), alt())
+}
+
+private fun Variant.toHotspotKey(): HotspotKey {
+    return HotspotKey(gene, chromosome, position, ref, alt)
 }
