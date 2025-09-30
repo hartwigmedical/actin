@@ -14,7 +14,7 @@ import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-data class TreatmentKey(
+data class GeneEffectKey(
     val gene: String,
     val proteinEffect: ProteinEffect
 )
@@ -29,11 +29,13 @@ private data class HotspotKey(
 
 private val SUPPORTED_PROTEIN_EFFECTS = setOf(
     ProteinEffect.GAIN_OF_FUNCTION,
+    ProteinEffect.GAIN_OF_FUNCTION_PREDICTED,
     ProteinEffect.LOSS_OF_FUNCTION,
+    ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
 )
 
 class IndirectEvidenceMatcher(
-    private val treatmentByGeneEffectForHotspots: Map<TreatmentKey, Set<EfficacyEvidence>>
+    private val treatmentByGeneEffectForHotspots: Map<GeneEffectKey, Set<EfficacyEvidence>>
 ) {
 
     // TODO: Actually this returns indirect but also direct hits, caller needs to filter out direct hits.
@@ -43,7 +45,7 @@ class IndirectEvidenceMatcher(
     }
 
     private fun findIndirectEvidence(gene: String, proteinEffect: ProteinEffect): Set<EfficacyEvidence> {
-        return treatmentByGeneEffectForHotspots[TreatmentKey(gene, proteinEffect)] ?: emptySet()
+        return treatmentByGeneEffectForHotspots[GeneEffectKey(gene, proteinEffect)] ?: emptySet()
     }
 
     companion object {
@@ -51,14 +53,14 @@ class IndirectEvidenceMatcher(
         val logger: Logger = LogManager.getLogger(IndirectEvidenceMatcher::class.java)
 
         fun create(serveRecord: ServeRecord): IndirectEvidenceMatcher {
-            val knownHotspotsByPosition = mapKnownHotspotsByPosition(serveRecord)
+            val knownResistantHotspotsByPosition = mapKnownResistantHotspotsByPosition(serveRecord)
 
             val treatmentByGeneEffect = serveRecord.evidences()
                 .asSequence()
                 .filter { it.source() == Knowledgebase.CKB }
                 .filterNot { isCombinedProfile(it.molecularCriterium()) }
                 .filter { it.molecularCriterium().hotspots().any() }
-                .mapNotNull { evidence -> matchableEvidence(evidence, knownHotspotsByPosition) }
+                .mapNotNull { evidence -> matchableEvidence(evidence, knownResistantHotspotsByPosition) }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, evidences) -> evidences.toCollection(HashSet()) }
 
@@ -67,7 +69,7 @@ class IndirectEvidenceMatcher(
 
         fun empty(): IndirectEvidenceMatcher = IndirectEvidenceMatcher(emptyMap())
 
-        private fun mapKnownHotspotsByPosition(serveRecord: ServeRecord): Map<HotspotKey, KnownHotspot> {
+        private fun mapKnownResistantHotspotsByPosition(serveRecord: ServeRecord): Map<HotspotKey, KnownHotspot> {
             val groupedByPosition = serveRecord.knownEvents().hotspots()
                 .asSequence()
                 .filter { it.sources().contains(Knowledgebase.CKB) }
@@ -88,7 +90,7 @@ class IndirectEvidenceMatcher(
         private fun matchableEvidence(
             evidence: EfficacyEvidence,
             knownHotspotsByVariant: Map<HotspotKey, KnownHotspot>
-        ): Pair<TreatmentKey, EfficacyEvidence>? {
+        ): Pair<GeneEffectKey, EfficacyEvidence>? {
             return evidence.molecularCriterium().hotspots().firstOrNull()
                 ?.takeIf { ApplicabilityFiltering.isApplicable(it) }
                 ?.variants()?.firstOrNull()
@@ -98,7 +100,7 @@ class IndirectEvidenceMatcher(
                 ?.let { knownHotspot ->
                     val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect())
                     proteinEffect.takeIf { it in SUPPORTED_PROTEIN_EFFECTS }
-                        ?.let { TreatmentKey(knownHotspot.gene(), it) to evidence }
+                        ?.let { GeneEffectKey(knownHotspot.gene(), it) to evidence }
                 }
         }
 
