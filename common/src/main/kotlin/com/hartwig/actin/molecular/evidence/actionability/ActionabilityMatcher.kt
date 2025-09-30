@@ -33,7 +33,7 @@ class ActionabilityMatcher(
     fun match(molecularTest: MolecularTest): MatchesForActionable {
         val evidenceMatches = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }
         val trialMatches = match(molecularTest, trials) { it.anyMolecularCriteria().toList() }
-        val indirectMatches = findIndirectEvidenceMatchesForVariant(molecularTest, evidenceMatches)
+        val indirectMatches = findIndirectEvidenceMatchesForVariants(molecularTest, evidenceMatches)
         val allActionables = evidenceMatches.keys + trialMatches.keys + indirectMatches.keys
 
         return allActionables.associateWith { actionable ->
@@ -47,7 +47,7 @@ class ActionabilityMatcher(
         }
     }
 
-    private fun findIndirectEvidenceMatchesForVariant(
+    private fun findIndirectEvidenceMatchesForVariants(
         molecularTest: MolecularTest,
         evidenceMatches: Map<Actionable, Set<Pair<EfficacyEvidence, MolecularCriterium>>>
     ): Map<Actionable, List<EfficacyEvidence>> {
