@@ -107,6 +107,63 @@ class IndirectEvidenceMatcherTest {
             .containsExactly(nonResistantEvidence)
     }
 
+    @Test
+    fun `Should exclude hotspots without gain or loss of function`() {
+        val unknownEffectVariant = variantAnnotation(
+            gene = "PIK3CA",
+            chromosome = "3",
+            position = 178936091,
+            ref = "A",
+            alt = "G"
+        )
+
+        val unknownEffectEvidenceBase = TestServeEvidenceFactory.create(
+            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
+                variants = setOf(unknownEffectVariant)
+            ),
+            treatment = "Generic Inhibitor Treatment"
+        )
+
+        val unknownEffectEvidence = ImmutableEfficacyEvidence.builder()
+            .from(unknownEffectEvidenceBase)
+            .treatment(
+                ImmutableTreatment.builder()
+                    .from(unknownEffectEvidenceBase.treatment())
+                    .treatmentApproachesDrugClass(listOf("PIK3CA Inhibitor"))
+                    .build()
+            )
+            .build()
+
+        val unknownEffectHotspot = TestServeKnownFactory.hotspotBuilder()
+            .gene(unknownEffectVariant.gene())
+            .chromosome(unknownEffectVariant.chromosome())
+            .position(unknownEffectVariant.position())
+            .ref(unknownEffectVariant.ref())
+            .alt(unknownEffectVariant.alt())
+            .proteinEffect(ProteinEffect.UNKNOWN)
+            .associatedWithDrugResistance(false)
+            .addSources(Knowledgebase.CKB)
+            .build()
+
+        val serveRecord = ImmutableServeRecord.builder()
+            .knownEvents(
+                ImmutableKnownEvents.builder()
+                    .addHotspots(unknownEffectHotspot)
+                    .build()
+            )
+            .addEvidences(unknownEffectEvidence)
+            .build()
+
+        val matcher = IndirectEvidenceMatcher.create(serveRecord)
+
+        val unknownEffectVariantDriver = TestVariantFactory.createMinimal().copy(
+            gene = unknownEffectVariant.gene(),
+            proteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.UNKNOWN)
+        )
+
+        assertThat(matcher.findIndirectEvidence(unknownEffectVariantDriver)).isEmpty()
+    }
+
     private fun variantAnnotation(
         gene: String,
         chromosome: String,

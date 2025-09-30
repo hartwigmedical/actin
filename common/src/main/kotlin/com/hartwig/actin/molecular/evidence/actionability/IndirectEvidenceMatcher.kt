@@ -27,6 +27,11 @@ private data class HotspotKey(
     val alt: String
 )
 
+private val SUPPORTED_PROTEIN_EFFECTS = setOf(
+    ProteinEffect.GAIN_OF_FUNCTION,
+    ProteinEffect.LOSS_OF_FUNCTION,
+)
+
 class IndirectEvidenceMatcher(
     private val treatmentByGeneEffectForHotspots: Map<TreatmentKey, Set<EfficacyEvidence>>
 ) {
@@ -92,7 +97,8 @@ class IndirectEvidenceMatcher(
                 ?.takeIf { GenericInhibitorFiltering.isGenericInhibitor(evidence.treatment()) }
                 ?.let { knownHotspot ->
                     val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect())
-                    TreatmentKey(knownHotspot.gene(), proteinEffect) to evidence
+                    proteinEffect.takeIf { it in SUPPORTED_PROTEIN_EFFECTS }
+                        ?.let { TreatmentKey(knownHotspot.gene(), it) to evidence }
                 }
         }
 
