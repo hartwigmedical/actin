@@ -56,27 +56,16 @@ class IndirectEvidenceMatcherTest {
             )
             .build()
 
-        val resistantKnownHotspot = TestServeKnownFactory.hotspotBuilder()
-            .gene(resistantVariant.gene())
-            .chromosome(resistantVariant.chromosome())
-            .position(resistantVariant.position())
-            .ref(resistantVariant.ref())
-            .alt(resistantVariant.alt())
-            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-            .associatedWithDrugResistance(true)
-            .addSources(Knowledgebase.CKB)
-            .build()
+        val resistantKnownHotspot = knownHotspot(
+            variant = resistantVariant,
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+            associatedWithDrugResistance = true
+        )
 
-        val nonResistantKnownHotspot = TestServeKnownFactory.hotspotBuilder()
-            .gene(nonResistantVariant.gene())
-            .chromosome(nonResistantVariant.chromosome())
-            .position(nonResistantVariant.position())
-            .ref(nonResistantVariant.ref())
-            .alt(nonResistantVariant.alt())
-            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-            .associatedWithDrugResistance(false)
-            .addSources(Knowledgebase.CKB)
-            .build()
+        val nonResistantKnownHotspot = knownHotspot(
+            variant = nonResistantVariant,
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+        )
 
         val serveRecord = ImmutableServeRecord.builder()
             .knownEvents(
@@ -134,16 +123,10 @@ class IndirectEvidenceMatcherTest {
             )
             .build()
 
-        val unknownEffectHotspot = TestServeKnownFactory.hotspotBuilder()
-            .gene(unknownEffectVariant.gene())
-            .chromosome(unknownEffectVariant.chromosome())
-            .position(unknownEffectVariant.position())
-            .ref(unknownEffectVariant.ref())
-            .alt(unknownEffectVariant.alt())
-            .proteinEffect(ProteinEffect.UNKNOWN)
-            .associatedWithDrugResistance(false)
-            .addSources(Knowledgebase.CKB)
-            .build()
+        val unknownEffectHotspot = knownHotspot(
+            variant = unknownEffectVariant,
+            proteinEffect = ProteinEffect.UNKNOWN
+        )
 
         val serveRecord = ImmutableServeRecord.builder()
             .knownEvents(
@@ -179,4 +162,19 @@ class IndirectEvidenceMatcherTest {
             alt = alt
         )
     }
+
+    private fun knownHotspot(
+        variant: VariantAnnotation,
+        proteinEffect: ProteinEffect,
+        associatedWithDrugResistance: Boolean = false
+    ) = TestServeKnownFactory.hotspotBuilder()
+        .gene(variant.gene())
+        .chromosome(variant.chromosome())
+        .position(variant.position())
+        .ref(variant.ref())
+        .alt(variant.alt())
+        .proteinEffect(proteinEffect)
+        .associatedWithDrugResistance(associatedWithDrugResistance)
+        .addSources(Knowledgebase.CKB)
+        .build()
 }
