@@ -5,6 +5,8 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.evidence.ServeVerifier.isCombinedProfile
 import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
 import com.hartwig.actin.molecular.evidence.curation.GenericInhibitorFiltering
+import com.hartwig.actin.molecular.evidence.matching.HotspotCoordinates
+import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.ServeRecord
@@ -19,14 +21,6 @@ data class GeneEffectKey(
     val proteinEffect: ProteinEffect
 )
 
-private data class HotspotKey(
-    val gene: String,
-    val chromosome: String,
-    val position: Int,
-    val ref: String,
-    val alt: String
-)
-
 private val SUPPORTED_PROTEIN_EFFECTS = setOf(
     ProteinEffect.GAIN_OF_FUNCTION,
     ProteinEffect.GAIN_OF_FUNCTION_PREDICTED,
@@ -34,20 +28,20 @@ private val SUPPORTED_PROTEIN_EFFECTS = setOf(
     ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
 )
 
-class IndirectEvidenceMatcher(private val treatmentByGeneEffectForHotspots: Map<GeneEffectKey, Set<EfficacyEvidence>>) {
+class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<GeneEffectKey, Set<EfficacyEvidence>>) {
 
     fun findIndirectEvidence(variant: Variant): Set<EfficacyEvidence> {
-        val matches = findIndirectEvidence(variant.gene, variant.proteinEffect)
+        val associatedEvidence = findAssociatedEvidence(variant.gene, variant.proteinEffect)
+        val hotspotCoordinates = HotspotMatching.coordinates(variant)
 
-        val hotspotKey = variant.toHotspotKey()
-        return matches
+        return associatedEvidence
             .asSequence()
-            .filterNot { evidence -> evidence.containsHotspot(hotspotKey) }
+            .filterNot { evidence -> evidence.isDirectHotspotMatch(hotspotCoordinates) }
             .toCollection(HashSet())
     }
 
-    private fun findIndirectEvidence(gene: String, proteinEffect: ProteinEffect): Set<EfficacyEvidence> {
-        return treatmentByGeneEffectForHotspots[GeneEffectKey(gene, proteinEffect)] ?: emptySet()
+    private fun findAssociatedEvidence(gene: String, proteinEffect: ProteinEffect): Set<EfficacyEvidence> {
+        return associatedEvidenceByGeneEffect[GeneEffectKey(gene, proteinEffect)] ?: emptySet()
     }
 
     companion object {
@@ -55,41 +49,41 @@ class IndirectEvidenceMatcher(private val treatmentByGeneEffectForHotspots: Map<
         val logger: Logger = LogManager.getLogger(IndirectEvidenceMatcher::class.java)
 
         fun create(serveRecord: ServeRecord): IndirectEvidenceMatcher {
-            val knownResistantHotspotsByPosition = mapKnownResistantHotspotsByPosition(serveRecord)
+            val nonResistantHotspotsByCoordinates = collectNonResistantHotspotsByCoordinates(serveRecord)
 
-            val treatmentByGeneEffect = serveRecord.evidences()
+            val associatedEvidenceByGeneEffect = serveRecord.evidences()
                 .asSequence()
                 .filter { it.source() == Knowledgebase.CKB }
-                .mapNotNull { evidence -> indirectMatchCandidate(evidence, knownResistantHotspotsByPosition) }
+                .mapNotNull { evidence -> associatedEvidenceCandidate(evidence, nonResistantHotspotsByCoordinates) }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, evidences) -> evidences.toCollection(HashSet()) }
 
-            return IndirectEvidenceMatcher(treatmentByGeneEffect)
+            return IndirectEvidenceMatcher(associatedEvidenceByGeneEffect)
         }
 
         fun empty(): IndirectEvidenceMatcher = IndirectEvidenceMatcher(emptyMap())
 
-        private fun mapKnownResistantHotspotsByPosition(serveRecord: ServeRecord): Map<HotspotKey, KnownHotspot> {
-            val groupedByPosition = serveRecord.knownEvents().hotspots()
+        private fun collectNonResistantHotspotsByCoordinates(serveRecord: ServeRecord): Map<HotspotCoordinates, KnownHotspot> {
+            val groupedByCoordinates = serveRecord.knownEvents().hotspots()
                 .asSequence()
                 .filter { it.sources().contains(Knowledgebase.CKB) }
                 .filterNot { it.associatedWithDrugResistance() == true }
-                .groupBy { it.toHotspotKey() }
+                .groupBy { HotspotMatching.coordinates(it) }
 
-            groupedByPosition
+            groupedByCoordinates
                 .filter { (_, hotspots) -> hotspots.size > 1 }
                 .forEach { (key, hotspots) ->
                     hotspots.drop(1).forEach { duplicate ->
-                        logger.warn("KnownHotspot with key $key already exists in map; skipping duplicate for known hotspot $duplicate.")
+                        logger.warn("KnownHotspot with coordinates $key already exists in map; skipping duplicate for known hotspot $duplicate.")
                     }
                 }
 
-            return groupedByPosition.mapValues { (_, hotspots) -> hotspots.first() }
+            return groupedByCoordinates.mapValues { (_, hotspots) -> hotspots.first() }
         }
 
-        private fun indirectMatchCandidate(
+        private fun associatedEvidenceCandidate(
             evidence: EfficacyEvidence,
-            knownHotspotsByVariant: Map<HotspotKey, KnownHotspot>
+            knownHotspotsByVariant: Map<HotspotCoordinates, KnownHotspot>
         ): Pair<GeneEffectKey, EfficacyEvidence>? {
             if (isCombinedProfile(evidence.molecularCriterium())) {
                 return null
@@ -105,32 +99,20 @@ class IndirectEvidenceMatcher(private val treatmentByGeneEffectForHotspots: Map<
     }
 }
 
-private fun EfficacyEvidence.containsHotspot(key: HotspotKey): Boolean {
+private fun EfficacyEvidence.isDirectHotspotMatch(coordinates: HotspotCoordinates): Boolean {
     return molecularCriterium().hotspots()
         .asSequence()
         .flatMap { it.variants().asSequence() }
-        .map { it.toHotspotKey() }
-        .any { it == key }
-}
-
-private fun VariantAnnotation.toHotspotKey(): HotspotKey {
-    return HotspotKey(gene(), chromosome(), position(), ref(), alt())
-}
-
-private fun KnownHotspot.toHotspotKey(): HotspotKey {
-    return HotspotKey(gene(), chromosome(), position(), ref(), alt())
-}
-
-private fun Variant.toHotspotKey(): HotspotKey {
-    return HotspotKey(gene, chromosome, position, ref, alt)
+        .map { HotspotMatching.coordinates(it) }
+        .any { it == coordinates }
 }
 
 private fun resolveNonResistantKnownHotspot(
     variants: Collection<VariantAnnotation>,
-    knownHotspotsByVariant: Map<HotspotKey, KnownHotspot>
+    knownHotspotsByVariant: Map<HotspotCoordinates, KnownHotspot>
 ): KnownHotspot? {
     return variants.asSequence()
-        .mapNotNull { variant -> knownHotspotsByVariant[variant.toHotspotKey()] }
+        .mapNotNull { variant -> knownHotspotsByVariant[HotspotMatching.coordinates(variant)] }
         .toList()
         .takeUnless { hotspots -> hotspots.any { it.associatedWithDrugResistance() == true } }
         ?.firstOrNull()
