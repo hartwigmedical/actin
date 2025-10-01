@@ -60,22 +60,23 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
         }
 
     private fun treatmentEvidencesWithTargets(actionables: Sequence<Actionable>) =
-        actionables.flatMap {
-            it.evidence.treatmentEvidence.map { t ->
-                TreatmentEvidenceWithTarget(
-                    t,
-                    when (it) {
-                        is GeneAlteration -> it.gene
-                        is MicrosatelliteStability -> "MSI"
-                        is TumorMutationalLoad -> "TML"
-                        is TumorMutationalBurden -> "TMB"
-                        is Fusion -> "${it.geneStart}::${it.geneEnd}"
-                        is Virus -> it.name
-                        is HomologousRecombination -> it.type.toString()
-                        else -> t.molecularMatch.sourceEvent
-                    }
-                )
-            }
+        actionables.flatMap { actionable ->
+            (actionable.evidence.treatmentEvidence.asSequence() + actionable.evidence.indirectTreatmentEvidence.asSequence())
+                .map { treatmentEvidence ->
+                    TreatmentEvidenceWithTarget(
+                        treatmentEvidence,
+                        when (actionable) {
+                            is GeneAlteration -> actionable.gene
+                            is MicrosatelliteStability -> "MSI"
+                            is TumorMutationalLoad -> "TML"
+                            is TumorMutationalBurden -> "TMB"
+                            is Fusion -> "${actionable.geneStart}::${actionable.geneEnd}"
+                            is Virus -> actionable.name
+                            is HomologousRecombination -> actionable.type.toString()
+                            else -> treatmentEvidence.molecularMatch.sourceEvent
+                        }
+                    )
+                }
         }
 
     private fun saturatingDiminishingReturnsScore(
@@ -84,4 +85,3 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
         score to if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
     }.map { it.first.copy(score = it.second) }
 }
-
