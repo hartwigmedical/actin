@@ -97,18 +97,10 @@ class IndirectEvidenceMatcher(private val treatmentByGeneEffectForHotspots: Map<
 
             return evidence.molecularCriterium().hotspots().firstOrNull()
                 ?.takeIf { ApplicabilityFiltering.isApplicable(it) }
-                // The hotspot variants are alternate genomic encodings for the same protein change,
-                // so we can safely inspect the first one, each genomic representation has a matching
-                // KnownHotspot entry with the same protein effect.
-                ?.variants()?.firstOrNull()
-                ?.let { variant -> knownHotspotsByVariant[variant.toHotspotKey()] }
-                ?.takeIf { hotspot -> hotspot.associatedWithDrugResistance() != true }
+                ?.variants()
+                ?.let { variants -> resolveNonResistantKnownHotspot(variants, knownHotspotsByVariant) }
                 ?.takeIf { GenericInhibitorFiltering.isGenericInhibitor(evidence.treatment()) }
-                ?.let { knownHotspot ->
-                    val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect())
-                    proteinEffect.takeIf { it in SUPPORTED_PROTEIN_EFFECTS }
-                        ?.let { GeneEffectKey(knownHotspot.gene(), it) to evidence }
-                }
+                ?.let { knownHotspot -> toGeneEffectMatch(knownHotspot, evidence) }
         }
     }
 }
@@ -131,4 +123,25 @@ private fun KnownHotspot.toHotspotKey(): HotspotKey {
 
 private fun Variant.toHotspotKey(): HotspotKey {
     return HotspotKey(gene, chromosome, position, ref, alt)
+}
+
+private fun resolveNonResistantKnownHotspot(
+    variants: Collection<VariantAnnotation>,
+    knownHotspotsByVariant: Map<HotspotKey, KnownHotspot>
+): KnownHotspot? {
+    return variants.asSequence()
+        .mapNotNull { variant -> knownHotspotsByVariant[variant.toHotspotKey()] }
+        .toList()
+        .takeUnless { hotspots -> hotspots.any { it.associatedWithDrugResistance() == true } }
+        ?.firstOrNull()
+}
+
+private fun toGeneEffectMatch(
+    knownHotspot: KnownHotspot,
+    evidence: EfficacyEvidence
+): Pair<GeneEffectKey, EfficacyEvidence>? {
+    val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect())
+    return proteinEffect
+        .takeIf { it in SUPPORTED_PROTEIN_EFFECTS }
+        ?.let { GeneEffectKey(knownHotspot.gene(), it) to evidence }
 }
