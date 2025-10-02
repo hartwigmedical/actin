@@ -44,9 +44,9 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     private val trialsProvider = TrialsProvider.create(
         report.patientRecord,
         report.treatmentMatch,
-        report.config.countryOfReference,
+        report.reportConfiguration.countryOfReference,
         enableExtendedMode,
-        report.config.filterOnSOCExhaustionAndTumorType
+        report.reportConfiguration.filterOnSOCExhaustionAndTumorType
     )
     private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
@@ -55,7 +55,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             logger.info("Including trial matching details")
         }
         
-        if (report.config.includeSOCLiteratureEfficacyEvidence) {
+        if (report.reportConfiguration.includeSOCLiteratureEfficacyEvidence) {
             logger.info("Including SOC literature details")
         }
         
@@ -65,40 +65,40 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             SummaryChapter(report, this, trialsProvider.evaluableCohortsAndNotIgnore()),
             PersonalizedEvidenceChapter(
                 report,
-                include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
+                include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
-            ResistanceEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
+            ResistanceEvidenceChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence),
             MolecularDetailsChapter(
                 report,
-                report.config.includeMolecularDetailsChapter,
-                report.config.includeRawPathologyReport,
+                report.reportConfiguration.includeMolecularDetailsChapter,
+                report.reportConfiguration.includeRawPathologyReport,
                 externalTrials.allFiltered()
             ),
             LongitudinalMolecularHistoryChapter(
                 report,
                 trialsProvider.evaluableCohortsAndNotIgnore(),
-                include = report.config.includeLongitudinalMolecularChapter
+                include = report.reportConfiguration.includeLongitudinalMolecularChapter
             ),
-            EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
-            ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
-            EfficacyEvidenceDetailsChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence && enableExtendedMode),
+            EfficacyEvidenceChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence),
+            ClinicalDetailsChapter(report, include = report.reportConfiguration.includeClinicalDetailsChapter),
+            EfficacyEvidenceDetailsChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence && enableExtendedMode),
             MolecularEvidenceChapter(
                 report,
                 treatmentRankingModel.rank(report.patientRecord),
-                include = report.config.includeMolecularEvidenceChapter
+                include = report.reportConfiguration.includeMolecularEvidenceChapter
             ),
             TrialMatchingOtherResultsChapter(
                 report,
-                externalTrialsOnly = report.config.includeOnlyExternalTrialsInTrialMatching,
+                externalTrialsOnly = report.reportConfiguration.includeOnlyExternalTrialsInTrialMatching,
                 trialsProvider,
-                include = report.config.includeTrialMatchingChapter
+                include = report.reportConfiguration.includeTrialMatchingChapter
             ),
             TrialMatchingDetailsChapter(report, include = enableExtendedMode)
         ).filter(ReportChapter::include)
     }
 
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float, cohorts: List<InterpretedCohort>): List<TableGenerator> {
-        val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
+        val clinicalHistoryGenerator = if (report.reportConfiguration.includeOverviewWithClinicalHistorySummary) {
             PatientClinicalHistoryWithOverviewGenerator(
                 report = report,
                 cohorts = cohorts,
@@ -112,7 +112,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val trialTableGenerators = createTrialTableGenerators(
             cohorts = cohorts,
             externalTrials = trialsProvider.externalTrials(),
-            requestingSource = TrialSource.fromDescription(report.config.hospitalOfReference)
+            requestingSource = TrialSource.fromDescription(report.reportConfiguration.hospitalOfReference)
         ).filterNotNull()
 
         val approvedTreatmentsGenerator = EligibleApprovedTreatmentGenerator(report)
@@ -126,11 +126,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 valueWidth = valueWidth,
                 molecularTestFilter = MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
             ).takeIf {
-                report.config.molecularSummaryType != MolecularSummaryType.NONE &&
+                report.reportConfiguration.molecularSummaryType != MolecularSummaryType.NONE &&
                         report.patientRecord.molecularTests.isNotEmpty()
             },
-            SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.config.includeEligibleSOCTreatmentSummary },
-            approvedTreatmentsGenerator.takeIf { report.config.includeApprovedTreatmentsInSummary && approvedTreatmentsGenerator.showTable() }
+            SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.reportConfiguration.includeEligibleSOCTreatmentSummary },
+            approvedTreatmentsGenerator.takeIf { report.reportConfiguration.includeApprovedTreatmentsInSummary && approvedTreatmentsGenerator.showTable() }
         ) + trialTableGenerators
     }
 
@@ -161,7 +161,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         requestingSource: TrialSource?
     ): List<TrialTableGenerator?> {
         val localOpenCohortsGenerator =
-            EligibleTrialGenerator.localOpenCohorts(cohorts, externalTrials, requestingSource, report.config.countryOfReference)
+            EligibleTrialGenerator.localOpenCohorts(cohorts, externalTrials, requestingSource, report.reportConfiguration.countryOfReference)
 
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
             EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(cohorts, requestingSource)
@@ -175,11 +175,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         )
 
         return listOfNotNull(
-            localOpenCohortsGenerator.takeIf { report.config.includeTrialMatchingInSummary },
+            localOpenCohortsGenerator.takeIf { report.reportConfiguration.includeTrialMatchingInSummary },
             localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
-                report.config.includeTrialMatchingInSummary && it?.cohortSize() != 0
+                report.reportConfiguration.includeTrialMatchingInSummary && it?.cohortSize() != 0
             },
-            nonLocalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty() },
+            nonLocalTrialGenerator.takeIf { report.reportConfiguration.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty() },
         )
     }
 }

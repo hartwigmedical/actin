@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import java.io.File
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 private val WORK_DIRECTORY = System.getProperty("user.dir")
 
@@ -40,5 +40,5 @@ fun main(args: Array<String>) {
     val skipMolecular = args.contains("--no-molecular")
     val writer = createProductionReportWriter(WORK_DIRECTORY)
     val report = TestReportWriterApplication.createTestReport(skipMolecular)
-    writer.write(report)
+    writer.write(report, enableExtendedMode = false)
 }

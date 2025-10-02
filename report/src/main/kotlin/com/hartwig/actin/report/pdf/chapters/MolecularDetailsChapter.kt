@@ -50,7 +50,7 @@ class MolecularDetailsChapter(
 
     private fun addMolecularDetails(document: Document) {
         val cohorts =
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.reportConfiguration.filterOnSOCExhaustionAndTumorType)
         
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }

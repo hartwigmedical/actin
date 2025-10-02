@@ -21,14 +21,10 @@ import java.time.LocalDate
 class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?) {
 
     private val logger = LogManager.getLogger(ReportWriter::class.java)
-
-    fun write(report: Report) {
-        write(report, false)
-    }
-
+    
     @Synchronized
     fun write(report: Report, enableExtendedMode: Boolean) {
-        logger.info("Building report for patient ${report.patientId} with configuration ${report.config}")
+        logger.info("Building report for patient ${report.patientId} with configuration ${report.reportConfiguration}")
 
         logger.debug("Initializing output styles")
         Styles.initialize()

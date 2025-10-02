@@ -31,7 +31,7 @@ class MolecularEvidenceChapter(
         addChapterTitle(document)
         addMolecularEvidenceTable(document)
         addEfficacyDescriptionTable(document)
-        if (report.config.includeTreatmentEvidenceRanking) addTreatmentEvidenceRankingTable(document)
+        if (report.reportConfiguration.includeTreatmentEvidenceRanking) addTreatmentEvidenceRankingTable(document)
     }
 
     private fun addMolecularEvidenceTable(document: Document) {

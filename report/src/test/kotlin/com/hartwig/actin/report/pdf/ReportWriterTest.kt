@@ -15,6 +15,8 @@ class ReportWriterTest {
 
     @Test
     fun `Should generate in-memory reports`() {
-        reports.forEach(memoryWriter::write)
+        reports.forEach {
+            memoryWriter.write(it, enableExtendedMode = true)
+        }
     }
 }

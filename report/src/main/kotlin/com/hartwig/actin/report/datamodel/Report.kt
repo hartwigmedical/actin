@@ -10,5 +10,5 @@ data class Report(
     val patientId: String,
     val patientRecord: PatientRecord,
     val treatmentMatch: TreatmentMatch,
-    val config: ReportConfiguration
+    val reportConfiguration: ReportConfiguration
 )

@@ -38,7 +38,7 @@ class ReportContentProviderTest {
         val eligibleTrialGenerators = ReportContentProvider(report).provideSummaryTables(
             KEY_WIDTH,
             VALUE_WIDTH,
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.reportConfiguration.filterOnSOCExhaustionAndTumorType)
         ).filterIsInstance<EligibleTrialGenerator>()
 
         assertThat(eligibleTrialGenerators).hasSize(2)
@@ -56,7 +56,7 @@ class ReportContentProviderTest {
         val eligibleTrialGenerators = ReportContentProvider(report).provideSummaryTables(
             KEY_WIDTH,
             VALUE_WIDTH,
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.reportConfiguration.filterOnSOCExhaustionAndTumorType)
         ).filterIsInstance<EligibleTrialGenerator>()
 
         assertThat(eligibleTrialGenerators).hasSize(2)

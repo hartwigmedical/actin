@@ -11,6 +11,7 @@ import java.time.LocalDate
 class ReportFactoryTest {
 
     private val reportDate = LocalDate.of(2025, 7, 1)
+    
     @Test
     fun `Should create report from test data`() {
         assertThat(

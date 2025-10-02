@@ -30,7 +30,7 @@ class SummaryChapter(
     }
 
     override fun render(document: Document) {
-        if (report.config.includePatientHeader) {
+        if (report.reportConfiguration.includePatientHeader) {
             addPatientDetails(document)
         }
         addChapterTitle(document)
@@ -48,7 +48,7 @@ class SummaryChapter(
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOfNotNull(
             "Tumor: " to report.patientRecord.tumor.name,
-            if (report.config.includeLesionsInTumorSummary) {
+            if (report.reportConfiguration.includeLesionsInTumorSummary) {
                 " | Lesions: " to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
             } else null,
             " | $stageTitle: " to stages

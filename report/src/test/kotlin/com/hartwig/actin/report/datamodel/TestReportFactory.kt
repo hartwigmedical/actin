@@ -18,7 +18,7 @@ object TestReportFactory {
             patientId = TestPatientFactory.TEST_PATIENT,
             patientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-            config = ReportConfiguration()
+            reportConfiguration = ReportConfiguration()
         )
     }
 
@@ -33,7 +33,7 @@ object TestReportFactory {
         return createMinimalTestReport().copy(
             patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
-            config = ReportConfiguration(includeMolecularEvidenceChapter = true)
+            reportConfiguration = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )
     }
 
@@ -41,7 +41,7 @@ object TestReportFactory {
         return createMinimalTestReport().copy(
             patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), emptyList()),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
-            config = ReportConfiguration(includeMolecularEvidenceChapter = true)
+            reportConfiguration = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )
     }
 
