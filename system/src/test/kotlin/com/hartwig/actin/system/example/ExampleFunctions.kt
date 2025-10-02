@@ -64,8 +64,6 @@ object ExampleFunctions {
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
             includeApprovedTreatmentsInSummary = false,
-            includeMolecularDetailsChapter = false,
-            includeClinicalDetailsChapter = false,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
@@ -85,33 +83,7 @@ object ExampleFunctions {
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
     }
-
-    fun createExhaustiveReportConfiguration(): ReportConfiguration {
-        return ReportConfiguration().copy(
-            includeOverviewWithClinicalHistorySummary = true,
-            includeMolecularDetailsChapter = true,
-            includeSOCLiteratureEfficacyEvidence = true,
-            includeEligibleSOCTreatmentSummary = true,
-            molecularSummaryType = MolecularSummaryType.STANDARD,
-            includeOtherOncologicalHistoryInSummary = true,
-            includePatientHeader = true,
-            includeRelevantNonOncologicalHistoryInSummary = true,
-            includeApprovedTreatmentsInSummary = true,
-            includeTrialMatchingInSummary = true,
-            includeExternalTrialsInSummary = true,
-            filterOnSOCExhaustionAndTumorType = true,
-            includeClinicalDetailsChapter = true,
-            includeTrialMatchingChapter = true,
-            includeOnlyExternalTrialsInTrialMatching = true,
-            includeLongitudinalMolecularChapter = true,
-            includeMolecularEvidenceChapter = true,
-            includeRawPathologyReport = true,
-            includeTreatmentEvidenceRanking = true,
-            countryOfReference = Country.NETHERLANDS,
-            hospitalOfReference = HOSPITAL_OF_REFERENCE
-        )
-    }
-
+    
     fun runExample(exampleToRun: String, reportConfigProvider: () -> ReportConfiguration) {
         val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
 
