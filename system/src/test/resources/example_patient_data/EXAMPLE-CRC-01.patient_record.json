@@ -600,6 +600,7 @@
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
+              "indirectTreatmentEvidence": [],
               "eligibleTrials": [
                 {
                   "nctId": "NCT00000009",
@@ -665,6 +666,7 @@
           "isUnstable": false,
           "evidence": {
             "treatmentEvidence": [],
+            "indirectTreatmentEvidence": [],
             "eligibleTrials": []
           }
         },
@@ -674,6 +676,7 @@
           "isHigh": false,
           "evidence": {
             "treatmentEvidence": [],
+            "indirectTreatmentEvidence": [],
             "eligibleTrials": []
           }
         },
