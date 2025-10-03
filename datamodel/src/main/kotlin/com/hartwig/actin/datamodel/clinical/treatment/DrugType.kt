@@ -209,7 +209,8 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     VEGFR_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGFR TKI"),
     VEGFR2_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 antibody"),
     VEGFR2_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 inhibitor"),
-    VEGFR2_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 TKI");
+    VEGFR2_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 TKI"),
+    WRN_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "WRN inhibitor");
 
     override fun display(): String {
         return display ?: toString().replace("_", " ").lowercase()
