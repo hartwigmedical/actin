@@ -114,8 +114,12 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                 CopyNumberType.PARTIAL_GAIN
             }
 
-            CopyNumberInterpretation.FULL_DEL, CopyNumberInterpretation.PARTIAL_DEL -> {
-                CopyNumberType.DEL
+            CopyNumberInterpretation.FULL_DEL -> {
+                CopyNumberType.FULL_DEL
+            }
+
+            CopyNumberInterpretation.PARTIAL_DEL -> {
+                CopyNumberType.PARTIAL_DEL
             }
 
             else -> {

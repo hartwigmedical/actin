@@ -25,7 +25,7 @@ object CopyNumberLookup {
                 event == GeneEvent.AMPLIFICATION
             }
 
-            CopyNumberType.DEL -> {
+            CopyNumberType.PARTIAL_DEL, CopyNumberType.FULL_DEL -> {
                 event == GeneEvent.DELETION
             }
 
