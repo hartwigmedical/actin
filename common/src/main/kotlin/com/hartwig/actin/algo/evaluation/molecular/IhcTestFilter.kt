@@ -23,10 +23,9 @@ object IhcTestFilter {
     fun mostRecentAndUnknownDateIhcTests(ihcTests: List<IhcTest>): Set<IhcTest> {
         val (withDate, withoutDate) = ihcTests.partition { it.measureDate != null }
         return withDate
-            .groupBy { it.item }
-            .values
-            .flatMap { tests ->
-                val mostRecentDate = tests.maxOfOrNull { it.measureDate!! }
+            .groupBy { it.item to it.reportHash }
+            .flatMap { (_, tests) ->
+                val mostRecentDate = tests.maxOf { it.measureDate!! }
                 tests.filter { it.measureDate == mostRecentDate }
             }.toSet() + withoutDate.toSet()
     }

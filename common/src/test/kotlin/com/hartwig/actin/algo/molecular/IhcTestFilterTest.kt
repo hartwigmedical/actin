@@ -4,9 +4,9 @@ import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allPDL1Tests
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem
 import com.hartwig.actin.datamodel.clinical.IhcTest
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class IhcTestFilterTest {
 
@@ -60,7 +60,14 @@ class IhcTestFilterTest {
         assertThat(IhcTestFilter.mostRecentAndUnknownDateIhcTests(listOf(test1, test2, test3))).containsOnly(test1, test3)
     }
 
-    private fun ihcTest(item: String = "", measure: String? = null, measureDate: LocalDate? = null): IhcTest {
-        return IhcTest(item = item, measure = measure, measureDate = measureDate)
+    @Test
+    fun `Should return all tests of most recent date except per report hash`() {
+        val test1 = ihcTest(item = "PD-L1", measureDate = LocalDate.of(2024, 2, 2), reportHash = "reportHash1")
+        val test2 = test1.copy(measureDate = LocalDate.of(2024, 2, 3), reportHash = "reportHash2")
+        assertThat(IhcTestFilter.mostRecentAndUnknownDateIhcTests(listOf(test1, test2))).containsOnly(test1, test2)
+    }
+
+    private fun ihcTest(item: String = "", measure: String? = null, measureDate: LocalDate? = null, reportHash: String? = null): IhcTest {
+        return IhcTest(item = item, measure = measure, measureDate = measureDate, reportHash = reportHash)
     }
 }
