@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
+import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -40,7 +41,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth / 2)
         listOf(
-            "Gender (birth year, WHO)" to "${record.patient.gender.display()} (${record.patient.birthYear}, WHO ${whoStatus(record.performanceStatus.latestWho)})",
+            "Gender (birth year, WHO)" to createPatientCharacteristicsSummary(record),
             "Stage" to stage(record.tumor),
             "Tumor" to record.tumor.name,
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),
@@ -54,7 +55,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
-        
+
         val molecularRecord = MolecularHistory(report.patientRecord.molecularTests).allPanels().firstOrNull()
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
         clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
@@ -62,6 +63,11 @@ class PatientClinicalHistoryWithOverviewGenerator(
         table.addCell(create(clinicalSummaryTable))
         table.addCell(create(clinicalHistoryTable))
         return table
+    }
+
+    private fun createPatientCharacteristicsSummary(record: PatientRecord): String {
+        return "${(record.patient.gender?.display() ?: "Unknown gender")} (${record.patient.birthYear}, " +
+                "WHO ${whoStatus(record.performanceStatus.latestWho)})"
     }
 
     private fun whoStatus(who: Int?): String {
