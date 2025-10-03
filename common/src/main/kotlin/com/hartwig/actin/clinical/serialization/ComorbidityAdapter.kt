@@ -14,7 +14,7 @@ class ComorbidityAdapter : JsonDeserializer<Comorbidity> {
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext): Comorbidity {
         return try {
             context.deserialize<Any>(
-                jsonElement, ComorbidityClass.valueOf(Json.string(jsonElement.asJsonObject, "comorbidityClass")).treatmentClass
+                jsonElement, ComorbidityClass.valueOf(Json.string(jsonElement.asJsonObject, "comorbidityClass")).comorbidityClass
             ) as Comorbidity
         } catch (e: Exception) {
             throw JsonParseException("Failed to deserialize: $jsonElement", e)
