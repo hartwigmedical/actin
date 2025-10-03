@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
@@ -17,7 +16,7 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
+import com.hartwig.actin.util.FormatFunctions.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
@@ -143,7 +142,7 @@ class PanelVariantAnnotator(
         return TranscriptVariantImpact(
             transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
-            hgvsProteinImpact = forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
+            hgvsProteinImpact = paveImpact.hgvsProteinImpact,
             affectedCodon = paveLiteAnnotation.affectedCodon(),
             affectedExon = paveLiteAnnotation.affectedExon(),
             inSpliceRegion = paveImpact.spliceRegion,
@@ -169,7 +168,7 @@ class PanelVariantAnnotator(
         return TranscriptVariantImpact(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
-            hgvsProteinImpact = forceSingleLetterAminoAcids(paveTranscriptImpact.hgvsProteinImpact),
+            hgvsProteinImpact = paveTranscriptImpact.hgvsProteinImpact,
             affectedCodon = paveLiteAnnotation.affectedCodon(),
             affectedExon = paveLiteAnnotation.affectedExon(),
             inSpliceRegion = paveTranscriptImpact.spliceRegion,
