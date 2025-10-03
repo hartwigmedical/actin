@@ -2,12 +2,14 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 data class ClinicalEvidence(
     val treatmentEvidence: Set<TreatmentEvidence>,
+    val indirectTreatmentEvidence: Set<TreatmentEvidence>,
     val eligibleTrials: Set<ExternalTrial>,
 ) : Comparable<ClinicalEvidence> {
 
     operator fun plus(other: ClinicalEvidence): ClinicalEvidence {
         return ClinicalEvidence(
             treatmentEvidence + other.treatmentEvidence,
+            indirectTreatmentEvidence + other.indirectTreatmentEvidence,
             eligibleTrials + other.eligibleTrials
         )
     }

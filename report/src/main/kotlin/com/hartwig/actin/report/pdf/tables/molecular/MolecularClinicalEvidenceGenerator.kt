@@ -37,7 +37,7 @@ class MolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>
             .forEach(table::addHeaderCell)
 
         for ((event, evidence) in MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(molecularTests)) {
-            val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence, isOnLabel)
+            val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence + evidence.indirectTreatmentEvidence, isOnLabel)
             if (filteredEvidence.isNotEmpty()) {
                 val groupedBySourceEvent = TreatmentEvidenceFunctions.groupBySourceEvent(filteredEvidence)
 
