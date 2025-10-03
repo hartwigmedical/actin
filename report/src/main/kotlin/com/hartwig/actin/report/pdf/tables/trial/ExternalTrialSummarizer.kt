@@ -25,7 +25,7 @@ object ExternalTrialSummarizer {
                 nctId = entry.key,
                 title = trial.title(),
                 countries = countries.toSortedSet(Comparator.comparing { c -> c.country }),
-                actinMolecularEvents = entry.value.map { ewt -> ewt.event }.toSortedSet(),
+                actinMolecularEvents = entry.value.map { ewt -> ewt.aggregatedEvidenceKey.event }.toSortedSet(),
                 sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),
                 applicableCancerTypes = entry.value.flatMap { ewt -> ewt.trial.applicableCancerTypes }
                     .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType }),
