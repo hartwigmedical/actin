@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.clinical
 import com.hartwig.actin.clinical.sort.OtherConditionDescendingDateComparator
 import com.hartwig.actin.clinical.sort.PriorPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
+import com.hartwig.actin.configuration.ClinicalSummaryType
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
@@ -47,15 +48,20 @@ class PatientClinicalHistoryGenerator(
 
     fun contentsAsList(): List<Cell> {
         val record = report.patientRecord
+        val includeAdditionalFields =
+            report.reportConfiguration.clinicalSummaryType == ClinicalSummaryType.TRIAL_MATCHING_DETAILED ||
+                    report.reportConfiguration.clinicalSummaryType == ClinicalSummaryType.CRC_PERSONALIZATION
+                    || showDetails
+        
         return listOfNotNull(
             "Relevant systemic treatment history" to relevantSystemicPreTreatmentHistoryTable(record),
-            if (report.reportConfiguration.includeOtherOncologicalHistoryInSummary || showDetails) {
+            if (includeAdditionalFields) {
                 "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
             } else null,
-            if (report.reportConfiguration.includePreviousPrimaryInClinicalSummary || showDetails) {
+            if (includeAdditionalFields) {
                 "Previous primary tumor" to priorPrimaryHistoryTable(record)
             } else null,
-            if (report.reportConfiguration.includeRelevantNonOncologicalHistoryInSummary || showDetails) {
+            if (includeAdditionalFields) {
                 "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
