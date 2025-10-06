@@ -10,7 +10,7 @@ import com.itextpdf.layout.element.Table
 class PathologyReportGenerator(private val pathologyReports: List<PathologyReport>?) : TableGenerator {
 
     override fun title(): String {
-        return "Input pathology report"
+        return "Original pathology report(s)"
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -20,9 +20,10 @@ class PathologyReportGenerator(private val pathologyReports: List<PathologyRepor
     override fun contents(): Table {
         val table = Tables.createSingleCol()
         pathologyReports
-            ?.mapNotNull { report -> report.report.takeIf { it.isNotBlank() } }
-            ?.forEach {
-                table.addCell(Cells.create(Tables.createSingleCol().addCell(it).addStyle(Styles.tableContentStyle())))
+            ?.mapNotNull { report -> report.report.takeIf { it.isNotBlank() }?.let { report.tissueId to it } }
+            ?.forEach { (tissueId, report) ->
+                table.addCell(Cells.createContentNoBorder("Tissue Id: $tissueId"))
+                table.addCell(Cells.create(Tables.createSingleCol().addCell(report).addStyle(Styles.tableContentStyle())))
             }
         return table
     }

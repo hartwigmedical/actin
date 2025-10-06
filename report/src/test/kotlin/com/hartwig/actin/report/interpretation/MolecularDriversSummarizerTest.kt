@@ -71,7 +71,8 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 3", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 4", DriverLikelihood.HIGH, true, 10, 20),
             copyNumber(CopyNumberType.NONE, "gene 5", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
-            copyNumber(CopyNumberType.DEL, "deletion", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_DEL, "deletion", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "deletion", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false),
         )
@@ -91,9 +92,13 @@ class MolecularDriversSummarizerTest {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.DEL, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.DEL, "non-reportable", DriverLikelihood.HIGH, false)
+            copyNumber(CopyNumberType.FULL_DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_DEL, "low", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_DEL, "non-reportable", DriverLikelihood.HIGH, false),
+            copyNumber(CopyNumberType.PARTIAL_DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "low", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "non-reportable", DriverLikelihood.HIGH, false)
+
         )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         assertExpectedListResult(summarizer(molecularDrivers).keyDeletedGenes())
@@ -166,8 +171,10 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "no evidence", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "expected amplification", null, false),
-            copyNumber(CopyNumberType.DEL, "expected deletion", DriverLikelihood.HIGH, false),
-        )
+            copyNumber(CopyNumberType.FULL_DEL, "expected deletion", DriverLikelihood.HIGH, false),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "expected deletion", DriverLikelihood.HIGH, false),
+
+            )
         val homozygousDisruptions = listOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
             homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
