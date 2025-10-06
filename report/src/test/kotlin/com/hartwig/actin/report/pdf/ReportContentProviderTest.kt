@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
-import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
@@ -35,11 +34,8 @@ class ReportContentProviderTest {
     @Test
     fun `Should match total cohort size between report and input`() {
         val report = TestReportFactory.createExhaustiveTestReport()
-        val eligibleTrialGenerators = ReportContentProvider(report).provideSummaryTables(
-            KEY_WIDTH,
-            VALUE_WIDTH,
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.reportConfiguration.filterOnSOCExhaustionAndTumorType)
-        ).filterIsInstance<EligibleTrialGenerator>()
+        val eligibleTrialGenerators =
+            ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH).filterIsInstance<EligibleTrialGenerator>()
 
         assertThat(eligibleTrialGenerators).hasSize(2)
         assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
@@ -53,11 +49,9 @@ class ReportContentProviderTest {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch1, trialMatch2))
         )
-        val eligibleTrialGenerators = ReportContentProvider(report).provideSummaryTables(
-            KEY_WIDTH,
-            VALUE_WIDTH,
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.reportConfiguration.filterOnSOCExhaustionAndTumorType)
-        ).filterIsInstance<EligibleTrialGenerator>()
+        
+        val eligibleTrialGenerators =
+            ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH).filterIsInstance<EligibleTrialGenerator>()
 
         assertThat(eligibleTrialGenerators).hasSize(2)
         assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
@@ -118,8 +112,7 @@ class ReportContentProviderTest {
 
     @Test
     fun `Should provide expected summary tables for default configuration`() {
-        val tables = ReportContentProvider(TestReportFactory.createExhaustiveTestReport())
-            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, emptyList())
+        val tables = ReportContentProvider(TestReportFactory.createExhaustiveTestReport()).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH)
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
@@ -148,7 +141,7 @@ class ReportContentProviderTest {
                 )
             )
         )
-            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, emptyList())
+            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH)
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
@@ -163,7 +156,7 @@ class ReportContentProviderTest {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
             patientRecord = proper.patientRecord.copy(molecularTests = emptyList())
         )
-        val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, emptyList())
+        val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH)
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,

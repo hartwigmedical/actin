@@ -77,7 +77,6 @@ object ExampleFunctions {
             includeSOCLiteratureEfficacyEvidence = true,
             includeEligibleSOCTreatmentSummary = true,
             molecularSummaryType = MolecularSummaryType.NONE,
-            includePatientHeader = false,
             filterOnSOCExhaustionAndTumorType = true,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE

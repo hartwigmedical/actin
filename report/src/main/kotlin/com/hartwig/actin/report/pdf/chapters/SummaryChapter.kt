@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
@@ -15,11 +14,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-class SummaryChapter(
-    private val report: Report,
-    private val reportContentProvider: ReportContentProvider,
-    private val interpretedCohorts: List<InterpretedCohort>
-) : ReportChapter {
+class SummaryChapter(private val report: Report, private val reportContentProvider: ReportContentProvider) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -30,10 +25,7 @@ class SummaryChapter(
     }
 
     override fun render(document: Document) {
-        if (report.reportConfiguration.includePatientHeader) {
-            addPatientDetails(document)
-        }
-        addChapterTitle(document)
+        addPatientDetails(document)
         addSummaryTable(document)
     }
 
@@ -43,7 +35,7 @@ class SummaryChapter(
             " | Birth year: " to report.patientRecord.patient.birthYear.toString(),
             " | WHO: " to whoStatus(report.patientRecord.performanceStatus.latestWho)
         )
-        addParagraphWithContent(patientDetailFields, document)
+        addParagraphWithContent(document, patientDetailFields)
 
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOfNotNull(
@@ -53,28 +45,7 @@ class SummaryChapter(
             } else null,
             " | $stageTitle: " to stages
         )
-        addParagraphWithContent(tumorDetailFields, document)
-    }
-
-    private fun addParagraphWithContent(contentFields: List<Pair<String, String>>, document: Document) {
-        val paragraph = Paragraph()
-        contentFields.flatMap { (label, value) ->
-            listOf(
-                Text(label).addStyle(Styles.reportHeaderLabelStyle()),
-                Text(value).addStyle(Styles.reportHeaderValueStyle())
-            )
-        }.forEach(paragraph::add)
-        document.add(paragraph.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
-    }
-
-    private fun addSummaryTable(document: Document) {
-        val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val valueWidth = contentWidth() - keyWidth
-        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, interpretedCohorts)
-
-        val table = Tables.createSingleColWithWidth(contentWidth())
-        TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = false)
-        document.add(table)
+        addParagraphWithContent(document, tumorDetailFields)
     }
 
     private fun whoStatus(who: Int?): String {
@@ -96,5 +67,26 @@ class SummaryChapter(
                 Pair(knownStage, "Unknown")
             }
         }
+    }
+
+    private fun addParagraphWithContent(document: Document, contentFields: List<Pair<String, String>>) {
+        val paragraph = Paragraph()
+        contentFields.flatMap { (label, value) ->
+            listOf(
+                Text(label).addStyle(Styles.reportHeaderLabelStyle()),
+                Text(value).addStyle(Styles.reportHeaderValueStyle())
+            )
+        }.forEach(paragraph::add)
+        document.add(paragraph.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
+    }
+
+    private fun addSummaryTable(document: Document) {
+        val keyWidth = Formats.STANDARD_KEY_WIDTH
+        val valueWidth = contentWidth() - keyWidth
+        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth)
+
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = false)
+        document.add(table)
     }
 }
