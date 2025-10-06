@@ -10,17 +10,7 @@ data class TreatmentMatch(
     val trialMatches: List<TrialMatch>,
     val standardOfCareMatches: List<AnnotatedTreatmentMatch>?,
     val personalizedDataAnalysis: PersonalizedDataAnalysis?,
-    val survivalPredictionsPerTreatment: List<TreatmentEfficacyPrediction>?,
+    val personalizedTreatmentSummary: PersonalizedTreatmentSummary?,
     val maxMolecularTestAge: LocalDate? = null
 )
 
-data class TreatmentEfficacyPrediction(
-    val treatment: String,
-    val survivalProbs: List<Double>,
-    val shapValues: Map<String, ShapDetail>
-) {
-    data class ShapDetail(
-        val featureValue: Double,
-        val shapValue: Double
-    )
-}

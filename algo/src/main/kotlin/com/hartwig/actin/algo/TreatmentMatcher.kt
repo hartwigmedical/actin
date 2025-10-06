@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
-import com.hartwig.actin.personalization.serialization.TreatmentEfficacyPredictionJson
+import com.hartwig.actin.personalization.serialization.PersonalizedTreatmentSummaryJson
 import java.time.LocalDate
 
 class TreatmentMatcher(
@@ -28,15 +28,15 @@ class TreatmentMatcher(
     fun run(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
-        val (standardOfCareMatches, personalizedDataAnalysis, survivalPredictionsPerTreatment) =
+        val (standardOfCareMatches, personalizedDataAnalysis, personalizedTreatmentSummary) =
             if (standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient)) {
                 val evaluatedTreatments = standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient).evaluatedTreatments
                 val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
-                val survivalPredictionsPerTreatment = treatmentEfficacyPredictionPath?.let(TreatmentEfficacyPredictionJson::read)
+                val personalizedTreatmentSummary = treatmentEfficacyPredictionPath?.let(PersonalizedTreatmentSummaryJson::read)
                 Triple(
                     evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
                     personalizedDataAnalysis,
-                    survivalPredictionsPerTreatment
+                    personalizedTreatmentSummary
                 )
             } else {
                 Triple(null, null, null)
@@ -49,7 +49,7 @@ class TreatmentMatcher(
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
             personalizedDataAnalysis = personalizedDataAnalysis,
-            survivalPredictionsPerTreatment = survivalPredictionsPerTreatment,
+            personalizedTreatmentSummary = personalizedTreatmentSummary,
             maxMolecularTestAge = maxMolecularTestAge
         )
     }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
@@ -15,9 +16,10 @@ object EvidenceAnnotatorFactory {
     fun createPanelRecordAnnotator(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        patientGender: Gender?
     ): EvidenceAnnotator {
-        return create(serveRecord, doidEntry, tumorDoids) { input, drivers, molecularCharacteristics ->
+        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
     }
@@ -25,9 +27,10 @@ object EvidenceAnnotatorFactory {
     fun createMolecularRecordAnnotator(
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
-        tumorDoids: Set<String>
+        tumorDoids: Set<String>,
+        patientGender: Gender?
     ): EvidenceAnnotator {
-        return create(serveRecord, doidEntry, tumorDoids) { input, drivers, molecularCharacteristics ->
+        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
             input.copy(drivers = drivers, characteristics = molecularCharacteristics)
         }
     }
@@ -36,11 +39,12 @@ object EvidenceAnnotatorFactory {
         serveRecord: ServeRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
+        patientGender: Gender?,
         annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics) -> MolecularTest
     ): EvidenceAnnotator {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
-        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, patientGender)
         val actionabilityMatcher = ActionabilityMatcherFactory.create(serveRecord)
 
         return EvidenceAnnotator(

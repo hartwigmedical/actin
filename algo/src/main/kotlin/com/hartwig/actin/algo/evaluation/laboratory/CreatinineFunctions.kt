@@ -10,15 +10,19 @@ internal object CreatinineFunctions {
     private const val DEFAULT_MIN_WEIGHT_FEMALE = 50.0
     private const val DEFAULT_MIN_WEIGHT_MALE = 65.0
 
-    fun calcMDRD(birthYear: Int, referenceYear: Int, gender: Gender, creatinine: LabValue): List<Double> {
+    fun calcMDRD(birthYear: Int, referenceYear: Int, gender: Gender?, creatinine: LabValue): List<Double> {
         val age = referenceYear - birthYear
         val base = 175 * (creatinine.value / 88.4).pow(-1.154) * age.toDouble().pow(-0.203)
-        val adjusted = if (gender == Gender.FEMALE) base * 0.742 else base
+        val adjusted = when (gender) {
+            Gender.FEMALE -> base * 0.742
+            Gender.MALE -> base
+            null -> throw IllegalArgumentException("Gender must not be null for MDRD calculation")
+        }
 
         return listOf(adjusted, adjusted * 1.212)
     }
 
-    fun calcCKDEPI(birthYear: Int, referenceYear: Int, gender: Gender, creatinine: LabValue): List<Double> {
+    fun calcCKDEPI(birthYear: Int, referenceYear: Int, gender: Gender?, creatinine: LabValue): List<Double> {
         val age = referenceYear - birthYear
         val isFemale = gender == Gender.FEMALE
         val correction = if (isFemale) 61.9 else 79.6
@@ -26,7 +30,11 @@ internal object CreatinineFunctions {
         val factor1 = (creatinine.value / correction).coerceAtMost(1.0).pow(power)
         val factor2 = (creatinine.value / correction).coerceAtLeast(1.0).pow(-1.209)
         val base = 141 * factor1 * factor2 * 0.993.pow(age.toDouble())
-        val adjusted = if (isFemale) base * 1.018 else base
+        val adjusted = when (gender) {
+            Gender.FEMALE -> base * 1.018
+            Gender.MALE -> base
+            null -> throw IllegalArgumentException("Gender must not be null for CKD-EPI calculation")
+        }
         return listOf(adjusted, adjusted * 1.159)
     }
 
@@ -41,9 +49,10 @@ internal object CreatinineFunctions {
     }
 
     fun calcCockcroftGault(
-        birthYear: Int, referenceYear: Int, gender: Gender, weight: Double?,
+        birthYear: Int, referenceYear: Int, gender: Gender?, weight: Double?,
         creatinine: LabValue
     ): Double {
+        if (gender == null) throw IllegalArgumentException("Gender must not be null for Cockcroft-Gault calculation")
         val isFemale = gender == Gender.FEMALE
         val effectiveWeight = weight ?: if (isFemale) DEFAULT_MIN_WEIGHT_FEMALE else DEFAULT_MIN_WEIGHT_MALE
         val age = referenceYear - birthYear
