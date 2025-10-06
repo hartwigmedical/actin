@@ -53,18 +53,19 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         if (enableExtendedMode) {
             logger.info("Including trial matching details")
         }
-        
+
         if (report.reportConfiguration.includeSOCLiteratureEfficacyEvidence) {
             logger.info("Including SOC literature details")
         }
-        
+
         val externalTrials = trialsProvider.externalTrials()
 
         return listOf(
             SummaryChapter(report, this),
             PersonalizedEvidenceChapter(
                 report,
-                include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
+                include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence
+                        && report.treatmentMatch.personalizedDataAnalysis != null
             ),
             ResistanceEvidenceChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence),
             MolecularDetailsChapter(
@@ -80,7 +81,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             ),
             EfficacyEvidenceChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.reportConfiguration.includeClinicalDetailsChapter),
-            EfficacyEvidenceDetailsChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence && enableExtendedMode),
+            EfficacyEvidenceDetailsChapter(
+                report,
+                include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence && enableExtendedMode
+            ),
             MolecularEvidenceChapter(
                 report,
                 treatmentRankingModel.rank(report.patientRecord),
@@ -130,7 +134,9 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                         report.patientRecord.molecularTests.isNotEmpty()
             },
             SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.reportConfiguration.includeEligibleSOCTreatmentSummary },
-            approvedTreatmentsGenerator.takeIf { report.reportConfiguration.includeApprovedTreatmentsInSummary && approvedTreatmentsGenerator.showTable() }
+            approvedTreatmentsGenerator.takeIf {
+                report.reportConfiguration.includeApprovedTreatmentsInSummary && approvedTreatmentsGenerator.showTable()
+            }
         ) + trialTableGenerators
     }
 
@@ -161,19 +167,26 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         requestingSource: TrialSource?
     ): List<TrialTableGenerator?> {
         val localOpenCohortsGenerator =
-            EligibleTrialGenerator.localOpenCohorts(cohorts, externalTrials, requestingSource, report.reportConfiguration.countryOfReference)
+            EligibleTrialGenerator.localOpenCohorts(
+                cohorts,
+                externalTrials,
+                requestingSource,
+                report.reportConfiguration.countryOfReference
+            )
 
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
             EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(cohorts, requestingSource)
 
         val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(externalTrials, requestingSource)
-        
+
         return listOfNotNull(
             localOpenCohortsGenerator.takeIf { report.reportConfiguration.includeTrialMatchingInSummary },
             localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
                 report.reportConfiguration.includeTrialMatchingInSummary && it?.cohortSize() != 0
             },
-            nonLocalTrialGenerator.takeIf { report.reportConfiguration.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty() },
+            nonLocalTrialGenerator.takeIf {
+                report.reportConfiguration.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty()
+            },
         )
     }
 }
