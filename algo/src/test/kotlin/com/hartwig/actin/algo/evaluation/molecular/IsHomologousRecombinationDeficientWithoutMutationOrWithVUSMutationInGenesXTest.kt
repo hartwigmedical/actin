@@ -32,7 +32,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     true,
                     TestCopyNumberFactory.createMinimal()
                         .copy(
-                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
                             gene = "BRCA1",
                             driverLikelihood = DriverLikelihood.HIGH
                         )

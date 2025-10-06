@@ -851,7 +851,7 @@ class ActionabilityMatcherTest {
 
         val copyNumber = TestMolecularFactory.createMinimalCopyNumber().copy(
             gene = "EGFR",
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
         )
         val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
@@ -873,7 +873,7 @@ class ActionabilityMatcherTest {
 
         val copyNumber = TestMolecularFactory.createMinimalCopyNumber().copy(
             gene = gene,
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
         )
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
@@ -892,7 +892,7 @@ class ActionabilityMatcherTest {
 
         val copyNumber = TestMolecularFactory.createMinimalCopyNumber().copy(
             gene = gene,
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
         )
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
