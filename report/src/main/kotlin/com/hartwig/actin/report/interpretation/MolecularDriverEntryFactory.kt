@@ -146,7 +146,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     private fun getDriverType(type: CopyNumberType): String {
         return when (type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> "Amplification"
-            CopyNumberType.DEL -> "Deletion"
+            CopyNumberType.FULL_DEL, CopyNumberType.PARTIAL_DEL -> "Deletion"
             CopyNumberType.NONE -> "Copy Number"
         }
     }
