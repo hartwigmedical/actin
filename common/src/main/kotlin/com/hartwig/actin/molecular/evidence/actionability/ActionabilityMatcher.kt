@@ -197,15 +197,6 @@ class ActionabilityMatcher(
             emptyList()
         }
 
-        val disruptionMatches = if (DisruptionEvidence.isDisruptionEvent(gene.event())) {
-            molecularTest.drivers.disruptions
-                .filter { disruption ->
-                    DisruptionEvidence.isDisruptionMatch(gene, disruption)
-                }
-        } else {
-            emptyList()
-        }
-
         val homozygousDisruptionMatches =
             if (HomozygousDisruptionEvidence.isHomozygousDisruptionEvent(gene)) {
                 molecularTest.drivers.homozygousDisruptions.filter { homozygousDisruption ->
@@ -232,7 +223,7 @@ class ActionabilityMatcher(
             }
 
         return successWhenNotEmpty(
-            variantMatches + promiscuousFusionMatches + disruptionMatches + homozygousDisruptionMatches
+            variantMatches + promiscuousFusionMatches + homozygousDisruptionMatches
                     + copyNumberAmplificationMatches + copyNumberDeletionMatches
         )
     }
@@ -342,20 +333,20 @@ class ActionabilityMatcher(
         } ?: ActionabilityMatchResult.Failure
     }
 
-    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, requireTmlHigh: Boolean): ActionabilityMatchResult {
-        return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-            if (requireTmlHigh && tml.isHigh || !requireTmlHigh && !tml.isHigh) {
-                ActionabilityMatchResult.Success(listOf(tml))
+    private fun matchTumorMutationalBurden(molecularTest: MolecularTest, requireTmbHigh: Boolean): ActionabilityMatchResult {
+        return molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
+            if (requireTmbHigh && tmb.isHigh || !requireTmbHigh && !tmb.isHigh) {
+                ActionabilityMatchResult.Success(listOf(tmb))
             } else {
                 ActionabilityMatchResult.Failure
             }
         } ?: ActionabilityMatchResult.Failure
     }
 
-    private fun matchTumorMutationalBurden(molecularTest: MolecularTest, requireTmbHigh: Boolean): ActionabilityMatchResult {
-        return molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
-            if (requireTmbHigh && tmb.isHigh || !requireTmbHigh && !tmb.isHigh) {
-                ActionabilityMatchResult.Success(listOf(tmb))
+    private fun matchTumorMutationalLoad(molecularTest: MolecularTest, requireTmlHigh: Boolean): ActionabilityMatchResult {
+        return molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
+            if (requireTmlHigh && tml.isHigh || !requireTmlHigh && !tml.isHigh) {
+                ActionabilityMatchResult.Success(listOf(tml))
             } else {
                 ActionabilityMatchResult.Failure
             }

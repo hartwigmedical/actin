@@ -39,7 +39,7 @@ class SummaryChapter(
 
     private fun addPatientDetails(document: Document) {
         val patientDetailFields = listOf(
-            "Gender: " to report.patientRecord.patient.gender.display(),
+            "Gender: " to (report.patientRecord.patient.gender?.display() ?: Formats.VALUE_UNKNOWN),
             " | Birth year: " to report.patientRecord.patient.birthYear.toString(),
             " | WHO: " to whoStatus(report.patientRecord.performanceStatus.latestWho)
         )

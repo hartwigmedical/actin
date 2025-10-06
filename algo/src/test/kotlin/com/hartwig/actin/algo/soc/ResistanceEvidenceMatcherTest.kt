@@ -94,7 +94,7 @@ class ResistanceEvidenceMatcherTest {
         val hasDel = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "BRAF",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL),
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
                 isReportable = true
             )
         ).molecularTests

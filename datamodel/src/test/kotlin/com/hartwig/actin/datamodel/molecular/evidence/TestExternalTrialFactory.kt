@@ -28,6 +28,7 @@ object TestExternalTrialFactory {
             nctId = nctId,
             title = title,
             acronym = acronym,
+            genderMatch = null,
             treatments = treatments,
             countries = countries,
             molecularMatches = molecularMatches,
