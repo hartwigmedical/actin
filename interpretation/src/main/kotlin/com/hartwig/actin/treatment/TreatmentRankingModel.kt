@@ -50,7 +50,12 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
         }.filterNotNull()
 
         val treatmentEvidencesWithTarget = treatmentEvidencesWithTargets(actionables)
-        val scoredTreatments = treatmentEvidencesWithTarget.map { it to scoringModel.score(it.treatmentEvidence) }
+        val scoredTreatments = treatmentEvidencesWithTarget.map { evidenceWithTarget ->
+            evidenceWithTarget to scoringModel.score(
+                evidenceWithTarget.treatmentEvidence,
+                isIndirect = evidenceWithTarget.isIndirect
+            )
+        }
         val scoredTreatmentsWithDuplicatesDiminished = groupEvidenceForDuplicationAndDiminishScores(scoredTreatments)
 
         return scoredTreatmentsWithDuplicatesDiminished

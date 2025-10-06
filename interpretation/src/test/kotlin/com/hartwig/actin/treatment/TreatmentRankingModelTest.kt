@@ -15,6 +15,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class TreatmentRankingModelTest {
@@ -194,6 +195,75 @@ class TreatmentRankingModelTest {
         assertThat(rank[0].score).isEqualTo(2950.0)
     }
 
+    @Test
+    fun `Should score indirect evidence as functional effect match`() {
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
+        val directEvidence = treatmentEvidence(
+            treatment = "treatment1",
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+            isCategoryEvent = false,
+            approvalStage = EvidenceLevelDetails.GUIDELINE,
+            hasBenefit = true,
+            event = "Direct Event"
+        )
+        val indirectEvidence = treatmentEvidence(
+            treatment = "treatment1",
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+            isCategoryEvent = false,
+            approvalStage = EvidenceLevelDetails.PHASE_II,
+            hasBenefit = true,
+            event = "Indirect Event"
+        )
+
+        val patientRecord = patientRecord(
+            createVariant(
+                treatmentEvidence = directEvidence,
+                indirectTreatmentEvidences = setOf(indirectEvidence)
+            )
+        )
+
+        val rankResults = ranker.computeRankResults(patientRecord)
+        val evidenceScores = rankResults.single().scores
+
+        val directScore = evidenceScores.first { it.event == "Direct Event" }
+        val indirectScore = evidenceScores.first { it.event == "Indirect Event" }
+
+        assertThat(directScore.scoringMatch.variantMatch).isEqualTo(VariantMatch.EXACT)
+        assertThat(indirectScore.scoringMatch.variantMatch).isEqualTo(VariantMatch.FUNCTIONAL_EFFECT_MATCH)
+    }
+
+    @Test
+    fun `Should fail scoring when indirect evidence is category event`() {
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
+        val directEvidence = treatmentEvidence(
+            treatment = "treatment1",
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+            isCategoryEvent = false,
+            approvalStage = EvidenceLevelDetails.GUIDELINE,
+            hasBenefit = true,
+            event = "Direct Event"
+        )
+        val indirectEvidence = treatmentEvidence(
+            treatment = "treatment1",
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+            isCategoryEvent = true,
+            approvalStage = EvidenceLevelDetails.PHASE_II,
+            hasBenefit = true,
+            event = "Category Indirect"
+        )
+
+        val patientRecord = patientRecord(
+            createVariant(
+                treatmentEvidence = directEvidence,
+                indirectTreatmentEvidences = setOf(indirectEvidence)
+            )
+        )
+
+        assertThatThrownBy { ranker.computeRankResults(patientRecord) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("Category Indirect")
+    }
+
 
     private fun patientRecord(
         vararg variants: Variant
@@ -222,10 +292,15 @@ class TreatmentRankingModelTest {
         )
     )
 
-    private fun createVariant(gene: String = "BRAF", treatmentEvidence: TreatmentEvidence) = TestVariantFactory.createMinimal().copy(
+    private fun createVariant(
+        gene: String = "BRAF",
+        treatmentEvidence: TreatmentEvidence,
+        indirectTreatmentEvidences: Set<TreatmentEvidence> = emptySet()
+    ) = TestVariantFactory.createMinimal().copy(
         gene = gene,
         evidence = TestClinicalEvidenceFactory.createEmpty().copy(
-            treatmentEvidence = setOf(treatmentEvidence)
+            treatmentEvidence = setOf(treatmentEvidence),
+            indirectTreatmentEvidence = indirectTreatmentEvidences
         )
     )
 

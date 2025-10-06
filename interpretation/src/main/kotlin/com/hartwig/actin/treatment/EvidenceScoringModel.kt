@@ -21,14 +21,25 @@ data class EvidenceScore(
 
 class EvidenceScoringModel(val config: ScoringConfig) {
 
-    fun score(treatment: TreatmentEvidence): EvidenceScore {
+    fun score(
+        treatment: TreatmentEvidence,
+        isIndirect: Boolean = false
+    ): EvidenceScore {
         val cancerTypeApplicability = when (treatment.cancerTypeMatch.applicability) {
             CancerTypeMatchApplicability.SPECIFIC_TYPE -> TumorMatch.PATIENT
             CancerTypeMatchApplicability.ALL_TYPES -> TumorMatch.ALL
             CancerTypeMatchApplicability.OTHER_TYPE -> TumorMatch.ANY
         }
-        val exactVariant = if (treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()) VariantMatch.CATEGORY else VariantMatch.EXACT
-        val scoringMatch = ScoringMatch(cancerTypeApplicability, exactVariant)
+        val isCategoryEvent = treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()
+        check(!(isIndirect && isCategoryEvent)) {
+            "Indirect evidence cannot be derived from category events: ${treatment.molecularMatch.sourceEvent}"
+        }
+        val variantMatch = when {
+            isIndirect -> VariantMatch.FUNCTIONAL_EFFECT_MATCH
+            isCategoryEvent -> VariantMatch.CATEGORY
+            else -> VariantMatch.EXACT
+        }
+        val scoringMatch = ScoringMatch(cancerTypeApplicability, variantMatch)
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
         val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
         val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
