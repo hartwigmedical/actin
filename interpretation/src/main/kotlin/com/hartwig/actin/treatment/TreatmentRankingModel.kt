@@ -24,7 +24,7 @@ data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceS
     }
 }
 
-data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String)
+data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String, val isIndirect: Boolean)
 data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, val tumorMatch: TumorMatch, val benefit: Boolean)
 
 class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
@@ -74,22 +74,33 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
 
     private fun treatmentEvidencesWithTargets(actionables: Sequence<Actionable>) =
         actionables.flatMap { actionable ->
-            (actionable.evidence.treatmentEvidence.asSequence() + actionable.evidence.indirectTreatmentEvidence.asSequence())
-                .map { treatmentEvidence ->
-                    TreatmentEvidenceWithTarget(
-                        treatmentEvidence,
-                        when (actionable) {
-                            is GeneAlteration -> actionable.gene
-                            is MicrosatelliteStability -> "MSI"
-                            is TumorMutationalLoad -> "TML"
-                            is TumorMutationalBurden -> "TMB"
-                            is Fusion -> "${actionable.geneStart}::${actionable.geneEnd}"
-                            is Virus -> actionable.name
-                            is HomologousRecombination -> actionable.type.toString()
-                            else -> treatmentEvidence.molecularMatch.sourceEvent
-                        }
-                    )
-                }
+            val directEvidences = actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
+                TreatmentEvidenceWithTarget(
+                    treatmentEvidence,
+                    resolveTarget(actionable, treatmentEvidence),
+                    isIndirect = false
+                )
+            }
+            val indirectEvidences = actionable.evidence.indirectTreatmentEvidence.asSequence().map { treatmentEvidence ->
+                TreatmentEvidenceWithTarget(
+                    treatmentEvidence,
+                    resolveTarget(actionable, treatmentEvidence),
+                    isIndirect = true
+                )
+            }
+            directEvidences + indirectEvidences
+        }
+
+    private fun resolveTarget(actionable: Actionable, treatmentEvidence: TreatmentEvidence): String =
+        when (actionable) {
+            is GeneAlteration -> actionable.gene
+            is MicrosatelliteStability -> "MSI"
+            is TumorMutationalLoad -> "TML"
+            is TumorMutationalBurden -> "TMB"
+            is Fusion -> "${actionable.geneStart}::${actionable.geneEnd}"
+            is Virus -> actionable.name
+            is HomologousRecombination -> actionable.type.toString()
+            else -> treatmentEvidence.molecularMatch.sourceEvent
         }
 
     private fun saturatingDiminishingReturnsScore(
@@ -120,8 +131,8 @@ fun main(args: Array<String>) {
         val evidenceRows = mutableListOf<String>()
         var scoreSum = 0.0
 
-        for (scoreObject in record.scores.sortedBy { it.score }.reversed()) {
-            with(scoreObject) {
+        for (evidenceScore in record.scores.sortedBy { it.score }.reversed()) {
+            with(evidenceScore) {
                 val row = listOf(
                     "",
                     event,
@@ -133,7 +144,7 @@ fun main(args: Array<String>) {
                 ).joinToString(delimiter)
                 evidenceRows += row
             }
-            scoreSum += scoreObject.score
+            scoreSum += evidenceScore.score
         }
 
         val summaryRow = listOf(
