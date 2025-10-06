@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment
 
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -10,6 +11,8 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.math.exp
 
 data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceScore>) : Comparable<TreatmentRankResult> {
@@ -27,6 +30,18 @@ data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, v
 class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
 
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
+        val rankingResults = computeRankResults(record)
+
+        return TreatmentEvidenceRanking(rankingResults.map {
+            RankedTreatment(
+                it.treatment,
+                it.scores.map { s -> s.event }.toSet(),
+                it.scores.sumOf { s -> s.score }
+            )
+        })
+    }
+
+    fun computeRankResults(record: PatientRecord): List<TreatmentRankResult> {
         val actionables = record.molecularTests.asSequence().flatMap {
             it.drivers.fusions + it.drivers.variants + it.drivers.copyNumbers +
                     it.drivers.homozygousDisruptions + it.drivers.disruptions + it.drivers.viruses +
@@ -38,13 +53,11 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
         val scoredTreatments = treatmentEvidencesWithTarget.map { it to scoringModel.score(it.treatmentEvidence) }
         val scoredTreatmentsWithDuplicatesDiminished = groupEvidenceForDuplicationAndDiminishScores(scoredTreatments)
 
-        val rankingResults = scoredTreatmentsWithDuplicatesDiminished.map { it.key.treatment to it.value }.groupBy { it.first }
+        return scoredTreatmentsWithDuplicatesDiminished
+            .map { it.key.treatment to it.value }
+            .groupBy { it.first }
             .map { TreatmentRankResult(it.key, it.value.flatMap { t -> t.second }) }
-
-        return TreatmentEvidenceRanking(rankingResults.sorted().map {
-            RankedTreatment(it.treatment, it.scores.map { s -> s.event }.toSet(),
-                it.scores.sumOf { s -> s.score })
-        })
+            .sorted()
     }
 
     private fun groupEvidenceForDuplicationAndDiminishScores(scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>) =
@@ -84,4 +97,57 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
     ) = evidenceScores.sortedDescending().withIndex().map { (index, score) ->
         score to if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
     }.map { it.first.copy(score = it.second) }
+}
+
+fun main(args: Array<String>) {
+    if (args.size != 2) {
+        println("Usage: <patient_json_path> <output_tsv_path>")
+        return
+    }
+    val patientRecordPath = args[0]
+    val outputTsvPath = args[1]
+    val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of(patientRecordPath)))
+    val records = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).computeRankResults(patientRecord)
+
+    val delimiter = "\t"
+    val newline = "\n"
+    val headerColumns = listOf("Treatment", "Variant", "Variant Match", "Tumor Match", "Approval", "Score", "Description")
+    val stringBuilder = StringBuilder()
+
+    stringBuilder.append(headerColumns.joinToString(delimiter)).append(newline)
+
+    for (record in records) {
+        val evidenceRows = mutableListOf<String>()
+        var scoreSum = 0.0
+
+        for (scoreObject in record.scores.sortedBy { it.score }.reversed()) {
+            with(scoreObject) {
+                val row = listOf(
+                    "",
+                    event,
+                    scoringMatch.variantMatch.toString(),
+                    scoringMatch.tumorMatch.toString(),
+                    evidenceLevelDetails.toString(),
+                    score.toString(),
+                    evidenceDescription
+                ).joinToString(delimiter)
+                evidenceRows += row
+            }
+            scoreSum += scoreObject.score
+        }
+
+        val summaryRow = listOf(
+            record.treatment,
+            "",
+            "",
+            "",
+            "",
+            scoreSum.toString(),
+            ""
+        ).joinToString(delimiter)
+        stringBuilder.append(summaryRow).append(newline)
+        evidenceRows.forEach { stringBuilder.append(it).append(newline) }
+    }
+
+    Files.writeString(Path.of(outputTsvPath), stringBuilder.toString())
 }
