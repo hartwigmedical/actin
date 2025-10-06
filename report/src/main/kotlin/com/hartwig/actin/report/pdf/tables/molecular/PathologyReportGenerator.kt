@@ -19,13 +19,10 @@ class PathologyReportGenerator(private val pathologyReports: List<PathologyRepor
 
     override fun contents(): Table {
         val table = Tables.createSingleCol()
-        val multipleReports = pathologyReports.orEmpty().size > 1
         pathologyReports
             ?.mapNotNull { report -> report.report.takeIf { it.isNotBlank() }?.let { report.tissueId to it } }
             ?.forEach { (tissueId, report) ->
-                tissueId?.takeIf { multipleReports }?.let {
-                    table.addCell(Cells.createContentNoBorder("Tissue Id: $tissueId"))
-                }
+                table.addCell(Cells.createContentNoBorder("Tissue Id: $tissueId"))
                 table.addCell(Cells.create(Tables.createSingleCol().addCell(report).addStyle(Styles.tableContentStyle())))
             }
         return table
