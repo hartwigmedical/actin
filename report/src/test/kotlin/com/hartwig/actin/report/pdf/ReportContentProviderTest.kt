@@ -13,8 +13,8 @@ import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
@@ -86,7 +86,7 @@ class ReportContentProviderTest {
     fun `Should provide all clinical details tables when details are provided`() {
         val tables = ReportContentProvider(proper).provideClinicalDetailsTables(KEY_WIDTH, VALUE_WIDTH)
         assertThat(tables.map { it::class }).containsExactly(
-            PatientClinicalHistoryGenerator::class,
+            ClinicalSummaryGenerator::class,
             PatientCurrentDetailsGenerator::class,
             TumorDetailsGenerator::class,
             MedicationGenerator::class,
@@ -104,7 +104,7 @@ class ReportContentProviderTest {
         )
         val tables = ReportContentProvider(report).provideClinicalDetailsTables(KEY_WIDTH, VALUE_WIDTH)
         assertThat(tables.map { it::class }).containsExactly(
-            PatientClinicalHistoryGenerator::class,
+            ClinicalSummaryGenerator::class,
             PatientCurrentDetailsGenerator::class,
             TumorDetailsGenerator::class
         )
@@ -115,7 +115,7 @@ class ReportContentProviderTest {
         val tables = ReportContentProvider(TestReportFactory.createExhaustiveTestReport()).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH)
 
         assertThat(tables.map { it::class }).containsExactly(
-            PatientClinicalHistoryGenerator::class,
+            ClinicalSummaryGenerator::class,
             MolecularSummaryGenerator::class,
             EligibleTrialGenerator::class,
             EligibleTrialGenerator::class
@@ -144,7 +144,7 @@ class ReportContentProviderTest {
             .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH)
 
         assertThat(tables.map { it::class }).containsExactly(
-            PatientClinicalHistoryGenerator::class,
+            ClinicalSummaryGenerator::class,
             MolecularSummaryGenerator::class,
             EligibleApprovedTreatmentGenerator::class,
             EligibleTrialGenerator::class,
@@ -152,14 +152,15 @@ class ReportContentProviderTest {
     }
 
     @Test
-    fun `Should omit molecular table and external tables from summary when molecular results not available`() {
+    fun `Should omit external tables from summary when molecular results not available`() {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
             patientRecord = proper.patientRecord.copy(molecularTests = emptyList())
         )
         val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH)
 
         assertThat(tables.map { it::class }).containsExactly(
-            PatientClinicalHistoryGenerator::class,
+            ClinicalSummaryGenerator::class,
+            MolecularSummaryGenerator::class,
             EligibleTrialGenerator::class
         )
     }

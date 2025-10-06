@@ -25,7 +25,7 @@ import com.itextpdf.layout.element.Table
 
 private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
-class PatientClinicalHistoryGenerator(
+class ClinicalSummaryGenerator(
     private val report: Report,
     private val showDetails: Boolean,
     private val keyWidth: Float,
@@ -48,18 +48,15 @@ class PatientClinicalHistoryGenerator(
 
     fun contentsAsList(): List<Cell> {
         val record = report.patientRecord
-        val includeAdditionalFields =
-            report.reportConfiguration.clinicalSummaryType == ClinicalSummaryType.TRIAL_MATCHING_DETAILED ||
-                    report.reportConfiguration.clinicalSummaryType == ClinicalSummaryType.CRC_PERSONALIZATION
-                    || showDetails
-        
+        val includeAdditionalFields = report.reportConfiguration.clinicalSummaryType == ClinicalSummaryType.EXTENSIVE || showDetails
+
         return listOfNotNull(
-            "Relevant systemic treatment history" to relevantSystemicPreTreatmentHistoryTable(record),
+            "Relevant systemic treatment history" to relevantSystemicTreatmentHistoryTable(record),
             if (includeAdditionalFields) {
-                "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
+                "Relevant other oncological history" to relevantNonSystemicTreatmentHistoryTable(record)
             } else null,
             if (includeAdditionalFields) {
-                "Previous primary tumor" to priorPrimaryHistoryTable(record)
+                "Previous primary tumor" to priorPrimaryTable(record)
             } else null,
             if (includeAdditionalFields) {
                 "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
@@ -77,11 +74,11 @@ class PatientClinicalHistoryGenerator(
         return table
     }
 
-    private fun relevantSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
+    private fun relevantSystemicTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, record.medications ?: emptyList(), true)
     }
 
-    private fun relevantNonSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
+    private fun relevantNonSystemicTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, emptyList(), false)
     }
 
@@ -92,7 +89,7 @@ class PatientClinicalHistoryGenerator(
     ): Table {
         val dateWidth = valueWidth / 5
         val treatmentWidth = valueWidth - dateWidth
-        val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
+        val table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
         val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, treatmentHistory)
         val systemicTreatmentHistory = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
@@ -115,7 +112,7 @@ class PatientClinicalHistoryGenerator(
         return treatmentHistoryEntry.allTreatments().any { it.isSystemic }
     }
 
-    private fun priorPrimaryHistoryTable(record: PatientRecord): Table {
+    private fun priorPrimaryTable(record: PatientRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
         record.priorPrimaries.distinct().sortedWith(PriorPrimaryDiagnosedDateComparator())

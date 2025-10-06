@@ -14,9 +14,9 @@ enum class MolecularSummaryType {
 }
 
 enum class ClinicalSummaryType {
-    CRC_PERSONALIZATION,
-    TRIAL_MATCHING_MINIMAL,
-    TRIAL_MATCHING_DETAILED,
+    NONE,
+    BRIEF,
+    EXTENSIVE,
 }
 
 data class AlgoConfiguration(
@@ -32,15 +32,11 @@ data class AlgoConfiguration(
 }
 
 data class ReportConfiguration(
-    val clinicalSummaryType: ClinicalSummaryType = ClinicalSummaryType.TRIAL_MATCHING_DETAILED,
-    val includeOverviewWithClinicalHistorySummary: Boolean = false,
-    val includeRelevantNonOncologicalHistoryInSummary: Boolean = true,
-    val includeOtherOncologicalHistoryInSummary: Boolean = true,
-    val includePreviousPrimaryInClinicalSummary: Boolean = true,
+    val clinicalSummaryType: ClinicalSummaryType = ClinicalSummaryType.BRIEF,
+    val molecularSummaryType: MolecularSummaryType = MolecularSummaryType.STANDARD,
     val includeMolecularDetailsChapter: Boolean = true,
     val includeSOCLiteratureEfficacyEvidence: Boolean = false,
     val includeEligibleSOCTreatmentSummary: Boolean = false,
-    val molecularSummaryType: MolecularSummaryType = MolecularSummaryType.STANDARD,
     val includeLesionsInTumorSummary: Boolean = true,
     val includeApprovedTreatmentsInSummary: Boolean = true,
     val includeTrialMatchingInSummary: Boolean = true,

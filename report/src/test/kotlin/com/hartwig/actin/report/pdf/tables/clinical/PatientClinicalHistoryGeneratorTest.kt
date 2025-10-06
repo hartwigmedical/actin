@@ -12,9 +12,9 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
 import com.itextpdf.layout.element.Table
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f
@@ -25,8 +25,8 @@ class PatientClinicalHistoryGeneratorTest {
 
     @Test
     fun `Should return title clinical summary`() {
-        val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
-        assertThat(patientClinicalHistoryGenerator.title()).isEqualTo("Clinical summary")
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
+        assertThat(clinicalSummaryGenerator.title()).isEqualTo("Clinical summary")
     }
 
     @Test
@@ -97,8 +97,8 @@ class PatientClinicalHistoryGeneratorTest {
     }
 
     private fun generateHistoryAndReturnTableWithText(report: Report, cellToFind: String): Table {
-        val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
-        val cells = patientClinicalHistoryGenerator.contentsAsList()
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
+        val cells = clinicalSummaryGenerator.contentsAsList()
         val otherHistoryCell =
             cells.dropWhile { extractTextFromCell(it) != cellToFind }.drop(1).first()
         return otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")

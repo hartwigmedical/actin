@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.configuration.ClinicalSummaryType
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
@@ -20,9 +21,8 @@ import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingOtherResultsChapter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryWithOverviewGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
@@ -101,20 +101,26 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float): List<TableGenerator> {
-        val cohorts = trialsProvider.evaluableCohortsAndNotIgnore()
-        val clinicalHistoryGenerator = if (report.reportConfiguration.includeOverviewWithClinicalHistorySummary) {
-            PatientClinicalHistoryWithOverviewGenerator(
-                report = report,
-                cohorts = cohorts,
-                keyWidth = keyWidth,
-                valueWidth = valueWidth
+        val clinicalSummaryGenerator =
+            ClinicalSummaryGenerator(report = report, showDetails = false, keyWidth = keyWidth, valueWidth = valueWidth).takeIf {
+                report.reportConfiguration.clinicalSummaryType != ClinicalSummaryType.NONE
+            }
+
+        val molecularSummaryGenerator = MolecularSummaryGenerator(
+            patientRecord = report.patientRecord,
+            cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
+            keyWidth = keyWidth,
+            valueWidth = valueWidth,
+            molecularTestFilter = MolecularTestFilter(
+                maxTestAge = report.treatmentMatch.maxMolecularTestAge,
+                useInsufficientQualityRecords = true
             )
-        } else {
-            PatientClinicalHistoryGenerator(report = report, showDetails = false, keyWidth = keyWidth, valueWidth = valueWidth)
+        ).takeIf {
+            report.reportConfiguration.molecularSummaryType != MolecularSummaryType.NONE
         }
 
         val trialTableGenerators = createTrialTableGenerators(
-            cohorts = cohorts,
+            cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
             externalTrials = trialsProvider.externalTrials(),
             requestingSource = TrialSource.fromDescription(report.reportConfiguration.hospitalOfReference)
         ).filterNotNull()
@@ -122,17 +128,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val approvedTreatmentsGenerator = EligibleApprovedTreatmentGenerator(report)
 
         return listOfNotNull(
-            clinicalHistoryGenerator,
-            MolecularSummaryGenerator(
-                patientRecord = report.patientRecord,
-                cohorts = cohorts,
-                keyWidth = keyWidth,
-                valueWidth = valueWidth,
-                molecularTestFilter = MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
-            ).takeIf {
-                report.reportConfiguration.molecularSummaryType != MolecularSummaryType.NONE &&
-                        report.patientRecord.molecularTests.isNotEmpty()
-            },
+            clinicalSummaryGenerator,
+            molecularSummaryGenerator,
             SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.reportConfiguration.includeEligibleSOCTreatmentSummary },
             approvedTreatmentsGenerator.takeIf {
                 report.reportConfiguration.includeApprovedTreatmentsInSummary && approvedTreatmentsGenerator.showTable()
@@ -142,7 +139,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
     fun provideClinicalDetailsTables(keyWidth: Float, valueWidth: Float): List<TableGenerator> {
         return listOfNotNull(
-            PatientClinicalHistoryGenerator(report = report, showDetails = true, keyWidth = keyWidth, valueWidth = valueWidth),
+            ClinicalSummaryGenerator(report = report, showDetails = true, keyWidth = keyWidth, valueWidth = valueWidth),
             PatientCurrentDetailsGenerator(
                 record = report.patientRecord,
                 keyWidth = keyWidth,

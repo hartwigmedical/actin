@@ -64,7 +64,7 @@ object ExampleFunctions {
 
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
-            clinicalSummaryType = ClinicalSummaryType.TRIAL_MATCHING_MINIMAL,
+            clinicalSummaryType = ClinicalSummaryType.BRIEF,
             includeApprovedTreatmentsInSummary = false,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
@@ -73,9 +73,7 @@ object ExampleFunctions {
 
     fun createPersonalizationReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
-            clinicalSummaryType = ClinicalSummaryType.CRC_PERSONALIZATION,
-            includeOverviewWithClinicalHistorySummary = true,
-            includeMolecularDetailsChapter = false,
+            clinicalSummaryType = ClinicalSummaryType.EXTENSIVE,
             includeApprovedTreatmentsInSummary = false,
             includeSOCLiteratureEfficacyEvidence = true,
             includeEligibleSOCTreatmentSummary = true,
