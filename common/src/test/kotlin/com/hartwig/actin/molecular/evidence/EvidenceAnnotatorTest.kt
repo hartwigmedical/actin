@@ -132,7 +132,7 @@ class EvidenceAnnotatorTest {
         val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver> {
             every { resolve(indication) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
         }
-        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver)
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, patientGender = null)
         val relatedMatcher = IndirectEvidenceMatcher(
             mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect) to setOf(evidence))
         )
