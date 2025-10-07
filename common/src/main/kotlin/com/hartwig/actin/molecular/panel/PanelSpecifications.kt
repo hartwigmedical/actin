@@ -10,7 +10,7 @@ class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<
     private val molecularTargetsPerTest: Map<PanelTestSpecification, Map<String, List<MolecularTestTarget>>> =
         panelSpecifications.mapValues { (_, geneSpecs) ->
             geneSpecs.groupBy(PanelGeneSpecification::geneName).mapValues { it.value.flatMap(PanelGeneSpecification::targets) }
-    }
+        }
 
     val panelTestSpecifications: Set<PanelTestSpecification>
         get() = molecularTargetsPerTest.keys
@@ -21,13 +21,15 @@ class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<
     ): PanelTargetSpecification {
         val baseTargets = molecularTargetsPerTest[testSpec]
             ?: throw IllegalStateException(
-                "Panel [${testSpec.testName}${testSpec.versionDate?.let { " version $it" } ?: ""}] is not found in panel specifications. Check curation and map to one " +
+                "Panel [${testSpec.testName}${testSpec.versionDate?.let { " version $it" } ?: ""}] " +
+                        "is not found in panel specifications. Check curation and map to one " +
                         "of [${molecularTargetsPerTest.keys.joinToString()}] or add this panel to the specification TSV."
             )
-        val negativeTargets = (negativeResults?.associate { it.gene to listOf(it.molecularTestTarget) } ?: emptyMap())
+        val negativeTargets =
+            (negativeResults?.groupBy(keySelector = { it.gene }, valueTransform = { it.molecularTestTarget }) ?: emptyMap())
         val mergedTargets = (baseTargets.keys + negativeTargets.keys)
             .associateWith { gene ->
-                (baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())
+                ((baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())).distinct()
             }
         return PanelTargetSpecification(mergedTargets)
     }
