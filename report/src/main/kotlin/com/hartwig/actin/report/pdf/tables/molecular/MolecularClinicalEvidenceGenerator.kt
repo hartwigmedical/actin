@@ -11,7 +11,11 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>, private val isOnLabel: Boolean) : TableGenerator {
+class MolecularClinicalEvidenceGenerator(
+    val molecularTests: List<MolecularTest>,
+    private val isOnLabel: Boolean,
+    private val includeIndirectTreatmentEvidence: Boolean = false
+) : TableGenerator {
 
     override fun title(): String {
         val titleEnd = "label clinical evidence"
@@ -37,7 +41,8 @@ class MolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>
             .forEach(table::addHeaderCell)
 
         for ((event, evidence) in MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(molecularTests)) {
-            val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence + evidence.indirectTreatmentEvidence, isOnLabel)
+            val indirectEvidence = if (includeIndirectTreatmentEvidence) evidence.indirectTreatmentEvidence else emptyList()
+            val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence + indirectEvidence, isOnLabel)
             if (filteredEvidence.isNotEmpty()) {
                 val groupedBySourceEvent = TreatmentEvidenceFunctions.groupBySourceEvent(filteredEvidence)
 

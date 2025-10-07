@@ -27,7 +27,10 @@ data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceS
 data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String, val isIndirect: Boolean)
 data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, val tumorMatch: TumorMatch, val benefit: Boolean)
 
-class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
+class TreatmentRankingModel(
+    private val scoringModel: EvidenceScoringModel,
+    private val includeIndirectTreatmentEvidence: Boolean = true
+) {
 
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
         val rankingResults = computeRankResults(record)
@@ -93,7 +96,7 @@ class TreatmentRankingModel(private val scoringModel: EvidenceScoringModel) {
                     isIndirect = true
                 )
             }
-            directEvidences + indirectEvidences
+            directEvidences + if (includeIndirectTreatmentEvidence) indirectEvidences else emptySequence()
         }
 
     private fun resolveTarget(actionable: Actionable, treatmentEvidence: TreatmentEvidence): String =

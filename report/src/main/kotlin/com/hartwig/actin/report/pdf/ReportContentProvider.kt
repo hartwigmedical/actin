@@ -48,17 +48,20 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         enableExtendedMode,
         report.config.filterOnSOCExhaustionAndTumorType
     )
-    private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
+    private val treatmentRankingModel = TreatmentRankingModel(
+        EvidenceScoringModel(createScoringConfig()),
+        includeIndirectTreatmentEvidence = report.config.includeIndirectMolecularTreatmentEvidence
+    )
 
     fun provideChapters(): List<ReportChapter> {
         if (enableExtendedMode) {
             logger.info("Including trial matching details")
         }
-        
+
         if (report.config.includeSOCLiteratureEfficacyEvidence) {
             logger.info("Including SOC literature details")
         }
-        
+
         val externalTrials = trialsProvider.externalTrials()
 
         return listOf(

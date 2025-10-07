@@ -4,10 +4,17 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.itextpdf.layout.element.Table
 
-class OnLabelMolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>) : TableGenerator {
+class OnLabelMolecularClinicalEvidenceGenerator(
+    val molecularTests: List<MolecularTest>,
+    private val includeIndirectTreatmentEvidence: Boolean = false
+) : TableGenerator {
 
-    private val wrapped = MolecularClinicalEvidenceGenerator(molecularTests, isOnLabel = true)
-    
+    private val wrapped = MolecularClinicalEvidenceGenerator(
+        molecularTests,
+        isOnLabel = true,
+        includeIndirectTreatmentEvidence = includeIndirectTreatmentEvidence
+    )
+
     override fun title(): String {
         return wrapped.title()
     }
