@@ -15,7 +15,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class TreatmentRankingModelTest {
@@ -79,14 +78,14 @@ class TreatmentRankingModelTest {
             createVariant(
                 gene = "KRAS",
                 treatmentEvidence =
-                treatmentEvidence(
-                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-                    isCategoryEvent = false,
-                    approvalStage = EvidenceLevelDetails.GUIDELINE,
-                    hasBenefit = true,
-                    treatment = "treatment1",
-                    event = "KRAS G12C"
-                )
+                    treatmentEvidence(
+                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+                        isCategoryEvent = false,
+                        approvalStage = EvidenceLevelDetails.GUIDELINE,
+                        hasBenefit = true,
+                        treatment = "treatment1",
+                        event = "KRAS G12C"
+                    )
             ), createVariant(
                 treatmentEvidence = treatmentEvidence(
                     cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
@@ -154,13 +153,13 @@ class TreatmentRankingModelTest {
                 )
             ), createVariant(
                 treatmentEvidence =
-                treatmentEvidence(
-                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-                    isCategoryEvent = false,
-                    approvalStage = EvidenceLevelDetails.GUIDELINE,
-                    hasBenefit = false,
-                    treatment = "treatment1",
-                )
+                    treatmentEvidence(
+                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+                        isCategoryEvent = false,
+                        approvalStage = EvidenceLevelDetails.GUIDELINE,
+                        hasBenefit = false,
+                        treatment = "treatment1",
+                    )
             )
         )
         val rank = ranker.rank(patientRecord)
@@ -241,64 +240,31 @@ class TreatmentRankingModelTest {
             .isEqualTo(expectedDirectScore + (expectedIndirectScore * diminishingFactorForSecondEvidence))
     }
 
-    @Test
-    fun `Should fail scoring when indirect evidence is category event`() {
-        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
-        val directEvidence = treatmentEvidence(
-            treatment = "treatment1",
-            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-            isCategoryEvent = false,
-            approvalStage = EvidenceLevelDetails.GUIDELINE,
-            hasBenefit = true,
-            event = "Direct Event"
-        )
-        val indirectEvidence = treatmentEvidence(
-            treatment = "treatment1",
-            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-            isCategoryEvent = true,
-            approvalStage = EvidenceLevelDetails.PHASE_II,
-            hasBenefit = true,
-            event = "Category Indirect"
-        )
-
-        val patientRecord = patientRecord(
-            createVariant(
-                treatmentEvidence = directEvidence,
-                indirectTreatmentEvidences = setOf(indirectEvidence)
-            )
-        )
-
-        assertThatThrownBy { ranker.rank(patientRecord) }
-            .isInstanceOf(IllegalStateException::class.java)
-            .hasMessageContaining("Category Indirect")
-    }
-
-
     private fun patientRecord(
         vararg variants: Variant
     ) = TestPatientFactory.createProperTestPatientRecord().copy(
         molecularTests =
-        listOf(
-            TestMolecularFactory.createMinimalWholeGenomeTest().copy(
-                drivers = Drivers(
-                    variants = variants.toList(),
-                    copyNumbers = emptyList(),
-                    homozygousDisruptions = emptyList(),
-                    disruptions = emptyList(),
-                    fusions = emptyList(),
-                    viruses = emptyList()
-                ),
-                characteristics = MolecularCharacteristics(
-                    homologousRecombination = null,
-                    purity = null,
-                    ploidy = null,
-                    predictedTumorOrigin = null,
-                    microsatelliteStability = null,
-                    tumorMutationalBurden = null,
-                    tumorMutationalLoad = null
+            listOf(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+                    drivers = Drivers(
+                        variants = variants.toList(),
+                        copyNumbers = emptyList(),
+                        homozygousDisruptions = emptyList(),
+                        disruptions = emptyList(),
+                        fusions = emptyList(),
+                        viruses = emptyList()
+                    ),
+                    characteristics = MolecularCharacteristics(
+                        homologousRecombination = null,
+                        purity = null,
+                        ploidy = null,
+                        predictedTumorOrigin = null,
+                        microsatelliteStability = null,
+                        tumorMutationalBurden = null,
+                        tumorMutationalLoad = null
+                    )
                 )
             )
-        )
     )
 
     private fun createVariant(

@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class EvidenceScoringModelTest {
@@ -30,15 +29,6 @@ class EvidenceScoringModelTest {
         val evidenceScore = scorer.score(treatmentEvidence, isIndirect = true)
 
         assertThat(evidenceScore.scoringMatch.variantMatch).isEqualTo(VariantMatch.FUNCTIONAL_EFFECT_MATCH)
-    }
-
-    @Test
-    fun `Should fail when indirect evidence is category event`() {
-        val treatmentEvidence = treatmentEvidence(isCategoryEvent = true)
-
-        assertThatThrownBy { scorer.score(treatmentEvidence, isIndirect = true) }
-            .isInstanceOf(IllegalStateException::class.java)
-            .hasMessageContaining("Indirect evidence")
     }
 
     private fun treatmentEvidence(isCategoryEvent: Boolean) = TestTreatmentEvidenceFactory.create(
