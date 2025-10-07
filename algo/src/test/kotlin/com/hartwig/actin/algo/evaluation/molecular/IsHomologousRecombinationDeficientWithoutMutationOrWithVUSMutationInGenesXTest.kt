@@ -19,11 +19,6 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     private val function = IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind)
 
     @Test
-    fun `Should fail when HRD status unknown and no reportable drivers in HR genes`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(hrdVariant())))
-    }
-
-    @Test
     fun `Should fail when HRD with deletion of BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -59,6 +54,11 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
             EvaluationResult.FAIL,
             function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(false, hrdVariant()))
         )
+    }
+
+    @Test
+    fun `Should be undetermined when HRD status unknown and no reportable drivers in HR genes`() {
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withVariant(hrdVariant())))
     }
 
     @Test

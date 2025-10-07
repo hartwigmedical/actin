@@ -31,12 +31,10 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesX(private val gene
                 }
 
                 isHRD == null -> {
-                    EvaluationFactory.fail("Unknown HRD status", isMissingMolecularResultForEvaluation = true)
+                    EvaluationFactory.undetermined("Unknown HRD status", isMissingMolecularResultForEvaluation = true)
                 }
 
-                isHRD == false -> {
-                    EvaluationFactory.fail("Tumor is not HRD")
-                }
+                !isHRD -> EvaluationFactory.fail("Tumor is not HRD")
 
                 genesToFindWithMutation.isNotEmpty() -> {
                     EvaluationFactory.fail("Tumor is HRD with variant in ${Format.concat(genesToFindWithMutation)}")
