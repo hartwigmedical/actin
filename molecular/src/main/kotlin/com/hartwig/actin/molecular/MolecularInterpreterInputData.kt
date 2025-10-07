@@ -104,11 +104,9 @@ object InputDataLoader {
 
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
-                    val knownGenes =
-                        deferredServeDatabase.await()
-                            .records()[ServeLoader.toServeRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)]?.knownEvents()?.genes()
-                            ?.toSet()?.map { it.gene() }?.toSet()
-                            ?: emptySet()
+                    val serveRecord =
+                        deferredServeDatabase.await().records()[ServeLoader.toServeRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)]
+                    val knownGenes = serveRecord?.knownEvents()?.genes()?.toSet()?.map { it.gene() }?.toSet() ?: emptySet()
                     config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it, knownGenes) }
                         ?: PanelSpecifications(emptySet(), emptyMap())
                 }
