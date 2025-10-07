@@ -197,7 +197,8 @@ class TreatmentRankingModelTest {
 
     @Test
     fun `Should score indirect evidence as functional effect match`() {
-        val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
+        val config = createScoringConfig()
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(config))
         val directEvidence = treatmentEvidence(
             treatment = "treatment1",
             cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
@@ -222,14 +223,22 @@ class TreatmentRankingModelTest {
             )
         )
 
-        val rankResults = ranker.computeRankResults(patientRecord)
-        val evidenceScores = rankResults.single().scores
+        val rankResult = ranker.rank(patientRecord).ranking.single()
 
-        val directScore = evidenceScores.first { it.event == "Direct Event" }
-        val indirectScore = evidenceScores.first { it.event == "Indirect Event" }
+        assertThat(rankResult.treatment).isEqualTo("treatment1")
+        assertThat(rankResult.events).containsExactlyInAnyOrder("Direct Event", "Indirect Event")
 
-        assertThat(directScore.scoringMatch.variantMatch).isEqualTo(VariantMatch.EXACT)
-        assertThat(indirectScore.scoringMatch.variantMatch).isEqualTo(VariantMatch.FUNCTIONAL_EFFECT_MATCH)
+        val expectedDirectScore = expectedScore(config, TumorMatch.PATIENT, VariantMatch.EXACT, EvidenceLevelDetails.GUIDELINE)
+        val expectedIndirectScore = expectedScore(
+            config,
+            TumorMatch.PATIENT,
+            VariantMatch.FUNCTIONAL_EFFECT_MATCH,
+            EvidenceLevelDetails.PHASE_II
+        )
+        val diminishingFactorForSecondEvidence = 1.0 / (1.0 + kotlin.math.exp(1.5 * (1 - 1.0)))
+
+        assertThat(rankResult.score)
+            .isEqualTo(expectedDirectScore + (expectedIndirectScore * diminishingFactorForSecondEvidence))
     }
 
     @Test
@@ -259,7 +268,7 @@ class TreatmentRankingModelTest {
             )
         )
 
-        assertThatThrownBy { ranker.computeRankResults(patientRecord) }
+        assertThatThrownBy { ranker.rank(patientRecord) }
             .isInstanceOf(IllegalStateException::class.java)
             .hasMessageContaining("Category Indirect")
     }
@@ -320,5 +329,18 @@ class TreatmentRankingModelTest {
         evidenceDirection = EvidenceDirection(hasBenefit, hasBenefit, !hasBenefit, true),
         evidenceLevel = EvidenceLevel.A,
     )
+
+    private fun expectedScore(
+        config: ScoringConfig,
+        tumorMatch: TumorMatch,
+        variantMatch: VariantMatch,
+        evidenceLevelDetails: EvidenceLevelDetails
+    ): Double {
+        val factor = config.categoryMatchLevels[ScoringMatch(tumorMatch, variantMatch)]
+            ?: error("Missing score for $tumorMatch/$variantMatch")
+        val levelScore = config.approvalPhaseLevel.scoring[evidenceLevelDetails]
+            ?: error("Missing level score for $evidenceLevelDetails")
+        return factor * levelScore.toDouble()
+    }
 
 }

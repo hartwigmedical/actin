@@ -31,9 +31,6 @@ class EvidenceScoringModel(val config: ScoringConfig) {
             CancerTypeMatchApplicability.OTHER_TYPE -> TumorMatch.ANY
         }
         val isCategoryEvent = treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()
-        check(!(isIndirect && isCategoryEvent)) {
-            "Indirect evidence cannot be derived from category events: ${treatment.molecularMatch.sourceEvent}"
-        }
         val variantMatch = when {
             isIndirect -> VariantMatch.FUNCTIONAL_EFFECT_MATCH
             isCategoryEvent -> VariantMatch.CATEGORY

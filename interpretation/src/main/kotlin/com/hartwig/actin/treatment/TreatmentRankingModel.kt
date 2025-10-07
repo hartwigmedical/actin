@@ -44,7 +44,7 @@ class TreatmentRankingModel(
         })
     }
 
-    fun computeRankResults(record: PatientRecord): List<TreatmentRankResult> {
+    private fun computeRankResults(record: PatientRecord): List<TreatmentRankResult> {
         val actionables = record.molecularTests.asSequence().flatMap {
             it.drivers.fusions + it.drivers.variants + it.drivers.copyNumbers +
                     it.drivers.homozygousDisruptions + it.drivers.disruptions + it.drivers.viruses +
@@ -116,57 +116,60 @@ class TreatmentRankingModel(
     ) = evidenceScores.sortedDescending().withIndex().map { (index, score) ->
         score to if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
     }.map { it.first.copy(score = it.second) }
-}
 
-fun main(args: Array<String>) {
-    if (args.size != 2) {
-        println("Usage: <patient_json_path> <output_tsv_path>")
-        return
-    }
-    val patientRecordPath = args[0]
-    val outputTsvPath = args[1]
-    val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of(patientRecordPath)))
-    val records = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).computeRankResults(patientRecord)
-
-    val delimiter = "\t"
-    val newline = "\n"
-    val headerColumns = listOf("Treatment", "Variant", "Variant Match", "Tumor Match", "Approval", "Score", "Description")
-    val stringBuilder = StringBuilder()
-
-    stringBuilder.append(headerColumns.joinToString(delimiter)).append(newline)
-
-    for (record in records) {
-        val evidenceRows = mutableListOf<String>()
-        var scoreSum = 0.0
-
-        for (evidenceScore in record.scores.sortedBy { it.score }.reversed()) {
-            with(evidenceScore) {
-                val row = listOf(
-                    "",
-                    event,
-                    scoringMatch.variantMatch.toString(),
-                    scoringMatch.tumorMatch.toString(),
-                    evidenceLevelDetails.toString(),
-                    score.toString(),
-                    evidenceDescription
-                ).joinToString(delimiter)
-                evidenceRows += row
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            if (args.size != 2) {
+                println("Usage: <patient_json_path> <output_tsv_path>")
+                return
             }
-            scoreSum += evidenceScore.score
+            val patientRecordPath = args[0]
+            val outputTsvPath = args[1]
+            val patientRecord = PatientRecordJson.fromJson(Files.readString(Path.of(patientRecordPath)))
+            val records = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).computeRankResults(patientRecord)
+
+            val delimiter = "\t"
+            val newline = "\n"
+            val headerColumns = listOf("Treatment", "Variant", "Variant Match", "Tumor Match", "Approval", "Score", "Description")
+            val stringBuilder = StringBuilder()
+
+            stringBuilder.append(headerColumns.joinToString(delimiter)).append(newline)
+
+            for (record in records) {
+                val evidenceRows = mutableListOf<String>()
+                var scoreSum = 0.0
+
+                for (evidenceScore in record.scores.sortedBy { it.score }.reversed()) {
+                    with(evidenceScore) {
+                        val row = listOf(
+                            "",
+                            event,
+                            scoringMatch.variantMatch.toString(),
+                            scoringMatch.tumorMatch.toString(),
+                            evidenceLevelDetails.toString(),
+                            score.toString(),
+                            evidenceDescription
+                        ).joinToString(delimiter)
+                        evidenceRows += row
+                    }
+                    scoreSum += evidenceScore.score
+                }
+
+                val summaryRow = listOf(
+                    record.treatment,
+                    "",
+                    "",
+                    "",
+                    "",
+                    scoreSum.toString(),
+                    ""
+                ).joinToString(delimiter)
+                stringBuilder.append(summaryRow).append(newline)
+                evidenceRows.forEach { stringBuilder.append(it).append(newline) }
+            }
+
+            Files.writeString(Path.of(outputTsvPath), stringBuilder.toString())
         }
-
-        val summaryRow = listOf(
-            record.treatment,
-            "",
-            "",
-            "",
-            "",
-            scoreSum.toString(),
-            ""
-        ).joinToString(delimiter)
-        stringBuilder.append(summaryRow).append(newline)
-        evidenceRows.forEach { stringBuilder.append(it).append(newline) }
     }
-
-    Files.writeString(Path.of(outputTsvPath), stringBuilder.toString())
 }
