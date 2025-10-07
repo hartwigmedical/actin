@@ -77,7 +77,8 @@ class ActionabilityMatcher(
     private fun logIndirectEvidence(
         variant: Variant,
         indirectEvidences: List<EfficacyEvidence>,
-        directMatches: Set<Pair<EfficacyEvidence, MolecularCriterium>>?
+        directMatches: Set<Pair<EfficacyEvidence, MolecularCriterium>>?,
+        detailed: Boolean = false
     ) {
         val uniqueTreatmentCount = indirectEvidences.map { it.treatment().name() }.toSet().size
         val directTreatmentNames = directMatches
@@ -89,7 +90,7 @@ class ActionabilityMatcher(
             .filterNot { directTreatmentNames.contains(it) }
             .toSet()
         logger.info(
-            "Retaining {} indirect evidence matches ({} unique treatments, {} novel treatments: {}) for variant {}",
+            "Found {} indirect evidence matches ({} unique treatments, {} novel treatments: {}) for variant {}",
             indirectEvidences.size,
             uniqueTreatmentCount,
             uniqueNovelTreatments.size,
@@ -97,8 +98,8 @@ class ActionabilityMatcher(
             variant.event
         )
 
-        if (indirectEvidences.isNotEmpty()) {
-            logger.info("Retained indirect evidence details for variant {}:", variant.event)
+        if (detailed && indirectEvidences.isNotEmpty()) {
+            logger.info("Found indirect evidence details for variant {}:", variant.event)
             indirectEvidences
                 .sortedWith(compareBy({ it.evidenceLevel() }, { it.treatment().name() }))
                 .forEach { evidence ->
