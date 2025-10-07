@@ -38,16 +38,14 @@ class PanelSpecificationsTest {
     @Test
     fun `Should resolve a panels specification from the set of all specification by name and negative results`() {
         val panelSpec = PanelTestSpecification("panel", null)
-        val negativeResults = setOf(SequencedNegativeResult(GENE, MolecularTestTarget.FUSION))
-        val specification = PanelSpecifications(
-            mapOf(
-                panelSpec to listOf(
-                    PanelGeneSpecification(
-                        GENE,
-                        listOf(MolecularTestTarget.MUTATION)
-                    )
-                )
+        val negativeResults =
+            setOf(
+                SequencedNegativeResult(GENE, MolecularTestTarget.FUSION),
+                SequencedNegativeResult(GENE, MolecularTestTarget.MUTATION)
             )
+        
+        val specification = PanelSpecifications(
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
         ).panelTargetSpecification(panelSpec, negativeResults)
         assertThat(specification.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION) }).isTrue()
     }
