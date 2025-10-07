@@ -25,10 +25,11 @@ class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<
                         "is not found in panel specifications. Check curation and map to one " +
                         "of [${molecularTargetsPerTest.keys.joinToString()}] or add this panel to the specification TSV."
             )
-        val negativeTargets = (negativeResults?.associate { it.gene to listOf(it.molecularTestTarget) } ?: emptyMap())
+        val negativeTargets =
+            (negativeResults?.groupBy(keySelector = { it.gene }, valueTransform = { it.molecularTestTarget }) ?: emptyMap())
         val mergedTargets = (baseTargets.keys + negativeTargets.keys)
             .associateWith { gene ->
-                (baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())
+                ((baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())).distinct()
             }
         return PanelTargetSpecification(mergedTargets)
     }
