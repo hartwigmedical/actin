@@ -5,7 +5,10 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 
-class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>) {
+class PanelSpecifications(
+    private val knownGenes: Set<String>,
+    panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>
+) {
 
     private val molecularTargetsPerTest: Map<PanelTestSpecification, Map<String, List<MolecularTestTarget>>> =
         panelSpecifications.mapValues { (_, geneSpecs) ->
@@ -19,10 +22,18 @@ class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<
         testSpec: PanelTestSpecification,
         negativeResults: Set<SequencedNegativeResult>?
     ): PanelTargetSpecification {
+        val unknownGenes = (negativeResults?.map(SequencedNegativeResult::gene)?.toSet() ?: emptySet()) - knownGenes
+        if (unknownGenes.isNotEmpty()) {
+            throw IllegalStateException(
+                "${logPanelName(testSpec)} has negative results associated containing " +
+                        "gene(s) not present in SERVE known genes: ${unknownGenes.joinToString()}." +
+                        "Correct this in the feed UI before continuing."
+            )
+        }
+
         val baseTargets = molecularTargetsPerTest[testSpec]
             ?: throw IllegalStateException(
-                "Panel [${testSpec.testName}${testSpec.versionDate?.let { " version $it" } ?: ""}] " +
-                        "is not found in panel specifications. Check curation and map to one " +
+                "${logPanelName(testSpec)} is not found in panel specifications. Check curation and map to one " +
                         "of [${molecularTargetsPerTest.keys.joinToString()}] or add this panel to the specification TSV."
             )
         val negativeTargets =
@@ -33,4 +44,6 @@ class PanelSpecifications(panelSpecifications: Map<PanelTestSpecification, List<
             }
         return PanelTargetSpecification(mergedTargets)
     }
+
+    fun logPanelName(testSpec: PanelTestSpecification) = "Panel [${testSpec.testName}${testSpec.versionDate?.let { " version $it" } ?: ""}]"
 }

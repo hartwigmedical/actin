@@ -54,6 +54,7 @@ class PanelAnnotatorTest {
             panelVirusAnnotator,
             panelDriverAttributeAnnotator,
             PanelSpecifications(
+                setOf(GENE, OTHER_GENE),
                 mapOf(
                     PanelTestSpecification(TEST_NAME) to listOf(
                         PanelGeneSpecification(
@@ -116,4 +117,5 @@ class PanelAnnotatorTest {
     private fun createTestSequencingTest(): SequencingTest {
         return SequencingTest(test = TEST_NAME, knownSpecifications = true)
     }
+
 }

@@ -43,7 +43,7 @@ import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
-private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
+val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
     fun run() = runBlocking {

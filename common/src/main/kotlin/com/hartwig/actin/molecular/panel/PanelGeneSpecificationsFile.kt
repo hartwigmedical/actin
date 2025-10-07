@@ -20,8 +20,9 @@ object PanelGeneSpecificationsFile {
             .readAll()
     }
 
-    fun create(panelGeneListTsvPath: String): PanelSpecifications {
+    fun create(panelGeneListTsvPath: String, knownGenes: Set<String>): PanelSpecifications {
         return PanelSpecifications(
+            knownGenes,
             parseEntries(panelGeneListTsvPath).groupBy(
                 { PanelTestSpecification(it.testName, it.versionDate) },
                 { it.toPanelGeneSpecification() })

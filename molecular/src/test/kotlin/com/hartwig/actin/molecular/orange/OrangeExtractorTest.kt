@@ -24,7 +24,10 @@ import java.time.LocalDate
 
 class OrangeExtractorTest {
 
-    private val interpreter = OrangeExtractor(TestGeneFilterFactory.createAlwaysValid(), PanelSpecifications(emptyMap()))
+    private val interpreter = OrangeExtractor(
+        TestGeneFilterFactory.createAlwaysValid(),
+        PanelSpecifications(emptySet(), emptyMap())
+    )
 
     @Test
     fun `Should not crash on minimal orange record`() {
@@ -199,4 +202,5 @@ class OrangeExtractorTest {
                     )
             )
     }
+
 }

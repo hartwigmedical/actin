@@ -19,6 +19,8 @@ private const val GENE = "gene"
 private const val ANOTHER_GENE = "another gene"
 private const val TEST = "test"
 
+private val KNOWN_GENES = setOf(GENE, ANOTHER_GENE)
+
 class PanelSpecificationsTest {
 
     @Test
@@ -45,6 +47,7 @@ class PanelSpecificationsTest {
             )
         
         val specification = PanelSpecifications(
+            KNOWN_GENES,
             mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
         ).panelTargetSpecification(panelSpec, negativeResults)
         assertThat(specification.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION) }).isTrue()
@@ -53,9 +56,25 @@ class PanelSpecificationsTest {
     @Test
     fun `Should throw illegal state exception when a panel name is not found`() {
         assertThatThrownBy {
-            val specifications = PanelSpecifications(emptyMap())
+            val specifications = PanelSpecifications(KNOWN_GENES, emptyMap())
             specifications.panelTargetSpecification(PanelTestSpecification("panel"), null)
         }.isInstanceOfAny(IllegalStateException::class.java)
+    }
+
+    @Test
+    fun `Should throw illegal state when negative results contain unknown genes`() {
+        val panelSpec = PanelTestSpecification("panel", null)
+        val specifications = PanelSpecifications(
+            KNOWN_GENES,
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
+        )
+
+        assertThatThrownBy {
+            specifications.panelTargetSpecification(
+                panelSpec,
+                setOf(SequencedNegativeResult("unknown", MolecularTestTarget.MUTATION))
+            )
+        }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
@@ -138,4 +157,5 @@ class PanelSpecificationsTest {
 
     private fun predicateForTargets(target: MolecularTestTarget): (t: List<MolecularTestTarget>) -> Boolean =
         { it.contains(target) }
+
 }
