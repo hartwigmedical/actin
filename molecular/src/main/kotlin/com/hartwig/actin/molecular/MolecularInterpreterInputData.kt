@@ -2,13 +2,13 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -101,12 +101,15 @@ object InputDataLoader {
                 }
             }
             val panelSpecifications = async {
+
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
-                    val panelSpecifications =
-                        config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it) }
-                            ?: PanelSpecifications(emptyMap())
-                    panelSpecifications
+                    val serveRecord =
+                        deferredServeDatabase.await().records()[ServeLoader.toServeRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)]
+                            ?: throw IllegalStateException("Serve record not present for ref genome version ${CLINICAL_TESTS_REF_GENOME_VERSION.name} in ${config.serveDirectory}")
+                    val knownGenes = serveRecord.knownEvents().genes().map { it.gene() }.toSet()
+                    config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it, knownGenes) }
+                        ?: PanelSpecifications(emptySet(), emptyMap())
                 }
             }
 
@@ -122,4 +125,3 @@ object InputDataLoader {
             )
         }
 }
-
