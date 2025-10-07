@@ -106,7 +106,8 @@ object InputDataLoader {
                     LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
                     val serveRecord =
                         deferredServeDatabase.await().records()[ServeLoader.toServeRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)]
-                    val knownGenes = serveRecord?.knownEvents()?.genes()?.toSet()?.map { it.gene() }?.toSet() ?: emptySet()
+                            ?: throw IllegalStateException("Serve record not present for ref genome version ${CLINICAL_TESTS_REF_GENOME_VERSION.name} in ${config.serveDirectory}")
+                    val knownGenes = serveRecord.knownEvents().genes().map { it.gene() }.toSet()
                     config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it, knownGenes) }
                         ?: PanelSpecifications(emptySet(), emptyMap())
                 }

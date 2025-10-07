@@ -22,14 +22,8 @@ class PanelSpecifications(
         testSpec: PanelTestSpecification,
         negativeResults: Set<SequencedNegativeResult>?
     ): PanelTargetSpecification {
-        val unknownGenes = (negativeResults?.map(SequencedNegativeResult::gene)?.toSet() ?: emptySet()) - knownGenes
-        if (unknownGenes.isNotEmpty()) {
-            throw IllegalStateException(
-                "${logPanelName(testSpec)} has negative results associated containing " +
-                        "gene(s) not present in SERVE known genes: ${unknownGenes.joinToString()}." +
-                        "Correct this in the feed UI before continuing."
-            )
-        }
+
+        checkForUnknownGenesInNegativeResults(negativeResults, testSpec)
 
         val baseTargets = molecularTargetsPerTest[testSpec]
             ?: throw IllegalStateException(
@@ -43,6 +37,21 @@ class PanelSpecifications(
                 ((baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())).distinct()
             }
         return PanelTargetSpecification(mergedTargets)
+    }
+
+    private fun checkForUnknownGenesInNegativeResults(
+        negativeResults: Set<SequencedNegativeResult>?,
+        testSpec: PanelTestSpecification
+    ) {
+        negativeResults?.map(SequencedNegativeResult::gene)?.toSet()
+            ?.let { it - knownGenes }.takeIf { it?.isNotEmpty() == true }
+            ?.let { unknownGenes ->
+                throw IllegalStateException(
+                    "${logPanelName(testSpec)} has negative results associated containing " +
+                            "gene(s) not present in SERVE known genes: ${unknownGenes.joinToString()}." +
+                            "Correct this in the feed UI before continuing."
+                )
+            }
     }
 
     fun logPanelName(testSpec: PanelTestSpecification) = "Panel [${testSpec.testName}${testSpec.versionDate?.let { " version $it" } ?: ""}]"
