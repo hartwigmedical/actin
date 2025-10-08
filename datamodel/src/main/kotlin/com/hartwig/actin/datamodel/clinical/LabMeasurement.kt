@@ -260,6 +260,7 @@ enum class LabMeasurement(val display: String, val defaultUnit: LabUnit) : Displ
     TRANSFERRIN_SATURATION("TSAT", LabUnit.PERCENTAGE),
     TRANSFERRIN("transferrin", LabUnit.GRAMS_PER_LITER),
     TRIGLYCERIDE("triglyceride", LabUnit.MILLIMOLES_PER_LITER),
+    TRYPTASE("tryptase", LabUnit.MICROGRAMS_PER_LITER),
     UREA_URINE("urea in urine", LabUnit.MILLIMOLES_PER_LITER),
     UREA("urea", LabUnit.MILLIMOLES_PER_LITER),
     URIC_ACID("uric acid", LabUnit.MILLIMOLES_PER_LITER),
