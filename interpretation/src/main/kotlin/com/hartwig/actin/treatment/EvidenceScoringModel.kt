@@ -2,12 +2,14 @@ package com.hartwig.actin.treatment
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class EvidenceScore(
     val event: String,
     val scoringMatch: ScoringMatch,
+    val evidenceLevel: EvidenceLevel,
     val evidenceLevelDetails: EvidenceLevelDetails,
     val cancerType: CancerType,
     val score: Double,
@@ -42,6 +44,7 @@ class EvidenceScoringModel(val config: ScoringConfig) {
         val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
         return EvidenceScore(
             scoringMatch = scoringMatch,
+            evidenceLevel = treatment.evidenceLevel,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             score = factor * score.toDouble(),
             event = treatment.molecularMatch.sourceEvent,

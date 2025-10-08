@@ -131,7 +131,17 @@ class TreatmentRankingModel(
 
             val delimiter = "\t"
             val newline = "\n"
-            val headerColumns = listOf("Treatment", "Variant", "Variant Match", "Tumor Match", "Approval", "Score", "Description")
+            val headerColumns = listOf(
+                "Treatment",
+                "Variant",
+                "Variant Match",
+                "Tumor Match",
+                "Approval",
+                "Evidence Level",
+                "Cancer Type",
+                "Score",
+                "Description"
+            )
             val stringBuilder = StringBuilder()
 
             stringBuilder.append(headerColumns.joinToString(delimiter)).append(newline)
@@ -148,6 +158,8 @@ class TreatmentRankingModel(
                             scoringMatch.variantMatch.toString(),
                             scoringMatch.tumorMatch.toString(),
                             evidenceLevelDetails.toString(),
+                            evidenceLevel.name,
+                            cancerType.matchedCancerType,
                             score.toString(),
                             evidenceDescription
                         ).joinToString(delimiter)
@@ -158,6 +170,8 @@ class TreatmentRankingModel(
 
                 val summaryRow = listOf(
                     record.treatment,
+                    "",
+                    "",
                     "",
                     "",
                     "",
