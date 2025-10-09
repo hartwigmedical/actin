@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.molecular.filter.GeneFilter
 import java.io.File
 
 object PanelGeneSpecificationsFile {
@@ -20,9 +21,9 @@ object PanelGeneSpecificationsFile {
             .readAll()
     }
 
-    fun create(panelGeneListTsvPath: String, knownGenes: Set<String>): PanelSpecifications {
+    fun create(panelGeneListTsvPath: String, geneFilter: GeneFilter): PanelSpecifications {
         return PanelSpecifications(
-            knownGenes,
+            geneFilter,
             parseEntries(panelGeneListTsvPath).groupBy(
                 { PanelTestSpecification(it.testName, it.versionDate) },
                 { it.toPanelGeneSpecification() })

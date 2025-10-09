@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
+import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
@@ -26,7 +27,7 @@ class OrangeExtractorTest {
 
     private val interpreter = OrangeExtractor(
         TestGeneFilterFactory.createAlwaysValid(),
-        PanelSpecifications(emptySet(), emptyMap())
+        PanelSpecifications(AlwaysValidFilter(), emptyMap())
     )
 
     @Test

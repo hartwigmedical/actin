@@ -7,17 +7,18 @@ import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencedVirus
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
+import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.molecular.filter.SpecificGenesFilter
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val OTHER_GENE = "other_gene"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
@@ -54,7 +55,7 @@ class PanelAnnotatorTest {
             panelVirusAnnotator,
             panelDriverAttributeAnnotator,
             PanelSpecifications(
-                setOf(GENE, OTHER_GENE),
+                SpecificGenesFilter(setOf(GENE, OTHER_GENE)),
                 mapOf(
                     PanelTestSpecification(TEST_NAME) to listOf(
                         PanelGeneSpecification(

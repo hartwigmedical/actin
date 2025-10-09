@@ -2,13 +2,16 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.molecular.filter.AlwaysValidFilter
+import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
-import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -32,7 +35,8 @@ data class MolecularInterpreterInputData(
     val ensemblDataCache: EnsemblDataCache,
     val dndsDatabase: DndsDatabase,
     val knownFusionCache: KnownFusionCache,
-    val panelSpecifications: PanelSpecifications
+    val panelSpecifications: PanelSpecifications,
+    val geneFilter: GeneFilter
 )
 
 object InputDataLoader {
@@ -100,16 +104,20 @@ object InputDataLoader {
                     knownFusionCache
                 }
             }
-            val panelSpecifications = async {
+
+            val deferredGeneFilter = async {
+                val serveRecord =
+                    deferredServeDatabase.await().records()[ServeLoader.toServeRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)]
+                        ?: throw IllegalStateException("Serve record not present for ref genome version ${CLINICAL_TESTS_REF_GENOME_VERSION.name} in ${config.serveDirectory}")
+                GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
+            }
+
+            val deferredPanelSpecifications = async {
 
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
-                    val serveRecord =
-                        deferredServeDatabase.await().records()[ServeLoader.toServeRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)]
-                            ?: throw IllegalStateException("Serve record not present for ref genome version ${CLINICAL_TESTS_REF_GENOME_VERSION.name} in ${config.serveDirectory}")
-                    val knownGenes = serveRecord.knownEvents().genes().map { it.gene() }.toSet()
-                    config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it, knownGenes) }
-                        ?: PanelSpecifications(emptySet(), emptyMap())
+                    config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it, deferredGeneFilter.await()) }
+                        ?: PanelSpecifications(AlwaysValidFilter(), emptyMap())
                 }
             }
 
@@ -121,7 +129,9 @@ object InputDataLoader {
                 ensemblDataCache = deferredEnsemblDataCache.await(),
                 dndsDatabase = deferredDndsDatabase.await(),
                 knownFusionCache = deferredKnownFusionCache.await(),
-                panelSpecifications = panelSpecifications.await()
+                panelSpecifications = deferredPanelSpecifications.await(),
+                geneFilter = deferredGeneFilter.await()
             )
         }
 }
+

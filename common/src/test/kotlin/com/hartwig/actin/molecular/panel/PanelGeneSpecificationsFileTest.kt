@@ -2,12 +2,11 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.testutil.ResourceLocator
 import java.time.LocalDate
 import org.assertj.core.api.Assertions
 import org.junit.Test
-
-private val KNOWN_GENES = setOf("ABCB1", "EGFR", "ALK", "ROS1")
 
 class PanelGeneSpecificationsFileTest {
 
@@ -15,7 +14,7 @@ class PanelGeneSpecificationsFileTest {
     fun `Should read from panel gene list TSV and match gene lists on test name regex`() {
         val geneList = PanelGeneSpecificationsFile.create(
             ResourceLocator.resourceOnClasspath("panel_specifications/panel_specifications.tsv"),
-            KNOWN_GENES
+            AlwaysValidFilter()
         )
         val oncoPanel = geneList.panelTargetSpecification(PanelTestSpecification("oncopanel", LocalDate.of(2022, 1, 1)), null)
         Assertions.assertThat(oncoPanel.testsGene("ABCB1") { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
@@ -32,7 +31,7 @@ class PanelGeneSpecificationsFileTest {
     fun `Should group genes correctly by test specification`() {
         val geneList = PanelGeneSpecificationsFile.create(
             ResourceLocator.resourceOnClasspath("panel_specifications/panel_specifications.tsv"),
-            KNOWN_GENES
+            AlwaysValidFilter()
         )
         val (oldOncoPanel, newOncoPanel) = listOf(LocalDate.of(2022, 1, 1), LocalDate.of(2023, 1, 1)).map {
             geneList.panelTargetSpecification(PanelTestSpecification("oncopanel", it), null)
