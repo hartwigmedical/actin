@@ -10,6 +10,11 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
+import com.hartwig.actin.molecular.evidence.actionability.GeneEffectKey
+import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
+import com.hartwig.actin.molecular.evidence.actionability.toGroupedProteinEffect
+import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
+import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import io.mockk.every
 import io.mockk.mockk
@@ -19,6 +24,11 @@ import org.junit.Test
 private val brafActionableHotspot = TestServeMolecularFactory.hotspot(
     TestServeMolecularFactory.createVariantAnnotation(
         gene = "BRAF", chromosome = "7", position = 140453136, ref = "T", alt = "A"
+    )
+)
+private val relatedBrafActionableHotspot = TestServeMolecularFactory.hotspot(
+    TestServeMolecularFactory.createVariantAnnotation(
+        gene = "BRAF", chromosome = "7", position = 140453139, ref = "G", alt = "C"
     )
 )
 private val brafMolecularTestVariant = TestVariantFactory.createMinimal().copy(
@@ -54,7 +64,7 @@ class EvidenceAnnotatorTest {
             indications = setOf(indication),
             title = "title"
         )
-        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial))
+        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial), IndirectEvidenceMatcher.empty())
 
         val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
 
@@ -81,7 +91,7 @@ class EvidenceAnnotatorTest {
 
         val evidenceAnnotator = evidenceAnnotator(
             clinicalEvidenceFactory,
-            ActionabilityMatcher(emptyList(), emptyList())
+            ActionabilityMatcher(emptyList(), emptyList(), IndirectEvidenceMatcher.empty())
         )
 
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
@@ -98,6 +108,48 @@ class EvidenceAnnotatorTest {
         val updatedTest = evidenceAnnotator.annotate(molecularTest)
         assertThat(updatedTest.drivers.variants).hasSize(1)
         assertThat(updatedTest.drivers.variants).isEqualTo(molecularTest.drivers.variants)
+    }
+
+    @Test
+    fun `Should annotate variants with indirect evidence`() {
+        val criterium = ImmutableMolecularCriterium.builder()
+            .addAllHotspots(listOf(relatedBrafActionableHotspot))
+            .build()
+        val baseEvidence = TestServeEvidenceFactory.create(
+            molecularCriterium = criterium,
+            treatment = "Related Treatment"
+        )
+        val evidence = ImmutableEfficacyEvidence.builder()
+            .from(baseEvidence)
+            .treatment(
+                ImmutableTreatment.builder()
+                    .from(baseEvidence.treatment())
+                    .treatmentApproachesDrugClass(listOf("PIK3CA Inhibitor"))
+                    .build()
+            )
+            .build()
+
+        val indication = evidence.indication()
+        val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver> {
+            every { resolve(indication) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+        }
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, patientGender = null)
+        val relatedMatcher = IndirectEvidenceMatcher(
+            mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to setOf(evidence))
+        )
+        val actionabilityMatcher = ActionabilityMatcher(emptyList(), emptyList(), relatedMatcher)
+
+        val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
+
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant)))
+
+        val updatedTest = evidenceAnnotator.annotate(molecularTest)
+        val annotatedVariant = updatedTest.drivers.variants.first()
+
+        assertThat(annotatedVariant.evidence.treatmentEvidence).isEmpty()
+        assertThat(annotatedVariant.evidence.indirectTreatmentEvidence)
+            .anySatisfy { assertThat(it.treatment).isEqualTo("Related Treatment") }
     }
 
     private fun evidenceAnnotator(

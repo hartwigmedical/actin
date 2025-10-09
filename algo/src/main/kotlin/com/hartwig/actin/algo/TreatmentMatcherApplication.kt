@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
+import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import kotlinx.coroutines.runBlocking
@@ -39,8 +40,10 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val molecularInputChecker = MolecularInputChecker.createAnyGeneValid()
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver =
-            FunctionInputResolver(inputData.doidModel, inputData.icdModel, molecularInputChecker,
-                treatmentDatabase, MedicationCategories.create(inputData.atcTree))
+            FunctionInputResolver(
+                inputData.doidModel, inputData.icdModel, molecularInputChecker,
+                treatmentDatabase, MedicationCategories.create(inputData.atcTree)
+            )
         val configuration = AlgoConfiguration.create(config.overridesYaml)
         LOGGER.info(" Loaded algo config: $configuration")
 
@@ -66,10 +69,15 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 evidences = inputData.serveRecord.evidences(),
                 treatmentDatabase = treatmentDatabase,
                 molecularTests = inputData.patient.molecularTests,
-                actionabilityMatcher = ActionabilityMatcher(inputData.serveRecord.evidences(), inputData.serveRecord.trials())
+                actionabilityMatcher = ActionabilityMatcher(
+                    inputData.serveRecord.evidences(),
+                    inputData.serveRecord.trials(),
+                    IndirectEvidenceMatcher.empty()
+                )
             )
 
-        val treatmentMatcher = TreatmentMatcher.create(resources, inputData.trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
+        val treatmentMatcher =
+            TreatmentMatcher.create(resources, inputData.trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         LOGGER.info("Printing treatment match")
