@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilit
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.GeneEffectKey
 import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
+import com.hartwig.actin.molecular.evidence.actionability.toGroupedProteinEffect
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
@@ -134,7 +135,7 @@ class EvidenceAnnotatorTest {
         }
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, patientGender = null)
         val relatedMatcher = IndirectEvidenceMatcher(
-            mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect) to setOf(evidence))
+            mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to setOf(evidence))
         )
         val actionabilityMatcher = ActionabilityMatcher(emptyList(), emptyList(), relatedMatcher)
 

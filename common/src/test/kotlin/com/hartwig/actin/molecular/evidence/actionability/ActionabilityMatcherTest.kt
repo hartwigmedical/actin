@@ -319,7 +319,7 @@ class ActionabilityMatcherTest {
             .build()
 
         val indirectEvidenceMatcher = IndirectEvidenceMatcher(
-            mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect) to setOf(evidence))
+            mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to setOf(evidence))
         )
         val matcher = ActionabilityMatcher(emptyList(), emptyList(), indirectEvidenceMatcher)
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
@@ -1040,7 +1040,7 @@ class ActionabilityMatcherTest {
 
         val indirectEvidenceMatcher = IndirectEvidenceMatcher(
             mapOf(
-                GeneEffectKey(krasMolecularTestVariant.gene, krasMolecularTestVariant.proteinEffect) to
+                GeneEffectKey(krasMolecularTestVariant.gene, krasMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to
                         linkedSetOf(genericIndirect)
             )
         )

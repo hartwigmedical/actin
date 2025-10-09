@@ -18,15 +18,22 @@ import org.apache.logging.log4j.Logger
 
 data class GeneEffectKey(
     val gene: String,
-    val proteinEffect: ProteinEffect
+    val groupedProteinEffect: GroupedProteinEffect
 )
 
-private val SUPPORTED_PROTEIN_EFFECTS = setOf(
-    ProteinEffect.GAIN_OF_FUNCTION,
-    ProteinEffect.GAIN_OF_FUNCTION_PREDICTED,
-    ProteinEffect.LOSS_OF_FUNCTION,
-    ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
-)
+enum class GroupedProteinEffect {
+    UNSUPPORTED,
+    LOSS_OF_FUNCTION_OR_LOSS_OF_FUNCTION_PREDICTED,
+    GAIN_OF_FUNCTION_OR_GAIN_OF_FUNCTION_PREDICTED
+}
+
+fun ProteinEffect.toGroupedProteinEffect(): GroupedProteinEffect {
+    return when (this) {
+        ProteinEffect.LOSS_OF_FUNCTION, ProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> GroupedProteinEffect.LOSS_OF_FUNCTION_OR_LOSS_OF_FUNCTION_PREDICTED
+        ProteinEffect.GAIN_OF_FUNCTION, ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> GroupedProteinEffect.GAIN_OF_FUNCTION_OR_GAIN_OF_FUNCTION_PREDICTED
+        else -> GroupedProteinEffect.UNSUPPORTED
+    }
+}
 
 class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<GeneEffectKey, Set<EfficacyEvidence>>) {
 
@@ -41,7 +48,7 @@ class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<Ge
     }
 
     private fun findAssociatedEvidence(gene: String, proteinEffect: ProteinEffect): Set<EfficacyEvidence> {
-        return associatedEvidenceByGeneEffect[GeneEffectKey(gene, proteinEffect)] ?: emptySet()
+        return associatedEvidenceByGeneEffect[GeneEffectKey(gene, proteinEffect.toGroupedProteinEffect())] ?: emptySet()
     }
 
     companion object {
@@ -122,8 +129,10 @@ private fun toGeneEffectMatch(
     knownHotspot: KnownHotspot,
     evidence: EfficacyEvidence
 ): Pair<GeneEffectKey, EfficacyEvidence>? {
-    val proteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect())
-    return proteinEffect
-        .takeIf { it in SUPPORTED_PROTEIN_EFFECTS }
-        ?.let { GeneEffectKey(knownHotspot.gene(), it) to evidence }
+    val groupedProteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect()).toGroupedProteinEffect()
+    return if (groupedProteinEffect == GroupedProteinEffect.UNSUPPORTED) {
+        null
+    } else {
+        GeneEffectKey(knownHotspot.gene(), groupedProteinEffect) to evidence
+    }
 }
