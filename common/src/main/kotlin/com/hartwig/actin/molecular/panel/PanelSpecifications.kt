@@ -45,7 +45,7 @@ class PanelSpecifications(
         testSpec: PanelTestSpecification
     ) {
         negativeResults?.map(SequencedNegativeResult::gene)?.toSet()
-            ?.filterNot { geneFilter.include(it) }.takeIf { it?.isNotEmpty() == true }
+            ?.filterNot(geneFilter::include).takeIf { it?.isNotEmpty() == true }
             ?.let { unknownGenes ->
                 throw IllegalStateException(
                     "${logPanelName(testSpec)} has negative results associated containing " +
