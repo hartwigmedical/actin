@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -11,7 +12,6 @@ import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
-import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -134,3 +134,4 @@ object InputDataLoader {
             )
         }
 }
+
