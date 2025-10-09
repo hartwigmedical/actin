@@ -4,6 +4,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceKey
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceKeyTest
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -48,10 +50,10 @@ class TrialsProviderTest {
 
     @Test
     fun `Should filter internal trials`() {
-        val notFiltered = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(NCT_02))
+        val notFiltered = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(NCT_02))
         assertThat(
             setOf(
-                EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(nctId = NCT_01)),
+                EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(nctId = NCT_01)),
                 notFiltered
             ).filterInternalTrials(setOf(NCT_01, NCT_03))
         ).containsExactly(notFiltered)
@@ -100,17 +102,17 @@ class TrialsProviderTest {
                 molecularInclusionEvents = setOf(EGFR_TARGET)
             )
         )
-        val filtered = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL)
-        val notFiltered = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL)
+        val filtered = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL)
+        val notFiltered = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(TMB_TARGET), BASE_EXTERNAL_TRIAL)
         val result = setOf(filtered, notFiltered).filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(interpretedCohorts)
         assertThat(result).containsExactly(notFiltered)
     }
 
     @Test
     fun `Should filter molecular criteria already matched in other trials`() {
-        val otherTrial = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL)
-        val filtered = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL)
-        val notFiltered = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL)
+        val otherTrial = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL)
+        val filtered = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL)
+        val notFiltered = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(TMB_TARGET), BASE_EXTERNAL_TRIAL)
         val result = setOf(filtered, notFiltered).filterMolecularCriteriaAlreadyPresentInTrials(setOf(otherTrial))
         assertThat(result).containsExactly(notFiltered)
     }
@@ -118,8 +120,8 @@ class TrialsProviderTest {
     @Test
     fun `externalTrialsUnfiltered should not filter external trials`() {
         val country1Trial1 =
-            EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_01))
-        val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+            EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_01))
+        val country2Trial1 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(TMB_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
 
         val externalTrialsSet: Set<EventWithExternalTrial> = setOf(country1Trial1, country2Trial1)
         val trialsProvider =
@@ -134,10 +136,10 @@ class TrialsProviderTest {
 
     @Test
     fun `externalTrials should filter internal trials and return filtered and original equal with extended mode`() {
-        val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
+        val country1Trial1 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
         val country1Trial2 =
-            EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
-        val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
+            EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
+        val country2Trial1 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(TMB_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
 
         val externalTrialsSet: Set<EventWithExternalTrial> = setOf(country1Trial1, country1Trial2, country2Trial1)
         val trialsProvider =
@@ -153,15 +155,15 @@ class TrialsProviderTest {
     @Test
     fun `externalTrials should filter internal trials and filtered and original should be different without extended mode`() {
         // Should be filtered based on INTERNAL_TRIAL_IDS
-        val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
+        val country1Trial1 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
         val country1Trial2 =
-            EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
+            EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(TMB_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
         // Should be filtered based on INTERNAL_TRIAL_IDS
-        val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
-        val country2Trial2 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+        val country2Trial1 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(TMB_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
+        val country2Trial2 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
         // Should be filtered based on national trials with same molecular criteria
-        val country2Trial3 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
-        val country2Trial4 = EventWithExternalTrial(ROS1_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+        val country2Trial3 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(TMB_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
+        val country2Trial4 = EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(ROS1_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
 
         val externalTrialsSet: Set<EventWithExternalTrial> =
             setOf(country1Trial1, country1Trial2, country2Trial1, country2Trial2, country2Trial3, country2Trial4)
@@ -183,6 +185,6 @@ class TrialsProviderTest {
             country.copy(hospitalsPerCity = hospitals)
         }.toSortedSet(Comparator.comparing { it.country })
 
-        return EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countries))
+        return EventWithExternalTrial(AggregatedEvidenceKeyTest.createAggregatedEvidenceKey(EGFR_TARGET), BASE_EXTERNAL_TRIAL.copy(countries = countries))
     }
 }
