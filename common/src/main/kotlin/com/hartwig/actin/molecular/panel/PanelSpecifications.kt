@@ -4,9 +4,10 @@ import com.hartwig.actin.datamodel.clinical.SequencedNegativeResult
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.molecular.filter.GeneFilter
 
 class PanelSpecifications(
-    private val knownGenes: Set<String>,
+    private val geneFilter: GeneFilter,
     panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>
 ) {
 
@@ -44,7 +45,7 @@ class PanelSpecifications(
         testSpec: PanelTestSpecification
     ) {
         negativeResults?.map(SequencedNegativeResult::gene)?.toSet()
-            ?.let { it - knownGenes }.takeIf { it?.isNotEmpty() == true }
+            ?.filterNot { geneFilter.include(it) }.takeIf { it?.isNotEmpty() == true }
             ?.let { unknownGenes ->
                 throw IllegalStateException(
                     "${logPanelName(testSpec)} has negative results associated containing " +
