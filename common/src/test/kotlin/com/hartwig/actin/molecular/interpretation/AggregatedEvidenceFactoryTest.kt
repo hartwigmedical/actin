@@ -60,7 +60,12 @@ class AggregatedEvidenceFactoryTest {
         val characteristics = TestMolecularFactory.createExhaustiveWholeGenomeTest().characteristics
         val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
 
-        assertThat(evidence.treatmentEvidencePerEvent).hasSize(5)
+        assertThat(evidence.treatmentEvidencePerEvent.map { it.key }).containsExactlyInAnyOrder(
+            "MSS",
+            "HRP",
+            "TMB High",
+            "TML High"
+        )
     }
 
     @Test
