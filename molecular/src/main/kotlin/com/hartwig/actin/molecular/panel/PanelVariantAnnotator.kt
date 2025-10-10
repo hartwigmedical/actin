@@ -123,6 +123,14 @@ class PanelVariantAnnotator(
         clonalLikelihood = null,
         phaseGroups = null,
         isCancerAssociatedVariant = false,
+        sourceEvent = "${variant.gene} ${
+            formatVariantImpact(
+                variant.hgvsProteinImpact,
+                variant.hgvsCodingImpact,
+                paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
+                paveResponse.impact.canonicalEffects.contains(PaveVariantEffect.UPSTREAM_GENE),
+                paveResponse.impact.canonicalEffects.joinToString("&") { it.toString() })
+        }",
         isReportable = true,
         event = "${variant.gene} ${eventString(paveResponse)}",
         driverLikelihood = null,

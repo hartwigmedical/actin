@@ -65,6 +65,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                     variantAlleleFrequency = variant.adjustedVAF(),
                     canonicalImpact = extractCanonicalImpact(variant),
                     otherImpacts = extractOtherImpacts(variant),
+                    sourceEvent = event,
                     variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                     totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
                     isBiallelic = variant.biallelic(),

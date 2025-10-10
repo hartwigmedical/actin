@@ -5,17 +5,17 @@ import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 object FormatFunctions {
     
     fun formatVariantImpact(
-        hgvsProteinImpact: String,
-        hgvsCodingImpact: String,
+        hgvsProteinImpact: String?,
+        hgvsCodingImpact: String?,
         isSplice: Boolean,
         isUpstream: Boolean,
         effects: String
     ): String {
-        if (hgvsProteinImpact.isNotEmpty() && hgvsProteinImpact != "p.?") {
+        if (!hgvsProteinImpact.isNullOrEmpty() && hgvsProteinImpact != "p.?") {
             return forceSingleLetterAminoAcids(hgvsProteinImpact.removePrefix("p."))
         }
 
-        if (hgvsCodingImpact.isNotEmpty()) {
+        if (!hgvsCodingImpact.isNullOrEmpty()) {
             return if (isSplice) "$hgvsCodingImpact splice" else hgvsCodingImpact
         }
 

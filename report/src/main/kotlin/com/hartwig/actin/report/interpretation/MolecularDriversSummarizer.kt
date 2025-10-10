@@ -15,12 +15,16 @@ class MolecularDriversSummarizer private constructor(
     fun keyVariants(): List<String> {
         val highDriverVariants = drivers.variants.filter(::isReportableHighDriver)
         val variantsAssociatedWithDrugResistance = drivers.variants.filter { it.isReportable && it.isAssociatedWithDrugResistance == true }
-        return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { it.event }.sorted()
+        return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { formatEvent(it.event, it.sourceEvent) }.sorted()
     }
 
     fun otherVariants(): List<String> {
-        return drivers.variants.asSequence().filter { it.isReportable }.filterNot { it.event in keyVariants() }.toSet().map { it.event }
-            .sorted().toList()
+        return drivers.variants.asSequence().filter { it.isReportable }.map { formatEvent(it.event, it.sourceEvent) }
+            .filterNot { it in keyVariants() }.toSet().sorted().toList()
+    }
+
+    fun formatEvent(event: String, sourceEvent: String): String {
+        return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
     }
 
     fun keyAmplifiedGenes(): List<String> {
