@@ -34,7 +34,7 @@ class HasExhaustedSOCTreatmentsTest {
         EvaluatedTreatment(
             TreatmentCandidate(
                 TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                setOf(EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList()))
+                setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList()))
             ), listOf(EvaluationFactory.pass("Has MSI"))
         )
     )
@@ -151,7 +151,7 @@ class HasExhaustedSOCTreatmentsTest {
             EvaluatedTreatment(
                 TreatmentCandidate(
                     TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                    setOf(EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList()))
+                    setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList()))
                 ),
                 listOf(EvaluationFactory.undetermined("Cannot determine if MSI", isMissingMolecularResultForEvaluation = true))
             )

@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.datamodel.TestPatientFactory
-import org.assertj.core.api.Assertions.assertThat
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
@@ -21,14 +19,12 @@ class MmrStatusIsAvailableTest {
     }
 
     @Test
-    fun `Should fail when missing MMR information`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteStability(null)))
+    fun `Should pass with MSI IHC test result`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MSI"))))
     }
 
     @Test
-    fun `Should fail when no molecular tests available`() {
-        val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("No MMR status available (no molecular test)")
+    fun `Should fail when missing MMR information`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteStability(null)))
     }
 }

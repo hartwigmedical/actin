@@ -178,7 +178,7 @@ object TestTreatmentMatchFactory {
         return mapOf(
             Eligibility(
                 references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList())
+                function = EligibilityFunction(rule = EligibilityRule.MMR_DEFICIENT, parameters = emptyList())
             ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
         )
     }
@@ -235,7 +235,7 @@ object TestTreatmentMatchFactory {
         return mapOf(
             Eligibility(
                 references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
+                function = EligibilityFunction(rule = EligibilityRule.MMR_DEFICIENT, parameters = emptyList()),
             ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI with biallelic drivers in MMR genes", "MSI")
         )
     }

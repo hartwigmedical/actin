@@ -13,9 +13,9 @@ import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class IsMicrosatelliteUnstableTest {
+class IsMmrDeficientTest {
     private val mmrGene = GeneConstants.MMR_GENES.first()
-    private val function = IsMicrosatelliteUnstable()
+    private val function = IsMmrDeficient()
 
     @Test
     fun `Should evaluate to undetermined with unknown MSI and no MSI alteration`() {
@@ -31,6 +31,14 @@ class IsMicrosatelliteUnstableTest {
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteStabilityAndVariant(null, msiVariant(isReportable = true, isBiallelic = true))
             )
+        )
+    }
+
+    @Test
+    fun `Should pass with IHC MSI test result`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MSI", scoreText = "Positive")))
         )
     }
 

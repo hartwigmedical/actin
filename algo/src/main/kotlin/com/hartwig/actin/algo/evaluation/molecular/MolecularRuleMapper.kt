@@ -70,7 +70,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.FUSION_IN_GENE_X to hasFusionInGeneCreator(),
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
-            EligibilityRule.MSI_SIGNATURE to { IsMicrosatelliteUnstable(maxMolecularTestAge()) },
+            EligibilityRule.MMR_DEFICIENT to { IsMmrDeficient() },
             EligibilityRule.HRD_SIGNATURE to { IsHomologousRecombinationDeficient(maxMolecularTestAge()) },
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(),
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(),
