@@ -74,10 +74,10 @@ object ExampleFunctions {
     fun createPersonalizationReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
             clinicalSummaryType = ClinicalSummaryType.EXTENSIVE,
-            includeApprovedTreatmentsInSummary = false,
-            includeSOCLiteratureEfficacyEvidence = true,
-            includeEligibleSOCTreatmentSummary = true,
             molecularSummaryType = MolecularSummaryType.NONE,
+            includeApprovedTreatmentsInSummary = false,
+            includeEligibleSOCTreatmentSummary = true,
+            includeSOCLiteratureEfficacyEvidence = true,
             filterOnSOCExhaustionAndTumorType = true,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE

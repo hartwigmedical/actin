@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.configuration.PatientDetailsType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
@@ -26,7 +27,7 @@ class SummaryChapter(private val report: Report, private val reportContentProvid
 
     override fun render(document: Document) {
         addPatientDetails(document)
-        addSummaryTable(document)
+        addSummaryTables(document)
     }
 
     private fun addPatientDetails(document: Document) {
@@ -40,7 +41,7 @@ class SummaryChapter(private val report: Report, private val reportContentProvid
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOfNotNull(
             "Tumor: " to report.patientRecord.tumor.name,
-            if (report.reportConfiguration.includeLesionsInTumorSummary) {
+            if (report.reportConfiguration.patientDetailsType == PatientDetailsType.COMPLETE) {
                 " | Lesions: " to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
             } else null,
             " | $stageTitle: " to stages
@@ -80,7 +81,7 @@ class SummaryChapter(private val report: Report, private val reportContentProvid
         document.add(paragraph.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
     }
 
-    private fun addSummaryTable(document: Document) {
+    private fun addSummaryTables(document: Document) {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
         val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth)

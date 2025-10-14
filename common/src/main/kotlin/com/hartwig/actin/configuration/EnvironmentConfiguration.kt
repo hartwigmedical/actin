@@ -8,15 +8,20 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
-enum class MolecularSummaryType {
-    NONE,
-    STANDARD
+enum class PatientDetailsType {
+    CONDENSED,
+    COMPLETE
 }
 
 enum class ClinicalSummaryType {
     NONE,
     BRIEF,
     EXTENSIVE,
+}
+
+enum class MolecularSummaryType {
+    NONE,
+    STANDARD
 }
 
 data class AlgoConfiguration(
@@ -32,13 +37,13 @@ data class AlgoConfiguration(
 }
 
 data class ReportConfiguration(
-    val clinicalSummaryType: ClinicalSummaryType = ClinicalSummaryType.BRIEF,
+    val patientDetailsType: PatientDetailsType = PatientDetailsType.COMPLETE,
+    val clinicalSummaryType: ClinicalSummaryType = ClinicalSummaryType.EXTENSIVE,
     val molecularSummaryType: MolecularSummaryType = MolecularSummaryType.STANDARD,
+    val includeEligibleSOCTreatmentSummary: Boolean = false,
+    val includeApprovedTreatmentsInSummary: Boolean = true,
     val includeMolecularDetailsChapter: Boolean = true,
     val includeSOCLiteratureEfficacyEvidence: Boolean = false,
-    val includeEligibleSOCTreatmentSummary: Boolean = false,
-    val includeLesionsInTumorSummary: Boolean = true,
-    val includeApprovedTreatmentsInSummary: Boolean = true,
     val includeTrialMatchingInSummary: Boolean = true,
     val includeEligibleButNoSlotsTableIfEmpty: Boolean = true,
     val includeExternalTrialsInSummary: Boolean = true,

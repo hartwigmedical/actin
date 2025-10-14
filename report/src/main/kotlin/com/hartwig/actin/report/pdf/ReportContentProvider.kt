@@ -50,10 +50,6 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
     fun provideChapters(): List<ReportChapter> {
-        if (enableExtendedMode) {
-            logger.info("Including trial matching details")
-        }
-
         if (report.reportConfiguration.includeSOCLiteratureEfficacyEvidence) {
             logger.info("Including SOC literature details")
         }
@@ -125,15 +121,18 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             requestingSource = TrialSource.fromDescription(report.reportConfiguration.hospitalOfReference)
         ).filterNotNull()
 
-        val approvedTreatmentsGenerator = EligibleApprovedTreatmentGenerator(report)
+        val socEligibleApprovedTreatmentGenerator =
+            SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.reportConfiguration.includeEligibleSOCTreatmentSummary }
+        
+        val approvedTreatmentsGenerator = EligibleApprovedTreatmentGenerator(report).takeIf {
+            report.reportConfiguration.includeApprovedTreatmentsInSummary && it.showTable()
+        }
 
         return listOfNotNull(
             clinicalSummaryGenerator,
             molecularSummaryGenerator,
-            SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.reportConfiguration.includeEligibleSOCTreatmentSummary },
-            approvedTreatmentsGenerator.takeIf {
-                report.reportConfiguration.includeApprovedTreatmentsInSummary && approvedTreatmentsGenerator.showTable()
-            }
+            socEligibleApprovedTreatmentGenerator,
+            approvedTreatmentsGenerator
         ) + trialTableGenerators
     }
 
