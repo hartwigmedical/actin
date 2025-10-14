@@ -198,46 +198,35 @@ class TreatmentRankingModelTest {
     fun `Should score indirect evidence as functional effect match`() {
         val config = createScoringConfig()
         val ranker = TreatmentRankingModel(EvidenceScoringModel(config))
-        val directEvidence = treatmentEvidence(
-            treatment = "treatment1",
-            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-            isCategoryEvent = false,
-            approvalStage = EvidenceLevelDetails.GUIDELINE,
-            hasBenefit = true,
-            event = "Direct Event"
-        )
+
         val indirectEvidence = treatmentEvidence(
             treatment = "treatment1",
             cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
             isCategoryEvent = false,
             approvalStage = EvidenceLevelDetails.PHASE_II,
             hasBenefit = true,
-            event = "Indirect Event"
+            event = "Indirect Event",
+            isIndirect = true
         )
 
-        val patientRecord = patientRecord(
-            createVariant(
-                treatmentEvidence = directEvidence,
-                indirectTreatmentEvidences = setOf(indirectEvidence)
-            )
-        )
+        val patientRecord = patientRecord(createVariant(treatmentEvidence = indirectEvidence))
 
         val rankResult = ranker.rank(patientRecord).ranking.single()
 
         assertThat(rankResult.treatment).isEqualTo("treatment1")
-        assertThat(rankResult.events).containsExactlyInAnyOrder("Direct Event", "Indirect Event")
+        assertThat(rankResult.events).containsExactlyInAnyOrder("Indirect Event")
 
-        val expectedDirectScore = expectedScore(config, TumorMatch.PATIENT, VariantMatch.EXACT, EvidenceLevelDetails.GUIDELINE)
+//        val expectedDirectScore = expectedScore(config, TumorMatch.PATIENT, VariantMatch.EXACT, EvidenceLevelDetails.GUIDELINE)
         val expectedIndirectScore = expectedScore(
             config,
             TumorMatch.PATIENT,
             VariantMatch.FUNCTIONAL_EFFECT_MATCH,
             EvidenceLevelDetails.PHASE_II
         )
-        val diminishingFactorForSecondEvidence = 1.0 / (1.0 + kotlin.math.exp(1.5 * (1 - 1.0)))
+        val diminishingFactor = 1.0 / (1.0 + kotlin.math.exp(1.5 * (1 - 1.0)))
 
         assertThat(rankResult.score)
-            .isEqualTo(expectedDirectScore + (expectedIndirectScore * diminishingFactorForSecondEvidence))
+            .isEqualTo(expectedIndirectScore)// * diminishingFactor)
     }
 
     private fun patientRecord(
@@ -267,16 +256,9 @@ class TreatmentRankingModelTest {
             )
     )
 
-    private fun createVariant(
-        gene: String = "BRAF",
-        treatmentEvidence: TreatmentEvidence,
-        indirectTreatmentEvidences: Set<TreatmentEvidence> = emptySet()
-    ) = TestVariantFactory.createMinimal().copy(
+    private fun createVariant(gene: String = "BRAF", treatmentEvidence: TreatmentEvidence) = TestVariantFactory.createMinimal().copy(
         gene = gene,
-        evidence = TestClinicalEvidenceFactory.createEmpty().copy(
-            treatmentEvidence = setOf(treatmentEvidence),
-            indirectTreatmentEvidence = indirectTreatmentEvidences
-        )
+        evidence = TestClinicalEvidenceFactory.createEmpty().copy(treatmentEvidence = setOf(treatmentEvidence))
     )
 
     private fun treatmentEvidence(
@@ -285,7 +267,8 @@ class TreatmentRankingModelTest {
         isCategoryEvent: Boolean,
         approvalStage: EvidenceLevelDetails,
         hasBenefit: Boolean,
-        event: String = "BRAF V600E"
+        event: String = "BRAF V600E",
+        isIndirect: Boolean = false
     ) = TestTreatmentEvidenceFactory.create(
         treatment = treatment,
         sourceEvent = event,
@@ -294,6 +277,7 @@ class TreatmentRankingModelTest {
         evidenceLevelDetails = approvalStage,
         evidenceDirection = EvidenceDirection(hasBenefit, hasBenefit, !hasBenefit, true),
         evidenceLevel = EvidenceLevel.A,
+        isIndirect = isIndirect
     )
 
     private fun expectedScore(

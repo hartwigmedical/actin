@@ -370,7 +370,6 @@
                   "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations"
                 }
               ],
-              "indirectTreatmentEvidence": [],
               "eligibleTrials": [
                 {
                   "nctId": "NCT00000006",
@@ -515,7 +514,6 @@
                   "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer."
                 }
               ],
-              "indirectTreatmentEvidence": [],
               "eligibleTrials": [
                 {
                   "nctId": "NCT00000008",
@@ -598,7 +596,6 @@
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
-              "indirectTreatmentEvidence": [],
               "eligibleTrials": []
             },
             "gene": "KRAS",
@@ -637,7 +634,6 @@
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
-              "indirectTreatmentEvidence": [],
               "eligibleTrials": [
                 {
                   "nctId": "NCT00000009",
@@ -693,7 +689,6 @@
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
-              "indirectTreatmentEvidence": [],
               "eligibleTrials": []
             },
             "gene": "TP53",
@@ -720,7 +715,6 @@
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
-              "indirectTreatmentEvidence": [],
               "eligibleTrials": []
             }
           }
@@ -755,7 +749,6 @@
           "isUnstable": false,
           "evidence": {
             "treatmentEvidence": [],
-            "indirectTreatmentEvidence": [],
             "eligibleTrials": []
           }
         },
@@ -767,7 +760,6 @@
           "brca2Value": 0.0,
           "evidence": {
             "treatmentEvidence": [],
-            "indirectTreatmentEvidence": [],
             "eligibleTrials": []
           }
         },
@@ -776,7 +768,6 @@
           "isHigh": true,
           "evidence": {
             "treatmentEvidence": [],
-            "indirectTreatmentEvidence": [],
             "eligibleTrials": []
           }
         },
@@ -785,7 +776,6 @@
           "isHigh": true,
           "evidence": {
             "treatmentEvidence": [],
-            "indirectTreatmentEvidence": [],
             "eligibleTrials": []
           }
         }

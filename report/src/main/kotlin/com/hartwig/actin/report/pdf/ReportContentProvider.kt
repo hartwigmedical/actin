@@ -48,10 +48,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         enableExtendedMode,
         report.config.filterOnSOCExhaustionAndTumorType
     )
-    private val treatmentRankingModel = TreatmentRankingModel(
-        EvidenceScoringModel(createScoringConfig()),
-        includeIndirectTreatmentEvidence = report.config.includeIndirectMolecularTreatmentEvidence
-    )
+    private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
     fun provideChapters(): List<ReportChapter> {
         if (enableExtendedMode) {

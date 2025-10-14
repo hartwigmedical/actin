@@ -126,7 +126,7 @@ class PanelVariantAnnotator(
         isReportable = true,
         event = "${variant.gene} ${eventString(paveResponse)}",
         driverLikelihood = null,
-        evidence = ClinicalEvidence(emptySet(), emptySet(), emptySet()),
+        evidence = ClinicalEvidence(emptySet(), emptySet()),
         gene = variant.gene,
         geneRole = GeneRole.UNKNOWN,
         proteinEffect = ProteinEffect.UNKNOWN,

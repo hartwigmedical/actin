@@ -147,9 +147,7 @@ class EvidenceAnnotatorTest {
         val updatedTest = evidenceAnnotator.annotate(molecularTest)
         val annotatedVariant = updatedTest.drivers.variants.first()
 
-        assertThat(annotatedVariant.evidence.treatmentEvidence).isEmpty()
-        assertThat(annotatedVariant.evidence.indirectTreatmentEvidence)
-            .anySatisfy { assertThat(it.treatment).isEqualTo("Related Treatment") }
+        assertThat(annotatedVariant.evidence.treatmentEvidence).anySatisfy { assertThat(it.treatment).isEqualTo("Related Treatment") }
     }
 
     private fun evidenceAnnotator(

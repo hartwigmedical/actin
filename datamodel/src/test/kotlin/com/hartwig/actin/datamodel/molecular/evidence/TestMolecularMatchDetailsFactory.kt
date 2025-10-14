@@ -7,8 +7,9 @@ object TestMolecularMatchDetailsFactory {
     fun create(sourceDate: LocalDate,
                sourceEvent: String,
                sourceEvidenceType: EvidenceType = EvidenceType.ANY_MUTATION,
-               sourceUrl: String = SOURCE_EVENT_URL
+               sourceUrl: String = SOURCE_EVENT_URL,
+               isIndirect: Boolean
     ): MolecularMatchDetails {
-        return MolecularMatchDetails(sourceDate, sourceEvent, sourceEvidenceType, sourceUrl)
+        return MolecularMatchDetails(sourceDate, sourceEvent, sourceEvidenceType, sourceUrl, isIndirect)
     }
 }

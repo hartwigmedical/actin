@@ -36,9 +36,8 @@ class MolecularEvidenceChapter(
 
     private fun addMolecularEvidenceTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val includeIndirectEvidence = report.config.includeIndirectMolecularTreatmentEvidence
-        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularTests, includeIndirectEvidence)
-        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularTests, includeIndirectEvidence)
+        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularTests)
+        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularTests)
         TableGeneratorFunctions.addGenerators(listOf(onLabelGenerator, offLabelGenerator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }

@@ -24,12 +24,11 @@ data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceS
     }
 }
 
-data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String, val isIndirect: Boolean)
+data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String)
 data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, val tumorMatch: TumorMatch, val benefit: Boolean)
 
 class TreatmentRankingModel(
     private val scoringModel: EvidenceScoringModel,
-    private val includeIndirectTreatmentEvidence: Boolean = true
 ) {
 
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
@@ -54,10 +53,7 @@ class TreatmentRankingModel(
 
         val treatmentEvidencesWithTarget = treatmentEvidencesWithTargets(actionables)
         val scoredTreatments = treatmentEvidencesWithTarget.map { evidenceWithTarget ->
-            evidenceWithTarget to scoringModel.score(
-                evidenceWithTarget.treatmentEvidence,
-                isIndirect = evidenceWithTarget.isIndirect
-            )
+            evidenceWithTarget to scoringModel.score(evidenceWithTarget.treatmentEvidence)
         }
         val scoredTreatmentsWithDuplicatesDiminished = groupEvidenceForDuplicationAndDiminishScores(scoredTreatments)
 
@@ -82,21 +78,12 @@ class TreatmentRankingModel(
 
     private fun treatmentEvidencesWithTargets(actionables: Sequence<Actionable>) =
         actionables.flatMap { actionable ->
-            val directEvidences = actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
+            actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
                 TreatmentEvidenceWithTarget(
                     treatmentEvidence,
                     resolveTarget(actionable, treatmentEvidence),
-                    isIndirect = false
                 )
             }
-            val indirectEvidences = actionable.evidence.indirectTreatmentEvidence.asSequence().map { treatmentEvidence ->
-                TreatmentEvidenceWithTarget(
-                    treatmentEvidence,
-                    resolveTarget(actionable, treatmentEvidence),
-                    isIndirect = true
-                )
-            }
-            directEvidences + if (includeIndirectTreatmentEvidence) indirectEvidences else emptySequence()
         }
 
     private fun resolveTarget(actionable: Actionable, treatmentEvidence: TreatmentEvidence): String =

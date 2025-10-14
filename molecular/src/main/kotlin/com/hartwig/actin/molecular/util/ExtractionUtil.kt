@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 internal object ExtractionUtil {
 
     fun noEvidence(): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = emptySet(), indirectTreatmentEvidence = emptySet(), eligibleTrials = emptySet())
+        return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
     }
 
     fun keep3Digits(input: Double): Double {

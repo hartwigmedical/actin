@@ -24,10 +24,10 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.GenderCriterium
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
+import java.time.LocalDate
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails as ServeEvidenceLevelDetails
 
@@ -111,12 +111,11 @@ class ClinicalEvidenceFactoryTest {
             )
         )
 
-        assertThat(result.treatmentEvidence).isEmpty()
-        assertThat(result.indirectTreatmentEvidence).hasSize(1)
-        val indirectTreatment = result.indirectTreatmentEvidence.first()
-        assertThat(indirectTreatment.treatment).isEqualTo("related")
-        assertThat(indirectTreatment.cancerTypeMatch.applicability).isEqualTo(CancerTypeMatchApplicability.SPECIFIC_TYPE)
-        assertThat(indirectTreatment.cancerTypeMatch.cancerType.matchedCancerType).isEqualTo("related type")
+        assertThat(result.treatmentEvidence).hasSize(1)
+        val treatment = result.treatmentEvidence.first()
+        assertThat(treatment.treatment).isEqualTo("related")
+        assertThat(treatment.cancerTypeMatch.applicability).isEqualTo(CancerTypeMatchApplicability.SPECIFIC_TYPE)
+        assertThat(treatment.cancerTypeMatch.cancerType.matchedCancerType).isEqualTo("related type")
     }
 
     @Test
@@ -268,12 +267,14 @@ class ClinicalEvidenceFactoryTest {
                     TestMolecularMatchDetailsFactory.create(
                         sourceDate = LocalDate.of(2022, 1, 1),
                         sourceEvent = "event 1",
-                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
+                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION,
+                        isIndirect = false
                     ),
                     TestMolecularMatchDetailsFactory.create(
                         sourceDate = LocalDate.of(2023, 1, 1),
                         sourceEvent = "event 2",
-                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
+                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION,
+                        isIndirect = false
                     ),
                 ),
                 applicableCancerTypes = setOf(
@@ -330,7 +331,8 @@ class ClinicalEvidenceFactoryTest {
                         TestMolecularMatchDetailsFactory.create(
                             sourceDate = expectedSourceDate,
                             sourceEvent = "event 1",
-                            sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
+                            sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION,
+                            isIndirect = false
                         )
                     ),
                     applicableCancerTypes = setOf(
@@ -344,7 +346,8 @@ class ClinicalEvidenceFactoryTest {
                         TestMolecularMatchDetailsFactory.create(
                             sourceDate = expectedSourceDate,
                             sourceEvent = "event 2",
-                            sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION
+                            sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION,
+                            isIndirect = false
                         )
                     ),
                     applicableCancerTypes = setOf(

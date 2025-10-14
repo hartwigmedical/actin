@@ -14,7 +14,6 @@ import com.itextpdf.layout.element.Table
 class MolecularClinicalEvidenceGenerator(
     val molecularTests: List<MolecularTest>,
     private val isOnLabel: Boolean,
-    private val includeIndirectTreatmentEvidence: Boolean = false
 ) : TableGenerator {
 
     override fun title(): String {
@@ -41,8 +40,7 @@ class MolecularClinicalEvidenceGenerator(
             .forEach(table::addHeaderCell)
 
         for ((event, evidence) in MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(molecularTests)) {
-            val indirectEvidence = if (includeIndirectTreatmentEvidence) evidence.indirectTreatmentEvidence else emptyList()
-            val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence + indirectEvidence, isOnLabel)
+            val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence, isOnLabel)
             if (filteredEvidence.isNotEmpty()) {
                 val groupedBySourceEvent = TreatmentEvidenceFunctions.groupBySourceEvent(filteredEvidence)
 

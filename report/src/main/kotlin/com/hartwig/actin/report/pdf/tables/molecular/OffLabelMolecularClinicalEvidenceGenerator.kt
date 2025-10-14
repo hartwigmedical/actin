@@ -6,13 +6,11 @@ import com.itextpdf.layout.element.Table
 
 class OffLabelMolecularClinicalEvidenceGenerator(
     val molecularTests: List<MolecularTest>,
-    private val includeIndirectTreatmentEvidence: Boolean = false
 ) : TableGenerator {
 
     private val wrapped = MolecularClinicalEvidenceGenerator(
         molecularTests,
-        isOnLabel = false,
-        includeIndirectTreatmentEvidence = includeIndirectTreatmentEvidence
+        isOnLabel = false
     )
 
     override fun title(): String {

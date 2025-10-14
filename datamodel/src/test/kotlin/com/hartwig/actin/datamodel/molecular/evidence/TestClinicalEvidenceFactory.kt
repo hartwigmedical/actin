@@ -3,7 +3,7 @@ package com.hartwig.actin.datamodel.molecular.evidence
 object TestClinicalEvidenceFactory {
 
     fun createEmpty(): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = emptySet(), indirectTreatmentEvidence = emptySet(), eligibleTrials = emptySet())
+        return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
     }
 
     fun createExhaustive(): ClinicalEvidence {
@@ -19,7 +19,6 @@ object TestClinicalEvidenceFactory {
                 TestTreatmentEvidenceFactory.onLabelSuspectResistant(),
                 TestTreatmentEvidenceFactory.offLabelSuspectResistant(),
             ),
-            indirectTreatmentEvidence = emptySet(),
             eligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
         )
     }
@@ -29,7 +28,7 @@ object TestClinicalEvidenceFactory {
     }
 
     fun withEligibleTrials(eligibleTrials: Set<ExternalTrial>): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = emptySet(), indirectTreatmentEvidence = emptySet(), eligibleTrials = eligibleTrials)
+        return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = eligibleTrials)
     }
 
     fun withApprovedTreatment(treatment: String): ClinicalEvidence {
@@ -57,6 +56,6 @@ object TestClinicalEvidenceFactory {
     }
 
     fun withEvidence(treatmentEvidence: TreatmentEvidence): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(treatmentEvidence), indirectTreatmentEvidence = emptySet(), eligibleTrials = emptySet())
+        return ClinicalEvidence(treatmentEvidence = setOf(treatmentEvidence), eligibleTrials = emptySet())
     }
 }

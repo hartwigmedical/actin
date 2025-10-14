@@ -25,7 +25,6 @@ class EvidenceScoringModel(val config: ScoringConfig) {
 
     fun score(
         treatment: TreatmentEvidence,
-        isIndirect: Boolean = false
     ): EvidenceScore {
         val cancerTypeApplicability = when (treatment.cancerTypeMatch.applicability) {
             CancerTypeMatchApplicability.SPECIFIC_TYPE -> TumorMatch.PATIENT
@@ -33,6 +32,7 @@ class EvidenceScoringModel(val config: ScoringConfig) {
             CancerTypeMatchApplicability.OTHER_TYPE -> TumorMatch.ANY
         }
         val isCategoryEvent = treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()
+        val isIndirect = treatment.molecularMatch.isIndirect
         val variantMatch = when {
             isIndirect -> VariantMatch.FUNCTIONAL_EFFECT_MATCH
             isCategoryEvent -> VariantMatch.CATEGORY

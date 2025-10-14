@@ -41,7 +41,7 @@ class DndsModelTest {
     fun `Should use estimated variant counts based on TMB when given`() {
         val database = DndsModel.create(
             DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV), tumorMutationalBurden = TumorMutationalBurden(
-                6.4, false, ClinicalEvidence(emptySet(), emptySet(), emptySet())
+                6.4, false, ClinicalEvidence(emptySet(), emptySet())
             )
         )
         assertThat(database.find("BRAF", GeneRole.ONCO, DndsDriverType.INDEL)).isEqualTo(DndsDatabaseEntry(0.0, 4.9020157660617514E-5))

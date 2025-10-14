@@ -72,7 +72,7 @@ object CancerAssociatedVariantEvaluator {
             isReportable = false,
             event = "",
             driverLikelihood = null,
-            evidence = ClinicalEvidence(treatmentEvidence = emptySet(), indirectTreatmentEvidence = emptySet(), eligibleTrials = emptySet()),
+            evidence = ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet()),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = false

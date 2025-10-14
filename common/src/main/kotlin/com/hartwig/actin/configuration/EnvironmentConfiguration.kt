@@ -17,7 +17,7 @@ data class AlgoConfiguration(
     val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
     val maxMolecularTestAgeInDays: Int? = null
 ) {
-    
+
     companion object {
         fun create(environmentConfigFile: String?): AlgoConfiguration {
             return EnvironmentConfiguration.create(environmentConfigFile).algo
@@ -46,13 +46,13 @@ data class ReportConfiguration(
     val includeOnlyExternalTrialsInTrialMatching: Boolean = false,
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
-    val includeIndirectMolecularTreatmentEvidence: Boolean = false,
+//    val includeIndirectMolecularTreatmentEvidence: Boolean = false,  // TODO do we need this after removing the separate collection?
     val includeRawPathologyReport: Boolean = false,
     val includeTreatmentEvidenceRanking: Boolean = false,
     val countryOfReference: Country = Country.OTHER,
     val hospitalOfReference: String? = null
 ) {
-    
+
     companion object {
         fun create(environmentConfigFile: String?): ReportConfiguration {
             return EnvironmentConfiguration.create(environmentConfigFile).report
@@ -62,7 +62,7 @@ data class ReportConfiguration(
 
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
 const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration overrides"
- 
+
 data class EnvironmentConfiguration(
     val algo: AlgoConfiguration = AlgoConfiguration(),
     val report: ReportConfiguration = ReportConfiguration()
@@ -70,7 +70,7 @@ data class EnvironmentConfiguration(
 
     companion object {
         private val LOGGER = LogManager.getLogger(EnvironmentConfiguration::class.java)
-        
+
         fun create(environmentConfigFile: String?): EnvironmentConfiguration {
             val configuration = environmentConfigFile?.let { readEnvironmentConfigYaml(it) } ?: EnvironmentConfiguration()
             val configSource = environmentConfigFile?.let { "file $it" } ?: "defaults"

@@ -1000,7 +1000,7 @@ class ActionabilityMatcherTest {
                 matchingHotspotCriterium
             )
         )
-        val highTmb = TumorMutationalBurden(11.0, true, ClinicalEvidence(emptySet(), emptySet(), emptySet()))
+        val highTmb = TumorMutationalBurden(11.0, true, ClinicalEvidence(emptySet(), emptySet()))
         val matches = matcherFactory(emptyList(), listOf(trial)).match(
             TestMolecularFactory.createMinimalPanelTest().copy(
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant)),
