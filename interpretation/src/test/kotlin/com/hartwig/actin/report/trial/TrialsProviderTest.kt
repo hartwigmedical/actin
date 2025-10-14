@@ -17,8 +17,8 @@ private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
 private const val ROS1_TARGET = "ROS1"
 
-private val AMSTERDAM = "Amsterdam"
-private val UTRECHT = "Utrecht"
+private const val AMSTERDAM = "Amsterdam"
+private const val UTRECHT = "Utrecht"
 private val NKI = Hospital("NKI", isChildrensHospital = false)
 private val PMC = Hospital("PMC", isChildrensHospital = true)
 private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = mapOf(AMSTERDAM to setOf(NKI)))
