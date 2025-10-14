@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions.derivedGeneTargetMap
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.molecular.filter.SpecificGenesFilter
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -20,6 +21,8 @@ private const val ANOTHER_GENE = "another gene"
 private const val TEST = "test"
 
 class PanelSpecificationsTest {
+
+    private val geneFilter = SpecificGenesFilter(setOf(GENE, ANOTHER_GENE))
 
     @Test
     fun `Should evaluate target predicate when gene is in panel specification`() {
@@ -38,16 +41,15 @@ class PanelSpecificationsTest {
     @Test
     fun `Should resolve a panels specification from the set of all specification by name and negative results`() {
         val panelSpec = PanelTestSpecification("panel", null)
-        val negativeResults = setOf(SequencedNegativeResult(GENE, MolecularTestTarget.FUSION))
-        val specification = PanelSpecifications(
-            mapOf(
-                panelSpec to listOf(
-                    PanelGeneSpecification(
-                        GENE,
-                        listOf(MolecularTestTarget.MUTATION)
-                    )
-                )
+        val negativeResults =
+            setOf(
+                SequencedNegativeResult(GENE, MolecularTestTarget.FUSION),
+                SequencedNegativeResult(GENE, MolecularTestTarget.MUTATION)
             )
+
+        val specification = PanelSpecifications(
+            geneFilter = geneFilter,
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
         ).panelTargetSpecification(panelSpec, negativeResults)
         assertThat(specification.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION) }).isTrue()
     }
@@ -55,9 +57,25 @@ class PanelSpecificationsTest {
     @Test
     fun `Should throw illegal state exception when a panel name is not found`() {
         assertThatThrownBy {
-            val specifications = PanelSpecifications(emptyMap())
+            val specifications = PanelSpecifications(geneFilter, emptyMap())
             specifications.panelTargetSpecification(PanelTestSpecification("panel"), null)
         }.isInstanceOfAny(IllegalStateException::class.java)
+    }
+
+    @Test
+    fun `Should throw illegal state when negative results contain unknown genes`() {
+        val panelSpec = PanelTestSpecification("panel", null)
+        val specifications = PanelSpecifications(
+            geneFilter,
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
+        )
+
+        assertThatThrownBy {
+            specifications.panelTargetSpecification(
+                panelSpec,
+                setOf(SequencedNegativeResult("unknown", MolecularTestTarget.MUTATION))
+            )
+        }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
@@ -140,4 +158,5 @@ class PanelSpecificationsTest {
 
     private fun predicateForTargets(target: MolecularTestTarget): (t: List<MolecularTestTarget>) -> Boolean =
         { it.contains(target) }
+
 }

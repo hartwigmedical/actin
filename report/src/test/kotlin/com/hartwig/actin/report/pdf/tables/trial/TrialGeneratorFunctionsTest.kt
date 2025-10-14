@@ -327,4 +327,27 @@ class TrialGeneratorFunctionsTest {
             )
         )
     }
+
+
+    @Test
+    fun `Should only show None in warnings column once when all cohorts have no warnings`() {
+        val cohort1 = cohort1.copy(locations = setOf("site1"), warnings = emptySet())
+        val cohort2 = cohort2.copy(locations = setOf("site1"), warnings = emptySet())
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeCohortConfig = false,
+                includeSites = true,
+                indicateNoSlotsOrClosed = true
+            )
+        ).isEqualTo(
+            listOf(
+                listOf(APPLIES_TO_ALL_COHORTS, "", "site1", "None"),
+                listOf("cohort1 (no slots)", "MSI", "", ""),
+                listOf("cohort2", "None", "", "")
+            )
+        )
+    }
 }
