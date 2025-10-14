@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.trial
+package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.datamodel.Report
@@ -9,12 +9,11 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class EligibleApprovedTreatmentGenerator(report: Report) : TableGenerator {
+class ProxyApprovedTreatmentGenerator(report: Report) : TableGenerator {
 
     private val isCUP = TumorDetailsInterpreter.hasCancerOfUnknownPrimary(report.patientRecord.tumor.name)
     private val molecular = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
-    private val hasConfidentPrediction =
-        molecular?.let { TumorOriginInterpreter.create(molecular).hasConfidentPrediction() } ?: false
+    private val hasConfidentPrediction = molecular?.let { TumorOriginInterpreter.create(molecular).hasConfidentPrediction() } ?: false
 
     fun showTable(): Boolean {
         return isCUP && hasConfidentPrediction

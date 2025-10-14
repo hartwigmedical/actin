@@ -40,7 +40,7 @@ class TrialMatchingOtherResultsChapter(
     }
 
     fun createTrialTableGenerators(): List<TableGenerator> {
-        val requestingSource = TrialSource.fromDescription(report.reportConfiguration.hospitalOfReference)
+        val requestingSource = TrialSource.fromDescription(report.configuration.hospitalOfReference)
         val externalTrials = trialsProvider.externalTrials()
 
         val localTrialGenerators = createTrialTableGenerators(
@@ -50,7 +50,7 @@ class TrialMatchingOtherResultsChapter(
             emptyList(),
             externalTrials,
             requestingSource,
-            report.reportConfiguration.countryOfReference
+            report.configuration.countryOfReference
         ).takeIf { externalTrialsOnly }
 
         val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(
@@ -60,7 +60,7 @@ class TrialMatchingOtherResultsChapter(
 
         val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(
             externalTrials,
-            report.reportConfiguration.countryOfReference
+            report.configuration.countryOfReference
         )
 
         return listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator, filteredTrialGenerator) + localTrialGenerators

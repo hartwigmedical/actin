@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.clinical
 import com.hartwig.actin.clinical.sort.OtherConditionDescendingDateComparator
 import com.hartwig.actin.clinical.sort.PriorPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
-import com.hartwig.actin.configuration.ClinicalSummaryType
+import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.OtherCondition
@@ -48,7 +48,7 @@ class ClinicalSummaryGenerator(
 
     fun contentsAsList(): List<Cell> {
         val record = report.patientRecord
-        val includeAdditionalFields = report.reportConfiguration.clinicalSummaryType == ClinicalSummaryType.EXTENSIVE || showDetails
+        val includeAdditionalFields = report.configuration.clinicalSummaryType == ReportContentType.COMPREHENSIVE || showDetails
 
         return listOfNotNull(
             "Relevant systemic treatment history" to relevantSystemicTreatmentHistoryTable(record),

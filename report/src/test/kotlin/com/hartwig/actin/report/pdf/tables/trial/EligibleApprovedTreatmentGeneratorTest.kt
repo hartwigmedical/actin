@@ -15,6 +15,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigi
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_STRING
 import com.hartwig.actin.report.pdf.getCellContents
+import com.hartwig.actin.report.pdf.tables.soc.ProxyApprovedTreatmentGenerator
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -70,7 +71,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             treatmentMatch,
             ReportConfiguration()
         )
-        return EligibleApprovedTreatmentGenerator(report).contents()
+        return ProxyApprovedTreatmentGenerator(report).contents()
     }
 }
 

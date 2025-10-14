@@ -1,8 +1,7 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
-import com.hartwig.actin.configuration.ClinicalSummaryType
-import com.hartwig.actin.configuration.MolecularSummaryType
+import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.datamodel.Report
@@ -26,8 +25,8 @@ import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.soc.EligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.soc.ProxyApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.trial.ExternalTrials
@@ -43,14 +42,14 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     private val trialsProvider = TrialsProvider.create(
         report.patientRecord,
         report.treatmentMatch,
-        report.reportConfiguration.countryOfReference,
+        report.configuration.countryOfReference,
         enableExtendedMode,
-        report.reportConfiguration.filterOnSOCExhaustionAndTumorType
+        report.configuration.filterOnSOCExhaustionAndTumorType
     )
     private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
     fun provideChapters(): List<ReportChapter> {
-        if (report.reportConfiguration.includeSOCLiteratureEfficacyEvidence) {
+        if (report.configuration.includeSOCLiteratureEfficacyEvidence) {
             logger.info("Including SOC literature details")
         }
 
@@ -60,37 +59,37 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             SummaryChapter(report, this),
             PersonalizedEvidenceChapter(
                 report,
-                include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence
+                include = report.configuration.includeSOCLiteratureEfficacyEvidence
                         && report.treatmentMatch.personalizedDataAnalysis != null
             ),
-            ResistanceEvidenceChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence),
+            ResistanceEvidenceChapter(report, include = report.configuration.includeSOCLiteratureEfficacyEvidence),
             MolecularDetailsChapter(
                 report,
-                report.reportConfiguration.includeMolecularDetailsChapter,
-                report.reportConfiguration.includeRawPathologyReport,
+                report.configuration.includeMolecularDetailsChapter,
+                report.configuration.includeRawPathologyReport,
                 externalTrials.allFiltered()
             ),
             LongitudinalMolecularHistoryChapter(
                 report,
                 trialsProvider.evaluableCohortsAndNotIgnore(),
-                include = report.reportConfiguration.includeLongitudinalMolecularChapter
+                include = report.configuration.includeLongitudinalMolecularChapter
             ),
-            EfficacyEvidenceChapter(report, include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence),
-            ClinicalDetailsChapter(report, include = report.reportConfiguration.includeClinicalDetailsChapter),
+            EfficacyEvidenceChapter(report, include = report.configuration.includeSOCLiteratureEfficacyEvidence),
+            ClinicalDetailsChapter(report, include = report.configuration.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(
                 report,
-                include = report.reportConfiguration.includeSOCLiteratureEfficacyEvidence && enableExtendedMode
+                include = report.configuration.includeSOCLiteratureEfficacyEvidence && enableExtendedMode
             ),
             MolecularEvidenceChapter(
                 report,
                 treatmentRankingModel.rank(report.patientRecord),
-                include = report.reportConfiguration.includeMolecularEvidenceChapter
+                include = report.configuration.includeMolecularEvidenceChapter
             ),
             TrialMatchingOtherResultsChapter(
                 report,
-                externalTrialsOnly = report.reportConfiguration.includeOnlyExternalTrialsInTrialMatching,
+                externalTrialsOnly = report.configuration.includeOnlyExternalTrialsInTrialMatching,
                 trialsProvider,
-                include = report.reportConfiguration.includeTrialMatchingChapter
+                include = report.configuration.includeTrialMatchingChapter
             ),
             TrialMatchingDetailsChapter(report, include = enableExtendedMode)
         ).filter(ReportChapter::include)
@@ -99,7 +98,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float): List<TableGenerator> {
         val clinicalSummaryGenerator =
             ClinicalSummaryGenerator(report = report, showDetails = false, keyWidth = keyWidth, valueWidth = valueWidth).takeIf {
-                report.reportConfiguration.clinicalSummaryType != ClinicalSummaryType.NONE
+                report.configuration.clinicalSummaryType != ReportContentType.NONE
             }
 
         val molecularSummaryGenerator = MolecularSummaryGenerator(
@@ -112,27 +111,26 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 useInsufficientQualityRecords = true
             )
         ).takeIf {
-            report.reportConfiguration.molecularSummaryType != MolecularSummaryType.NONE
+            report.configuration.molecularSummaryType != ReportContentType.NONE
         }
 
+        val approvedTreatmentSummaryGenerator = when (report.configuration.approvedTreatmentSummaryType) {
+            ReportContentType.NONE -> null
+            ReportContentType.BRIEF -> ProxyApprovedTreatmentGenerator(report).takeIf { it.showTable() }
+            ReportContentType.COMPREHENSIVE -> EligibleApprovedTreatmentGenerator(report)
+        }
+        
         val trialTableGenerators = createTrialTableGenerators(
             cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
             externalTrials = trialsProvider.externalTrials(),
-            requestingSource = TrialSource.fromDescription(report.reportConfiguration.hospitalOfReference)
+            requestingSource = TrialSource.fromDescription(report.configuration.hospitalOfReference)
         ).filterNotNull()
-
-        val socEligibleApprovedTreatmentGenerator =
-            SOCEligibleApprovedTreatmentGenerator(report).takeIf { report.reportConfiguration.includeEligibleSOCTreatmentSummary }
         
-        val approvedTreatmentsGenerator = EligibleApprovedTreatmentGenerator(report).takeIf {
-            report.reportConfiguration.includeApprovedTreatmentsInSummary && it.showTable()
-        }
-
+        
         return listOfNotNull(
             clinicalSummaryGenerator,
             molecularSummaryGenerator,
-            socEligibleApprovedTreatmentGenerator,
-            approvedTreatmentsGenerator
+            approvedTreatmentSummaryGenerator
         ) + trialTableGenerators
     }
 
@@ -167,7 +165,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 cohorts,
                 externalTrials,
                 requestingSource,
-                report.reportConfiguration.countryOfReference
+                report.configuration.countryOfReference
             )
 
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
@@ -176,12 +174,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(externalTrials, requestingSource)
 
         return listOfNotNull(
-            localOpenCohortsGenerator.takeIf { report.reportConfiguration.includeTrialMatchingInSummary },
+            localOpenCohortsGenerator.takeIf { report.configuration.includeTrialMatchingInSummary },
             localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
-                report.reportConfiguration.includeTrialMatchingInSummary && it?.cohortSize() != 0
+                report.configuration.includeTrialMatchingInSummary && it?.cohortSize() != 0
             },
             nonLocalTrialGenerator.takeIf {
-                report.reportConfiguration.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty()
+                report.configuration.includeExternalTrialsInSummary && externalTrials.internationalTrials.isNotEmpty()
             },
         )
     }

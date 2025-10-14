@@ -2,9 +2,8 @@ package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
-import com.hartwig.actin.configuration.ClinicalSummaryType
-import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
@@ -64,8 +63,8 @@ object ExampleFunctions {
 
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
-            clinicalSummaryType = ClinicalSummaryType.BRIEF,
-            includeApprovedTreatmentsInSummary = false,
+            clinicalSummaryType = ReportContentType.BRIEF,
+            approvedTreatmentSummaryType = ReportContentType.NONE,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
@@ -73,10 +72,9 @@ object ExampleFunctions {
 
     fun createPersonalizationReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
-            clinicalSummaryType = ClinicalSummaryType.EXTENSIVE,
-            molecularSummaryType = MolecularSummaryType.NONE,
-            includeApprovedTreatmentsInSummary = false,
-            includeEligibleSOCTreatmentSummary = true,
+            clinicalSummaryType = ReportContentType.COMPREHENSIVE,
+            molecularSummaryType = ReportContentType.NONE,
+            approvedTreatmentSummaryType = ReportContentType.COMPREHENSIVE,
             includeSOCLiteratureEfficacyEvidence = true,
             filterOnSOCExhaustionAndTumorType = true,
             countryOfReference = Country.NETHERLANDS,

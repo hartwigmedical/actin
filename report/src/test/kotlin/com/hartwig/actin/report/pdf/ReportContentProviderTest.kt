@@ -18,7 +18,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.soc.ProxyApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import org.assertj.core.api.Assertions.assertThat
@@ -146,7 +146,7 @@ class ReportContentProviderTest {
         assertThat(tables.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
             MolecularSummaryGenerator::class,
-            EligibleApprovedTreatmentGenerator::class,
+            ProxyApprovedTreatmentGenerator::class,
             EligibleTrialGenerator::class,
         )
     }

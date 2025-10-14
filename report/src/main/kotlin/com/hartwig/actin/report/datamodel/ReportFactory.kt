@@ -28,7 +28,7 @@ object ReportFactory {
             patientId = patientRecord.patientId,
             patientRecord = patientRecord,
             treatmentMatch = treatmentMatch,
-            reportConfiguration = reportConfiguration
+            configuration = reportConfiguration
         )
     }
 }

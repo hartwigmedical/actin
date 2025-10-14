@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.configuration.PatientDetailsType
+import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
@@ -26,7 +26,9 @@ class SummaryChapter(private val report: Report, private val reportContentProvid
     }
 
     override fun render(document: Document) {
-        addPatientDetails(document)
+        if (report.configuration.patientDetailsType != ReportContentType.NONE) {
+            addPatientDetails(document)
+        }
         addSummaryTables(document)
     }
 
@@ -41,7 +43,7 @@ class SummaryChapter(private val report: Report, private val reportContentProvid
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOfNotNull(
             "Tumor: " to report.patientRecord.tumor.name,
-            if (report.reportConfiguration.patientDetailsType == PatientDetailsType.COMPLETE) {
+            if (report.configuration.patientDetailsType == ReportContentType.COMPREHENSIVE) {
                 " | Lesions: " to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
             } else null,
             " | $stageTitle: " to stages

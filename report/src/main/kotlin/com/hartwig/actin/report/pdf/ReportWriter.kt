@@ -24,7 +24,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
     
     @Synchronized
     fun write(report: Report, enableExtendedMode: Boolean) {
-        logger.info("Building report for patient ${report.patientId} with configuration ${report.reportConfiguration}")
+        logger.info("Building report for patient ${report.patientId} with configuration ${report.configuration}")
 
         logger.debug("Initializing output styles")
         Styles.initialize()
