@@ -211,7 +211,7 @@ object TrialGeneratorFunctions {
                     cohort.locations - commonLocations,
                     true
                 ) else null,
-                if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null,
+                if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty() && hidePrefix) else null,
                 if (includeCohortConfig) concat(
                     setOfNotNull(
                         "Ignored".takeIf { cohort.ignore },
