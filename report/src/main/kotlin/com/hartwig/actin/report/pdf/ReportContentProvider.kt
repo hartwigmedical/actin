@@ -5,7 +5,6 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
-import com.hartwig.actin.report.pdf.chapters.LongitudinalMolecularHistoryChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
@@ -53,17 +52,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                         && report.treatmentMatch.personalizedDataAnalysis != null
             ),
             ResistanceEvidenceChapter(report, include = report.configuration.includeSOCLiteratureEfficacyEvidence),
-            MolecularDetailsChapter(
-                report,
-                report.configuration.includeMolecularDetailsChapter,
-                report.configuration.includeRawPathologyReport,
-                externalTrials.allFiltered()
-            ),
-            LongitudinalMolecularHistoryChapter(
-                report,
-                trialsProvider.evaluableCohortsAndNotIgnore(),
-                include = report.configuration.includeLongitudinalMolecularChapter
-            ),
+            MolecularDetailsChapter(report, trialsProvider.evaluableCohortsAndNotIgnore(), externalTrials.allFiltered()),
             EfficacyEvidenceChapter(report, include = report.configuration.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.configuration.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(
