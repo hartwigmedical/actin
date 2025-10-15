@@ -7,41 +7,34 @@ import org.junit.Test
 
 class InterpretedCohortComparatorTest {
 
-    private val cohort = create("trial 3", "cohort 1", true, "Event B")
+    private val matchingLocation = TrialSource.EXAMPLE.description
+    private val nonMatchingLocation = TrialSource.LKO.description
+    private val cohort = create("trial 3", "cohort 1", emptySet(), true, "Event B")
 
     @Test
     fun `Should sort cohorts`() {
         val cohorts = listOf(
-            create("trial 7", "cohort 1", true),
-            create("trial 3", "cohort 2 + cohort 3", false, "Event C"),
-            create("trial 3", "cohort 1", false, "Event B"),
-            create("trial 5", "cohort 1", false, "Event D", "Event A"),
-            create("trial 1", null, false),
-            create("trial 1", "cohort 1", false),
-            create("trial 1", "cohort 2", false),
-            create("trial 2", "cohort 1", false)
+            create("trial 7", "fourth", setOf(matchingLocation), true),
+            create("trial 3", "second", setOf(matchingLocation), false, "Event C"),
+            create("trial 3", "first", setOf(matchingLocation, nonMatchingLocation), true, "Event B"),
+            create("trial 5", "third", setOf(nonMatchingLocation), false, "Event D", "Event A"),
+            create("trial 1", "fifth", setOf(nonMatchingLocation), true),
+            create("trial 1", "A-sixth", setOf(nonMatchingLocation), false),
+            create("trial 1", "B-seventh", setOf(nonMatchingLocation), false),
+            create("trial 2", "eighth", setOf(nonMatchingLocation), false)
         )
 
-        val cohortList = listOf(
-            cohorts[6],
-            cohorts[2],
-            cohorts[7],
-            cohorts[1],
-            cohorts[5],
-            cohorts[0],
-            cohorts[3],
-            cohorts[4]
-        ).sortedWith(InterpretedCohortComparator())
-
-        val cohortIterator = cohortList.iterator()
-        cohorts.forEach { assertThat(cohortIterator.next()).isEqualTo(it) }
+        assertExpectedOrder(
+            listOf(cohorts[2], cohorts[1], cohorts[3], cohorts[0], cohorts[4], cohorts[5], cohorts[6], cohorts[7]),
+            TrialSource.EXAMPLE
+        )
     }
 
     @Test
     fun `Should place cohorts from requesting source before those from other sources or source null`() {
         val cohort = cohort.copy(source = TrialSource.EXAMPLE)
         assertExpectedOrder(listOf(cohort, cohort.copy(source = TrialSource.LKO)), TrialSource.EXAMPLE)
-        assertExpectedOrder(listOf(cohort, cohort.copy(source = null, locations = emptySet())), TrialSource.EXAMPLE)
+        assertExpectedOrder(listOf(cohort, cohort.copy(source = null)), TrialSource.EXAMPLE)
     }
 
     @Test
@@ -86,15 +79,22 @@ class InterpretedCohortComparatorTest {
     }
 
     private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>, requestingSource: TrialSource? = null) {
-        assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator(requestingSource))).isEqualTo(expectedCohorts)
+        assertThat(expectedCohorts.shuffled().sortedWith(InterpretedCohortComparator(requestingSource))).isEqualTo(expectedCohorts)
     }
 
-    private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): InterpretedCohort {
+    private fun create(
+        trialId: String,
+        cohort: String?,
+        locations: Set<String>,
+        hasSlotsAvailable: Boolean,
+        vararg molecularEvents: String
+    ): InterpretedCohort {
         return InterpretedCohortTestFactory.interpretedCohort(
             trialId = trialId,
             acronym = "",
             molecularInclusionEvents = setOf(*molecularEvents),
             cohort = cohort,
+            locations = locations,
             isPotentiallyEligible = false,
             isOpen = false,
             hasSlotsAvailable = hasSlotsAvailable
