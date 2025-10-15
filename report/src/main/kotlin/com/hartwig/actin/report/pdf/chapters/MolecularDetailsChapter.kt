@@ -22,17 +22,15 @@ import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Table
 
-class MolecularDetailsChapter(
-    private val report: Report,
-    private val cohorts: List<InterpretedCohort>,
-    private val externalTrials: Set<EventWithExternalTrial>
-) : ReportChapter {
+class MolecularDetailsChapter(private val report: Report, private val trialsProvider: TrialsProvider) : ReportChapter {
+
+    private val externalTrials = trialsProvider.externalTrials().allFiltered()
 
     override fun name(): String {
         return "Molecular Details"
@@ -45,7 +43,7 @@ class MolecularDetailsChapter(
     override fun include(): Boolean {
         return true
     }
-
+    
     override fun render(document: Document) {
         addChapterTitle(document)
         if (report.configuration.molecularChapterType == MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY ||
@@ -143,6 +141,7 @@ class MolecularDetailsChapter(
 
     private fun addLongitudinalMolecularHistoryTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
+        val cohorts = trialsProvider.evaluableCohortsAndNotIgnore()
         val generator = LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularTests, cohorts)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)

@@ -26,6 +26,13 @@ enum class ClinicalChapterType {
     COMPLETE
 }
 
+enum class TrialMatchingChapterType {
+    NONE,
+    STANDARD_ALL_TRIALS,
+    STANDARD_EXTERNAL_TRIALS_ONLY,
+    COMPREHENSIVE
+}
+
 data class ReportConfiguration(
     val patientDetailsType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val clinicalSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
@@ -35,10 +42,9 @@ data class ReportConfiguration(
     val molecularChapterType: MolecularChapterType = MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY,
     val efficacyEvidenceChapterType: EfficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,
     val clinicalChapterType: ClinicalChapterType = ClinicalChapterType.COMPLETE,
+    val trialMatchingChapterType: TrialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val includeEligibleButNoSlotsTableIfEmpty: Boolean = true,
-    val includeTrialMatchingChapter: Boolean = true,
-    val includeOnlyExternalTrialsInTrialMatching: Boolean = false,
     val countryOfReference: Country = Country.OTHER,
     val hospitalOfReference: String? = null
 ) {

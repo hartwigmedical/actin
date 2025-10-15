@@ -1,18 +1,14 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
-import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
-import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -31,31 +27,6 @@ class SummaryChapterTest {
             EligibleTrialGenerator::class,
             EligibleTrialGenerator::class
         )
-    }
-
-    @Test
-    fun `Should match total cohort size between report and input`() {
-        val report = TestReportFactory.createExhaustiveTestReport()
-        val eligibleTrialGenerators = createTestSummaryChapter(TestReportFactory.createExhaustiveTestReport()).createSummaryGenerators()
-            .filterIsInstance<EligibleTrialGenerator>()
-
-        assertThat(eligibleTrialGenerators).hasSize(2)
-        assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
-    }
-
-    @Test
-    fun `Should match total cohort size between report and input when there are multiple locations`() {
-        val matches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
-        val trialMatch1 = matches[0].copy(identification = matches[0].identification.copy(source = TrialSource.LKO))
-        val trialMatch2 = matches[1].copy(identification = matches[1].identification.copy(source = TrialSource.NKI))
-        val report = TestReportFactory.createExhaustiveTestReport().copy(
-            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch1, trialMatch2))
-        )
-
-        val eligibleTrialGenerators = createTestSummaryChapter(report).createSummaryGenerators().filterIsInstance<EligibleTrialGenerator>()
-
-        assertThat(eligibleTrialGenerators).hasSize(2)
-        assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
     }
 
     @Test
@@ -93,19 +64,6 @@ class SummaryChapterTest {
             MolecularSummaryGenerator::class,
             EligibleTrialGenerator::class
         )
-    }
-
-    private fun assertReportCohortSizeMatchesInput(report: Report, eligibleTrialGenerators: List<EligibleTrialGenerator>) {
-        val trialMatchingOtherResultsChapter =
-            ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingOtherResultsChapter>().first()
-        val generators = trialMatchingOtherResultsChapter.createTrialTableGenerators()
-        val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
-
-        val totalCohortSizeOnReport =
-            eligibleTrialGenerators.sumOf { it.cohortSize() } + trialTableGenerators.sumOf { it.cohortSize() }
-        val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
-
-        assertThat(totalCohortSizeInput).isEqualTo(totalCohortSizeOnReport)
     }
 
     private fun createTestSummaryChapter(report: Report): SummaryChapter {

@@ -29,7 +29,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         logger.debug("Initializing output styles")
         Styles.initialize()
 
-        val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
+        val chapters = ReportContentProvider(report).provideChapters()
         writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, enableExtendedMode, report.reportDate)
     }
 
