@@ -36,7 +36,8 @@ class TrialsProvider(
     private val nonEvaluableCohorts: List<InterpretedCohort>,
     private val internalTrialIds: Set<String>,
     private val isYoungAdult: Boolean,
-    private val countryOfReference: Country
+    private val countryOfReference: Country,
+    private val retainOriginalExternalTrials: Boolean
 ) {
     fun evaluableCohorts(): List<InterpretedCohort> {
         return cohorts
@@ -79,8 +80,27 @@ class TrialsProvider(
                 .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials)
 
         return ExternalTrials(
-            MolecularFilteredExternalTrials(nationalTrials, filteredNationalTrials),
-            MolecularFilteredExternalTrials(internationalTrials, filteredInternationalTrials)
+            hideOverlappingTrials(
+                nationalTrials,
+                filteredNationalTrials,
+                retainOriginalExternalTrials
+            ),
+            hideOverlappingTrials(
+                internationalTrials,
+                filteredInternationalTrials,
+                retainOriginalExternalTrials
+            )
+        )
+    }
+
+    private fun hideOverlappingTrials(
+        original: Set<EventWithExternalTrial>,
+        filtered: Set<EventWithExternalTrial>,
+        retainOriginalTrials: Boolean
+    ): MolecularFilteredExternalTrials {
+        return MolecularFilteredExternalTrials(
+            original,
+            if (retainOriginalTrials) original else filtered
         )
     }
 
@@ -89,6 +109,7 @@ class TrialsProvider(
             patientRecord: PatientRecord,
             treatmentMatch: TreatmentMatch,
             countryOfReference: Country,
+            retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             externalTrials: Set<EventWithExternalTrial> = externalEligibleTrials(patientRecord)
         ): TrialsProvider {
@@ -99,8 +120,15 @@ class TrialsProvider(
             )
             val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
             val internalTrialIds = treatmentMatch.trialMatches.mapNotNull { it.identification.nctId }.toSet()
-            
-            return TrialsProvider(externalTrials, cohorts, nonEvaluableCohorts, internalTrialIds, isYoungAdult, countryOfReference)
+            return TrialsProvider(
+                externalTrials,
+                cohorts,
+                nonEvaluableCohorts,
+                internalTrialIds,
+                isYoungAdult,
+                countryOfReference,
+                retainOriginalExternalTrials
+            )
         }
 
         private fun externalEligibleTrials(patientRecord: PatientRecord): Set<EventWithExternalTrial> {
@@ -165,5 +193,3 @@ private fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(pr
         !presentEvents.contains(it.event)
     }.toSet()
 }
-
-

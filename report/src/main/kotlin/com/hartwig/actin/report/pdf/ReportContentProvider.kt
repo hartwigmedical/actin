@@ -26,7 +26,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         report.patientRecord,
         report.treatmentMatch,
         report.configuration.countryOfReference,
-        report.configuration.filterOnSOCExhaustionAndTumorType
+        report.configuration.filterOnSOCExhaustionAndTumorType,
+        enableExtendedMode
     )
     private val treatmentRankingModel = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
 
