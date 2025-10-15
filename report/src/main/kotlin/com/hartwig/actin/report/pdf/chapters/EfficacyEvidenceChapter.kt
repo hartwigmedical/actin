@@ -140,11 +140,10 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
     }
 
     private fun addPersonalizedEfficacyEvidence(document: Document) {
-        
         val personalizedDataAnalysis = report.treatmentMatch.personalizedDataAnalysis
         
         if (personalizedDataAnalysis == null) {
-            logger.warn("Personalized data analysis is null, unable to generate personalized efficacy evidence")
+            logger.info("Personalized data analysis is null, unable to generate personalized efficacy evidence data in report")
             return
         }
 

@@ -2,9 +2,12 @@ package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
+import com.hartwig.actin.configuration.ClinicalChapterType
 import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
+import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
+import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
@@ -64,8 +67,15 @@ object ExampleFunctions {
 
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
+            patientDetailsType = ReportContentType.COMPREHENSIVE,
             clinicalSummaryType = ReportContentType.BRIEF,
+            molecularSummaryType = ReportContentType.COMPREHENSIVE,
             standardOfCareSummaryType = ReportContentType.NONE,
+            trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
+            molecularChapterType = MolecularChapterType.DETAILED_WITH_PATHOLOGY,
+            efficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,
+            clinicalChapterType = ClinicalChapterType.COMPLETE,
+            trialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
@@ -73,10 +83,15 @@ object ExampleFunctions {
 
     fun createPersonalizationReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
+            patientDetailsType = ReportContentType.COMPREHENSIVE,
             clinicalSummaryType = ReportContentType.COMPREHENSIVE,
             molecularSummaryType = ReportContentType.NONE,
             standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
+            trialMatchingSummaryType = ReportContentType.BRIEF,
+            molecularChapterType = MolecularChapterType.DETAILED_WITH_PATHOLOGY,
             efficacyEvidenceChapterType = EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY,
+            clinicalChapterType = ClinicalChapterType.COMPLETE,
+            trialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
