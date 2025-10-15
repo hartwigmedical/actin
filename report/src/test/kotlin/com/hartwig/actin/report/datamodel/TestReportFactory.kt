@@ -1,11 +1,7 @@
 package com.hartwig.actin.report.datamodel
 
-import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
-import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
-import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
@@ -18,8 +14,7 @@ object TestReportFactory {
             reportDate = LocalDate.now(),
             patientId = TestPatientFactory.TEST_PATIENT,
             patientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord(),
-            treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-            configuration = ReportConfiguration()
+            treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         )
     }
 
@@ -33,19 +28,10 @@ object TestReportFactory {
     fun createExhaustiveTestReport(): Report {
         return createMinimalTestReport().copy(
             patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord(),
-            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
-            configuration = ReportConfiguration(efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE)
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
     }
-
-    fun createExhaustiveTestReportWithoutMolecular(): Report {
-        return createMinimalTestReport().copy(
-            patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), emptyList()),
-            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
-            configuration = ReportConfiguration(efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE)
-        )
-    }
-
+    
     fun createExhaustiveTestReportWithOtherLocations(): Report {
         val matches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
         val trialMatch1 = matches[0]

@@ -29,6 +29,7 @@ import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.svg.converter.SvgConverter
+import org.apache.logging.log4j.LogManager
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomBar
@@ -50,6 +51,8 @@ import kotlin.math.sign
 
 class EfficacyEvidenceChapter(private val report: Report, private val configuration: ReportConfiguration) : ReportChapter {
 
+    private val logger = LogManager.getLogger(EfficacyEvidenceChapter::class.java)
+    
     private val molecularTests = report.patientRecord.molecularTests
     private val treatmentEvidenceRanking = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).rank(report.patientRecord)
 
@@ -73,7 +76,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
             if (configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE) {
                 addStandardOfCareEfficacyEvidenceDetails(document)
             }
-            addPersonalizedEfficayEvidence(document)
+            addPersonalizedEfficacyEvidence(document)
             addPersonalizedEfficacyPlots(document)
             addStandardOfCareResistanceEvidence(document)
         }
@@ -85,13 +88,13 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
     }
 
     private fun includeStandardOfCareEvidence(): Boolean {
-        return report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY ||
-                report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE
+        return configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY ||
+                configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE
     }
 
     private fun includeMolecularEvidence(): Boolean {
-        return report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.MOLECULAR_ONLY ||
-                report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE
+        return configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.MOLECULAR_ONLY ||
+                configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE
     }
 
     private fun addStandardOfCareEfficacyEvidence(document: Document) {
@@ -136,15 +139,21 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         document.add(table)
     }
 
-    private fun addPersonalizedEfficayEvidence(document: Document) {
+    private fun addPersonalizedEfficacyEvidence(document: Document) {
+        
+        val personalizedDataAnalysis = report.treatmentMatch.personalizedDataAnalysis
+        
+        if (personalizedDataAnalysis == null) {
+            logger.warn("Personalized data analysis is null, unable to generate personalized efficacy evidence")
+            return
+        }
+
         val table = Tables.createSingleColWithWidth(contentWidth())
 
         val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches
             ?.filter(AnnotatedTreatmentMatch::eligible)
             ?.map { it.treatmentCandidate.treatment.name.lowercase() }
             ?.toSet() ?: emptySet()
-
-        val personalizedDataAnalysis = report.treatmentMatch.personalizedDataAnalysis!!
 
         val generators = listOfNotNull(
             RealWorldTreatmentDecisionsGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth()),

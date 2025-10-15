@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.datamodel
 
-import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import org.apache.logging.log4j.LogManager
@@ -13,8 +12,7 @@ object ReportFactory {
     fun create(
         reportDate: LocalDate,
         patientRecord: PatientRecord,
-        treatmentMatch: TreatmentMatch,
-        reportConfiguration: ReportConfiguration
+        treatmentMatch: TreatmentMatch
     ): Report {
         if (patientRecord.patientId != treatmentMatch.patientId) {
             LOGGER.warn(
@@ -27,8 +25,7 @@ object ReportFactory {
             reportDate = reportDate,
             patientId = patientRecord.patientId,
             patientRecord = patientRecord,
-            treatmentMatch = treatmentMatch,
-            configuration = reportConfiguration
+            treatmentMatch = treatmentMatch
         )
     }
 }

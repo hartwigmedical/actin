@@ -53,7 +53,7 @@ class TrialMatchingDetailsChapter(
     override fun render(document: Document) {
         addChapterTitle(document)
         addTrialMatchingResults(document)
-        if (report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE) {
+        if (configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE) {
             addDetailedTrialMatching(document)
         }
     }
@@ -65,25 +65,25 @@ class TrialMatchingDetailsChapter(
     }
 
     fun createTrialTableGenerators(): List<TableGenerator> {
-        val requestingSource = TrialSource.fromDescription(report.configuration.hospitalOfReference)
+        val requestingSource = TrialSource.fromDescription(configuration.hospitalOfReference)
 
-        val includeLocalTrialGenerators = report.configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_ALL_TRIALS ||
-                report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
+        val includeLocalTrialGenerators = configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_ALL_TRIALS ||
+                configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
 
         val localTrialGenerators = createLocalTrialTableGenerators(
             trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
         ).takeIf { includeLocalTrialGenerators } ?: emptyList()
 
         val includeSpecificExternalGenerators =
-            report.configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_EXTERNAL_TRIALS_ONLY ||
-                    report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
+            configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_EXTERNAL_TRIALS_ONLY ||
+                    configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
 
         val externalTrials = trialsProvider.externalTrials()
         val localExternalTrialGenerator = EligibleTrialGenerator.localOpenCohorts(
             emptyList(),
             externalTrials,
             requestingSource,
-            report.configuration.countryOfReference
+            configuration.countryOfReference
         ).takeIf { includeSpecificExternalGenerators }
 
         val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(
@@ -91,7 +91,7 @@ class TrialMatchingDetailsChapter(
             requestingSource,
         ).takeIf { includeSpecificExternalGenerators }
 
-        val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(externalTrials, report.configuration.countryOfReference)
+        val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(externalTrials, configuration.countryOfReference)
 
         return listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator, filteredTrialGenerator) + localTrialGenerators
     }

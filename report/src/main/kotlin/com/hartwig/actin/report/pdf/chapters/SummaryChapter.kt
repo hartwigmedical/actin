@@ -114,8 +114,13 @@ class SummaryChapter(
         val valueWidth = contentWidth() - keyWidth
 
         val clinicalSummaryGenerator =
-            ClinicalSummaryGenerator(report = report, showDetails = false, keyWidth = keyWidth, valueWidth = valueWidth).takeIf {
-                report.configuration.clinicalSummaryType != ReportContentType.NONE
+            ClinicalSummaryGenerator(
+                report = report,
+                includeAdditionalFields = configuration.clinicalSummaryType == ReportContentType.COMPREHENSIVE,
+                keyWidth = keyWidth,
+                valueWidth = valueWidth
+            ).takeIf {
+                configuration.clinicalSummaryType != ReportContentType.NONE
             }
 
         val molecularSummaryGenerator = MolecularSummaryGenerator(
@@ -128,10 +133,10 @@ class SummaryChapter(
                 useInsufficientQualityRecords = true
             )
         ).takeIf {
-            report.configuration.molecularSummaryType != ReportContentType.NONE
+            configuration.molecularSummaryType != ReportContentType.NONE
         }
 
-        val standardOfCareTableGenerator = when (report.configuration.standardOfCareSummaryType) {
+        val standardOfCareTableGenerator = when (configuration.standardOfCareSummaryType) {
             ReportContentType.NONE -> null
             ReportContentType.BRIEF -> ProxyStandardOfCareGenerator(report).takeIf { it.showTable() }
             ReportContentType.COMPREHENSIVE -> EligibleStandardOfCareGenerator(report)
@@ -140,8 +145,8 @@ class SummaryChapter(
         val trialTableGenerators = createTrialTableGenerators(
             cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
             externalTrials = trialsProvider.externalTrials(),
-            requestingSource = TrialSource.fromDescription(report.configuration.hospitalOfReference)
-        ).takeIf { report.configuration.trialMatchingSummaryType != ReportContentType.NONE } ?: emptyList()
+            requestingSource = TrialSource.fromDescription(configuration.hospitalOfReference)
+        ).takeIf { configuration.trialMatchingSummaryType != ReportContentType.NONE } ?: emptyList()
 
         return listOfNotNull(
             clinicalSummaryGenerator,
@@ -157,10 +162,10 @@ class SummaryChapter(
     ): List<TrialTableGenerator> {
         val localOpenCohortsGenerator =
             EligibleTrialGenerator.localOpenCohorts(
-                cohorts,
-                externalTrials,
-                requestingSource,
-                report.configuration.countryOfReference
+                cohorts = cohorts,
+                externalTrials = externalTrials,
+                requestingSource = requestingSource,
+                countryOfReference = configuration.countryOfReference
             )
 
         val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =

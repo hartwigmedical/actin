@@ -51,7 +51,7 @@ class MolecularDetailsChapter(
 
     override fun render(document: Document) {
         addChapterTitle(document)
-        
+
         if (configuration.molecularChapterType == MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY ||
             configuration.molecularChapterType == MolecularChapterType.DETAILED_WITH_PATHOLOGY ||
             configuration.molecularChapterType == MolecularChapterType.COMPLETE
@@ -73,7 +73,7 @@ class MolecularDetailsChapter(
 
     private fun addMolecularDetails(document: Document) {
         val cohorts =
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.configuration.filterOnSOCExhaustionAndTumorType)
+            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, configuration.filterOnSOCExhaustionAndTumorType)
 
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }

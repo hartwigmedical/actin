@@ -32,7 +32,7 @@ class ReporterApplication(private val config: ReporterConfig) {
             ReportConfiguration.create(config.overrideYaml)
         }
 
-        val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch, configuration)
+        val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, configuration, config.enableExtendedMode)
         LOGGER.info("Done!")

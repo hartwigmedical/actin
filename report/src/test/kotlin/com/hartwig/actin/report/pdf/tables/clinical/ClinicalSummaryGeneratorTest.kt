@@ -99,8 +99,7 @@ class PatientClinicalHistoryGeneratorTest {
     private fun generateHistoryAndReturnTableWithText(report: Report, cellToFind: String): Table {
         val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
         val cells = clinicalSummaryGenerator.contentsAsList()
-        val otherHistoryCell =
-            cells.dropWhile { extractTextFromCell(it) != cellToFind }.drop(1).first()
+        val otherHistoryCell = cells.dropWhile { extractTextFromCell(it) != cellToFind }.drop(1).first()
         return otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
     }
 }

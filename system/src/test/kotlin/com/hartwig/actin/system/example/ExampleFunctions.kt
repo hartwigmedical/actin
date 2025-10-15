@@ -108,7 +108,7 @@ object ExampleFunctions {
         LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
 
-        val report = ReportFactory.create(reportDate, patient, treatmentMatch, configuration)
+        val report = ReportFactory.create(reportDate, patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
         writer.write(report = report, configuration = configuration, addExtendedSuffix = false)

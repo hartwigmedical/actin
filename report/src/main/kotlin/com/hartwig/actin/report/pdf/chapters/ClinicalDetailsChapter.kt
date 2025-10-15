@@ -44,9 +44,14 @@ class ClinicalDetailsChapter(private val report: Report, private val configurati
     fun createClinicalDetailGenerators(): List<TableGenerator> {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
-        
+
         return listOfNotNull(
-            ClinicalSummaryGenerator(report = report, showDetails = true, keyWidth = keyWidth, valueWidth = valueWidth),
+            ClinicalSummaryGenerator(
+                report = report,
+                includeAdditionalFields = true,
+                keyWidth = keyWidth,
+                valueWidth = valueWidth
+            ),
             PatientCurrentDetailsGenerator(
                 record = report.patientRecord,
                 keyWidth = keyWidth,
