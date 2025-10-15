@@ -117,7 +117,6 @@ class SummaryChapterTest {
             report.patientRecord,
             report.treatmentMatch,
             report.configuration.countryOfReference,
-            false,
             report.configuration.filterOnSOCExhaustionAndTumorType
         )
     }
