@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.actin.molecular.util.FormatFunctions
+import com.hartwig.actin.util.FormatFunctions
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
