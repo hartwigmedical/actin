@@ -32,7 +32,7 @@
       "description": "Pneumonia"
     },
     "lvef": 0.5,
-    "hasComplications": false
+    "hasOtherConditions": false
   },
   "performanceStatus": {
     "whoStatuses": [

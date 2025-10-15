@@ -14,7 +14,6 @@ import org.junit.Test
 import java.time.LocalDate
 
 private const val OTHER_CONDITION_NAME: String = "other condition"
-private const val COMPLICATION_NAME: String = "complication"
 private const val TOXICITY_NAME: String = "toxicity"
 private const val childCode = "childCode"
 private const val parentCode = "childParentCode"
@@ -26,8 +25,10 @@ class HasHadComorbidityWithIcdCodeTest {
         TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent", "extension", parentCode))
     private val referenceDate = LocalDate.of(2024, 12, 6)
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val complicationWithTargetCode = ComorbidityTestFactory.complication(icdMainCode = parentCode, name = COMPLICATION_NAME)
-    private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
+    private val historicalConditionWithTargetCode =
+        ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "history condition")
+    private val historicalConditionWithChildOfTargetCode =
+        historicalConditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
     private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(
         name = OTHER_CONDITION_NAME,
         icdMainCode = parentCode
@@ -89,12 +90,9 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should pass when ICD code or parent code of complication matches code of target title`() {
-        listOf(complicationWithChildOfTargetCode, complicationWithTargetCode).forEach {
-            assertPassEvaluationWithMessages(
-                function.evaluate(ComorbidityTestFactory.withComplications(listOf(it))),
-                "complication"
-            )
+    fun `Should pass when ICD code or parent code of historical condition matches code of target title`() {
+        listOf(historicalConditionWithChildOfTargetCode, historicalConditionWithTargetCode).forEach {
+            assertPassEvaluationWithMessages(function.evaluate(ComorbidityTestFactory.withOtherCondition(it)), "other condition")
         }
     }
 
@@ -172,16 +170,16 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should combine multiple conditions, toxicities and complications into one message`() {
+    fun `Should combine multiple conditions, toxicities and historical conditions into one message`() {
         val toxicity = toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(childCode), 2)
         val otherTox = toxicity.copy(name = "pneumonitis")
         assertPassEvaluationWithMessages(
             function.evaluate(
                 minimalPatient.copy(
-                    comorbidities = listOf(toxicity, otherTox, complicationWithTargetCode, conditionWithTargetCode)
+                    comorbidities = listOf(toxicity, otherTox, historicalConditionWithTargetCode, conditionWithTargetCode)
                 )
             ),
-            "complication, other condition, pneumonitis and toxicity"
+            "history condition, other condition, pneumonitis and toxicity"
         )
     }
 

@@ -11,7 +11,7 @@ assigned. For more information, see https://disease-ontology.org/.
 
 ### International Classification of Diseases version 11 (ICD-11)
 
-For other conditions, complications, intolerances, toxicities and ECG data in the ACTIN clinical data model, one or more ICD-11 codes are
+For other conditions, intolerances, toxicities and ECG data in the ACTIN clinical data model, one or more ICD-11 codes are
 assigned. For more information, see https://icd.who.int/. To browse codes: https://icd.who.int/browse/2024-01/mms/en
 
 ### Datamodel
@@ -55,7 +55,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | hasActiveInfection         | Other relevant patient history |
 | activeInfectionDescription | Other relevant patient history |
 | lvef                       | Other relevant patient history |
-| hasComplications           | Complication details           |
+| hasOtherConditions         | Other condition details        |
 
 #### 0+ treatment history entries in oncological history
 
@@ -122,7 +122,7 @@ The details may include multiple treatment stages representing switches from the
 #### 0+ comorbidities
 
 Comorbidities are diseases or medical conditions that coexist alongside the primary diagnosis.
-These consist of complications, intolerances, toxicities, ECGs, and other conditions.
+These consist of intolerances, toxicities, ECGs, and other conditions.
 Each subtype has fields for name, year, month, and ICD codes to enable generic matching across all comorbidities.
 They can also be considered individually:
 
@@ -134,16 +134,6 @@ They can also be considered individually:
 | year     | Other condition: start date |
 | month    | Other condition: start date |
 | icdCodes | Added in curation           |
-
-##### 0+ cancer related complications
-
-| Field    | Origin                   |
-|----------|--------------------------|
-| name     | Complication: name       |
-| icdCodes | Added in curation        |
-| year     | Complication: start date |
-| month    | Complication: start date |
-
 
 ##### 0+ toxicities
 

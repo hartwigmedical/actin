@@ -59,8 +59,8 @@ class PatientCurrentDetailsGenerator(
             table.addCell(Cells.createKey("LVEF"))
             table.addCell(Cells.createValue(Formats.percentage(record.clinicalStatus.lvef!!)))
         }
-        table.addCell(Cells.createKey("Cancer-related complications"))
-        table.addCell(Cells.createValue(complications(record)))
+        table.addCell(Cells.createKey("Cancer-related other conditions"))
+        table.addCell(Cells.createValue(otherConditions(record)))
         table.addCell(Cells.createKey("Known allergies"))
         table.addCell(Cells.createValue(allergies(record.intolerances)))
         if (record.surgeries.isNotEmpty()) {
@@ -102,16 +102,11 @@ class PatientCurrentDetailsGenerator(
             }
     }
 
-    private fun complications(record: PatientRecord): String {
-        val complicationSummary = record.complications.filter { it.name != null }.joinToString(Formats.COMMA_SEPARATOR) { complication ->
-            complication.name + (toDateString(complication.year, complication.month)?.let { " ($it)" } ?: "")
+    private fun otherConditions(record: PatientRecord): String {
+        val conditionSummary = record.otherConditions.filter { it.name != null }.joinToString(Formats.COMMA_SEPARATOR) { condition ->
+            condition.name + (toDateString(condition.year, condition.month)?.let { " ($it)" } ?: "")
         }
-        val defaultValue = when (record.clinicalStatus.hasComplications) {
-            true -> "Yes (complication details unknown)"
-            false -> "None"
-            else -> "Unknown"
-        }
-        return Formats.valueOrDefault(complicationSummary, defaultValue)
+        return Formats.valueOrDefault(conditionSummary, "Unknown")
     }
 
     private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {

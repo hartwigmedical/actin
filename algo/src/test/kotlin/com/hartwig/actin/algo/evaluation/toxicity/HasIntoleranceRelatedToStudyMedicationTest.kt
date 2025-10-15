@@ -76,8 +76,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
         val icdMainCode = matchingIcdCodes.first()
         listOf(
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode, IcdConstants.NIVOLUMAB_CODE),
-            ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = IcdConstants.NIVOLUMAB_CODE),
-            ComorbidityTestFactory.complication("complication", icdMainCode = icdMainCode, icdExtensionCode = IcdConstants.NIVOLUMAB_CODE)
+            ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = IcdConstants.NIVOLUMAB_CODE)
         ).forEach { match ->
             assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
         }

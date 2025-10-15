@@ -162,17 +162,6 @@ CREATE TABLE `ihcTest`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `complication`;
-CREATE TABLE `complication`
-(   `id` int NOT NULL AUTO_INCREMENT,
-    `patientId` varchar(50) NOT NULL,
-    `name` varchar(150),
-    `icdCodes` varchar(50) NOT NULL,
-    `year` int,
-    `month` int,
-    PRIMARY KEY (`id`)
-);
-
 DROP TABLE IF EXISTS `labValue`;
 CREATE TABLE `labValue`
 (   `id` int NOT NULL AUTO_INCREMENT,

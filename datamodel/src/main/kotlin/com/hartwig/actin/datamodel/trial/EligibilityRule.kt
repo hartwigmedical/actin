@@ -502,7 +502,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     USES_ADEQUATE_ANTICONCEPTION(FunctionInput.NONE),
     ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS(FunctionInput.NONE),
 
-    // Rules related to complications
+    // Rules related to other conditions
     HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN(FunctionInput.NONE),
     HAS_LEPTOMENINGEAL_DISEASE(FunctionInput.NONE),
     HAS_PLEURAL_EFFUSION(FunctionInput.NONE),

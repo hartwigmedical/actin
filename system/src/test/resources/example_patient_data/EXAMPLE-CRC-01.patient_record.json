@@ -40,7 +40,7 @@
   "clinicalStatus": {
     "infectionStatus": null,
     "lvef": null,
-    "hasComplications": null
+    "hasOtherConditions": null
   },
   "performanceStatus": {
     "latestWho": 0,

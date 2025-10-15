@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -41,7 +40,6 @@ class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.PRIORPRIMARY).execute()
         context.truncate(Tables.OTHERCONDITION).execute()
         context.truncate(Tables.IHCTEST).execute()
-        context.truncate(Tables.COMPLICATION).execute()
         context.truncate(Tables.LABVALUE).execute()
         context.truncate(Tables.TOXICITY).execute()
         context.truncate(Tables.INTOLERANCE).execute()
@@ -63,7 +61,6 @@ class ClinicalDAO(private val context: DSLContext) {
         writePriorPrimaries(patientId, record.priorPrimaries)
         writeOtherConditions(patientId, record.otherConditions)
         writeMolecularTests(patientId, record.ihcTests)
-        writeComplications(patientId, record.complications)
         writeLabValues(patientId, record.labValues)
         writeToxicities(patientId, record.toxicities)
         writeIntolerances(patientId, record.intolerances)
@@ -194,7 +191,7 @@ class ClinicalDAO(private val context: DSLContext) {
                 jtcMeasure?.value,
                 jtcMeasure?.unit,
                 clinicalStatus.lvef,
-                clinicalStatus.hasComplications
+                null
             )
             .execute()
     }
@@ -387,31 +384,6 @@ class ClinicalDAO(private val context: DSLContext) {
                     ihcTest.impliesPotentialIndeterminateStatus
                 )
                 .execute()
-        }
-    }
-
-    private fun writeComplications(patientId: String, complications: List<Complication>?) {
-        if (complications != null) {
-            for (complication in complications) {
-                if (complication.name?.isNotEmpty() == true) {
-                    context.insertInto(
-                        Tables.COMPLICATION,
-                        Tables.COMPLICATION.PATIENTID,
-                        Tables.COMPLICATION.NAME,
-                        Tables.COMPLICATION.ICDCODES,
-                        Tables.COMPLICATION.YEAR,
-                        Tables.COMPLICATION.MONTH
-                    )
-                        .values(
-                            patientId,
-                            complication.name,
-                            DataUtil.concatObjects(complication.icdCodes),
-                            complication.year,
-                            complication.month
-                        )
-                        .execute()
-                }
-            }
         }
     }
 

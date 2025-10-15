@@ -6,6 +6,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.ComorbidityClass
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.util.json.Json
 import java.lang.reflect.Type
 
@@ -13,9 +14,12 @@ class ComorbidityAdapter : JsonDeserializer<Comorbidity> {
 
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext): Comorbidity {
         return try {
-            context.deserialize<Any>(
-                jsonElement, ComorbidityClass.valueOf(Json.string(jsonElement.asJsonObject, "comorbidityClass")).comorbidityClass
-            ) as Comorbidity
+            val className = Json.string(jsonElement.asJsonObject, "comorbidityClass")
+            val targetType = when (className) {
+                "COMPLICATION" -> OtherCondition::class.java
+                else -> ComorbidityClass.valueOf(className).comorbidityClass
+            }
+            context.deserialize<Any>(jsonElement, targetType) as Comorbidity
         } catch (e: Exception) {
             throw JsonParseException("Failed to deserialize: $jsonElement", e)
         }

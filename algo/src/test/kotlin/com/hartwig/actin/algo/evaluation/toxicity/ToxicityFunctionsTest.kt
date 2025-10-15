@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
@@ -65,16 +64,34 @@ class ToxicityFunctionsTest {
     }
 
     @Test
-    fun `Should filter EHR toxicities when also present in complications`() {
-        val withEhrTox = ComorbidityTestFactory.withComorbidities(listOf(ehrTox, Complication(ehrTox.name, icdCodes = ehrTox.icdCodes)))
+    fun `Should filter EHR toxicities when also present in other conditions`() {
+        val ehrIcdCode = ehrTox.icdCodes.first()
+        val withEhrTox = ComorbidityTestFactory.withComorbidities(
+            listOf(
+                ehrTox,
+                ComorbidityTestFactory.otherCondition(
+                    name = ehrTox.name!!,
+                    icdMainCode = ehrIcdCode.mainCode,
+                    icdExtensionCode = ehrIcdCode.extensionCode
+                )
+            )
+        )
         assertThat(ToxicityFunctions.selectRelevantToxicities(withEhrTox, TestIcdFactory.createTestModel(), referenceDate)).isEmpty()
     }
 
     @Test
-    fun `Should not filter questionnaire toxicities when also present in complications`() {
+    fun `Should not filter questionnaire toxicities when also present in other conditions`() {
         val questionnaireTox = ehrTox.copy(source = ToxicitySource.QUESTIONNAIRE)
+        val ehrIcdCode = ehrTox.icdCodes.first()
         val withQuestionnaireTox = ComorbidityTestFactory.withComorbidities(
-            listOf(questionnaireTox, Complication(ehrTox.name, icdCodes = ehrTox.icdCodes))
+            listOf(
+                questionnaireTox,
+                ComorbidityTestFactory.otherCondition(
+                    name = ehrTox.name!!,
+                    icdMainCode = ehrIcdCode.mainCode,
+                    icdExtensionCode = ehrIcdCode.extensionCode
+                )
+            )
         )
         assertThat(ToxicityFunctions.selectRelevantToxicities(withQuestionnaireTox, TestIcdFactory.createTestModel(), referenceDate))
             .containsOnly(questionnaireTox)
