@@ -14,20 +14,16 @@ class InterpretedCohortComparatorTest {
     @Test
     fun `Should sort cohorts`() {
         val cohorts = listOf(
-            create("trial 7", "fourth", setOf(matchingLocation), true),
-            create("trial 3", "second", setOf(matchingLocation), false, "Event C"),
             create("trial 3", "first", setOf(matchingLocation, nonMatchingLocation), true, "Event B"),
+            create("trial 3", "second", setOf(matchingLocation), false, "Event C"),
             create("trial 5", "third", setOf(nonMatchingLocation), false, "Event D", "Event A"),
+            create("trial 7", "fourth", setOf(matchingLocation), true),
             create("trial 1", "fifth", setOf(nonMatchingLocation), true),
             create("trial 1", "A-sixth", setOf(nonMatchingLocation), false),
             create("trial 1", "B-seventh", setOf(nonMatchingLocation), false),
             create("trial 2", "eighth", setOf(nonMatchingLocation), false)
         )
-
-        assertExpectedOrder(
-            listOf(cohorts[2], cohorts[1], cohorts[3], cohorts[0], cohorts[4], cohorts[5], cohorts[6], cohorts[7]),
-            TrialSource.EXAMPLE
-        )
+        assertExpectedOrder(cohorts, TrialSource.EXAMPLE)
     }
 
     @Test
@@ -79,7 +75,7 @@ class InterpretedCohortComparatorTest {
     }
 
     private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>, requestingSource: TrialSource? = null) {
-        assertThat(expectedCohorts.shuffled().sortedWith(InterpretedCohortComparator(requestingSource))).isEqualTo(expectedCohorts)
+        assertThat(expectedCohorts.reversed().sortedWith(InterpretedCohortComparator(requestingSource))).isEqualTo(expectedCohorts)
     }
 
     private fun create(
