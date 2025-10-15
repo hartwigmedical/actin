@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.configuration.ClinicalChapterType
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
@@ -15,7 +16,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
+class ClinicalDetailsChapter(private val report: Report, private val configuration: ReportConfiguration) : ReportChapter {
 
     override fun name(): String {
         return "Clinical Details"
@@ -26,7 +27,7 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
     }
 
     override fun include(): Boolean {
-        return report.configuration.clinicalChapterType != ClinicalChapterType.NONE
+        return configuration.clinicalChapterType != ClinicalChapterType.NONE
     }
 
     override fun render(document: Document) {

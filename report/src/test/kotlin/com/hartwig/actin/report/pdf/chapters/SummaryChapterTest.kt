@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.report.datamodel.Report
@@ -67,16 +69,17 @@ class SummaryChapterTest {
     }
 
     private fun createTestSummaryChapter(report: Report): SummaryChapter {
-        return SummaryChapter(report, createTrialsProvider(report))
+        val configuration = ReportConfiguration()
+        return SummaryChapter(report, configuration, createTrialsProvider(report, configuration))
     }
 
-    private fun createTrialsProvider(report: Report): TrialsProvider {
+    private fun createTrialsProvider(report: Report, configuration: ReportConfiguration): TrialsProvider {
         return TrialsProvider.create(
             report.patientRecord,
             report.treatmentMatch,
-            report.configuration.countryOfReference,
-            report.configuration.filterOnSOCExhaustionAndTumorType,
-            false
+            configuration.countryOfReference,
+            configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE,
+            configuration.filterOnSOCExhaustionAndTumorType,
         )
     }
 }

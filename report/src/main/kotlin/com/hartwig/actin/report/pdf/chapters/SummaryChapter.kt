@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.trial.TrialSource
@@ -26,7 +27,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-class SummaryChapter(private val report: Report, private val trialsProvider: TrialsProvider) : ReportChapter {
+class SummaryChapter(
+    private val report: Report,
+    private val configuration: ReportConfiguration,
+    private val trialsProvider: TrialsProvider
+) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -41,7 +46,7 @@ class SummaryChapter(private val report: Report, private val trialsProvider: Tri
     }
 
     override fun render(document: Document) {
-        if (report.configuration.patientDetailsType != ReportContentType.NONE) {
+        if (configuration.patientDetailsType != ReportContentType.NONE) {
             addPatientDetails(document)
         }
         addSummaryTable(document)
@@ -58,7 +63,7 @@ class SummaryChapter(private val report: Report, private val trialsProvider: Tri
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOfNotNull(
             "Tumor: " to report.patientRecord.tumor.name,
-            if (report.configuration.patientDetailsType == ReportContentType.COMPREHENSIVE) {
+            if (configuration.patientDetailsType == ReportContentType.COMPREHENSIVE) {
                 " | Lesions: " to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
             } else null,
             " | $stageTitle: " to stages
@@ -107,7 +112,7 @@ class SummaryChapter(private val report: Report, private val trialsProvider: Tri
     fun createSummaryGenerators(): List<TableGenerator> {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
-        
+
         val clinicalSummaryGenerator =
             ClinicalSummaryGenerator(report = report, showDetails = false, keyWidth = keyWidth, valueWidth = valueWidth).takeIf {
                 report.configuration.clinicalSummaryType != ReportContentType.NONE
@@ -137,12 +142,12 @@ class SummaryChapter(private val report: Report, private val trialsProvider: Tri
             externalTrials = trialsProvider.externalTrials(),
             requestingSource = TrialSource.fromDescription(report.configuration.hospitalOfReference)
         ).takeIf { report.configuration.trialMatchingSummaryType != ReportContentType.NONE } ?: emptyList()
-        
+
         return listOfNotNull(
             clinicalSummaryGenerator,
             molecularSummaryGenerator,
             standardOfCareTableGenerator
-        )  + trialTableGenerators
+        ) + trialTableGenerators
     }
 
     private fun createTrialTableGenerators(

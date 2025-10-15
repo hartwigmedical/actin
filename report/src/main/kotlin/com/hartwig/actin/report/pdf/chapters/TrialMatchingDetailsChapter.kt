@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -31,7 +32,11 @@ import com.itextpdf.layout.properties.AreaBreakType
 private const val INDENT_WIDTH = 10f
 private const val KEY_WIDTH = 90f
 
-class TrialMatchingDetailsChapter(private val report: Report, private val trialsProvider: TrialsProvider) : ReportChapter {
+class TrialMatchingDetailsChapter(
+    private val report: Report,
+    private val configuration: ReportConfiguration,
+    private val trialsProvider: TrialsProvider
+) : ReportChapter {
 
     override fun name(): String {
         return "Trial Matching Details"
@@ -42,13 +47,13 @@ class TrialMatchingDetailsChapter(private val report: Report, private val trials
     }
 
     override fun include(): Boolean {
-        return report.configuration.trialMatchingChapterType != TrialMatchingChapterType.NONE
+        return configuration.trialMatchingChapterType != TrialMatchingChapterType.NONE
     }
 
     override fun render(document: Document) {
         addChapterTitle(document)
         addTrialMatchingResults(document)
-        if (report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPREHENSIVE) {
+        if (report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE) {
             addDetailedTrialMatching(document)
         }
     }
@@ -63,7 +68,7 @@ class TrialMatchingDetailsChapter(private val report: Report, private val trials
         val requestingSource = TrialSource.fromDescription(report.configuration.hospitalOfReference)
 
         val includeLocalTrialGenerators = report.configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_ALL_TRIALS ||
-                report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPREHENSIVE
+                report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
 
         val localTrialGenerators = createLocalTrialTableGenerators(
             trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
@@ -71,7 +76,7 @@ class TrialMatchingDetailsChapter(private val report: Report, private val trials
 
         val includeSpecificExternalGenerators =
             report.configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_EXTERNAL_TRIALS_ONLY ||
-                    report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPREHENSIVE
+                    report.configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
 
         val externalTrials = trialsProvider.externalTrials()
         val localExternalTrialGenerator = EligibleTrialGenerator.localOpenCohorts(

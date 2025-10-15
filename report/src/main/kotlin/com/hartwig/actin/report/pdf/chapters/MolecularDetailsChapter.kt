@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
 import com.hartwig.actin.configuration.MolecularChapterType
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
@@ -28,7 +29,11 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Table
 
-class MolecularDetailsChapter(private val report: Report, private val trialsProvider: TrialsProvider) : ReportChapter {
+class MolecularDetailsChapter(
+    private val report: Report,
+    private val configuration: ReportConfiguration,
+    private val trialsProvider: TrialsProvider
+) : ReportChapter {
 
     private val externalTrials = trialsProvider.externalTrials().allFiltered()
 
@@ -43,17 +48,25 @@ class MolecularDetailsChapter(private val report: Report, private val trialsProv
     override fun include(): Boolean {
         return true
     }
-    
+
     override fun render(document: Document) {
         addChapterTitle(document)
-        if (report.configuration.molecularChapterType == MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY ||
-            report.configuration.molecularChapterType == MolecularChapterType.DETAILED_WITH_PATHOLOGY
+        
+        if (configuration.molecularChapterType == MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY ||
+            configuration.molecularChapterType == MolecularChapterType.DETAILED_WITH_PATHOLOGY ||
+            configuration.molecularChapterType == MolecularChapterType.COMPLETE
         ) {
             addMolecularDetails(document)
-            if (report.configuration.molecularChapterType == MolecularChapterType.DETAILED_WITH_PATHOLOGY) {
+            if (configuration.molecularChapterType == MolecularChapterType.DETAILED_WITH_PATHOLOGY ||
+                configuration.molecularChapterType == MolecularChapterType.COMPLETE
+            ) {
                 addPathologyReport(document)
             }
-        } else if (report.configuration.molecularChapterType == MolecularChapterType.LONGITUDINAL) {
+        }
+
+        if (configuration.molecularChapterType == MolecularChapterType.LONGITUDINAL ||
+            configuration.molecularChapterType == MolecularChapterType.COMPLETE
+        ) {
             addLongitudinalMolecularHistoryTable(document)
         }
     }

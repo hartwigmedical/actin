@@ -81,7 +81,7 @@ object ExampleFunctions {
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
     }
-    
+
     fun runExample(exampleToRun: String, reportConfigProvider: () -> ReportConfiguration) {
         val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
 
@@ -100,7 +100,7 @@ object ExampleFunctions {
         examplePatientRecordJson: String,
         exampleTreatmentMatchJson: String,
         outputDirectory: String,
-        reportConfiguration: ReportConfiguration
+        configuration: ReportConfiguration
     ) {
         LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
         val patient = PatientRecordJson.read(examplePatientRecordJson)
@@ -108,11 +108,11 @@ object ExampleFunctions {
         LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
 
-        val report = ReportFactory.create(reportDate, patient, treatmentMatch, reportConfiguration)
+        val report = ReportFactory.create(reportDate, patient, treatmentMatch, configuration)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
-        writer.write(report, enableExtendedMode = false)
-        writer.write(report, enableExtendedMode = true)
+        writer.write(report = report, configuration = configuration, addExtendedSuffix = false)
+        writer.write(report = report, configuration = ReportConfiguration.extended(), addExtendedSuffix = true)
 
         LOGGER.info("Done!")
     }

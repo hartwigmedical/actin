@@ -11,7 +11,8 @@ enum class ReportContentType {
 enum class MolecularChapterType {
     DETAILED_WITHOUT_PATHOLOGY,
     DETAILED_WITH_PATHOLOGY,
-    LONGITUDINAL
+    LONGITUDINAL,
+    COMPLETE
 }
 
 enum class EfficacyEvidenceChapterType {
@@ -30,7 +31,7 @@ enum class TrialMatchingChapterType {
     NONE,
     STANDARD_ALL_TRIALS,
     STANDARD_EXTERNAL_TRIALS_ONLY,
-    COMPREHENSIVE
+    COMPLETE
 }
 
 data class ReportConfiguration(
@@ -52,6 +53,20 @@ data class ReportConfiguration(
     companion object {
         fun create(environmentConfigFile: String?): ReportConfiguration {
             return EnvironmentConfiguration.create(environmentConfigFile).report
+        }
+
+        fun extended(): ReportConfiguration {
+            return ReportConfiguration(
+                patientDetailsType = ReportContentType.COMPREHENSIVE,
+                clinicalSummaryType = ReportContentType.COMPREHENSIVE,
+                molecularSummaryType = ReportContentType.COMPREHENSIVE,
+                standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
+                trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
+                molecularChapterType = MolecularChapterType.COMPLETE,
+                efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
+                clinicalChapterType = ClinicalChapterType.COMPLETE,
+                trialMatchingChapterType = TrialMatchingChapterType.COMPLETE
+            )
         }
     }
 }

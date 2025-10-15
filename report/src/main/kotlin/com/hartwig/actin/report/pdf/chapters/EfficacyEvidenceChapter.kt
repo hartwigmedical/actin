@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.algo.ShapDetail
 import com.hartwig.actin.datamodel.algo.SimilarPatientsSummary
@@ -19,7 +20,9 @@ import com.hartwig.actin.report.pdf.tables.soc.ResistanceEvidenceGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.treatment.EvidenceScoringModel
 import com.hartwig.actin.treatment.TreatmentRankingModel
+import com.hartwig.actin.treatment.createScoringConfig
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Image
@@ -45,10 +48,10 @@ import kotlin.io.path.readBytes
 import kotlin.math.abs
 import kotlin.math.sign
 
-class EfficacyEvidenceChapter(private val report: Report, treatmentRankingModel: TreatmentRankingModel) : ReportChapter {
+class EfficacyEvidenceChapter(private val report: Report, private val configuration: ReportConfiguration) : ReportChapter {
 
     private val molecularTests = report.patientRecord.molecularTests
-    private val treatmentEvidenceRanking = treatmentRankingModel.rank(report.patientRecord)
+    private val treatmentEvidenceRanking = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).rank(report.patientRecord)
 
     override fun name(): String {
         return "Efficacy evidence"
@@ -59,15 +62,15 @@ class EfficacyEvidenceChapter(private val report: Report, treatmentRankingModel:
     }
 
     override fun include(): Boolean {
-        return report.configuration.efficacyEvidenceChapterType != EfficacyEvidenceChapterType.NONE
+        return configuration.efficacyEvidenceChapterType != EfficacyEvidenceChapterType.NONE
     }
-    
+
     override fun render(document: Document) {
         addChapterTitle(document)
 
         if (includeStandardOfCareEvidence()) {
             addStandardOfCareEfficacyEvidence(document)
-            if (report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE) {
+            if (configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE) {
                 addStandardOfCareEfficacyEvidenceDetails(document)
             }
             addPersonalizedEfficayEvidence(document)
@@ -81,16 +84,16 @@ class EfficacyEvidenceChapter(private val report: Report, treatmentRankingModel:
         }
     }
 
-    private fun includeStandardOfCareEvidence() : Boolean {
+    private fun includeStandardOfCareEvidence(): Boolean {
         return report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY ||
                 report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE
     }
 
-    private fun includeMolecularEvidence() : Boolean {
+    private fun includeMolecularEvidence(): Boolean {
         return report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.MOLECULAR_ONLY ||
                 report.configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE
     }
-    
+
     private fun addStandardOfCareEfficacyEvidence(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val efficacyEvidenceGenerator = EfficacyEvidenceGenerator(report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() })
