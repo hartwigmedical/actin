@@ -2,6 +2,7 @@ package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
+import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
@@ -75,8 +76,7 @@ object ExampleFunctions {
             clinicalSummaryType = ReportContentType.COMPREHENSIVE,
             molecularSummaryType = ReportContentType.NONE,
             approvedTreatmentSummaryType = ReportContentType.COMPREHENSIVE,
-            includeSOCLiteratureEfficacyEvidence = true,
-            filterOnSOCExhaustionAndTumorType = true,
+            efficacyEvidenceChapterType = EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )

@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.datamodel
 
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
@@ -33,7 +34,7 @@ object TestReportFactory {
         return createMinimalTestReport().copy(
             patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
-            configuration = ReportConfiguration(includeMolecularEvidenceChapter = true)
+            configuration = ReportConfiguration(efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE)
         )
     }
 
@@ -41,7 +42,7 @@ object TestReportFactory {
         return createMinimalTestReport().copy(
             patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), emptyList()),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
-            configuration = ReportConfiguration(includeMolecularEvidenceChapter = true)
+            configuration = ReportConfiguration(efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE)
         )
     }
 

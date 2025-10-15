@@ -22,7 +22,7 @@ import com.itextpdf.layout.properties.AreaBreakType
 private const val INDENT_WIDTH = 10f
 private const val KEY_WIDTH = 90f
 
-class TrialMatchingDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+class TrialMatchingDetailsChapter(private val report: Report, private val include: Boolean) : ReportChapter {
 
     override fun name(): String {
         return "Trial Matching Details"
@@ -30,6 +30,10 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
 
     override fun pageSize(): PageSize {
         return PageSize.A4
+    }
+
+    override fun include(): Boolean {
+        return include
     }
 
     override fun render(document: Document) {

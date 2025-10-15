@@ -42,6 +42,10 @@ class MolecularDetailsChapter(
         return PageSize.A4.rotate()
     }
 
+    override fun include(): Boolean {
+        return true
+    }
+
     override fun render(document: Document) {
         addChapterTitle(document)
         if (report.configuration.molecularChapterType == MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY ||

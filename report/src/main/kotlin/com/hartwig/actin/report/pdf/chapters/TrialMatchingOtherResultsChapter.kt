@@ -17,7 +17,7 @@ class TrialMatchingOtherResultsChapter(
     private val report: Report,
     private val externalTrialsOnly: Boolean,
     private val trialsProvider: TrialsProvider,
-    override val include: Boolean
+    private val include: Boolean
 ) : ReportChapter {
 
     override fun name(): String {
@@ -26,6 +26,10 @@ class TrialMatchingOtherResultsChapter(
 
     override fun pageSize(): PageSize {
         return PageSize.A4.rotate()
+    }
+
+    override fun include(): Boolean {
+        return include
     }
 
     override fun render(document: Document) {

@@ -36,6 +36,10 @@ class SummaryChapter(private val report: Report, private val trialsProvider: Tri
         return PageSize.A4
     }
 
+    override fun include(): Boolean {
+        return true
+    }
+
     override fun render(document: Document) {
         if (report.configuration.patientDetailsType != ReportContentType.NONE) {
             addPatientDetails(document)

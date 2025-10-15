@@ -8,7 +8,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class ClinicalDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+class ClinicalDetailsChapter(private val report: Report, private val include: Boolean) : ReportChapter {
 
     override fun name(): String {
         return "Clinical Details"
@@ -16,6 +16,10 @@ class ClinicalDetailsChapter(private val report: Report, override val include: B
 
     override fun pageSize(): PageSize {
         return PageSize.A4
+    }
+
+    override fun include(): Boolean {
+        return include
     }
 
     override fun render(document: Document) {
