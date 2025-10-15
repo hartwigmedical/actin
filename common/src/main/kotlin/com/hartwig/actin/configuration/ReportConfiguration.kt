@@ -14,8 +14,6 @@ data class ReportConfiguration(
     val molecularSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val approvedTreatmentSummaryType: ReportContentType = ReportContentType.BRIEF,
     val trialMatchingSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
-    val includeTrialMatchingInSummary: Boolean = true,
-    val includeExternalTrialsInSummary: Boolean = true,
     val includeMolecularDetailsChapter: Boolean = true,
     val includeSOCLiteratureEfficacyEvidence: Boolean = false,
     val includeEligibleButNoSlotsTableIfEmpty: Boolean = true,
