@@ -65,7 +65,7 @@ object ExampleFunctions {
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
             clinicalSummaryType = ReportContentType.BRIEF,
-            approvedTreatmentSummaryType = ReportContentType.NONE,
+            standardOfCareSummaryType = ReportContentType.NONE,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
@@ -75,7 +75,7 @@ object ExampleFunctions {
         return ReportConfiguration().copy(
             clinicalSummaryType = ReportContentType.COMPREHENSIVE,
             molecularSummaryType = ReportContentType.NONE,
-            approvedTreatmentSummaryType = ReportContentType.COMPREHENSIVE,
+            standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
             efficacyEvidenceChapterType = EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE

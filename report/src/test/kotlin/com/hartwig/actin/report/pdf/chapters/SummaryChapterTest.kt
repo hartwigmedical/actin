@@ -10,7 +10,7 @@ import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.soc.ProxyApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.trial.TrialsProvider
@@ -76,7 +76,7 @@ class SummaryChapterTest {
         assertThat(generators.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
             MolecularSummaryGenerator::class,
-            ProxyApprovedTreatmentGenerator::class,
+            ProxyStandardOfCareGenerator::class,
             EligibleTrialGenerator::class,
         )
     }

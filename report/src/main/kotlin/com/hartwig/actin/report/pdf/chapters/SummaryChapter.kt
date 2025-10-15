@@ -11,8 +11,8 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.soc.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.soc.ProxyApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.soc.EligibleStandardOfCareGenerator
+import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Formats
@@ -126,10 +126,10 @@ class SummaryChapter(private val report: Report, private val trialsProvider: Tri
             report.configuration.molecularSummaryType != ReportContentType.NONE
         }
 
-        val approvedTreatmentSummaryGenerator = when (report.configuration.approvedTreatmentSummaryType) {
+        val standardOfCareTableGenerator = when (report.configuration.standardOfCareSummaryType) {
             ReportContentType.NONE -> null
-            ReportContentType.BRIEF -> ProxyApprovedTreatmentGenerator(report).takeIf { it.showTable() }
-            ReportContentType.COMPREHENSIVE -> EligibleApprovedTreatmentGenerator(report)
+            ReportContentType.BRIEF -> ProxyStandardOfCareGenerator(report).takeIf { it.showTable() }
+            ReportContentType.COMPREHENSIVE -> EligibleStandardOfCareGenerator(report)
         }
 
         val trialTableGenerators = createTrialTableGenerators(
@@ -141,7 +141,7 @@ class SummaryChapter(private val report: Report, private val trialsProvider: Tri
         return listOfNotNull(
             clinicalSummaryGenerator,
             molecularSummaryGenerator,
-            approvedTreatmentSummaryGenerator
+            standardOfCareTableGenerator
         )  + trialTableGenerators
     }
 

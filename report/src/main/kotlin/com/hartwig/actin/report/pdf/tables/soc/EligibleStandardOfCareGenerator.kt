@@ -6,10 +6,10 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class EligibleApprovedTreatmentGenerator(private val report: Report) : TableGenerator {
+class EligibleStandardOfCareGenerator(private val report: Report) : TableGenerator {
 
     override fun title(): String {
-        return "Standard of care options considered potentially eligible"
+        return "Standard-of-care options considered potentially eligible"
     }
 
     override fun forceKeepTogether(): Boolean {

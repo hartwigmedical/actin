@@ -9,7 +9,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class ProxyApprovedTreatmentGenerator(report: Report) : TableGenerator {
+class ProxyStandardOfCareGenerator(report: Report) : TableGenerator {
 
     private val isCUP = TumorDetailsInterpreter.hasCancerOfUnknownPrimary(report.patientRecord.tumor.name)
     private val molecular = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
@@ -20,7 +20,7 @@ class ProxyApprovedTreatmentGenerator(report: Report) : TableGenerator {
     }
 
     override fun title(): String {
-        return "Approved treatments considered eligible"
+        return "Standard-of-care options considered potentially eligible"
     }
 
     override fun forceKeepTogether(): Boolean {
