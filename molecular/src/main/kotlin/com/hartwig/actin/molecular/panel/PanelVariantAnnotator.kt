@@ -123,14 +123,7 @@ class PanelVariantAnnotator(
         clonalLikelihood = null,
         phaseGroups = null,
         isCancerAssociatedVariant = false,
-        sourceEvent = "${variant.gene} ${
-            formatVariantImpact(
-                variant.hgvsProteinImpact,
-                variant.hgvsCodingImpact,
-                paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
-                paveResponse.impact.canonicalEffects.contains(PaveVariantEffect.UPSTREAM_GENE),
-                paveResponse.impact.canonicalEffects.joinToString("&") { it.toString() })
-        }",
+        sourceEvent = sourceEvent(variant, paveResponse, transvarAnnotation),
         isReportable = true,
         event = "${variant.gene} ${eventString(paveResponse)}",
         driverLikelihood = null,
@@ -140,6 +133,35 @@ class PanelVariantAnnotator(
         proteinEffect = ProteinEffect.UNKNOWN,
         isAssociatedWithDrugResistance = null
     )
+
+    private fun sourceEvent(variant: SequencedVariant, paveResponse: PaveResponse, transvarAnnotation: TransvarVariant): String {
+        val transcripts = paveResponse.transcriptImpacts
+        val selectedTranscript =
+            variant.transcript?.let { transcript -> transcripts.filter { it.transcript.equals(transcript, ignoreCase = true) } }
+                ?.firstOrNull()
+                ?: variant.hgvsProteinImpact?.let { proteinImpact ->
+                    transcripts.filter {
+                        forceSingleLetterAminoAcids(it.hgvsProteinImpact) == forceSingleLetterAminoAcids(
+                            proteinImpact
+                        )
+                    }
+                }?.firstOrNull()
+                ?: variant.hgvsCodingImpact?.let { codingImpact -> transcripts.filter { it.hgvsCodingImpact == codingImpact } }
+                    ?.firstOrNull()
+                ?: transcripts.first { it.transcript == paveResponse.impact.canonicalTranscript }
+
+        val selectedTranscriptImpact = transcriptImpact(selectedTranscript, transvarAnnotation)
+
+        return "${variant.gene} ${
+            formatVariantImpact(
+                variant.hgvsProteinImpact?.let { forceSingleLetterAminoAcids(it) },
+                variant.hgvsCodingImpact,
+                selectedTranscriptImpact.codingEffect == CodingEffect.SPLICE,
+                selectedTranscriptImpact.effects.contains(VariantEffect.UPSTREAM_GENE),
+                selectedTranscriptImpact.effects.joinToString("&") { it.toString() }
+            )
+        }"
+    }
 
     private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
@@ -167,7 +189,10 @@ class PanelVariantAnnotator(
             .toSet()
     }
 
-    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
+    private fun transcriptImpact(
+        paveTranscriptImpact: PaveTranscriptImpact,
+        transvarVariant: TransvarVariant
+    ): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
             paveTranscriptImpact.gene,
             paveTranscriptImpact.transcript,

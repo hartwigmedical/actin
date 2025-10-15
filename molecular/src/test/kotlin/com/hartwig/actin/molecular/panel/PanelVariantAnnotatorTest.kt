@@ -60,7 +60,17 @@ private val PAVE_ANNOTATION = PaveResponse(
         worstCodingEffect = PaveCodingEffect.MISSENSE,
         genesAffected = 1
     ),
-    transcriptImpacts = emptyList()
+    transcriptImpacts = listOf(
+        PaveTranscriptImpact(
+            geneId = "1",
+            gene = GENE,
+            transcript = TRANSCRIPT,
+            effects = listOf(PaveVariantEffect.UPSTREAM_GENE),
+            spliceRegion = false,
+            hgvsCodingImpact = HGVS_CODING,
+            hgvsProteinImpact = HGVS_PROTEIN_1LETTER
+        )
+    )
 )
 
 class PanelVariantAnnotatorTest {
@@ -93,6 +103,7 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.canonicalImpact.inSpliceRegion).isFalse()
         assertThat(annotated.otherImpacts).isEmpty()
         assertThat(annotated.isBiallelic).isNull()
+        assertThat(annotated.sourceEvent).isEqualTo("$GENE $HGVS_CODING")
     }
 
     @Test
