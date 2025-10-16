@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.util
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
 import com.hartwig.actin.molecular.util.FormatFunctions.formatFusionEvent
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class FormatFunctionsTest {
@@ -72,9 +73,11 @@ class FormatFunctionsTest {
         assertThat(result).isEqualTo("effects")
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception if protein and coding impact are both null`() {
-        formatVariantImpact(null, null, false, false, "effects")
+        assertThatThrownBy {
+            formatVariantImpact(null, null, false, false, "")
+        }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
@@ -149,8 +152,10 @@ class FormatFunctionsTest {
         ).isEqualTo("geneDown fusion")
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception if geneUp and geneDown are null`() {
-        formatFusionEvent(geneUp = null, exonUp = null, geneDown = null, exonDown = null)
+        assertThatThrownBy { formatFusionEvent(geneUp = null, exonUp = null, geneDown = null, exonDown = null) }.isInstanceOf(
+            IllegalStateException::class.java
+        )
     }
 }

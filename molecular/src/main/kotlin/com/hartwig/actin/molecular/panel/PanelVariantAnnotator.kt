@@ -203,22 +203,25 @@ class PanelVariantAnnotator(
     }
 
     private fun sourceEvent(variant: SequencedVariant, paveResponse: PaveResponse, transvarAnnotation: TransvarVariant): String {
-        val transcripts = paveResponse.transcriptImpacts
+        val transcriptImpacts = paveResponse.transcriptImpacts
         val selectedTranscript =
-            variant.transcript?.let { transcript -> transcripts.filter { it.transcript.equals(transcript, ignoreCase = true) } }
-                ?.firstOrNull()
-                ?: variant.hgvsProteinImpact?.let { proteinImpact ->
-                    transcripts.filter {
-                        forceSingleLetterAminoAcids(it.hgvsProteinImpact) == forceSingleLetterAminoAcids(proteinImpact)
-                    }
-                }?.firstOrNull()
-                ?: variant.hgvsCodingImpact?.let { codingImpact ->
-                    transcripts.filter {
-                        it.hgvsCodingImpact.equals(codingImpact, ignoreCase = true)
-                    }
+            variant.transcript?.let { transcript ->
+                transcriptImpacts.filter { it.transcript.equals(transcript, ignoreCase = true) }
+            }
+                ?.firstOrNull() ?: variant.hgvsProteinImpact?.let { proteinImpact ->
+                transcriptImpacts.filter {
+                    forceSingleLetterAminoAcids(
+                        it.hgvsProteinImpact
+                    ) == forceSingleLetterAminoAcids(proteinImpact)
                 }
-                    ?.firstOrNull()
-                ?: transcripts.first { it.transcript == paveResponse.impact.canonicalTranscript }
+            }?.firstOrNull() ?: variant.hgvsCodingImpact?.let { codingImpact ->
+                transcriptImpacts.filter {
+                    it.hgvsCodingImpact.equals(
+                        codingImpact,
+                        ignoreCase = true
+                    )
+                }
+            }?.firstOrNull() ?: transcriptImpacts.first { it.transcript == paveResponse.impact.canonicalTranscript }
 
         val selectedTranscriptImpact = transcriptImpact(selectedTranscript, transvarAnnotation)
 
