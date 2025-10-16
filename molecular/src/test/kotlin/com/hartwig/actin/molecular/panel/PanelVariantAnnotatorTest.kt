@@ -348,7 +348,6 @@ class PanelVariantAnnotatorTest {
         paveCanonicalTranscript: String,
         paveTranscriptImpacts: List<PaveTranscriptImpact>,
     ) {
-
         every {
             transvarAnnotator.resolve(GENE, sequencedVariant.transcript, sequencedVariant.hgvsCodingOrProteinImpact())
         } returns TRANSCRIPT_ANNOTATION
