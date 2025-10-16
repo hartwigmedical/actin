@@ -138,14 +138,15 @@ object TestMolecularFactory {
     fun createExhaustivePanelTest(): MolecularTest {
         return createProperPanelTest().copy(
             testTypeDisplay = "exhaustive panel",
-            targetSpecification = PanelTargetSpecification(setOf(
-                "BRAF",
-                "PTEN",
-                "MYC",
-                "MET",
-                "EML4",
-                "ALK"
-            ).associateWith { listOf(MolecularTestTarget.MUTATION) }),
+            targetSpecification = PanelTargetSpecification(
+                setOf(
+                    "BRAF",
+                    "PTEN",
+                    "MYC",
+                    "MET",
+                    "EML4",
+                    "ALK"
+                ).associateWith { listOf(MolecularTestTarget.MUTATION) }),
             drivers = createExhaustiveTestDrivers(),
             characteristics = createExhaustiveTestCharacteristics()
         )
@@ -480,6 +481,50 @@ object TestMolecularFactory {
     private fun createExhaustiveTestDrivers(): Drivers {
         val proper = createProperTestDrivers()
         return proper.copy(
+            variants = proper.variants + Variant(
+                chromosome = "7",
+                position = 140453000,
+                ref = "T",
+                alt = "A",
+                type = VariantType.SNV,
+                canonicalImpact = TranscriptVariantImpact(
+                    transcriptId = "ENST00000288602",
+                    hgvsCodingImpact = "c.1499T>A",
+                    hgvsProteinImpact = "p.V500E",
+                    affectedCodon = 500,
+                    affectedExon = 14,
+                    inSpliceRegion = false,
+                    effects = setOf(VariantEffect.MISSENSE),
+                    codingEffect = CodingEffect.MISSENSE
+                ),
+                otherImpacts = setOf(
+                    TranscriptVariantImpact(
+                        transcriptId = "ENST00000288603",
+                        hgvsCodingImpact = "c.1796T>A",
+                        hgvsProteinImpact = "p.V450E",
+                        affectedCodon = 450,
+                        affectedExon = 15,
+                        inSpliceRegion = false,
+                        effects = setOf(VariantEffect.MISSENSE),
+                        codingEffect = CodingEffect.MISSENSE
+                    )
+                ),
+                variantCopyNumber = 4.1,
+                totalCopyNumber = 6.0,
+                isBiallelic = false,
+                clonalLikelihood = 1.0,
+                phaseGroups = null,
+                isCancerAssociatedVariant = true,
+                sourceEvent = "BRAF V450E",
+                isReportable = true,
+                event = "BRAF V500E",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestClinicalEvidenceFactory.withApprovedTreatment("Vemurafenib"),
+                gene = "BRAF",
+                geneRole = GeneRole.ONCO,
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                isAssociatedWithDrugResistance = true,
+            ),
             copyNumbers = proper.copyNumbers + CopyNumber(
                 isReportable = true,
                 event = "MYC amp",
