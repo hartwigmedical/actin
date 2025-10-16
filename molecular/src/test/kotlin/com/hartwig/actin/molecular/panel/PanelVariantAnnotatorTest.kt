@@ -252,11 +252,46 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
+    fun `Should set source event using transcript with matching input transcript`() {
+        val sequencedVariant =
+            SequencedVariant(gene = GENE, transcript = TRANSCRIPT, hgvsCodingImpact = "c.10T>A", hgvsProteinImpact = null)
+        val transcriptImpacts = listOf(
+            paveTranscriptImpact(
+                transcript = OTHER_TRANSCRIPT,
+                hgvsCodingImpact = "wrong",
+                hgvsProteinImpact = "wrong",
+                effects = listOf(PaveVariantEffect.OTHER)
+            ),
+            paveTranscriptImpact(
+                transcript = TRANSCRIPT,
+                hgvsCodingImpact = "c.100T>A",
+                hgvsProteinImpact = "p.V44E",
+                effects = listOf(PaveVariantEffect.SPLICE_DONOR)
+            ),
+        )
+
+        setupSourceEventFixture(sequencedVariant, paveCanonicalTranscript = OTHER_TRANSCRIPT, paveTranscriptImpacts = transcriptImpacts)
+        val annotated = annotator.annotate(setOf(sequencedVariant)).first()
+
+        assertThat(annotated.sourceEvent).isEqualTo("$GENE c.10T>A splice")
+    }
+
+    @Test
     fun `Should set source event using transcript with matching coding hgvs`() {
         val sequencedVariant = SequencedVariant(gene = GENE, transcript = null, hgvsCodingImpact = "c.10T>A", hgvsProteinImpact = null)
         val transcriptImpacts = listOf(
-            paveTranscriptImpact(transcript = TRANSCRIPT, hgvsCodingImpact = "c.10T>A", hgvsProteinImpact = "p.V4E", effects = listOf(PaveVariantEffect.SPLICE_DONOR)),
-            paveTranscriptImpact(transcript = OTHER_TRANSCRIPT, hgvsCodingImpact = "mismatch", hgvsProteinImpact = "mismatch", effects = listOf(PaveVariantEffect.OTHER))
+            paveTranscriptImpact(
+                transcript = OTHER_TRANSCRIPT,
+                hgvsCodingImpact = "mismatch",
+                hgvsProteinImpact = "mismatch",
+                effects = listOf(PaveVariantEffect.OTHER)
+            ),
+            paveTranscriptImpact(
+                transcript = TRANSCRIPT,
+                hgvsCodingImpact = "c.10T>A",
+                hgvsProteinImpact = "p.V4E",
+                effects = listOf(PaveVariantEffect.SPLICE_DONOR)
+            )
         )
 
         setupSourceEventFixture(sequencedVariant, paveCanonicalTranscript = OTHER_TRANSCRIPT, paveTranscriptImpacts = transcriptImpacts)
@@ -267,23 +302,39 @@ class PanelVariantAnnotatorTest {
 
     @Test
     fun `Should set source event using transcript with matching protein hgvs`() {
-        val sequencedVariant = SequencedVariant(gene = GENE, transcript = null, hgvsCodingImpact = null, hgvsProteinImpact = "p.V4E")
+        val sequencedVariant = SequencedVariant(gene = GENE, transcript = null, hgvsCodingImpact = "c.9T>A", hgvsProteinImpact = "p.?")
         val transcriptImpacts = listOf(
-            paveTranscriptImpact(transcript = TRANSCRIPT, hgvsCodingImpact = "c.10T>A", hgvsProteinImpact = "p.Val4Glu", effects = listOf(PaveVariantEffect.SPLICE_DONOR)),
-            paveTranscriptImpact(transcript = OTHER_TRANSCRIPT, hgvsCodingImpact = "mismatch", hgvsProteinImpact = "mismatch", effects = listOf(PaveVariantEffect.OTHER))
+            paveTranscriptImpact(
+                transcript = OTHER_TRANSCRIPT,
+                hgvsCodingImpact = "mismatch",
+                hgvsProteinImpact = "mismatch",
+                effects = listOf(PaveVariantEffect.OTHER)
+            ),
+            paveTranscriptImpact(
+                transcript = TRANSCRIPT,
+                hgvsCodingImpact = "c.10T>A",
+                hgvsProteinImpact = "p.?",
+                effects = listOf(PaveVariantEffect.SPLICE_DONOR)
+            )
         )
 
         setupSourceEventFixture(sequencedVariant, paveCanonicalTranscript = OTHER_TRANSCRIPT, paveTranscriptImpacts = transcriptImpacts)
         val annotated = annotator.annotate(setOf(sequencedVariant)).first()
 
-        assertThat(annotated.sourceEvent).isEqualTo("$GENE V4E")
+        assertThat(annotated.sourceEvent).isEqualTo("$GENE c.9T>A splice")
     }
-    
+
     @Test
     fun `Should set source event using canonical transcript impact when no transcript or protein match`() {
-        val sequencedVariant = SequencedVariant(gene = GENE, transcript = TRANSCRIPT, hgvsCodingImpact = "c.10T>A", hgvsProteinImpact = null)
+        val sequencedVariant =
+            SequencedVariant(gene = GENE, transcript = TRANSCRIPT, hgvsCodingImpact = "c.10T>A", hgvsProteinImpact = null)
         val transcriptImpacts = listOf(
-            paveTranscriptImpact(transcript = OTHER_TRANSCRIPT, hgvsCodingImpact = "ignore", hgvsProteinImpact = "ignore", effects = listOf(PaveVariantEffect.SPLICE_DONOR)),
+            paveTranscriptImpact(
+                transcript = OTHER_TRANSCRIPT,
+                hgvsCodingImpact = "ignore",
+                hgvsProteinImpact = "ignore",
+                effects = listOf(PaveVariantEffect.SPLICE_DONOR)
+            ),
         )
 
         setupSourceEventFixture(sequencedVariant, paveCanonicalTranscript = OTHER_TRANSCRIPT, paveTranscriptImpacts = transcriptImpacts)
@@ -303,8 +354,10 @@ class PanelVariantAnnotatorTest {
         } returns TRANSCRIPT_ANNOTATION
 
         every { paver.run(listOf(PAVE_QUERY)) } returns listOf(
-            PAVE_ANNOTATION.copy(impact = PAVE_ANNOTATION.impact.copy(
-                canonicalTranscript = paveCanonicalTranscript),
+            PAVE_ANNOTATION.copy(
+                impact = PAVE_ANNOTATION.impact.copy(
+                    canonicalTranscript = paveCanonicalTranscript
+                ),
                 transcriptImpacts = paveTranscriptImpacts
             )
         )

@@ -134,35 +134,6 @@ class PanelVariantAnnotator(
         isAssociatedWithDrugResistance = null
     )
 
-    private fun sourceEvent(variant: SequencedVariant, paveResponse: PaveResponse, transvarAnnotation: TransvarVariant): String {
-        val transcripts = paveResponse.transcriptImpacts
-        val selectedTranscript =
-            variant.transcript?.let { transcript -> transcripts.filter { it.transcript.equals(transcript, ignoreCase = true) } }
-                ?.firstOrNull()
-                ?: variant.hgvsProteinImpact?.let { proteinImpact ->
-                    transcripts.filter {
-                        forceSingleLetterAminoAcids(it.hgvsProteinImpact) == forceSingleLetterAminoAcids(
-                            proteinImpact
-                        )
-                    }
-                }?.firstOrNull()
-                ?: variant.hgvsCodingImpact?.let { codingImpact -> transcripts.filter { it.hgvsCodingImpact == codingImpact } }
-                    ?.firstOrNull()
-                ?: transcripts.first { it.transcript == paveResponse.impact.canonicalTranscript }
-
-        val selectedTranscriptImpact = transcriptImpact(selectedTranscript, transvarAnnotation)
-
-        return "${variant.gene} ${
-            formatVariantImpact(
-                variant.hgvsProteinImpact?.let { forceSingleLetterAminoAcids(it) },
-                variant.hgvsCodingImpact,
-                selectedTranscriptImpact.codingEffect == CodingEffect.SPLICE,
-                selectedTranscriptImpact.effects.contains(VariantEffect.UPSTREAM_GENE),
-                selectedTranscriptImpact.effects.joinToString("&") { it.toString() }
-            )
-        }"
-    }
-
     private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
         val paveLiteAnnotation = paveLite.run(
             paveImpact.gene,
@@ -229,6 +200,35 @@ class PanelVariantAnnotator(
         } else {
             VariantType.INSERT
         }
+    }
+
+    private fun sourceEvent(variant: SequencedVariant, paveResponse: PaveResponse, transvarAnnotation: TransvarVariant): String {
+        val transcripts = paveResponse.transcriptImpacts
+        val selectedTranscript =
+            variant.transcript?.let { transcript -> transcripts.filter { it.transcript.equals(transcript, ignoreCase = true) } }
+                ?.firstOrNull()
+                ?: variant.hgvsProteinImpact?.let { proteinImpact ->
+                    transcripts.filter {
+                        forceSingleLetterAminoAcids(it.hgvsProteinImpact) == forceSingleLetterAminoAcids(
+                            proteinImpact
+                        )
+                    }
+                }?.firstOrNull()
+                ?: variant.hgvsCodingImpact?.let { codingImpact -> transcripts.filter { it.hgvsCodingImpact == codingImpact } }
+                    ?.firstOrNull()
+                ?: transcripts.first { it.transcript == paveResponse.impact.canonicalTranscript }
+
+        val selectedTranscriptImpact = transcriptImpact(selectedTranscript, transvarAnnotation)
+
+        return "${variant.gene} ${
+            formatVariantImpact(
+                variant.hgvsProteinImpact?.let { forceSingleLetterAminoAcids(it) },
+                variant.hgvsCodingImpact,
+                selectedTranscriptImpact.codingEffect == CodingEffect.SPLICE,
+                selectedTranscriptImpact.effects.contains(VariantEffect.UPSTREAM_GENE),
+                selectedTranscriptImpact.effects.joinToString("&") { it.toString() }
+            )
+        }"
     }
 
     private fun codingEffect(paveCodingEffect: PaveCodingEffect): CodingEffect {
