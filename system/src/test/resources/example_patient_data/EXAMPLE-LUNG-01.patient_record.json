@@ -306,6 +306,7 @@
             "clonalLikelihood": 1.0,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "EGFR L858R",
             "isReportable": true,
             "event": "EGFR L858R",
             "driverLikelihood": "HIGH",
@@ -479,6 +480,7 @@
             "clonalLikelihood": 1.0,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "EGFR C797S",
             "isReportable": true,
             "event": "EGFR C797S",
             "driverLikelihood": "HIGH",
@@ -591,6 +593,7 @@
             "clonalLikelihood": 0.4,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "KRAS G12D",
             "isReportable": true,
             "event": "KRAS G12D",
             "driverLikelihood": "HIGH",
@@ -629,6 +632,7 @@
             "clonalLikelihood": 0.4,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "KRAS G12C",
             "isReportable": true,
             "event": "KRAS G12C",
             "driverLikelihood": "HIGH",
@@ -679,7 +683,7 @@
           {
             "canonicalImpact": {
               "transcriptId": "",
-              "type": "DEL",
+              "type": "FULL_DEL",
               "minCopies": 0,
               "maxCopies": 0
             },

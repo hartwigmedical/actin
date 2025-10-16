@@ -17,6 +17,7 @@ data class Variant(
     val clonalLikelihood: Double?,
     val phaseGroups: Set<Int>?,
     val isCancerAssociatedVariant: Boolean,
+    val sourceEvent: String,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
@@ -35,4 +36,3 @@ data class Variant(
             .compare(this, other)
     }
 }
-

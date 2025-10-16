@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -11,7 +12,6 @@ import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
-import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
 import com.hartwig.actin.molecular.panel.IhcAnnotator
@@ -32,6 +32,7 @@ import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
+import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -39,10 +40,9 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
-private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
+val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
     fun run() = runBlocking {
@@ -59,7 +59,9 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
         }
 
-        val orangeMolecularTests = interpretOrangeRecord(tumorDoids, inputData)
+        val patientGender = inputData.clinical.patient.gender
+        val orangeMolecularTests = interpretOrangeRecord(tumorDoids, inputData, patientGender)
+
         val clinicalMolecularTests =
             interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
 
@@ -74,18 +76,18 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretOrangeRecord(
         tumorDoids: Set<String>,
-        inputData: MolecularInterpreterInputData
+        inputData: MolecularInterpreterInputData,
+        patientGender: Gender?
     ): List<MolecularTest> {
         return if (inputData.orange != null) {
             val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.orange.refGenomeVersion())
             val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, orangeRefGenomeVersion)
 
             LOGGER.info("Interpreting ORANGE record")
-            val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
             MolecularInterpreter(
-                OrangeExtractor(geneFilter, inputData.panelSpecifications),
+                OrangeExtractor(inputData.geneFilter, inputData.panelSpecifications),
                 MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents())),
-                listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids))
+                listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids, patientGender))
             ).run(listOf(inputData.orange))
         } else {
             emptyList()
@@ -120,7 +122,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVirusAnnotator = PanelVirusAnnotator()
         val panelDriverAttributeAnnotator =
             PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), inputData.dndsDatabase)
-        val evidenceAnnotator = EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids)
+
+        val patientGender = clinical.patient.gender
+        val evidenceAnnotator =
+            EvidenceAnnotatorFactory.createPanelRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids, patientGender)
 
         val sequencingMolecularTests = interpretSequencingMolecularTests(
             clinical,

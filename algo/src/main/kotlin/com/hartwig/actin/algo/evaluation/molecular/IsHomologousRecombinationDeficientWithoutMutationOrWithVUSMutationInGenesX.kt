@@ -58,12 +58,10 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 }
 
                 isHRD == null -> {
-                    EvaluationFactory.fail("Unknown HRD status", isMissingMolecularResultForEvaluation = true)
+                    EvaluationFactory.undetermined("Unknown HRD status", isMissingMolecularResultForEvaluation = true)
                 }
 
-                isHRD == false -> {
-                    EvaluationFactory.fail("Tumor is not HRD")
-                }
+                !isHRD ->  EvaluationFactory.fail("Tumor is not HRD")
 
                 genesToFindWithBiallelicCav.isNotEmpty() || genesToFindWithNonBiallelicCav.isNotEmpty() -> {
                     EvaluationFactory.fail(

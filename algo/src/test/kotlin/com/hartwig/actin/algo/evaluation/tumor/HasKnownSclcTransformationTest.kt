@@ -103,7 +103,7 @@ class HasKnownSclcTransformationTest {
             isReportable = true,
             geneRole = GeneRole.TSG,
             proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.DEL)
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
         )
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val record = base.copy(

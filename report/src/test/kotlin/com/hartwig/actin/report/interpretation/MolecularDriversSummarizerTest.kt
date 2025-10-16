@@ -43,7 +43,7 @@ class MolecularDriversSummarizerTest {
             variant("not associated with resistance", DriverLikelihood.MEDIUM, isReportable = true, isAssociatedWithDrugResistance = false)
         )
         val molecularDrivers = minimalDrivers.copy(variants = variants)
-        
+
         val keyEntries = summarizer(molecularDrivers).keyVariants().distinct()
         assertThat(keyEntries).containsExactly("associated with resistance", "high driver")
     }
@@ -64,6 +64,24 @@ class MolecularDriversSummarizerTest {
     }
 
     @Test
+    fun `Should format event correctly in case sourceEvent is different from event for key events`() {
+        val variants = listOf(variant("high driver", DriverLikelihood.HIGH, true, sourceEvent = "different name"))
+        val molecularDrivers = minimalDrivers.copy(variants = variants)
+
+        val keyEntries = summarizer(molecularDrivers).keyVariants().distinct()
+        assertThat(keyEntries).containsExactly("high driver (also known as different name)")
+    }
+
+    @Test
+    fun `Should format event correctly in case sourceEvent is different from event for other events`() {
+        val variants = listOf(variant("low driver", DriverLikelihood.LOW, true, sourceEvent = "different name"))
+        val molecularDrivers = minimalDrivers.copy(variants = variants)
+
+        val otherEntries = summarizer(molecularDrivers).otherVariants().distinct()
+        assertThat(otherEntries).containsExactly("low driver (also known as different name)")
+    }
+
+    @Test
     fun `Should return key amplified genes and indicate partial amplifications and copy nrs if available`() {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "gene 1", DriverLikelihood.HIGH, true),
@@ -71,7 +89,8 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 3", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 4", DriverLikelihood.HIGH, true, 10, 20),
             copyNumber(CopyNumberType.NONE, "gene 5", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
-            copyNumber(CopyNumberType.DEL, "deletion", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_DEL, "deletion", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "deletion", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false),
         )
@@ -91,9 +110,13 @@ class MolecularDriversSummarizerTest {
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.DEL, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.DEL, "non-reportable", DriverLikelihood.HIGH, false)
+            copyNumber(CopyNumberType.FULL_DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_DEL, "low", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_DEL, "non-reportable", DriverLikelihood.HIGH, false),
+            copyNumber(CopyNumberType.PARTIAL_DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "low", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "non-reportable", DriverLikelihood.HIGH, false)
+
         )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         assertExpectedListResult(summarizer(molecularDrivers).keyDeletedGenes())
@@ -158,7 +181,7 @@ class MolecularDriversSummarizerTest {
 
         val variants = listOf(
             variant("key variant", DriverLikelihood.HIGH, true, evidence = externalEvidence),
-            variant("expected non-reportable variant", DriverLikelihood.HIGH, false, evidence= approvedTreatment),
+            variant("expected non-reportable variant", DriverLikelihood.HIGH, false, evidence = approvedTreatment),
             variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true),
             variant("no evidence", DriverLikelihood.MEDIUM, true)
         )
@@ -166,8 +189,10 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "no evidence", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "expected amplification", null, false),
-            copyNumber(CopyNumberType.DEL, "expected deletion", DriverLikelihood.HIGH, false),
-        )
+            copyNumber(CopyNumberType.FULL_DEL, "expected deletion", DriverLikelihood.HIGH, false),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "expected deletion", DriverLikelihood.HIGH, false),
+
+            )
         val homozygousDisruptions = listOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
             homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
@@ -237,12 +262,14 @@ class MolecularDriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
+        sourceEvent: String? = null,
         isAssociatedWithDrugResistance: Boolean? = null,
         evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
             event = name,
+            sourceEvent = sourceEvent ?: name,
             driverLikelihood = driverLikelihood,
             isReportable = isReportable,
             evidence = evidence,

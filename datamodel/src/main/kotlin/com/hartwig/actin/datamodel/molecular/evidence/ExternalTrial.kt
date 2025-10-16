@@ -4,6 +4,7 @@ data class ExternalTrial(
     val nctId: String,
     val title: String,
     val acronym: String?,
+    val genderMatch: Boolean?,
     val treatments: Set<String>,
     val countries: Set<CountryDetails>,
     val molecularMatches: Set<MolecularMatchDetails>,
