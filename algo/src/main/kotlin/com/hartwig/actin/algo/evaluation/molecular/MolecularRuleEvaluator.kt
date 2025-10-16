@@ -11,6 +11,6 @@ object MolecularRuleEvaluator {
     }
 
     fun geneIsInactivatedForPatient(gene: String, record: PatientRecord, maxTestAge: LocalDate?): Boolean {
-        return GeneIsInactivated(gene, maxTestAge).evaluate(record).result == EvaluationResult.PASS
+        return GeneIsInactivated(gene, maxTestAge, false).evaluate(record).result == EvaluationResult.PASS
     }
 }
