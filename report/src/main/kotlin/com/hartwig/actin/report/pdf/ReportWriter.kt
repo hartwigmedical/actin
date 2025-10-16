@@ -26,7 +26,9 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
     @Synchronized
     fun write(report: Report, configuration: ReportConfiguration, addExtendedSuffix: Boolean) {
         logger.info("Building report for patient ${report.patientId} with configuration $configuration")
-
+        
+        logger.debug("Extended suffix enabled: $addExtendedSuffix")
+        
         logger.debug("Initializing output styles")
         Styles.initialize()
 
@@ -64,8 +66,8 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath =
-                (Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" + (if (addExtendedSuffix) ".extended" else "")
-                        + ".pdf")
+                (Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" +
+                        (if (addExtendedSuffix) ".extended" else "") + ".pdf")
             logger.info("Writing PDF report to {}", outputFilePath)
             val properties = WriterProperties().setFullCompressionMode(true)
                 .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)

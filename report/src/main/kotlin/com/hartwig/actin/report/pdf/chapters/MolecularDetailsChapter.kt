@@ -19,7 +19,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistor
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.WgsSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
@@ -105,7 +105,7 @@ class MolecularDetailsChapter(
         topTable: Table
     ) {
         pathologyReport?.let {
-            topTable.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(pathologyReport = it)))
+            topTable.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = it)))
         }
 
         val tableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
@@ -116,7 +116,7 @@ class MolecularDetailsChapter(
             OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport)
         }
         val wgsSummaryGenerators = externalPanelResults.map {
-            WGSSummaryGenerator(
+            WgsSummaryGenerator(
                 SummaryType.DETAILS,
                 report.patientRecord,
                 it,

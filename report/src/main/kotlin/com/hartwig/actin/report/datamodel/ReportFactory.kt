@@ -9,11 +9,7 @@ object ReportFactory {
 
     private val LOGGER = LogManager.getLogger(ReportFactory::class.java)
 
-    fun create(
-        reportDate: LocalDate,
-        patientRecord: PatientRecord,
-        treatmentMatch: TreatmentMatch
-    ): Report {
+    fun create(reportDate: LocalDate, patientRecord: PatientRecord, treatmentMatch: TreatmentMatch): Report {
         if (patientRecord.patientId != treatmentMatch.patientId) {
             LOGGER.warn(
                 "Patient record patientId '${patientRecord.patientId}' not the same as " +

@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.clinical
+package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
