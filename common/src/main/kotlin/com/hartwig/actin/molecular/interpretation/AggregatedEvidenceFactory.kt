@@ -53,7 +53,7 @@ object AggregatedEvidenceFactory {
         if (hasCharacteristic == true) {
             return createAggregatedEvidence(characteristic, evidence)
         } else if (hasEvidence(evidence)) {
-            LOGGER.warn("There is evidence for $characteristic without presence of signature")
+            LOGGER.debug("There is evidence for $characteristic without presence of signature")
         }
         return null
     }
