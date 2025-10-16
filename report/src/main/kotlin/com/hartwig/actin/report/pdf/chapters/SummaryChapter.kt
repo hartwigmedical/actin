@@ -4,7 +4,6 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
@@ -127,11 +126,7 @@ class SummaryChapter(
             patientRecord = report.patientRecord,
             cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
             keyWidth = keyWidth,
-            valueWidth = valueWidth,
-            molecularTestFilter = MolecularTestFilter(
-                maxTestAge = report.treatmentMatch.maxMolecularTestAge,
-                useInsufficientQualityRecords = true
-            )
+            valueWidth = valueWidth
         ).takeIf {
             configuration.molecularSummaryType != ReportContentType.NONE
         }
