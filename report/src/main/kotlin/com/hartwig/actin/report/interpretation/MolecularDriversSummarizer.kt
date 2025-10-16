@@ -23,7 +23,7 @@ class MolecularDriversSummarizer private constructor(
             .filterNot { it in keyVariants() }.toSet().sorted().toList()
     }
 
-    fun formatEvent(event: String, sourceEvent: String): String {
+    private fun formatEvent(event: String, sourceEvent: String): String {
         return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
     }
 
