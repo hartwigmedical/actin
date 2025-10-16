@@ -16,7 +16,9 @@ object AggregatedEvidenceFactory {
         return if (!molecular.hasSufficientQuality) {
             AggregatedEvidence()
         } else mergeAggregatedEvidenceList(
-            aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers)
+            aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers) + aggregateDriverEvidenceVariants(
+                molecular.drivers
+            )
         )
     }
 
@@ -51,7 +53,7 @@ object AggregatedEvidenceFactory {
         evidence: ClinicalEvidence?
     ): AggregatedEvidence? {
         if (hasCharacteristic == true) {
-            return createAggregatedEvidence(characteristic, evidence)
+            return createAggregatedEvidence(characteristic, null, null, evidence)
         } else if (hasEvidence(evidence)) {
             LOGGER.warn("There is evidence for $characteristic without presence of signature")
         }
@@ -69,17 +71,45 @@ object AggregatedEvidenceFactory {
 
     private fun aggregateDriverEvidence(drivers: Drivers): List<AggregatedEvidence> {
         return listOf(
-            drivers.variants, drivers.copyNumbers, drivers.homozygousDisruptions, drivers.disruptions, drivers.fusions, drivers.viruses
-        ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.event, it.evidence) } }
+            drivers.copyNumbers, drivers.homozygousDisruptions, drivers.disruptions, drivers.fusions, drivers.viruses
+        ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.event, null, null, it.evidence) } }
     }
 
-    private fun createAggregatedEvidence(event: String, evidence: ClinicalEvidence?): AggregatedEvidence {
+    private fun aggregateDriverEvidenceVariants(drivers: Drivers): List<AggregatedEvidence> {
+        return listOf(
+            drivers.variants
+        ).flatMap { driverSet ->
+            driverSet.map {
+                createAggregatedEvidence(
+                    it.event,
+                    it.canonicalImpact.affectedCodon,
+                    it.canonicalImpact.affectedExon,
+                    it.evidence
+                )
+            }
+        }
+    }
+
+
+    private fun createAggregatedEvidence(
+        event: String,
+        codon: Int?,
+        exons: Int?,
+        evidence: ClinicalEvidence?
+    ): AggregatedEvidence {
         return if (evidence == null) {
             AggregatedEvidence()
         } else {
+
+            val aggregatedEvidenceKey = AggregatedEvidenceKey(
+                codon = codon,
+                exon = exons,
+                event = event,
+            )
+
             AggregatedEvidence(
-                treatmentEvidencePerEvent = mapByEvent(event, evidence.treatmentEvidence),
-                eligibleTrialsPerEvent = mapByEvent(event, evidence.eligibleTrials),
+                treatmentEvidencePerEvent = mapByEvent(aggregatedEvidenceKey, evidence.treatmentEvidence),
+                eligibleTrialsPerEvent = mapByEvent(aggregatedEvidenceKey, evidence.eligibleTrials),
             )
         }
     }
@@ -95,7 +125,7 @@ object AggregatedEvidenceFactory {
         )
     }
 
-    private fun <T> mapByEvent(event: String, subset: Set<T>): Map<String, Set<T>> {
-        return if (subset.isEmpty()) emptyMap() else mapOf(event to subset)
+    private fun <T> mapByEvent(key: AggregatedEvidenceKey, subset: Set<T>): Map<AggregatedEvidenceKey, Set<T>> {
+        return if (subset.isEmpty()) emptyMap() else mapOf(key to subset)
     }
 }
