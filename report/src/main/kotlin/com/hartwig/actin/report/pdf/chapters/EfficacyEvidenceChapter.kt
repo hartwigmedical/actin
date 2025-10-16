@@ -52,10 +52,13 @@ import kotlin.math.sign
 class EfficacyEvidenceChapter(private val report: Report, private val configuration: ReportConfiguration) : ReportChapter {
 
     private val logger = LogManager.getLogger(EfficacyEvidenceChapter::class.java)
-    
+
     private val molecularTests = report.patientRecord.molecularTests
     private val treatmentEvidenceRanking = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).rank(report.patientRecord)
 
+    private val plotWidth = contentWidth() - 50
+    private val plotHeight = contentHeight() - 100
+    
     override fun name(): String {
         return "Efficacy evidence"
     }
@@ -141,7 +144,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
 
     private fun addPersonalizedEfficacyEvidence(document: Document) {
         val personalizedDataAnalysis = report.treatmentMatch.personalizedDataAnalysis
-        
+
         if (personalizedDataAnalysis == null) {
             logger.info("Personalized data analysis is null, unable to generate personalized efficacy evidence data in report")
             return
@@ -206,10 +209,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
             document.add(image)
         }
         report.treatmentMatch.personalizedTreatmentSummary?.similarPatientsSummary?.let { similarPatientsSummary ->
-            val image = generateTreatmentDistributionPlot(
-                similarPatientsSummary,
-                document
-            )
+            val image = generateTreatmentDistributionPlot(similarPatientsSummary, document)
             document.add(image)
         }
     }
@@ -231,19 +231,15 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         val plot = letsPlot { x = survivalTime; y = survivalProbability; color = group } +
                 geomLine() +
                 labs(x = "Time (months)", y = "Survival Probability") +
-                ggsize(width = 1500, height = 800)
+                ggsize(width = plotWidth, height = plotHeight)
 
         val tmpFile = createTempFile("plot", ".svg")
         ggsave(plot, tmpFile.absolutePathString())
         val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
-        return Image(xObj)
+        return Image(xObj).setWidth(plotWidth).setHeight(plotHeight)
     }
 
-    private fun generateShapPlot(
-        treatmentName: String,
-        shapDetails: Map<String, ShapDetail>,
-        document: Document
-    ): Image {
+    private fun generateShapPlot(treatmentName: String, shapDetails: Map<String, ShapDetail>, document: Document): Image {
         val sortedShapData = shapDetails.toList().sortedByDescending { abs(it.second.shapValue) }.take(10)
 
         val features = sortedShapData.map { it.first }
@@ -252,9 +248,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         val yLabels = features.zip(featureValues) { feature, value -> "$feature = %.2f".format(value) }
 
         val plot = letsPlot { x = shapValues; y = yLabels; fill = shapValues.map { sign(it) } } +
-                geomBar(
-                    stat = Stat.identity,
-                ) +
+                geomBar(stat = Stat.identity) +
                 scaleFillManual(
                     values = mapOf(
                         -1.0 to "blue",
@@ -264,25 +258,22 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
                 ) +
                 guides(fill = "none") +
                 ggtitle("SHAP values for treatment: $treatmentName") +
-                ggsize(width = 1500, height = 800)
+                ggsize(width = plotWidth, height = plotHeight)
 
         val tmpFile = createTempFile("shap_plot", ".svg")
         ggsave(plot, tmpFile.absolutePathString())
         val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
-        return Image(xObj)
+        return Image(xObj).setWidth(plotWidth).setHeight(plotHeight)
     }
 
-    private fun generateTreatmentDistributionPlot(
-        similarPatientsSummary: SimilarPatientsSummary,
-        document: Document
-    ): Image {
+    private fun generateTreatmentDistributionPlot(similarPatientsSummary: SimilarPatientsSummary, document: Document): Image {
         val categories = similarPatientsSummary.overallTreatmentProportion.map { it.treatment }
 
         val overallProportion = similarPatientsSummary.overallTreatmentProportion.map { it.proportion }
         val similarPatientsProportion = similarPatientsSummary.similarPatientsTreatmentProportion.map { it.proportion }
 
         val data = mapOf(
-            "treatment" to (categories + categories), // repeat categories
+            "treatment" to (categories + categories),
             "proportion" to (overallProportion + similarPatientsProportion),
             "group" to (List(categories.size) { "Overall" } + List(categories.size) { "Similar Patients" })
         )
@@ -295,12 +286,12 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
                 } +
                 ggtitle("Treatment Distribution in 25 Most Similar Patients vs Overall Population") +
                 scaleYContinuous(limits = 0.0 to 1.0) +
-                ggsize(1500, 800)
+                ggsize(width = plotWidth, height = plotHeight)
 
         val tmpFile = createTempFile("treatment_distribution_plot", ".svg")
         ggsave(plot, tmpFile.absolutePathString())
         val xObj = SvgConverter.convertToXObject(ByteArrayInputStream(tmpFile.readBytes()), document.pdfDocument)
-        return Image(xObj)
+        return Image(xObj).setWidth(plotWidth).setHeight(plotHeight)
     }
 
     private fun addMolecularEvidence(document: Document) {

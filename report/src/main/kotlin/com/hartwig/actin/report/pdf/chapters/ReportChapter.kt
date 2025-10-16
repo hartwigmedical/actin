@@ -16,6 +16,10 @@ interface ReportChapter {
 
     fun render(document: Document)
 
+    fun contentHeight(): Float {
+        return pageSize().height - (5 + Constants.PAGE_MARGIN_TOP + Constants.PAGE_MARGIN_BOTTOM)
+    }
+    
     fun contentWidth(): Float {
         return pageSize().width - (5 + Constants.PAGE_MARGIN_LEFT + Constants.PAGE_MARGIN_RIGHT)
     }

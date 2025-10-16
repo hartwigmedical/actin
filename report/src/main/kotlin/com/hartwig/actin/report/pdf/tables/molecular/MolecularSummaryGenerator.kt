@@ -74,7 +74,7 @@ class MolecularSummaryGenerator(
             val wgsMolecular = MolecularHistory(listOf(molecularTest)).latestOrangeMolecularRecord()
             if (wgsMolecular?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-                    logger.warn("Generating WGS results for non-WGS sample")
+                    logger.debug("Generating WGS results for non-WGS sample")
                 }
                 val wgsGenerator = WgsSummaryGenerator(
                     selectSummaryType(molecularTest.experimentType),

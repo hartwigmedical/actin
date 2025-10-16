@@ -45,7 +45,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
     ) {
         val doc = initializeReport(patientId, addExtendedSuffix)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler: PageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate)
+        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]
