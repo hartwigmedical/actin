@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.util
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 
 object FormatFunctions {
-    
+
     fun formatVariantImpact(
         hgvsProteinImpact: String?,
         hgvsCodingImpact: String?,
@@ -11,15 +11,17 @@ object FormatFunctions {
         isUpstream: Boolean,
         effects: String
     ): String {
-        if (!hgvsProteinImpact.isNullOrEmpty() && hgvsProteinImpact != "p.?") {
-            return forceSingleLetterAminoAcids(hgvsProteinImpact.removePrefix("p."))
-        }
+        return when {
+            !hgvsProteinImpact.isNullOrEmpty() && hgvsProteinImpact != "p.?" -> {
+                forceSingleLetterAminoAcids(hgvsProteinImpact.removePrefix("p."))
+            }
 
-        if (!hgvsCodingImpact.isNullOrEmpty()) {
-            return if (isSplice) "$hgvsCodingImpact splice" else hgvsCodingImpact
-        }
+            !hgvsCodingImpact.isNullOrEmpty() -> if (isSplice) "$hgvsCodingImpact splice" else hgvsCodingImpact
 
-        return if (isUpstream) "upstream" else effects
+            hgvsProteinImpact != null && hgvsCodingImpact != null -> if (isUpstream) "upstream" else effects
+
+            else -> throw IllegalStateException("Protein and coding impact cannot both be null")
+        }
     }
 
     fun formatFusionEvent(geneUp: String?, exonUp: Int?, geneDown: String?, exonDown: Int?): String {
