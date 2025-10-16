@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.SummaryType
@@ -22,7 +21,6 @@ class MolecularSummaryGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val molecularTestFilter: MolecularTestFilter
 ) : TableGenerator {
 
     private val logger = LogManager.getLogger(MolecularSummaryGenerator::class.java)
@@ -37,8 +35,7 @@ class MolecularSummaryGenerator(
 
     override fun contents(): Table {
         val table = Tables.createSingleCol()
-        val nonIhcTestsIncludedInTrialMatching =
-            molecularTestFilter.apply(patientRecord.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
+        val nonIhcTestsIncludedInTrialMatching = patientRecord.molecularTests.filterNot { it.experimentType == ExperimentType.IHC }
         val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }

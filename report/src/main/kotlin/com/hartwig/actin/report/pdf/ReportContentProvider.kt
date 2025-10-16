@@ -3,7 +3,6 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
@@ -123,8 +122,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 patientRecord = report.patientRecord,
                 cohorts = cohorts,
                 keyWidth = keyWidth,
-                valueWidth = valueWidth,
-                molecularTestFilter = MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
+                valueWidth = valueWidth
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE &&
                         report.patientRecord.molecularTests.isNotEmpty()
