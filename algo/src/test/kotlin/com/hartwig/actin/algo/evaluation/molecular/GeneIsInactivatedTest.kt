@@ -26,7 +26,7 @@ import org.junit.Test
 
 private const val GENE = "gene A"
 
-class GeneIsInactivatedOrDeletedTest {
+class GeneIsInactivatedTest {
 
     private val functionInactivation = GeneIsInactivated(GENE, onlyDeletions = false)
     private val functionDeletion = GeneIsInactivated(GENE, onlyDeletions = true)
@@ -238,14 +238,12 @@ class GeneIsInactivatedOrDeletedTest {
 
     @Test
     fun `Should warn when deletion is only on non-canonical transcript`() {
-        assertMolecularEvaluation(
+        assertBothFunctions(
             EvaluationResult.WARN,
-            functionDeletion.evaluate(
-                MolecularTestFactory.withCopyNumber(
-                    matchingDel.copy(
-                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
-                        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL))
-                    )
+            MolecularTestFactory.withCopyNumber(
+                matchingDel.copy(
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+                    otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL))
                 )
             )
         )
@@ -253,7 +251,7 @@ class GeneIsInactivatedOrDeletedTest {
 
     @Test
     fun `Should fail when TSG variant has no coding impact`() {
-        assertResultForVariantForDeletion(
+        assertResultForVariantForInactivation(
             EvaluationResult.FAIL, matchingVariant.copy(
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONE)
             )
@@ -269,7 +267,7 @@ class GeneIsInactivatedOrDeletedTest {
     fun `Should fail when TSG variant is non biallelic and non high driver`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionDeletion.evaluate(MolecularTestFactory.withVariant(nonHighDriverNonBiallelicMatchingVariant))
+            functionInactivation.evaluate(MolecularTestFactory.withVariant(nonHighDriverNonBiallelicMatchingVariant))
         )
     }
 
@@ -352,7 +350,7 @@ class GeneIsInactivatedOrDeletedTest {
     @Test
     fun `Should fail with multiple low driver variants with overlapping phase groups and inactivating effects`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, functionDeletion.evaluate(
+            EvaluationResult.FAIL, functionInactivation.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true, variantWithPhaseGroups(setOf(1)), variantWithPhaseGroups(setOf(1, 2))
                 )
@@ -385,7 +383,7 @@ class GeneIsInactivatedOrDeletedTest {
     }
 
     @Test
-    fun `Should warn with low driver variant with inactivating effect and low driver disruption`() {
+    fun `Should warn with low driver variant with inactivating effect and low driver disruption when requesting inactivation`() {
         val disruption = TestDisruptionFactory.createMinimal().copy(
             gene = GENE, isReportable = true, clusterGroup = 1, driverLikelihood = DriverLikelihood.LOW
         )
@@ -399,7 +397,7 @@ class GeneIsInactivatedOrDeletedTest {
     }
 
     @Test
-    fun `Should warn with low driver variant with inactivating effect and low driver disruption when requesting only deletions`() {
+    fun `Should fail with low driver variant with inactivating effect and low driver disruption when requesting only deletions`() {
         val disruption = TestDisruptionFactory.createMinimal().copy(
             gene = GENE, isReportable = true, clusterGroup = 1, driverLikelihood = DriverLikelihood.LOW
         )
@@ -453,6 +451,11 @@ class GeneIsInactivatedOrDeletedTest {
         )
     }
 
+    private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {
+        assertMolecularEvaluation(result, functionInactivation.evaluate(record))
+        assertMolecularEvaluation(result, functionDeletion.evaluate(record))
+    }
+
     private fun variantWithPhaseGroups(phaseGroups: Set<Int>?) = TestVariantFactory.createMinimal().copy(
         gene = GENE,
         isReportable = true,
@@ -460,9 +463,4 @@ class GeneIsInactivatedOrDeletedTest {
         driverLikelihood = DriverLikelihood.LOW,
         phaseGroups = phaseGroups
     )
-
-    private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, functionInactivation.evaluate(record))
-        assertMolecularEvaluation(result, functionDeletion.evaluate(record))
-    }
 }
