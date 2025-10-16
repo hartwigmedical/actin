@@ -43,11 +43,6 @@ object AggregatedEvidenceFactory {
                     characteristics.homologousRecombination?.evidence
                 )
 
-                false -> createAggregatedEvidence(
-                    MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_PROFICIENT,
-                    characteristics.homologousRecombination?.evidence
-                )
-
                 else -> null
             },
 

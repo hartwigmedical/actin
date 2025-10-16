@@ -62,7 +62,6 @@ class AggregatedEvidenceFactoryTest {
 
         assertThat(evidence.treatmentEvidencePerEvent.map { it.key }).containsExactlyInAnyOrder(
             "MSS",
-            "HRP",
             "TMB High",
             "TML High"
         )
