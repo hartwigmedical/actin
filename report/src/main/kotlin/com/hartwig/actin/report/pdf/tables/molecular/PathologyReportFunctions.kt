@@ -48,13 +48,16 @@ object PathologyReportFunctions {
                             listOf(Text(it).addStyle(Styles.tableHighlightStyle()))
                         },
                         pathologyReport.tissueDate?.let {
-                            getTextWithLabel("Collection date: ", pathologyReport.tissueDate)
+                            getTextWithLabel("Tissue date: ", pathologyReport.tissueDate)
                         },
                         pathologyReport.authorisationDate?.let {
                             getTextWithLabel("Authorization date: ", pathologyReport.authorisationDate)
                         },
                         pathologyReport.reportDate?.let {
                             getTextWithLabel("Report date: ", pathologyReport.reportDate)
+                        },
+                        pathologyReport.extractionDate?.let {
+                            getTextWithLabel("Data extraction date: ", pathologyReport.extractionDate)
                         },
                         pathologyReport.diagnosis?.takeIf { it.isNotBlank() }?.let {
                             listOf(
