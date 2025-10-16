@@ -21,7 +21,6 @@ import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
-import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -130,7 +129,7 @@ class LocalExampleTreatmentMatchApplication {
                 treatmentsByName = emptyMap()
             ),
             molecularTests = emptyList(),
-            ActionabilityMatcher(emptyList(), emptyList(), IndirectEvidenceMatcher.empty())
+            ActionabilityMatcher(emptyList(), emptyList(), emptySet()),
         )
     }
 

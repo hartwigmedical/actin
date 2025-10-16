@@ -11,7 +11,6 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
-import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import kotlinx.coroutines.runBlocking
@@ -72,7 +71,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 actionabilityMatcher = ActionabilityMatcher(
                     inputData.serveRecord.evidences(),
                     inputData.serveRecord.trials(),
-                    IndirectEvidenceMatcher.empty()
+                    inputData.serveRecord.knownEvents().hotspots(),
                 )
             )
 

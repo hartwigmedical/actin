@@ -23,7 +23,6 @@ import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
-import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
@@ -237,6 +236,6 @@ class ResistanceEvidenceMatcherTest {
         listOf(EFFICACY_EVIDENCE),
         TREATMENT_DATABASE,
         molecularTests,
-        ActionabilityMatcher(evidences = efficacyEvidence, emptyList(), IndirectEvidenceMatcher.empty())
+        ActionabilityMatcher(evidences = efficacyEvidence, emptyList(), emptySet())
     )
 }

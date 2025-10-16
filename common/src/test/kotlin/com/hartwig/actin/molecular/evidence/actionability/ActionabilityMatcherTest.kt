@@ -22,6 +22,7 @@ import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher.Companion.successWhenNotEmpty
 import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
+import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.ServeRecord
@@ -30,7 +31,9 @@ import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.fusion.ImmutableActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -63,7 +66,8 @@ private val brafMolecularTestVariant = TestVariantFactory.createMinimal().copy(
     ref = "T",
     alt = "A",
     driverLikelihood = DriverLikelihood.HIGH,
-    isReportable = true
+    isReportable = true,
+    proteinEffect = com.hartwig.actin.datamodel.molecular.driver.ProteinEffect.GAIN_OF_FUNCTION,
 )
 private val krasMolecularTestVariant = TestVariantFactory.createMinimal().copy(
     gene = "KRAS",
@@ -72,7 +76,8 @@ private val krasMolecularTestVariant = TestVariantFactory.createMinimal().copy(
     ref = "C",
     alt = "T",
     driverLikelihood = DriverLikelihood.HIGH,
-    isReportable = true
+    isReportable = true,
+    proteinEffect = com.hartwig.actin.datamodel.molecular.driver.ProteinEffect.GAIN_OF_FUNCTION,
 )
 
 private val actionableFusion: ActionableFusion =
@@ -321,7 +326,7 @@ class ActionabilityMatcherTest {
         val indirectEvidenceMatcher = IndirectEvidenceMatcher(
             mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to setOf(evidence))
         )
-        val matcher = ActionabilityMatcher(emptyList(), emptyList(), indirectEvidenceMatcher)
+        val matcher = ActionabilityMatcher(emptyList(), emptyList(), emptySet())
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant)))
 
@@ -393,7 +398,7 @@ class ActionabilityMatcherTest {
         val trial1 = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
         val trial2 = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
 
-        val matcher = ActionabilityMatcher(listOf(evidence1, evidence2), listOf(trial1, trial2), IndirectEvidenceMatcher.empty())
+        val matcher = ActionabilityMatcher(listOf(evidence1, evidence2), listOf(trial1, trial2), emptySet())
 
         val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(brafMolecularTestVariant))
@@ -1036,19 +1041,23 @@ class ActionabilityMatcherTest {
 
     @Test
     fun `Should include only generic inhibitors as indirect evidence matches`() {
-        val genericIndirect = evidenceWithDrugClass("Treatment", "KRAS Inhibitor")
-
-        val indirectEvidenceMatcher = IndirectEvidenceMatcher(
-            mapOf(
-                GeneEffectKey(krasMolecularTestVariant.gene, krasMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to
-                        linkedSetOf(genericIndirect)
-            )
-        )
+        // TODO shouldn't this include a treatment drug class that isn't a generic inhibitor?
+        // TODO setup related kras variant to use in the matcher construction
+        val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(krasActionableHotspot).build()
+        val genericIndirect = evidenceWithDrugClass("Treatment", "KRAS Inhibitor", molecularCriterium)
 
         val matcher = ActionabilityMatcher(
-            evidences = emptyList(),
+            evidences = listOf(genericIndirect),
             trials = emptyList(),
-            indirectEvidenceMatcher = indirectEvidenceMatcher
+            hotspots = setOf(TestServeKnownFactory.hotspotBuilder()
+                .gene(krasMolecularTestVariant.gene)
+                .chromosome(krasMolecularTestVariant.chromosome)
+                .position(krasMolecularTestVariant.position)
+                .ref(krasMolecularTestVariant.ref)
+                .alt(krasMolecularTestVariant.alt)
+                .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                .build()
+            )
         )
 
         val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
@@ -1065,8 +1074,8 @@ class ActionabilityMatcherTest {
         return ActionabilityMatcherFactory.create(serveRecord(evidences, trials))
     }
 
-    private fun evidenceWithDrugClass(name: String, drugClass: String): EfficacyEvidence {
-        val base = TestServeEvidenceFactory.create(treatment = name)
+    private fun evidenceWithDrugClass(name: String, drugClass: String, molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium()): EfficacyEvidence {
+        val base = TestServeEvidenceFactory.create(treatment = name, molecularCriterium = molecularCriterium)
         val treatment = ImmutableTreatment.builder()
             .from(base.treatment())
             .treatmentApproachesDrugClass(listOf(drugClass))

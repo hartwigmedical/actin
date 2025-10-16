@@ -5,11 +5,9 @@ import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
-import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import org.assertj.core.api.Assertions.assertThat
@@ -67,20 +65,12 @@ class IndirectEvidenceMatcherTest {
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
         )
 
-        val serveRecord = ImmutableServeRecord.builder()
-            .knownEvents(
-                ImmutableKnownEvents.builder()
-                    .addHotspots(resistantKnownHotspot)
-                    .addHotspots(nonResistantKnownHotspot)
-                    .build()
-            )
-            .addEvidences(resistantEvidence)
-            .addEvidences(nonResistantEvidence)
-            .build()
-
         val actinProteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
 
-        val matcher = IndirectEvidenceMatcher.create(serveRecord)
+        val matcher = IndirectEvidenceMatcher.create(
+            listOf(resistantEvidence, nonResistantEvidence),
+            setOf(resistantKnownHotspot, nonResistantKnownHotspot)
+        )
 
         val resistantVariantDriver = TestVariantFactory.createMinimal().copy(
             gene = "BRAF",
@@ -128,16 +118,7 @@ class IndirectEvidenceMatcherTest {
             proteinEffect = ProteinEffect.UNKNOWN
         )
 
-        val serveRecord = ImmutableServeRecord.builder()
-            .knownEvents(
-                ImmutableKnownEvents.builder()
-                    .addHotspots(unknownEffectHotspot)
-                    .build()
-            )
-            .addEvidences(unknownEffectEvidence)
-            .build()
-
-        val matcher = IndirectEvidenceMatcher.create(serveRecord)
+        val matcher = IndirectEvidenceMatcher.create(listOf(unknownEffectEvidence), setOf(unknownEffectHotspot))
 
         val unknownEffectVariantDriver = TestVariantFactory.createMinimal().copy(
             gene = unknownEffectVariant.gene(),
@@ -196,19 +177,11 @@ class IndirectEvidenceMatcherTest {
             )
             .build()
 
-        val serveRecord = ImmutableServeRecord.builder()
-            .knownEvents(
-                ImmutableKnownEvents.builder()
-                    .addHotspots(knownHotspot(directVariant, ProteinEffect.GAIN_OF_FUNCTION))
-                    .addHotspots(knownHotspot(indirectVariant, ProteinEffect.GAIN_OF_FUNCTION))
-                    .build()
-            )
-            .addEvidences(directEvidence)
-            .addEvidences(indirectEvidence)
-            .build()
-
         val actinProteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-        val matcher = IndirectEvidenceMatcher.create(serveRecord)
+        val matcher = IndirectEvidenceMatcher.create(
+            listOf(directEvidence, indirectEvidence),
+            setOf(knownHotspot(directVariant, ProteinEffect.GAIN_OF_FUNCTION), knownHotspot(indirectVariant, ProteinEffect.GAIN_OF_FUNCTION))
+        )
 
         val patientVariant = TestVariantFactory.createMinimal().copy(
             gene = directVariant.gene(),

@@ -3,13 +3,10 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.evidence.ServeVerifier.isCombinedProfile
-import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
 import com.hartwig.actin.molecular.evidence.curation.GenericInhibitorFiltering
 import com.hartwig.actin.molecular.evidence.matching.HotspotCoordinates
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.serve.datamodel.Knowledgebase
-import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
@@ -55,12 +52,11 @@ class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<Ge
 
         val logger: Logger = LogManager.getLogger(IndirectEvidenceMatcher::class.java)
 
-        fun create(serveRecord: ServeRecord): IndirectEvidenceMatcher {
-            val nonResistantHotspotsByCoordinates = collectNonResistantHotspotsByCoordinates(serveRecord)
+        fun create(evidences: List<EfficacyEvidence>, knownHotspots: Set<KnownHotspot>): IndirectEvidenceMatcher {
+            val nonResistantHotspotsByCoordinates = collectNonResistantHotspotsByCoordinates(knownHotspots)
 
-            val associatedEvidenceByGeneEffect = serveRecord.evidences()
+            val associatedEvidenceByGeneEffect = evidences
                 .asSequence()
-                .filter { it.source() == Knowledgebase.CKB }
                 .mapNotNull { evidence -> associatedEvidenceCandidate(evidence, nonResistantHotspotsByCoordinates) }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, evidences) -> evidences.toCollection(HashSet()) }
@@ -70,10 +66,9 @@ class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<Ge
 
         fun empty(): IndirectEvidenceMatcher = IndirectEvidenceMatcher(emptyMap())
 
-        private fun collectNonResistantHotspotsByCoordinates(serveRecord: ServeRecord): Map<HotspotCoordinates, KnownHotspot> {
-            val groupedByCoordinates = serveRecord.knownEvents().hotspots()
+        private fun collectNonResistantHotspotsByCoordinates(knownHotspots: Set<KnownHotspot>): Map<HotspotCoordinates, KnownHotspot> {
+            val groupedByCoordinates = knownHotspots
                 .asSequence()
-                .filter { it.sources().contains(Knowledgebase.CKB) }
                 .filterNot { it.associatedWithDrugResistance() == true }
                 .groupBy { HotspotMatching.coordinates(it) }
 
@@ -97,7 +92,6 @@ class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<Ge
             }
 
             return evidence.molecularCriterium().hotspots().firstOrNull()
-                ?.takeIf { ApplicabilityFiltering.isApplicable(it) }
                 ?.variants()
                 ?.let { variants -> resolveNonResistantKnownHotspot(variants, knownHotspotsByVariant) }
                 ?.takeIf { GenericInhibitorFiltering.isGenericInhibitor(evidence.treatment()) }

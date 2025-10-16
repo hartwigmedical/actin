@@ -15,6 +15,7 @@ import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicT
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.apache.logging.log4j.LogManager
@@ -25,8 +26,9 @@ typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 class ActionabilityMatcher(
     private val evidences: List<EfficacyEvidence>,
     private val trials: List<ActionableTrial>,
-    private val indirectEvidenceMatcher: IndirectEvidenceMatcher
+    private val hotspots: Set<KnownHotspot>,
 ) {
+    private val indirectEvidenceMatcher = IndirectEvidenceMatcher.create(evidences, hotspots)
 
     val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
 

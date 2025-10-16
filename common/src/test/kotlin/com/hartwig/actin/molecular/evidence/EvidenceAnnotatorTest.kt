@@ -13,9 +13,12 @@ import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactor
 import com.hartwig.actin.molecular.evidence.actionability.GeneEffectKey
 import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.actionability.toGroupedProteinEffect
+import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -38,7 +41,8 @@ private val brafMolecularTestVariant = TestVariantFactory.createMinimal().copy(
     ref = "T",
     alt = "A",
     driverLikelihood = DriverLikelihood.HIGH,
-    isReportable = true
+    isReportable = true,
+    proteinEffect = com.hartwig.actin.datamodel.molecular.driver.ProteinEffect.GAIN_OF_FUNCTION,
 )
 
 class EvidenceAnnotatorTest {
@@ -64,7 +68,8 @@ class EvidenceAnnotatorTest {
             indications = setOf(indication),
             title = "title"
         )
-        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial), IndirectEvidenceMatcher.empty())
+        val knownHotspots: Set<KnownHotspot> = emptySet()  // TODO add hotspot
+        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial), knownHotspots)
 
         val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
 
@@ -91,7 +96,7 @@ class EvidenceAnnotatorTest {
 
         val evidenceAnnotator = evidenceAnnotator(
             clinicalEvidenceFactory,
-            ActionabilityMatcher(emptyList(), emptyList(), IndirectEvidenceMatcher.empty())
+            ActionabilityMatcher(emptyList(), emptyList(), emptySet())
         )
 
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
@@ -124,7 +129,7 @@ class EvidenceAnnotatorTest {
             .treatment(
                 ImmutableTreatment.builder()
                     .from(baseEvidence.treatment())
-                    .treatmentApproachesDrugClass(listOf("PIK3CA Inhibitor"))
+                    .treatmentApproachesDrugClass(listOf("Generic Inhibitor"))
                     .build()
             )
             .build()
@@ -137,7 +142,16 @@ class EvidenceAnnotatorTest {
         val relatedMatcher = IndirectEvidenceMatcher(
             mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to setOf(evidence))
         )
-        val actionabilityMatcher = ActionabilityMatcher(emptyList(), emptyList(), relatedMatcher)
+        val knowHotspot = TestServeKnownFactory.hotspotBuilder()
+            .gene(relatedBrafActionableHotspot.variants().first().gene())
+            .chromosome(relatedBrafActionableHotspot.variants().first().chromosome())
+            .position(relatedBrafActionableHotspot.variants().first().position())
+            .ref(relatedBrafActionableHotspot.variants().first().ref())
+            .alt(relatedBrafActionableHotspot.variants().first().alt())
+            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+            .build()
+
+        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), emptyList(), setOf(knowHotspot))
 
         val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
 
