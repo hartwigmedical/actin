@@ -227,8 +227,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsInactivatedCreator(onlyDeletions: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
             GeneIsInactivated(
-                functionInputResolver().createOneGeneInput(function).geneName,
-                maxMolecularTestAge(),
+                gene = functionInputResolver().createOneGeneInput(function).geneName,
+                maxTestAge = maxMolecularTestAge(),
                 onlyDeletions = onlyDeletions
             )
         }
