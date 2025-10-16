@@ -209,12 +209,14 @@ class PanelVariantAnnotator(
                 ?.firstOrNull()
                 ?: variant.hgvsProteinImpact?.let { proteinImpact ->
                     transcripts.filter {
-                        forceSingleLetterAminoAcids(it.hgvsProteinImpact) == forceSingleLetterAminoAcids(
-                            proteinImpact
-                        )
+                        forceSingleLetterAminoAcids(it.hgvsProteinImpact) == forceSingleLetterAminoAcids(proteinImpact)
                     }
                 }?.firstOrNull()
-                ?: variant.hgvsCodingImpact?.let { codingImpact -> transcripts.filter { it.hgvsCodingImpact == codingImpact } }
+                ?: variant.hgvsCodingImpact?.let { codingImpact ->
+                    transcripts.filter {
+                        it.hgvsCodingImpact.equals(codingImpact, ignoreCase = true)
+                    }
+                }
                     ?.firstOrNull()
                 ?: transcripts.first { it.transcript == paveResponse.impact.canonicalTranscript }
 
