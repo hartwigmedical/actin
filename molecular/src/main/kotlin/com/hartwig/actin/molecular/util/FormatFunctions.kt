@@ -18,9 +18,9 @@ object FormatFunctions {
 
             !hgvsCodingImpact.isNullOrEmpty() -> if (isSplice) "$hgvsCodingImpact splice" else hgvsCodingImpact
 
-            hgvsProteinImpact != null && hgvsCodingImpact != null -> if (isUpstream) "upstream" else effects
+            hgvsProteinImpact == "" && hgvsCodingImpact == "" -> if (isUpstream) "upstream" else effects
 
-            else -> throw IllegalStateException("Protein and coding impact cannot both be null")
+            else -> throw IllegalStateException("Variant impact cannot be formatted - protein and coding impact illegal state")
         }
     }
 
