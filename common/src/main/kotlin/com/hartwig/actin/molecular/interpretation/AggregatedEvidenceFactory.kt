@@ -6,11 +6,8 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import com.hartwig.actin.util.MapFunctions
-import org.apache.logging.log4j.LogManager
 
 object AggregatedEvidenceFactory {
-
-    private val LOGGER = LogManager.getLogger(AggregatedEvidenceFactory::class.java)
 
     fun create(molecular: MolecularTest): AggregatedEvidence {
         return if (!molecular.hasSufficientQuality) {

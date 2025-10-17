@@ -25,11 +25,16 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val reportConfig = ReportConfiguration.create(config.overrideYaml)
+        val configuration = if (config.enableExtendedMode) {
+            LOGGER.info("Extended mode enabled. Using report configuration that includes all possible content")
+            ReportConfiguration.extended()
+        } else {
+            ReportConfiguration.create(config.overrideYaml)
+        }
 
-        val report = ReportFactory.create(this.config.reportDate ?: LocalDate.now(), patient, treatmentMatch, reportConfig)
-        val writer = ReportWriterFactory.createProductionReportWriter(this.config.outputDirectory)
-        writer.write(report, this.config.enableExtendedMode)
+        val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
+        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
+        writer.write(report, configuration, config.enableExtendedMode)
         LOGGER.info("Done!")
     }
 

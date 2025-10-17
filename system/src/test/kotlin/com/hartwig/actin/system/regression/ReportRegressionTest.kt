@@ -42,7 +42,7 @@ class ReportRegressionTest {
 
     @Test
     fun `Regress trial matching report textually and visually`() {
-        regressReport(exampleName = LUNG_01_EXAMPLE) { ExampleFunctions.createExhaustiveReportConfiguration() }
+        regressReport(exampleName = LUNG_01_EXAMPLE) { ExampleFunctions.createTrialMatchingReportConfiguration() }
     }
 
     @Test
@@ -54,7 +54,7 @@ class ReportRegressionTest {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
 
         ExampleFunctions.run(
-            LocalDate.of(2025, 4, 17),
+            LocalDate.of(2025, 9, 17),
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
             outputDirectory,

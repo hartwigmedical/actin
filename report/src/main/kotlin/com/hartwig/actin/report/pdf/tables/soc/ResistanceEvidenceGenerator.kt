@@ -8,10 +8,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
-class ResistanceEvidenceGenerator(
-    private val treatments: Set<AnnotatedTreatmentMatch>,
-    private val width: Float
-) : TableGenerator {
+class ResistanceEvidenceGenerator(private val treatments: Set<AnnotatedTreatmentMatch>, private val width: Float) : TableGenerator {
 
     override fun title(): String {
         return "Resistance evidence"

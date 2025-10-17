@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.clinical
+package com.hartwig.actin.report.pdf.tables
 
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph

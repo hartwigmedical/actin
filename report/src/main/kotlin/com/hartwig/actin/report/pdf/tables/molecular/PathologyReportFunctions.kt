@@ -25,7 +25,7 @@ object PathologyReportFunctions {
             tissueDate ?: authorisationDate ?: reportDate
         ) { "Expected one of tissueDate, authorisationDate or reportDate to be non-null." }
 
-    fun getPathologyReportSummary(
+    fun createPathologyReportSummaryCell(
         prefix: String? = null,
         prefixStyle: Style? = null,
         pathologyReport: PathologyReport

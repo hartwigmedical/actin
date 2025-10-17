@@ -11,7 +11,7 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.itextpdf.layout.element.Table
 
-class WGSSummaryGenerator(
+class WgsSummaryGenerator(
     private val summaryType: SummaryType,
     private val patientRecord: PatientRecord,
     private val molecular: MolecularTest,
@@ -35,7 +35,7 @@ class WGSSummaryGenerator(
     }
 
     override fun contents(): Table {
-        return WGSSummaryGeneratorFunctions.createMolecularSummaryTable(
+        return WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
             summaryType, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
         )
     }

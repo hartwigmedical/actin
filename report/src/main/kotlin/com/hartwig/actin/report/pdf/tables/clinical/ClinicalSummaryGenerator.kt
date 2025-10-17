@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.MedicationToTreatmentConverter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -24,9 +25,9 @@ import com.itextpdf.layout.element.Table
 
 private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
-class PatientClinicalHistoryGenerator(
+class ClinicalSummaryGenerator(
     private val report: Report,
-    private val showDetails: Boolean,
+    private val includeAdditionalFields: Boolean,
     private val keyWidth: Float,
     private val valueWidth: Float
 ) : TableGenerator {
@@ -47,15 +48,16 @@ class PatientClinicalHistoryGenerator(
 
     fun contentsAsList(): List<Cell> {
         val record = report.patientRecord
+        
         return listOfNotNull(
-            "Relevant systemic treatment history" to relevantSystemicPreTreatmentHistoryTable(record),
-            if (report.config.includeOtherOncologicalHistoryInSummary || showDetails) {
-                "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
+            "Relevant systemic treatment history" to relevantSystemicTreatmentHistoryTable(record),
+            if (includeAdditionalFields) {
+                "Relevant other oncological history" to relevantNonSystemicTreatmentHistoryTable(record)
             } else null,
-            if (report.config.includePreviousPrimaryInClinicalSummary || showDetails) {
-                "Previous primary tumor" to priorPrimaryHistoryTable(record)
+            if (includeAdditionalFields) {
+                "Previous primary tumor" to priorPrimaryTable(record)
             } else null,
-            if (report.config.includeRelevantNonOncologicalHistoryInSummary || showDetails) {
+            if (includeAdditionalFields) {
                 "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
@@ -71,11 +73,11 @@ class PatientClinicalHistoryGenerator(
         return table
     }
 
-    private fun relevantSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
+    private fun relevantSystemicTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, record.medications ?: emptyList(), true)
     }
 
-    private fun relevantNonSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
+    private fun relevantNonSystemicTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, emptyList(), false)
     }
 
@@ -86,7 +88,7 @@ class PatientClinicalHistoryGenerator(
     ): Table {
         val dateWidth = valueWidth / 5
         val treatmentWidth = valueWidth - dateWidth
-        val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
+        val table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
         val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, treatmentHistory)
         val systemicTreatmentHistory = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
@@ -109,7 +111,7 @@ class PatientClinicalHistoryGenerator(
         return treatmentHistoryEntry.allTreatments().any { it.isSystemic }
     }
 
-    private fun priorPrimaryHistoryTable(record: PatientRecord): Table {
+    private fun priorPrimaryTable(record: PatientRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
         record.priorPrimaries.distinct().sortedWith(PriorPrimaryDiagnosedDateComparator())
