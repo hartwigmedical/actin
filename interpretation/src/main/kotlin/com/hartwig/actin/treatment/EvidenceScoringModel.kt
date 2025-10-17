@@ -2,12 +2,14 @@ package com.hartwig.actin.treatment
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class EvidenceScore(
     val event: String,
     val scoringMatch: ScoringMatch,
+    val evidenceLevel: EvidenceLevel,
     val evidenceLevelDetails: EvidenceLevelDetails,
     val cancerType: CancerType,
     val score: Double,
@@ -21,19 +23,28 @@ data class EvidenceScore(
 
 class EvidenceScoringModel(val config: ScoringConfig) {
 
-    fun score(treatment: TreatmentEvidence): EvidenceScore {
+    fun score(
+        treatment: TreatmentEvidence,
+    ): EvidenceScore {
         val cancerTypeApplicability = when (treatment.cancerTypeMatch.applicability) {
             CancerTypeMatchApplicability.SPECIFIC_TYPE -> TumorMatch.PATIENT
             CancerTypeMatchApplicability.ALL_TYPES -> TumorMatch.ALL
             CancerTypeMatchApplicability.OTHER_TYPE -> TumorMatch.ANY
         }
-        val exactVariant = if (treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()) VariantMatch.CATEGORY else VariantMatch.EXACT
-        val scoringMatch = ScoringMatch(cancerTypeApplicability, exactVariant)
+        val isCategoryEvent = treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()
+        val isIndirect = treatment.molecularMatch.isIndirect
+        val variantMatch = when {
+            isIndirect -> VariantMatch.FUNCTIONAL_EFFECT
+            isCategoryEvent -> VariantMatch.CATEGORY
+            else -> VariantMatch.EXACT
+        }
+        val scoringMatch = ScoringMatch(cancerTypeApplicability, variantMatch)
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
         val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
         val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
         return EvidenceScore(
             scoringMatch = scoringMatch,
+            evidenceLevel = treatment.evidenceLevel,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             score = factor * score.toDouble(),
             event = treatment.molecularMatch.sourceEvent,

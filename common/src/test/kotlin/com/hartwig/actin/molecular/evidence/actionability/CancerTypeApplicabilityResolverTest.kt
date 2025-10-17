@@ -29,6 +29,17 @@ class CancerTypeApplicabilityResolverTest {
     }
 
     @Test
+    fun `Should resolve indication to all cancer types from expanded doids`() {
+        val resolverWithExpandedTumor = CancerTypeApplicabilityResolver(setOf("4006", "162"))
+
+        assertThat(
+            resolverWithExpandedTumor.resolve(
+                indication("162")
+            )
+        ).isEqualTo(CancerTypeMatchApplicability.ALL_TYPES)
+    }
+
+    @Test
     fun `Should resolve indication to other cancer type when no match to doids`() {
         assertThat(
             resolver.resolve(

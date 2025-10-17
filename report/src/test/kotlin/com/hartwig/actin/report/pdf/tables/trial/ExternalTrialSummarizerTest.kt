@@ -10,7 +10,7 @@ import com.hartwig.actin.report.trial.EventWithExternalTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
-import java.util.*
+import java.util.SortedSet
 
 private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
@@ -29,11 +29,13 @@ private val TRIAL_1 = TestExternalTrialFactory.create(
     molecularMatches = setOf(
         TestMolecularMatchDetailsFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
-            sourceEvent = "source event 1"
+            sourceEvent = "source event 1",
+            isIndirect = false
         ),
         TestMolecularMatchDetailsFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
-            sourceEvent = "source event 2"
+            sourceEvent = "source event 2",
+            isIndirect = false
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 1", emptySet()), CancerType("cancer type 2", emptySet())),
@@ -47,7 +49,8 @@ private val TRIAL_2 = TestExternalTrialFactory.create(
     molecularMatches = setOf(
         TestMolecularMatchDetailsFactory.create(
             sourceDate = LocalDate.of(2023, 2, 3),
-            sourceEvent = "source event 3"
+            sourceEvent = "source event 3",
+            isIndirect = false
         )
     ),
     applicableCancerTypes = setOf(CancerType("cancer type 3", emptySet())),

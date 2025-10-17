@@ -53,11 +53,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         if (enableExtendedMode) {
             logger.info("Including trial matching details")
         }
-        
+
         if (report.config.includeSOCLiteratureEfficacyEvidence) {
             logger.info("Including SOC literature details")
         }
-        
+
         val externalTrials = trialsProvider.externalTrials()
 
         return listOf(

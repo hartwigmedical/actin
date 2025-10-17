@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.evidence.curation
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 
 object ApplicabilityFiltering {
@@ -27,6 +28,10 @@ object ApplicabilityFiltering {
             }
         }
         return eventIsApplicable(actionableGene.gene())
+    }
+
+    fun isApplicable(knownHotspot: KnownHotspot): Boolean {
+        return eventIsApplicable(knownHotspot.gene())
     }
 
     private fun eventIsApplicable(gene: String): Boolean {

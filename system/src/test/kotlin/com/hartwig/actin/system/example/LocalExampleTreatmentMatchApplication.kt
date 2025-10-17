@@ -129,7 +129,7 @@ class LocalExampleTreatmentMatchApplication {
                 treatmentsByName = emptyMap()
             ),
             molecularTests = emptyList(),
-            ActionabilityMatcher(emptyList(), emptyList())
+            ActionabilityMatcher(emptyList(), emptyList(), emptySet()),
         )
     }
 
@@ -140,7 +140,7 @@ class LocalExampleTreatmentMatchApplication {
 
 fun main() {
     LocalExampleTreatmentMatchApplication.LOGGER.info("Running ACTIN Example Treatment Matcher")
-    
+
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
         val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
