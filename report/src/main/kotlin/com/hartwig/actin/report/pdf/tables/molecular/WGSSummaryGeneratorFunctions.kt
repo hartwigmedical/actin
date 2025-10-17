@@ -36,6 +36,15 @@ object WGSSummaryGeneratorFunctions {
         val isLongSummaryType = summaryType == SummaryType.LONG_SUMMARY
         val isDetailsSummaryType = summaryType == SummaryType.DETAILS
 
+        if (isDetailsSummaryType && molecular.targetSpecification?.testDateIsBeforeOldestTestVersion == true) {
+            table.addCell(
+                Cells.createSpanningSubNote(
+                    "The date of this test (${molecular.date}) is before the oldest version date of this test (${molecular.targetSpecification?.versionDate!!}), the oldest version of the test is used to determine the tested genes",
+                    table
+                )
+            )
+        }
+
         if (isLongSummaryType || (isDetailsSummaryType && patientRecord.tumor.biopsyLocation != null)) {
             table.addCell(Cells.createKey("Biopsy location"))
             table.addCell(biopsySummary(patientRecord, molecular))

@@ -45,6 +45,15 @@ class OrangeMolecularRecordGenerator(
             )
         }
 
+        if (molecular.targetSpecification?.testDateIsBeforeOldestTestVersion == true) {
+            table.addCell(
+                Cells.createSpanningSubNote(
+                    "The date of this test (${molecular.date}) is before the oldest version date of this test (${molecular.targetSpecification?.versionDate!!}), the oldest version of the test is used to determine the tested genes",
+                    table
+                )
+            )
+        }
+
         val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
         TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true, skipWrappingFooter = true)
 
