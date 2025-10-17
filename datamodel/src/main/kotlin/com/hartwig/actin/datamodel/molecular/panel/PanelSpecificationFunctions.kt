@@ -35,7 +35,7 @@ object PanelSpecificationFunctions {
         test: SequencingTest,
         panelTestSpecifications: Set<PanelTestSpecification>,
         registrationDate: LocalDate
-    ): Pair<LocalDate?, Boolean> {
+    ): Pair<LocalDate?, Boolean?> {
         val referenceDate = test.date ?: registrationDate
         val testsWithMatchingName = panelTestSpecifications
             .filter { it.testName == test.test }
@@ -48,7 +48,7 @@ object PanelSpecificationFunctions {
             Pair(matchingVersion.versionDate, false)
         } else {
             val oldest = testsWithMatchingName.minByOrNull { it.versionDate!! }
-            Pair(oldest?.versionDate, true)
+            Pair(oldest?.versionDate, oldest?.let { true })
         }
     }
 }
