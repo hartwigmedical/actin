@@ -3,12 +3,18 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.BRAF_T599R_VARIANT
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.BRAF_V600E_VARIANT
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.KRAS_G12V_VARIANT
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.PIK3CA_E545K_VARIANT
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createHotspotEvidence
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createKnownHotspot
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory.convertProteinEffect
+import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
+import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
+import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
-import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,27 +22,12 @@ class IndirectEvidenceMatcherTest {
 
     @Test
     fun `create should include only non resistant related evidences`() {
-        val resistantVariant = variantAnnotation(
-            gene = "BRAF",
-            chromosome = "7",
-            position = 140453136,
-            ref = "T",
-            alt = "A"
-        )
-        val nonResistantVariant = variantAnnotation(
-            gene = "KRAS",
-            chromosome = "12",
-            position = 25245350,
-            ref = "C",
-            alt = "T"
-        )
-
-        val resistantHotspot = TestServeMolecularFactory.hotspot(resistantVariant)
-        val nonResistantHotspot = TestServeMolecularFactory.hotspot(nonResistantVariant)
+        val resistantHotspot = TestServeMolecularFactory.hotspot(BRAF_V600E_VARIANT)
+        val nonResistantHotspot = TestServeMolecularFactory.hotspot(KRAS_G12V_VARIANT)
 
         val resistantEvidence = TestServeEvidenceFactory.create(
             molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                variants = setOf(resistantVariant)
+                variants = setOf(BRAF_V600E_VARIANT)
             ),
             treatment = "Resistant Treatment"
         )
@@ -51,13 +42,10 @@ class IndirectEvidenceMatcherTest {
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
             associatedWithDrugResistance = true
         )
-
         val nonResistantKnownHotspot = createKnownHotspot(
             variant = nonResistantHotspot.firstVariant(),
-            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+            proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
         )
-
-        val actinProteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
 
         val matcher = IndirectEvidenceMatcher.create(
             listOf(resistantEvidence, nonResistantEvidence),
@@ -65,12 +53,12 @@ class IndirectEvidenceMatcherTest {
         )
 
         val resistantVariantDriver = TestVariantFactory.createMinimal().copy(
-            gene = "BRAF",
-            proteinEffect = actinProteinEffect
+            gene = BRAF_V600E_VARIANT.gene(),
+            proteinEffect = convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
         )
         val nonResistantVariantDriver = TestVariantFactory.createMinimal().copy(
-            gene = "KRAS",
-            proteinEffect = actinProteinEffect
+            gene = KRAS_G12V_VARIANT.gene(),
+            proteinEffect = convertProteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
         )
 
         assertThat(matcher.findIndirectEvidence(resistantVariantDriver)).isEmpty()
@@ -79,70 +67,80 @@ class IndirectEvidenceMatcherTest {
     }
 
     @Test
-    fun `Should exclude hotspots without gain or loss of function`() {
-        val unknownEffectVariant = variantAnnotation(
-            gene = "PIK3CA",
-            chromosome = "3",
-            position = 178936091,
-            ref = "A",
-            alt = "G"
+    fun `Should skip evidences with combined molecular criteria`() {
+        val hotspot = TestServeMolecularFactory.hotspot(BRAF_V600E_VARIANT)
+
+        val combinedCriterium = ImmutableMolecularCriterium.builder()
+            .addHotspots(hotspot)
+            .addAllGenes(TestServeMolecularFactory.createGeneCriterium(gene = BRAF_V600E_VARIANT.gene()).genes())
+            .build()
+
+        val baseEvidence = TestServeEvidenceFactory.create(
+            molecularCriterium = combinedCriterium,
+            treatment = "Combined Treatment"
+        )
+        val combinedEvidence = ImmutableEfficacyEvidence.builder()
+            .from(baseEvidence)
+            .treatment(
+                ImmutableTreatment.builder()
+                    .from(baseEvidence.treatment())
+                    .treatmentApproachesDrugClass(listOf("BRAF Inhibitor"))
+                    .build()
+            )
+            .build()
+
+        val knownHotspot = createKnownHotspot(hotspot.firstVariant(), ProteinEffect.GAIN_OF_FUNCTION)
+        val matcher = IndirectEvidenceMatcher.create(listOf(combinedEvidence), setOf(knownHotspot))
+
+        val variantDriver = TestVariantFactory.createMinimal().copy(
+            gene = BRAF_V600E_VARIANT.gene(),
+            proteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
         )
 
-        val unknownEffectHotspot = TestServeMolecularFactory.hotspot(unknownEffectVariant)
+        assertThat(matcher.findIndirectEvidence(variantDriver)).isEmpty()
+    }
+
+    @Test
+    fun `Should exclude hotspots without gain or loss of function`() {
+        val unknownHotspot = TestServeMolecularFactory.hotspot(PIK3CA_E545K_VARIANT)
 
         val unknownEffectEvidence = createHotspotEvidence(
-            hotspot = unknownEffectHotspot,
+            hotspot = unknownHotspot,
             treatmentName = "Generic Inhibitor Treatment",
             drugClass = "PIK3CA Inhibitor"
         ).evidence
 
         val unknownEffectKnownHotspot = createKnownHotspot(
-            variant = unknownEffectHotspot.firstVariant(),
+            variant = unknownHotspot.firstVariant(),
             proteinEffect = ProteinEffect.UNKNOWN
         )
 
         val matcher = IndirectEvidenceMatcher.create(listOf(unknownEffectEvidence), setOf(unknownEffectKnownHotspot))
 
-        val unknownEffectVariantDriver = TestVariantFactory.createMinimal().copy(
-            gene = unknownEffectVariant.gene(),
+        val variantDriver = TestVariantFactory.createMinimal().copy(
+            gene = PIK3CA_E545K_VARIANT.gene(),
             proteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.UNKNOWN)
         )
 
-        assertThat(matcher.findIndirectEvidence(unknownEffectVariantDriver)).isEmpty()
+        assertThat(matcher.findIndirectEvidence(variantDriver)).isEmpty()
     }
 
     @Test
     fun `Should exclude direct hotspot matches`() {
-        val directVariant = variantAnnotation(
-            gene = "KRAS",
-            chromosome = "12",
-            position = 25245350,
-            ref = "C",
-            alt = "T"
-        )
-        val indirectVariant = variantAnnotation(
-            gene = "KRAS",
-            chromosome = "12",
-            position = 25245351,
-            ref = "C",
-            alt = "A"
-        )
-
-        val directHotspot = TestServeMolecularFactory.hotspot(directVariant)
-        val indirectHotspot = TestServeMolecularFactory.hotspot(indirectVariant)
+        val directHotspot = TestServeMolecularFactory.hotspot(BRAF_V600E_VARIANT)
+        val indirectHotspot = TestServeMolecularFactory.hotspot(BRAF_T599R_VARIANT)
 
         val directEvidence = createHotspotEvidence(
             hotspot = directHotspot,
             treatmentName = "Direct Treatment",
-            drugClass = "KRAS Inhibitor"
+            drugClass = "BRAF Inhibitor"
         ).evidence
         val indirectEvidence = createHotspotEvidence(
             hotspot = indirectHotspot,
             treatmentName = "Indirect Treatment",
-            drugClass = "KRAS Inhibitor"
+            drugClass = "BRAF Inhibitor"
         ).evidence
 
-        val actinProteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
         val matcher = IndirectEvidenceMatcher.create(
             listOf(directEvidence, indirectEvidence),
             setOf(
@@ -151,31 +149,15 @@ class IndirectEvidenceMatcherTest {
             )
         )
 
-        val patientVariant = TestVariantFactory.createMinimal().copy(
-            gene = directVariant.gene(),
-            proteinEffect = actinProteinEffect,
-            chromosome = directVariant.chromosome(),
-            position = directVariant.position(),
-            ref = directVariant.ref(),
-            alt = directVariant.alt()
+        val variantDriver = TestVariantFactory.createMinimal().copy(
+            gene = BRAF_V600E_VARIANT.gene(),
+            proteinEffect = convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION),
+            chromosome = BRAF_V600E_VARIANT.chromosome(),
+            position = BRAF_V600E_VARIANT.position(),
+            ref = BRAF_V600E_VARIANT.ref(),
+            alt = BRAF_V600E_VARIANT.alt()
         )
 
-        assertThat(matcher.findIndirectEvidence(patientVariant)).containsExactly(indirectEvidence)
-    }
-
-    private fun variantAnnotation(
-        gene: String,
-        chromosome: String,
-        position: Int,
-        ref: String,
-        alt: String
-    ): VariantAnnotation {
-        return TestServeMolecularFactory.createVariantAnnotation(
-            gene = gene,
-            chromosome = chromosome,
-            position = position,
-            ref = ref,
-            alt = alt
-        )
+        assertThat(matcher.findIndirectEvidence(variantDriver)).containsExactly(indirectEvidence)
     }
 }
