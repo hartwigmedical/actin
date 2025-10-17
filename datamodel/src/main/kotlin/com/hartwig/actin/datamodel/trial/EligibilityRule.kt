@@ -432,6 +432,10 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY(FunctionInput.NONE),
     HAS_ADEQUATE_VENOUS_ACCESS(FunctionInput.NONE),
     MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST(FunctionInput.NONE),
+    HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN(FunctionInput.NONE),
+    HAS_LEPTOMENINGEAL_DISEASE(FunctionInput.NONE),
+    HAS_PLEURAL_EFFUSION(FunctionInput.NONE),
+    HAS_PERITONEAL_EFFUSION(FunctionInput.NONE),
 
     //Rules related to cardiac function
     HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE(FunctionInput.NONE),
@@ -501,12 +505,6 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     IS_PREGNANT(FunctionInput.NONE),
     USES_ADEQUATE_ANTICONCEPTION(FunctionInput.NONE),
     ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS(FunctionInput.NONE),
-
-    // Rules related to other conditions
-    HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN(FunctionInput.NONE),
-    HAS_LEPTOMENINGEAL_DISEASE(FunctionInput.NONE),
-    HAS_PLEURAL_EFFUSION(FunctionInput.NONE),
-    HAS_PERITONEAL_EFFUSION(FunctionInput.NONE),
 
     // Rules related to allergies/toxicities
     HAS_INTOLERANCE_TO_NAME_X(FunctionInput.ONE_STRING),

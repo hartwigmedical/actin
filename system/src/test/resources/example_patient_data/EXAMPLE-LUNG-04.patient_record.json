@@ -31,8 +31,7 @@
       "hasActiveInfection": false,
       "description": null
     },
-    "lvef": 0.5,
-    "hasOtherConditions": true
+    "lvef": 0.5
   },
   "performanceStatus": {
     "whoStatuses": [

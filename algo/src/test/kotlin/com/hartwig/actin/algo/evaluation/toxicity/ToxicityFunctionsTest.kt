@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -65,33 +66,15 @@ class ToxicityFunctionsTest {
 
     @Test
     fun `Should filter EHR toxicities when also present in other conditions`() {
-        val ehrIcdCode = ehrTox.icdCodes.first()
-        val withEhrTox = ComorbidityTestFactory.withComorbidities(
-            listOf(
-                ehrTox,
-                ComorbidityTestFactory.otherCondition(
-                    name = ehrTox.name!!,
-                    icdMainCode = ehrIcdCode.mainCode,
-                    icdExtensionCode = ehrIcdCode.extensionCode
-                )
-            )
-        )
+        val withEhrTox = ComorbidityTestFactory.withComorbidities(listOf(ehrTox, OtherCondition(ehrTox.name!!, icdCodes = ehrTox.icdCodes)))
         assertThat(ToxicityFunctions.selectRelevantToxicities(withEhrTox, TestIcdFactory.createTestModel(), referenceDate)).isEmpty()
     }
 
     @Test
     fun `Should not filter questionnaire toxicities when also present in other conditions`() {
         val questionnaireTox = ehrTox.copy(source = ToxicitySource.QUESTIONNAIRE)
-        val ehrIcdCode = ehrTox.icdCodes.first()
         val withQuestionnaireTox = ComorbidityTestFactory.withComorbidities(
-            listOf(
-                questionnaireTox,
-                ComorbidityTestFactory.otherCondition(
-                    name = ehrTox.name!!,
-                    icdMainCode = ehrIcdCode.mainCode,
-                    icdExtensionCode = ehrIcdCode.extensionCode
-                )
-            )
+            listOf(questionnaireTox, OtherCondition(ehrTox.name!!, ehrTox.icdCodes))
         )
         assertThat(ToxicityFunctions.selectRelevantToxicities(withQuestionnaireTox, TestIcdFactory.createTestModel(), referenceDate))
             .containsOnly(questionnaireTox)

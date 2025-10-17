@@ -15,9 +15,8 @@ class ComorbidityAdapter : JsonDeserializer<Comorbidity> {
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext): Comorbidity {
         return try {
             val className = Json.string(jsonElement.asJsonObject, "comorbidityClass")
-            val targetType = when (className) {
-                "COMPLICATION" -> OtherCondition::class.java
-                else -> ComorbidityClass.valueOf(className).comorbidityClass
+            val targetType = if (className == "COMPLICATION") OtherCondition::class.java else {
+                ComorbidityClass.valueOf(className).comorbidityClass
             }
             context.deserialize<Any>(jsonElement, targetType) as Comorbidity
         } catch (e: Exception) {

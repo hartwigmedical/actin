@@ -78,7 +78,7 @@ class ClinicalRecordJsonTest {
         )
 
         assertThat(record.comorbidities).hasSize(7)
-        assertCollectionOfClassWithSize(record.otherConditions, OtherCondition::class, 3)
+        assertCollectionOfClassWithSize(record.otherConditions, OtherCondition::class, 2)
         assertCollectionOfClassWithSize(record.toxicities, Toxicity::class, 2)
         assertCollectionOfClassWithSize(record.intolerances, Intolerance::class, 2)
         assertCollectionOfClassWithSize(record.ecgs, Ecg::class, 1)

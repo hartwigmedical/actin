@@ -54,7 +54,6 @@ CREATE TABLE `clinicalStatus`
     `jtcValue` int,
     `jtcUnit` varchar(50),
     `lvef` double precision,
-    `hasComplications` BOOLEAN,
     PRIMARY KEY (`id`)
 );
 

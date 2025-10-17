@@ -177,8 +177,7 @@ class ClinicalDAO(private val context: DSLContext) {
             Tables.CLINICALSTATUS.QTCFUNIT,
             Tables.CLINICALSTATUS.JTCVALUE,
             Tables.CLINICALSTATUS.JTCUNIT,
-            Tables.CLINICALSTATUS.LVEF,
-            Tables.CLINICALSTATUS.HASCOMPLICATIONS
+            Tables.CLINICALSTATUS.LVEF
         )
             .values(
                 patientId,
@@ -191,7 +190,6 @@ class ClinicalDAO(private val context: DSLContext) {
                 jtcMeasure?.value,
                 jtcMeasure?.unit,
                 clinicalStatus.lvef,
-                null
             )
             .execute()
     }
