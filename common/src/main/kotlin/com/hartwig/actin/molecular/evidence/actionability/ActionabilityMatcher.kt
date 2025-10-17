@@ -26,11 +26,10 @@ typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 class ActionabilityMatcher(
     private val evidences: List<EfficacyEvidence>,
     private val trials: List<ActionableTrial>,
-    private val hotspots: Set<KnownHotspot>,
+    hotspots: Set<KnownHotspot>,
 ) {
-    private val indirectEvidenceMatcher = IndirectEvidenceMatcher.create(evidences, hotspots)
-
     val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
+    private val indirectEvidenceMatcher = IndirectEvidenceMatcher.create(evidences, hotspots)
 
     fun match(molecularTest: MolecularTest): MatchesForActionable {
         val evidenceMatches = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }

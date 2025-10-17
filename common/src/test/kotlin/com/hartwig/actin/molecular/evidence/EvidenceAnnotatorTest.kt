@@ -10,10 +10,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.actionability.GeneEffectKey
-import com.hartwig.actin.molecular.evidence.actionability.IndirectEvidenceMatcher
-import com.hartwig.actin.molecular.evidence.actionability.toGroupedProteinEffect
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
+import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
@@ -139,9 +137,7 @@ class EvidenceAnnotatorTest {
             every { resolve(indication) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
         }
         val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, patientGender = null)
-        val relatedMatcher = IndirectEvidenceMatcher(
-            mapOf(GeneEffectKey(brafMolecularTestVariant.gene, brafMolecularTestVariant.proteinEffect.toGroupedProteinEffect()) to setOf(evidence))
-        )
+
         val knowHotspot = TestServeKnownFactory.hotspotBuilder()
             .gene(relatedBrafActionableHotspot.variants().first().gene())
             .chromosome(relatedBrafActionableHotspot.variants().first().chromosome())
@@ -149,6 +145,7 @@ class EvidenceAnnotatorTest {
             .ref(relatedBrafActionableHotspot.variants().first().ref())
             .alt(relatedBrafActionableHotspot.variants().first().alt())
             .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+            .addSources(Knowledgebase.CKB)
             .build()
 
         val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), emptyList(), setOf(knowHotspot))
