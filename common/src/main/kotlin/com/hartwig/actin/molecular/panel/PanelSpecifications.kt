@@ -37,7 +37,7 @@ class PanelSpecifications(
             .associateWith { gene ->
                 ((baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())).distinct()
             }
-        return PanelTargetSpecification(mergedTargets)
+        return PanelTargetSpecification(mergedTargets, testSpec.isNewerTest)
     }
 
     private fun checkForUnknownGenesInNegativeResults(

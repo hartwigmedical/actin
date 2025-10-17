@@ -21,13 +21,13 @@ class PanelSpecificationFunctionsTest {
     @Test
     fun `Should return most recent version with date before sequencing test date`() {
         val result = PanelSpecificationFunctions.determineTestVersion(feedTest, panelTestSpecs, registrationDate = referenceDate)
-        assertThat(result).isEqualTo(recentDate)
+        assertThat(result).isEqualTo(Pair(recentDate, true))
     }
 
     @Test
     fun `Should prefer test date over registration date`() {
         val result = PanelSpecificationFunctions.determineTestVersion(feedTest, panelTestSpecs, registrationDate = olderDate)
-        assertThat(result).isEqualTo(recentDate)
+        assertThat(result).isEqualTo(Pair(recentDate, true))
     }
 
     @Test
@@ -37,7 +37,7 @@ class PanelSpecificationFunctionsTest {
             panelTestSpecs,
             registrationDate = olderDate
         )
-        assertThat(result).isEqualTo(olderDate)
+        assertThat(result).isEqualTo(Pair(olderDate, true))
     }
 
     @Test
@@ -47,7 +47,7 @@ class PanelSpecificationFunctionsTest {
             setOf(PanelTestSpecification(testName, versionDate = null)),
             registrationDate = olderDate
         )
-        assertThat(result).isNull()
+        assertThat(result).isEqualTo(Pair(null, false))
     }
 
     @Test
@@ -60,6 +60,19 @@ class PanelSpecificationFunctionsTest {
             ),
             referenceDate
         )
-        assertThat(result).isEqualTo(olderDate)
+        assertThat(result).isEqualTo(Pair(olderDate, true))
+    }
+
+    @Test
+    fun `Should return oldest version date and false when sequencing test date before oldest version date`() {
+        val result = PanelSpecificationFunctions.determineTestVersion(
+            feedTest.copy(date = recentDate.minusMonths(7)),
+            setOf(
+                PanelTestSpecification(testName, versionDate = recentDate),
+                PanelTestSpecification(testName, versionDate = recentDate.plusMonths(1))
+            ),
+            referenceDate.minusMonths(7)
+        )
+        assertThat(result).isEqualTo(Pair(recentDate, false))
     }
 }

@@ -37,11 +37,14 @@ class PanelAnnotator(
     }
 
     private fun interpret(input: SequencingTest): MolecularTest {
-        val testVersion =
+        val (testVersion, isNewerTest) =
             PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
 
         val specification = if (input.knownSpecifications) {
-            panelSpecifications.panelTargetSpecification(PanelTestSpecification(input.test, testVersion), input.negativeResults)
+            panelSpecifications.panelTargetSpecification(
+                PanelTestSpecification(input.test, testVersion, isNewerTest),
+                input.negativeResults
+            )
         } else PanelTargetSpecification(
             PanelSpecificationFunctions.derivedGeneTargetMap(input)
         )

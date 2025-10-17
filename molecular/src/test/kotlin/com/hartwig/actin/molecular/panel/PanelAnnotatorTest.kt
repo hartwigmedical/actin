@@ -39,7 +39,7 @@ class PanelAnnotatorTest {
     private val panelCopyNumberAnnotator = mockk<PanelCopyNumberAnnotator> {
         every { annotate(any<Set<SequencedAmplification>>()) } returns emptyList()
     }
-    private val panelDriverAttributeAnnotator = mockk<PanelDriverAttributeAnnotator>() {
+    private val panelDriverAttributeAnnotator = mockk<PanelDriverAttributeAnnotator> {
         every { annotate(any()) } answers { firstArg() }
     }
     private val panelVirusAnnotator = mockk<PanelVirusAnnotator> {
@@ -57,7 +57,7 @@ class PanelAnnotatorTest {
             PanelSpecifications(
                 SpecificGenesFilter(setOf(GENE, OTHER_GENE)),
                 mapOf(
-                    PanelTestSpecification(TEST_NAME) to listOf(
+                    PanelTestSpecification(TEST_NAME, isNewerTest = false) to listOf(
                         PanelGeneSpecification(
                             GENE,
                             listOf(MolecularTestTarget.MUTATION)
