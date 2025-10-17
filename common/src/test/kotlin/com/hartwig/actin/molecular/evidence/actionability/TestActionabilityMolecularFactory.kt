@@ -40,6 +40,13 @@ object TestIndirectEvidenceFactory {
         ref = "C",
         alt = "A"
     )
+    val KRAS_K5N_VARIANT: VariantAnnotation = TestServeMolecularFactory.createVariantAnnotation(
+        gene = "KRAS",
+        chromosome = "12",
+        position = 25398304,
+        ref = "T",
+        alt = "A"
+    )
     val PIK3CA_E545K_VARIANT: VariantAnnotation = TestServeMolecularFactory.createVariantAnnotation(
         gene = "PIK3CA",
         chromosome = "3",

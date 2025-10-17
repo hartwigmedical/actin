@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.evidence.curation
 
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
+import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -89,5 +90,15 @@ class ApplicabilityFilteringTest {
                     .first()
             )
         ).isFalse()
+    }
+
+    @Test
+    fun `Should filter known hotspots on non-applicable gene`() {
+        val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
+        val applicableHotspot = TestServeKnownFactory.hotspotBuilder().gene("other").build()
+        val nonApplicableHotspot = TestServeKnownFactory.hotspotBuilder().gene(nonApplicableGene).build()
+
+        assertThat(ApplicabilityFiltering.isApplicable(nonApplicableHotspot)).isFalse()
+        assertThat(ApplicabilityFiltering.isApplicable(applicableHotspot)).isTrue()
     }
 }

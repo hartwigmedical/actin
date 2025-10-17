@@ -6,9 +6,11 @@ import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.BRAF_T599R_VARIANT
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.BRAF_V600E_VARIANT
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.KRAS_G12V_VARIANT
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.KRAS_K5N_VARIANT
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.PIK3CA_E545K_VARIANT
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createHotspotEvidence
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createKnownHotspot
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createVariant
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory.convertProteinEffect
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
@@ -17,6 +19,7 @@ import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect as DriverProteinEffect
 
 class IndirectEvidenceMatcherTest {
 
@@ -159,5 +162,39 @@ class IndirectEvidenceMatcherTest {
         )
 
         assertThat(matcher.findIndirectEvidence(variantDriver)).containsExactly(indirectEvidence)
+    }
+
+    @Test
+    fun `Should match predicted gain of function with gain of function`() {
+        val predictedHotspot = TestServeMolecularFactory.hotspot(BRAF_T599R_VARIANT)
+        val predictedEvidence = createHotspotEvidence(
+            hotspot = predictedHotspot,
+            treatmentName = "Treatment",
+            drugClass = "BRAF Inhibitor"
+        ).evidence
+
+        val knownHotspot = createKnownHotspot(predictedHotspot.firstVariant(), ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+        val matcher = IndirectEvidenceMatcher.create(listOf(predictedEvidence), setOf(knownHotspot))
+
+        val patientVariant = createVariant(BRAF_V600E_VARIANT, DriverProteinEffect.GAIN_OF_FUNCTION)
+
+        assertThat(matcher.findIndirectEvidence(patientVariant)).containsExactly(predictedEvidence)
+    }
+
+    @Test
+    fun `Should match predicted loss of function with loss of function`() {
+        val predictedHotspot = TestServeMolecularFactory.hotspot(KRAS_G12V_VARIANT)
+        val predictedEvidence = createHotspotEvidence(
+            hotspot = predictedHotspot,
+            treatmentName = "Treatment",
+            drugClass = "KRAS Inhibitor"
+        ).evidence
+
+        val knownHotspot = createKnownHotspot(predictedHotspot.firstVariant(), ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
+        val matcher = IndirectEvidenceMatcher.create(listOf(predictedEvidence), setOf(knownHotspot))
+
+        val patientVariant = createVariant(KRAS_K5N_VARIANT, DriverProteinEffect.LOSS_OF_FUNCTION)
+
+        assertThat(matcher.findIndirectEvidence(patientVariant)).containsExactly(predictedEvidence)
     }
 }
