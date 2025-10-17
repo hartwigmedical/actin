@@ -45,10 +45,10 @@ object PanelSpecificationFunctions {
             .maxByOrNull { it.versionDate!! }
 
         return if (matchingVersion != null) {
-            Pair(matchingVersion.versionDate, true)
+            Pair(matchingVersion.versionDate, false)
         } else {
             val oldest = testsWithMatchingName.minByOrNull { it.versionDate!! }
-            Pair(oldest?.versionDate, false)
+            Pair(oldest?.versionDate, true)
         }
     }
 }
