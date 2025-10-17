@@ -21,6 +21,8 @@ import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher.Companion.successWhenNotEmpty
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createHotspotEvidence
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createKnownHotspot
 import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.util.GeneConstants
@@ -311,47 +313,28 @@ class ActionabilityMatcherTest {
 
     @Test
     fun `Should match evidence on hotspot related to but not directly matching molecular test hotspot`() {
-        val criterium = ImmutableMolecularCriterium.builder().addAllHotspots(listOf(relatedBrafActionableHotspot)).build()
-        val baseEvidence = TestServeEvidenceFactory.create(treatment = "Treatment 1", molecularCriterium = criterium)
-        val genericEvidence = ImmutableEfficacyEvidence.builder()
-            .from(baseEvidence)
-            .treatment(
-                ImmutableTreatment.builder()
-                    .from(baseEvidence.treatment())
-                    .treatmentApproachesDrugClass(listOf("BRAF Inhibitor"))
-                    .build()
-            )
-            .build()
-        val specificEvidence = ImmutableEfficacyEvidence.builder()
-            .from(baseEvidence)
-            .treatment(
-                ImmutableTreatment.builder()
-                    .from(baseEvidence.treatment())
-                    .treatmentApproachesDrugClass(listOf("BRAF V600E Inhibitor"))
-                    .build()
-            )
-            .build()
+        val genericEvidence = createHotspotEvidence(
+            hotspot = relatedBrafActionableHotspot,
+            treatmentName = "Treatment 1",
+            drugClass = "BRAF Inhibitor"
+        )
+        val specificEvidence = createHotspotEvidence(
+            hotspot = relatedBrafActionableHotspot,
+            treatmentName = "Specific Treatment",
+            drugClass = "BRAF V600E Inhibitor"
+        )
 
-        val relatedVariant = relatedBrafActionableHotspot.variants().first()
-        val patientKnownHotspot = TestServeKnownFactory.hotspotBuilder()
-            .gene(brafMolecularTestVariant.gene)
-            .chromosome(brafMolecularTestVariant.chromosome)
-            .position(brafMolecularTestVariant.position)
-            .ref(brafMolecularTestVariant.ref)
-            .alt(brafMolecularTestVariant.alt)
-            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-            .build()
-        val relatedKnownHotspot = TestServeKnownFactory.hotspotBuilder()
-            .gene(relatedVariant.gene())
-            .chromosome(relatedVariant.chromosome())
-            .position(relatedVariant.position())
-            .ref(relatedVariant.ref())
-            .alt(relatedVariant.alt())
-            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-            .build()
+        val patientKnownHotspot = createKnownHotspot(
+            variant = brafActionableHotspot.firstVariant(),
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+        )
+        val relatedKnownHotspot = createKnownHotspot(
+            variant = relatedBrafActionableHotspot.firstVariant(),
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+        )
 
         val matcher = ActionabilityMatcher(
-            evidences = listOf(genericEvidence, specificEvidence),
+            evidences = listOf(genericEvidence.evidence, specificEvidence.evidence),
             trials = emptyList(),
             hotspots = setOf(patientKnownHotspot, relatedKnownHotspot)
         )
@@ -361,7 +344,7 @@ class ActionabilityMatcherTest {
         val matches = matcher.match(molecularTest)
 
         assertThat(matches.size).isEqualTo(1)
-        assertThat(matches[brafMolecularTestVariant]).isEqualTo(indirectActionabilityMatch(genericEvidence))
+        assertThat(matches[brafMolecularTestVariant]).isEqualTo(indirectActionabilityMatch(genericEvidence.evidence))
     }
 
     @Test
@@ -1069,32 +1052,28 @@ class ActionabilityMatcherTest {
 
     @Test
     fun `Should include only generic inhibitors as indirect evidence matches`() {
-        val molecularCriterium = ImmutableMolecularCriterium.builder()
-            .addHotspots(relatedBrafActionableHotspot)
-            .build()
-        val genericIndirect = evidenceWithDrugClass("Treatment", "BRAF Inhibitor", molecularCriterium)
-        val specificIndirect = evidenceWithDrugClass("Specific Treatment", "BRAF V600E Inhibitor", molecularCriterium)
+        val genericEvidence = createHotspotEvidence(
+            hotspot = relatedBrafActionableHotspot,
+            treatmentName = "Treatment",
+            drugClass = "BRAF Inhibitor"
+        )
+        val specificEvidence = createHotspotEvidence(
+            hotspot = relatedBrafActionableHotspot,
+            treatmentName = "Specific Treatment",
+            drugClass = "BRAF V600E Inhibitor"
+        )
 
-        val relatedVariant = relatedBrafActionableHotspot.variants().first()
-        val patientKnownHotspot = TestServeKnownFactory.hotspotBuilder()
-            .gene(brafMolecularTestVariant.gene)
-            .chromosome(brafMolecularTestVariant.chromosome)
-            .position(brafMolecularTestVariant.position)
-            .ref(brafMolecularTestVariant.ref)
-            .alt(brafMolecularTestVariant.alt)
-            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-            .build()
-        val relatedKnownHotspot = TestServeKnownFactory.hotspotBuilder()
-            .gene(relatedVariant.gene())
-            .chromosome(relatedVariant.chromosome())
-            .position(relatedVariant.position())
-            .ref(relatedVariant.ref())
-            .alt(relatedVariant.alt())
-            .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-            .build()
+        val patientKnownHotspot = createKnownHotspot(
+            variant = brafActionableHotspot.firstVariant(),
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+        )
+        val relatedKnownHotspot = createKnownHotspot(
+            variant = relatedBrafActionableHotspot.firstVariant(),
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+        )
 
         val matcher = ActionabilityMatcher(
-            evidences = listOf(genericIndirect, specificIndirect),
+            evidences = listOf(genericEvidence.evidence, specificEvidence.evidence),
             trials = emptyList(),
             hotspots = setOf(patientKnownHotspot, relatedKnownHotspot)
         )
@@ -1106,7 +1085,7 @@ class ActionabilityMatcherTest {
         val matches = matcher.match(molecularTest)
         val indirectMatches = matches[brafMolecularTestVariant]?.indirectEvidenceMatches
 
-        assertThat(indirectMatches).containsExactly(genericIndirect)
+        assertThat(indirectMatches).containsExactly(genericEvidence.evidence)
     }
 
     private fun matcherFactory(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial> = emptyList()): ActionabilityMatcher {

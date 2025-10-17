@@ -5,9 +5,8 @@ import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.serve.datamodel.Knowledgebase
-import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
-import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createHotspotEvidence
+import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createKnownHotspot
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import org.assertj.core.api.Assertions.assertThat
@@ -32,36 +31,29 @@ class IndirectEvidenceMatcherTest {
             alt = "T"
         )
 
+        val resistantHotspot = TestServeMolecularFactory.hotspot(resistantVariant)
+        val nonResistantHotspot = TestServeMolecularFactory.hotspot(nonResistantVariant)
+
         val resistantEvidence = TestServeEvidenceFactory.create(
             molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
                 variants = setOf(resistantVariant)
             ),
             treatment = "Resistant Treatment"
         )
-        val nonResistantEvidenceBase = TestServeEvidenceFactory.create(
-            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                variants = setOf(nonResistantVariant)
-            ),
-            treatment = "Non Resistant Treatment"
-        )
-        val nonResistantEvidence = ImmutableEfficacyEvidence.builder()
-            .from(nonResistantEvidenceBase)
-            .treatment(
-                ImmutableTreatment.builder()
-                    .from(nonResistantEvidenceBase.treatment())
-                    .treatmentApproachesDrugClass(listOf("KRAS Inhibitor"))
-                    .build()
-            )
-            .build()
+        val nonResistantEvidence = createHotspotEvidence(
+            hotspot = nonResistantHotspot,
+            treatmentName = "Non Resistant Treatment",
+            drugClass = "KRAS Inhibitor"
+        ).evidence
 
-        val resistantKnownHotspot = knownHotspot(
-            variant = resistantVariant,
+        val resistantKnownHotspot = createKnownHotspot(
+            variant = resistantHotspot.firstVariant(),
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
             associatedWithDrugResistance = true
         )
 
-        val nonResistantKnownHotspot = knownHotspot(
-            variant = nonResistantVariant,
+        val nonResistantKnownHotspot = createKnownHotspot(
+            variant = nonResistantHotspot.firstVariant(),
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
         )
 
@@ -96,29 +88,20 @@ class IndirectEvidenceMatcherTest {
             alt = "G"
         )
 
-        val unknownEffectEvidenceBase = TestServeEvidenceFactory.create(
-            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                variants = setOf(unknownEffectVariant)
-            ),
-            treatment = "Generic Inhibitor Treatment"
-        )
+        val unknownEffectHotspot = TestServeMolecularFactory.hotspot(unknownEffectVariant)
 
-        val unknownEffectEvidence = ImmutableEfficacyEvidence.builder()
-            .from(unknownEffectEvidenceBase)
-            .treatment(
-                ImmutableTreatment.builder()
-                    .from(unknownEffectEvidenceBase.treatment())
-                    .treatmentApproachesDrugClass(listOf("PIK3CA Inhibitor"))
-                    .build()
-            )
-            .build()
+        val unknownEffectEvidence = createHotspotEvidence(
+            hotspot = unknownEffectHotspot,
+            treatmentName = "Generic Inhibitor Treatment",
+            drugClass = "PIK3CA Inhibitor"
+        ).evidence
 
-        val unknownEffectHotspot = knownHotspot(
-            variant = unknownEffectVariant,
+        val unknownEffectKnownHotspot = createKnownHotspot(
+            variant = unknownEffectHotspot.firstVariant(),
             proteinEffect = ProteinEffect.UNKNOWN
         )
 
-        val matcher = IndirectEvidenceMatcher.create(listOf(unknownEffectEvidence), setOf(unknownEffectHotspot))
+        val matcher = IndirectEvidenceMatcher.create(listOf(unknownEffectEvidence), setOf(unknownEffectKnownHotspot))
 
         val unknownEffectVariantDriver = TestVariantFactory.createMinimal().copy(
             gene = unknownEffectVariant.gene(),
@@ -145,42 +128,27 @@ class IndirectEvidenceMatcherTest {
             alt = "A"
         )
 
-        val directEvidenceBase = TestServeEvidenceFactory.create(
-            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                variants = setOf(directVariant)
-            ),
-            treatment = "Direct Treatment"
-        )
-        val directEvidence = ImmutableEfficacyEvidence.builder()
-            .from(directEvidenceBase)
-            .treatment(
-                ImmutableTreatment.builder()
-                    .from(directEvidenceBase.treatment())
-                    .treatmentApproachesDrugClass(listOf("KRAS Inhibitor"))
-                    .build()
-            )
-            .build()
+        val directHotspot = TestServeMolecularFactory.hotspot(directVariant)
+        val indirectHotspot = TestServeMolecularFactory.hotspot(indirectVariant)
 
-        val indirectEvidenceBase = TestServeEvidenceFactory.create(
-            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
-                variants = setOf(indirectVariant)
-            ),
-            treatment = "Indirect Treatment"
-        )
-        val indirectEvidence = ImmutableEfficacyEvidence.builder()
-            .from(indirectEvidenceBase)
-            .treatment(
-                ImmutableTreatment.builder()
-                    .from(indirectEvidenceBase.treatment())
-                    .treatmentApproachesDrugClass(listOf("KRAS Inhibitor"))
-                    .build()
-            )
-            .build()
+        val directEvidence = createHotspotEvidence(
+            hotspot = directHotspot,
+            treatmentName = "Direct Treatment",
+            drugClass = "KRAS Inhibitor"
+        ).evidence
+        val indirectEvidence = createHotspotEvidence(
+            hotspot = indirectHotspot,
+            treatmentName = "Indirect Treatment",
+            drugClass = "KRAS Inhibitor"
+        ).evidence
 
         val actinProteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
         val matcher = IndirectEvidenceMatcher.create(
             listOf(directEvidence, indirectEvidence),
-            setOf(knownHotspot(directVariant, ProteinEffect.GAIN_OF_FUNCTION), knownHotspot(indirectVariant, ProteinEffect.GAIN_OF_FUNCTION))
+            setOf(
+                createKnownHotspot(directHotspot.firstVariant(), ProteinEffect.GAIN_OF_FUNCTION),
+                createKnownHotspot(indirectHotspot.firstVariant(), ProteinEffect.GAIN_OF_FUNCTION)
+            )
         )
 
         val patientVariant = TestVariantFactory.createMinimal().copy(
@@ -210,19 +178,4 @@ class IndirectEvidenceMatcherTest {
             alt = alt
         )
     }
-
-    private fun knownHotspot(
-        variant: VariantAnnotation,
-        proteinEffect: ProteinEffect,
-        associatedWithDrugResistance: Boolean = false
-    ) = TestServeKnownFactory.hotspotBuilder()
-        .gene(variant.gene())
-        .chromosome(variant.chromosome())
-        .position(variant.position())
-        .ref(variant.ref())
-        .alt(variant.alt())
-        .proteinEffect(proteinEffect)
-        .associatedWithDrugResistance(associatedWithDrugResistance)
-        .addSources(Knowledgebase.CKB)
-        .build()
 }
