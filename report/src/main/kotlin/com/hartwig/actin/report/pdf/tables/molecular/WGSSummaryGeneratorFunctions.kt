@@ -36,7 +36,7 @@ object WGSSummaryGeneratorFunctions {
         val isLongSummaryType = summaryType == SummaryType.LONG_SUMMARY
         val isDetailsSummaryType = summaryType == SummaryType.DETAILS
 
-        if (isDetailsSummaryType && molecular.targetSpecification?.isNewerTest == true) {
+        if (isDetailsSummaryType && molecular.targetSpecification?.testDateIsBeforeOldestTestVersion == true) {
             table.addCell(
                 Cells.createSpanningSubNote(
                     "The date of this test is before the oldest version date of this test, the oldest version of the test is used",

@@ -15,7 +15,7 @@ class OrangeMolecularRecordGeneratorTest {
             emptyList(),
             1.0f,
             TestMolecularFactory.createProperWholeGenomeTest()
-                .copy(targetSpecification = PanelTargetSpecification(emptyMap(), isNewerTest = true)),
+                .copy(targetSpecification = PanelTargetSpecification(emptyMap(), testDateIsBeforeOldestTestVersion = true)),
             null
         )
         assertThat(

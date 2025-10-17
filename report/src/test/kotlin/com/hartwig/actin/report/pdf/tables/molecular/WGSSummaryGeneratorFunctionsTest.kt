@@ -102,7 +102,7 @@ class WGSSummaryGeneratorFunctionsTest {
         val table = WGSSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
             TestPatientFactory.createProperTestPatientRecord(),
-            molecularRecord.copy(targetSpecification = PanelTargetSpecification(emptyMap(), isNewerTest = true)),
+            molecularRecord.copy(targetSpecification = PanelTargetSpecification(emptyMap(), testDateIsBeforeOldestTestVersion = true)),
             wgsMolecular = null,
             1.0F,
             1.0F,
