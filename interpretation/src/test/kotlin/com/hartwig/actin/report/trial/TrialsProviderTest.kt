@@ -116,7 +116,7 @@ class TrialsProviderTest {
     }
 
     @Test
-    fun `externalTrialsUnfiltered should not filter external trials`() {
+    fun `Should not filter external trials when retaining original external trials`() {
         val country1Trial1 =
             EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_01))
         val country2Trial1 = EventWithExternalTrial(TMB_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02))
@@ -133,7 +133,7 @@ class TrialsProviderTest {
     }
 
     @Test
-    fun `externalTrials should filter internal trials and return filtered and original equal with retaining external trials`() {
+    fun `Should filter internal trials from external trials and return filtered and original equal when retaining all external trials`() {
         val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
         val country1Trial2 =
             EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS), nctId = NCT_02))
@@ -151,7 +151,7 @@ class TrialsProviderTest {
     }
 
     @Test
-    fun `externalTrials should filter internal trials and filtered and original should be different without retaining external trials`() {
+    fun `Should filter internal trials from external and clean in filtered external trials when not retaining all external trials`() {
         // Should be filtered based on INTERNAL_TRIAL_IDS
         val country1Trial1 = EventWithExternalTrial(EGFR_TARGET, BASE_EXTERNAL_TRIAL.copy(countries = countrySet(NETHERLANDS)))
         val country1Trial2 =
