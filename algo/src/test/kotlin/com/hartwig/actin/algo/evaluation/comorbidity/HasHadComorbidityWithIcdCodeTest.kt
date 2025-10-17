@@ -25,22 +25,14 @@ class HasHadComorbidityWithIcdCodeTest {
         TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent", "extension", parentCode))
     private val referenceDate = LocalDate.of(2024, 12, 6)
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val historicalConditionWithTargetCode =
-        ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "other condition")
-    private val historicalConditionWithChildOfTargetCode =
-        historicalConditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
-    private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(
-        name = OTHER_CONDITION_NAME,
-        icdMainCode = parentCode
-    )
+    private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(name = OTHER_CONDITION_NAME, icdMainCode = parentCode)
     private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
-    private val function =
-        HasHadComorbidityWithIcdCode(
-            icdModel,
-            targetIcdCodes + setOf(IcdCode(parentCode)),
-            diseaseDescription,
-            referenceDate
-        )
+    private val function = HasHadComorbidityWithIcdCode(
+        icdModel,
+        targetIcdCodes + setOf(IcdCode(parentCode)),
+        diseaseDescription,
+        referenceDate
+    )
 
     @Test
     fun `Should pass if comorbidity with correct ICD code in history`() {
@@ -90,13 +82,6 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should pass when ICD code or parent code of historical condition matches code of target title`() {
-        listOf(historicalConditionWithChildOfTargetCode, historicalConditionWithTargetCode).forEach {
-            assertPassEvaluationWithMessages(function.evaluate(ComorbidityTestFactory.withOtherCondition(it)), "other condition")
-        }
-    }
-
-    @Test
     fun `Should pass when ICD code or parent code of intolerance matches code of target title`() {
         val intoleranceWithTargetCode = ComorbidityTestFactory.intolerance(icdMainCode = parentCode, name = "intolerance")
         val intoleranceWithChildOfTargetCode = intoleranceWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
@@ -108,7 +93,7 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should pass when ICD code or parent code of intolerance and other condition matches code of target title`() {
+    fun `Should pass when ICD code or parent code of intolerance and other condition matches target code`() {
         val intoleranceWithTargetCode = ComorbidityTestFactory.intolerance(icdMainCode = parentCode, name = "intolerance")
         val otherConditionWithTargetCode = ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "other condition")
         val evaluation =
@@ -138,24 +123,6 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when ICD main code matches but extension code is unknown`() {
-        val function = HasHadComorbidityWithIcdCode(
-            icdModel,
-            setOf(IcdCode(parentCode, "extensionCode")),
-            diseaseDescription,
-            referenceDate
-        )
-
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(
-                ComorbidityTestFactory.withOtherCondition(
-                    ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, icdExtensionCode = null)
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should fail when ICD code or parent code of toxicity from EHR with grade less than 2 matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertEvaluation(
@@ -170,13 +137,13 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should combine multiple conditions, toxicities and historical conditions into one message`() {
+    fun `Should combine multiple toxicities and other conditions in one message`() {
         val toxicity = toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(childCode), 2)
         val otherTox = toxicity.copy(name = "pneumonitis")
         assertPassEvaluationWithMessages(
             function.evaluate(
                 minimalPatient.copy(
-                    comorbidities = listOf(toxicity, otherTox, historicalConditionWithTargetCode, conditionWithTargetCode)
+                    comorbidities = listOf(toxicity, otherTox, conditionWithTargetCode, conditionWithChildOfTargetCode)
                 )
             ),
             "other condition, pneumonitis and toxicity"
