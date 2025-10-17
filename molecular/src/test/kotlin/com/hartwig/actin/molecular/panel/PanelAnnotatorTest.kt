@@ -57,7 +57,7 @@ class PanelAnnotatorTest {
             PanelSpecifications(
                 SpecificGenesFilter(setOf(GENE, OTHER_GENE)),
                 mapOf(
-                    PanelTestSpecification(TEST_NAME, testDateIsBeforeOldestTestVersion = true) to listOf(
+                    PanelTestSpecification(TEST_NAME, testDateIsBeforeOldestTestVersion = null) to listOf(
                         PanelGeneSpecification(
                             GENE,
                             listOf(MolecularTestTarget.MUTATION)
