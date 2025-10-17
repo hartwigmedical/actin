@@ -26,7 +26,7 @@ class HasHadComorbidityWithIcdCodeTest {
     private val referenceDate = LocalDate.of(2024, 12, 6)
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val historicalConditionWithTargetCode =
-        ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "history condition")
+        ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "other condition")
     private val historicalConditionWithChildOfTargetCode =
         historicalConditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
     private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(
@@ -179,7 +179,7 @@ class HasHadComorbidityWithIcdCodeTest {
                     comorbidities = listOf(toxicity, otherTox, historicalConditionWithTargetCode, conditionWithTargetCode)
                 )
             ),
-            "history condition, other condition, pneumonitis and toxicity"
+            "other condition, pneumonitis and toxicity"
         )
     }
 

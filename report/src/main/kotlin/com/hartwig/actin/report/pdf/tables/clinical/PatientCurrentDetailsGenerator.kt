@@ -59,8 +59,6 @@ class PatientCurrentDetailsGenerator(
             table.addCell(Cells.createKey("LVEF"))
             table.addCell(Cells.createValue(Formats.percentage(record.clinicalStatus.lvef!!)))
         }
-        table.addCell(Cells.createKey("Cancer-related other conditions"))
-        table.addCell(Cells.createValue(otherConditions(record)))
         table.addCell(Cells.createKey("Known allergies"))
         table.addCell(Cells.createValue(allergies(record.intolerances)))
         if (record.surgeries.isNotEmpty()) {
@@ -100,19 +98,6 @@ class PatientCurrentDetailsGenerator(
             .map { (_, toxicitiesWithName) ->
                 toxicitiesWithName.maxBy { it.evaluatedDate ?: LocalDate.MIN }
             }
-    }
-
-    private fun otherConditions(record: PatientRecord): String {
-        val conditionSummary = record.otherConditions.filter { it.name != null }.joinToString(Formats.COMMA_SEPARATOR) { condition ->
-            condition.name + (toDateString(condition.year, condition.month)?.let { " ($it)" } ?: "")
-        }
-        return Formats.valueOrDefault(conditionSummary, "Unknown")
-    }
-
-    private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {
-        return maybeYear?.let { year ->
-            maybeMonth?.let { month -> "$month/$year" } ?: year.toString()
-        }
     }
 
     private fun allergies(intolerances: List<Intolerance>): String {
