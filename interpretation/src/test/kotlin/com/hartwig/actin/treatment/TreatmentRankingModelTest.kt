@@ -220,7 +220,7 @@ class TreatmentRankingModelTest {
         val expectedIndirectScore = expectedScore(
             config,
             TumorMatch.PATIENT,
-            VariantMatch.FUNCTIONAL_EFFECT_MATCH,
+            VariantMatch.FUNCTIONAL_EFFECT,
             EvidenceLevelDetails.PHASE_II
         )
         val diminishingFactor = 1.0 / (1.0 + kotlin.math.exp(1.5 * (1 - 1.0)))

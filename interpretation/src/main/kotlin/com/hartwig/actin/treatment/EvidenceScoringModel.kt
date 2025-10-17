@@ -34,7 +34,7 @@ class EvidenceScoringModel(val config: ScoringConfig) {
         val isCategoryEvent = treatment.molecularMatch.sourceEvidenceType.isCategoryEvent()
         val isIndirect = treatment.molecularMatch.isIndirect
         val variantMatch = when {
-            isIndirect -> VariantMatch.FUNCTIONAL_EFFECT_MATCH
+            isIndirect -> VariantMatch.FUNCTIONAL_EFFECT
             isCategoryEvent -> VariantMatch.CATEGORY
             else -> VariantMatch.EXACT
         }

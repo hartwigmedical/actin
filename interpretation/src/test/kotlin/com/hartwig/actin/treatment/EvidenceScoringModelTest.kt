@@ -37,7 +37,7 @@ class EvidenceScoringModelTest {
 
         val evidenceScore = scorer.score(treatmentEvidence)
 
-        assertThat(evidenceScore.scoringMatch.variantMatch).isEqualTo(VariantMatch.FUNCTIONAL_EFFECT_MATCH)
+        assertThat(evidenceScore.scoringMatch.variantMatch).isEqualTo(VariantMatch.FUNCTIONAL_EFFECT)
     }
 
 

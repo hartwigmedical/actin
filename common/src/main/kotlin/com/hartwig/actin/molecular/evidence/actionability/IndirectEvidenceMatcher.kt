@@ -97,36 +97,38 @@ class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<Ge
                 ?.takeIf { GenericInhibitorFiltering.isGenericInhibitor(evidence.treatment()) }
                 ?.let { knownHotspot -> toGeneEffectMatch(knownHotspot, evidence) }
         }
+
+        private fun EfficacyEvidence.isDirectHotspotMatch(coordinates: HotspotCoordinates): Boolean {
+            return molecularCriterium().hotspots()
+                .asSequence()
+                .flatMap { it.variants().asSequence() }
+                .map { HotspotMatching.coordinates(it) }
+                .any { it == coordinates }
+        }
+
+        private fun resolveNonResistantKnownHotspot(
+            variants: Collection<VariantAnnotation>,
+            knownHotspotsByVariant: Map<HotspotCoordinates, KnownHotspot>
+        ): KnownHotspot? {
+            return variants.asSequence()
+                .mapNotNull { variant -> knownHotspotsByVariant[HotspotMatching.coordinates(variant)] }
+                .toList()
+                .takeUnless { hotspots -> hotspots.any { it.associatedWithDrugResistance() == true } }
+                ?.firstOrNull()
+        }
+
+        private fun toGeneEffectMatch(
+            knownHotspot: KnownHotspot,
+            evidence: EfficacyEvidence
+        ): Pair<GeneEffectKey, EfficacyEvidence>? {
+            val groupedProteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect()).toGroupedProteinEffect()
+            return if (groupedProteinEffect == GroupedProteinEffect.UNSUPPORTED) {
+                null
+            } else {
+                GeneEffectKey(knownHotspot.gene(), groupedProteinEffect) to evidence
+            }
+        }
     }
 }
 
-private fun EfficacyEvidence.isDirectHotspotMatch(coordinates: HotspotCoordinates): Boolean {
-    return molecularCriterium().hotspots()
-        .asSequence()
-        .flatMap { it.variants().asSequence() }
-        .map { HotspotMatching.coordinates(it) }
-        .any { it == coordinates }
-}
 
-private fun resolveNonResistantKnownHotspot(
-    variants: Collection<VariantAnnotation>,
-    knownHotspotsByVariant: Map<HotspotCoordinates, KnownHotspot>
-): KnownHotspot? {
-    return variants.asSequence()
-        .mapNotNull { variant -> knownHotspotsByVariant[HotspotMatching.coordinates(variant)] }
-        .toList()
-        .takeUnless { hotspots -> hotspots.any { it.associatedWithDrugResistance() == true } }
-        ?.firstOrNull()
-}
-
-private fun toGeneEffectMatch(
-    knownHotspot: KnownHotspot,
-    evidence: EfficacyEvidence
-): Pair<GeneEffectKey, EfficacyEvidence>? {
-    val groupedProteinEffect = GeneAlterationFactory.convertProteinEffect(knownHotspot.proteinEffect()).toGroupedProteinEffect()
-    return if (groupedProteinEffect == GroupedProteinEffect.UNSUPPORTED) {
-        null
-    } else {
-        GeneEffectKey(knownHotspot.gene(), groupedProteinEffect) to evidence
-    }
-}

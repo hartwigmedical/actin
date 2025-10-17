@@ -46,7 +46,6 @@ data class ReportConfiguration(
     val includeOnlyExternalTrialsInTrialMatching: Boolean = false,
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
-//    val includeIndirectMolecularTreatmentEvidence: Boolean = false,  // TODO do we need this after removing the separate collection?
     val includeRawPathologyReport: Boolean = false,
     val includeTreatmentEvidenceRanking: Boolean = false,
     val countryOfReference: Country = Country.OTHER,
