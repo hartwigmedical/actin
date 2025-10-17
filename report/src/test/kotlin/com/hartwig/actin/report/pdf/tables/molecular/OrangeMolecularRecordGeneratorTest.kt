@@ -9,7 +9,7 @@ import org.junit.Test
 class OrangeMolecularRecordGeneratorTest {
 
     @Test
-    fun `Should show warning in case correct version of test is not present in database`() {
+    fun `Should show warning in case the date of the molecular test is before the oldest version date of this test`() {
         val table = OrangeMolecularRecordGenerator(
             emptySet(),
             emptyList(),
@@ -24,6 +24,6 @@ class OrangeMolecularRecordGeneratorTest {
                 0,
                 0
             )
-        ).isEqualTo("The date of this test is before the oldest version date of this test, the oldest version of the test is used")
+        ).isEqualTo("The date of this test is before the oldest version date of this test, the oldest version of the test is used to determine the tested genes")
     }
 }

@@ -48,7 +48,7 @@ object PanelSpecificationFunctions {
             Pair(matchingVersion.versionDate, false)
         } else {
             val oldest = testsWithMatchingName.minByOrNull { it.versionDate!! }
-            Pair(oldest?.versionDate, oldest?.let { true })
+            Pair(oldest?.versionDate, oldest?.versionDate?.let { true })
         }
     }
 }

@@ -47,7 +47,7 @@ class PanelSpecificationFunctionsTest {
             setOf(PanelTestSpecification(testName, versionDate = null)),
             registrationDate = olderDate
         )
-        assertThat(result).isEqualTo(Pair(null, true))
+        assertThat(result).isEqualTo(Pair(null, null))
     }
 
     @Test
@@ -64,7 +64,7 @@ class PanelSpecificationFunctionsTest {
     }
 
     @Test
-    fun `Should return oldest version date and false when sequencing test date before oldest version date`() {
+    fun `Should return oldest version date and true when sequencing test date before oldest version date`() {
         val result = PanelSpecificationFunctions.determineTestVersion(
             feedTest.copy(date = recentDate.minusMonths(7)),
             setOf(

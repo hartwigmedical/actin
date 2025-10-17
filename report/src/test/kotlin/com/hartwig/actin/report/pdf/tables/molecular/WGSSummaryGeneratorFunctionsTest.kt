@@ -10,10 +10,10 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.SummaryType
-import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
 import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -57,7 +57,7 @@ class WGSSummaryGeneratorFunctionsTest {
         )
         val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers, 2.5)
 
-        assertThat(extractTextFromCell(cell))
+        assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo(
                 "event 1 (4 copies - with tumor ploidy 2.5), event 2 (annotated as not a driver), event 3 (low driver likelihood), " +
                         "event 4 (medium driver likelihood), event 5"
@@ -69,14 +69,14 @@ class WGSSummaryGeneratorFunctionsTest {
         val drivers = emptyList<Driver>()
         val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers)
 
-        assertThat(extractTextFromCell(cell)).isEqualTo("None")
+        assertThat(CellTestUtil.extractTextFromCell(cell)).isEqualTo("None")
     }
 
     @Test
     fun `Should add '(low purity)' to predicted tumor origin when conclusive with sufficient quality and insufficient purity`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord.copy(hasSufficientPurity = false))
 
-        assertThat(extractTextFromCell(cell)).isEqualTo("Melanoma (100%) (low purity)")
+        assertThat(CellTestUtil.extractTextFromCell(cell)).isEqualTo("Melanoma (100%) (low purity)")
     }
 
     @Test
@@ -85,7 +85,7 @@ class WGSSummaryGeneratorFunctionsTest {
             molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics).copy(hasSufficientPurity = false)
         )
 
-        assertThat(extractTextFromCell(cell)).isEqualTo("Inconclusive (Melanoma 60%, Lung 20%) (low purity)")
+        assertThat(CellTestUtil.extractTextFromCell(cell)).isEqualTo("Inconclusive (Melanoma 60%, Lung 20%) (low purity)")
     }
 
     @Test
@@ -98,7 +98,7 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should show warning in case correct version of test is not present in database`() {
+    fun `Should show warning in case the date of the molecular test is before the oldest version date of this test`() {
         val table = WGSSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
             TestPatientFactory.createProperTestPatientRecord(),
@@ -112,12 +112,12 @@ class WGSSummaryGeneratorFunctionsTest {
             )
         )
         assertThat(
-            extractTextFromCell(
+            CellTestUtil.extractTextFromCell(
                 table.getCell(
                     0,
                     0
                 )
             )
-        ).isEqualTo("The date of this test is before the oldest version date of this test, the oldest version of the test is used")
+        ).isEqualTo("The date of this test is before the oldest version date of this test, the oldest version of the test is used to determine the tested genes")
     }
 }

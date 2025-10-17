@@ -39,7 +39,7 @@ object WGSSummaryGeneratorFunctions {
         if (isDetailsSummaryType && molecular.targetSpecification?.testDateIsBeforeOldestTestVersion == true) {
             table.addCell(
                 Cells.createSpanningSubNote(
-                    "The date of this test is before the oldest version date of this test, the oldest version of the test is used",
+                    "The date of this test is before the oldest version date of this test, the oldest version of the test is used to determine the tested genes",
                     table
                 )
             )
