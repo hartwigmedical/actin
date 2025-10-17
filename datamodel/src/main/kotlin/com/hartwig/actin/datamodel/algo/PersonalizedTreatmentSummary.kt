@@ -7,7 +7,8 @@ data class PersonalizedTreatmentSummary(
 
 data class SimilarPatientsSummary(
     val overallTreatmentProportion: List<TreatmentProportion>,
-    val similarPatientsTreatmentProportion: List<TreatmentProportion>
+    val similarPatientsTreatmentProportion: List<TreatmentProportion>,
+    val similarPatientsFeatureDistribution: List<FeatureDistribution>,
 )
 
 data class TreatmentEfficacyPrediction(
@@ -24,4 +25,11 @@ data class ShapDetail(
 data class TreatmentProportion(
     val treatment: String,
     val proportion: Double
+)
+
+data class FeatureDistribution(
+    val feature: String,
+    val patientValue: String,
+    val neighborsDistribution: Map<String, Double>,
+    val overallDistribution: Map<String, Double>
 )
