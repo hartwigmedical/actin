@@ -12,10 +12,16 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
-class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null) :
+class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null, private val onlyDeletions: Boolean) :
     MolecularEvaluationFunction(
-        targetCoveragePredicate = or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION, messagePrefix = "Inactivation of"),
-        maxTestAge = maxTestAge
+        targetCoveragePredicate = if (onlyDeletions) {
+            specific(
+                MolecularTestTarget.DELETION,
+                messagePrefix = "Deletion of"
+            )
+        } else {
+            or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION, messagePrefix = "Inactivation of")
+        }, maxTestAge = maxTestAge
     ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
@@ -28,7 +34,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val evidenceSource = test.evidenceSource
 
         sequenceOf(
-            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type.isDeletion} }
+            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type.isDeletion } }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver -> inactivationEventsOnNonCanonicalTranscript.add(geneAlterationDriver.event) }
@@ -63,66 +69,71 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val inactivationHighDriverUnknownBiallelicVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
-        val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
-        for (variant in drivers.variants) {
-            val variantIsClonal = variant.clonalLikelihood?.let { it >= CLONAL_CUTOFF } ?: true
-            if (variant.gene == gene && variantIsClonal && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
-                if (!variant.isReportable) {
-                    inactivationEventsThatAreUnreportable.add(variant.event)
-                } else {
-                    val phaseGroups: Set<Int>? = variant.phaseGroups
-                    if (phaseGroups != null) {
-                        if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {
+
+        if (!onlyDeletions) {
+            val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
+            for (variant in drivers.variants) {
+                val variantIsClonal = variant.clonalLikelihood?.let { it >= CLONAL_CUTOFF } ?: true
+                if (variant.gene == gene && variantIsClonal && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
+                    if (!variant.isReportable) {
+                        inactivationEventsThatAreUnreportable.add(variant.event)
+                    } else {
+                        val phaseGroups: Set<Int>? = variant.phaseGroups
+                        if (phaseGroups != null) {
+                            if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {
+                                eventsThatMayBeTransPhased.add(variant.event)
+                            }
+                            evaluatedPhaseGroups.addAll(phaseGroups)
+                        } else {
                             eventsThatMayBeTransPhased.add(variant.event)
                         }
-                        evaluatedPhaseGroups.addAll(phaseGroups)
-                    } else {
-                        eventsThatMayBeTransPhased.add(variant.event)
-                    }
 
-                    if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-                        val isGainOfFunction = (variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION
-                                || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
-                        val isNoEffect = (variant.proteinEffect == ProteinEffect.NO_EFFECT
-                                || variant.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
-                        if (variant.geneRole == GeneRole.ONCO) {
-                            inactivationEventsNoTSG.add(variant.event)
-                        } else if (variant.isBiallelic == false) {
-                            inactivationHighDriverNonBiallelicVariants.add(variant.event)
-                        } else if (variant.isBiallelic == null) {
-                            inactivationHighDriverUnknownBiallelicVariants.add(variant.event)
-                        } else if (isGainOfFunction) {
-                            inactivationEventsGainOfFunction.add(variant.event)
-                        } else if (isNoEffect) {
-                            inactivationEventsNoEffect.add(variant.event)
-                        } else {
-                            inactivationEventsThatQualify.add(variant.event)
+                        if (variant.driverLikelihood == DriverLikelihood.HIGH) {
+                            val isGainOfFunction = (variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION
+                                    || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                            val isNoEffect = (variant.proteinEffect == ProteinEffect.NO_EFFECT
+                                    || variant.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
+                            if (variant.geneRole == GeneRole.ONCO) {
+                                inactivationEventsNoTSG.add(variant.event)
+                            } else if (variant.isBiallelic == false) {
+                                inactivationHighDriverNonBiallelicVariants.add(variant.event)
+                            } else if (variant.isBiallelic == null) {
+                                inactivationHighDriverUnknownBiallelicVariants.add(variant.event)
+                            } else if (isGainOfFunction) {
+                                inactivationEventsGainOfFunction.add(variant.event)
+                            } else if (isNoEffect) {
+                                inactivationEventsNoEffect.add(variant.event)
+                            } else {
+                                inactivationEventsThatQualify.add(variant.event)
+                            }
+                        } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && variant.isBiallelic == true) {
+                            reportableNonDriverBiallelicVariantsOther.add(variant.event)
+                        } else if (
+                            (variant.gene in GeneConstants.HR_GENES && test.characteristics.homologousRecombination?.isDeficient == true)
+                            || (variant.gene in GeneConstants.MMR_GENES && test.characteristics.microsatelliteStability?.isUnstable == true)
+                        ) {
+                            reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                         }
-                    } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && variant.isBiallelic == true) {
-                        reportableNonDriverBiallelicVariantsOther.add(variant.event)
-                    } else if (
-                        (variant.gene in GeneConstants.HR_GENES && test.characteristics.homologousRecombination?.isDeficient == true)
-                        || (variant.gene in GeneConstants.MMR_GENES && test.characteristics.microsatelliteStability?.isUnstable == true)
-                    ) {
-                        reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
+                    }
+                }
+            }
+
+            val evaluatedClusterGroups: MutableSet<Int> = mutableSetOf()
+            for (disruption in drivers.disruptions) {
+                if (disruption.gene == gene && disruption.isReportable) {
+                    if (!evaluatedClusterGroups.contains(disruption.clusterGroup)) {
+                        evaluatedClusterGroups.add(disruption.clusterGroup)
+                        eventsThatMayBeTransPhased.add(disruption.event)
                     }
                 }
             }
         }
 
-        val evaluatedClusterGroups: MutableSet<Int> = mutableSetOf()
-        for (disruption in drivers.disruptions) {
-            if (disruption.gene == gene && disruption.isReportable) {
-                if (!evaluatedClusterGroups.contains(disruption.clusterGroup)) {
-                    evaluatedClusterGroups.add(disruption.clusterGroup)
-                    eventsThatMayBeTransPhased.add(disruption.event)
-                }
-            }
-        }
+        val messageSubject = if (onlyDeletions) "deletion" else "inactivation"
 
         if (inactivationEventsThatQualify.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "$gene inactivation (${concat(inactivationEventsThatQualify)})",
+                "$gene $messageSubject (${concat(inactivationEventsThatQualify)})",
                 inclusionEvents = inactivationEventsThatQualify
             )
         }
@@ -138,10 +149,11 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
             reportableNonDriverBiallelicVariantsOther,
             reportableNonDriverNonBiallelicVariantsOther,
             eventsThatMayBeTransPhased,
-            evidenceSource
+            evidenceSource,
+            messageSubject
         )
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail("No $gene inactivation")
+        return potentialWarnEvaluation ?: EvaluationFactory.fail("No $gene $messageSubject")
     }
 
     private fun evaluatePotentialWarns(
@@ -154,59 +166,62 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         inactivationEventsOnNonCanonicalTranscript: Set<String>,
         reportableNonDriverBiallelicVariantsOther: Set<String>,
         reportableNonDriverNonBiallelicVariantsOther: Set<String>,
-        eventsThatMayBeTransPhased: List<String>, evidenceSource: String
+        eventsThatMayBeTransPhased: List<String>, evidenceSource: String,
+        messageSubject: String
     ): Evaluation? {
+        val messageSubjectCapitalized = messageSubject.replaceFirstChar { it.titlecase() }
+
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOfNotNull(
                 EventsWithMessages(
                     inactivationEventsThatAreUnreportable,
-                    "Inactivation event(s) ${concat(inactivationEventsThatAreUnreportable)} for $gene but event(s) not reportable"
+                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsThatAreUnreportable)} for $gene but event(s) not reportable"
                 ),
                 EventsWithMessages(
                     inactivationEventsNoTSG,
-                    "Inactivation event(s) ${concat(inactivationEventsNoTSG)} for $gene"
+                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsNoTSG)} for $gene"
                             + " however gene is oncogene in $evidenceSource"
                 ),
                 EventsWithMessages(
                     inactivationEventsGainOfFunction,
-                    "Inactivation event(s) ${concat(inactivationEventsGainOfFunction)} for $gene"
+                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsGainOfFunction)} for $gene"
                             + " however event(s) annotated with gain-of-function protein impact in $evidenceSource"
                 ),
                 EventsWithMessages(
                     inactivationEventsNoEffect,
-                    "Inactivation event(s) ${concat(inactivationEventsNoEffect)} for $gene"
+                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsNoEffect)} for $gene"
                             + " however event(s) annotated with no protein effect in $evidenceSource"
                 ),
                 if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
                     EventsWithMessages(
                         inactivationHighDriverNonBiallelicVariants,
-                        "Inactivation event(s) ${concat(inactivationHighDriverNonBiallelicVariants)} for $gene but event(s) are not biallelic"
+                        "$messageSubjectCapitalized event(s) ${concat(inactivationHighDriverNonBiallelicVariants)} for $gene but event(s) are not biallelic"
                     )
                 } else null,
                 if (inactivationHighDriverUnknownBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
                     EventsWithMessages(
                         inactivationHighDriverUnknownBiallelicVariants,
-                        "Inactivation event(s) ${concat(inactivationHighDriverUnknownBiallelicVariants)} for $gene but unknown if event(s) are biallelic"
+                        "$messageSubjectCapitalized event(s) ${concat(inactivationHighDriverUnknownBiallelicVariants)} for $gene but unknown if event(s) are biallelic"
                     )
                 } else null,
                 EventsWithMessages(
                     inactivationEventsOnNonCanonicalTranscript,
-                    "Inactivation event(s) ${concat(inactivationEventsOnNonCanonicalTranscript)} for $gene but only on non-canonical transcript"
+                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsOnNonCanonicalTranscript)} for $gene but only on non-canonical transcript"
                 ),
                 EventsWithMessages(
                     reportableNonDriverBiallelicVariantsOther,
-                    "Potential inactivation event(s) ${concat(reportableNonDriverBiallelicVariantsOther)} for $gene"
+                    "Potential $messageSubject event(s) ${concat(reportableNonDriverBiallelicVariantsOther)} for $gene"
                             + " but event(s) are not of high driver likelihood"
                 ),
                 EventsWithMessages(
                     reportableNonDriverNonBiallelicVariantsOther,
-                    "Potential inactivation event(s) ${concat(reportableNonDriverNonBiallelicVariantsOther)} for $gene"
+                    "Potential $messageSubject event(s) ${concat(reportableNonDriverNonBiallelicVariantsOther)} for $gene"
                             + " but event(s) are not biallelic and not of high driver likelihood"
                 ),
                 if (eventsThatMayBeTransPhased.size > 1) {
                     EventsWithMessages(
                         eventsThatMayBeTransPhased.toSet(),
-                        "Multiple events for $gene (${concat(eventsThatMayBeTransPhased)}) that potentially together inactivate the gene"
+                        "Multiple events for $gene (${concat(eventsThatMayBeTransPhased)}) that potentially together cause $messageSubject of the gene"
                     )
                 } else null
             )

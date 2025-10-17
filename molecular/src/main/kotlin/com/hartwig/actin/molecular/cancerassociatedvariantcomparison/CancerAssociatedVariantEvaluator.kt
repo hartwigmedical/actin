@@ -69,6 +69,7 @@ object CancerAssociatedVariantEvaluator {
             clonalLikelihood = null,
             phaseGroups = null,
             isCancerAssociatedVariant = false,
+            sourceEvent = "",
             isReportable = false,
             event = "",
             driverLikelihood = null,
