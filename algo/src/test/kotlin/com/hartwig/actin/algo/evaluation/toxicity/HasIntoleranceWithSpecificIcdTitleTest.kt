@@ -45,8 +45,7 @@ class HasIntoleranceWithSpecificIcdTitleTest {
         listOf(
             ComorbidityTestFactory.intolerance("unspecified", icdMainCode, icdExtensionCode),
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode, icdExtensionCode),
-            ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode),
-            ComorbidityTestFactory.complication("complication", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode)
+            ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode)
         ).forEach { match ->
             assertEvaluation(expectedResult, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
         }

@@ -26,9 +26,6 @@ data class ClinicalRecord(
     val otherConditions: List<OtherCondition>
         get() = comorbidities.filterIsInstance<OtherCondition>()
 
-    val complications: List<Complication>
-        get() = comorbidities.filterIsInstance<Complication>()
-
     val toxicities: List<Toxicity>
         get() = comorbidities.filterIsInstance<Toxicity>()
 

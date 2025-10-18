@@ -17,32 +17,26 @@ class HasLeptomeningealDiseaseTest {
     private val function = HasLeptomeningealDisease(icdModel)
 
     @Test
-    fun `Should pass when record contains complication or non oncological history entry with direct or parent match on target icd code`() {
-        listOf(targetNode.code, childOfTargetNode.code).flatMap { code ->
-            listOf(
-                ComorbidityTestFactory.withComplication(
-                    ComorbidityTestFactory.complication(icdMainCode = code)
-                ),
-                ComorbidityTestFactory.withOtherCondition(
-                    ComorbidityTestFactory.otherCondition(icdMainCode = code)
-                )
-            )
-        }.forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it)) }
+    fun `Should pass when record contains other condition with direct or parent match on target icd code`() {
+        listOf(targetNode.code, childOfTargetNode.code).forEach { code ->
+            val condition = ComorbidityTestFactory.otherCondition(icdMainCode = code)
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)))
+        }
     }
 
     @Test
-    fun `Should fail when no complications are present`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplications(emptyList())))
+    fun `Should fail when no relevant conditions are present`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
     }
 
     @Test
-    fun `Should fail when complications do not match leptomeningeal disease icd code`() {
-        val different = ComorbidityTestFactory.complication(icdMainCode = "other")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplication(different)))
+    fun `Should fail when other conditions do not match leptomeningeal disease icd code`() {
+        val different = ComorbidityTestFactory.otherCondition(icdMainCode = "other")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherCondition(different)))
     }
 
     @Test
-    fun `Should fail when CNS lesion is present but no leptomeningeal complications`() {
+    fun `Should fail when CNS lesion is present but no leptomeningeal conditions`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withCnsLesion("just a lesion")))
     }
 

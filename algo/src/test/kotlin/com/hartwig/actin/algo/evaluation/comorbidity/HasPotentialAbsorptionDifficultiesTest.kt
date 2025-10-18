@@ -14,7 +14,6 @@ class HasPotentialAbsorptionDifficultiesTest {
     private val correctIcd = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_SET.iterator().next()
     private val wrongIcdMainCode = "wrong"
     private val correctCondition = ComorbidityTestFactory.otherCondition(icdMainCode = correctIcd)
-    private val correctComplication = ComorbidityTestFactory.complication(icdMainCode = correctIcd)
     private val correctToxicity = ComorbidityTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)
 
     @Test
@@ -23,20 +22,14 @@ class HasPotentialAbsorptionDifficultiesTest {
     }
 
     @Test
-    fun `Should pass for icd-matching complication`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComplications(listOf(correctComplication))))
-    }
-
-    @Test
     fun `Should pass for icd-matching toxicity`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withToxicities(listOf(correctToxicity))))
     }
 
     @Test
-    fun `Should fail when no matching condition, complication or toxicity present`() {
+    fun `Should fail when no matching condition or toxicity present`() {
         listOf(
             ComorbidityTestFactory.withToxicities(listOf(correctToxicity.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
-            ComorbidityTestFactory.withComplications(listOf(correctComplication.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
             ComorbidityTestFactory.withOtherCondition(correctCondition.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))
         )
             .forEach {

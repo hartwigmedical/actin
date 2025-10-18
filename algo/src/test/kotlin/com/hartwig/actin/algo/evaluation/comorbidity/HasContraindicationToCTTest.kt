@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.complication
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.intolerance
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withIntolerances
@@ -73,19 +72,12 @@ class HasContraindicationToCTTest {
     }
 
     @Test
-    fun `Should fail without complications`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplications(emptyList())))
+    fun `Should fail with other condition provided in list with wrong code`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withOtherCondition(otherCondition(icdMainCode = "wrong"))))
     }
 
     @Test
-    fun `Should fail with complication with wrong code`() {
-        val complications = listOf(complication(icdMainCode = "wrong"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplications(complications)))
-    }
-
-    @Test
-    fun `Should pass with complication with correct code`() {
-        val complications = listOf(complication(icdMainCode = correctCode))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComplications(complications)))
+    fun `Should pass with other condition provided in list with correct code`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode))))
     }
 }

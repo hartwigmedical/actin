@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
@@ -79,8 +78,7 @@ class ClinicalRecordJsonTest {
         )
 
         assertThat(record.comorbidities).hasSize(7)
-        assertCollectionOfClassWithSize(record.otherConditions, OtherCondition::class, 1)
-        assertCollectionOfClassWithSize(record.complications, Complication::class, 1)
+        assertCollectionOfClassWithSize(record.otherConditions, OtherCondition::class, 2)
         assertCollectionOfClassWithSize(record.toxicities, Toxicity::class, 2)
         assertCollectionOfClassWithSize(record.intolerances, Intolerance::class, 2)
         assertCollectionOfClassWithSize(record.ecgs, Ecg::class, 1)

@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.clinical.BodyHeight
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Comorbidity
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
@@ -46,9 +45,6 @@ data class PatientRecord(
 
     val otherConditions: List<OtherCondition>
         get() = comorbidities.filterIsInstance<OtherCondition>()
-
-    val complications: List<Complication>
-        get() = comorbidities.filterIsInstance<Complication>()
 
     val toxicities: List<Toxicity>
         get() = comorbidities.filterIsInstance<Toxicity>()
