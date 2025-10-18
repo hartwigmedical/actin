@@ -55,7 +55,6 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | hasActiveInfection         | Other relevant patient history |
 | activeInfectionDescription | Other relevant patient history |
 | lvef                       | Other relevant patient history |
-| hasOtherConditions         | Other condition details        |
 
 #### 0+ treatment history entries in oncological history
 

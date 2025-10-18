@@ -20,10 +20,7 @@ internal object ComorbidityTestFactory {
         return withOtherConditions(listOf(condition))
     }
 
-    fun withOtherConditions(conditions: List<OtherCondition>?): PatientRecord {
-        val comorbidities = conditions ?: emptyList()
-        return base.copy(comorbidities = comorbidities)
-    }
+    fun withOtherConditions(conditions: List<OtherCondition>?): PatientRecord = base.copy(comorbidities = conditions.orEmpty())
 
     fun otherCondition(
         name: String = "",
