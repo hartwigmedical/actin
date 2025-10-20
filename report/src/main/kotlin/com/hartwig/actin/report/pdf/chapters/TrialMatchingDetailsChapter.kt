@@ -53,7 +53,7 @@ class TrialMatchingDetailsChapter(
     override fun render(document: Document) {
         addChapterTitle(document)
         addTrialMatchingResults(document)
-        if (configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE) {
+        if (configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS) {
             addDetailedTrialMatching(document)
         }
     }
@@ -68,7 +68,7 @@ class TrialMatchingDetailsChapter(
         val requestingSource = TrialSource.fromDescription(configuration.hospitalOfReference)
 
         val includeLocalTrialGenerators = configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_ALL_TRIALS ||
-                configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
+                configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
 
         val localTrialGenerators = createLocalTrialTableGenerators(
             trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
@@ -76,7 +76,7 @@ class TrialMatchingDetailsChapter(
 
         val includeSpecificExternalGenerators =
             configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_EXTERNAL_TRIALS_ONLY ||
-                    configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE
+                    configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
 
         val externalTrials = trialsProvider.externalTrials()
         val localExternalTrialGenerator = EligibleTrialGenerator.localOpenCohorts(

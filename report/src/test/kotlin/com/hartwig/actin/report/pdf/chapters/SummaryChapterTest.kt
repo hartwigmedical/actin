@@ -78,7 +78,7 @@ class SummaryChapterTest {
             report.patientRecord,
             report.treatmentMatch,
             configuration.countryOfReference,
-            configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE,
+            configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
             configuration.filterOnSOCExhaustionAndTumorType,
         )
     }

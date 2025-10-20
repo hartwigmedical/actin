@@ -17,7 +17,7 @@ class ReportContentProvider(private val report: Report, private val configuratio
         patientRecord = report.patientRecord,
         treatmentMatch = report.treatmentMatch,
         countryOfReference = configuration.countryOfReference,
-        retainOriginalExternalTrials = configuration.trialMatchingChapterType == TrialMatchingChapterType.COMPLETE,
+        retainOriginalExternalTrials = configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
         filterOnSOCExhaustionAndTumorType = configuration.filterOnSOCExhaustionAndTumorType
     )
     

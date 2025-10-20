@@ -9,10 +9,10 @@ enum class ReportContentType {
 }
 
 enum class MolecularChapterType {
-    DETAILED_WITHOUT_PATHOLOGY,
-    DETAILED_WITH_PATHOLOGY,
+    STANDARD,
+    STANDARD_WITH_PATHOLOGY,
     LONGITUDINAL,
-    COMPLETE
+    STANDARD_AND_LONGITUDINAL
 }
 
 enum class EfficacyEvidenceChapterType {
@@ -31,7 +31,7 @@ enum class TrialMatchingChapterType {
     NONE,
     STANDARD_ALL_TRIALS,
     STANDARD_EXTERNAL_TRIALS_ONLY,
-    COMPLETE
+    DETAILED_ALL_TRIALS
 }
 
 data class ReportConfiguration(
@@ -40,7 +40,7 @@ data class ReportConfiguration(
     val molecularSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val standardOfCareSummaryType: ReportContentType = ReportContentType.BRIEF,
     val trialMatchingSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
-    val molecularChapterType: MolecularChapterType = MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY,
+    val molecularChapterType: MolecularChapterType = MolecularChapterType.STANDARD,
     val efficacyEvidenceChapterType: EfficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,
     val clinicalChapterType: ClinicalChapterType = ClinicalChapterType.COMPLETE,
     val trialMatchingChapterType: TrialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
@@ -61,10 +61,10 @@ data class ReportConfiguration(
                 molecularSummaryType = ReportContentType.COMPREHENSIVE,
                 standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
                 trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
-                molecularChapterType = MolecularChapterType.COMPLETE,
+                molecularChapterType = MolecularChapterType.STANDARD_AND_LONGITUDINAL,
                 efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
                 clinicalChapterType = ClinicalChapterType.COMPLETE,
-                trialMatchingChapterType = TrialMatchingChapterType.COMPLETE
+                trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS
             )
         }
     }

@@ -52,20 +52,20 @@ class MolecularDetailsChapter(
     override fun render(document: Document) {
         addChapterTitle(document)
 
-        if (configuration.molecularChapterType == MolecularChapterType.DETAILED_WITHOUT_PATHOLOGY ||
-            configuration.molecularChapterType == MolecularChapterType.DETAILED_WITH_PATHOLOGY ||
-            configuration.molecularChapterType == MolecularChapterType.COMPLETE
+        if (configuration.molecularChapterType == MolecularChapterType.STANDARD ||
+            configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY ||
+            configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
         ) {
             addMolecularDetails(document)
-            if (configuration.molecularChapterType == MolecularChapterType.DETAILED_WITH_PATHOLOGY ||
-                configuration.molecularChapterType == MolecularChapterType.COMPLETE
+            if (configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY ||
+                configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
             ) {
                 addPathologyReport(document)
             }
         }
 
         if (configuration.molecularChapterType == MolecularChapterType.LONGITUDINAL ||
-            configuration.molecularChapterType == MolecularChapterType.COMPLETE
+            configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
         ) {
             addLongitudinalMolecularHistoryTable(document)
         }
