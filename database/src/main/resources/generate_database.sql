@@ -54,7 +54,6 @@ CREATE TABLE `clinicalStatus`
     `jtcValue` int,
     `jtcUnit` varchar(50),
     `lvef` double precision,
-    `hasComplications` BOOLEAN,
     PRIMARY KEY (`id`)
 );
 
@@ -159,17 +158,6 @@ CREATE TABLE `ihcTest`
     `scoreValue` double precision,
     `scoreValueUnit` varchar(50),
     `impliesPotentialIndeterminateStatus` BOOLEAN NOT NULL,
-    PRIMARY KEY (`id`)
-);
-
-DROP TABLE IF EXISTS `complication`;
-CREATE TABLE `complication`
-(   `id` int NOT NULL AUTO_INCREMENT,
-    `patientId` varchar(50) NOT NULL,
-    `name` varchar(150),
-    `icdCodes` varchar(50) NOT NULL,
-    `year` int,
-    `month` int,
     PRIMARY KEY (`id`)
 );
 
