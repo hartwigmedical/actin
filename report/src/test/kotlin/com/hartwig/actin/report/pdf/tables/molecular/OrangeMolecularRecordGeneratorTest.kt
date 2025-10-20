@@ -24,11 +24,7 @@ class OrangeMolecularRecordGeneratorTest {
             null
         )
         assertThat(
-            getCellContents(
-                table.contents(),
-                0,
-                0
-            )
+            getCellContents(table.contents(), 0, 0)
         ).isEqualTo("The date of this test (2023-09-19) is older than the date of the oldest version of the test for which we could derive which genes were tested (2024-09-19). This version is still used to determine which genes were tested. This determination is potentially not correct.")
     }
 }

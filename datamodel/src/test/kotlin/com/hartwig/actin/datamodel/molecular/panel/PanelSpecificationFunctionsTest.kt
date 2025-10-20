@@ -47,7 +47,7 @@ class PanelSpecificationFunctionsTest {
             setOf(PanelTestSpecification(testName, versionDate = null)),
             registrationDate = olderDate
         )
-        assertThat(result).isEqualTo(Pair(null, null))
+        assertThat(result).isEqualTo(Pair(null, false))
     }
 
     @Test

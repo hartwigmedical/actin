@@ -7,7 +7,7 @@ import java.util.function.Predicate
 data class PanelTargetSpecification(
     private val geneTargetMap: Map<String, List<MolecularTestTarget>>,
     val versionDate: LocalDate? = null,
-    val testDateIsBeforeOldestTestVersion: Boolean? = false
+    val testDateIsBeforeOldestTestVersion: Boolean = false
 ) {
     
     fun testsGene(gene: String, molecularTestTargets: Predicate<List<MolecularTestTarget>>) =
