@@ -136,11 +136,11 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should warn when patient is known to have not exhausted SOC`() {
+    fun `Should fail when patient is known to have not exhausted SOC`() {
         setStandardOfCareCanBeEvaluatedForPatient(true)
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(nonEmptyTreatmentList)
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
-        assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).warnMessagesStrings())
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessagesStrings())
             .containsExactly("Has not exhausted SOC (remaining options: Pembrolizumab)")
     }
 
