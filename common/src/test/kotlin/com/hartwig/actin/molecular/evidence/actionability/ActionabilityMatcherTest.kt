@@ -1142,11 +1142,8 @@ class ActionabilityMatcherTest {
         return ActionabilityMatcherFactory.create(serveRecord(evidences, trials))
     }
 
-    private fun evidenceWithDrugClass(
-        name: String,
-        drugClass: String,
-        molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium()
-    ): EfficacyEvidence {
+    private fun evidenceWithDrugClass(name: String, drugClass: String, molecularCriterium: MolecularCriterium =
+        TestServeMolecularFactory.createHotspotCriterium()): EfficacyEvidence {
         val base = TestServeEvidenceFactory.create(treatment = name, molecularCriterium = molecularCriterium)
         val treatment = ImmutableTreatment.builder()
             .from(base.treatment())

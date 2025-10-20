@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
-import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.util.ExtractionUtil
@@ -38,18 +37,14 @@ class PanelAnnotator(
     }
 
     private fun interpret(input: SequencingTest): MolecularTest {
-        val (testVersion, testDateIsBeforeOldestTestVersion) =
-            PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
+        val testVersion = PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
 
         val specification = if (input.knownSpecifications) {
             panelSpecifications.panelTargetSpecification(
-                PanelTestSpecification(input.test, TestVersion(testVersion, testDateIsBeforeOldestTestVersion)),
+                PanelTestSpecification(input.test, testVersion),
                 input.negativeResults
             )
-        } else PanelTargetSpecification(
-            PanelSpecificationFunctions.derivedGeneTargetMap(input),
-            TestVersion()
-        )
+        } else PanelTargetSpecification(PanelSpecificationFunctions.derivedGeneTargetMap(input))
         
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)

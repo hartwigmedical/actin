@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
-import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.SpecificGenesFilter
 import io.mockk.every
 import io.mockk.mockk
@@ -58,7 +57,7 @@ class PanelAnnotatorTest {
             PanelSpecifications(
                 SpecificGenesFilter(setOf(GENE, OTHER_GENE)),
                 mapOf(
-                    PanelTestSpecification(TEST_NAME, TestVersion()) to listOf(
+                    PanelTestSpecification(TEST_NAME) to listOf(
                         PanelGeneSpecification(
                             GENE,
                             listOf(MolecularTestTarget.MUTATION)

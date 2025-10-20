@@ -48,6 +48,6 @@ object PanelSpecificationFunctions {
             ?.let { TestVersion(it.testVersion.versionDate, false) }
             ?: testsWithMatchingName
                 .minByOrNull { it.testVersion.versionDate!! }
-                .let { TestVersion(it?.testVersion?.versionDate, (it?.testVersion?.versionDate != null)) }
+                .let { TestVersion(it?.testVersion?.versionDate, it?.testVersion?.versionDate != null) }
     }
 }

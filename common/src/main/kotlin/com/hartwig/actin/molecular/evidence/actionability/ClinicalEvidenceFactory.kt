@@ -29,10 +29,8 @@ class ClinicalEvidenceFactory(
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
-            treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches, false) + convertToTreatmentEvidences(
-                actionabilityMatch.indirectEvidenceMatches,
-                true
-            ),
+            treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches, false) +
+                    convertToTreatmentEvidences(actionabilityMatch.indirectEvidenceMatches, true),
             eligibleTrials = convertToExternalTrials(determineOnLabelTrials(actionabilityMatch.matchingCriteriaPerTrialMatch))
         )
     }
