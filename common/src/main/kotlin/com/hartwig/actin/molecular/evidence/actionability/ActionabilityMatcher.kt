@@ -78,42 +78,26 @@ class ActionabilityMatcher(
     private fun logIndirectEvidence(
         variant: Variant,
         indirectEvidences: List<EfficacyEvidence>,
-        directMatches: Set<Pair<EfficacyEvidence, MolecularCriterium>>?,
-        detailed: Boolean = false
+        directMatches: Set<Pair<EfficacyEvidence, MolecularCriterium>>?
     ) {
-        val uniqueTreatmentCount = indirectEvidences.map { it.treatment().name() }.toSet().size
-        val directTreatmentNames = directMatches
-            ?.map { (directEvidence, _) -> directEvidence.treatment().name() }
-            ?.toSet()
-            .orEmpty()
-        val uniqueNovelTreatments = indirectEvidences
-            .map { it.treatment().name() }
-            .filterNot { directTreatmentNames.contains(it) }
-            .toSet()
-        logger.info(
-            "Found {} indirect evidence matches ({} unique treatments, {} novel treatments: {}) for variant {}",
-            indirectEvidences.size,
-            uniqueTreatmentCount,
-            uniqueNovelTreatments.size,
-            uniqueNovelTreatments.sorted().joinToString(", "),
-            variant.event
-        )
-
-        if (detailed && indirectEvidences.isNotEmpty()) {
-            logger.info("Found indirect evidence details for variant {}:", variant.event)
-            indirectEvidences
-                .sortedWith(compareBy({ it.evidenceLevel() }, { it.treatment().name() }))
-                .forEach { evidence ->
-                    logger.info(
-                        " - Treatment: {} | Level: {} | Direction: {} | Indication: {} | Class: {} | Source event: {}",
-                        evidence.treatment().name(),
-                        evidence.evidenceLevel(),
-                        evidence.evidenceDirection(),
-                        evidence.indication().applicableType().name(),
-                        evidence.treatment().treatmentApproachesDrugClass(),
-                        evidence.molecularCriterium().hotspots().firstOrNull()?.sourceEvent()
-                    )
-                }
+        if (indirectEvidences.isNotEmpty()) {
+            val uniqueTreatmentCount = indirectEvidences.map { it.treatment().name() }.toSet().size
+            val directTreatmentNames = directMatches
+                ?.map { (directEvidence, _) -> directEvidence.treatment().name() }
+                ?.toSet()
+                .orEmpty()
+            val uniqueNovelTreatments = indirectEvidences
+                .map { it.treatment().name() }
+                .filterNot { directTreatmentNames.contains(it) }
+                .toSet()
+            logger.info(
+                "Found {} indirect evidence matches ({} unique treatments, {} novel treatments: {}) for variant {}",
+                indirectEvidences.size,
+                uniqueTreatmentCount,
+                uniqueNovelTreatments.size,
+                uniqueNovelTreatments.sorted().joinToString(", "),
+                variant.event
+            )
         }
     }
 
