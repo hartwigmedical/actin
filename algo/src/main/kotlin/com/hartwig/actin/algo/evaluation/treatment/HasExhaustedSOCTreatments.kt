@@ -33,7 +33,7 @@ class HasExhaustedSOCTreatments(
                         )
                     }
                     else -> {
-                        EvaluationFactory.fail(
+                        EvaluationFactory.warn(
                             "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
                         )
                     }
