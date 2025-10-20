@@ -236,6 +236,6 @@ class ResistanceEvidenceMatcherTest {
         listOf(EFFICACY_EVIDENCE),
         TREATMENT_DATABASE,
         molecularTests,
-        ActionabilityMatcher(evidences = efficacyEvidence, emptyList())
+        ActionabilityMatcher(evidences = efficacyEvidence, emptyList(), emptySet())
     )
 }

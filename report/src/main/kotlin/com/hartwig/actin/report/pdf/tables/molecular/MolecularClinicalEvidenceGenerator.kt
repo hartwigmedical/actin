@@ -11,7 +11,10 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>, private val isOnLabel: Boolean) : TableGenerator {
+class MolecularClinicalEvidenceGenerator(
+    val molecularTests: List<MolecularTest>,
+    private val isOnLabel: Boolean,
+) : TableGenerator {
 
     override fun title(): String {
         val titleEnd = "label clinical evidence"

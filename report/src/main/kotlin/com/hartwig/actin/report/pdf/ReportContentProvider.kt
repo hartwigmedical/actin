@@ -20,7 +20,7 @@ class ReportContentProvider(private val report: Report, private val configuratio
         retainOriginalExternalTrials = configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
         filterOnSOCExhaustionAndTumorType = configuration.filterOnSOCExhaustionAndTumorType
     )
-    
+
     fun provideChapters(): List<ReportChapter> {
         return listOf(
             SummaryChapter(report, configuration, trialsProvider),

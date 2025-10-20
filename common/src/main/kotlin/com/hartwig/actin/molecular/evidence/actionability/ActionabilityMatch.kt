@@ -6,5 +6,6 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 data class ActionabilityMatch(
     val evidenceMatches: List<EfficacyEvidence>,
+    val indirectEvidenceMatches: List<EfficacyEvidence> = emptyList(),
     val matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>
 )

@@ -99,7 +99,8 @@ object TestTreatmentEvidenceFactory {
         evidenceLevelDetails: EvidenceLevelDetails,
         evidenceDirection: EvidenceDirection,
         evidenceYear: Int = 2021,
-        sourceUrl: String = SOURCE_EVENT_URL
+        sourceUrl: String = SOURCE_EVENT_URL,
+        isIndirect: Boolean = false
     ) = TreatmentEvidence(
         treatment = treatment,
         treatmentTypes = emptySet(),
@@ -107,7 +108,8 @@ object TestTreatmentEvidenceFactory {
             sourceDate = sourceDate,
             sourceEvent = sourceEvent,
             sourceEvidenceType = evidenceType,
-            sourceUrl = sourceUrl
+            sourceUrl = sourceUrl,
+            isIndirect = isIndirect
         ),
         cancerTypeMatch = CancerTypeMatchDetails(
             CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
