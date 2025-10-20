@@ -45,11 +45,11 @@ class OrangeMolecularRecordGenerator(
             )
         }
 
-        if (molecular.targetSpecification?.testDateIsBeforeOldestTestVersion == true) {
+        if (molecular.targetSpecification?.testVersion?.testDateIsBeforeOldestTestVersion == true) {
             table.addCell(
                 Cells.createSpanningSubNote(
                     "The date of this test (${molecular.date}) is older than the date of the oldest version of the test for which " +
-                            "we could derive which genes were tested (${molecular.targetSpecification?.versionDate!!}). This version is " +
+                            "we could derive which genes were tested (${molecular.targetSpecification?.testVersion?.versionDate!!}). This version is " +
                             "still used to determine which genes were tested. This determination is potentially not correct.",
                     table
                 )

@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
+import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.util.Tables
@@ -106,7 +107,7 @@ class WGSSummaryGeneratorFunctionsTest {
             TestPatientFactory.createProperTestPatientRecord(),
             molecularRecord.copy(
                 date = date,
-                targetSpecification = PanelTargetSpecification(emptyMap(), date.plusYears(1), testDateIsBeforeOldestTestVersion = true)
+                targetSpecification = PanelTargetSpecification(emptyMap(), TestVersion(date.plusYears(1), true))
             ),
             wgsMolecular = null,
             1.0F,

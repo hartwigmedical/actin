@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
+import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.report.pdf.getCellContents
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -19,7 +20,10 @@ class OrangeMolecularRecordGeneratorTest {
             TestMolecularFactory.createProperWholeGenomeTest()
                 .copy(
                     date = date,
-                    targetSpecification = PanelTargetSpecification(emptyMap(), date.plusYears(1), testDateIsBeforeOldestTestVersion = true)
+                    targetSpecification = PanelTargetSpecification(
+                        emptyMap(),
+                        TestVersion(date.plusYears(1), testDateIsBeforeOldestTestVersion = true)
+                    )
                 ),
             null
         )
