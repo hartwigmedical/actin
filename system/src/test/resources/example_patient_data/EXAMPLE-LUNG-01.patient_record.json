@@ -29,8 +29,7 @@
   },
   "clinicalStatus": {
     "infectionStatus": null,
-    "lvef": 0.5,
-    "hasComplications": false
+    "lvef": 0.5
   },
   "performanceStatus": {
     "whoStatuses": [
