@@ -91,12 +91,12 @@ class ActionabilityMatcher(
                 .filterNot { directTreatmentNames.contains(it) }
                 .toSet()
             logger.info(
-                "Found {} indirect evidence matches ({} unique treatments, {} novel treatments: {}) for variant {}",
+                "Found {} indirect evidence matches for variant {}: {} unique treatments, {} novel treatments: {}",
                 indirectEvidences.size,
+                variant.event,
                 uniqueTreatmentCount,
                 uniqueNovelTreatments.size,
-                uniqueNovelTreatments.sorted().joinToString(", "),
-                variant.event
+                uniqueNovelTreatments.sorted().joinToString(", ")
             )
         }
     }
