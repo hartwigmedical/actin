@@ -82,7 +82,7 @@ object TestClinicalFactory {
             performanceStatus = createTestPerformanceStatus(),
             oncologicalHistory = createTreatmentHistory(),
             priorPrimaries = createTestPriorPrimaries(),
-            comorbidities = createTestOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
+            comorbidities = createTestOtherConditions() + createTestToxicities() + createTestIntolerances(),
             ihcTests = createTestIhcTests(),
             labValues = createTestLabValues(),
             surgeries = createTestSurgeries(),
@@ -294,6 +294,10 @@ object TestClinicalFactory {
                 icdCodes = setOf(IcdCode("QB50.1", null)),
                 year = 2023,
                 month = 10
+            ),
+            OtherCondition(
+                name = "Ascites",
+                icdCodes = setOf(IcdCode("1A01", null))
             )
         )
     }
@@ -376,10 +380,6 @@ object TestClinicalFactory {
                 impliesPotentialIndeterminateStatus = true
             )
         )
-    }
-
-    private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", icdCodes = setOf(IcdCode("1A01", null))))
     }
 
     private fun createTestLabValues(): List<LabValue> {

@@ -44,24 +44,15 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined on complication or non oncological history entry with direct or parent match on target icd code`() {
-        val (complicationWithDirectMatch, complicationWithParentMatch) =
-            listOf(targetNode.code, childOfTargetNode.code).map { ComorbidityTestFactory.complication(icdMainCode = it) }
-        val (historyWithDirectMatch, historyWithParentMatch) = listOf(
-            targetNode.code,
-            childOfTargetNode.code
-        ).map { ComorbidityTestFactory.otherCondition(icdMainCode = it) }
-
-        listOf(
-            listOf(complicationWithDirectMatch, complicationWithParentMatch).map { ComorbidityTestFactory.withComplication(it) },
-            listOf(historyWithDirectMatch, historyWithParentMatch, ComorbidityTestFactory.otherCondition(icdMainCode = otherTargetCode))
-                .map { ComorbidityTestFactory.withOtherCondition(it) }
-        ).flatten().forEach { assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveFunction.evaluate(it)) }
+    fun `Should evaluate to undetermined on other condition with direct or parent match on target icd code`() {
+        listOf(targetNode.code, childOfTargetNode.code, otherTargetCode)
+            .map { ComorbidityTestFactory.withOtherCondition(ComorbidityTestFactory.otherCondition(icdMainCode = it)) }
+            .forEach { assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveFunction.evaluate(it)) }
     }
 
 
     @Test
-    fun `Should fail if patient has no complications and uses no pain medication`() {
+    fun `Should fail if patient has no relevant conditions and uses no pain medication`() {
         val noPainMedication = TestMedicationFactory.createMinimal().copy(name = "just some medication")
         assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(ComorbidityTestFactory.withMedication(noPainMedication)))
     }

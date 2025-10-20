@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
+import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.itextpdf.layout.Style
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -25,7 +25,7 @@ class PathologyReportFunctionsTest {
     fun `Should return complete pathology report summary`() {
         val pathologyReport = pathologyReport(1, date1).copy(authorisationDate = date2, reportDate = date2, extractionDate = date2)
 
-        val cell = PathologyReportFunctions.getPathologyReportSummary(
+        val cell = PathologyReportFunctions.createPathologyReportSummaryCell(
             prefix = "Test",
             prefixStyle = Style(),
             pathologyReport = pathologyReport
@@ -37,7 +37,7 @@ class PathologyReportFunctionsTest {
                     "Test - T-100001 ($lab, Tissue date: ${df.format(tissueDate)}, " +
                             "Authorization date: ${df.format(authorisationDate)}, " +
                             "Report date: ${df.format(reportDate)}, " +
-                            "Data extraction date: ${df.format(extractionDate)}, " +
+                            "Data retrieval date: ${df.format(extractionDate)}, " +
                             "Diagnosis: $diagnosis)"
                 )
         }
@@ -55,7 +55,7 @@ class PathologyReportFunctionsTest {
             diagnosis = null,
         )
 
-        val cell = PathologyReportFunctions.getPathologyReportSummary(pathologyReport = pathologyReport)
+        val cell = PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)
 
         with(pathologyReport) {
             assertThat(CellTestUtil.extractTextFromCell(cell))

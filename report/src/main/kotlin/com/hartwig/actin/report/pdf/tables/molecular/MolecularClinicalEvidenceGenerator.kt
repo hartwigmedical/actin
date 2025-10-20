@@ -66,11 +66,11 @@ class MolecularClinicalEvidenceGenerator(
                                     cancerTypeContent.setFontColor(PALETTE_RED)
                                 }
 
-                                val evidenceSubTable = Tables.createSingleCol()
-                                evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
-                                evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
+                                val evidenceSubTable = Tables.createSingleCol().useAllAvailableWidth()
+                                evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent).setMinWidth(0f))
+                                evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent).setMinWidth(0f))
 
-                                evidenceLevelTable.addCell(Cells.createContentNoBorder(evidenceSubTable))
+                                evidenceLevelTable.addCell(Cells.create(evidenceSubTable))
                             }
 
                             if (evidenceLevelTable.numberOfRows == 0) {

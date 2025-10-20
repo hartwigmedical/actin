@@ -49,7 +49,7 @@ class MolecularSummaryGenerator(
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(pathologyReport = pathologyReport)))
+                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)))
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
@@ -74,9 +74,9 @@ class MolecularSummaryGenerator(
             val wgsMolecular = MolecularHistory(listOf(molecularTest)).latestOrangeMolecularRecord()
             if (wgsMolecular?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-                    logger.warn("Generating WGS results for non-WGS sample")
+                    logger.debug("Generating WGS results for non-WGS sample")
                 }
-                val wgsGenerator = WGSSummaryGenerator(
+                val wgsGenerator = WgsSummaryGenerator(
                     selectSummaryType(molecularTest.experimentType),
                     patientRecord,
                     molecularTest,

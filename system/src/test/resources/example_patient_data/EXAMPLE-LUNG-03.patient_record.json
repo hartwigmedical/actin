@@ -31,8 +31,7 @@
       "hasActiveInfection": true,
       "description": "Pneumonia"
     },
-    "lvef": 0.5,
-    "hasComplications": false
+    "lvef": 0.5
   },
   "performanceStatus": {
     "whoStatuses": [

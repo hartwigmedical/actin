@@ -25,7 +25,7 @@ object PathologyReportFunctions {
             tissueDate ?: authorisationDate ?: reportDate
         ) { "Expected one of tissueDate, authorisationDate or reportDate to be non-null." }
 
-    fun getPathologyReportSummary(
+    fun createPathologyReportSummaryCell(
         prefix: String? = null,
         prefixStyle: Style? = null,
         pathologyReport: PathologyReport
@@ -57,7 +57,7 @@ object PathologyReportFunctions {
                             getTextWithLabel("Report date: ", pathologyReport.reportDate)
                         },
                         pathologyReport.extractionDate?.let {
-                            getTextWithLabel("Data extraction date: ", pathologyReport.extractionDate)
+                            getTextWithLabel("Data retrieval date: ", pathologyReport.extractionDate)
                         },
                         pathologyReport.diagnosis?.takeIf { it.isNotBlank() }?.let {
                             listOf(

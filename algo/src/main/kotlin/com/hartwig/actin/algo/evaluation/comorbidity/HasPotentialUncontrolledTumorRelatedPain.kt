@@ -20,7 +20,7 @@ class HasPotentialUncontrolledTumorRelatedPain(
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (hasCancerRelatedPainComplicationOrHistory, hasAcutePainComplicationOrHistory) = listOf(
+        val (hasCancerRelatedPainConditionOrHistory, hasAcutePainConditionOrHistory) = listOf(
             IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE,
             IcdConstants.ACUTE_PAIN_CODE
         ).map { code ->
@@ -34,11 +34,11 @@ class HasPotentialUncontrolledTumorRelatedPain(
         )
 
         return when {
-            hasCancerRelatedPainComplicationOrHistory -> {
+            hasCancerRelatedPainConditionOrHistory -> {
                 EvaluationFactory.undetermined("Has tumor related pain in history - undetermined if uncontrolled")
             }
 
-            hasAcutePainComplicationOrHistory -> {
+            hasAcutePainConditionOrHistory -> {
                 EvaluationFactory.undetermined("Has acute pain in history - undetermined if uncontrolled")
             }
 

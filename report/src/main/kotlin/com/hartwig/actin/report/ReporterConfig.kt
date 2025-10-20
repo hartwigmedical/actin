@@ -14,10 +14,10 @@ import java.time.LocalDate
 data class ReporterConfig(
     val patientJson: String,
     val treatmentMatchJson: String,
-    val overrideYaml: String?,
+    val overrideYaml: String,
     val outputDirectory: String,
     val enableExtendedMode: Boolean,
-    val reportDate: LocalDate? = null
+    val reportDate: LocalDate?
 ) {
 
     companion object {
@@ -33,10 +33,10 @@ data class ReporterConfig(
         fun createOptions(): Options {
             val options = Options()
             options.addOption(PATIENT_JSON, true, "File containing the patient record")
-            options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
+            options.addOption(TREATMENT_MATCH_JSON, true, "File containing the result of the ACTIN treatment matcher algo")
             options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
-            options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
+            options.addOption(ENABLE_EXTENDED_MODE, false, "If set, enables all options available in the report regardless of overrides")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(REPORT_DATE, true, "If set, sets fixed report date")
             return options
@@ -56,10 +56,10 @@ data class ReporterConfig(
             return ReporterConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
-                overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
+                overrideYaml = ApplicationConfig.nonOptionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
-                reportDate = cmd.getOptionValue(REPORT_DATE)?.let { LocalDate.parse(it) },
-                enableExtendedMode = enableExtendedMode
+                enableExtendedMode = enableExtendedMode,
+                reportDate = cmd.getOptionValue(REPORT_DATE)?.let { LocalDate.parse(it) } 
             )
         }
     }

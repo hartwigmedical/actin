@@ -2,9 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Comorbidity
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -22,9 +20,7 @@ internal object ComorbidityTestFactory {
         return withOtherConditions(listOf(condition))
     }
 
-    fun withOtherConditions(conditions: List<OtherCondition>): PatientRecord {
-        return withComorbidities(conditions)
-    }
+    fun withOtherConditions(conditions: List<OtherCondition>?): PatientRecord = base.copy(comorbidities = conditions.orEmpty())
 
     fun otherCondition(
         name: String = "",
@@ -57,10 +53,6 @@ internal object ComorbidityTestFactory {
         )
     }
 
-    fun complication(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Complication {
-        return Complication(name = name, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)))
-    }
-
     fun toxicity(
         name: String,
         toxicitySource: ToxicitySource,
@@ -80,13 +72,6 @@ internal object ComorbidityTestFactory {
 
     fun withComorbidity(comorbidity: Comorbidity): PatientRecord {
         return withComorbidities(listOf(comorbidity))
-    }
-
-    fun withComplications(complications: List<Complication>?): PatientRecord {
-        return base.copy(
-            comorbidities = complications ?: emptyList(),
-            clinicalStatus = ClinicalStatus(hasComplications = complications?.isNotEmpty())
-        )
     }
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
@@ -112,10 +97,6 @@ internal object ComorbidityTestFactory {
                 emptyList()
             )
         )
-    }
-
-    fun withComplication(complication: Complication): PatientRecord {
-        return withComplications(listOf(complication))
     }
 
     fun withCnsLesion(lesion: String): PatientRecord {

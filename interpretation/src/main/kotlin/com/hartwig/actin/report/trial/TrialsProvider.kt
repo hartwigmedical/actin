@@ -37,7 +37,7 @@ class TrialsProvider(
     private val internalTrialIds: Set<String>,
     private val isYoungAdult: Boolean,
     private val countryOfReference: Country,
-    private val enableExtendedMode: Boolean
+    private val retainOriginalExternalTrials: Boolean
 ) {
     fun evaluableCohorts(): List<InterpretedCohort> {
         return cohorts
@@ -83,12 +83,12 @@ class TrialsProvider(
             hideOverlappingTrials(
                 nationalTrials,
                 filteredNationalTrials,
-                enableExtendedMode
+                retainOriginalExternalTrials
             ),
             hideOverlappingTrials(
                 internationalTrials,
                 filteredInternationalTrials,
-                enableExtendedMode
+                retainOriginalExternalTrials
             )
         )
     }
@@ -96,11 +96,11 @@ class TrialsProvider(
     private fun hideOverlappingTrials(
         original: Set<EventWithExternalTrial>,
         filtered: Set<EventWithExternalTrial>,
-        enableExtendedMode: Boolean
+        retainOriginalTrials: Boolean
     ): MolecularFilteredExternalTrials {
         return MolecularFilteredExternalTrials(
             original,
-            if (enableExtendedMode) original else filtered
+            if (retainOriginalTrials) original else filtered
         )
     }
 
@@ -109,7 +109,7 @@ class TrialsProvider(
             patientRecord: PatientRecord,
             treatmentMatch: TreatmentMatch,
             countryOfReference: Country,
-            enableExtendedMode: Boolean,
+            retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             externalTrials: Set<EventWithExternalTrial> = externalEligibleTrials(patientRecord)
         ): TrialsProvider {
@@ -121,9 +121,13 @@ class TrialsProvider(
             val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
             val internalTrialIds = treatmentMatch.trialMatches.mapNotNull { it.identification.nctId }.toSet()
             return TrialsProvider(
-                externalTrials, cohorts, nonEvaluableCohorts, internalTrialIds, isYoungAdult,
+                externalTrials,
+                cohorts,
+                nonEvaluableCohorts,
+                internalTrialIds,
+                isYoungAdult,
                 countryOfReference,
-                enableExtendedMode
+                retainOriginalExternalTrials
             )
         }
 
@@ -189,5 +193,3 @@ private fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(pr
         !presentEvents.contains(it.event)
     }.toSet()
 }
-
-
