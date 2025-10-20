@@ -39,8 +39,7 @@
   },
   "clinicalStatus": {
     "infectionStatus": null,
-    "lvef": null,
-    "hasComplications": null
+    "lvef": null
   },
   "performanceStatus": {
     "latestWho": 0,
@@ -595,6 +594,7 @@
             "clonalLikelihood": null,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "KRAS G12D",
             "isReportable": true,
             "event": "KRAS G12D",
             "driverLikelihood": "HIGH",

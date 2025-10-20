@@ -6,11 +6,8 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import com.hartwig.actin.util.MapFunctions
-import org.apache.logging.log4j.LogManager
 
 object AggregatedEvidenceFactory {
-
-    private val LOGGER = LogManager.getLogger(AggregatedEvidenceFactory::class.java)
 
     fun create(molecular: MolecularTest): AggregatedEvidence {
         return if (!molecular.hasSufficientQuality) {
@@ -22,49 +19,58 @@ object AggregatedEvidenceFactory {
 
     private fun aggregateCharacteristicsEvidence(characteristics: MolecularCharacteristics): List<AggregatedEvidence> {
         return listOfNotNull(
-            aggregatedEvidenceForCharacteristic(
-                MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE,
-                characteristics.microsatelliteStability?.isUnstable,
-                characteristics.microsatelliteStability?.evidence
-            ),
-            aggregatedEvidenceForCharacteristic(
-                MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT,
-                characteristics.homologousRecombination?.isDeficient,
-                characteristics.homologousRecombination?.evidence
-            ),
-            aggregatedEvidenceForCharacteristic(
-                MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_BURDEN,
-                characteristics.tumorMutationalBurden?.isHigh,
-                characteristics.tumorMutationalBurden?.evidence
-            ),
-            aggregatedEvidenceForCharacteristic(
-                MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD,
-                characteristics.tumorMutationalLoad?.isHigh,
-                characteristics.tumorMutationalLoad?.evidence
-            )
+
+            when (characteristics.microsatelliteStability?.isUnstable) {
+                true -> createAggregatedEvidence(
+                    MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE,
+                    characteristics.microsatelliteStability?.evidence
+                )
+
+                false -> createAggregatedEvidence(
+                    MolecularCharacteristicEvents.MICROSATELLITE_STABLE,
+                    characteristics.microsatelliteStability?.evidence
+                )
+
+                else -> null
+            },
+
+            when (characteristics.homologousRecombination?.isDeficient) {
+                true -> createAggregatedEvidence(
+                    MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT,
+                    characteristics.homologousRecombination?.evidence
+                )
+
+                else -> null
+            },
+
+            when (characteristics.tumorMutationalBurden?.isHigh) {
+                true -> createAggregatedEvidence(
+                    MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_BURDEN,
+                    characteristics.tumorMutationalBurden?.evidence
+                )
+
+                false -> createAggregatedEvidence(
+                    MolecularCharacteristicEvents.LOW_TUMOR_MUTATIONAL_BURDEN,
+                    characteristics.tumorMutationalBurden?.evidence
+                )
+
+                else -> null
+            },
+
+            when (characteristics.tumorMutationalLoad?.isHigh) {
+                true -> createAggregatedEvidence(
+                    MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD,
+                    characteristics.tumorMutationalLoad?.evidence
+                )
+
+                false -> createAggregatedEvidence(
+                    MolecularCharacteristicEvents.LOW_TUMOR_MUTATIONAL_LOAD,
+                    characteristics.tumorMutationalLoad?.evidence
+                )
+
+                else -> null
+            },
         )
-    }
-
-    private fun aggregatedEvidenceForCharacteristic(
-        characteristic: String,
-        hasCharacteristic: Boolean?,
-        evidence: ClinicalEvidence?
-    ): AggregatedEvidence? {
-        if (hasCharacteristic == true) {
-            return createAggregatedEvidence(characteristic, evidence)
-        } else if (hasEvidence(evidence)) {
-            LOGGER.warn("There is evidence for $characteristic without presence of signature")
-        }
-        return null
-    }
-
-    private fun hasEvidence(evidence: ClinicalEvidence?): Boolean {
-        return if (evidence == null) false else {
-            listOf(
-                evidence.treatmentEvidence,
-                evidence.eligibleTrials
-            ).any(Set<Any>::isNotEmpty)
-        }
     }
 
     private fun aggregateDriverEvidence(drivers: Drivers): List<AggregatedEvidence> {

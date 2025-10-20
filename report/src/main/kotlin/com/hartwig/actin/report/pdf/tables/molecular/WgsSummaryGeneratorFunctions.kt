@@ -21,7 +21,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
-object WGSSummaryGeneratorFunctions {
+object WgsSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTable(
         summaryType: SummaryType,

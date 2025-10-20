@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.util
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
 import com.hartwig.actin.molecular.util.FormatFunctions.formatFusionEvent
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class FormatFunctionsTest {
@@ -13,9 +14,21 @@ class FormatFunctionsTest {
     private val exonDown = 10
 
     @Test
-    fun `Should format variant impact with protein impact`() {
+    fun `Should format variant impact with protein impact and coding impact is empty`() {
         val result = formatVariantImpact("p.Met1Leu", "", false, false, "")
         assertThat(result).isEqualTo("M1L")
+    }
+
+    @Test
+    fun `Should format variant impact with protein impact and coding impact is null`() {
+        val result = formatVariantImpact("p.Met1Leu", null, false, false, "")
+        assertThat(result).isEqualTo("M1L")
+    }
+
+    @Test
+    fun `Should format variant impact with protein impact question mark with coding impact`() {
+        val result = formatVariantImpact("p.?", "c.123A>T", false, false, "")
+        assertThat(result).isEqualTo("c.123A>T")
     }
 
     @Test
@@ -25,21 +38,15 @@ class FormatFunctionsTest {
     }
 
     @Test
-    fun `Should format variant impact with coding impact`() {
+    fun `Should format variant impact with coding impact and protein impact is empty`() {
         val result = formatVariantImpact("", "c.123A>T", false, false, "")
         assertThat(result).isEqualTo("c.123A>T")
     }
 
     @Test
-    fun `Should format variant impact with upstream`() {
-        val result = formatVariantImpact("", "", false, true, "")
-        assertThat(result).isEqualTo("upstream")
-    }
-
-    @Test
-    fun `Should format variant impact with effects`() {
-        val result = formatVariantImpact("", "", false, false, "some_effect")
-        assertThat(result).isEqualTo("some_effect")
+    fun `Should format variant impact with coding impact and protein impact is null`() {
+        val result = formatVariantImpact(null, "c.123A>T", false, false, "")
+        assertThat(result).isEqualTo("c.123A>T")
     }
 
     @Test
@@ -55,21 +62,22 @@ class FormatFunctionsTest {
     }
 
     @Test
-    fun `Should prioritize protein impact over effects`() {
-        val result = formatVariantImpact("p.Met1Leu", "", false, false, "some_effect")
-        assertThat(result).isEqualTo("M1L")
+    fun `Should format variant impact without protein or coding impact but upstream`() {
+        val result = formatVariantImpact("", "", false, true, "effects")
+        assertThat(result).isEqualTo("upstream")
     }
 
     @Test
-    fun `Should prioritize coding impact over upstream`() {
-        val result = formatVariantImpact("", "c.123A>T", false, true, "")
-        assertThat(result).isEqualTo("c.123A>T")
+    fun `Should format variant impact without protein or coding impact and not upstream`() {
+        val result = formatVariantImpact("", "", false, false, "effects")
+        assertThat(result).isEqualTo("effects")
     }
 
     @Test
-    fun `Should prioritize coding impact over effects`() {
-        val result = formatVariantImpact("", "c.123A>T", false, false, "some_effect")
-        assertThat(result).isEqualTo("c.123A>T")
+    fun `Should throw exception if protein and coding impact are both null`() {
+        assertThatThrownBy {
+            formatVariantImpact(null, null, false, false, "")
+        }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
@@ -144,8 +152,10 @@ class FormatFunctionsTest {
         ).isEqualTo("geneDown fusion")
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception if geneUp and geneDown are null`() {
-        formatFusionEvent(geneUp = null, exonUp = null, geneDown = null, exonDown = null)
+        assertThatThrownBy { formatFusionEvent(geneUp = null, exonUp = null, geneDown = null, exonDown = null) }.isInstanceOf(
+            IllegalStateException::class.java
+        )
     }
 }

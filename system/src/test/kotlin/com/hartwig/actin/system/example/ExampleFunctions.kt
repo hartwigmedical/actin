@@ -2,8 +2,12 @@ package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
-import com.hartwig.actin.configuration.MolecularSummaryType
+import com.hartwig.actin.configuration.ClinicalChapterType
+import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
+import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.configuration.ReportContentType
+import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
@@ -63,9 +67,15 @@ object ExampleFunctions {
 
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
-            includeApprovedTreatmentsInSummary = false,
-            includeMolecularDetailsChapter = false,
-            includeClinicalDetailsChapter = false,
+            patientDetailsType = ReportContentType.COMPREHENSIVE,
+            clinicalSummaryType = ReportContentType.BRIEF,
+            molecularSummaryType = ReportContentType.COMPREHENSIVE,
+            standardOfCareSummaryType = ReportContentType.NONE,
+            trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
+            molecularChapterType = MolecularChapterType.STANDARD_WITH_PATHOLOGY,
+            efficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,
+            clinicalChapterType = ClinicalChapterType.COMPLETE,
+            trialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
@@ -73,40 +83,15 @@ object ExampleFunctions {
 
     fun createPersonalizationReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
-            includeOverviewWithClinicalHistorySummary = true,
-            includeMolecularDetailsChapter = false,
-            includeApprovedTreatmentsInSummary = false,
-            includeSOCLiteratureEfficacyEvidence = true,
-            includeEligibleSOCTreatmentSummary = true,
-            molecularSummaryType = MolecularSummaryType.NONE,
-            includePatientHeader = false,
-            filterOnSOCExhaustionAndTumorType = true,
-            countryOfReference = Country.NETHERLANDS,
-            hospitalOfReference = HOSPITAL_OF_REFERENCE
-        )
-    }
-
-    fun createExhaustiveReportConfiguration(): ReportConfiguration {
-        return ReportConfiguration().copy(
-            includeOverviewWithClinicalHistorySummary = true,
-            includeMolecularDetailsChapter = true,
-            includeSOCLiteratureEfficacyEvidence = true,
-            includeEligibleSOCTreatmentSummary = true,
-            molecularSummaryType = MolecularSummaryType.STANDARD,
-            includeOtherOncologicalHistoryInSummary = true,
-            includePatientHeader = true,
-            includeRelevantNonOncologicalHistoryInSummary = true,
-            includeApprovedTreatmentsInSummary = true,
-            includeTrialMatchingInSummary = true,
-            includeExternalTrialsInSummary = true,
-            filterOnSOCExhaustionAndTumorType = true,
-            includeClinicalDetailsChapter = true,
-            includeTrialMatchingChapter = true,
-            includeOnlyExternalTrialsInTrialMatching = true,
-            includeLongitudinalMolecularChapter = true,
-            includeMolecularEvidenceChapter = true,
-            includeRawPathologyReport = true,
-            includeTreatmentEvidenceRanking = true,
+            patientDetailsType = ReportContentType.COMPREHENSIVE,
+            clinicalSummaryType = ReportContentType.COMPREHENSIVE,
+            molecularSummaryType = ReportContentType.NONE,
+            standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
+            trialMatchingSummaryType = ReportContentType.BRIEF,
+            molecularChapterType = MolecularChapterType.STANDARD_WITH_PATHOLOGY,
+            efficacyEvidenceChapterType = EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY,
+            clinicalChapterType = ClinicalChapterType.COMPLETE,
+            trialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
             countryOfReference = Country.NETHERLANDS,
             hospitalOfReference = HOSPITAL_OF_REFERENCE
         )
@@ -130,7 +115,7 @@ object ExampleFunctions {
         examplePatientRecordJson: String,
         exampleTreatmentMatchJson: String,
         outputDirectory: String,
-        reportConfiguration: ReportConfiguration
+        configuration: ReportConfiguration
     ) {
         LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
         val patient = PatientRecordJson.read(examplePatientRecordJson)
@@ -138,11 +123,11 @@ object ExampleFunctions {
         LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
 
-        val report = ReportFactory.create(reportDate, patient, treatmentMatch, reportConfiguration)
+        val report = ReportFactory.create(reportDate, patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
-        writer.write(report, enableExtendedMode = false)
-        writer.write(report, enableExtendedMode = true)
+        writer.write(report = report, configuration = configuration, addExtendedSuffix = false)
+        writer.write(report = report, configuration = ReportConfiguration.extended(), addExtendedSuffix = true)
 
         LOGGER.info("Done!")
     }

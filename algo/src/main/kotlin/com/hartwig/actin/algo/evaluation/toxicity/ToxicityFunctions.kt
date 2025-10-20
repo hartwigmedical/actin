@@ -12,7 +12,7 @@ object ToxicityFunctions {
     fun selectRelevantToxicities(
         record: PatientRecord, icdModel: IcdModel, referenceDate: LocalDate, icdTitlesToIgnore: List<String> = emptyList()
     ): List<Toxicity> {
-        val icdCodesToExclude = (record.otherConditions + record.complications).map(Comorbidity::icdCodes).toSet()
+        val icdCodesToExclude = record.otherConditions.map(Comorbidity::icdCodes).toSet()
         val ignoredIcdMainCodes = icdTitlesToIgnore.mapNotNull(icdModel::resolveCodeForTitle).map { it.mainCode }.toSet()
 
         return dropOutdatedEHRToxicities(record.toxicities)

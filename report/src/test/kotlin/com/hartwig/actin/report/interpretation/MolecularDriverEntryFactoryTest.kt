@@ -25,8 +25,8 @@ class MolecularDriverEntryFactoryTest {
     fun `Should create molecular driver entries`() {
         val test = TestMolecularFactory.createExhaustiveWholeGenomeTest()
         val factory = createFactoryForMolecularTest(test)
-        
-        assertThat(factory.create()).hasSize(13)
+
+        assertThat(factory.create()).hasSize(14)
     }
 
     @Test

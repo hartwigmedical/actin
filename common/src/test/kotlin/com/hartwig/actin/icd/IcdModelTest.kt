@@ -1,7 +1,6 @@
 package com.hartwig.actin.icd
 
 import com.hartwig.actin.datamodel.clinical.Comorbidity
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
@@ -161,7 +160,6 @@ class IcdModelTest {
             OtherCondition("name", icdCodes = icdCodes),
             Toxicity("name", icdCodes, date, ToxicitySource.EHR, 3, date),
             Intolerance("name", icdCodes = icdCodes),
-            Complication("name", icdCodes = icdCodes)
         )
     }
 }

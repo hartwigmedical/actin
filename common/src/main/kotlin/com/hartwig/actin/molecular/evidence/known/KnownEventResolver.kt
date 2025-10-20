@@ -19,12 +19,19 @@ import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import com.hartwig.serve.datamodel.molecular.range.KnownExon
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 class KnownEventResolver(
     private val primaryKnownEvents: KnownEvents,
     private val secondaryKnownEvents: KnownEvents,
     private val aggregatedKnownGenes: Set<KnownGene>
 ) {
+    companion object {
+        private val logger: Logger = LogManager.getLogger(KnownEventResolver::class.java)
+    }
 
     fun resolveForVariant(variant: Variant): VariantAlteration {
         val primaryAlteration = findHotspot(primaryKnownEvents.hotspots(), variant)
@@ -90,6 +97,24 @@ class KnownEventResolver(
     }
 
     private fun findExon(knownExons: Iterable<KnownExon>, variant: Variant): KnownExon? {
-        return knownExons.find { RangeMatching.isMatch(it, variant) }
+        return knownExons
+            .filter { RangeMatching.isMatch(it, variant) }
+            .minWithOrNull(
+                compareBy<KnownExon>(
+                    { geneAlterationPriority(it) },
+                    { it.proteinEffect().name },
+                )
+            )
+    }
+}
+
+private fun geneAlterationPriority(alteration: ServeGeneAlteration?): Int {
+    val effect = alteration?.proteinEffect()
+    return when (effect) {
+        ServeProteinEffect.GAIN_OF_FUNCTION -> 0
+        ServeProteinEffect.LOSS_OF_FUNCTION -> 1
+        ServeProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> 2
+        ServeProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> 3
+        else -> 10
     }
 }

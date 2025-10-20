@@ -9,11 +9,11 @@ import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
-import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f
@@ -62,9 +62,9 @@ class PatientCurrentDetailsGeneratorTest {
             PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
         val table = patientCurrentDetailsGenerator.contents()
 
-        assertThat(table.numberOfRows).isEqualTo(4)
-        assertThat(extractTextFromCell(table.getCell(3, 0))).isEqualTo("Recent surgeries")
-        assertThat(extractTextFromCell(table.getCell(3, 1))).isEqualTo(
+        assertThat(table.numberOfRows).isEqualTo(3)
+        assertThat(extractTextFromCell(table.getCell(2, 0))).isEqualTo("Recent surgeries")
+        assertThat(extractTextFromCell(table.getCell(2, 1))).isEqualTo(
             "%s Surgery 1, %s, %s Surgery 2",
             DATE_FORMAT.format(endDate),
             DATE_FORMAT.format(endDateMinus4),
@@ -87,7 +87,7 @@ class PatientCurrentDetailsGeneratorTest {
             PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
         val table = patientCurrentDetailsGenerator.contents()
 
-        assertThat(table.numberOfRows).isEqualTo(3)
+        assertThat(table.numberOfRows).isEqualTo(2)
         assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Unresolved toxicities grade => 2")
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("From EHR: Toxicity 1 (3), Toxicity 2 (2)")
     }

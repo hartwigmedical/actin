@@ -32,7 +32,6 @@ class OrangeMolecularRecordGenerator(
     }
 
     override fun contents(): Table {
-
         val table = Tables.createSingleColWithWidth(width)
 
         if (molecular.hasSufficientQualityButLowPurity()) {

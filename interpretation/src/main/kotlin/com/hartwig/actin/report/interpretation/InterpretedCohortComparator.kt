@@ -7,13 +7,13 @@ private const val COMBINATION_COHORT_IDENTIFIER = "+"
 class InterpretedCohortComparator(private val requestingSource: TrialSource? = null) : Comparator<InterpretedCohort> {
 
     override fun compare(cohort1: InterpretedCohort, cohort2: InterpretedCohort): Int {
-        return compareByDescending<InterpretedCohort> { cohort ->
-            requestingSource?.let {
-                InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(cohort.source, cohort.locations, requestingSource)
-            } ?: true
-        }
+        return compareBy<InterpretedCohort> { it.molecularInclusionEvents.isEmpty() }
+            .thenByDescending { cohort ->
+                requestingSource?.let {
+                    InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(cohort.source, cohort.locations, requestingSource)
+                } ?: true
+            }
             .thenByDescending(InterpretedCohort::hasSlotsAvailable)
-            .thenBy { it.molecularInclusionEvents.isEmpty() }
             .thenBy(nullsLast(), InterpretedCohort::phase)
             .thenByDescending { it.warnings.isEmpty() }
             .thenBy(InterpretedCohort::trialId)

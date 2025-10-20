@@ -11,7 +11,10 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>, private val isOnLabel: Boolean) : TableGenerator {
+class MolecularClinicalEvidenceGenerator(
+    val molecularTests: List<MolecularTest>,
+    private val isOnLabel: Boolean,
+) : TableGenerator {
 
     override fun title(): String {
         val titleEnd = "label clinical evidence"
@@ -63,11 +66,11 @@ class MolecularClinicalEvidenceGenerator(val molecularTests: List<MolecularTest>
                                     cancerTypeContent.setFontColor(PALETTE_RED)
                                 }
 
-                                val evidenceSubTable = Tables.createSingleCol()
-                                evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
-                                evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
+                                val evidenceSubTable = Tables.createSingleCol().useAllAvailableWidth()
+                                evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent).setMinWidth(0f))
+                                evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent).setMinWidth(0f))
 
-                                evidenceLevelTable.addCell(Cells.createContentNoBorder(evidenceSubTable))
+                                evidenceLevelTable.addCell(Cells.create(evidenceSubTable))
                             }
 
                             if (evidenceLevelTable.numberOfRows == 0) {

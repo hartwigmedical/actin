@@ -1,17 +1,27 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.TrialIdentification
+import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluationInterpreter
+import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
+import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
+import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
@@ -22,36 +32,104 @@ import com.itextpdf.layout.properties.AreaBreakType
 private const val INDENT_WIDTH = 10f
 private const val KEY_WIDTH = 90f
 
-class TrialMatchingDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+class TrialMatchingDetailsChapter(
+    private val report: Report,
+    private val configuration: ReportConfiguration,
+    private val trialsProvider: TrialsProvider
+) : ReportChapter {
 
     override fun name(): String {
         return "Trial Matching Details"
     }
 
     override fun pageSize(): PageSize {
-        return PageSize.A4
+        return PageSize.A4.rotate()
+    }
+
+    override fun include(): Boolean {
+        return configuration.trialMatchingChapterType != TrialMatchingChapterType.NONE
     }
 
     override fun render(document: Document) {
         addChapterTitle(document)
+        addTrialMatchingResults(document)
+        if (configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS) {
+            addDetailedTrialMatching(document)
+        }
+    }
 
+    private fun addTrialMatchingResults(document: Document) {
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        TableGeneratorFunctions.addGenerators(createTrialTableGenerators(), table, overrideTitleFormatToSubtitle = false)
+        document.add(table)
+    }
+
+    fun createTrialTableGenerators(): List<TableGenerator> {
+        val requestingSource = TrialSource.fromDescription(configuration.hospitalOfReference)
+
+        val includeLocalTrialGenerators = configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_ALL_TRIALS ||
+                configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
+
+        val localTrialGenerators = createLocalTrialTableGenerators(
+            trialsProvider.evaluableCohorts(), trialsProvider.nonEvaluableCohorts(), requestingSource
+        ).takeIf { includeLocalTrialGenerators } ?: emptyList()
+
+        val includeSpecificExternalGenerators =
+            configuration.trialMatchingChapterType == TrialMatchingChapterType.STANDARD_EXTERNAL_TRIALS_ONLY ||
+                    configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
+
+        val externalTrials = trialsProvider.externalTrials()
+        val localExternalTrialGenerator = EligibleTrialGenerator.localOpenCohorts(
+            emptyList(),
+            externalTrials,
+            requestingSource,
+            configuration.countryOfReference
+        ).takeIf { includeSpecificExternalGenerators }
+
+        val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(
+            externalTrials,
+            requestingSource,
+        ).takeIf { includeSpecificExternalGenerators }
+
+        val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(externalTrials, configuration.countryOfReference)
+
+        return listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator, filteredTrialGenerator) + localTrialGenerators
+    }
+
+    private fun createLocalTrialTableGenerators(
+        cohorts: List<InterpretedCohort>,
+        nonEvaluableCohorts: List<InterpretedCohort>,
+        source: TrialSource?
+    ): List<TrialTableGenerator> {
+        val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
+
+        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(nonIgnoredCohorts, source)
+        val ineligibleTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source)
+        val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialGenerator.forNonEvaluableAndIgnoredCohorts(
+            ignoredCohorts, nonEvaluableCohorts, source
+        )
+
+        return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableAndIgnoredCohortsGenerator)
+    }
+
+    private fun addDetailedTrialMatching(document: Document) {
         val (eligible: List<TrialMatch>, nonEligible: List<TrialMatch>) = report.treatmentMatch.trialMatches
             .map(TrialClassification::createForTrialMatch)
             .fold(TrialClassification(), TrialClassification::combine)
 
         if (eligible.isNotEmpty()) {
-            addTrialMatches(document, eligible, "Potentially eligible open trials & cohorts", true)
+            addDetailedTrialMatches(document, eligible, "Potentially eligible open trials & cohorts", true)
         }
 
         if (nonEligible.isNotEmpty()) {
             if (eligible.isNotEmpty()) {
                 document.add(pageBreak())
             }
-            addTrialMatches(document, nonEligible, "Other trials & cohorts", false)
+            addDetailedTrialMatches(document, nonEligible, "Other trials & cohorts", false)
         }
     }
 
-    private fun addTrialMatches(document: Document, trials: List<TrialMatch>, title: String, trialsAreEligible: Boolean) {
+    private fun addDetailedTrialMatches(document: Document, trials: List<TrialMatch>, title: String, trialsAreEligible: Boolean) {
         document.add(Paragraph(title).addStyle(Styles.tableTitleStyle()))
         var addBlank = false
         for (trial in trials) {

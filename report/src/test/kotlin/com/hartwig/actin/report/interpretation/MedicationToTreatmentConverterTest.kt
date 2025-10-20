@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.clinical
+package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -10,9 +10,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Test
+import java.time.LocalDate
 
 class MedicationToTreatmentConverterTest {
 
@@ -34,8 +34,8 @@ class MedicationToTreatmentConverterTest {
     @Test
     fun `Should convert medications not already present in treatment history to a treatment history`() {
         val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, oncologicalHistory)
-        assertThat(medicationsToAdd.size).isEqualTo(1)
-        assertThat(medicationsToAdd.first()).isEqualTo(
+        Assertions.assertThat(medicationsToAdd.size).isEqualTo(1)
+        Assertions.assertThat(medicationsToAdd.first()).isEqualTo(
             createTreatmentHistoryEntry("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, 2023, 2023).copy(
                 treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2023, stopMonth = 12),
                 startYear = 2023,
@@ -51,7 +51,7 @@ class MedicationToTreatmentConverterTest {
             createMedication("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, LocalDate.of(2023, 5, 31))
         val treatmentHistory =
             createTreatmentHistoryEntry("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, 2023, 2023, 2, 5)
-        assertThat(MedicationToTreatmentConverter.matchesDate(medication, treatmentHistory)).isTrue()
+        Assertions.assertThat(MedicationToTreatmentConverter.matchesDate(medication, treatmentHistory)).isTrue()
     }
 
     private fun createTreatmentHistoryEntry(

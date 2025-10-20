@@ -78,14 +78,14 @@ class TreatmentRankingModelTest {
             createVariant(
                 gene = "KRAS",
                 treatmentEvidence =
-                treatmentEvidence(
-                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-                    isCategoryEvent = false,
-                    approvalStage = EvidenceLevelDetails.GUIDELINE,
-                    hasBenefit = true,
-                    treatment = "treatment1",
-                    event = "KRAS G12C"
-                )
+                    treatmentEvidence(
+                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+                        isCategoryEvent = false,
+                        approvalStage = EvidenceLevelDetails.GUIDELINE,
+                        hasBenefit = true,
+                        treatment = "treatment1",
+                        event = "KRAS G12C"
+                    )
             ), createVariant(
                 treatmentEvidence = treatmentEvidence(
                     cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
@@ -153,13 +153,13 @@ class TreatmentRankingModelTest {
                 )
             ), createVariant(
                 treatmentEvidence =
-                treatmentEvidence(
-                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-                    isCategoryEvent = false,
-                    approvalStage = EvidenceLevelDetails.GUIDELINE,
-                    hasBenefit = false,
-                    treatment = "treatment1",
-                )
+                    treatmentEvidence(
+                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+                        isCategoryEvent = false,
+                        approvalStage = EvidenceLevelDetails.GUIDELINE,
+                        hasBenefit = false,
+                        treatment = "treatment1",
+                    )
             )
         )
         val rank = ranker.rank(patientRecord)
@@ -194,39 +194,71 @@ class TreatmentRankingModelTest {
         assertThat(rank[0].score).isEqualTo(2950.0)
     }
 
+    @Test
+    fun `Should score indirect evidence as functional effect match`() {
+        val config = createScoringConfig()
+        val ranker = TreatmentRankingModel(EvidenceScoringModel(config))
+
+        val indirectEvidence = treatmentEvidence(
+            treatment = "treatment1",
+            cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+            isCategoryEvent = false,
+            approvalStage = EvidenceLevelDetails.PHASE_II,
+            hasBenefit = true,
+            event = "Indirect Event",
+            isIndirect = true
+        )
+
+        val patientRecord = patientRecord(createVariant(treatmentEvidence = indirectEvidence))
+
+        val rankResult = ranker.rank(patientRecord).ranking.single()
+
+        assertThat(rankResult.treatment).isEqualTo("treatment1")
+        assertThat(rankResult.events).containsExactlyInAnyOrder("Indirect Event")
+
+//        val expectedDirectScore = expectedScore(config, TumorMatch.PATIENT, VariantMatch.EXACT, EvidenceLevelDetails.GUIDELINE)
+        val expectedIndirectScore = expectedScore(
+            config,
+            TumorMatch.PATIENT,
+            VariantMatch.FUNCTIONAL_EFFECT,
+            EvidenceLevelDetails.PHASE_II
+        )
+        val diminishingFactor = 1.0 / (1.0 + kotlin.math.exp(1.5 * (1 - 1.0)))
+
+        assertThat(rankResult.score)
+            .isEqualTo(expectedIndirectScore)// * diminishingFactor)
+    }
 
     private fun patientRecord(
         vararg variants: Variant
     ) = TestPatientFactory.createProperTestPatientRecord().copy(
         molecularTests =
-        listOf(
-            TestMolecularFactory.createMinimalWholeGenomeTest().copy(
-                drivers = Drivers(
-                    variants = variants.toList(),
-                    copyNumbers = emptyList(),
-                    homozygousDisruptions = emptyList(),
-                    disruptions = emptyList(),
-                    fusions = emptyList(),
-                    viruses = emptyList()
-                ),
-                characteristics = MolecularCharacteristics(
-                    homologousRecombination = null,
-                    purity = null,
-                    ploidy = null,
-                    predictedTumorOrigin = null,
-                    microsatelliteStability = null,
-                    tumorMutationalBurden = null,
-                    tumorMutationalLoad = null
+            listOf(
+                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
+                    drivers = Drivers(
+                        variants = variants.toList(),
+                        copyNumbers = emptyList(),
+                        homozygousDisruptions = emptyList(),
+                        disruptions = emptyList(),
+                        fusions = emptyList(),
+                        viruses = emptyList()
+                    ),
+                    characteristics = MolecularCharacteristics(
+                        homologousRecombination = null,
+                        purity = null,
+                        ploidy = null,
+                        predictedTumorOrigin = null,
+                        microsatelliteStability = null,
+                        tumorMutationalBurden = null,
+                        tumorMutationalLoad = null
+                    )
                 )
             )
-        )
     )
 
     private fun createVariant(gene: String = "BRAF", treatmentEvidence: TreatmentEvidence) = TestVariantFactory.createMinimal().copy(
         gene = gene,
-        evidence = TestClinicalEvidenceFactory.createEmpty().copy(
-            treatmentEvidence = setOf(treatmentEvidence)
-        )
+        evidence = TestClinicalEvidenceFactory.createEmpty().copy(treatmentEvidence = setOf(treatmentEvidence))
     )
 
     private fun treatmentEvidence(
@@ -235,7 +267,8 @@ class TreatmentRankingModelTest {
         isCategoryEvent: Boolean,
         approvalStage: EvidenceLevelDetails,
         hasBenefit: Boolean,
-        event: String = "BRAF V600E"
+        event: String = "BRAF V600E",
+        isIndirect: Boolean = false
     ) = TestTreatmentEvidenceFactory.create(
         treatment = treatment,
         sourceEvent = event,
@@ -244,6 +277,20 @@ class TreatmentRankingModelTest {
         evidenceLevelDetails = approvalStage,
         evidenceDirection = EvidenceDirection(hasBenefit, hasBenefit, !hasBenefit, true),
         evidenceLevel = EvidenceLevel.A,
+        isIndirect = isIndirect
     )
+
+    private fun expectedScore(
+        config: ScoringConfig,
+        tumorMatch: TumorMatch,
+        variantMatch: VariantMatch,
+        evidenceLevelDetails: EvidenceLevelDetails
+    ): Double {
+        val factor = config.categoryMatchLevels[ScoringMatch(tumorMatch, variantMatch)]
+            ?: error("Missing score for $tumorMatch/$variantMatch")
+        val levelScore = config.approvalPhaseLevel.scoring[evidenceLevelDetails]
+            ?: error("Missing level score for $evidenceLevelDetails")
+        return factor * levelScore.toDouble()
+    }
 
 }
