@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import kotlinx.coroutines.runBlocking
@@ -68,11 +68,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 evidences = inputData.serveRecord.evidences(),
                 treatmentDatabase = treatmentDatabase,
                 molecularTests = inputData.patient.molecularTests,
-                actionabilityMatcher = ActionabilityMatcher(
-                    inputData.serveRecord.evidences(),
-                    inputData.serveRecord.trials(),
-                    inputData.serveRecord.knownEvents().hotspots(),
-                )
+                actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
             )
 
         val treatmentMatcher =
