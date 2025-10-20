@@ -57,7 +57,7 @@ object PathologyReportFunctions {
                             getTextWithLabel("Report date: ", pathologyReport.reportDate)
                         },
                         pathologyReport.extractionDate?.let {
-                            getTextWithLabel("Data extraction date: ", pathologyReport.extractionDate)
+                            getTextWithLabel("Data retrieval date: ", pathologyReport.extractionDate)
                         },
                         pathologyReport.diagnosis?.takeIf { it.isNotBlank() }?.let {
                             listOf(

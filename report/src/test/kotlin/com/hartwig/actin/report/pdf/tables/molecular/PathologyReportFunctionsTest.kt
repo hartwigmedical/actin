@@ -37,7 +37,7 @@ class PathologyReportFunctionsTest {
                     "Test - T-100001 ($lab, Tissue date: ${df.format(tissueDate)}, " +
                             "Authorization date: ${df.format(authorisationDate)}, " +
                             "Report date: ${df.format(reportDate)}, " +
-                            "Data extraction date: ${df.format(extractionDate)}, " +
+                            "Data retrieval date: ${df.format(extractionDate)}, " +
                             "Diagnosis: $diagnosis)"
                 )
         }
