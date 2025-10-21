@@ -15,7 +15,7 @@ import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecently(
     private val category: TreatmentCategory,
-    private val types: Set<TreatmentType>,
+    private val types: Set<TreatmentType>?,
     private val minDate: LocalDate,
     private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
@@ -28,7 +28,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
         val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
-                    && treatmentHistoryEntry.matchesTypeFromSet(types) == true
+                    && types?.let { treatmentHistoryEntry.matchesTypeFromSet(types) == true } ?: true
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
@@ -37,26 +37,22 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val typesList = concatItemsWithOr(types)
+        val typesList = types?.let { "${concatItemsWithOr(types)} " } ?: ""
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
-                EvaluationFactory.pass("Has received $typesList ${category.display()} treatment")
+                EvaluationFactory.pass("Has received $typesList${category.display()} treatment within requested weeks")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received $typesList ${category.display()} treatment but inconclusive date")
+                EvaluationFactory.undetermined("Has received $typesList${category.display()} treatment but inconclusive date")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate -> {
                 EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}")
             }
 
-            else -> {
-                EvaluationFactory.fail(
-                    "Has not had recent $typesList ${category.display()} treatment"
-                )
-            }
+            else -> EvaluationFactory.fail("Has not had $typesList${category.display()} treatment within requested weeks")
         }
     }
 }
