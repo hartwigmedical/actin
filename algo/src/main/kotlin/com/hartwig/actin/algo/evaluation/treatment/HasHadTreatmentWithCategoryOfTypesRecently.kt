@@ -41,7 +41,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
-                EvaluationFactory.pass("Has received $typesList${category.display()} treatment within requested weeks")
+                EvaluationFactory.pass("Has received $typesList${category.display()} treatment within requested time frame")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
@@ -52,7 +52,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                 EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}")
             }
 
-            else -> EvaluationFactory.fail("Has not had $typesList${category.display()} treatment within requested weeks")
+            else -> EvaluationFactory.fail("Has not had $typesList${category.display()} treatment within requested time frame")
         }
     }
 }
