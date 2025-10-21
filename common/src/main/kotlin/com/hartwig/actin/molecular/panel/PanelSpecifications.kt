@@ -37,7 +37,7 @@ class PanelSpecifications(
             .associateWith { gene ->
                 ((baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())).distinct()
             }
-        return PanelTargetSpecification(mergedTargets)
+        return PanelTargetSpecification(mergedTargets, testSpec.testVersion)
     }
 
     private fun checkForUnknownGenesInNegativeResults(
@@ -55,5 +55,6 @@ class PanelSpecifications(
             }
     }
 
-    fun logPanelName(testSpec: PanelTestSpecification) = "Panel [${testSpec.testName}${testSpec.versionDate?.let { " version $it" } ?: ""}]"
+    fun logPanelName(testSpec: PanelTestSpecification) =
+        "Panel [${testSpec.testName}${testSpec.testVersion.versionDate?.let { " version $it" } ?: ""}]"
 }

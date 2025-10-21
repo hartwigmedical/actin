@@ -48,7 +48,7 @@ class ClinicalSummaryGenerator(
 
     fun contentsAsList(): List<Cell> {
         val record = report.patientRecord
-        
+
         return listOfNotNull(
             "Relevant systemic treatment history" to relevantSystemicTreatmentHistoryTable(record),
             if (includeAdditionalFields) {

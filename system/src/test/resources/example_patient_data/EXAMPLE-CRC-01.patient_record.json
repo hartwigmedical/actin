@@ -559,7 +559,11 @@
       "experimentType": "PANEL",
       "testTypeDisplay": "NGS & MSI Panel",
       "targetSpecification": {
-        "geneTargetMap": []
+        "geneTargetMap": [],
+        "testVersion": {
+          "versionDate": null,
+          "testDateIsBeforeOldestTestVersion": false
+        }
       },
       "refGenomeVersion": "V37",
       "containsTumorCells": true,

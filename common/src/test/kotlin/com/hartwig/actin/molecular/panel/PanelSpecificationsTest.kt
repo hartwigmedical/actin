@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions.derivedGeneTargetMap
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.SpecificGenesFilter
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -40,7 +41,7 @@ class PanelSpecificationsTest {
 
     @Test
     fun `Should resolve a panels specification from the set of all specification by name and negative results`() {
-        val panelSpec = PanelTestSpecification("panel", null)
+        val panelSpec = PanelTestSpecification("panel", TestVersion(null))
         val negativeResults =
             setOf(
                 SequencedNegativeResult(GENE, MolecularTestTarget.FUSION),
@@ -64,7 +65,7 @@ class PanelSpecificationsTest {
 
     @Test
     fun `Should throw illegal state when negative results contain unknown genes`() {
-        val panelSpec = PanelTestSpecification("panel", null)
+        val panelSpec = PanelTestSpecification("panel", TestVersion(null))
         val specifications = PanelSpecifications(
             geneFilter,
             mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))

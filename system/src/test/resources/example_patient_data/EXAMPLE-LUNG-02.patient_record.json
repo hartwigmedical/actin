@@ -435,7 +435,11 @@
       "experimentType": "PANEL",
       "testTypeDisplay": "NGS Lung Panel 1.2",
       "targetSpecification": {
-        "geneTargetMap": []
+        "geneTargetMap": [],
+        "testVersion": {
+          "versionDate": null,
+          "testDateIsBeforeOldestTestVersion": false
+        }
       },
       "refGenomeVersion": "V37",
       "containsTumorCells": true,

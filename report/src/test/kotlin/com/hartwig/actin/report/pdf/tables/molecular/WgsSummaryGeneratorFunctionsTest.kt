@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
@@ -9,10 +10,15 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
+import com.hartwig.actin.datamodel.molecular.panel.TestVersion
+import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
+import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class WgsSummaryGeneratorFunctionsTest {
 
@@ -91,5 +97,33 @@ class WgsSummaryGeneratorFunctionsTest {
         )
         val hasTmbTmlCells = WgsSummaryGeneratorFunctions.createTmbCells(record, false, Tables.createFixedWidthCols(100f, 100f))
         assertThat(hasTmbTmlCells).isFalse()
+    }
+
+    @Test
+    fun `Should show warning in case the date of the molecular test is before the oldest version date of this test`() {
+        val date = LocalDate.of(2023, 9, 19)
+        val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
+            SummaryType.DETAILS,
+            TestPatientFactory.createProperTestPatientRecord(),
+            molecularRecord.copy(
+                date = date,
+                targetSpecification = PanelTargetSpecification(emptyMap(), TestVersion(date.plusYears(1), true))
+            ),
+            wgsMolecular = null,
+            1.0F,
+            1.0F,
+            MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(
+                TestMolecularFactory.createMinimalWholeGenomeTest().drivers,
+                emptyList()
+            )
+        )
+        assertThat(
+            CellTestUtil.extractTextFromCell(
+                table.getCell(
+                    0,
+                    0
+                )
+            )
+        ).isEqualTo("The date of this test (2023-09-19) is older than the date of the oldest version of the test for which we could derive which genes were tested (2024-09-19). This version is still used to determine which genes were tested. This determination is potentially not correct.")
     }
 }

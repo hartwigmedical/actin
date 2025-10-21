@@ -14,11 +14,11 @@ class ClinicalDetailsChapterTest {
 
     private val proper = TestReportFactory.createProperTestReport()
     private val configuration = ReportConfiguration()
-    
+
     @Test
     fun `Should provide all clinical details tables when details are provided`() {
         val tables = ClinicalDetailsChapter(proper, configuration).createClinicalDetailGenerators()
-        
+
         assertThat(tables.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
             PatientCurrentDetailsGenerator::class,
@@ -37,7 +37,7 @@ class ClinicalDetailsChapterTest {
             )
         )
         val tables = ClinicalDetailsChapter(report, configuration).createClinicalDetailGenerators()
-        
+
         assertThat(tables.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
             PatientCurrentDetailsGenerator::class,

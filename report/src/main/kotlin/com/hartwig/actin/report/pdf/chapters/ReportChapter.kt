@@ -12,7 +12,7 @@ interface ReportChapter {
 
     fun pageSize(): PageSize
 
-    fun include() : Boolean
+    fun include(): Boolean
 
     fun render(document: Document)
 

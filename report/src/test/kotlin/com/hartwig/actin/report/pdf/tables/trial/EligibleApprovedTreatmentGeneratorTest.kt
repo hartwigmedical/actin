@@ -67,7 +67,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             patientRecord = PatientRecordFactory.fromInputs(clinicalRecord, molecularTests),
             treatmentMatch = treatmentMatch
         )
-        
+
         return ProxyStandardOfCareGenerator(report).contents()
     }
 }

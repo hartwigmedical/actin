@@ -68,8 +68,8 @@ class ReportContentProviderTest {
 
         assertThat(totalCohortSizeInput).isEqualTo(totalCohortSizeOnReport)
     }
-    
-    private fun chapters(report: Report) : List<ReportChapter>{
-        return ReportContentProvider(report, configuration).provideChapters()   
+
+    private fun chapters(report: Report): List<ReportChapter> {
+        return ReportContentProvider(report, configuration).provideChapters()
     }
 }
