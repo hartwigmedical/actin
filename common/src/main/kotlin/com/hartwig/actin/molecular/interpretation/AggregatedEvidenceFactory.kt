@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import com.hartwig.actin.util.MapFunctions
 
 object AggregatedEvidenceFactory {
