@@ -63,7 +63,6 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyIntentsOneIn
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
-import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentResponseOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentTypeOneInteger
