@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.util
+package com.hartwig.actin.datamodel.molecular.characteristics
 
 object MolecularCharacteristicEvents {
     const val MICROSATELLITE_UNSTABLE = "MSI"
