@@ -29,8 +29,12 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
                     && (types == null || treatmentHistoryEntry.matchesTypeFromSet(types) == true )
+            val categoryAndTypeMatchPotentially = treatmentHistoryEntry.categories().contains(category)
+                    && (types == null || treatmentHistoryEntry.allTreatments().all { it.types().isEmpty() })
+
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
+                hasPotentiallyValidTreatment = categoryAndTypeMatchPotentially && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
                         && startedPastMinDate == true
@@ -42,6 +46,10 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass("Has received $typesAndCategoryString treatment within requested time frame")
+            }
+
+            treatmentAssessment.hasPotentiallyValidTreatment -> {
+                EvaluationFactory.undetermined("Has potentially received $typesAndCategoryString treatment within requested time frame - exact drug type of patient's treatment unknown")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {

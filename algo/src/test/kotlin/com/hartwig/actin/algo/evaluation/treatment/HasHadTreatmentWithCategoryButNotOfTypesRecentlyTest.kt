@@ -118,6 +118,20 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
     }
 
     @Test
+    fun `Should be undetermined for recent treatment with correct category of unknown type`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(
+                drugTreatment(
+                    "test",
+                    MATCHING_CATEGORY,
+                    emptySet()
+                )
+            ), startYear = MIN_DATE.year + 1
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
     fun `Should return undetermined for recent trial treatment`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(treatment("test", true)), isTrial = true, startYear = MIN_DATE.year + 1

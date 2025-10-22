@@ -51,11 +51,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
     }
 
     @Test
-    fun `Should fail for recent correct treatment category with unknown type when types requested`() {
+    fun `Should be undetermined for recent correct treatment category with unknown type but matching category when types requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
