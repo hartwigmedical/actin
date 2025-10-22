@@ -133,7 +133,7 @@ class TrialsProvider(
 
         private fun externalEligibleTrials(patientRecord: PatientRecord): Set<EventWithExternalTrial> {
             return patientRecord.molecularTests.flatMap { test ->
-                AggregatedEvidenceFactory.create(test).eligibleTrialsPerEvent.flatMap {
+                AggregatedEvidenceFactory.createTrialEvidences(test).flatMap {
                     it.value.map { trial -> EventWithExternalTrial(it.key, trial) }
                 }
             }.toSet()
