@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
@@ -102,7 +103,44 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
     }
 
     @Test
-    fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
+    fun `Should be undetermined for recent trial treatments without category when looking for likely categories`() {
+        val treatmentHistoryEntry =
+            treatmentHistoryEntry(
+                setOf(treatment("", true, emptySet(), emptySet())), isTrial = true,
+                startYear = MIN_DATE.year + 1
+            )
+
+        assertBothFunctions(EvaluationResult.UNDETERMINED, withTreatmentHistoryEntry(treatmentHistoryEntry))
+    }
+
+    @Test
+    fun `Should fail for recent trial treatments without category when looking for unlikely trial categories`() {
+        val functionWithTypes =
+            HasHadTreatmentWithCategoryOfTypesRecently(
+                TreatmentCategory.TRANSPLANTATION,
+                setOf(OtherTreatmentType.ALLOGENIC),
+                MIN_DATE,
+                interpreter
+            )
+        val functionWithoutTypes =
+            HasHadTreatmentWithCategoryOfTypesRecently(
+                TreatmentCategory.TRANSPLANTATION,
+                null,
+                MIN_DATE,
+                interpreter
+            )
+        val treatmentHistoryEntry =
+            treatmentHistoryEntry(
+                setOf(treatment("", true, emptySet(), emptySet())),
+                isTrial = true, startYear = MIN_DATE.year + 1
+            )
+
+        assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun `Should be undetermined when looking for unlikely trial categories but category matches`() {
         val function =
             HasHadTreatmentWithCategoryOfTypesRecently(
                 TreatmentCategory.TRANSPLANTATION,
@@ -111,9 +149,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
                 interpreter
             )
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(drugTreatment("test", TreatmentCategory.TRANSPLANTATION)), isTrial = true, startYear = MIN_DATE.year + 1
+            setOf(drugTreatment("transplantation", TreatmentCategory.TRANSPLANTATION, types = emptySet())),
+            isTrial = true,
+            startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test

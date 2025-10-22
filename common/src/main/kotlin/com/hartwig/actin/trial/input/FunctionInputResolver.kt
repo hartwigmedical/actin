@@ -179,11 +179,6 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER -> {
-                    createOneTreatmentCategoryOneIntegerInput(function)
-                    return true
-                }
-
                 FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER -> {
                     createOneTreatmentTypeOneIntegerInput(function)
                     return true
@@ -546,14 +541,6 @@ class FunctionInputResolver(
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
             intents = toIntents(function.parameters[1]),
             integer = parameterAsInt(function, 2)
-        )
-    }
-
-    fun createOneTreatmentCategoryOneIntegerInput(function: EligibilityFunction): OneTreatmentCategoryOneInteger {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_ONE_INTEGER, 2)
-        return OneTreatmentCategoryOneInteger(
-            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
-            integer = parameterAsInt(function, 1)
         )
     }
 

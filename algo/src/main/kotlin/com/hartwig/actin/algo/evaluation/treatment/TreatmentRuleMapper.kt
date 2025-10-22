@@ -391,9 +391,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentCategoryWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryOneIntegerInput(function)
+            val input = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
             val (interpreter, minDate) = createInterpreterForWashout(input.integer, null, referenceDate)
-            HasHadTreatmentWithCategoryOfTypesRecently(input.category, null, minDate, interpreter)
+            val treatment = input.treatment
+            treatment.mappedType?.let { mappedType ->
+                HasHadTreatmentWithCategoryOfTypesRecently(treatment.mappedCategory, setOf(mappedType), minDate, interpreter)
+            } ?: HasHadTreatmentWithCategoryOfTypesRecently(treatment.mappedCategory, null, minDate, interpreter)
         }
     }
 

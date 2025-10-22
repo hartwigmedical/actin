@@ -28,7 +28,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
         val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
-                    && types?.let { treatmentHistoryEntry.matchesTypeFromSet(types) == true } ?: true
+                    && (types == null || treatmentHistoryEntry.matchesTypeFromSet(types) == true )
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
@@ -37,22 +37,22 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val typesList = types?.let { "${concatItemsWithOr(types)} " } ?: ""
+        val typesAndCategoryString = listOfNotNull(types?.let(::concatItemsWithOr), category.display()).joinToString(" ")
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
-                EvaluationFactory.pass("Has received $typesList${category.display()} treatment within requested time frame")
+                EvaluationFactory.pass("Has received $typesAndCategoryString treatment within requested time frame")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received $typesList${category.display()} treatment but inconclusive date")
+                EvaluationFactory.undetermined("Has received $typesAndCategoryString treatment but inconclusive if within requested time frame")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}")
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial may have included ${category.display()}")
             }
 
-            else -> EvaluationFactory.fail("Has not had $typesList${category.display()} treatment within requested time frame")
+            else -> EvaluationFactory.fail("Has not had $typesAndCategoryString treatment within requested time frame")
         }
     }
 }
