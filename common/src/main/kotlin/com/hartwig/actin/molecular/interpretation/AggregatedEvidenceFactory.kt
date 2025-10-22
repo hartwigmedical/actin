@@ -13,18 +13,22 @@ object AggregatedEvidenceFactory {
             AggregatedEvidence()
         } else {
             AggregatedEvidence(
-                createTreatmentEvidences(molecular),
-                createTrialEvidences(molecular)
+                mapByEvent(createTreatmentEvidences(molecular)), mapByEvent(createTrialEvidences(molecular))
             )
         }
     }
 
-    fun createTreatmentEvidences(molecular: MolecularTest): Map<String, Set<TreatmentEvidence>> {
-        return mapByEvent(actionableList(molecular)) { evidence -> evidence.treatmentEvidence }
+    private fun <E> mapByEvent(actionableAndEvidences: List<Pair<Actionable, Set<E>>>): Map<String, Set<E>> {
+        return actionableAndEvidences.groupBy({ it.first.eventName()!! }, { it.second })
+            .mapValues { (_, values) -> values.flatten().toSet() }
     }
 
-    fun createTrialEvidences(molecular: MolecularTest): Map<String, Set<ExternalTrial>> {
-        return mapByEvent(actionableList(molecular)) { evidence -> evidence.eligibleTrials }
+    fun createTreatmentEvidences(molecular: MolecularTest): List<Pair<Actionable, Set<TreatmentEvidence>>> {
+        return actionableAndEvidences(actionableList(molecular)) { evidence -> evidence.treatmentEvidence }
+    }
+
+    fun createTrialEvidences(molecular: MolecularTest): List<Pair<Actionable, Set<ExternalTrial>>> {
+        return actionableAndEvidences(actionableList(molecular)) { evidence -> evidence.eligibleTrials }
     }
 
     private fun actionableList(molecular: MolecularTest): List<Actionable> {
@@ -39,9 +43,9 @@ object AggregatedEvidenceFactory {
                 )
     }
 
-    private fun <E> mapByEvent(actionableList: List<Actionable>, valueFunction: (ClinicalEvidence) -> Set<E>): Map<String, Set<E>> {
-        return actionableList.filter { it.eventName() != null }.groupBy({ it.eventName()!! }, { valueFunction(it.evidence) })
-            .mapValues { (_, values) -> values.flatten().toSet() }
-            .filterValues { it.isNotEmpty() }
+    private fun <E> actionableAndEvidences(
+        actionableList: List<Actionable>, valueFunction: (ClinicalEvidence) -> Set<E>
+    ): List<Pair<Actionable, Set<E>>> {
+        return actionableList.filter { it.eventName() != null }.map { it to valueFunction(it.evidence) }.filter { it.second.isNotEmpty() }
     }
 }
