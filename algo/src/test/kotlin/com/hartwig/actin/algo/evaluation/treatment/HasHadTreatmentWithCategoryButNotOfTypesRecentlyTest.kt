@@ -98,12 +98,12 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
 
 
     @Test
-    fun `Should pass for recent treatment with correct category and two types of which is one is not ignored`() {
+    fun `Should fail for recent treatment with correct category and two types of which is one is ignored`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, IGNORE_TYPE_SET + setOf(DrugType.ANTI_TISSUE_FACTOR))),
             startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test

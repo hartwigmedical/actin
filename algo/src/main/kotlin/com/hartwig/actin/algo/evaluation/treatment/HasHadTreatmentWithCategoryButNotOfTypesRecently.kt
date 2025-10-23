@@ -23,7 +23,8 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
         val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val filteredTreatments = treatmentHistoryEntry.allTreatments().filter({ category in treatmentHistoryEntry.categories() })
-            val typeMatchAndTypesConfigured = filteredTreatments.any { treatment -> treatment.types().any { it !in ignoreTypes } }
+            val typeMatchAndTypesConfigured =
+                filteredTreatments.any { treatment -> treatment.types().none { it in ignoreTypes } && treatment.types().isNotEmpty() }
             val noTypesConfigured = filteredTreatments.any { it.types().isEmpty() }
 
             TreatmentAssessment(
