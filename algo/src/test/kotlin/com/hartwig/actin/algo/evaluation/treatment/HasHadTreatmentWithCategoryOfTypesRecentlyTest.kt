@@ -51,7 +51,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
     }
 
     @Test
-    fun `Should be undetermined for recent correct treatment category with unknown type but matching category when types requested`() {
+    fun `Should be undetermined for recent correct treatment category with unknown type when types requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), startYear = MIN_DATE.year + 1
         )
@@ -115,25 +115,22 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
 
     @Test
     fun `Should fail for recent trial treatments without category when looking for unlikely trial categories`() {
-        val functionWithTypes =
-            HasHadTreatmentWithCategoryOfTypesRecently(
-                TreatmentCategory.TRANSPLANTATION,
-                setOf(OtherTreatmentType.ALLOGENIC),
-                MIN_DATE,
-                interpreter
-            )
-        val functionWithoutTypes =
-            HasHadTreatmentWithCategoryOfTypesRecently(
-                TreatmentCategory.TRANSPLANTATION,
-                null,
-                MIN_DATE,
-                interpreter
-            )
-        val treatmentHistoryEntry =
-            treatmentHistoryEntry(
-                setOf(treatment("", true, emptySet(), emptySet())),
-                isTrial = true, startYear = MIN_DATE.year + 1
-            )
+        val functionWithTypes = HasHadTreatmentWithCategoryOfTypesRecently(
+            TreatmentCategory.TRANSPLANTATION,
+            setOf(OtherTreatmentType.ALLOGENIC),
+            MIN_DATE,
+            interpreter
+        )
+        val functionWithoutTypes = HasHadTreatmentWithCategoryOfTypesRecently(
+            TreatmentCategory.TRANSPLANTATION,
+            null,
+            MIN_DATE,
+            interpreter
+        )
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(treatment("", true, emptySet(), emptySet())),
+            isTrial = true, startYear = MIN_DATE.year + 1
+        )
 
         assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
         assertEvaluation(EvaluationResult.FAIL, functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
@@ -141,13 +138,12 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
 
     @Test
     fun `Should be undetermined when looking for unlikely trial categories but category matches`() {
-        val function =
-            HasHadTreatmentWithCategoryOfTypesRecently(
-                TreatmentCategory.TRANSPLANTATION,
-                setOf(OtherTreatmentType.ALLOGENIC),
-                MIN_DATE,
-                interpreter
-            )
+        val function = HasHadTreatmentWithCategoryOfTypesRecently(
+            TreatmentCategory.TRANSPLANTATION,
+            setOf(OtherTreatmentType.ALLOGENIC),
+            MIN_DATE,
+            interpreter
+        )
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("transplantation", TreatmentCategory.TRANSPLANTATION, types = emptySet())),
             isTrial = true,
@@ -181,13 +177,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
     @Test
     fun `Should pass for recent correct treatment category with other type and medication with correct type`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR))), startYear = MIN_DATE.year + 1
+            setOf(treatment("", true, emptySet(), emptySet())),
+            isTrial = true, startYear = MIN_DATE.year + 1
         )
         val medication = WashoutTestFactory.medication(null, MIN_DATE.plusMonths(2)).copy(
-            drug = Drug(
-                name = "", category = MATCHING_CATEGORY, drugTypes =
-                    MATCHING_TYPE_SET
-            ),
+            drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = MATCHING_TYPE_SET),
             startDate = MIN_DATE.plusMonths(1)
         )
         assertBothFunctions(

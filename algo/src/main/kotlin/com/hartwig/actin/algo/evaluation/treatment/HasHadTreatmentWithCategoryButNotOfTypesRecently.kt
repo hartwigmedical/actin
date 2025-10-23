@@ -22,17 +22,14 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
-                    && treatmentHistoryEntry.matchesTypeFromSet(ignoreTypes) != true && !treatmentHistoryEntry.allTreatments().all {
-                it.types().isEmpty()
-            }
-            val categoryAndTypeMatchPotentially = treatmentHistoryEntry.categories().contains(category)
-                    && treatmentHistoryEntry.allTreatments().all { it.types().isEmpty() }
+            val filteredTreatments = treatmentHistoryEntry.allTreatments().filter({ category in treatmentHistoryEntry.categories() })
+            val typeMatchAndTypesConfigured = filteredTreatments.any { treatment -> treatment.types().any { it !in ignoreTypes } }
+            val noTypesConfigured = filteredTreatments.any { it.types().isEmpty() }
 
             TreatmentAssessment(
-                hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
-                hasPotentiallyValidTreatment = categoryAndTypeMatchPotentially && startedPastMinDate == true,
-                hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
+                hasHadValidTreatment = typeMatchAndTypesConfigured && startedPastMinDate == true,
+                hasPotentiallyValidTreatment = noTypesConfigured && startedPastMinDate == true,
+                hasInconclusiveDate = typeMatchAndTypesConfigured && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
                         && startedPastMinDate == true
             )

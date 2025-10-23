@@ -26,16 +26,14 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                 record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE })
 
         val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
+            val categoryMatch = category in treatmentHistoryEntry.categories()
+            val typeMatch = if (types == null) true else treatmentHistoryEntry.matchesTypeFromSet(types)
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
-                    && (types == null || treatmentHistoryEntry.matchesTypeFromSet(types) == true )
-            val categoryAndTypeMatchPotentially = treatmentHistoryEntry.categories().contains(category)
-                    && (types == null || treatmentHistoryEntry.allTreatments().all { it.types().isEmpty() })
 
             TreatmentAssessment(
-                hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
-                hasPotentiallyValidTreatment = categoryAndTypeMatchPotentially && startedPastMinDate == true,
-                hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
+                hasHadValidTreatment = categoryMatch && typeMatch == true && startedPastMinDate == true,
+                hasPotentiallyValidTreatment = categoryMatch && typeMatch == null && startedPastMinDate == true,
+                hasInconclusiveDate = categoryMatch && typeMatch == true && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
                         && startedPastMinDate == true
             )
