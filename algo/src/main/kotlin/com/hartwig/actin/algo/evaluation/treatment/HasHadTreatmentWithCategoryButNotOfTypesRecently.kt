@@ -22,15 +22,14 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val filteredTreatments = treatmentHistoryEntry.allTreatments().filter({ category in treatmentHistoryEntry.categories() })
-            val typeMatchAndTypesConfigured =
-                filteredTreatments.any { treatment -> treatment.types().none { it in ignoreTypes } && treatment.types().isNotEmpty() }
-            val noTypesConfigured = filteredTreatments.any { it.types().isEmpty() }
+            val potentialTypeMatches = treatmentHistoryEntry.allTreatments()
+                .filter { it.categories().contains(category) && it.types().none(ignoreTypes::contains) }
+            val categoryAndTypeMatch = potentialTypeMatches.any { it.types().isNotEmpty() }
 
             TreatmentAssessment(
-                hasHadValidTreatment = typeMatchAndTypesConfigured && startedPastMinDate == true,
-                hasPotentiallyValidTreatment = noTypesConfigured && startedPastMinDate == true,
-                hasInconclusiveDate = typeMatchAndTypesConfigured && startedPastMinDate == null,
+                hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
+                hasPotentiallyValidTreatment = potentialTypeMatches.isNotEmpty() && startedPastMinDate == true,
+                hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
                         && startedPastMinDate == true
             )
