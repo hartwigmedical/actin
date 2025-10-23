@@ -112,7 +112,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 drugTreatment("test", MATCHING_CATEGORY, DRUG_TYPE_TO_IGNORE_SET),
-                drugTreatment("test", MATCHING_CATEGORY, OTHER_DRUG_TYPE_SET),
+                drugTreatment("test2", MATCHING_CATEGORY, OTHER_DRUG_TYPE_SET),
             ),
             startYear = MIN_DATE.year + 1
         )
