@@ -58,7 +58,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
 
     private val plotWidth = contentWidth() - 50
     private val plotHeight = contentHeight() - 100
-    
+
     override fun name(): String {
         return "Efficacy evidence"
     }
@@ -84,9 +84,9 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
             addStandardOfCareResistanceEvidence(document)
         }
         if (includeMolecularEvidence()) {
+            addMolecularEvidenceRanking(document)
             addMolecularEvidence(document)
             addMolecularEfficacyDescriptions(document)
-            addMolecularEvidenceRanking(document)
         }
     }
 
