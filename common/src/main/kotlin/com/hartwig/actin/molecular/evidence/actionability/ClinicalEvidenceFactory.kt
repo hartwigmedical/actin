@@ -81,7 +81,7 @@ class ClinicalEvidenceFactory(
             Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
         return matchingCriteriaPerTrialMatch.mapValues { (trial, criteria) ->
             criteria to trial.indications()
-                .filter { cancerTypeResolver.resolve(it) == CancerTypeMatchApplicability.SPECIFIC_TYPE }.toSet()
+                .filter { cancerTypeResolver.resolve(it).isOnLabel() }.toSet()
         }
             .filter { (_, criteriaAndIndications) -> criteriaAndIndications.second.isNotEmpty() }
     }
