@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.Displayable
 enum class LabMeasurement(val display: String, val defaultUnit: LabUnit) : Displayable {
     ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME_RATIO("APTT ratio", LabUnit.NONE),
     ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME("APTT", LabUnit.SECONDS),
+    ACTIVE_VITAMIN_B12("active vitamin B12", LabUnit.PICOMOLES_PER_LITER),
     ADRENOCORTICOTROPIC_HORMONE("ACTH", LabUnit.PICOMOLES_PER_LITER),
     ALANINE_AMINOTRANSFERASE("ALAT", LabUnit.UNITS_PER_LITER),
     ALBUMIN_CREATININE_RATIO("albumin/creatinine ratio", LabUnit.GRAMS_PER_MOLE),
@@ -101,6 +102,7 @@ enum class LabMeasurement(val display: String, val defaultUnit: LabUnit) : Displ
     FETAL_HEMOGLOBIN_F("HbF fraction", LabUnit.NONE),
     FETAL_HEMOGLOBIN_PCT("HbF percentage", LabUnit.PERCENTAGE),
     FIBRINOGEN("fibrinogen", LabUnit.GRAMS_PER_LITER),
+    FIVE_HIAA("5-HIAA", LabUnit.NANOMOLES_PER_LITER),
     FIVE_HIAA_24U("5-HIAA in 24h urine", LabUnit.NONE),
     FIVE_HIAA_CREATININE_RATIO("5-HIAA creatinine ratio", LabUnit.MILLIMOLES_PER_MOLE),
     FIVE_HIAA_URINE("5-HIAA in urine", LabUnit.MICROMOLES_PER_LITER),
@@ -273,6 +275,7 @@ enum class LabMeasurement(val display: String, val defaultUnit: LabUnit) : Displ
     URINE_VOLUME_24H("24-hour volume urine", LabUnit.MILLILITERS),
     UROBILINOGEN_URINE("urobilinogen in urine", LabUnit.MICROMOLES_PER_LITER),
     VITAMIN_A("vitamin A", LabUnit.MICROMOLES_PER_LITER),
+    VITAMIN_B3("vitamin B3", LabUnit.MICROMOLES_PER_LITER),
     VITAMIN_B12("vitamin B12", LabUnit.PICOMOLES_PER_LITER),
     VITAMIN_D_1_25_DI_OH("1.25-di-OH Vitamin D", LabUnit.PICOMOLES_PER_LITER),
     VITAMIN_D_25_OH("vitamin D 25-OH", LabUnit.NANOMOLES_PER_LITER),
