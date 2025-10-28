@@ -29,15 +29,20 @@ class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentE
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f)
         val header = listOf("Event / Variant", "Treatment", "Score").map(Cells::createHeader)
 
-        // Group treatments by their associated events
+        // Group treatments by associated events
         val groupedRankings = treatmentEvidenceRanking.ranking.groupBy { it.events }
 
-        // For each event group, sort treatments by score and prepare table cells
-        val cells = groupedRankings.flatMap { (event, treatments) ->
-            // Add a row for the event (spanning columns if necessary)
-            val eventRow = listOf(Cells.createHeader(event ?: "Unknown Event"), Cells.createContent(""), Cells.createContent(""))
+        // Partition groups into variants and event groups
+        val (variantGroups, eventGroups) = groupedRankings.entries.partition { (event, _) ->
+            event != null && event.matches(Regex(".*\\b(del|amp|fusion|mut|[A-Za-z]+\\d+)\\b.*", RegexOption.IGNORE_CASE))
+        }
 
-            // Process and rank treatments within this event group
+        // Combine groups with variants first
+        val orderedGroups = variantGroups + eventGroups
+
+        // Generate table rows for each group
+        val cells = orderedGroups.flatMap { (event, treatments) ->
+            val eventRow = listOf(Cells.createHeader(event ?: "Unknown Event"), Cells.createContent(""), Cells.createContent(""))
             val treatmentRows = treatments.sortedByDescending { it.score }.flatMap {
                 listOf(
                     Cells.createContent(""), // Empty cell under Event
@@ -45,11 +50,10 @@ class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentE
                     Cells.createContent(DecimalFormat.getIntegerInstance().format(it.score))
                 )
             }
-
             eventRow + treatmentRows
         }
 
-        // Add header and cells to the table
+        // Add headers and cells to the table
         (header + cells).forEach(table::addCell)
         return table
     }
