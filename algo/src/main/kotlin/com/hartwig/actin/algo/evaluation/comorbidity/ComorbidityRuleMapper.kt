@@ -49,9 +49,9 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     IcdConstants.FISTULA_OF_APPENDIX,
                 ), "gastrointestinal fistula"
             ),
-            EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
-                setOf(IcdConstants.IMMUNE_SYSTEM_DISEASE_CHAPTER),
-                "immune system disease"
+            EligibilityRule.HAS_HISTORY_OF_IMMUNODEFICIENCY to hasHadComorbiditiesWithIcdCodeCreator(
+                IcdConstants.IMMUNO_DEFICIENCY_SET,
+                "immunodeficiency"
             ),
             EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE_INCLUDING_PNEUMONITIS to hasHadComorbiditiesWithIcdCodeCreator(
                 IcdConstants.INTERSTITIAL_LUNG_DISEASE_SET + IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
