@@ -17,7 +17,7 @@ class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentE
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f)
         val header = listOf("Treatment", "Events", "Score").map(Cells::createHeader)
         val cells = treatmentEvidenceRanking.ranking.sortedBy { it.score }.reversed().flatMap {
-            listOf(it.treatment, it.events.joinToString("\n"), DecimalFormat.getIntegerInstance().format(it.score))
+            listOf(it.treatment, it.events.toString(), DecimalFormat.getIntegerInstance().format(it.score))
         }.map(Cells::createContent)
         (header + cells).forEach(table::addCell)
         return table

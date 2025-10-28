@@ -11,7 +11,7 @@ fun assertThatPdf(actual: String): PdfAssertion {
     return PdfAssertion(actual)
 }
 
-private const val OUTPUT_PATH = "target/test-classes"
+private const val OUTPUT_PATH = "targetGene/test-classes"
 
 class PdfAssertion(private val actual: String) {
 
