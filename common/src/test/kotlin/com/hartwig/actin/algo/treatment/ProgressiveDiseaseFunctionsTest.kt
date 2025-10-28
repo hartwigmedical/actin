@@ -1,5 +1,6 @@
-package com.hartwig.actin.algo.evaluation.treatment
+package com.hartwig.actin.algo.treatment
 
+import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.evaluateTreatmentHistory
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPD
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
