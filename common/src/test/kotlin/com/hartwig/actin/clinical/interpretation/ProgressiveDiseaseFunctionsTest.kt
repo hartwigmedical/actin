@@ -28,28 +28,12 @@ class ProgressiveDiseaseFunctionsTest {
 
     @Test
     fun `Should return true when stop reason is null and duration was sufficient`() {
-        assertThat(
-            treatmentResultedInPD(
-                treatmentHistoryEntryWithDates(
-                    null,
-                    null,
-                    STOP_MONTH_SUFFICIENT_DURATION
-                )
-            )
-        ).isTrue()
+        assertThat(treatmentResultedInPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION))).isTrue()
     }
 
     @Test
     fun `Should return null when stop reason is null and duration was insufficient`() {
-        assertThat(
-            treatmentResultedInPD(
-                treatmentHistoryEntryWithDates(
-                    null,
-                    null,
-                    STOP_MONTH_INSUFFICIENT_DURATION
-                )
-            )
-        ).isNull()
+        assertThat(treatmentResultedInPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION))).isNull()
     }
 
     @Test
