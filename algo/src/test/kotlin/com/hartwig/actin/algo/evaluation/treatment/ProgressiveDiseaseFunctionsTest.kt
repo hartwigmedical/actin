@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.evaluateTreatmentHistory
-import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPD
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEvaluationFunctions.evaluateTreatmentHistory
+import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.treatmentResultedInPD
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -112,7 +112,7 @@ class ProgressiveDiseaseFunctionsTest {
         assertThat(
             evaluateTreatmentHistory(TreatmentTestFactory.withTreatmentHistory(emptyList()), TARGET_DRUG_SET)
         ).isEqualTo(
-            ProgressiveDiseaseFunctions.TreatmentHistoryEvaluation(
+            TreatmentHistoryEvaluationFunctions.TreatmentHistoryEvaluation(
                 matchingDrugsWithPD = emptySet(),
                 matchingDrugs = emptySet(),
                 matchesWithUnclearPD = false,
@@ -130,7 +130,7 @@ class ProgressiveDiseaseFunctionsTest {
         assertThat(
             evaluateTreatmentHistory(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistory), emptySet())
         ).isEqualTo(
-            ProgressiveDiseaseFunctions.TreatmentHistoryEvaluation(
+            TreatmentHistoryEvaluationFunctions.TreatmentHistoryEvaluation(
                 matchingDrugsWithPD = emptySet(),
                 matchingDrugs = emptySet(),
                 matchesWithUnclearPD = false,
@@ -148,7 +148,7 @@ class ProgressiveDiseaseFunctionsTest {
         assertThat(
             evaluateTreatmentHistory(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistory), emptySet())
         ).isEqualTo(
-            ProgressiveDiseaseFunctions.TreatmentHistoryEvaluation(
+            TreatmentHistoryEvaluationFunctions.TreatmentHistoryEvaluation(
                 matchingDrugsWithPD = emptySet(),
                 matchingDrugs = emptySet(),
                 matchesWithUnclearPD = false,
