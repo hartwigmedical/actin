@@ -22,10 +22,13 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
-                    && treatmentHistoryEntry.matchesTypeFromSet(ignoreTypes) != true
+            val potentialTypeMatches = treatmentHistoryEntry.allTreatments()
+                .filter { it.categories().contains(category) && it.types().none(ignoreTypes::contains) }
+            val categoryAndTypeMatch = potentialTypeMatches.any { it.types().isNotEmpty() }
+
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
+                hasPotentiallyValidTreatment = potentialTypeMatches.isNotEmpty() && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
                         && startedPastMinDate == true
@@ -36,7 +39,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
 
         val hadCancerMedicationWithCategoryButNotOfTypes =
-            activeOrRecentlyStoppedMedications?.any { medication -> medication.hasCategory(category) && !medication.hasDrugType(ignoreTypes) }
+            activeOrRecentlyStoppedMedications?.any { medication ->
+                medication.hasCategory(category) && !medication.hasDrugType(
+                    ignoreTypes
+                )
+            }
                 ?: false
 
         val ignoringTypesList = Format.concatItemsWithAnd(ignoreTypes)
@@ -44,6 +51,10 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
         return when {
             treatmentAssessment.hasHadValidTreatment || hadCancerMedicationWithCategoryButNotOfTypes -> {
                 EvaluationFactory.pass("Has received ${category.display()} treatment ignoring $ignoringTypesList")
+            }
+
+            treatmentAssessment.hasPotentiallyValidTreatment -> {
+                EvaluationFactory.undetermined("Has potentially received ${category.display()} treatment ignoring $ignoringTypesList - exact drug type of patient's treatment unknown")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {

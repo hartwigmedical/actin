@@ -15,7 +15,7 @@ import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecently(
     private val category: TreatmentCategory,
-    private val types: Set<TreatmentType>,
+    private val types: Set<TreatmentType>?,
     private val minDate: LocalDate,
     private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
@@ -26,37 +26,39 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                 record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE })
 
         val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
+            val categoryMatch = category in treatmentHistoryEntry.categories()
+            val typeMatch = if (types == null) true else treatmentHistoryEntry.matchesTypeFromSet(types)
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
-                    && treatmentHistoryEntry.matchesTypeFromSet(types) == true
+
             TreatmentAssessment(
-                hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
-                hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
+                hasHadValidTreatment = categoryMatch && typeMatch == true && startedPastMinDate == true,
+                hasPotentiallyValidTreatment = categoryMatch && typeMatch == null && startedPastMinDate == true,
+                hasInconclusiveDate = categoryMatch && typeMatch == true && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
                         && startedPastMinDate == true
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val typesList = concatItemsWithOr(types)
+        val typesAndCategoryString = listOfNotNull(types?.let(::concatItemsWithOr), category.display()).joinToString(" ")
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
-                EvaluationFactory.pass("Has received $typesList ${category.display()} treatment")
+                EvaluationFactory.pass("Has received $typesAndCategoryString treatment within requested time frame")
+            }
+
+            treatmentAssessment.hasPotentiallyValidTreatment -> {
+                EvaluationFactory.undetermined("Has potentially received $typesAndCategoryString treatment within requested time frame - exact drug type of patient's treatment unknown")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received $typesList ${category.display()} treatment but inconclusive date")
+                EvaluationFactory.undetermined("Has received $typesAndCategoryString treatment but inconclusive if within requested time frame")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}")
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial may have included ${category.display()}")
             }
 
-            else -> {
-                EvaluationFactory.fail(
-                    "Has not had recent $typesList ${category.display()} treatment"
-                )
-            }
+            else -> EvaluationFactory.fail("Has not had $typesAndCategoryString treatment within requested time frame")
         }
     }
 }

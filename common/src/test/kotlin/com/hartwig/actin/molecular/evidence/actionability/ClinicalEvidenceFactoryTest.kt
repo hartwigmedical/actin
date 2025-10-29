@@ -289,6 +289,49 @@ class ClinicalEvidenceFactoryTest {
     }
 
     @Test
+    fun `Should include SERVE actionable trial with all applicable cancer type`() {
+        val matchingEvent = TestServeMolecularFactory.createActionableEvent(
+            sourceDate = LocalDate.of(2024, 2, 1),
+            sourceEvent = "all type event"
+        )
+        val criteria = TestServeMolecularFactory.createHotspotCriterium(matchingEvent)
+        val indication = TestServeFactory.createIndicationWithTypeAndExcludedTypes(type = "all type", excludedTypes = emptySet())
+        val trial = TestServeTrialFactory.create(
+            nctId = "NCT00000001",
+            indications = setOf(indication),
+            urls = setOf("https://clinicaltrials.gov/study/NCT00000001")
+        )
+        every { cancerTypeResolver.resolve(indication) } returns CancerTypeMatchApplicability.ALL_TYPES
+
+        val result = factory.create(
+            ActionabilityMatch(
+                evidenceMatches = emptyList(),
+                matchingCriteriaPerTrialMatch = mapOf(trial to setOf(criteria))
+            )
+        )
+
+        val expectedClinicalEvidence = TestClinicalEvidenceFactory.withEligibleTrial(
+            TestExternalTrialFactory.create(
+                nctId = "NCT00000001",
+                molecularMatches = setOf(
+                    TestMolecularMatchDetailsFactory.create(
+                        sourceDate = matchingEvent.sourceDate(),
+                        sourceEvent = matchingEvent.sourceEvent(),
+                        sourceEvidenceType = EvidenceType.HOTSPOT_MUTATION,
+                        isIndirect = false
+                    )
+                ),
+                applicableCancerTypes = setOf(
+                    CancerType(matchedCancerType = "all type", excludedCancerSubTypes = emptySet())
+                ),
+                url = "https://clinicaltrials.gov/study/NCT00000001"
+            )
+        )
+
+        assertThat(result).isEqualTo(expectedClinicalEvidence)
+    }
+
+    @Test
     fun `Should create multiple external trials for multiple SERVE actionable trial`() {
         val expectedSourceDate = LocalDate.of(2024, 1, 1)
         val event1 = TestServeMolecularFactory.createActionableEvent(sourceDate = expectedSourceDate, sourceEvent = "event 1")
