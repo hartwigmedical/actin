@@ -6,5 +6,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 data class TumorMutationalBurden(
     val score: Double,
     val isHigh: Boolean,
-    override val evidence: ClinicalEvidence
+    override val evidence: ClinicalEvidence,
+    override val event: String
 ) : Actionable

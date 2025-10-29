@@ -15,7 +15,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.math.exp
 
-data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceScore>) : Comparable<TreatmentRankResult> {
+data class TreatmentRankResult(val treatment: String, val event: String, val scores: List<EvidenceScore>) :
+    Comparable<TreatmentRankResult> {
 
     val score = scores.sumOf { it.score }
 
@@ -24,7 +25,7 @@ data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceS
     }
 }
 
-data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String)
+data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String, val event: String)
 data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, val tumorMatch: TumorMatch, val benefit: Boolean)
 
 class TreatmentRankingModel(
@@ -39,14 +40,17 @@ class TreatmentRankingModel(
                 RankedTreatment(
                     //it.scores.map { s -> s.event }.toSet(),
                     it.treatment,
-                    extractEventForTreatment(record, it.treatment), // Extract only relevant variants,
+                    it.event, // Extract only relevant variants,
                     it.scores.sumOf { s -> s.score }
                 )
             })
     }
 
     private fun extractEventForTreatment(record: PatientRecord, treatment: String): String? {
+
         // Iterate through molecular tests in the patient record
+
+
         record.molecularTests.forEach { molecularTest ->
             // 1. Check and return the first matching patient variant
             molecularTest.drivers.variants.find { variant ->
@@ -151,6 +155,7 @@ class TreatmentRankingModel(
                 TreatmentEvidenceWithTarget(
                     treatmentEvidence,
                     resolveTarget(actionable, treatmentEvidence),
+                    actionable.event
                 )
             }
         }

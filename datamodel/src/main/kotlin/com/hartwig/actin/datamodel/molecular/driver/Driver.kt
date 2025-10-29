@@ -21,7 +21,6 @@ fun evidenceTier(driver: Driver): EvidenceTier {
 
 interface Driver : Actionable {
     val isReportable: Boolean
-    val event: String
     val driverLikelihood: DriverLikelihood?
 
     fun evidenceTier() = evidenceTier(this)
