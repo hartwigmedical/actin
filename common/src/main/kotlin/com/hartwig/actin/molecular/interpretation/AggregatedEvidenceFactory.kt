@@ -9,13 +9,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 object AggregatedEvidenceFactory {
 
     fun create(molecular: MolecularTest): AggregatedEvidence {
-        return if (!molecular.hasSufficientQuality) {
-            AggregatedEvidence()
-        } else {
-            AggregatedEvidence(
-                mapByEvent(createTreatmentEvidences(molecular)), mapByEvent(createTrialEvidences(molecular))
-            )
-        }
+        return AggregatedEvidence(
+            mapByEvent(createTreatmentEvidences(molecular)), mapByEvent(createTrialEvidences(molecular))
+        )
     }
 
     private fun <E> mapByEvent(actionableAndEvidences: List<Pair<Actionable, Set<E>>>): Map<String, Set<E>> {
@@ -32,15 +28,19 @@ object AggregatedEvidenceFactory {
     }
 
     private fun actionableList(molecular: MolecularTest): List<Actionable> {
-        val drivers = molecular.drivers
-        val characteristics = molecular.characteristics
-        return drivers.variants + drivers.copyNumbers + drivers.homozygousDisruptions + drivers.disruptions + drivers.fusions + drivers.viruses +
-                listOfNotNull(
-                    characteristics.microsatelliteStability,
-                    characteristics.homologousRecombination,
-                    characteristics.tumorMutationalBurden,
-                    characteristics.tumorMutationalLoad
-                )
+        return if (!molecular.hasSufficientQuality) {
+            emptyList()
+        } else {
+            val drivers = molecular.drivers
+            val characteristics = molecular.characteristics
+            return drivers.variants + drivers.copyNumbers + drivers.homozygousDisruptions + drivers.disruptions + drivers.fusions + drivers.viruses +
+                    listOfNotNull(
+                        characteristics.microsatelliteStability,
+                        characteristics.homologousRecombination,
+                        characteristics.tumorMutationalBurden,
+                        characteristics.tumorMutationalLoad
+                    )
+        }
     }
 
     private fun <E> actionableAndEvidences(
