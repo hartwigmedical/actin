@@ -1,20 +1,20 @@
-package com.hartwig.actin.algo.treatment
+package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.treatment.TrialFunctions
-import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialFunctionsTest {
-    private val treatmentEntryWithNoCategory =
-        TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("", true, emptySet(), emptySet())), isTrial = true)
+    private val treatmentEntryWithNoCategory = treatmentHistoryEntry(setOf(treatment("", true, emptySet(), emptySet())), isTrial = true)
 
     @Test
     fun `Should indicate possible trial match for trial treatment with matching category and no types`() {
-        Assertions.assertThat(
+        assertThat(
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.CHEMOTHERAPY, isTrial = true), setOf(TreatmentCategory.CHEMOTHERAPY)
             )
@@ -23,18 +23,18 @@ class TrialFunctionsTest {
 
     @Test
     fun `Should indicate possible trial match for trial treatment with no category and no types for likely trial category`() {
-        Assertions.assertThat(TrialFunctions.treatmentMayMatchAsTrial(treatmentEntryWithNoCategory, setOf(TreatmentCategory.CHEMOTHERAPY))).isTrue
+        assertThat(TrialFunctions.treatmentMayMatchAsTrial(treatmentEntryWithNoCategory, setOf(TreatmentCategory.CHEMOTHERAPY))).isTrue
     }
 
     @Test
     fun `Should indicate possible trial match for trial entry when any treatment may match criteria`() {
-        Assertions.assertThat(
+        assertThat(
             TrialFunctions.treatmentMayMatchAsTrial(
-                TreatmentTestFactory.treatmentHistoryEntry(
+                treatmentHistoryEntry(
                     setOf(
-                        TreatmentTestFactory.drugTreatment("", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE)),
-                        TreatmentTestFactory.drugTreatment("", TreatmentCategory.TARGETED_THERAPY),
-                        TreatmentTestFactory.treatment("", true, emptySet(), emptySet())
+                        drugTreatment("", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE)),
+                        drugTreatment("", TreatmentCategory.TARGETED_THERAPY),
+                        treatment("", true, emptySet(), emptySet())
                     ),
                     isTrial = true
                 ),
@@ -45,11 +45,10 @@ class TrialFunctionsTest {
 
     @Test
     fun `Should not indicate possible trial match for trial treatment and matching category when types are known`() {
-        Assertions.assertThat(
+        assertThat(
             TrialFunctions.treatmentMayMatchAsTrial(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(TreatmentTestFactory.drugTreatment("", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE))),
-                    isTrial = true
+                treatmentHistoryEntry(
+                    setOf(drugTreatment("", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE))), isTrial = true
                 ),
                 setOf(TreatmentCategory.CHEMOTHERAPY)
             )
@@ -58,7 +57,7 @@ class TrialFunctionsTest {
 
     @Test
     fun `Should not indicate possible trial match for trial treatment and different category`() {
-        Assertions.assertThat(
+        assertThat(
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true), setOf(TreatmentCategory.CHEMOTHERAPY)
             )
@@ -67,7 +66,7 @@ class TrialFunctionsTest {
 
     @Test
     fun `Should not indicate possible trial match for non-trial treatment and matching category`() {
-        Assertions.assertThat(
+        assertThat(
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.CHEMOTHERAPY), setOf(TreatmentCategory.CHEMOTHERAPY)
             )
@@ -76,8 +75,8 @@ class TrialFunctionsTest {
 
     @Test
     fun `Should not indicate possible trial match for trial treatment and unlikely trial category`() {
-        Assertions.assertThat(TrialFunctions.treatmentMayMatchAsTrial(treatmentEntryWithNoCategory, setOf(TreatmentCategory.SURGERY))).isFalse
-        Assertions.assertThat(
+        assertThat(TrialFunctions.treatmentMayMatchAsTrial(treatmentEntryWithNoCategory, setOf(TreatmentCategory.SURGERY))).isFalse
+        assertThat(
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.SURGERY), setOf(TreatmentCategory.SURGERY)
             )
@@ -85,5 +84,5 @@ class TrialFunctionsTest {
     }
 
     private fun treatmentEntryWithCategory(category: TreatmentCategory, isTrial: Boolean = false): TreatmentHistoryEntry =
-        TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("", category)), isTrial = isTrial)
+        treatmentHistoryEntry(setOf(drugTreatment("", category)), isTrial = isTrial)
 }
