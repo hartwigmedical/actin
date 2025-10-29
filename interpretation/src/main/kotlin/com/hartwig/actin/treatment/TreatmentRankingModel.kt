@@ -215,7 +215,7 @@ class TreatmentRankingModel(
                     with(evidenceScore) {
                         val row = listOf(
                             "",
-                            event,
+                            sourceEvent,
                             scoringMatch.variantMatch.toString(),
                             scoringMatch.tumorMatch.toString(),
                             evidenceLevelDetails.toString(),

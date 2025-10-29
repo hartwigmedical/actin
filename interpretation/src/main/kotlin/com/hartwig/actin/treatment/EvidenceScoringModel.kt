@@ -7,8 +7,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class EvidenceScore(
-    val variantEvent: String,
-    val event: String,
+    val sourceEvent: String,
     val scoringMatch: ScoringMatch,
     val evidenceLevel: EvidenceLevel,
     val evidenceLevelDetails: EvidenceLevelDetails,
@@ -44,12 +43,11 @@ class EvidenceScoringModel(val config: ScoringConfig) {
         val factor = (config.categoryMatchLevels[scoringMatch] ?: 0) * direction
         val score = config.approvalPhaseLevel.scoring[treatment.evidenceLevelDetails] ?: 0
         return EvidenceScore(
-            variantEvent = "fill me in",
             scoringMatch = scoringMatch,
             evidenceLevel = treatment.evidenceLevel,
             evidenceLevelDetails = treatment.evidenceLevelDetails,
             score = factor * score.toDouble(),
-            event = treatment.molecularMatch.sourceEvent,
+            sourceEvent = treatment.molecularMatch.sourceEvent,
             evidenceDescription = treatment.efficacyDescription,
             cancerType = treatment.cancerTypeMatch.cancerType
         )
