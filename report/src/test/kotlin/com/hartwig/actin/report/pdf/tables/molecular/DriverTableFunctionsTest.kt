@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.TEST_ACTIONABLE
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.Test
@@ -21,11 +22,11 @@ class DriverTableFunctionsTest {
     @Test
     fun `Should correctly group by single event`() {
         val externalTrials = setOf(
-            EventWithExternalTrial("PTEN del", trial1),
-            EventWithExternalTrial("PTEN del", trial2),
-            EventWithExternalTrial("MYC amp", trial2),
-            EventWithExternalTrial("PTEN del", trial3),
-            EventWithExternalTrial("MYC amp", trial3)
+            EventWithExternalTrial("PTEN del", trial1, TEST_ACTIONABLE),
+            EventWithExternalTrial("PTEN del", trial2, TEST_ACTIONABLE),
+            EventWithExternalTrial("MYC amp", trial2, TEST_ACTIONABLE),
+            EventWithExternalTrial("PTEN del", trial3, TEST_ACTIONABLE),
+            EventWithExternalTrial("MYC amp", trial3, TEST_ACTIONABLE)
         )
         val groupedByEvent = DriverTableFunctions.groupByEvent(externalTrials)
         assertThat(groupedByEvent).containsOnly(

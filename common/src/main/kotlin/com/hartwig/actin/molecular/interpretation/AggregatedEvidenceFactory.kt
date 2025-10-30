@@ -19,27 +19,33 @@ object AggregatedEvidenceFactory {
             .mapValues { (_, values) -> values.flatten().toSet() }
     }
 
-    fun createTreatmentEvidences(molecular: MolecularTest): List<Pair<Actionable, Set<TreatmentEvidence>>> {
-        return actionableAndEvidences(actionableList(molecular)) { evidence -> evidence.treatmentEvidence }
+    fun createTreatmentEvidences(
+        molecular: MolecularTest,
+        filter: Function1<Actionable, Boolean> = { a -> true }
+    ): List<Pair<Actionable, Set<TreatmentEvidence>>> {
+        return actionableAndEvidences(actionableList(molecular, filter)) { evidence -> evidence.treatmentEvidence }
     }
 
-    fun createTrialEvidences(molecular: MolecularTest): List<Pair<Actionable, Set<ExternalTrial>>> {
-        return actionableAndEvidences(actionableList(molecular)) { evidence -> evidence.eligibleTrials }
+    fun createTrialEvidences(
+        molecular: MolecularTest,
+        filter: Function1<Actionable, Boolean> = { a -> true }
+    ): List<Pair<Actionable, Set<ExternalTrial>>> {
+        return actionableAndEvidences(actionableList(molecular, filter)) { evidence -> evidence.eligibleTrials }
     }
 
-    private fun actionableList(molecular: MolecularTest): List<Actionable> {
+    private fun actionableList(molecular: MolecularTest, filter: Function1<Actionable, Boolean>): List<Actionable> {
         return if (!molecular.hasSufficientQuality) {
             emptyList()
         } else {
             val drivers = molecular.drivers
             val characteristics = molecular.characteristics
-            return drivers.variants + drivers.copyNumbers + drivers.homozygousDisruptions + drivers.disruptions + drivers.fusions + drivers.viruses +
+            return (drivers.variants + drivers.copyNumbers + drivers.homozygousDisruptions + drivers.disruptions + drivers.fusions + drivers.viruses +
                     listOfNotNull(
                         characteristics.microsatelliteStability,
                         characteristics.homologousRecombination,
                         characteristics.tumorMutationalBurden,
                         characteristics.tumorMutationalLoad
-                    )
+                    )).filter(filter)
         }
     }
 

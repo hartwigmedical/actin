@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestMolecularMatchDetailsFactory
 import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.TEST_ACTIONABLE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -63,9 +64,9 @@ class ExternalTrialSummarizerTest {
     fun `Should summarize trials by aggregating events, source events and cancer types and sorting by event`() {
         val summarized = ExternalTrialSummarizer.summarize(
             listOf(
-                EventWithExternalTrial(TMB_TARGET, TRIAL_1),
-                EventWithExternalTrial(TMB_TARGET, TRIAL_2),
-                EventWithExternalTrial(EGFR_TARGET, TRIAL_2)
+                EventWithExternalTrial(TMB_TARGET, TRIAL_1, TEST_ACTIONABLE),
+                EventWithExternalTrial(TMB_TARGET, TRIAL_2, TEST_ACTIONABLE),
+                EventWithExternalTrial(EGFR_TARGET, TRIAL_2, TEST_ACTIONABLE)
             )
         )
         assertThat(summarized).containsExactly(

@@ -2,6 +2,7 @@ package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
@@ -10,7 +11,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 
 const val YOUNG_ADULT_CUT_OFF = 40
 
-data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
+data class EventWithExternalTrial(val event: String, val trial: ExternalTrial, val actionable: Actionable)
 
 class MolecularFilteredExternalTrials(val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
 
@@ -111,7 +112,7 @@ class TrialsProvider(
             countryOfReference: Country,
             retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
-            externalTrials: Set<EventWithExternalTrial> = externalEligibleTrials(patientRecord)
+            filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
             val isYoungAdult = (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF
             val cohorts = InterpretedCohortFactory.createEvaluableCohorts(
@@ -121,7 +122,7 @@ class TrialsProvider(
             val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
             val internalTrialIds = treatmentMatch.trialMatches.mapNotNull { it.identification.nctId }.toSet()
             return TrialsProvider(
-                externalTrials,
+                externalEligibleTrials(patientRecord, filter),
                 cohorts,
                 nonEvaluableCohorts,
                 internalTrialIds,
@@ -131,10 +132,13 @@ class TrialsProvider(
             )
         }
 
-        private fun externalEligibleTrials(patientRecord: PatientRecord): Set<EventWithExternalTrial> {
+        private fun externalEligibleTrials(
+            patientRecord: PatientRecord,
+            filter: Function1<Actionable, Boolean>
+        ): Set<EventWithExternalTrial> {
             return patientRecord.molecularTests.flatMap { test ->
-                AggregatedEvidenceFactory.createTrialEvidences(test).flatMap {
-                    it.second.map { trial -> EventWithExternalTrial(it.first.eventName()!!, trial) }
+                AggregatedEvidenceFactory.createTrialEvidences(test, filter).flatMap {
+                    it.second.map { trial -> EventWithExternalTrial(it.first.eventName()!!, trial, it.first) }
                 }
             }.toSet()
         }
