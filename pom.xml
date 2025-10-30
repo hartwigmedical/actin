@@ -29,8 +29,8 @@
         <serve.version>8.2.0</serve.version>
         <actin-personalization.version>0.30.2</actin-personalization.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
-        <actin-transvar.version>1.0.0</actin-transvar.version>
-        <actin-pave-lite.version>1.0.0</actin-pave-lite.version>
+        <actin-transvar.version>1.1.0</actin-transvar.version>
+        <actin-pave-lite.version>1.1.0</actin-pave-lite.version>
         <actin-feed.version>1.0.1</actin-feed.version>
         <pave.version>1.6</pave.version>
 
@@ -325,16 +325,16 @@
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
             </dependency>
-        <dependency>
-            <groupId>org.jetbrains.lets-plot</groupId>
-            <artifactId>lets-plot-image-export</artifactId>
-            <version>${letsplot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.lets-plot</groupId>
-            <artifactId>lets-plot-kotlin-jvm</artifactId>
-            <version>${letsplot-kotlin.version}</version>
-        </dependency>
+            <dependency>
+                <groupId>org.jetbrains.lets-plot</groupId>
+                <artifactId>lets-plot-image-export</artifactId>
+                <version>${letsplot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.lets-plot</groupId>
+                <artifactId>lets-plot-kotlin-jvm</artifactId>
+                <version>${letsplot-kotlin.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
