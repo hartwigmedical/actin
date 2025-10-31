@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import java.time.LocalDate
 
-class MmrStatusIsAvailable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class MmrStatusIsAvailable : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcResultAvailable = IhcTestEvaluation.create("MSI", record.ihcTests).filteredTests.isNotEmpty()

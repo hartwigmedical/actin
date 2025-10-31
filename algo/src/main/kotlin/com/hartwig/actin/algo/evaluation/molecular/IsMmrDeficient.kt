@@ -17,12 +17,65 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestEvaluation = IhcTestEvaluation.create("MMR", record.ihcTests)
-        val isMmrDeficientIhcResult = ihcTestEvaluation.hasCertainPositiveResultsForItem()
-        val isMmrProficientIhcResult = ihcTestEvaluation.hasCertainNegativeResultsForItem()
+        val isMmrDeficientIhcResult = isMmrDeficientIhc(ihcTestEvaluation)
+        val isMmrProficientIhcResult = isMmrProficientIhc(ihcTestEvaluation)
 
         val molecularTestFilter = MolecularTestFilter(maxTestAge, false)
         val molecularHistory = MolecularHistory(molecularTestFilter.apply(record.molecularTests))
-        val test = molecularHistory.latestOrangeMolecularRecord() ?: molecularHistory.allPanels()
+        val test = findRelevantTest(molecularHistory)
+
+        val drivers = test?.drivers
+        val msiVariants = drivers?.variants?.filter { variant -> variant.gene in GeneConstants.MMR_GENES && variant.isReportable }
+            ?.groupBy { it.isBiallelic } ?: emptyMap()
+        val msiCopyNumbers =
+            drivers?.copyNumbers?.filter { it.gene in GeneConstants.MMR_GENES && it.canonicalImpact.type.isDeletion } ?: emptyList()
+        val msiHomozygousDisruptions = drivers?.homozygousDisruptions?.filter { it.gene in GeneConstants.MMR_GENES } ?: emptyList()
+        val msiGenesWithBiallelicDriver = genesFrom(msiVariants[true] ?: emptyList(), msiCopyNumbers, msiHomozygousDisruptions)
+
+        val msiDisruptions = drivers?.disruptions?.filter { it.gene in GeneConstants.MMR_GENES && it.isReportable } ?: emptyList()
+        val msiGenesWithNonBiallelicDriver = genesFrom(msiVariants[false] ?: emptyList(), msiDisruptions)
+        val msiGenesWithUnknownBiallelicDriver = genesFrom(msiVariants[null] ?: emptyList())
+
+        val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
+
+        return when {
+            test == null && ihcTestEvaluation.filteredTests.isEmpty() ->
+                EvaluationFactory.undetermined("No MMR deficiency test result", isMissingMolecularResultForEvaluation = true)
+
+            test == null -> evaluateIhcOnly(isMmrDeficientIhcResult, isMmrProficientIhcResult)
+
+            test.characteristics.microsatelliteStability?.isUnstable == true && isMmrProficientIhcResult ->
+                EvaluationFactory.warn(
+                    "Tumor is MMR proficient by IHC but MSI by molecular test",
+                    inclusionEvents = inclusionMolecularEvents
+                )
+
+            test.characteristics.microsatelliteStability?.isUnstable == true ->
+                evaluateMsiWithDrivers(msiGenesWithBiallelicDriver, msiGenesWithNonBiallelicDriver, inclusionMolecularEvents)
+
+            isMmrDeficientIhcResult && test.characteristics.microsatelliteStability?.isUnstable == false ->
+                EvaluationFactory.warn("Tumor is dMMR by IHC but MSS by molecular test", inclusionEvents = setOf("dMMR by IHC"))
+
+            isMmrDeficientIhcResult ->
+                EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("IHC dMMR"))
+
+            isMmrProficientIhcResult || test.characteristics.microsatelliteStability?.isUnstable == false ->
+                EvaluationFactory.fail("Tumor is not dMMR")
+
+            else -> evaluateUndetermined(msiGenesWithBiallelicDriver, msiGenesWithNonBiallelicDriver, msiGenesWithUnknownBiallelicDriver)
+        }
+    }
+
+    private fun isMmrDeficientIhc(ihcTestEvaluation: IhcTestEvaluation) =
+        ihcTestEvaluation.filteredTests.isNotEmpty() &&
+                ihcTestEvaluation.filteredTests.all { it.scoreText?.lowercase() == "deficient" && !it.impliesPotentialIndeterminateStatus }
+
+    private fun isMmrProficientIhc(ihcTestEvaluation: IhcTestEvaluation) =
+        ihcTestEvaluation.filteredTests.isNotEmpty() &&
+                ihcTestEvaluation.filteredTests.all { it.scoreText?.lowercase() == "proficient" && !it.impliesPotentialIndeterminateStatus }
+
+    private fun findRelevantTest(molecularHistory: MolecularHistory) =
+        molecularHistory.latestOrangeMolecularRecord() ?: molecularHistory.allPanels()
             .firstOrNull {
                 it.characteristics.microsatelliteStability != null || GeneConstants.MMR_GENES.any { gene ->
                     it.testsGene(
@@ -32,91 +85,47 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
                 }
             }
 
-        if (test == null && ihcTestEvaluation.filteredTests.isEmpty()) {
-            return EvaluationFactory.undetermined("No MMR deficiency test result", isMissingMolecularResultForEvaluation = true)
+    private fun evaluateIhcOnly(isMmrDeficientIhcResult: Boolean, isMmrProficientIhcResult: Boolean): Evaluation =
+        when {
+            isMmrDeficientIhcResult -> EvaluationFactory.pass("Tumor is dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
+            isMmrProficientIhcResult -> EvaluationFactory.fail("Tumor is not dMMR by IHC")
+            else -> EvaluationFactory.undetermined("Undetermined dMMR result by IHC")
         }
 
-        if (test == null) {
-            return when {
-                isMmrDeficientIhcResult -> EvaluationFactory.pass("Tumor is dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
-                isMmrProficientIhcResult -> EvaluationFactory.fail("Tumor is not dMMR by IHC")
-                else -> EvaluationFactory.undetermined("Undetermined dMMR result by IHC")
-            }
+    private fun evaluateMsiWithDrivers(
+        msiGenesWithBiallelicDriver: String,
+        msiGenesWithNonBiallelicDriver: String,
+        inclusionMolecularEvents: Set<String>
+    ): Evaluation =
+        when {
+            msiGenesWithBiallelicDriver.isNotEmpty() -> EvaluationFactory.pass(
+                "Tumor is MSI with biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver)",
+                inclusionEvents = inclusionMolecularEvents
+            )
+
+            msiGenesWithNonBiallelicDriver.isNotEmpty() -> EvaluationFactory.warn(
+                "Tumor is MSI but with only non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver)",
+                inclusionEvents = inclusionMolecularEvents
+            )
+
+            else -> EvaluationFactory.warn(
+                "Tumor is MSI but without known driver event(s) in MMR gene(s)",
+                inclusionEvents = inclusionMolecularEvents
+            )
         }
 
-        val drivers = test.drivers
-        val msiVariants = drivers.variants.filter { variant -> variant.gene in GeneConstants.MMR_GENES && variant.isReportable }
-
-        val biallelicMsiVariants = msiVariants.filter { it.isBiallelic == true }
-        val nonBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == false }
-        val unknownBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == null }
-
-        val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in GeneConstants.MMR_GENES && it.canonicalImpact.type.isDeletion }
-        val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in GeneConstants.MMR_GENES }
-        val msiGenesWithBiallelicDriver = genesFrom(biallelicMsiVariants, msiCopyNumbers, msiHomozygousDisruptions)
-
-        val msiDisruptions = drivers.disruptions.filter { it.gene in GeneConstants.MMR_GENES && it.isReportable }
-        val msiGenesWithNonBiallelicDriver = genesFrom(nonBiallelicMsiVariants, msiDisruptions)
-
-        val msiGenesWithUnknownBiallelicDriver = genesFrom(unknownBiallelicMsiVariants)
-
-        val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
-        return when {
-            test.characteristics.microsatelliteStability?.isUnstable == true && isMmrProficientIhcResult -> {
-                EvaluationFactory.warn(
-                    "Tumor is MMR proficient by IHC but MSI by molecular test",
-                    inclusionEvents = inclusionMolecularEvents
-                )
-            }
-
-            test.characteristics.microsatelliteStability?.isUnstable == true -> {
-                if (msiGenesWithBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.pass(
-                        "Tumor is MSI with biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver)",
-                        inclusionEvents = inclusionMolecularEvents
-                    )
-                } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.warn(
-                        "Tumor is MSI but with only non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver)",
-                        inclusionEvents = inclusionMolecularEvents
-                    )
-                } else {
-                    EvaluationFactory.warn(
-                        "Tumor is MSI but without known driver event(s) in MMR gene(s)",
-                        inclusionEvents = inclusionMolecularEvents
-                    )
-                }
-            }
-
-            isMmrDeficientIhcResult && test.characteristics.microsatelliteStability?.isUnstable == false -> {
-                EvaluationFactory.warn("Tumor is dMMR by IHC but MSS by molecular test", inclusionEvents = setOf("dMMR by IHC"))
-            }
-
-            isMmrDeficientIhcResult -> EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("IHC dMMR"))
-
-            isMmrProficientIhcResult || test.characteristics.microsatelliteStability?.isUnstable == false -> {
-                EvaluationFactory.fail("Tumor is not dMMR")
-            }
-
-            else -> {
-                val message = when {
-                    msiGenesWithBiallelicDriver.isNotEmpty() -> {
-                        " but biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver) detected"
-                    }
-
-                    msiGenesWithNonBiallelicDriver.isNotEmpty() -> {
-                        " but non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver) detected"
-                    }
-
-                    msiGenesWithUnknownBiallelicDriver.isNotEmpty() -> {
-                        " but driver event(s) in MMR gene(s) ($msiGenesWithUnknownBiallelicDriver) detected"
-                    }
-
-                    else -> ""
-                }
-                EvaluationFactory.undetermined("No MSI test result$message", isMissingMolecularResultForEvaluation = true)
-            }
+    private fun evaluateUndetermined(
+        msiGenesWithBiallelicDriver: String,
+        msiGenesWithNonBiallelicDriver: String,
+        msiGenesWithUnknownBiallelicDriver: String
+    ): Evaluation {
+        val message = when {
+            msiGenesWithBiallelicDriver.isNotEmpty() -> " but biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver) detected"
+            msiGenesWithNonBiallelicDriver.isNotEmpty() -> " but non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver) detected"
+            msiGenesWithUnknownBiallelicDriver.isNotEmpty() -> " but driver event(s) in MMR gene(s) ($msiGenesWithUnknownBiallelicDriver) detected"
+            else -> ""
         }
+        return EvaluationFactory.undetermined("No MSI test result$message", isMissingMolecularResultForEvaluation = true)
     }
 
     private fun genesFrom(vararg geneAlterations: Iterable<GeneAlteration>) =

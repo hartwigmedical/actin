@@ -146,7 +146,7 @@ class IsMmrDeficientTest {
     fun `Should pass with IHC MMR deficient test result`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Positive")))
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))
         )
     }
 
@@ -154,7 +154,7 @@ class IsMmrDeficientTest {
     fun `Should fail with IHC MMR proficient test result`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Negative")))
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")))
         )
     }
 
@@ -162,7 +162,7 @@ class IsMmrDeficientTest {
     fun `Should evaluate to undetermined with unclear IHC MMR test result`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Negative", impliesIndeterminate = true)))
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient", impliesIndeterminate = true)))
         )
     }
 
@@ -170,7 +170,7 @@ class IsMmrDeficientTest {
     fun `Should resolve to undetermined when IHC and sequencing MMR results don't match`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Negative")), true, msiVariant(isReportable = true, isBiallelic = true)))
+            function.evaluate(MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")), true, msiVariant(isReportable = true, isBiallelic = true)))
         )
     }
 
