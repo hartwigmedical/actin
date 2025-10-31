@@ -60,6 +60,15 @@ class HasReceivedPlatinumBasedDoubletTest {
         )
     )
 
+    private val chemoImmunoHistory = listOf(
+        TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.treatment("CHEMOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
+                TreatmentTestFactory.treatment("IMMUNOTHERAPY", false, setOf(TreatmentCategory.IMMUNOTHERAPY), emptySet())
+            )
+        )
+    )
+
     @Test
     fun `Should pass if treatment history contains platinum doublet`() {
         val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet)))
@@ -111,6 +120,26 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID)).copy(oncologicalHistory = chemoradiationHistory)
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains chemo-immunotherapy with undefined chemo drug when tumor type is NSCLC`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)).copy(oncologicalHistory = chemoImmunoHistory)
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail if treatment history contains chemo-immunotherapy with undefined chemo drug when tumor type is other than NSCLC`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TumorTestFactory.withDoids(setOf(DoidConstants.BREAST_CANCER_DOID)).copy(oncologicalHistory = chemoImmunoHistory)
             )
         )
     }

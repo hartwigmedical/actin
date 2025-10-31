@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
@@ -28,7 +29,8 @@ import org.junit.Test
 class HasExhaustedSOCTreatmentsTest {
 
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
-    private val standardOfCareEvaluatorFactory = mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
+    private val standardOfCareEvaluatorFactory =
+        mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
     private val function = HasExhaustedSOCTreatments(standardOfCareEvaluatorFactory, TestDoidModelFactory.createMinimalTestDoidModel())
     private val nonEmptyTreatmentList = listOf(
         EvaluatedTreatment(
@@ -55,20 +57,19 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should pass for patient with NSCLC and history entry with treatment names CHEMOTHERAPY and RADIOTHERAPY`() {
+    fun `Should pass for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
-        val chemoradiation =
+        val (chemoradiation, chemoimmunotherapy) = listOf(
+            "RADIOTHERAPY" to TreatmentCategory.RADIOTHERAPY,
+            "IMMUNOTHERAPY" to TreatmentCategory.IMMUNOTHERAPY
+        ).map {
             TreatmentTestFactory.treatmentHistoryEntry(
-                listOf(
-                    DrugTreatment(
-                        name = "CHEMOTHERAPY",
-                        drugs = setOf(
-                            Drug(name = "Chemo", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()),
-                        )
-                    ),
-                    TreatmentTestFactory.treatment("RADIOTHERAPY", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())
+                treatments = listOf(
+                    TreatmentTestFactory.treatment("CHEMOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
+                    TreatmentTestFactory.treatment(it.first, false, setOf(it.second), emptySet())
                 )
             )
+        }
 
         val chemoradiationWithOther = chemoradiation.copy(
             treatments = chemoradiation.treatments + TreatmentTestFactory.treatment(
@@ -79,14 +80,24 @@ class HasExhaustedSOCTreatmentsTest {
             )
         )
 
-        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-        listOf(chemoradiation, chemoradiationWithOther).forEach {
-            val record = base.copy(
-                tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
-                oncologicalHistory = listOf(it)
+        listOf(chemoradiation, chemoimmunotherapy, chemoradiationWithOther).forEach {
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(
+                    TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
+                        .copy(oncologicalHistory = listOf(it))
+                )
             )
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
         }
+    }
+
+    @Test
+    fun `Should return undetermined for patient with NSCLC and history entry with undefined chemotherapy`() {
+        setStandardOfCareCanBeEvaluatedForPatient(false)
+        val record = createHistoryWithNSCLCAndTreatment(
+            TreatmentTestFactory.drugTreatment("CHEMOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
