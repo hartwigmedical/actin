@@ -31,8 +31,7 @@
       "hasActiveInfection": false,
       "description": null
     },
-    "lvef": 0.5,
-    "hasComplications": true
+    "lvef": 0.5
   },
   "performanceStatus": {
     "whoStatuses": [
@@ -134,7 +133,7 @@
       ],
       "year": 2023,
       "month": 1,
-      "comorbidityClass": "COMPLICATION"
+      "comorbidityClass": "OTHER_CONDITION"
     }
   ],
   "ihcTests": [
@@ -486,7 +485,11 @@
       "experimentType": "PANEL",
       "testTypeDisplay": "Small NGS Lung Panel",
       "targetSpecification": {
-        "geneTargetMap": []
+        "geneTargetMap": [],
+        "testVersion": {
+          "versionDate": null,
+          "testDateIsBeforeOldestTestVersion": false
+        }
       },
       "containsTumorCells": true,
       "hasSufficientPurity": true,
@@ -520,6 +523,7 @@
             "clonalLikelihood": null,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "TP53 R273H",
             "isReportable": true,
             "event": "TP53 R273H",
             "driverLikelihood": "HIGH",
@@ -602,6 +606,7 @@
             "clonalLikelihood": null,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "SMARCA4 T910M",
             "isReportable": true,
             "event": "SMARCA4 T910M",
             "driverLikelihood": "HIGH",

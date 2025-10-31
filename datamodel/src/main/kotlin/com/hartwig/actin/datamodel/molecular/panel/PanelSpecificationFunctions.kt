@@ -35,12 +35,19 @@ object PanelSpecificationFunctions {
         test: SequencingTest,
         panelTestSpecifications: Set<PanelTestSpecification>,
         registrationDate: LocalDate
-    ): LocalDate? {
+    ): TestVersion {
         val referenceDate = test.date ?: registrationDate
-        return panelTestSpecifications
+        val testsWithMatchingName = panelTestSpecifications
             .filter { it.testName == test.test }
-            .filter { it.versionDate?.isAfter(referenceDate) == false }
-            .maxByOrNull { it.versionDate!! }
-            ?.versionDate
+
+        val matchingVersion = testsWithMatchingName
+            .filter { it.testVersion.versionDate?.isAfter(referenceDate) == false }
+            .maxByOrNull { it.testVersion.versionDate!! }
+
+        return matchingVersion
+            ?.let { TestVersion(it.testVersion.versionDate, false) }
+            ?: testsWithMatchingName
+                .minByOrNull { it.testVersion.versionDate!! }
+                .let { TestVersion(it?.testVersion?.versionDate, it?.testVersion?.versionDate != null) }
     }
 }

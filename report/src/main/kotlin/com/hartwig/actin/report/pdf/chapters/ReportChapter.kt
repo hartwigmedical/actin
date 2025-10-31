@@ -12,6 +12,14 @@ interface ReportChapter {
 
     fun pageSize(): PageSize
 
+    fun include(): Boolean
+
+    fun render(document: Document)
+
+    fun contentHeight(): Float {
+        return pageSize().height - (5 + Constants.PAGE_MARGIN_TOP + Constants.PAGE_MARGIN_BOTTOM)
+    }
+    
     fun contentWidth(): Float {
         return pageSize().width - (5 + Constants.PAGE_MARGIN_LEFT + Constants.PAGE_MARGIN_RIGHT)
     }
@@ -19,9 +27,4 @@ interface ReportChapter {
     fun addChapterTitle(document: Document) {
         document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
     }
-
-    fun render(document: Document)
-
-    val include: Boolean
-        get() = true
 }

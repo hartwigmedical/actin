@@ -21,7 +21,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
-object WGSSummaryGeneratorFunctions {
+object WgsSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTable(
         summaryType: SummaryType,
@@ -35,6 +35,17 @@ object WGSSummaryGeneratorFunctions {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         val isLongSummaryType = summaryType == SummaryType.LONG_SUMMARY
         val isDetailsSummaryType = summaryType == SummaryType.DETAILS
+
+        if (isDetailsSummaryType && molecular.targetSpecification?.testVersion?.testDateIsBeforeOldestTestVersion == true) {
+            table.addCell(
+                Cells.createSpanningSubNote(
+                    "The date of this test (${molecular.date}) is older than the date of the oldest version of the test for which " +
+                            "we could derive which genes were tested (${molecular.targetSpecification?.testVersion?.versionDate!!}). This version is " +
+                            "still used to determine which genes were tested. This determination is potentially not correct.",
+                    table
+                )
+            )
+        }
 
         if (isLongSummaryType || (isDetailsSummaryType && patientRecord.tumor.biopsyLocation != null)) {
             table.addCell(Cells.createKey("Biopsy location"))

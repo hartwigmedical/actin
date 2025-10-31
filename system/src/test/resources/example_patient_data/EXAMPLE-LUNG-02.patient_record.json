@@ -32,8 +32,7 @@
       "hasActiveInfection": false,
       "description": null
     },
-    "lvef": 0.4,
-    "hasComplications": false
+    "lvef": 0.4
   },
   "performanceStatus": {
     "whoStatuses": [
@@ -436,7 +435,11 @@
       "experimentType": "PANEL",
       "testTypeDisplay": "NGS Lung Panel 1.2",
       "targetSpecification": {
-        "geneTargetMap": []
+        "geneTargetMap": [],
+        "testVersion": {
+          "versionDate": null,
+          "testDateIsBeforeOldestTestVersion": false
+        }
       },
       "refGenomeVersion": "V37",
       "containsTumorCells": true,
@@ -471,6 +474,7 @@
             "clonalLikelihood": null,
             "phaseGroups": null,
             "isCancerAssociatedVariant": true,
+            "sourceEvent": "PIK3CA E545K",
             "isReportable": true,
             "event": "PIK3CA E545K",
             "driverLikelihood": "HIGH",

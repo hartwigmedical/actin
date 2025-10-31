@@ -1,7 +1,19 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.clinical.Gender
-import com.hartwig.actin.datamodel.molecular.evidence.*
+import com.hartwig.actin.datamodel.molecular.evidence.CancerType
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
+import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchDetails
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.molecular.evidence.Hospital
+import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.Treatment
@@ -17,28 +29,31 @@ class ClinicalEvidenceFactory(
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         return ClinicalEvidence(
-            treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches),
+            treatmentEvidence = convertToTreatmentEvidences(actionabilityMatch.evidenceMatches, false) +
+                    convertToTreatmentEvidences(actionabilityMatch.indirectEvidenceMatches, true),
             eligibleTrials = convertToExternalTrials(determineOnLabelTrials(actionabilityMatch.matchingCriteriaPerTrialMatch))
         )
     }
 
     private fun convertToTreatmentEvidences(
-        evidences: List<EfficacyEvidence>
+        evidences: List<EfficacyEvidence>,
+        isIndirect: Boolean
     ): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
-            createTreatmentEvidence(cancerTypeResolver.resolve(evidence.indication()), evidence)
+            createTreatmentEvidence(cancerTypeResolver.resolve(evidence.indication()), evidence, isIndirect)
         }.toSet()
     }
 
     private fun createTreatmentEvidence(
         cancerTypeApplicability: CancerTypeMatchApplicability,
         evidence: EfficacyEvidence,
+        isIndirect: Boolean
     ): TreatmentEvidence {
         val treatment = evidence.treatment()
         return TreatmentEvidence(
             treatment = treatment.name(),
             treatmentTypes = determineTreatmentTypes(treatment),
-            molecularMatch = createMolecularMatchDetails(evidence.molecularCriterium()),
+            molecularMatch = createMolecularMatchDetails(evidence.molecularCriterium(), isIndirect),
             cancerTypeMatch = CancerTypeMatchDetails(
                 cancerType = CancerType(
                     matchedCancerType = evidence.indication().applicableType().name(),
@@ -66,7 +81,7 @@ class ClinicalEvidenceFactory(
             Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
         return matchingCriteriaPerTrialMatch.mapValues { (trial, criteria) ->
             criteria to trial.indications()
-                .filter { cancerTypeResolver.resolve(it) == CancerTypeMatchApplicability.SPECIFIC_TYPE }.toSet()
+                .filter { cancerTypeResolver.resolve(it).isOnLabel() }.toSet()
         }
             .filter { (_, criteriaAndIndications) -> criteriaAndIndications.second.isNotEmpty() }
     }
@@ -97,7 +112,7 @@ class ClinicalEvidenceFactory(
         }.toSet()
 
         val molecularMatches = matchingCriteria.map {
-            createMolecularMatchDetails(it)
+            createMolecularMatchDetails(it, false)
         }.toSet()
 
         val applicableCancerTypes = matchingIndications.map { indication ->
@@ -131,13 +146,14 @@ class ClinicalEvidenceFactory(
         )
     }
 
-    private fun createMolecularMatchDetails(molecularCriterium: MolecularCriterium): MolecularMatchDetails {
+    private fun createMolecularMatchDetails(molecularCriterium: MolecularCriterium, isIndirect: Boolean): MolecularMatchDetails {
         val (evidenceType, event) = ActionableEventExtraction.extractEvent(molecularCriterium)
         return MolecularMatchDetails(
             sourceDate = event.sourceDate(),
             sourceEvent = event.sourceEvent(),
             evidenceType,
-            sourceUrl = event.sourceUrls().first()
+            sourceUrl = event.sourceUrls().first(),
+            isIndirect = isIndirect
         )
     }
 

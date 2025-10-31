@@ -15,7 +15,7 @@ class InterpretedCohortsSummarizer(
     }
 
     fun driverIsActionable(driver: Driver): Boolean {
-        return (driver.evidence.eligibleTrials.isNotEmpty() || inclusionEventsOfOpenTrials.contains(driver.event)
+        return (driver.evidence.eligibleTrials.isNotEmpty() || inclusionEventsOfOpenTrials.any(driver.event::contains)
                 || approved(driver.evidence.treatmentEvidence).isNotEmpty())
     }
 
@@ -25,7 +25,14 @@ class InterpretedCohortsSummarizer(
 
             val eligibleOpenTrialsByInclusionEvent = openCohorts
                 .filter(InterpretedCohort::isPotentiallyEligible)
-                .flatMap { cohort -> cohort.molecularInclusionEvents.map { it to TrialAcronymAndLocations(cohort.acronym, cohort.locations) } }
+                .flatMap { cohort ->
+                    cohort.molecularInclusionEvents.map {
+                        it to TrialAcronymAndLocations(
+                            cohort.acronym,
+                            cohort.locations
+                        )
+                    }
+                }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, acronymsAndLocations) -> acronymsAndLocations.sortedBy { it.trialAcronym }.distinct() }
 

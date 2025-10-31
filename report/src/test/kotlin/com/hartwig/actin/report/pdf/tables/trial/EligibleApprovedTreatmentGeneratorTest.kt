@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
@@ -12,13 +11,13 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
-import com.hartwig.actin.report.datamodel.ReportFactory
+import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_STRING
 import com.hartwig.actin.report.pdf.getCellContents
+import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class EligibleApprovedTreatmentGeneratorTest {
 
@@ -64,13 +63,12 @@ class EligibleApprovedTreatmentGeneratorTest {
         molecularTests: List<MolecularTest> = emptyList(),
         treatmentMatch: TreatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
     ): Table {
-        val report = ReportFactory.create(
-            LocalDate.of(2025, 7, 1),
-            PatientRecordFactory.fromInputs(clinicalRecord, molecularTests),
-            treatmentMatch,
-            ReportConfiguration()
+        val report = TestReportFactory.createMinimalTestReport().copy(
+            patientRecord = PatientRecordFactory.fromInputs(clinicalRecord, molecularTests),
+            treatmentMatch = treatmentMatch
         )
-        return EligibleApprovedTreatmentGenerator(report).contents()
+
+        return ProxyStandardOfCareGenerator(report).contents()
     }
 }
 

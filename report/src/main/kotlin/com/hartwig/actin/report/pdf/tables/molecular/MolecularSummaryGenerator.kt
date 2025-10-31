@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.SummaryType
@@ -22,7 +21,6 @@ class MolecularSummaryGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val molecularTestFilter: MolecularTestFilter
 ) : TableGenerator {
 
     private val logger = LogManager.getLogger(MolecularSummaryGenerator::class.java)
@@ -37,8 +35,7 @@ class MolecularSummaryGenerator(
 
     override fun contents(): Table {
         val table = Tables.createSingleCol()
-        val nonIhcTestsIncludedInTrialMatching =
-            molecularTestFilter.apply(patientRecord.molecularTests).filterNot { it.experimentType == ExperimentType.IHC }
+        val nonIhcTestsIncludedInTrialMatching = patientRecord.molecularTests.filterNot { it.experimentType == ExperimentType.IHC }
         val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }
@@ -52,7 +49,7 @@ class MolecularSummaryGenerator(
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.getPathologyReportSummary(pathologyReport = pathologyReport)))
+                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)))
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
@@ -77,9 +74,9 @@ class MolecularSummaryGenerator(
             val wgsMolecular = MolecularHistory(listOf(molecularTest)).latestOrangeMolecularRecord()
             if (wgsMolecular?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-                    logger.warn("Generating WGS results for non-WGS sample")
+                    logger.debug("Generating WGS results for non-WGS sample")
                 }
-                val wgsGenerator = WGSSummaryGenerator(
+                val wgsGenerator = WgsSummaryGenerator(
                     selectSummaryType(molecularTest.experimentType),
                     patientRecord,
                     molecularTest,

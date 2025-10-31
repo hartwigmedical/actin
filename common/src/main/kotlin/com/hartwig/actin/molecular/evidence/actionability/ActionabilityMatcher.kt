@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
@@ -14,6 +15,7 @@ import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicT
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.apache.logging.log4j.LogManager
@@ -21,21 +23,79 @@ import org.apache.logging.log4j.Logger
 
 typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 
-class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, private val trials: List<ActionableTrial>) {
-
+class ActionabilityMatcher(
+    private val evidences: List<EfficacyEvidence>,
+    private val trials: List<ActionableTrial>,
+    hotspots: Set<KnownHotspot>,
+) {
     val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
+    private val indirectEvidenceMatcher = IndirectEvidenceMatcher.create(evidences, hotspots)
 
     fun match(molecularTest: MolecularTest): MatchesForActionable {
-        val evidences = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }
-        val trials = match(molecularTest, trials) { it.anyMolecularCriteria().toList() }
-        val allActionables = evidences.keys + trials.keys
+        val evidenceMatches = match(molecularTest, evidences) { listOf(it.molecularCriterium()) }
+        val trialMatches = match(molecularTest, trials) { it.anyMolecularCriteria().toList() }
+        val indirectMatches = findIndirectEvidenceMatchesForVariants(molecularTest, evidenceMatches)
+        val allActionables = evidenceMatches.keys + trialMatches.keys + indirectMatches.keys
 
         return allActionables.associateWith { actionable ->
-            val evidenceMatch = evidences[actionable] ?: emptySet()
-            val trialMatches = trials[actionable] ?: emptySet()
+            val evidenceMatch = evidenceMatches[actionable] ?: emptySet()
+            val trialMatch = trialMatches[actionable] ?: emptySet()
             ActionabilityMatch(
                 evidenceMatch.map { it.first },
-                trialMatches.groupBy { it.first }.mapValues { it.value.map { p -> p.second }.toSet() }
+                indirectMatches[actionable] ?: emptyList(),
+                trialMatch.groupBy { it.first }.mapValues { it.value.map { pair -> pair.second }.toSet() }
+            )
+        }
+    }
+
+    private fun findIndirectEvidenceMatchesForVariants(
+        molecularTest: MolecularTest,
+        evidenceMatches: Map<Actionable, Set<Pair<EfficacyEvidence, MolecularCriterium>>>
+    ): Map<Actionable, List<EfficacyEvidence>> {
+        return molecularTest.drivers.variants
+            .mapNotNull { variant -> findIndirectEvidenceMatchesForVariant(variant, evidenceMatches) }
+            .toMap()
+    }
+
+    private fun findIndirectEvidenceMatchesForVariant(
+        variant: Variant,
+        evidenceMatches: Map<Actionable, Set<Pair<EfficacyEvidence, MolecularCriterium>>>
+    ): Pair<Variant, List<EfficacyEvidence>>? {
+        val indirectEvidences = indirectEvidenceMatcher.findIndirectEvidence(variant)
+            .filterNot { evidence ->
+                evidenceMatches[variant]?.any { (directEvidence, _) -> directEvidence == evidence } == true
+            }
+            .distinct()
+        logIndirectEvidence(variant, indirectEvidences, evidenceMatches[variant])
+
+        return if (indirectEvidences.isEmpty()) {
+            null
+        } else {
+            variant to indirectEvidences
+        }
+    }
+
+    private fun logIndirectEvidence(
+        variant: Variant,
+        indirectEvidences: List<EfficacyEvidence>,
+        directMatches: Set<Pair<EfficacyEvidence, MolecularCriterium>>?
+    ) {
+        if (indirectEvidences.isNotEmpty()) {
+            val uniqueTreatmentCount = indirectEvidences.map { it.treatment().name() }.toSet().size
+            val directTreatmentNames = directMatches
+                ?.map { (directEvidence, _) -> directEvidence.treatment().name() }
+                ?.toSet()
+                .orEmpty()
+            val uniqueNovelTreatments = indirectEvidences
+                .map { it.treatment().name() }
+                .filterNot { directTreatmentNames.contains(it) }
+                .toSet()
+            logger.info(
+                "Found {} indirect evidence matches for variant {}: {} unique treatments, {} novel treatments",
+                indirectEvidences.size,
+                variant.event,
+                uniqueTreatmentCount,
+                uniqueNovelTreatments.size
             )
         }
     }
@@ -72,7 +132,6 @@ class ActionabilityMatcher(private val evidences: List<EfficacyEvidence>, privat
 
     private fun matchHotspot(molecularTest: MolecularTest, hotspot: ActionableHotspot): ActionabilityMatchResult {
         val matches = molecularTest.drivers.variants.filter { variant -> HotspotMatching.isMatch(hotspot, variant) }
-
         return successWhenNotEmpty(matches)
     }
 

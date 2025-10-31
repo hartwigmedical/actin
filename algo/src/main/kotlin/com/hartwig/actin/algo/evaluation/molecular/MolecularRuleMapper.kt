@@ -54,7 +54,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE_EXCLUDING_GENES_X to
                     hasMolecularEventInNSCLCWithAvailableSocFirstLineExcludingSomeGenesCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
-            EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
+            EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(onlyDeletions = false),
+            EligibilityRule.DELETION_OF_GENE_X to geneIsInactivatedCreator(onlyDeletions = true),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_KINASE_DOMAIN_IN_ANY_GENES_X to anyGeneHasActivatingMutationInKinaseDomainCreator(),
@@ -223,9 +224,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun geneIsInactivatedCreator(): FunctionCreator {
+    private fun geneIsInactivatedCreator(onlyDeletions: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsInactivated(functionInputResolver().createOneGeneInput(function).geneName, maxMolecularTestAge())
+            GeneIsInactivated(
+                gene = functionInputResolver().createOneGeneInput(function).geneName,
+                maxTestAge = maxMolecularTestAge(),
+                onlyDeletions = onlyDeletions
+            )
         }
     }
 

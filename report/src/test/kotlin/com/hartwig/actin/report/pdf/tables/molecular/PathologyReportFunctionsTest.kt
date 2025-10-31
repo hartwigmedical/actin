@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
+import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.itextpdf.layout.Style
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -14,7 +14,7 @@ private const val YEAR = 2023
 private const val MONTH = 1
 
 class PathologyReportFunctionsTest {
-    
+
     private val minimalWholeGenomeTest = TestMolecularFactory.createMinimalWholeGenomeTest()
     private val minimalPanelTest = TestMolecularFactory.createMinimalPanelTest()
     private val date1 = LocalDate.of(YEAR, MONTH, 1)
@@ -23,9 +23,9 @@ class PathologyReportFunctionsTest {
 
     @Test
     fun `Should return complete pathology report summary`() {
-        val pathologyReport = pathologyReport(1, date1).copy(authorisationDate = date2, reportDate = date2)
+        val pathologyReport = pathologyReport(1, date1).copy(authorisationDate = date2, reportDate = date2, extractionDate = date2)
 
-        val cell = PathologyReportFunctions.getPathologyReportSummary(
+        val cell = PathologyReportFunctions.createPathologyReportSummaryCell(
             prefix = "Test",
             prefixStyle = Style(),
             pathologyReport = pathologyReport
@@ -34,9 +34,11 @@ class PathologyReportFunctionsTest {
         with(pathologyReport) {
             assertThat(CellTestUtil.extractTextFromCell(cell))
                 .isEqualTo(
-                    "Test - T-100001 ($lab, Collection date: ${df.format(tissueDate)}, " +
+                    "Test - T-100001 ($lab, Tissue date: ${df.format(tissueDate)}, " +
                             "Authorization date: ${df.format(authorisationDate)}, " +
-                            "Report date: ${df.format(reportDate)}, Diagnosis: $diagnosis)"
+                            "Report date: ${df.format(reportDate)}, " +
+                            "Data retrieval date: ${df.format(extractionDate)}, " +
+                            "Diagnosis: $diagnosis)"
                 )
         }
     }
@@ -48,11 +50,12 @@ class PathologyReportFunctionsTest {
             authorisationDate = null,
             tissueDate = null,
             reportDate = date1,
+            extractionDate = null,
             lab = null,
             diagnosis = null,
         )
 
-        val cell = PathologyReportFunctions.getPathologyReportSummary(pathologyReport = pathologyReport)
+        val cell = PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)
 
         with(pathologyReport) {
             assertThat(CellTestUtil.extractTextFromCell(cell))
@@ -144,6 +147,7 @@ class PathologyReportFunctionsTest {
         diagnosis = "Diagnosis$idx",
         tissueDate = date,
         authorisationDate = null,
+        extractionDate = date,
         report = "Report$idx"
     )
 

@@ -4,13 +4,18 @@ import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 
 object ActionabilityMatcherFactory {
 
     fun create(serveRecord: ServeRecord): ActionabilityMatcher {
-        return ActionabilityMatcher(filterEvidences(serveRecord.evidences()), filterTrials(serveRecord.trials()))
+        return ActionabilityMatcher(
+            filterEvidences(serveRecord.evidences()),
+            filterTrials(serveRecord.trials()),
+            filterKnownHotspots(serveRecord.knownEvents().hotspots())
+        )
     }
 
     private fun filterEvidences(evidences: List<EfficacyEvidence>): List<EfficacyEvidence> {
@@ -30,6 +35,13 @@ object ActionabilityMatcherFactory {
                     null
                 }
             }
+    }
+
+    private fun filterKnownHotspots(knownHotspots: Set<KnownHotspot>): Set<KnownHotspot> {
+        return knownHotspots
+            .filter { it.sources().contains(ActionabilityConstants.EVIDENCE_SOURCE) }
+            .filter { ApplicabilityFiltering.isApplicable(it) }
+            .toSet()
     }
 
     private fun isMolecularCriteriumApplicable(molecularCriterium: MolecularCriterium): Boolean {

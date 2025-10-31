@@ -12,6 +12,7 @@ private const val CLOSED_COHORT = "CLOSED"
 private const val ELIGIBLE_COHORT = "ELIGIBLE"
 private const val ELIGIBLE_COHORT_2 = "ELIGIBLE2"
 private const val ELIGIBLE_EVENT = "event"
+private const val ELIGIBLE_EVENT_2 = "event (also known as other)"
 private const val LOCATION = "location"
 
 class InterpretedCohortsSummarizerTest {
@@ -39,6 +40,7 @@ class InterpretedCohortsSummarizerTest {
     fun `Should indicate driver is actionable if event matches open trial`() {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
         assertThat(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT))).isTrue
+        assertThat(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT_2))).isTrue
     }
 
     @Test

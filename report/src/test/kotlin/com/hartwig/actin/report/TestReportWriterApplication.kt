@@ -1,8 +1,9 @@
-package com.hartwig.actin.report.pdf
+package com.hartwig.actin.report
 
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
@@ -16,9 +17,8 @@ object TestReportWriterApplication {
     private val LOGGER = LogManager.getLogger(TestReportWriterApplication::class.java)
     private val OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json"
 
-    fun createTestReport(skipMolecular: Boolean): Report {
-        val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
-            TestReportFactory.createExhaustiveTestReport()
+    fun createTestReport(): Report {
+        val report = TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing patient record")
         PatientPrinter.printRecord(report.patientRecord)
 
@@ -36,9 +36,8 @@ object TestReportWriterApplication {
     }
 }
 
-fun main(args: Array<String>) {
-    val skipMolecular = args.contains("--no-molecular")
+fun main() {
+    val report = TestReportWriterApplication.createTestReport()
     val writer = createProductionReportWriter(WORK_DIRECTORY)
-    val report = TestReportWriterApplication.createTestReport(skipMolecular)
-    writer.write(report)
+    writer.write(report, configuration = ReportConfiguration(), addExtendedSuffix = false)
 }

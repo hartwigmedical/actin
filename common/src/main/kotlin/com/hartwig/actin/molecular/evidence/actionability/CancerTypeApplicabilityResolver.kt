@@ -18,7 +18,12 @@ class CancerTypeApplicabilityResolver(private val expandedTumorDoids: Set<String
     }
 
     private fun isOnLabel(indication: Indication): Boolean {
-        return matchDoid(indication, expandedTumorDoids)
+        val applicableDoid = indication.applicableType().doid()
+        return if (applicableDoid == CANCER_TUMOR_DOID) {
+            false
+        } else {
+            matchDoid(indication, expandedTumorDoids)
+        }
     }
 
     private fun matchDoid(indication: Indication, doidsToMatch: Set<String>): Boolean {

@@ -32,7 +32,6 @@ class OrangeMolecularRecordGenerator(
     }
 
     override fun contents(): Table {
-
         val table = Tables.createSingleColWithWidth(width)
 
         if (molecular.hasSufficientQualityButLowPurity()) {
@@ -41,6 +40,17 @@ class OrangeMolecularRecordGenerator(
                 Cells.createContentNoBorder(
                     ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
                             "DNA aberrations might not have been detected & predicted tumor origin results may be less reliable")
+                )
+            )
+        }
+
+        if (molecular.targetSpecification?.testVersion?.testDateIsBeforeOldestTestVersion == true) {
+            table.addCell(
+                Cells.createSpanningSubNote(
+                    "The date of this test (${molecular.date}) is older than the date of the oldest version of the test for which " +
+                            "we could derive which genes were tested (${molecular.targetSpecification?.testVersion?.versionDate!!}). This version is " +
+                            "still used to determine which genes were tested. This determination is potentially not correct.",
+                    table
                 )
             )
         }
