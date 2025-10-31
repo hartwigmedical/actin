@@ -23,6 +23,18 @@ class MolecularDriversSummarizer private constructor(
             .filterNot { it in keyVariants() }.toSet().sorted().toList()
     }
 
+    fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
+        val nonDisruptionDrivers = listOf(
+            drivers.variants.map { it.copy(event = formatEvent(it.event, it.sourceEvent)) },
+            drivers.copyNumbers,
+            drivers.fusions,
+            drivers.homozygousDisruptions,
+            drivers.viruses
+        ).flatten().filterNot(::isReportableHighDriver)
+        return (nonDisruptionDrivers + drivers.disruptions.toList())
+            .filter(interpretedCohortsSummarizer::driverIsActionable)
+    }
+
     private fun formatEvent(event: String, sourceEvent: String): String {
         return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
     }
@@ -60,18 +72,6 @@ class MolecularDriversSummarizer private constructor(
             .filter(::isReportableHighDriver)
             .map { it -> it.event + (it.integrations?.let { " ($it int. detected)" } ?: "") }
             .distinct()
-    }
-
-    fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
-        val nonDisruptionDrivers = listOf(
-            drivers.variants,
-            drivers.copyNumbers,
-            drivers.fusions,
-            drivers.homozygousDisruptions,
-            drivers.viruses
-        ).flatten().filterNot(::isReportableHighDriver)
-        return (nonDisruptionDrivers + drivers.disruptions.toList())
-            .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
 
     private fun isReportableHighDriver(driver: Driver): Boolean {
