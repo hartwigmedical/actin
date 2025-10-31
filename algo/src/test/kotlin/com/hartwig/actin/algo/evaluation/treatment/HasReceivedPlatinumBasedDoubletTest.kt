@@ -63,8 +63,7 @@ class HasReceivedPlatinumBasedDoubletTest {
     private val chemoImmunoHistory = listOf(
         TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(
-                TreatmentTestFactory.treatment("CHEMOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
-                TreatmentTestFactory.treatment("IMMUNOTHERAPY", false, setOf(TreatmentCategory.IMMUNOTHERAPY), emptySet())
+                TreatmentTestFactory.treatment("CHEMOTHERAPY+IMMUNOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet())
             )
         )
     )

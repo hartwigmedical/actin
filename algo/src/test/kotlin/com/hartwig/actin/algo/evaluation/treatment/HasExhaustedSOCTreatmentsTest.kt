@@ -59,17 +59,12 @@ class HasExhaustedSOCTreatmentsTest {
     @Test
     fun `Should pass for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
-        val (chemoradiation, chemoimmunotherapy) = listOf(
-            "RADIOTHERAPY" to TreatmentCategory.RADIOTHERAPY,
-            "IMMUNOTHERAPY" to TreatmentCategory.IMMUNOTHERAPY
-        ).map {
-            TreatmentTestFactory.treatmentHistoryEntry(
-                treatments = listOf(
-                    TreatmentTestFactory.treatment("CHEMOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
-                    TreatmentTestFactory.treatment(it.first, false, setOf(it.second), emptySet())
-                )
+        val chemoradiation = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = listOf(
+                TreatmentTestFactory.treatment("CHEMOTHERAPY", true, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
+                TreatmentTestFactory.treatment("RADIOTHERAPY", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())
             )
-        }
+        )
 
         val chemoradiationWithOther = chemoradiation.copy(
             treatments = chemoradiation.treatments + TreatmentTestFactory.treatment(
@@ -80,7 +75,7 @@ class HasExhaustedSOCTreatmentsTest {
             )
         )
 
-        listOf(chemoradiation, chemoimmunotherapy, chemoradiationWithOther).forEach {
+        listOf(chemoradiation, chemoradiationWithOther).forEach {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(
@@ -89,6 +84,15 @@ class HasExhaustedSOCTreatmentsTest {
                 )
             )
         }
+    }
+
+    @Test
+    fun `Should pass for patient with NSCLC and history entry with chemo-immuno with undefined chemotherapy`() {
+        setStandardOfCareCanBeEvaluatedForPatient(false)
+        val record = createHistoryWithNSCLCAndTreatment(
+            TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
