@@ -20,7 +20,7 @@ class MmrStatusIsAvailableTest {
 
     @Test
     fun `Should pass with MSI IHC test result`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MSI"))))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR"))))
     }
 
     @Test
