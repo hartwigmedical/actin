@@ -35,10 +35,6 @@ class MolecularDriversSummarizer private constructor(
             .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
 
-    private fun formatEvent(event: String, sourceEvent: String): String {
-        return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
-    }
-
     fun keyAmplifiedGenes(): List<String> {
         return drivers.copyNumbers
             .asSequence()
@@ -101,7 +97,7 @@ class MolecularDriversSummarizer private constructor(
         fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
             return with(drivers) {
                 Drivers(
-                    variants = variants.matchingLikelihood(useHighDrivers),
+                    variants = variants.matchingLikelihood(useHighDrivers).map { it.copy(event = formatEvent(it.event, it.sourceEvent)) },
                     copyNumbers = copyNumbers.matchingLikelihood(useHighDrivers),
                     homozygousDisruptions = homozygousDisruptions.matchingLikelihood(useHighDrivers),
                     disruptions = disruptions.matchingLikelihood(useHighDrivers),
@@ -109,6 +105,10 @@ class MolecularDriversSummarizer private constructor(
                     viruses = viruses.matchingLikelihood(useHighDrivers)
                 )
             }
+        }
+
+        private fun formatEvent(event: String, sourceEvent: String): String {
+            return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
         }
     }
 }
