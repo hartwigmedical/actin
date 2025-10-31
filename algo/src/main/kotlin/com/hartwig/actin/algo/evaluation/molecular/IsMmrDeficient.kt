@@ -89,7 +89,7 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
         when {
             isMmrDeficientIhcResult -> EvaluationFactory.pass("Tumor is dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
             isMmrProficientIhcResult -> EvaluationFactory.fail("Tumor is not dMMR by IHC")
-            else -> EvaluationFactory.undetermined("Undetermined dMMR result by IHC")
+            else -> EvaluationFactory.undetermined("Undetermined dMMR result by IHC", isMissingMolecularResultForEvaluation = true)
         }
 
     private fun evaluateMsiWithDrivers(

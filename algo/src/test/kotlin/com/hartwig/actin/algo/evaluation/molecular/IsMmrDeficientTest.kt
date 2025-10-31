@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
@@ -162,16 +163,70 @@ class IsMmrDeficientTest {
     fun `Should evaluate to undetermined with unclear IHC MMR test result`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient", impliesIndeterminate = true)))
+            function.evaluate(
+                MolecularTestFactory.withIhcTests(
+                    MolecularTestFactory.ihcTest(
+                        "MMR",
+                        scoreText = "Proficient",
+                        impliesIndeterminate = true
+                    )
+                )
+            )
         )
     }
 
     @Test
-    fun `Should resolve to undetermined when IHC and sequencing MMR results don't match`() {
+    fun `Should warn when MMR proficient by IHC and MSI by molecular test`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")), true, msiVariant(isReportable = true, isBiallelic = true)))
+            function.evaluate(
+                MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(
+                    listOf(
+                        MolecularTestFactory.ihcTest(
+                            "MMR",
+                            scoreText = "Proficient"
+                        )
+                    ), true, msiVariant(isReportable = true, isBiallelic = true)
+                )
+            )
         )
+    }
+
+    @Test
+    fun `Should warn when MMR deficient by IHC and MSS by molecular test`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(
+                    listOf(
+                        MolecularTestFactory.ihcTest(
+                            "MMR",
+                            scoreText = "Deficient"
+                        )
+                    ), false, msiVariant(isReportable = true)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should resolve to undetermined when MMR deficiency test results are missing`() {
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()))
+    }
+
+    @Test
+    fun `Should pass with IHC MMR deficient test result and no molecular test`() {
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))))
+    }
+
+    @Test
+    fun `Should fail with IHC MMR proficient test result and no molecular test`() {
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")))))
+    }
+
+    @Test
+    fun `Should resolve to undetermined with IHC MMR test result with indeterminate result and no molecular test`() {
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient", impliesIndeterminate = true)))))
     }
 
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
