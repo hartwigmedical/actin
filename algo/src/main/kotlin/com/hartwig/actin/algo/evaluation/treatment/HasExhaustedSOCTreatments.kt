@@ -56,6 +56,10 @@ class HasExhaustedSOCTreatments(
                         EvaluationFactory.pass("$messageStart (chemo-immunotherapy in history)")
                     }
 
+                    treatmentHistoryAnalysis.receivedUndefinedChemotherapy() -> {
+                        EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in history)")
+                    }
+
                     else -> EvaluationFactory.fail("Has not exhausted SOC (at least platinum doublet remaining)")
                 }
             }

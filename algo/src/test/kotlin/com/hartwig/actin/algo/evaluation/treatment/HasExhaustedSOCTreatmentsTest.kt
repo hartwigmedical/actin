@@ -92,6 +92,15 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
+    fun `Should return undetermined for patient with NSCLC and history entry with undefined chemotherapy`() {
+        setStandardOfCareCanBeEvaluatedForPatient(false)
+        val record = createHistoryWithNSCLCAndTreatment(
+            TreatmentTestFactory.drugTreatment("CHEMOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+    }
+
+    @Test
     fun `Should fail for patient with NSCLC with other treatment in treatment history`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         val treatment =
