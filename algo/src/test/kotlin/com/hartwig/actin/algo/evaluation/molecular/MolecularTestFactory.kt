@@ -124,8 +124,8 @@ internal object MolecularTestFactory {
         return withDriver(fusion)
     }
 
-    fun withExperimentTypeAndContainingTumorCells(type: ExperimentType, containsTumorCells: Boolean): PatientRecord {
-        return withMolecularTest(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells))
+    fun withExperimentTypeAndHasSufficientQuality(type: ExperimentType, hasSufficientQuality: Boolean): PatientRecord {
+        return withMolecularTest(baseMolecular.copy(experimentType = type, hasSufficientQuality = hasSufficientQuality))
     }
 
     fun withExperimentTypeAndVirus(type: ExperimentType, virus: Virus): PatientRecord {
@@ -161,13 +161,13 @@ internal object MolecularTestFactory {
         return withMolecularTest(baseMolecular.copy(immunology = immunology))
     }
 
-    fun withExperimentTypeAndContainingTumorCellsAndPriorTest(
+    fun withExperimentTypeAndHasSufficientQualityAndPriorTest(
         type: ExperimentType,
-        containsTumorCells: Boolean,
+        hasSufficientQuality: Boolean,
         priorTest: IhcTest
     ): PatientRecord {
         return basePatient.copy(
-            molecularTests = listOf(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells)),
+            molecularTests = listOf(baseMolecular.copy(experimentType = type, hasSufficientQuality = hasSufficientQuality)),
             ihcTests = listOf(priorTest)
         )
     }
