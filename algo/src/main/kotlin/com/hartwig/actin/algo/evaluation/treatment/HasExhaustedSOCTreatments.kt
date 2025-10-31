@@ -42,13 +42,18 @@ class HasExhaustedSOCTreatments(
 
             DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID) -> {
                 val treatmentHistoryAnalysis = TreatmentHistoryAnalysis.create(record)
+                val messageStart = "SOC considered exhausted"
                 when {
                     treatmentHistoryAnalysis.receivedPlatinumDoublet() || treatmentHistoryAnalysis.receivedPlatinumTripletOrAbove() -> {
-                        EvaluationFactory.pass("SOC considered exhausted (platinum doublet in history)")
+                        EvaluationFactory.pass("$messageStart (platinum doublet in history)")
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {
-                        EvaluationFactory.pass("SOC considered exhausted (chemoradiation in history)")
+                        EvaluationFactory.pass("$messageStart (chemoradiation in history)")
+                    }
+
+                    treatmentHistoryAnalysis.receivedUndefinedChemoImmunotherapy() -> {
+                        EvaluationFactory.pass("$messageStart (chemo-immunotherapy in history)")
                     }
 
                     else -> EvaluationFactory.fail("Has not exhausted SOC (at least platinum doublet remaining)")

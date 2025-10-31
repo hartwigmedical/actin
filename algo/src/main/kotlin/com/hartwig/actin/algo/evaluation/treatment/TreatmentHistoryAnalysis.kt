@@ -18,6 +18,12 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
         }
     }
 
+    fun receivedUndefinedChemoImmunotherapy(): Boolean {
+        return record.oncologicalHistory.any {
+            it.treatments.map(Treatment::name).containsAll(listOf("CHEMOTHERAPY", "IMMUNOTHERAPY"))
+        }
+    }
+
     companion object {
         fun create(record: PatientRecord): TreatmentHistoryAnalysis {
             val platinumCombinations = record.oncologicalHistory.asSequence()
