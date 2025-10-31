@@ -22,7 +22,6 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
 
         val molecularTestFilter = MolecularTestFilter(maxTestAge, false)
         val molecularHistory = MolecularHistory(molecularTestFilter.apply(record.molecularTests))
-
         val test = molecularHistory.latestOrangeMolecularRecord()
 
         if (test == null && ihcTestEvaluation.filteredTests.isEmpty()) {
