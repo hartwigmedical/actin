@@ -11,7 +11,7 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val molecularHistory = MolecularHistory(record.molecularTests)
         val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
-            .partition { it.containsTumorCells }
+            .partition { it.hasSufficientQuality }
 
         val missing = molecularHistory.allPanels().let { panels ->
             NSCLC_DRIVER_GENE_SET.filterNot { gene -> panels.any { it.testsGene(gene, any("")) } }

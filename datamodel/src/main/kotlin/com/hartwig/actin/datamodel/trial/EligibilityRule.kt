@@ -256,7 +256,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     FUSION_IN_GENE_X(FunctionInput.ONE_GENE),
     WILDTYPE_OF_GENE_X(FunctionInput.ONE_GENE),
     EXON_SKIPPING_GENE_X_EXON_Y(FunctionInput.ONE_GENE_ONE_INTEGER),
-    MSI_SIGNATURE(FunctionInput.NONE),
+    MMR_DEFICIENT(FunctionInput.NONE),
     HRD_SIGNATURE(FunctionInput.NONE),
     HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X(FunctionInput.MANY_GENES),
     HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X(FunctionInput.MANY_GENES),

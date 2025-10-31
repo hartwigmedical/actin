@@ -17,7 +17,7 @@ class HasKnownHPVStatusTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_WHOLE_GENOME, true
                 )
             )
@@ -48,7 +48,7 @@ class HasKnownHPVStatusTest {
 
     @Test
     fun `Should pass if WGS does not contain enough tumor cells but correct test is in molecularTest`() {
-        val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+        val record = MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
             ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
@@ -58,7 +58,7 @@ class HasKnownHPVStatusTest {
 
     @Test
     fun `Should warn if no WGS has been performed and correct test is in molecularTest with indeterminate status`() {
-        val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+        val record = MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
             ihcTests =
@@ -73,7 +73,7 @@ class HasKnownHPVStatusTest {
 
     @Test
     fun `Should fail if WGS does not contain enough tumor cells and no correct test in prior molecular tests `() {
-        val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+        val record = MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
             ihcTests = listOf(MolecularTestFactory.ihcTest(item = "Something"))

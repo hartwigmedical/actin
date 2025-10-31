@@ -12,16 +12,12 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecularTests.isEmpty()) {
-            return EvaluationFactory.undetermined("No molecular data")
-        }
-
         val orangeMolecular = MolecularHistory(record.molecularTests).latestOrangeMolecularRecord()
-        if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && orangeMolecular.containsTumorCells) {
+        if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && orangeMolecular.hasSufficientQuality) {
             return EvaluationFactory.pass("WGS results available for $gene")
         }
 
-        if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED && orangeMolecular.containsTumorCells) {
+        if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED && orangeMolecular.hasSufficientQuality) {
             val geneIsTested = orangeMolecular.drivers.copyNumbers
                 .any { it.gene == gene }
             return if (geneIsTested) {
