@@ -211,22 +211,43 @@ class IsMmrDeficientTest {
 
     @Test
     fun `Should resolve to undetermined when MMR deficiency test results are missing`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+        )
     }
 
     @Test
     fun `Should pass with IHC MMR deficient test result and no molecular test`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TestPatientFactory.createEmptyMolecularTestPatientRecord()
+                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))
+            )
+        )
     }
 
     @Test
     fun `Should fail with IHC MMR proficient test result and no molecular test`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")))))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TestPatientFactory.createEmptyMolecularTestPatientRecord()
+                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")))
+            )
+        )
     }
 
     @Test
     fun `Should resolve to undetermined with IHC MMR test result with indeterminate result and no molecular test`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient", impliesIndeterminate = true)))))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TestPatientFactory.createEmptyMolecularTestPatientRecord()
+                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient", impliesIndeterminate = true)))
+            )
+        )
     }
 
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
