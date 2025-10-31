@@ -56,7 +56,10 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
 
         return when {
             test.characteristics.microsatelliteStability?.isUnstable == true && certainNegativeIhcResult -> {
-                EvaluationFactory.warn("Tumor is MMR proficient by IHC but MSI by molecular test", inclusionEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE))
+                EvaluationFactory.warn(
+                    "Tumor is MMR proficient by IHC but MSI by molecular test",
+                    inclusionEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
+                )
             }
 
             test.characteristics.microsatelliteStability?.isUnstable == true -> {
