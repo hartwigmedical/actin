@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.util.GeneConstants
@@ -16,13 +17,21 @@ import java.time.LocalDate
 class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTestEvaluation = IhcTestEvaluation.create("MSI", record.ihcTests)
-        val certainPositiveIhcResult = ihcTestEvaluation.hasCertainPositiveResultsForItem()
-        val certainNegativeIhcResult = ihcTestEvaluation.hasCertainNegativeResultsForItem()
+        val ihcTestEvaluation = IhcTestEvaluation.create("MMR", record.ihcTests)
+        val isMmrDeficientIhcResult = ihcTestEvaluation.hasCertainPositiveResultsForItem()
+        val isMmrProficientIhcResult = ihcTestEvaluation.hasCertainNegativeResultsForItem()
 
         val molecularTestFilter = MolecularTestFilter(maxTestAge, false)
         val molecularHistory = MolecularHistory(molecularTestFilter.apply(record.molecularTests))
-        val test = molecularHistory.latestOrangeMolecularRecord()
+        val test = molecularHistory.latestOrangeMolecularRecord() ?: molecularHistory.allPanels()
+            .firstOrNull {
+                it.characteristics.microsatelliteStability != null || GeneConstants.MMR_GENES.any { gene ->
+                    it.testsGene(
+                        gene,
+                        any("")
+                    )
+                }
+            }
 
         if (test == null && ihcTestEvaluation.filteredTests.isEmpty()) {
             return EvaluationFactory.undetermined("No MMR deficiency test result", isMissingMolecularResultForEvaluation = true)
@@ -30,15 +39,14 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
 
         if (test == null) {
             return when {
-                certainPositiveIhcResult -> EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("IHC dMMR"))
-                certainNegativeIhcResult -> EvaluationFactory.fail("Tumor is not dMMR by IHC")
+                isMmrDeficientIhcResult -> EvaluationFactory.pass("Tumor is dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
+                isMmrProficientIhcResult -> EvaluationFactory.fail("Tumor is not dMMR by IHC")
                 else -> EvaluationFactory.undetermined("Undetermined dMMR result by IHC")
             }
         }
 
         val drivers = test.drivers
-        val msiVariants = drivers.variants
-            .filter { variant -> variant.gene in GeneConstants.MMR_GENES && variant.isReportable }
+        val msiVariants = drivers.variants.filter { variant -> variant.gene in GeneConstants.MMR_GENES && variant.isReportable }
 
         val biallelicMsiVariants = msiVariants.filter { it.isBiallelic == true }
         val nonBiallelicMsiVariants = msiVariants.filter { it.isBiallelic == false }
@@ -53,16 +61,16 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
 
         val msiGenesWithUnknownBiallelicDriver = genesFrom(unknownBiallelicMsiVariants)
 
+        val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
         return when {
-            test.characteristics.microsatelliteStability?.isUnstable == true && certainNegativeIhcResult -> {
+            test.characteristics.microsatelliteStability?.isUnstable == true && isMmrProficientIhcResult -> {
                 EvaluationFactory.warn(
                     "Tumor is MMR proficient by IHC but MSI by molecular test",
-                    inclusionEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
+                    inclusionEvents = inclusionMolecularEvents
                 )
             }
 
             test.characteristics.microsatelliteStability?.isUnstable == true -> {
-                val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
                         "Tumor is MSI with biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver)",
@@ -75,19 +83,19 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is MSI but without driver event(s) in MMR gene(s)",
+                        "Tumor is MSI but without known driver event(s) in MMR gene(s)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }
             }
 
-            certainPositiveIhcResult && test.characteristics.microsatelliteStability?.isUnstable == false -> {
+            isMmrDeficientIhcResult && test.characteristics.microsatelliteStability?.isUnstable == false -> {
                 EvaluationFactory.warn("Tumor is dMMR by IHC but MSS by molecular test", inclusionEvents = setOf("dMMR by IHC"))
             }
 
-            certainPositiveIhcResult -> EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("IHC dMMR"))
+            isMmrDeficientIhcResult -> EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("IHC dMMR"))
 
-            certainNegativeIhcResult || test.characteristics.microsatelliteStability?.isUnstable == false -> {
+            isMmrProficientIhcResult || test.characteristics.microsatelliteStability?.isUnstable == false -> {
                 EvaluationFactory.fail("Tumor is not dMMR")
             }
 
