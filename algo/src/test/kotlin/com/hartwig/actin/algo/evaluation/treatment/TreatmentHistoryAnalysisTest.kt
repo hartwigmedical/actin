@@ -67,8 +67,10 @@ class TreatmentHistoryAnalysisTest {
             treatments = setOf(nonPlatinumDoublet),
             maintenanceTreatment = TreatmentStage(platinumDoublet, null, null, null)
         )
-        assertThat(TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
-            .receivedPlatinumDoublet()).isTrue()
+        assertThat(
+            TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
+                .receivedPlatinumDoublet()
+        ).isTrue()
     }
 
     @Test
@@ -77,8 +79,10 @@ class TreatmentHistoryAnalysisTest {
             treatments = setOf(nonPlatinumDoublet),
             switchToTreatments = listOf(TreatmentStage(platinumDoublet, null, null, null))
         )
-        assertThat(TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
-            .receivedPlatinumDoublet()).isTrue()
+        assertThat(
+            TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
+                .receivedPlatinumDoublet()
+        ).isTrue()
     }
 
     @Test
@@ -89,10 +93,13 @@ class TreatmentHistoryAnalysisTest {
             switchToTreatments = listOf(
                 treatmentStage,
                 treatmentStage,
-                treatmentStage.copy(treatment = nonPlatinumDoublet))
+                treatmentStage.copy(treatment = nonPlatinumDoublet)
+            )
         )
-        assertThat(TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
-            .receivedPlatinumDoublet()).isTrue()
+        assertThat(
+            TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
+                .receivedPlatinumDoublet()
+        ).isTrue()
     }
 
     @Test
@@ -158,7 +165,17 @@ class TreatmentHistoryAnalysisTest {
     @Test
     fun `Should return true if treatment history contains undefined chemo-immunotherapy`() {
         val record = TreatmentTestFactory.withTreatmentHistory(
-            listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(undefinedChemo, immunotherapy)))
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = setOf(
+                        TreatmentTestFactory.drugTreatment(
+                            "CHEMOTHERAPY+IMMUNOTHERAPY",
+                            TreatmentCategory.CHEMOTHERAPY,
+                            emptySet()
+                        )
+                    )
+                )
+            )
         )
         assertThat(TreatmentHistoryAnalysis.create(record).receivedUndefinedChemoImmunotherapy()).isTrue()
     }

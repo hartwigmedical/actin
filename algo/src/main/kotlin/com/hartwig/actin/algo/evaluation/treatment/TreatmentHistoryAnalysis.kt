@@ -14,7 +14,7 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
 
     fun receivedUndefinedChemoradiation(): Boolean = hasTreatments(setOf("CHEMOTHERAPY", "RADIOTHERAPY"))
 
-    fun receivedUndefinedChemoImmunotherapy(): Boolean = hasTreatments(setOf("CHEMOTHERAPY", "IMMUNOTHERAPY"))
+    fun receivedUndefinedChemoImmunotherapy(): Boolean = hasTreatments(setOf("CHEMOTHERAPY+IMMUNOTHERAPY"))
 
     fun receivedUndefinedChemotherapy(): Boolean = hasTreatments(setOf("CHEMOTHERAPY"))
 
