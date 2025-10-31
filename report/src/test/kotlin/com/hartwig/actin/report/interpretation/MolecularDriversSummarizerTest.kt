@@ -182,6 +182,13 @@ class MolecularDriversSummarizerTest {
         val variants = listOf(
             variant("key variant", DriverLikelihood.HIGH, true, evidence = externalEvidence),
             variant("expected non-reportable variant", DriverLikelihood.HIGH, false, evidence = approvedTreatment),
+            variant(
+                "expected low likelihood variant",
+                DriverLikelihood.LOW,
+                true,
+                evidence = approvedTreatment,
+                sourceEvent = "other event"
+            ),
             variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true),
             variant("no evidence", DriverLikelihood.MEDIUM, true)
         )
@@ -226,8 +233,9 @@ class MolecularDriversSummarizerTest {
         val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(drivers, cohorts)
         val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().map(Driver::event).distinct().toSet()
 
-        assertThat(otherActionableEvents).hasSize(12)
+        assertThat(otherActionableEvents).hasSize(13)
         assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }
+        assertThat(otherActionableEvents).contains("expected low likelihood variant (also known as other event)")
     }
 
     @Test
