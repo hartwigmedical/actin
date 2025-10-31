@@ -55,10 +55,9 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
                 evaluateMsiWithDrivers(msiGenesWithBiallelicDriver, msiGenesWithNonBiallelicDriver, inclusionMolecularEvents)
 
             isMmrDeficientIhcResult && test.characteristics.microsatelliteStability?.isUnstable == false ->
-                EvaluationFactory.warn("Tumor is dMMR by IHC but MSS by molecular test", inclusionEvents = setOf("dMMR by IHC"))
+                EvaluationFactory.warn("Tumor is dMMR by IHC but MSS by molecular test", inclusionEvents = setOf("MMR deficient"))
 
-            isMmrDeficientIhcResult ->
-                EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("IHC dMMR"))
+            isMmrDeficientIhcResult -> EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
 
             isMmrProficientIhcResult || test.characteristics.microsatelliteStability?.isUnstable == false ->
                 EvaluationFactory.fail("Tumor is not dMMR")
