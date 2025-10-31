@@ -9,12 +9,12 @@ class MmrStatusIsAvailableTest {
     private val function = MmrStatusIsAvailable()
 
     @Test
-    fun `Should pass with MSI true`() {
+    fun `Should pass with MSI sequencing result true`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteStability(true)))
     }
 
     @Test
-    fun `Should pass with MSI false`() {
+    fun `Should pass with MSI sequencing result false`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteStability(false)))
     }
 

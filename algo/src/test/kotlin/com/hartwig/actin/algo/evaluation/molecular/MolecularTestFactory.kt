@@ -56,6 +56,19 @@ internal object MolecularTestFactory {
         return withIhcTests(ihcTests.toList())
     }
 
+    fun withIhcTestsMicrosatelliteStabilityAndVariant(
+        ihcTests: List<IhcTest>,
+        isUnstable: Boolean?,
+        variant: Variant
+    ): PatientRecord {
+        val patient = withCharacteristicsAndDriver(
+            baseMolecular.characteristics.copy(
+                microsatelliteStability = createTestMicrosatelliteStability(isUnstable)
+            ), variant
+        )
+        return patient.copy(ihcTests = ihcTests)
+    }
+
     fun withMolecularTests(molecularTests: List<MolecularTest>): PatientRecord {
         return basePatient.copy(molecularTests = listOf(baseMolecular) + molecularTests)
     }

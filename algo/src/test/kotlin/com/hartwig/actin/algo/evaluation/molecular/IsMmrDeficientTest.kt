@@ -35,14 +35,6 @@ class IsMmrDeficientTest {
     }
 
     @Test
-    fun `Should pass with IHC MSI test result`() {
-        assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MSI", scoreText = "Positive")))
-        )
-    }
-
-    @Test
     fun `Should be undetermined with reportable non-biallelic MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -148,6 +140,30 @@ class IsMmrDeficientTest {
         )
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No MSI test result but driver event(s) in MMR gene(s) (EPCAM) detected")
+    }
+
+    @Test
+    fun `Should pass with IHC MMR deficient test result`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MSI", scoreText = "Positive")))
+        )
+    }
+
+    @Test
+    fun `Should fail with IHC MMR proficient test result`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MSI", scoreText = "Negative")))
+        )
+    }
+
+    @Test
+    fun `Should resolve to undetermined when IHC and sequencing MMR results don't match`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(listOf(MolecularTestFactory.ihcTest("MSI", scoreText = "Negative")), true, msiVariant(isReportable = true, isBiallelic = true)))
+        )
     }
 
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
