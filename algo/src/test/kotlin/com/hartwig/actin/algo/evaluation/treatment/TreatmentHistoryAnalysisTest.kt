@@ -174,7 +174,7 @@ class TreatmentHistoryAnalysisTest {
     @Test
     fun `Should return true if treatment history contains undefined chemotherapy`() {
         val record = TreatmentTestFactory.withTreatmentHistory(
-            listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(undefinedChemo)))
+            listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(undefinedChemo, platinumDoublet)))
         )
         assertThat(TreatmentHistoryAnalysis.create(record).receivedUndefinedChemotherapy()).isTrue()
     }
