@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.util.GeneConstants
@@ -74,16 +75,15 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
         ihcTestEvaluation.filteredTests.isNotEmpty() &&
                 ihcTestEvaluation.filteredTests.all { it.scoreText?.lowercase() == "proficient" && !it.impliesPotentialIndeterminateStatus }
 
-    private fun findRelevantTest(molecularHistory: MolecularHistory) =
-        molecularHistory.latestOrangeMolecularRecord() ?: molecularHistory.allPanels()
-            .firstOrNull {
-                it.characteristics.microsatelliteStability != null || GeneConstants.MMR_GENES.any { gene ->
-                    it.testsGene(
-                        gene,
-                        any("")
-                    )
-                }
+    private fun findRelevantTest(molecularHistory: MolecularHistory): MolecularTest? {
+        val tests = listOfNotNull(molecularHistory.latestOrangeMolecularRecord()) + molecularHistory.allPanels()
+        return tests
+            .filter { test ->
+                test.characteristics.microsatelliteStability != null ||
+                        GeneConstants.MMR_GENES.any { gene -> test.testsGene(gene, any("")) }
             }
+            .maxByOrNull { it.date ?: LocalDate.MIN }
+    }
 
     private fun evaluateIhcOnly(isMmrDeficientIhcResult: Boolean, isMmrProficientIhcResult: Boolean): Evaluation =
         when {
