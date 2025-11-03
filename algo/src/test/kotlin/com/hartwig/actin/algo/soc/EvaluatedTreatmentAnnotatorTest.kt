@@ -43,7 +43,7 @@ class EvaluatedTreatmentAnnotatorTest {
 
     @Test
     fun `Should annotate SOC treatments with efficacy evidence`() {
-        val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
+        val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList())
         val treatmentCandidate = TreatmentCandidate(
             TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.IMMUNOTHERAPY), false, setOf(eligibilityFunction)
         )
@@ -58,7 +58,7 @@ class EvaluatedTreatmentAnnotatorTest {
 
     @Test
     fun `Should return empty annotations list for SOC treatment without efficacy evidence`() {
-        val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
+        val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList())
         val treatmentCandidate = TreatmentCandidate(
             TreatmentTestFactory.drugTreatment("capecitabine+oxaliplatin", TreatmentCategory.CHEMOTHERAPY),
             false,

@@ -32,7 +32,7 @@ class MolecularResultsAreKnownForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_WHOLE_GENOME, true
                 )
             )
@@ -44,7 +44,7 @@ class MolecularResultsAreKnownForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_WHOLE_GENOME, false
                 )
             )
@@ -56,7 +56,7 @@ class MolecularResultsAreKnownForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_TARGETED, true
                 )
             )
@@ -68,7 +68,7 @@ class MolecularResultsAreKnownForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_TARGETED, false
                 )
             )
@@ -100,7 +100,7 @@ class MolecularResultsAreKnownForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQualityAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
                     MolecularTestFactory.ihcTest(item = "gene 1", impliesIndeterminate = true)
@@ -114,7 +114,7 @@ class MolecularResultsAreKnownForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false
 
@@ -153,7 +153,7 @@ class MolecularResultsAreKnownForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                MolecularTestFactory.withExperimentTypeAndHasSufficientQualityAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
                     MolecularTestFactory.ihcTest(item = "gene 2", impliesIndeterminate = false)

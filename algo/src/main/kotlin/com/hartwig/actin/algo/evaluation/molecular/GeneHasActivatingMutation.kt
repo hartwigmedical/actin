@@ -174,7 +174,7 @@ class GeneHasActivatingMutation(
                 EventsWithMessages(
                     activatingVariantsAssociatedWithResistance,
                     "$gene activating mutation(s) ${activatingVariantsAssociatedWithResistance?.let { concatVariants(it, gene) }} " +
-                            "(also associated with drug resistance in $evidenceSource)$inKinaseDomainString"
+                            "is/are associated with drug resistance in $evidenceSource$inKinaseDomainString"
                 ),
                 EventsWithMessages(
                     activatingVariantsInNonOncogene,
