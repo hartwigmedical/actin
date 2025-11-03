@@ -15,8 +15,8 @@ class TreatmentDatabaseTest {
     
     @Test
     fun `Should return set of all drugs`() {
-        assertThat(treatmentDatabase().drugs().map(Drug::name)).containsExactly(
-            "CAPECITABINE", "OXALIPLATIN", "TRIFLURIDINE", "PERTUZUMAB_TRASTUZUMAB"
+        assertThat(treatmentDatabase().drugs().map(Drug::name).sorted()).containsExactly(
+            "CAPECITABINE", "OXALIPLATIN", "PERTUZUMAB_TRASTUZUMAB", "TRIFLURIDINE"
         )
     }
 
