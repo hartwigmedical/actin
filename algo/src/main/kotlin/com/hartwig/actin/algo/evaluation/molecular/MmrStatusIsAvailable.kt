@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MmrStatusIsAvailable : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcResultAvailable = IhcTestEvaluation.create("MSI", record.ihcTests).filteredTests.isNotEmpty()
+        val ihcResultAvailable = IhcTestEvaluation.create("MMR", record.ihcTests).filteredTests.isNotEmpty()
         val molecularResultAvailable = record.molecularTests.any { it.characteristics.microsatelliteStability != null }
 
         return if (ihcResultAvailable || molecularResultAvailable) {
