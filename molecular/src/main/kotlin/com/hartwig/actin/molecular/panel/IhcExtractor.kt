@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.panel
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.molecular.MolecularExtractor
 
-private val IHC_FUSION_GENES = setOf("ALK", "ROS1")
+private val IHC_FUSION_GENES = setOf("ALK", "ROS1", "NTRK1", "NTRK2", "NTRK3")
 
 class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
 
