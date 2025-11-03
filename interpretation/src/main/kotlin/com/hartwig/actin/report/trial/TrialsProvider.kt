@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
+import com.hartwig.actin.molecular.interpretation.ActionableAndEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 
@@ -137,7 +137,7 @@ class TrialsProvider(
             filter: Function1<Actionable, Boolean>
         ): Set<EventWithExternalTrial> {
             return patientRecord.molecularTests.flatMap { test ->
-                AggregatedEvidenceFactory.createTrialEvidences(test, filter).flatMap {
+                ActionableAndEvidenceFactory.createTrialEvidences(test, filter).flatMap {
                     it.second.map { trial -> EventWithExternalTrial(it.first.eventName()!!, trial, it.first) }
                 }
             }.toSet()

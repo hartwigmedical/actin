@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.util
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.util.DatamodelPrinter
 import org.apache.logging.log4j.LogManager
 import java.text.DecimalFormat
@@ -44,7 +43,7 @@ class MolecularTestPrinter(private val printer: DatamodelPrinter) {
     }
 
     private fun printEvidence(test: MolecularTest) {
-        val aggregatedEvidence = AggregatedEvidenceFactory.create(test)
+        val aggregatedEvidence = AggregatedEvidence.create(test)
         printer.print(" Events with evidence for approved treatment: " + keys(aggregatedEvidence.approvedTreatmentsPerEvent()))
         printer.print(" Events associated with external trials: " + keys(aggregatedEvidence.eligibleTrialsPerEvent))
         printer.print(
