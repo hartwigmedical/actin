@@ -597,8 +597,8 @@ object TestMolecularFactory {
                         6
                     ), TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
                         CopyNumberType.NONE,
-                        7,
-                        7
+                        8,
+                        8
                     )
                 ),
                 geneRole = GeneRole.UNKNOWN,
