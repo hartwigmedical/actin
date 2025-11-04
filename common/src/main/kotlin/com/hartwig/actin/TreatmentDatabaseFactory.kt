@@ -5,9 +5,8 @@ import com.hartwig.actin.clinical.serialization.ClinicalGsonDeserializer
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import org.apache.logging.log4j.LogManager
-import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
-import kotlin.io.path.isRegularFile
 
 object TreatmentDatabaseFactory {
 
@@ -16,19 +15,13 @@ object TreatmentDatabaseFactory {
     private val LOGGER = LogManager.getLogger(TreatmentDatabaseFactory::class.java)
 
     fun createFromPath(treatmentDbPath: String): TreatmentDatabase {
-        val drugsByName = readFilesInFolder(
-            Path.of(treatmentDbPath, DRUG_FOLDER),
-            ClinicalGsonDeserializer.create(),
-            Drug::class.java
-        ).associateBy { it.name.lowercase() }
+        val drugsByName = readFilesInFolder<Drug>(treatmentDbPath, DRUG_FOLDER, ClinicalGsonDeserializer.create())
+            .associateBy { it.name.lowercase() }
 
-        val treatmentsByName = readFilesInFolder(
-            Path.of(treatmentDbPath, TREATMENT_FOLDER),
-            ClinicalGsonDeserializer.createWithDrugMap(drugsByName),
-            Treatment::class.java
-        ).flatMap { treatment ->
-            (treatment.synonyms + treatment.name).map { it.replace(" ", "_").lowercase() to treatment }
-        }.toMap()
+        val treatmentsByName = readFilesInFolder<Treatment>(treatmentDbPath, TREATMENT_FOLDER, ClinicalGsonDeserializer.createWithDrugMap(drugsByName))
+            .flatMap { treatment ->
+                (treatment.synonyms + treatment.name).map { it.replace(" ", "_").lowercase() to treatment }
+            }.toMap()
 
         LOGGER.info(
             " Loaded {} drugs from {} and {} treatments from {}",
@@ -40,14 +33,18 @@ object TreatmentDatabaseFactory {
         return TreatmentDatabase(drugsByName, treatmentsByName)
     }
 
-    fun<T> readFilesInFolder(path: Path, des: Gson, classOfT: Class<T>): List<T> {
-        return Files.walk(path).use { stream ->
-            stream.filter { it.isRegularFile() }.iterator().asSequence()
-                .map { path ->
-                    Files.newBufferedReader(path).use { reader ->
-                        des.fromJson(reader, classOfT)
-                    }
-                }.toList()
+    private inline fun<reified T> readFilesInFolder(treatmentDbPath: String, folderName: String, deserializer: Gson): List<T> {
+        val folder = Path.of(treatmentDbPath, folderName).toFile()
+        require(folder.exists() && folder.isDirectory) {
+            throw NoSuchFileException("Folder does not exist or is not a directory ${folder.path}")
         }
+        return folder.walkTopDown()
+            .filter { it.isFile }
+            .map { file ->
+                file.bufferedReader().use { reader ->
+                    deserializer.fromJson(reader, T::class.java)
+                }
+            }
+            .toList()
     }
 }
