@@ -436,6 +436,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST(FunctionInput.NONE),
     HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN(FunctionInput.NONE),
     HAS_LEPTOMENINGEAL_DISEASE(FunctionInput.NONE),
+    HAS_SPINAL_CORD_COMPRESSION(FunctionInput.NONE),
     HAS_PLEURAL_EFFUSION(FunctionInput.NONE),
     HAS_PERITONEAL_EFFUSION(FunctionInput.NONE),
 

@@ -177,6 +177,14 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
             EligibilityRule.HAS_COMORBIDITY_WITH_ANY_ICD_TITLE_X to hasHadComorbiditiesWithIcdCodeCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
+            EligibilityRule.HAS_SPINAL_CORD_COMPRESSION to hasHadComorbiditiesWithIcdCodeCreator(
+                setOf(
+                    IcdConstants.MYELOPATHY,
+                    IcdConstants.TRAUMATIC_SPINAL_CORD_COMPRESSION,
+                    IcdConstants.OTHER_SPECIFIED_SPINAL_CORD_DISORDERS_EXCLUDING_TRAUMA
+                ),
+                "spinal cord compression"
+            ),
             EligibilityRule.HAS_PLEURAL_EFFUSION to
                     hasHadComorbiditiesWithIcdCodeCreator(
                         setOf(
