@@ -9,6 +9,6 @@ data class HomologousRecombination(
     val type: HomologousRecombinationType?,
     val brca1Value: Double?,
     val brca2Value: Double?,
-    override val evidence: ClinicalEvidence, 
-    override val event: String
+    override val evidence: ClinicalEvidence,
+    override val event: String = ""
 ) : Actionable

@@ -23,7 +23,7 @@ class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentE
         (header + cells).forEach(table::addCell)
         return table
     }
-    */
+*/
 
     override fun contents(): Table {
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f)

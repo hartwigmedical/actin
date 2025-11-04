@@ -38,84 +38,13 @@ class TreatmentRankingModel(
         return TreatmentEvidenceRanking(
             rankingResults.map {
                 RankedTreatment(
-                    //it.scores.map { s -> s.event }.toSet(),
                     it.treatment,
-                    it.event, // Extract only relevant variants,
+                    it.event, // Extract patient event/variant
                     it.scores.sumOf { s -> s.score }
                 )
             })
     }
 
-    private fun extractEventForTreatment(record: PatientRecord, treatment: String): String? {
-
-        // Iterate through molecular tests in the patient record
-
-
-        record.molecularTests.forEach { molecularTest ->
-            // 1. Check and return the first matching patient variant
-            molecularTest.drivers.variants.find { variant ->
-                variant.evidence.treatmentEvidence.any { it.treatment == treatment }
-            }?.let { variant ->
-                return variant.event // Return the matching variant's event
-            }
-
-            // 2. Check and return the TMB value if it matches the treatment
-            molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
-                if (tmb.evidence.treatmentEvidence.any { it.treatment == treatment }) {
-                    return "TMB ${tmb.score}" // Return the TMB value
-                }
-            }
-
-            // 3. Check and return the MSI status if it matches the treatment
-            molecularTest.characteristics.microsatelliteStability?.let { msi ->
-                if (msi.evidence.treatmentEvidence.any { it.treatment == treatment }) {
-                    return if (msi.isUnstable) "MSI Unstable" else "MSI Stable" // Return the MSI string
-                }
-            }
-        }
-
-        // Return null if no match is found
-        return null
-    }
-
-    /*
-    // Add a helper function to extract the patient-specific variant
-    private fun extractEventForTreatment(record: PatientRecord, treatment: String): Set<String> {
-        // Logic to fetch and return the patient's variant/mutation
-        // For example: Use molecularTests to locate the specific variant along with the treatment
-        val variants = record.molecularTests.flatMap { molecularTest ->
-            molecularTest.drivers.variants.filter { variant ->
-                variant.evidence.treatmentEvidence.any { it.treatment == treatment }
-            }.map { it.event }
-        }
-        // Add molecular characteristics (MSI, TMB, TML)
-        val molecularCharacteristics = record.molecularTests.flatMap { molecularTest ->
-            listOfNotNull(
-                // Match MSI if evidence links it to this treatment
-                molecularTest.characteristics.microsatelliteStability?.let { msi ->
-                    if (msi.evidence.treatmentEvidence.any { it.treatment == treatment }) {
-                        if (msi.isUnstable == true) "MSI High" else "MSI Low/Neg"
-                    } else null
-                },
-                // Match TMB if evidence links it to this treatment
-                molecularTest.characteristics.tumorMutationalBurden?.let { tmb ->
-                    if (tmb.evidence.treatmentEvidence.any { it.treatment == treatment }) {
-                        if (tmb.isHigh == true) "TMB High" else "TMB Low"
-                    } else null
-                },
-                // Match TML if evidence links it to this treatment
-                molecularTest.characteristics.tumorMutationalLoad?.let { tml ->
-                    if (tml.evidence.treatmentEvidence.any { it.treatment == treatment }) {
-                        if (tml.isHigh == true) "TML High" else "TML Low"
-                    } else null
-                }
-            )
-        }
-
-        // Combine variants and molecular characteristics, ensuring no duplicates
-        return (variants + molecularCharacteristics).toSet()
-    }
-*/
     private fun computeRankResults(record: PatientRecord): List<TreatmentRankResult> {
         val actionables = record.molecularTests.asSequence().flatMap {
             it.drivers.fusions + it.drivers.variants + it.drivers.copyNumbers +
@@ -133,7 +62,7 @@ class TreatmentRankingModel(
         return scoredTreatmentsWithDuplicatesDiminished
             .map { it.key.treatment to it.value }
             .groupBy { it.first }
-            .map { TreatmentRankResult(it.key, it.value.flatMap { t -> t.second }) }
+            .map { TreatmentRankResult(it.key, it.toString(), it.value.flatMap { t -> t.second }) }
             .sorted()
     }
 

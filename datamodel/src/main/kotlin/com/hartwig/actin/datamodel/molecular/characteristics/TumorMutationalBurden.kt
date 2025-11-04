@@ -7,5 +7,5 @@ data class TumorMutationalBurden(
     val score: Double,
     val isHigh: Boolean,
     override val evidence: ClinicalEvidence,
-    override val event: String
+    override val event: String = ""
 ) : Actionable
