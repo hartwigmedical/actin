@@ -177,7 +177,7 @@ object WgsSummaryGeneratorFunctions {
                 }
             }
             listOf(
-                Text(driver.event).addStyle(Styles.tableHighlightStyle()),
+                Text(driver.eventDisplay()).addStyle(Styles.tableHighlightStyle()),
                 Text(warning).addStyle(Styles.tableNoticeStyle()),
                 Text(", ").addStyle(Styles.tableHighlightStyle()),
             )
@@ -207,10 +207,10 @@ object WgsSummaryGeneratorFunctions {
         val keyToValueMap = mapOf(
             "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
             "HR status" to characteristicsGenerator.createHRStatusString(),
-            "Driver mutations" to formatList(summarizer.keyVariants()),
-            "Other mutations" to formatList(summarizer.otherVariants()),
-            "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
-            "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
+            "Driver mutations" to formatList(summarizer.keyVariantEvents()),
+            "Other mutations" to formatList(summarizer.otherVariantEvents()),
+            "Amplified genes" to formatList(summarizer.keyAmplifiedGeneEvents()),
+            "Deleted genes" to formatList(summarizer.keyDeletedGeneEvents()),
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
             "Gene fusions" to formatList(summarizer.keyFusionEvents()),
             "Virus" to formatList(summarizer.keyVirusEvents()),

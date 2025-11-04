@@ -566,23 +566,6 @@ object TestMolecularFactory {
                 isAssociatedWithDrugResistance = null
             ) + CopyNumber(
                 isReportable = true,
-                event = "FGFR1 amp",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                gene = "FGFR1",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, 2, 2),
-                otherImpacts = setOf(
-                    TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                        CopyNumberType.FULL_GAIN,
-                        40,
-                        60
-                    )
-                ),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null
-            ) + CopyNumber(
-                isReportable = true,
                 event = "EGFR amp",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
@@ -593,6 +576,56 @@ object TestMolecularFactory {
                     20
                 ),
                 otherImpacts = emptySet(),
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
+            ) + CopyNumber(
+                isReportable = false,
+                event = "RET copy nr",
+                driverLikelihood = null,
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                gene = "RET",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    CopyNumberType.NONE,
+                    6,
+                    6
+                ),
+                otherImpacts = setOf(
+                    TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.NONE,
+                        6,
+                        6
+                    ), TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.NONE,
+                        7,
+                        7
+                    )
+                ),
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
+            ) + CopyNumber(
+                isReportable = true,
+                event = "DFGFRF1 del",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                gene = "DFGFR1",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    CopyNumberType.NONE,
+                    6,
+                    6
+                ),
+                otherImpacts = setOf(
+                    TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.NONE,
+                        6,
+                        6
+                    ), TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.FULL_DEL,
+                        0,
+                        0
+                    )
+                ),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
