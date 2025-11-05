@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.Test
@@ -37,8 +37,8 @@ class DriverTableFunctionsTest {
         )
     }
 
-    private fun createEventWithExternalTrial(event: String, trial: ExternalTrial): EventWithExternalTrial {
-        return EventWithExternalTrial(event = event, trial, actionable = createActionable(event))
+    private fun createEventWithExternalTrial(event: String, trial: ExternalTrial): ActionableWithExternalTrial {
+        return ActionableWithExternalTrial(actionable = createActionable(event), trial = trial)
     }
 
     private fun createActionable(event: String): Actionable {

@@ -38,16 +38,19 @@ private val BASE_EXTERNAL_TRIAL = TestExternalTrialFactory.create(
     url = URL
 )
 
-private val EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL = EventWithExternalTrial(
-    EGFR_TARGET, BASE_EXTERNAL_TRIAL, EGFR_ACTIONABLE
+private val EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL = ActionableWithExternalTrial(
+    EGFR_ACTIONABLE,
+    BASE_EXTERNAL_TRIAL,
 )
 
-private val TMB_ACTIONABLE_WITH_EXTERNAL_TRIAL = EventWithExternalTrial(
-    TMB_TARGET, BASE_EXTERNAL_TRIAL, TMB_ACTIONABLE
+private val TMB_ACTIONABLE_WITH_EXTERNAL_TRIAL = ActionableWithExternalTrial(
+    TMB_ACTIONABLE,
+    BASE_EXTERNAL_TRIAL,
 )
 
-private val ROS1_ACTIONABLE_WITH_EXTERNAL_TRIAL = EventWithExternalTrial(
-    ROS1_TARGET, BASE_EXTERNAL_TRIAL, ROS1_ACTIONABLE
+private val ROS1_ACTIONABLE_WITH_EXTERNAL_TRIAL = ActionableWithExternalTrial(
+    ROS1_ACTIONABLE,
+    BASE_EXTERNAL_TRIAL,
 )
 
 
@@ -142,7 +145,7 @@ class TrialsProviderTest {
                 trial = BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02)
             )
 
-        val externalTrialsSet: Set<EventWithExternalTrial> = setOf(country1Trial1, country2Trial1)
+        val externalTrialsSet: Set<ActionableWithExternalTrial> = setOf(country1Trial1, country2Trial1)
         val trialsProvider =
             TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), INTERNAL_TRIAL_IDS, false, Country.NETHERLANDS, true)
         val externalTrials = trialsProvider.externalTrialsUnfiltered()
@@ -161,7 +164,7 @@ class TrialsProviderTest {
         val country2Trial1 =
             TMB_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM)))
 
-        val externalTrialsSet: Set<EventWithExternalTrial> = setOf(country1Trial1, country1Trial2, country2Trial1)
+        val externalTrialsSet: Set<ActionableWithExternalTrial> = setOf(country1Trial1, country1Trial2, country2Trial1)
         val trialsProvider =
             TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), INTERNAL_TRIAL_IDS, false, Country.NETHERLANDS, true)
         val externalTrials = trialsProvider.externalTrials()
@@ -194,7 +197,7 @@ class TrialsProviderTest {
             trial = BASE_EXTERNAL_TRIAL.copy(countries = countrySet(BELGIUM), nctId = NCT_02)
         )
 
-        val externalTrialsSet: Set<EventWithExternalTrial> =
+        val externalTrialsSet: Set<ActionableWithExternalTrial> =
             setOf(country1Trial1, country1Trial2, country2Trial1, country2Trial2, country2Trial3, country2Trial4)
         val trialsProvider =
             TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), INTERNAL_TRIAL_IDS, false, Country.NETHERLANDS, false)
@@ -209,7 +212,7 @@ class TrialsProviderTest {
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)
 
     private fun createExternalTrialSummaryWithHospitals(vararg countryHospitals: Pair<CountryDetails, Map<String, Set<Hospital>>>):
-            EventWithExternalTrial {
+            ActionableWithExternalTrial {
         val countries = countryHospitals.map { (country, hospitals) ->
             country.copy(hospitalsPerCity = hospitals)
         }.toSortedSet(Comparator.comparing { it.country })

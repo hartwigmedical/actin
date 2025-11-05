@@ -11,9 +11,9 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 
 const val YOUNG_ADULT_CUT_OFF = 40
 
-data class EventWithExternalTrial(val event: String, val trial: ExternalTrial, val actionable: Actionable)
+data class ActionableWithExternalTrial(val actionable: Actionable, val trial: ExternalTrial)
 
-class MolecularFilteredExternalTrials(val original: Set<EventWithExternalTrial>, val filtered: Set<EventWithExternalTrial>) {
+class MolecularFilteredExternalTrials(val original: Set<ActionableWithExternalTrial>, val filtered: Set<ActionableWithExternalTrial>) {
 
     fun isNotEmpty() = original.isNotEmpty()
 
@@ -22,7 +22,7 @@ class MolecularFilteredExternalTrials(val original: Set<EventWithExternalTrial>,
 
 class ExternalTrials(val nationalTrials: MolecularFilteredExternalTrials, val internationalTrials: MolecularFilteredExternalTrials) {
 
-    fun allFiltered(): Set<EventWithExternalTrial> {
+    fun allFiltered(): Set<ActionableWithExternalTrial> {
         return nationalTrials.filtered + internationalTrials.filtered
     }
 
@@ -32,7 +32,7 @@ class ExternalTrials(val nationalTrials: MolecularFilteredExternalTrials, val in
 }
 
 class TrialsProvider(
-    private val externalTrials: Set<EventWithExternalTrial>,
+    private val externalTrials: Set<ActionableWithExternalTrial>,
     private val cohorts: List<InterpretedCohort>,
     private val nonEvaluableCohorts: List<InterpretedCohort>,
     private val internalTrialIds: Set<String>,
@@ -95,8 +95,8 @@ class TrialsProvider(
     }
 
     private fun hideOverlappingTrials(
-        original: Set<EventWithExternalTrial>,
-        filtered: Set<EventWithExternalTrial>,
+        original: Set<ActionableWithExternalTrial>,
+        filtered: Set<ActionableWithExternalTrial>,
         retainOriginalTrials: Boolean
     ): MolecularFilteredExternalTrials {
         return MolecularFilteredExternalTrials(
@@ -135,10 +135,10 @@ class TrialsProvider(
         private fun externalEligibleTrials(
             patientRecord: PatientRecord,
             filter: Function1<Actionable, Boolean>
-        ): Set<EventWithExternalTrial> {
+        ): Set<ActionableWithExternalTrial> {
             return patientRecord.molecularTests.flatMap { test ->
                 ActionableAndEvidenceFactory.createTrialEvidences(test, filter).flatMap {
-                    it.second.map { trial -> EventWithExternalTrial(it.first.eventName(), trial, it.first) }
+                    it.second.map { trial -> ActionableWithExternalTrial(it.first, trial) }
                 }
             }.toSet()
         }
@@ -149,31 +149,31 @@ class TrialsProvider(
             }
         }
 
-        private fun countryNames(it: EventWithExternalTrial) = it.trial.countries.map { c -> c.country }
+        private fun countryNames(it: ActionableWithExternalTrial) = it.trial.countries.map { c -> c.country }
 
         private fun partitionByCountry(
-            trials: Set<EventWithExternalTrial>,
+            trials: Set<ActionableWithExternalTrial>,
             country: Country
-        ): Pair<Set<EventWithExternalTrial>, Set<EventWithExternalTrial>> {
+        ): Pair<Set<ActionableWithExternalTrial>, Set<ActionableWithExternalTrial>> {
             val (a, b) = trials.partition { country in countryNames(it).toSet() }
             return a.toSet() to b.toSet()
         }
     }
 }
 
-fun Set<EventWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<String>): Set<EventWithExternalTrial> {
+fun Set<ActionableWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<String>): Set<ActionableWithExternalTrial> {
     return this.filter { it.trial.nctId !in internalTrialIds }.toSet()
 }
 
-fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(
+fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(
     internalEvaluatedCohorts: List<InterpretedCohort>
-): Set<EventWithExternalTrial> {
+): Set<ActionableWithExternalTrial> {
     return filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts.flatMap { it.molecularInclusionEvents }.toSet())
 }
 
-fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Set<EventWithExternalTrial>):
-        Set<EventWithExternalTrial> {
-    return filterMolecularCriteriaAlreadyPresent(trials.map { it.event }.toSet())
+fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Set<ActionableWithExternalTrial>):
+        Set<ActionableWithExternalTrial> {
+    return filterMolecularCriteriaAlreadyPresent(trials.map { it.actionable.eventName() }.toSet())
 }
 
 private fun hospitalsForCountry(trial: ExternalTrial, country: Country) =
@@ -181,10 +181,10 @@ private fun hospitalsForCountry(trial: ExternalTrial, country: Country) =
         ?: throw IllegalArgumentException("Country not found")
 
 
-fun Set<EventWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReferenceCountry(
+fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReferenceCountry(
     isYoungAdult: Boolean,
     countryOfReference: Country
-): Set<EventWithExternalTrial> {
+): Set<ActionableWithExternalTrial> {
     return this.filter { ewt ->
         val allHospitalsAreChildrensInReferenceCountry =
             hospitalsForCountry(ewt.trial, countryOfReference).all { it.isChildrensHospital == true }
@@ -192,8 +192,8 @@ fun Set<EventWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReference
     }.toSet()
 }
 
-private fun Set<EventWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<EventWithExternalTrial> {
+private fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ActionableWithExternalTrial> {
     return filter {
-        !presentEvents.contains(it.event)
+        !presentEvents.contains(it.actionable.eventName())
     }.toSet()
 }
