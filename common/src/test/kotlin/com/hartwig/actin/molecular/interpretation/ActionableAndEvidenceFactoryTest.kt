@@ -19,10 +19,10 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-val TEST_VARIANT_1 = TestVariantFactory.createMinimal().copy(
+val REPORTABLE_VARIANT = TestVariantFactory.createMinimal().copy(
     event = "variant1", evidence = TestClinicalEvidenceFactory.createExhaustive(), isReportable = true
 )
-val TEST_VARIANT_2 = TestVariantFactory.createMinimal().copy(
+val UNREPORTED_VARIANT = TestVariantFactory.createMinimal().copy(
     event = "variant2", evidence = TestClinicalEvidenceFactory.createExhaustive(), isReportable = false
 )
 
@@ -85,7 +85,7 @@ class ActionableAndEvidenceFactoryTest {
                     true
                 }
             })
-        ).containsOnly(Pair(TEST_VARIANT_1, TEST_VARIANT_1.evidence.treatmentEvidence))
+        ).containsOnly(Pair(REPORTABLE_VARIANT, REPORTABLE_VARIANT.evidence.treatmentEvidence))
     }
 
     @Test
@@ -106,8 +106,8 @@ class ActionableAndEvidenceFactoryTest {
         assertThat(
             ActionableAndEvidenceFactory.createTreatmentEvidences(test)
         ).containsOnly(
-            Pair(TEST_VARIANT_1, TEST_VARIANT_1.evidence.treatmentEvidence),
-            Pair(TEST_VARIANT_2, TEST_VARIANT_2.evidence.treatmentEvidence)
+            Pair(REPORTABLE_VARIANT, REPORTABLE_VARIANT.evidence.treatmentEvidence),
+            Pair(UNREPORTED_VARIANT, UNREPORTED_VARIANT.evidence.treatmentEvidence)
         )
     }
 
@@ -116,8 +116,8 @@ class ActionableAndEvidenceFactoryTest {
         return test.copy(
             drivers = test.drivers.copy(
                 variants = listOf(
-                    TEST_VARIANT_1,
-                    TEST_VARIANT_2
+                    REPORTABLE_VARIANT,
+                    UNREPORTED_VARIANT
                 ),
             )
         )
