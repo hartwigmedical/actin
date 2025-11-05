@@ -2,12 +2,12 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.Driver
-import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 
 object DriverTableFunctions {
 
-    fun groupByEvent(externalTrialSummaries: Set<EventWithExternalTrial>): Map<String, String> {
-        return externalTrialSummaries.groupBy { e -> e.event }.mapValues { entry -> entry.value.joinToString(", ") { it.trial.nctId } }
+    fun groupByEvent(externalTrialSummaries: Set<ActionableWithExternalTrial>): Map<String, String> {
+        return externalTrialSummaries.groupBy { e -> e.actionable.eventName() }.mapValues { entry -> entry.value.joinToString(", ") { it.trial.nctId } }
     }
 
     fun allDrivers(molecularTests: List<MolecularTest>): List<Pair<MolecularTest, List<Driver>>> =
