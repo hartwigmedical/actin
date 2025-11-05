@@ -8,7 +8,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.math.exp
 
-data class TreatmentRankResult(val treatment: String, val event: String, val scores: List<EvidenceScore>) :
+data class TreatmentRankResult(val treatment: String, val events: Set<String>, val scores: List<EvidenceScore>) :
     Comparable<TreatmentRankResult> {
 
     val score = scores.sumOf { it.score }
@@ -32,7 +32,7 @@ class TreatmentRankingModel(
             rankingResults.map {
                 RankedTreatment(
                     it.treatment,
-                    it.event, // Needs to be extracted patient event/variant
+                    it.events, // Needs to be extracted patient event/variant
                     it.scores.sumOf { s -> s.score }
                 )
             })
@@ -52,8 +52,8 @@ class TreatmentRankingModel(
         }
         val scoredTreatmentsWithDuplicatesDiminished = groupEvidenceForDuplicationAndDiminishScores(scoredTreatments)
 
-        return scoredTreatmentsWithDuplicatesDiminished
-            .map { TreatmentRankResult(it.key.treatment, it.key.target, it.value) }
+        return scoredTreatmentsWithDuplicatesDiminished.entries.groupBy { it.key.treatment }
+            .map { TreatmentRankResult(it.key, it.value.map { g -> g.key.target }.toSet(), it.value.flatMap { g -> g.value }) }
             .sorted()
     }
 

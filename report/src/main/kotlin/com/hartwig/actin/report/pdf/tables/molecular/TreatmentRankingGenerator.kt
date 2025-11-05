@@ -66,10 +66,10 @@ class TreatmentRankingGenerator(private val treatmentEvidenceRanking: TreatmentE
         val groupedRankings = treatmentEvidenceRanking.ranking.groupBy { it.events }
 
         // Generate table rows for each variant/event
-        val cells = groupedRankings.flatMap { (event, treatments) ->
+        val cells = groupedRankings.flatMap { (events, treatments) ->
             // Add a row to mark the start of a group (Event / Variant)
             val eventRow = listOf(
-                Cells.createHeader(event), // Use the event as a header
+                Cells.createHeader(events.joinToString("\n")), // Use the event as a header
                 Cells.createContent(""),  // Leave Treatment column blank
                 Cells.createContent("")   // Leave Score column blank
             )
