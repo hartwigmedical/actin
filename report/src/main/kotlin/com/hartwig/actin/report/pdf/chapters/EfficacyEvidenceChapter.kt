@@ -311,6 +311,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
 
     private fun addMolecularEvidenceRanking(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
+        //val generator = TreatmentRankingGenerator(treatmentEvidenceRanking)
         val generator = TreatmentRankingGenerator(treatmentEvidenceRanking)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)

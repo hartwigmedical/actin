@@ -2,13 +2,6 @@ package com.hartwig.actin.treatment
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
-import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
-import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
-import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import java.nio.file.Files
@@ -25,8 +18,8 @@ data class TreatmentRankResult(val treatment: String, val event: String, val sco
     }
 }
 
-data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String, val event: String)
-data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, val tumorMatch: TumorMatch, val benefit: Boolean)
+data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String)
+data class DuplicateEvidenceGrouping(val treatment: String, val target: String, val tumorMatch: TumorMatch, val benefit: Boolean)
 
 class TreatmentRankingModel(
     private val scoringModel: EvidenceScoringModel,
@@ -39,7 +32,7 @@ class TreatmentRankingModel(
             rankingResults.map {
                 RankedTreatment(
                     it.treatment,
-                    it.event, // Extract patient event/variant
+                    it.event, // Needs to be extracted patient event/variant
                     it.scores.sumOf { s -> s.score }
                 )
             })
@@ -60,9 +53,7 @@ class TreatmentRankingModel(
         val scoredTreatmentsWithDuplicatesDiminished = groupEvidenceForDuplicationAndDiminishScores(scoredTreatments)
 
         return scoredTreatmentsWithDuplicatesDiminished
-            .map { it.key.treatment to it.value }
-            .groupBy { it.first }
-            .map { TreatmentRankResult(it.key, it.toString(), it.value.flatMap { t -> t.second }) }
+            .map { TreatmentRankResult(it.key.treatment, it.key.target, it.value) }
             .sorted()
     }
 
@@ -83,22 +74,9 @@ class TreatmentRankingModel(
             actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
                 TreatmentEvidenceWithTarget(
                     treatmentEvidence,
-                    resolveTarget(actionable, treatmentEvidence),
                     actionable.event
                 )
             }
-        }
-
-    private fun resolveTarget(actionable: Actionable, treatmentEvidence: TreatmentEvidence): String =
-        when (actionable) {
-            is GeneAlteration -> actionable.gene
-            is MicrosatelliteStability -> "MSI"
-            is TumorMutationalLoad -> "TML"
-            is TumorMutationalBurden -> "TMB"
-            is Fusion -> "${actionable.geneStart}::${actionable.geneEnd}"
-            is Virus -> actionable.name
-            is HomologousRecombination -> actionable.type.toString()
-            else -> treatmentEvidence.molecularMatch.sourceEvent
         }
 
     private fun saturatingDiminishingReturnsScore(
