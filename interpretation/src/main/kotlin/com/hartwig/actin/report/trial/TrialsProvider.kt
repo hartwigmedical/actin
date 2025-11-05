@@ -2,6 +2,7 @@ package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
@@ -114,13 +115,32 @@ class TrialsProvider(
             filterOnSOCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
-            val isYoungAdult = (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF
+            return create(
+                patientRecord,
+                treatmentMatch.trialMatches,
+                countryOfReference,
+                (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF,
+                retainOriginalExternalTrials,
+                filterOnSOCExhaustionAndTumorType,
+                filter
+            )
+        }
+
+        fun create(
+            patientRecord: PatientRecord,
+            trialMatches: List<TrialMatch>,
+            countryOfReference: Country,
+            isYoungAdult: Boolean,
+            retainOriginalExternalTrials: Boolean,
+            filterOnSOCExhaustionAndTumorType: Boolean,
+            filter: Function1<Actionable, Boolean> = { true }
+        ): TrialsProvider {
             val cohorts = InterpretedCohortFactory.createEvaluableCohorts(
-                treatmentMatch,
+                trialMatches,
                 filterOnSOCExhaustionAndTumorType
             )
-            val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(treatmentMatch)
-            val internalTrialIds = treatmentMatch.trialMatches.mapNotNull { it.identification.nctId }.toSet()
+            val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(trialMatches)
+            val internalTrialIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
             return TrialsProvider(
                 externalEligibleTrials(patientRecord, filter),
                 cohorts,
