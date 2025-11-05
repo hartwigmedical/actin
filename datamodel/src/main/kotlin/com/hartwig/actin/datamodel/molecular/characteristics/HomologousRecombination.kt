@@ -11,7 +11,7 @@ data class HomologousRecombination(
     val brca2Value: Double?,
     override val evidence: ClinicalEvidence
 ) : Actionable {
-    override fun eventName(): String? {
-        return if (isDeficient) MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT else null
+    override fun eventName(): String {
+        return if (isDeficient) MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT else MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_PROFICIENT
     }
 }

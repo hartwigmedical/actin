@@ -138,7 +138,7 @@ class TrialsProvider(
         ): Set<EventWithExternalTrial> {
             return patientRecord.molecularTests.flatMap { test ->
                 ActionableAndEvidenceFactory.createTrialEvidences(test, filter).flatMap {
-                    it.second.map { trial -> EventWithExternalTrial(it.first.eventName()!!, trial, it.first) }
+                    it.second.map { trial -> EventWithExternalTrial(it.first.eventName(), trial, it.first) }
                 }
             }.toSet()
         }

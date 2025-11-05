@@ -33,7 +33,7 @@ data class AggregatedEvidence(
         }
 
         private fun <E> mapByEvent(actionableAndEvidences: List<Pair<Actionable, Set<E>>>): Map<String, Set<E>> {
-            return actionableAndEvidences.groupBy({ it.first.eventName()!! }, { it.second })
+            return actionableAndEvidences.groupBy({ it.first.eventName() }, { it.second })
                 .mapValues { (_, values) -> values.flatten().toSet() }
         }
     }
