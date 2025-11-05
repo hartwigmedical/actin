@@ -15,7 +15,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class AggregatedEvidenceTest {
@@ -23,7 +23,7 @@ class AggregatedEvidenceTest {
     @Test
     fun `Should find no evidence on minimal record`() {
         val minimalRecord = TestMolecularFactory.createMinimalWholeGenomeTest()
-        Assertions.assertThat(AggregatedEvidence.create(minimalRecord).treatmentEvidencePerEvent).isEmpty()
+        assertThat(AggregatedEvidence.create(minimalRecord).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
@@ -43,12 +43,12 @@ class AggregatedEvidenceTest {
                 evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
-        Assertions.assertThat(AggregatedEvidence.create(withCharacteristics(characteristics)).treatmentEvidencePerEvent).isEmpty()
+        assertThat(AggregatedEvidence.create(withCharacteristics(characteristics)).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
     fun `Should find no external eligible trials when hasSufficientQuality is false`() {
-        Assertions.assertThat(
+        assertThat(
             AggregatedEvidence.create(
                 TestMolecularFactory.createMinimalWholeGenomeTest().copy(hasSufficientQuality = false)
             ).eligibleTrialsPerEvent
@@ -60,7 +60,7 @@ class AggregatedEvidenceTest {
         val characteristics = TestMolecularFactory.createExhaustiveWholeGenomeTest().characteristics
         val evidence = AggregatedEvidence.create(withCharacteristics(characteristics))
 
-        Assertions.assertThat(evidence.treatmentEvidencePerEvent.map { it.key }).containsExactlyInAnyOrder(
+        assertThat(evidence.treatmentEvidencePerEvent.map { it.key }).containsExactlyInAnyOrder(
             "MSS",
             "TMB High",
             "TML High"
@@ -102,7 +102,7 @@ class AggregatedEvidenceTest {
             ),
         )
         val evidence = AggregatedEvidence.create(withDrivers(drivers))
-        Assertions.assertThat(evidence.treatmentEvidencePerEvent).hasSize(6)
+        assertThat(evidence.treatmentEvidencePerEvent).hasSize(6)
     }
 
     @Test
@@ -116,7 +116,7 @@ class AggregatedEvidenceTest {
             variants = listOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
         )
         val evidence = AggregatedEvidence.create(withDrivers(drivers))
-        Assertions.assertThat(evidence.treatmentEvidencePerEvent).hasSize(1)
+        assertThat(evidence.treatmentEvidencePerEvent).hasSize(1)
     }
 
     private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularTest {
