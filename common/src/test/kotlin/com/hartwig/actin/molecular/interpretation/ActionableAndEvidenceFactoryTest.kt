@@ -29,17 +29,16 @@ val UNREPORTED_VARIANT = TestVariantFactory.createMinimal().copy(
 class ActionableAndEvidenceFactoryTest {
 
     @Test
+    fun `Should return result if sufficient quality`() {
+        val test = createMinimalMolecularTest(true)
+        assertThat(
+            ActionableAndEvidenceFactory.createTreatmentEvidences(test)
+        ).hasSize(1)
+    }
+
+    @Test
     fun `Should return empty result if not sufficient quality`() {
-        var test = TestMolecularFactory.createMinimalWholeGenomeTest().copy(hasSufficientQuality = false)
-        test = test.copy(
-            characteristics = test.characteristics.copy(
-                microsatelliteStability = MicrosatelliteStability(
-                    microsatelliteIndelsPerMb = 10.2,
-                    isUnstable = true,
-                    evidence = TestClinicalEvidenceFactory.createEmpty()
-                ),
-            )
-        )
+        val test = createMinimalMolecularTest(false)
         assertThat(
             ActionableAndEvidenceFactory.createTreatmentEvidences(test)
         ).isEmpty()
@@ -118,6 +117,19 @@ class ActionableAndEvidenceFactoryTest {
                 variants = listOf(
                     REPORTABLE_VARIANT,
                     UNREPORTED_VARIANT
+                ),
+            )
+        )
+    }
+
+    private fun createMinimalMolecularTest(hasSufficientQuality: Boolean): MolecularTest {
+        val test = TestMolecularFactory.createMinimalWholeGenomeTest().copy(hasSufficientQuality = hasSufficientQuality)
+        return test.copy(
+            characteristics = test.characteristics.copy(
+                microsatelliteStability = MicrosatelliteStability(
+                    microsatelliteIndelsPerMb = 10.2,
+                    isUnstable = true,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive()
                 ),
             )
         )
