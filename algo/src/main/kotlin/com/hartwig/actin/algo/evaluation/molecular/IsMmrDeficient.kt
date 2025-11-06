@@ -8,10 +8,10 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.util.GeneConstants
-import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
 class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunction {

@@ -6,14 +6,16 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestMolecularMatchDetailsFactory
-import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.ActionableWithExternalTrial
+import com.hartwig.actin.report.trial.EGFR_ACTIONABLE
+import com.hartwig.actin.report.trial.EGFR_TARGET
+import com.hartwig.actin.report.trial.TMB_ACTIONABLE
+import com.hartwig.actin.report.trial.TMB_TARGET
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 import java.util.SortedSet
 
-private const val TMB_TARGET = "TMB"
-private const val EGFR_TARGET = "EGFR"
 private const val NCT_01 = "NCT00000001"
 private const val NCT_02 = "NCT00000002"
 private const val TITLE = "title"
@@ -63,9 +65,9 @@ class ExternalTrialSummarizerTest {
     fun `Should summarize trials by aggregating events, source events and cancer types and sorting by event`() {
         val summarized = ExternalTrialSummarizer.summarize(
             listOf(
-                EventWithExternalTrial(TMB_TARGET, TRIAL_1),
-                EventWithExternalTrial(TMB_TARGET, TRIAL_2),
-                EventWithExternalTrial(EGFR_TARGET, TRIAL_2)
+                ActionableWithExternalTrial(TMB_ACTIONABLE, TRIAL_1),
+                ActionableWithExternalTrial(TMB_ACTIONABLE, TRIAL_2),
+                ActionableWithExternalTrial(EGFR_ACTIONABLE, TRIAL_2)
             )
         )
         assertThat(summarized).containsExactly(

@@ -12,13 +12,13 @@ import com.hartwig.actin.report.pdf.tables.trial.TrialLocations
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
     private val molecular: MolecularTest,
     private val cohorts: List<InterpretedCohort>,
-    private val externalTrials: Set<EventWithExternalTrial>,
+    private val externalTrials: Set<ActionableWithExternalTrial>,
     private val title: String
 ) : TableGenerator {
 

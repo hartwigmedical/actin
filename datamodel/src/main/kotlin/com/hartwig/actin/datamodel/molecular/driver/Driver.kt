@@ -26,6 +26,10 @@ interface Driver : Actionable {
 
     fun evidenceTier() = evidenceTier(this)
 
+    override fun eventName(): String {
+        return event
+    }
+
     fun eventDisplay(): String = when (this) {
         is Variant -> displayVariantEvent(event, sourceEvent)
         is CopyNumber -> displayCopyNumberEvent(

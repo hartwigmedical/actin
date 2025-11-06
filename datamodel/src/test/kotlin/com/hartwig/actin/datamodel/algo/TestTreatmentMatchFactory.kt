@@ -43,7 +43,7 @@ object TestTreatmentMatchFactory {
         )
     }
 
-    private fun createTestTrialMatches(): List<TrialMatch> {
+    fun createTestTrialMatches(): List<TrialMatch> {
         return listOf(
             TrialMatch(
                 identification = TrialIdentification(
