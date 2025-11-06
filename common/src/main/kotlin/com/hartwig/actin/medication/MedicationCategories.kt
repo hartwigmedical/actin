@@ -62,6 +62,18 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
         fun create(atcTree: AtcTree): MedicationCategories {
             return MedicationCategories(
                 mapOf(
+                    "Androgen deprivation therapy" to convertToAtcLevel(
+                        setOf(
+                            "L02BB",
+                            "L02BX",
+                            "G03H",
+                            "H01CA",
+                            "L02AE",
+                            "H01CC",
+                            "G03XA",
+                            "H02CA03"
+                        ), atcTree
+                    ),
                     "Anticancer" to convertToAtcLevel(ANTI_CANCER_ATC_CODES, atcTree),
                     "Anticoagulants" to convertToAtcLevel(setOf("B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF", "B01AX"), atcTree),
                     "Antiepileptics" to convertToAtcLevel(setOf("N03"), atcTree),
