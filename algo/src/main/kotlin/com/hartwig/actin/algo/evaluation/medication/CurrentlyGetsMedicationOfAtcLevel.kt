@@ -30,7 +30,7 @@ class CurrentlyGetsMedicationOfAtcLevel(
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No $categoryName medication use")
+                EvaluationFactory.recoverableFail("No current $categoryName medication use")
             }
         }
     }
