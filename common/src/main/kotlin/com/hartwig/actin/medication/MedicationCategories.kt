@@ -49,6 +49,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
             "L01CD" to setOf(DrugType.TAXANE),
             "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
+            "L02BX" to setOf(DrugType.ANTI_ANDROGEN, DrugType.GONADOTROPIN_ANTAGONIST),
             "L01A" to setOf(DrugType.ALKYLATING_AGENT),
             "L01XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
             "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
