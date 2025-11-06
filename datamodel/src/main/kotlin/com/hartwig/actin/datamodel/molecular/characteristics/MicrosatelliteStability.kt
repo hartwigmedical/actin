@@ -7,5 +7,6 @@ data class MicrosatelliteStability(
     val microsatelliteIndelsPerMb: Double?,
     val isUnstable: Boolean,
     override val evidence: ClinicalEvidence,
-    override val event: String = if (isUnstable) "" else ""
+    override val event: String = if (isUnstable) "MSI" else "MSS"
 ) : Actionable
+

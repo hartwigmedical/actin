@@ -10,5 +10,5 @@ data class HomologousRecombination(
     val brca1Value: Double?,
     val brca2Value: Double?,
     override val evidence: ClinicalEvidence,
-    override val event: String = ""
+    override val event: String = if (isDeficient) "HRD" else "HRP"
 ) : Actionable
