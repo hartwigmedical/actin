@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -428,6 +429,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_DRUG_INTERACTION_TYPES -> {
+                    createManyDrugInteractionTypes(function)
+                    return true
+                }
+
                 else -> {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
@@ -553,7 +559,7 @@ class FunctionInputResolver(
 
     fun createManyTreatmentCategories(function: EligibilityFunction): ManyTreatmentCategories {
         assertParamConfig(function, FunctionInput.MANY_TREATMENT_CATEGORIES, 1)
-        return ManyTreatmentCategories(treatmentCategories =  toTreatmentCategoriesSet(function.parameters.first()))
+        return ManyTreatmentCategories(treatmentCategories = toTreatmentCategoriesSet(function.parameters.first()))
     }
 
     fun createOneSpecificTreatmentInput(function: EligibilityFunction): Treatment {
@@ -958,7 +964,7 @@ class FunctionInputResolver(
         return medicationCategories.resolveCategoryName(category) to medicationCategories.resolve(category)
     }
 
-    private fun toTnmTs(input: Any): Set<TnmT>{
+    private fun toTnmTs(input: Any): Set<TnmT> {
         return toStringList(input).map(TnmT::valueOf).toSet()
     }
 
@@ -1002,6 +1008,15 @@ class FunctionInputResolver(
             throw IllegalArgumentException("Not a proper transporter: $transporter")
         }
         return Transporter.valueOf(transporter)
+    }
+
+    fun createManyDrugInteractionTypes(function: EligibilityFunction): Set<DrugInteraction.Type> {
+        assertParamConfig(function, FunctionInput.MANY_DRUG_INTERACTION_TYPES, 1)
+        return toDrugInteractionTypes(function.parameters.first())
+    }
+
+    private fun toDrugInteractionTypes(input: Any): Set<DrugInteraction.Type> {
+        return toStringList(input).map { DrugInteraction.Type.valueOf(it.uppercase()) }.toSet()
     }
 
     fun createOneProteinInput(function: EligibilityFunction): OneProtein {

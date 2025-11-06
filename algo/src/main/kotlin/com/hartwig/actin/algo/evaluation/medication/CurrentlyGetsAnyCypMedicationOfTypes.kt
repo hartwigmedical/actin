@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 
-class CurrentlyGetsAnyCypMedicationOfTypes(private val selector: MedicationSelector, private val types: List<DrugInteraction.Type>) :
+class CurrentlyGetsAnyCypMedicationOfTypes(private val selector: MedicationSelector, private val types: Set<DrugInteraction.Type>) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
