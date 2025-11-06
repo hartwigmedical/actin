@@ -21,13 +21,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithCategoryCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfAtcLevelCreator(),
             EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
-            EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS to hasRecentlyReceivedCYPXInducingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X to getsCYPXInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCypInducingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCypXInducingMedicationCreator(),
+            EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS to hasRecentlyReceivedCypXInducingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X to getsCypXInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP to getsAnyCypInhibitingOrInducingMedication(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCYPXInhibitingOrInducingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCypXInhibitingOrInducingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCypSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_ANY_CYP to getsAnyCypSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_TRANSPORTER_X to getsTransporterInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_TRANSPORTER_X to getsTransporterSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OR_INHIBITING_ANY_NON_EVALUABLE_TRANSPORTER_X to
@@ -63,18 +64,18 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { CurrentlyGetsQTProlongatingMedication(selector) }
     }
 
-    private fun getsAnyCYPInducingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsAnyCypInducingMedication(selector) }
+    private fun getsAnyCypInducingMedicationCreator(): FunctionCreator {
+        return { CurrentlyGetsAnyCypMedicationOfTypes(selector, listOf(DrugInteraction.Type.INDUCER)) }
     }
 
-    private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
+    private fun getsCypXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
             CurrentlyGetsCypXInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
-    private fun hasRecentlyReceivedCYPXInducingMedicationCreator(): FunctionCreator {
+    private fun hasRecentlyReceivedCypXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneCypOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
@@ -82,7 +83,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
-    private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
+    private fun getsCypXInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
             CurrentlyGetsCypXInhibitingMedication(selector, MedicationUtil.extractCypString(termToFind))
@@ -90,21 +91,25 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsAnyCypInhibitingOrInducingMedication(): FunctionCreator {
-        return { CurrentlyGetsAnyCypInhibitingOrInducingMedication(selector) }
+        return { CurrentlyGetsAnyCypMedicationOfTypes(selector, listOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR)) }
     }
 
-    private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
+    private fun getsCypXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
             CurrentlyGetsCypXInhibitingOrInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
-    private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
+    private fun getsCypSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
             CurrentlyGetsCypXSubstrateMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
+    }
+
+    private fun getsAnyCypSubstrateMedicationCreator(): FunctionCreator {
+        return { CurrentlyGetsAnyCypMedicationOfTypes(selector, listOf(DrugInteraction.Type.SUBSTRATE)) }
     }
 
     private fun getsTransporterInhibitingMedicationCreator(): FunctionCreator {

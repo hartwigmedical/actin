@@ -8,8 +8,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CurrentlyGetsAnyCypInhibitingOrInducingMedicationTest {
-    private val alwaysActiveFunction = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive())
-    private val alwaysPlannedFunction = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysPlanned())
+    private val alwaysActiveFunction = CurrentlyGetsAnyCypMedicationOfTypes(
+        MedicationTestFactory.alwaysActive(),
+        listOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR)
+    )
+    private val alwaysPlannedFunction = CurrentlyGetsAnyCypMedicationOfTypes(
+        MedicationTestFactory.alwaysPlanned(),
+        listOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR)
+    )
 
     @Test
     fun `Should pass when any CYP inhibiting or inducing medication`() {
