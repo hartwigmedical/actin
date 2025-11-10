@@ -77,15 +77,14 @@ class TreatmentRankingModelTest {
         val patientRecord = patientRecord(
             createVariant(
                 gene = "KRAS",
-                treatmentEvidence =
-                    treatmentEvidence(
-                        cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
-                        isCategoryEvent = false,
-                        approvalStage = EvidenceLevelDetails.GUIDELINE,
-                        hasBenefit = true,
-                        treatment = "treatment1",
-                        event = "KRAS G12C"
-                    )
+                treatmentEvidence = treatmentEvidence(
+                    cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
+                    isCategoryEvent = false,
+                    approvalStage = EvidenceLevelDetails.GUIDELINE,
+                    hasBenefit = true,
+                    treatment = "treatment1",
+                    event = "KRAS G12C"
+                )
             ), createVariant(
                 treatmentEvidence = treatmentEvidence(
                     cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
@@ -98,6 +97,7 @@ class TreatmentRankingModelTest {
             )
         )
         val rank = ranker.rank(patientRecord)
+
         assertThat(rank.ranking[0].treatment).isEqualTo("treatment1")
         assertThat(rank.ranking[0].score).isEqualTo(3900.0)
     }
