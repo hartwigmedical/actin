@@ -24,14 +24,12 @@ data class DuplicateEvidenceGrouping(
     val target: String,
     val tumorMatch: TumorMatch,
     val benefit: Boolean,
-    val sourceEvent: String
 )
 
 class TreatmentRankingModel(
     private val scoringModel: EvidenceScoringModel,
 ) {
-
-    /*
+    
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
         val rankingResults = computeRankResults(record)
 
@@ -43,24 +41,6 @@ class TreatmentRankingModel(
                     it.scores.sumOf { s -> s.score }
                 )
             })
-    }
-*/
-    fun rank(record: PatientRecord): TreatmentEvidenceRanking {
-        val rankingResults = computeRankResults(record)
-
-        // Aggregate scores for each treatment
-        return TreatmentEvidenceRanking(
-            rankingResults.groupBy { it.treatment }.map { (treatment, rankResults) ->
-                // Combine all events associated with the treatment
-                val allEvents = rankResults.flatMap { it.events }.toSet()
-
-                // Sum up all scores across independent events
-                val totalScore = rankResults.sumOf { it.scores.sumOf { score -> score.score } }
-
-                // Return the ranked treatment with total scored adjusted per independent event
-                RankedTreatment(treatment, allEvents, totalScore)
-            }
-        )
     }
 
     private fun computeRankResults(record: PatientRecord): List<TreatmentRankResult> {
@@ -82,43 +62,17 @@ class TreatmentRankingModel(
             .sorted()
     }
 
-    /*
-        // original code
-        private fun groupEvidenceForDuplicationAndDiminishScores(scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>) =
-            scoredTreatmentEntries.groupBy {
-                DuplicateEvidenceGrouping(
-                    it.first.treatmentEvidence.treatment,
-                    it.first.target,
-                    it.second.scoringMatch.tumorMatch,
-                    (it.second.score > 0)
-                )
-            }.mapValues { entry ->
-                saturatingDiminishingReturnsScore(entry.value.map { it.second })
-            }
-    */
-
-    // This is where diminishing scoring is done and needs fix
-    private fun groupEvidenceForDuplicationAndDiminishScores(
-        scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>
-    ): Map<DuplicateEvidenceGrouping, List<EvidenceScore>> {
-        return scoredTreatmentEntries.groupBy {
+    private fun groupEvidenceForDuplicationAndDiminishScores(scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>) =
+        scoredTreatmentEntries.groupBy {
             DuplicateEvidenceGrouping(
                 it.first.treatmentEvidence.treatment,
-                it.first.target, // Include molecular event/variant as part of the grouping
+                it.first.target,
                 it.second.scoringMatch.tumorMatch,
-                (it.second.score > 0), // Include benefit/resistance direction
-                it.second.sourceEvent // Separate grouping by independent source events
+                (it.second.score > 0)
             )
-        }.mapValues { (_, eventGroup) ->
-            if (eventGroup.size > 1) {
-                // Apply diminishing returns for multiple entries within the same group
-                saturatingDiminishingReturnsScore(eventGroup.map { it.second })
-            } else {
-                // If only one entry in the group, no diminishing logic is applied
-                eventGroup.map { it.second }
-            }
+        }.mapValues { entry ->
+            saturatingDiminishingReturnsScore(entry.value.map { it.second })
         }
-    }
 
     private fun treatmentEvidencesWithTargets(actionables: Sequence<Actionable>) =
         actionables.flatMap { actionable ->

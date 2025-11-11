@@ -86,7 +86,8 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         if (includeMolecularEvidence()) {
             addMolecularEvidenceRanking(document)
             addMolecularEvidence(document)
-            addMolecularEfficacyDescriptions(document)
+            // Commented out for now (vs removal) because I want to look at this code later
+            // addMolecularEfficacyDescriptions(document)
         }
     }
 
