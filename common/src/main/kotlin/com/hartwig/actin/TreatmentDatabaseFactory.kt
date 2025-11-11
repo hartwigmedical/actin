@@ -18,10 +18,11 @@ object TreatmentDatabaseFactory {
         val drugsByName = readFilesInFolder<Drug>(treatmentDbPath, DRUG_FOLDER, ClinicalGsonDeserializer.create())
             .associateBy { it.name.lowercase() }
 
-        val treatmentsByName = readFilesInFolder<Treatment>(treatmentDbPath, TREATMENT_FOLDER, ClinicalGsonDeserializer.createWithDrugMap(drugsByName))
-            .flatMap { treatment ->
-                (treatment.synonyms + treatment.name).map { it.replace(" ", "_").lowercase() to treatment }
-            }.toMap()
+        val treatmentsByName =
+            readFilesInFolder<Treatment>(treatmentDbPath, TREATMENT_FOLDER, ClinicalGsonDeserializer.createWithDrugMap(drugsByName))
+                .flatMap { treatment ->
+                    (treatment.synonyms + treatment.name).map { it.replace(" ", "_").lowercase() to treatment }
+                }.toMap()
 
         LOGGER.info(
             " Loaded {} drugs from {} and {} treatments from {}",
@@ -33,7 +34,7 @@ object TreatmentDatabaseFactory {
         return TreatmentDatabase(drugsByName, treatmentsByName)
     }
 
-    private inline fun<reified T> readFilesInFolder(treatmentDbPath: String, folderName: String, deserializer: Gson): List<T> {
+    private inline fun <reified T> readFilesInFolder(treatmentDbPath: String, folderName: String, deserializer: Gson): List<T> {
         val folder = Path.of(treatmentDbPath, folderName).toFile()
         require(folder.exists() && folder.isDirectory) {
             throw NoSuchFileException("Folder does not exist or is not a directory ${folder.path}")
