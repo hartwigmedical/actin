@@ -77,27 +77,31 @@ class TreatmentRankingModelTest {
         val patientRecord = patientRecord(
             createVariant(
                 gene = "KRAS",
+                event = "KRAS G12C",
                 treatmentEvidence = treatmentEvidence(
                     cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.GUIDELINE,
                     hasBenefit = true,
                     treatment = "treatment1",
-                    event = "KRAS G12C"
+                    sourceEvent = "KRAS G12C"
                 )
             ), createVariant(
+                gene = "BRAF",
+                event = "BRAF V600E",
                 treatmentEvidence = treatmentEvidence(
                     cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
                     approvalStage = EvidenceLevelDetails.FDA_APPROVED,
                     hasBenefit = true,
                     treatment = "treatment1",
-                    event = "BRAF V600E"
+                    sourceEvent = "BRAF V600E"
                 )
             )
         )
         val rank = ranker.rank(patientRecord)
 
+        assertThat(rank.ranking[0].events).containsExactlyInAnyOrder("KRAS G12C", "BRAF V600E")
         assertThat(rank.ranking[0].treatment).isEqualTo("treatment1")
         assertThat(rank.ranking[0].score).isEqualTo(3900.0)
     }
@@ -168,10 +172,11 @@ class TreatmentRankingModelTest {
     }
 
     @Test
-    fun `Should diminish returns single treatment, same tumor type, variant`() {
+    fun `Should diminish returns single treatment, same tumor type, event`() {
         val ranker = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
         val patientRecord = patientRecord(
             createVariant(
+                event = "BRAF V600E",
                 treatmentEvidence = treatmentEvidence(
                     cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
@@ -180,6 +185,7 @@ class TreatmentRankingModelTest {
                     treatment = "treatment1"
                 )
             ), createVariant(
+                event = "BRAF V600E",
                 treatmentEvidence = treatmentEvidence(
                     cancerTypeMatchApplicability = CancerTypeMatchApplicability.SPECIFIC_TYPE,
                     isCategoryEvent = false,
@@ -189,9 +195,10 @@ class TreatmentRankingModelTest {
                 )
             )
         )
-        val rank = ranker.rank(patientRecord).ranking
-        assertThat(rank[0].treatment).isEqualTo("treatment1")
-        assertThat(rank[0].score).isEqualTo(2950.0)
+        val rank = ranker.rank(patientRecord)
+        assertThat(rank.ranking[0].events).containsExactlyInAnyOrder("BRAF V600E")
+        assertThat(rank.ranking[0].treatment).isEqualTo("treatment1")
+        assertThat(rank.ranking[0].score).isEqualTo(2950.0)
     }
 
     @Test
@@ -205,30 +212,23 @@ class TreatmentRankingModelTest {
             isCategoryEvent = false,
             approvalStage = EvidenceLevelDetails.PHASE_II,
             hasBenefit = true,
-            event = "Indirect Event",
+            sourceEvent = "KRAS G12D",
             isIndirect = true
         )
 
-        val patientRecord = patientRecord(createVariant(treatmentEvidence = indirectEvidence))
-
+        val patientRecord = patientRecord(createVariant(treatmentEvidence = indirectEvidence, event = "KRAS G12C"))
         val rankResult = ranker.rank(patientRecord).ranking.single()
 
         assertThat(rankResult.treatment).isEqualTo("treatment1")
-
-        // Rohan modified code to get things runnable. Remove later
-        //assertThat(rankResult.events).containsExactlyInAnyOrder("Indirect Event")
-
-//        val expectedDirectScore = expectedScore(config, TumorMatch.PATIENT, VariantMatch.EXACT, EvidenceLevelDetails.GUIDELINE)
+        assertThat(rankResult.events).containsExactlyInAnyOrder("KRAS G12C")
         val expectedIndirectScore = expectedScore(
             config,
             TumorMatch.PATIENT,
             VariantMatch.FUNCTIONAL_EFFECT,
             EvidenceLevelDetails.PHASE_II
         )
-        val diminishingFactor = 1.0 / (1.0 + kotlin.math.exp(1.5 * (1 - 1.0)))
-
         assertThat(rankResult.score)
-            .isEqualTo(expectedIndirectScore)// * diminishingFactor)
+            .isEqualTo(expectedIndirectScore)
     }
 
     private fun patientRecord(
@@ -258,10 +258,12 @@ class TreatmentRankingModelTest {
             )
     )
 
-    private fun createVariant(gene: String = "BRAF", treatmentEvidence: TreatmentEvidence) = TestVariantFactory.createMinimal().copy(
-        gene = gene,
-        evidence = TestClinicalEvidenceFactory.createEmpty().copy(treatmentEvidence = setOf(treatmentEvidence))
-    )
+    private fun createVariant(gene: String = "BRAF", event: String = "", treatmentEvidence: TreatmentEvidence) =
+        TestVariantFactory.createMinimal().copy(
+            gene = gene,
+            event = event,
+            evidence = TestClinicalEvidenceFactory.createEmpty().copy(treatmentEvidence = setOf(treatmentEvidence))
+        )
 
     private fun treatmentEvidence(
         treatment: String,
@@ -269,11 +271,11 @@ class TreatmentRankingModelTest {
         isCategoryEvent: Boolean,
         approvalStage: EvidenceLevelDetails,
         hasBenefit: Boolean,
-        event: String = "BRAF V600E",
+        sourceEvent: String = "",
         isIndirect: Boolean = false
     ) = TestTreatmentEvidenceFactory.create(
         treatment = treatment,
-        sourceEvent = event,
+        sourceEvent = sourceEvent,
         cancerTypeMatchApplicability = cancerTypeMatchApplicability,
         evidenceType = if (isCategoryEvent) EvidenceType.ANY_MUTATION else EvidenceType.HOTSPOT_MUTATION,
         evidenceLevelDetails = approvalStage,

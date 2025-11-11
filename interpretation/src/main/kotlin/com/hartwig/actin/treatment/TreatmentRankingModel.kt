@@ -29,7 +29,7 @@ data class DuplicateEvidenceGrouping(
 class TreatmentRankingModel(
     private val scoringModel: EvidenceScoringModel,
 ) {
-    
+
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
         val rankingResults = computeRankResults(record)
 
@@ -51,6 +51,7 @@ class TreatmentRankingModel(
                     it.characteristics.tumorMutationalLoad + it.characteristics.tumorMutationalBurden
         }.filterNotNull()
 
+
         val treatmentEvidencesWithTarget = treatmentEvidencesWithTargets(actionables)
         val scoredTreatments = treatmentEvidencesWithTarget.map { evidenceWithTarget ->
             evidenceWithTarget to scoringModel.score(evidenceWithTarget.treatmentEvidence)
@@ -62,32 +63,41 @@ class TreatmentRankingModel(
             .sorted()
     }
 
-    private fun groupEvidenceForDuplicationAndDiminishScores(scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>) =
-        scoredTreatmentEntries.groupBy {
+    private fun groupEvidenceForDuplicationAndDiminishScores(
+        scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>
+    ): Map<DuplicateEvidenceGrouping, List<EvidenceScore>> {
+        val grouped = scoredTreatmentEntries.groupBy {
             DuplicateEvidenceGrouping(
                 it.first.treatmentEvidence.treatment,
                 it.first.target,
                 it.second.scoringMatch.tumorMatch,
                 (it.second.score > 0)
             )
-        }.mapValues { entry ->
-            saturatingDiminishingReturnsScore(entry.value.map { it.second })
         }
+        val diminishedScores = grouped.mapValues { entry ->
+            val originalScores = entry.value.map { it.second }
+            val newScores = saturatingDiminishingReturnsScore(originalScores)
+            newScores
+        }
+        return diminishedScores
+    }
 
     private fun treatmentEvidencesWithTargets(actionables: Sequence<Actionable>) =
         actionables.flatMap { actionable ->
-            actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
+            val evidenceTargets = actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
                 TreatmentEvidenceWithTarget(
                     treatmentEvidence,
                     actionable.event
                 )
             }
+            evidenceTargets
         }
 
     private fun saturatingDiminishingReturnsScore(
         evidenceScores: List<EvidenceScore>, slope: Double = 1.5, midpoint: Double = 1.0
     ) = evidenceScores.sortedDescending().withIndex().map { (index, score) ->
-        score to if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
+        val adjustedScore = if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
+        score to adjustedScore
     }.map { it.first.copy(score = it.second) }
 
     companion object {
