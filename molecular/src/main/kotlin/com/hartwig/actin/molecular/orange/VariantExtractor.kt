@@ -90,13 +90,9 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
 
     fun determineVariantType(variant: PurpleVariant): VariantType {
         return when (variant.type()) {
-            PurpleVariantType.MNP -> {
-                VariantType.MNV
-            }
+            PurpleVariantType.MNP -> VariantType.MNV
 
-            PurpleVariantType.SNP -> {
-                VariantType.SNV
-            }
+            PurpleVariantType.SNP -> VariantType.SNV
 
             PurpleVariantType.INDEL -> {
                 run {
@@ -109,9 +105,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                 run { throw IllegalStateException("Cannot convert variant type: " + variant.type()) }
             }
 
-            else -> {
-                throw IllegalStateException("Cannot convert variant type: " + variant.type())
-            }
+            else -> throw IllegalStateException("Cannot convert variant type: " + variant.type())
         }
     }
 
@@ -131,13 +125,13 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
         if (!isEnsemblTranscript(variant.canonicalImpact())) {
             logger.warn("Canonical impact defined on non-ensembl transcript for variant '{}'", variant)
         }
-        return toTranscriptImpact(variant.canonicalImpact())
+        return toTranscriptImpact(variant.canonicalImpact(), variant.gene())
     }
 
     private fun extractOtherImpacts(variant: PurpleVariant): Set<TranscriptVariantImpact> {
         return variant.otherImpacts()
             .filter { purpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
-            .map { purpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
+            .map { purpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact, variant.gene()) }
             .toSet()
     }
 
@@ -145,18 +139,32 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
         return purpleTranscriptImpact.transcript().startsWith(ENSEMBL_TRANSCRIPT_IDENTIFIER)
     }
 
-    private fun toTranscriptImpact(purpleTranscriptImpact: PurpleTranscriptImpact): TranscriptVariantImpact {
+    private fun toTranscriptImpact(purpleTranscriptImpact: PurpleTranscriptImpact, gene: String): TranscriptVariantImpact {
+        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift = shouldAnnotateAsSpliceOverNonsenseOrFrameshift(purpleTranscriptImpact.effects(), gene)
+
         return TranscriptVariantImpact(
             transcriptId = purpleTranscriptImpact.transcript(),
             hgvsCodingImpact = purpleTranscriptImpact.hgvsCodingImpact(),
-            hgvsProteinImpact = AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()),
+            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()),
             affectedCodon = purpleTranscriptImpact.affectedCodon(),
             affectedExon = purpleTranscriptImpact.affectedExon(),
             inSpliceRegion = purpleTranscriptImpact.inSpliceRegion(),
             effects = toEffects(purpleTranscriptImpact.effects()),
-            codingEffect = determineCodingEffect(purpleTranscriptImpact.codingEffect())
+            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else determineCodingEffect(purpleTranscriptImpact.codingEffect())
         )
     }
+
+    private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PurpleVariantEffect>, gene: String): Boolean =
+        gene == "MET" && effects.any {
+            it in setOf(PurpleVariantEffect.SPLICE_ACCEPTOR, PurpleVariantEffect.SPLICE_DONOR)
+        } && effects.any {
+            it in setOf(
+                PurpleVariantEffect.FRAMESHIFT,
+                PurpleVariantEffect.STOP_GAINED,
+                PurpleVariantEffect.STOP_LOST,
+                PurpleVariantEffect.START_LOST
+            )
+        }
 
     private fun toEffects(effects: Set<PurpleVariantEffect>): Set<VariantEffect> {
         return effects.map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.toSet()
@@ -164,121 +172,39 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
 
     fun determineVariantEffect(effect: PurpleVariantEffect): VariantEffect {
         return when (effect) {
-            PurpleVariantEffect.STOP_GAINED -> {
-                VariantEffect.STOP_GAINED
-            }
-
-            PurpleVariantEffect.STOP_LOST -> {
-                VariantEffect.STOP_LOST
-            }
-
-            PurpleVariantEffect.START_LOST -> {
-                VariantEffect.START_LOST
-            }
-
-            PurpleVariantEffect.FRAMESHIFT -> {
-                VariantEffect.FRAMESHIFT
-            }
-
-            PurpleVariantEffect.SPLICE_ACCEPTOR -> {
-                VariantEffect.SPLICE_ACCEPTOR
-            }
-
-            PurpleVariantEffect.SPLICE_DONOR -> {
-                VariantEffect.SPLICE_DONOR
-            }
-
-            PurpleVariantEffect.INFRAME_INSERTION -> {
-                VariantEffect.INFRAME_INSERTION
-            }
-
-            PurpleVariantEffect.INFRAME_DELETION -> {
-                VariantEffect.INFRAME_DELETION
-            }
-
-            PurpleVariantEffect.MISSENSE -> {
-                VariantEffect.MISSENSE
-            }
-
-            PurpleVariantEffect.PHASED_MISSENSE -> {
-                VariantEffect.PHASED_MISSENSE
-            }
-
-            PurpleVariantEffect.PHASED_INFRAME_INSERTION -> {
-                VariantEffect.PHASED_INFRAME_INSERTION
-            }
-
-            PurpleVariantEffect.PHASED_INFRAME_DELETION -> {
-                VariantEffect.PHASED_INFRAME_DELETION
-            }
-
-            PurpleVariantEffect.SYNONYMOUS -> {
-                VariantEffect.SYNONYMOUS
-            }
-
-            PurpleVariantEffect.PHASED_SYNONYMOUS -> {
-                VariantEffect.PHASED_SYNONYMOUS
-            }
-
-            PurpleVariantEffect.INTRONIC -> {
-                VariantEffect.INTRONIC
-            }
-
-            PurpleVariantEffect.FIVE_PRIME_UTR -> {
-                VariantEffect.FIVE_PRIME_UTR
-            }
-
-            PurpleVariantEffect.THREE_PRIME_UTR -> {
-                VariantEffect.THREE_PRIME_UTR
-            }
-
-            PurpleVariantEffect.UPSTREAM_GENE -> {
-                VariantEffect.UPSTREAM_GENE
-            }
-
-            PurpleVariantEffect.NON_CODING_TRANSCRIPT -> {
-                VariantEffect.NON_CODING_TRANSCRIPT
-            }
-
-            PurpleVariantEffect.OTHER -> {
-                VariantEffect.OTHER
-            }
-
-            else -> {
-                throw IllegalStateException("Could not convert purple variant effect: $effect")
-            }
+            PurpleVariantEffect.STOP_GAINED -> VariantEffect.STOP_GAINED
+            PurpleVariantEffect.STOP_LOST -> VariantEffect.STOP_LOST
+            PurpleVariantEffect.START_LOST -> VariantEffect.START_LOST
+            PurpleVariantEffect.FRAMESHIFT -> VariantEffect.FRAMESHIFT
+            PurpleVariantEffect.SPLICE_ACCEPTOR -> VariantEffect.SPLICE_ACCEPTOR
+            PurpleVariantEffect.SPLICE_DONOR -> VariantEffect.SPLICE_DONOR
+            PurpleVariantEffect.INFRAME_INSERTION -> VariantEffect.INFRAME_INSERTION
+            PurpleVariantEffect.INFRAME_DELETION -> VariantEffect.INFRAME_DELETION
+            PurpleVariantEffect.MISSENSE -> VariantEffect.MISSENSE
+            PurpleVariantEffect.PHASED_MISSENSE -> VariantEffect.PHASED_MISSENSE
+            PurpleVariantEffect.PHASED_INFRAME_INSERTION -> VariantEffect.PHASED_INFRAME_INSERTION
+            PurpleVariantEffect.PHASED_INFRAME_DELETION -> VariantEffect.PHASED_INFRAME_DELETION
+            PurpleVariantEffect.SYNONYMOUS -> VariantEffect.SYNONYMOUS
+            PurpleVariantEffect.PHASED_SYNONYMOUS -> VariantEffect.PHASED_SYNONYMOUS
+            PurpleVariantEffect.INTRONIC -> VariantEffect.INTRONIC
+            PurpleVariantEffect.FIVE_PRIME_UTR -> VariantEffect.FIVE_PRIME_UTR
+            PurpleVariantEffect.THREE_PRIME_UTR -> VariantEffect.THREE_PRIME_UTR
+            PurpleVariantEffect.UPSTREAM_GENE -> VariantEffect.UPSTREAM_GENE
+            PurpleVariantEffect.NON_CODING_TRANSCRIPT -> VariantEffect.NON_CODING_TRANSCRIPT
+            PurpleVariantEffect.OTHER -> VariantEffect.OTHER
+            else -> throw IllegalStateException("Could not convert purple variant effect: $effect")
         }
     }
 
     fun determineCodingEffect(codingEffect: PurpleCodingEffect): CodingEffect? {
         return when (codingEffect) {
-            PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT -> {
-                CodingEffect.NONSENSE_OR_FRAMESHIFT
-            }
-
-            PurpleCodingEffect.SPLICE -> {
-                CodingEffect.SPLICE
-            }
-
-            PurpleCodingEffect.MISSENSE -> {
-                CodingEffect.MISSENSE
-            }
-
-            PurpleCodingEffect.SYNONYMOUS -> {
-                CodingEffect.SYNONYMOUS
-            }
-
-            PurpleCodingEffect.NONE -> {
-                CodingEffect.NONE
-            }
-
-            PurpleCodingEffect.UNDEFINED -> {
-                null
-            }
-
-            else -> {
-                throw IllegalStateException("Could not convert purple coding effect: $codingEffect")
-            }
+            PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
+            PurpleCodingEffect.SPLICE -> CodingEffect.SPLICE
+            PurpleCodingEffect.MISSENSE -> CodingEffect.MISSENSE
+            PurpleCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
+            PurpleCodingEffect.NONE -> CodingEffect.NONE
+            PurpleCodingEffect.UNDEFINED -> null
+            else -> throw IllegalStateException("Could not convert purple coding effect: $codingEffect")
         }
     }
 }

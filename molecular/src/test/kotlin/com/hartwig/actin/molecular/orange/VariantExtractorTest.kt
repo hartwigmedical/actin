@@ -41,6 +41,7 @@ class VariantExtractorTest {
             .type(PurpleDriverType.GERMLINE_MUTATION)
             .driverLikelihood(0.6)
             .build()
+
         val driver3: PurpleDriver = TestPurpleFactory.driverBuilder()
             .gene("gene 1")
             .transcript("ENST-weird")
@@ -84,9 +85,11 @@ class VariantExtractorTest {
 
         val purpleVariant2: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 2")
-            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
-                .codingEffect(PurpleCodingEffect.NONE)
-                .build())
+            .canonicalImpact(
+                TestPurpleFactory.transcriptImpactBuilder()
+                    .codingEffect(PurpleCodingEffect.NONE)
+                    .build()
+            )
             .build()
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
@@ -135,6 +138,83 @@ class VariantExtractorTest {
     }
 
     @Test
+    fun `Should prefer splice over nonsense (NS) or frameshift (FS) if variant has both splice and NS or FS effects AND gene is MET`() {
+        val purpleVariant1: PurpleVariant = TestPurpleFactory.variantBuilder()
+            .gene("MET")
+            .canonicalImpact(
+                TestPurpleFactory.transcriptImpactBuilder()
+                    .inSpliceRegion(true)
+                    .hgvsProteinImpact("p.500fs")
+                    .codingEffect(PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT)
+                    .effects(setOf(PurpleVariantEffect.SPLICE_DONOR, PurpleVariantEffect.FRAMESHIFT, PurpleVariantEffect.SYNONYMOUS))
+                    .build()
+            )
+            .build()
+
+        val purpleVariant2: PurpleVariant = TestPurpleFactory.variantBuilder()
+            .gene("METFS")
+            .canonicalImpact(
+                TestPurpleFactory.transcriptImpactBuilder()
+                    .inSpliceRegion(true)
+                    .hgvsProteinImpact("p.500fs")
+                    .codingEffect(PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT)
+                    .effects(setOf(PurpleVariantEffect.SPLICE_DONOR, PurpleVariantEffect.FRAMESHIFT, PurpleVariantEffect.SYNONYMOUS))
+                    .build()
+            )
+            .build()
+
+        val purple: PurpleRecord = ImmutablePurpleRecord.builder()
+            .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
+            .addAllSomaticVariants(purpleVariant1, purpleVariant2)
+            .build()
+
+        val geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant1.gene(), purpleVariant2.gene())
+        val variantExtractor = VariantExtractor(geneFilter)
+
+        val variants = variantExtractor.extract(purple)
+        assertThat(variants).hasSize(2)
+
+        val variant1 = variants.find { it.gene == "MET" }!!
+        assertThat(variant1.canonicalImpact.codingEffect).isEqualTo(CodingEffect.SPLICE)
+        assertThat(variant1.canonicalImpact.hgvsProteinImpact).isEqualTo("p.?")
+        assertThat(variant1.canonicalImpact.inSpliceRegion).isTrue
+
+        val variant2 = variants.find { it.gene == "METFS" }!!
+        assertThat(variant2.canonicalImpact.codingEffect).isEqualTo(CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        assertThat(variant2.canonicalImpact.hgvsProteinImpact).isEqualTo("p.500fs")
+        assertThat(variant2.canonicalImpact.inSpliceRegion).isTrue
+    }
+
+    @Test
+    fun `Should not annotate as splice in case MET variant has only nonsense (NS) or frameshift (FS) effects`() {
+        val purpleVariant1: PurpleVariant = TestPurpleFactory.variantBuilder()
+            .gene("MET")
+            .canonicalImpact(
+                TestPurpleFactory.transcriptImpactBuilder()
+                    .inSpliceRegion(true)
+                    .hgvsProteinImpact("p.500fs")
+                    .codingEffect(PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT)
+                    .effects(setOf(PurpleVariantEffect.FRAMESHIFT, PurpleVariantEffect.SYNONYMOUS))
+                    .build()
+            )
+            .build()
+
+        val purple: PurpleRecord = ImmutablePurpleRecord.builder()
+            .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
+            .addAllSomaticVariants(purpleVariant1)
+            .build()
+
+        val geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant1.gene())
+        val variantExtractor = VariantExtractor(geneFilter)
+
+        val variants = variantExtractor.extract(purple)
+        assertThat(variants).hasSize(1)
+
+        assertThat(variants.first().canonicalImpact.codingEffect).isEqualTo(CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        assertThat(variants.first().canonicalImpact.hgvsProteinImpact).isEqualTo("p.500fs")
+    }
+
+    @Test
     fun `Should retain ensembl transcripts only`() {
         val purpleVariant = TestPurpleFactory.variantBuilder()
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().reported(true).build())
@@ -161,10 +241,12 @@ class VariantExtractorTest {
     fun `Should throw exception when filtering reported variant`() {
         val purpleVariant: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
-            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
-                .codingEffect(PurpleCodingEffect.SPLICE)
-                .reported(true)
-                .build())
+            .canonicalImpact(
+                TestPurpleFactory.transcriptImpactBuilder()
+                    .codingEffect(PurpleCodingEffect.SPLICE)
+                    .reported(true)
+                    .build()
+            )
             .build()
 
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()

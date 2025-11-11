@@ -343,6 +343,33 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.sourceEvent).isEqualTo("$GENE c.10T>A splice")
     }
 
+    @Test
+    fun `Should prefer splice over nonsense (NS) or frameshift (FS) if variant has both splice and NS or FS effects AND gene is MET`() {
+        val sequencedVariant1 = SequencedVariant(gene = GENE, transcript = TRANSCRIPT, hgvsCodingImpact = "c.10T>A")
+        val sequencedVariant2 = sequencedVariant1.copy(gene = "MET")
+        val transcriptImpacts = listOf(paveTranscriptImpact(transcript = TRANSCRIPT))
+
+        setupSpliceOverNonsenseFrameshiftFixture(
+            sequencedVariant1,
+            paveCanonicalTranscript = TRANSCRIPT,
+            paveTranscriptImpacts = transcriptImpacts
+        )
+        val annotated1 = annotator.annotate(setOf(sequencedVariant1)).first()
+
+        assertThat(annotated1.canonicalImpact.hgvsProteinImpact).isEqualTo("p.500fs")
+        assertThat(annotated1.canonicalImpact.codingEffect).isEqualTo(CodingEffect.NONSENSE_OR_FRAMESHIFT)
+
+        setupSpliceOverNonsenseFrameshiftFixture(
+            sequencedVariant2,
+            paveCanonicalTranscript = TRANSCRIPT,
+            paveTranscriptImpacts = transcriptImpacts
+        )
+        val annotated2 = annotator.annotate(setOf(sequencedVariant2)).first()
+
+        assertThat(annotated2.canonicalImpact.hgvsProteinImpact).isEqualTo("p.?")
+        assertThat(annotated2.canonicalImpact.codingEffect).isEqualTo(CodingEffect.SPLICE)
+    }
+
     private fun setupSourceEventFixture(
         sequencedVariant: SequencedVariant,
         paveCanonicalTranscript: String,
@@ -366,6 +393,36 @@ class PanelVariantAnnotatorTest {
             .map(PaveTranscriptImpact::transcript)
             .forEach { transcript ->
                 every { paveLite.run(GENE, transcript, POSITION) } returns PAVE_LITE_ANNOTATION
+            }
+    }
+
+    private fun setupSpliceOverNonsenseFrameshiftFixture(
+        sequencedVariant: SequencedVariant,
+        paveCanonicalTranscript: String,
+        paveTranscriptImpacts: List<PaveTranscriptImpact>,
+    ) {
+        every {
+            transvarAnnotator.resolve(sequencedVariant.gene, sequencedVariant.transcript, sequencedVariant.hgvsCodingOrProteinImpact())
+        } returns TRANSCRIPT_ANNOTATION
+
+        every { paver.run(listOf(PAVE_QUERY)) } returns listOf(
+            PAVE_ANNOTATION.copy(
+                impact = PAVE_ANNOTATION.impact.copy(
+                    gene = sequencedVariant.gene,
+                    hgvsProteinImpact = "p.500fs",
+                    canonicalCodingEffect = PaveCodingEffect.NONSENSE_OR_FRAMESHIFT,
+                    canonicalEffects = listOf(PaveVariantEffect.MISSENSE, PaveVariantEffect.SPLICE_DONOR, PaveVariantEffect.FRAMESHIFT),
+                    canonicalTranscript = paveCanonicalTranscript
+                ),
+                transcriptImpacts = paveTranscriptImpacts
+            )
+        )
+
+        every { paveLite.run(sequencedVariant.gene, paveCanonicalTranscript, POSITION) } returns PAVE_LITE_ANNOTATION
+        paveTranscriptImpacts
+            .map(PaveTranscriptImpact::transcript)
+            .forEach { transcript ->
+                every { paveLite.run(sequencedVariant.gene, transcript, POSITION) } returns PAVE_LITE_ANNOTATION
             }
     }
 
