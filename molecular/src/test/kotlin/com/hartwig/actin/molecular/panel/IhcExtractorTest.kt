@@ -19,8 +19,7 @@ class IhcExtractorTest {
         assertThat(result).isEqualTo(
             listOf(
                 IhcExtraction(
-                    null,
-                    setOf(POSITIVE_FUSION_GENE),
+                    null, setOf(POSITIVE_FUSION_GENE),
                     emptySet()
                 )
             )
@@ -31,7 +30,14 @@ class IhcExtractorTest {
     fun `Should extract fusion negatives from IHC`() {
         val ihcTests = listOf(negativeIhc(NEGATIVE_FUSION_GENE))
         val result = IhcExtractor().extract(ihcTests)
-        assertThat(result).isEqualTo(listOf(IhcExtraction(null, emptySet(), setOf(NEGATIVE_FUSION_GENE))))
+        assertThat(result).isEqualTo(
+            listOf(
+                IhcExtraction(
+                    null, emptySet(),
+                    setOf(NEGATIVE_FUSION_GENE)
+                )
+            )
+        )
     }
 
     @Test
