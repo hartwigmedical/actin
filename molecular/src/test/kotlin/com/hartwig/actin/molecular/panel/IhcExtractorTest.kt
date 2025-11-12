@@ -19,7 +19,8 @@ class IhcExtractorTest {
         assertThat(result).isEqualTo(
             listOf(
                 IhcExtraction(
-                    null, setOf(POSITIVE_FUSION_GENE),
+                    null,
+                    setOf(POSITIVE_FUSION_GENE),
                     emptySet()
                 )
             )
@@ -33,7 +34,8 @@ class IhcExtractorTest {
         assertThat(result).isEqualTo(
             listOf(
                 IhcExtraction(
-                    null, emptySet(),
+                    null,
+                    emptySet(),
                     setOf(NEGATIVE_FUSION_GENE)
                 )
             )
