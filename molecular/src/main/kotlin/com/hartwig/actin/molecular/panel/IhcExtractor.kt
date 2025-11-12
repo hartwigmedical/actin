@@ -13,15 +13,15 @@ class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
             .map { (date, tests) ->
                 IhcExtraction(
                     date,
-                    ihcFusionGenes(tests, IHC_FUSION_GENES + IHC_FUSION_GENES_IF_POSITIVE, "Positive"),
-                    ihcFusionGenes(tests, IHC_FUSION_GENES, "Negative")
+                    ihcFusionGenes(tests, IHC_FUSION_GENES + IHC_FUSION_GENES_IF_POSITIVE, "positive"),
+                    ihcFusionGenes(tests, IHC_FUSION_GENES, "negative")
                 )
             }
             .filter { it.fusionPositiveGenes.isNotEmpty() || it.fusionNegativeGenes.isNotEmpty() }
     }
 
     private fun ihcFusionGenes(ihcTests: List<IhcTest>, genes: Set<String>, scoreText: String): Set<String> {
-        return ihcTests.filter { it.item in genes && it.scoreText == scoreText }
+        return ihcTests.filter { it.item in genes && it.scoreText?.lowercase() == scoreText }
             .map { it.item }
             .toSet()
     }
