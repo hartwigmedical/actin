@@ -22,6 +22,10 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
+private val NONSENSE_OR_FRAMESHIFT_EFFECTS =
+    setOf(PaveVariantEffect.FRAMESHIFT, PaveVariantEffect.START_LOST, PaveVariantEffect.STOP_GAINED, PaveVariantEffect.STOP_LOST)
+private val SPLICE_EFFECTS = setOf(PaveVariantEffect.SPLICE_ACCEPTOR, PaveVariantEffect.SPLICE_DONOR)
+
 fun eventString(paveResponse: PaveResponse): String {
     return formatVariantImpact(
         paveResponse.impact.hgvsProteinImpact,
@@ -179,7 +183,9 @@ class PanelVariantAnnotator(
         return TranscriptVariantImpact(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
-            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(paveTranscriptImpact.hgvsProteinImpact),
+            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(
+                paveTranscriptImpact.hgvsProteinImpact
+            ),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
             affectedExon = paveLiteAnnotation.affectedExon(),
             inSpliceRegion = paveTranscriptImpact.spliceRegion,
@@ -193,16 +199,7 @@ class PanelVariantAnnotator(
     }
 
     private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PaveVariantEffect>, gene: String): Boolean =
-        gene == "MET" && effects.any {
-            it in setOf(PaveVariantEffect.SPLICE_ACCEPTOR, PaveVariantEffect.SPLICE_DONOR)
-        } && effects.any {
-            it in setOf(
-                PaveVariantEffect.FRAMESHIFT,
-                PaveVariantEffect.STOP_GAINED,
-                PaveVariantEffect.STOP_LOST,
-                PaveVariantEffect.START_LOST
-            )
-        }
+        gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
 
     private fun variantType(transvarVariant: com.hartwig.actin.tools.variant.Variant): VariantType {
         val ref = transvarVariant.ref()

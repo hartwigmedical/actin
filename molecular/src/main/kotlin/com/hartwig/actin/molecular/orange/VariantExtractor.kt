@@ -23,6 +23,10 @@ import org.apache.logging.log4j.LogManager
 
 private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
 
+private val NONSENSE_OR_FRAMESHIFT_EFFECTS =
+    setOf(PurpleVariantEffect.FRAMESHIFT, PurpleVariantEffect.START_LOST, PurpleVariantEffect.STOP_GAINED, PurpleVariantEffect.STOP_LOST)
+private val SPLICE_EFFECTS = setOf(PurpleVariantEffect.SPLICE_ACCEPTOR, PurpleVariantEffect.SPLICE_DONOR)
+
 class VariantExtractor(private val geneFilter: GeneFilter) {
 
     private val logger = LogManager.getLogger(VariantExtractor::class.java)
@@ -140,31 +144,27 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
     }
 
     private fun toTranscriptImpact(purpleTranscriptImpact: PurpleTranscriptImpact, gene: String): TranscriptVariantImpact {
-        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift = shouldAnnotateAsSpliceOverNonsenseOrFrameshift(purpleTranscriptImpact.effects(), gene)
+        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
+            shouldAnnotateAsSpliceOverNonsenseOrFrameshift(purpleTranscriptImpact.effects(), gene)
 
         return TranscriptVariantImpact(
             transcriptId = purpleTranscriptImpact.transcript(),
             hgvsCodingImpact = purpleTranscriptImpact.hgvsCodingImpact(),
-            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()),
+            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else AminoAcid.forceSingleLetterAminoAcids(
+                purpleTranscriptImpact.hgvsProteinImpact()
+            ),
             affectedCodon = purpleTranscriptImpact.affectedCodon(),
             affectedExon = purpleTranscriptImpact.affectedExon(),
             inSpliceRegion = purpleTranscriptImpact.inSpliceRegion(),
             effects = toEffects(purpleTranscriptImpact.effects()),
-            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else determineCodingEffect(purpleTranscriptImpact.codingEffect())
+            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else determineCodingEffect(
+                purpleTranscriptImpact.codingEffect()
+            )
         )
     }
 
     private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PurpleVariantEffect>, gene: String): Boolean =
-        gene == "MET" && effects.any {
-            it in setOf(PurpleVariantEffect.SPLICE_ACCEPTOR, PurpleVariantEffect.SPLICE_DONOR)
-        } && effects.any {
-            it in setOf(
-                PurpleVariantEffect.FRAMESHIFT,
-                PurpleVariantEffect.STOP_GAINED,
-                PurpleVariantEffect.STOP_LOST,
-                PurpleVariantEffect.START_LOST
-            )
-        }
+        gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
 
     private fun toEffects(effects: Set<PurpleVariantEffect>): Set<VariantEffect> {
         return effects.map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.toSet()
