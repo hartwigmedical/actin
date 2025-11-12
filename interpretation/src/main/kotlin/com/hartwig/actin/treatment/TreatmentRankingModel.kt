@@ -37,7 +37,7 @@ class TreatmentRankingModel(
             rankingResults.map {
                 RankedTreatment(
                     it.treatment,
-                    it.events, // Needs to be extracted patient event/variant
+                    it.events,
                     it.scores.sumOf { s -> s.score }
                 )
             })

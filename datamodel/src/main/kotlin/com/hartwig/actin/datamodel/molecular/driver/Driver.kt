@@ -24,10 +24,6 @@ interface Driver : Actionable {
     val driverLikelihood: DriverLikelihood?
 
     fun evidenceTier() = evidenceTier(this)
-
-    override fun eventName(): String {
-        return event
-    }
 }
 
 

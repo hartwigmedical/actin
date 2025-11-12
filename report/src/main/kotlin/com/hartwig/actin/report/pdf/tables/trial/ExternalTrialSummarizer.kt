@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.report.trial.ActionableWithExternalTrial
-import java.util.SortedSet
+import java.util.*
 
 data class ExternalTrialSummary(
     val nctId: String,
@@ -25,7 +25,7 @@ object ExternalTrialSummarizer {
                 nctId = entry.key,
                 title = trial.title(),
                 countries = countries.toSortedSet(Comparator.comparing { c -> c.country }),
-                actinMolecularEvents = entry.value.map { ewt -> ewt.actionable.eventName() }.toSortedSet(),
+                actinMolecularEvents = entry.value.map { ewt -> ewt.actionable.event }.toSortedSet(),
                 sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),
                 applicableCancerTypes = entry.value.flatMap { ewt -> ewt.trial.applicableCancerTypes }
                     .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType }),
