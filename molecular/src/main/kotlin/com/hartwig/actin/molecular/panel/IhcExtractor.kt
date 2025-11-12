@@ -12,8 +12,8 @@ class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
             .map { (date, tests) ->
                 IhcExtraction(
                     date,
-                    ihcFusionGenes(tests,"positive"),
-                    ihcFusionGenes(tests,"negative")
+                    ihcFusionGenes(tests, "positive"),
+                    ihcFusionGenes(tests, "negative")
                 )
             }
             .filter { it.fusionPositiveGenes.isNotEmpty() || it.fusionNegativeGenes.isNotEmpty() }
