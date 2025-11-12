@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.report.trial.EventWithExternalTrial
+import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import java.util.SortedSet
 
 data class ExternalTrialSummary(
@@ -17,7 +17,7 @@ data class ExternalTrialSummary(
 
 object ExternalTrialSummarizer {
 
-    fun summarize(externalTrialsPerEvent: Iterable<EventWithExternalTrial>): Set<ExternalTrialSummary> {
+    fun summarize(externalTrialsPerEvent: Iterable<ActionableWithExternalTrial>): Set<ExternalTrialSummary> {
         return externalTrialsPerEvent.groupBy { ewt -> ewt.trial.nctId }.map { entry ->
             val countries = entry.value.flatMap { ewt -> ewt.trial.countries }
             val trial = entry.value.first().trial
@@ -25,7 +25,7 @@ object ExternalTrialSummarizer {
                 nctId = entry.key,
                 title = trial.title(),
                 countries = countries.toSortedSet(Comparator.comparing { c -> c.country }),
-                actinMolecularEvents = entry.value.map { ewt -> ewt.event }.toSortedSet(),
+                actinMolecularEvents = entry.value.map { ewt -> ewt.actionable.eventName() }.toSortedSet(),
                 sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),
                 applicableCancerTypes = entry.value.flatMap { ewt -> ewt.trial.applicableCancerTypes }
                     .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType }),

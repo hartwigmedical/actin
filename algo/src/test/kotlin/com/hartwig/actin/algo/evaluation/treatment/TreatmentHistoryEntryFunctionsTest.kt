@@ -1,16 +1,113 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.evaluateIfDrugHadPDResponse
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+
+private val TARGET_DRUG_SET = setOf(Drug("Osimertinib", setOf(DrugType.EGFR_INHIBITOR), TreatmentCategory.TARGETED_THERAPY))
+private val TARGET_DRUG_TREATMENT = drugTreatment("Osimertinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR))
+private val WRONG_DRUG_TREATMENT = drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
+private val DRUG_TREATMENT_WITH_TARGET_CATEGORY = drugTreatment("Target therapy trial drug", TreatmentCategory.TARGETED_THERAPY, emptySet())
+private val TRIAL_DRUG_TREATMENT_NO_CATEGORY = drugTreatment("Some trial drug", TreatmentCategory.TARGETED_THERAPY, emptySet())
 
 class TreatmentHistoryEntryFunctionsTest {
     private val predicate: (Treatment) -> Boolean = { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
 
+    // Testing of fun evaluateIfDrugHadPDResponse
+    @Test
+    fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`() {
+        assertThat(evaluateIfDrugHadPDResponse(emptyList(), TARGET_DRUG_SET)).isEqualTo(
+            TreatmentHistoryEntryFunctions.TreatmentHistoryEvaluation(
+                matchingDrugsWithPD = emptySet(),
+                matchingDrugs = emptySet(),
+                matchesWithUnclearPD = false,
+                possibleTrialMatch = false,
+                matchesWithToxicity = false
+            )
+        )
+    }
+
+    @Test
+    fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when target drug set is empty`() {
+        val treatmentHistory = treatmentHistoryEntry(treatments = setOf(TARGET_DRUG_TREATMENT))
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), emptySet())).isEqualTo(
+            TreatmentHistoryEntryFunctions.TreatmentHistoryEvaluation(
+                matchingDrugsWithPD = emptySet(),
+                matchingDrugs = emptySet(),
+                matchesWithUnclearPD = false,
+                possibleTrialMatch = false,
+                matchesWithToxicity = false
+            )
+        )
+    }
+
+    @Test
+    fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when target drugs not in history`() {
+        val treatmentHistory = treatmentHistoryEntry(treatments = setOf(WRONG_DRUG_TREATMENT))
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), emptySet())).isEqualTo(
+            TreatmentHistoryEntryFunctions.TreatmentHistoryEvaluation(
+                matchingDrugsWithPD = emptySet(),
+                matchingDrugs = emptySet(),
+                matchesWithUnclearPD = false,
+                possibleTrialMatch = false,
+                matchesWithToxicity = false
+            )
+        )
+    }
+
+    @Test
+    fun `Should correctly return all matching drugs with PD as matchingDrugsWithPD`() {
+        val treatmentHistory = treatmentHistoryEntry(
+            treatments = setOf(TARGET_DRUG_TREATMENT, WRONG_DRUG_TREATMENT),
+            stopReason = StopReason.PROGRESSIVE_DISEASE
+        )
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).matchingDrugsWithPD).containsAll(
+            TARGET_DRUG_TREATMENT.drugs
+        )
+    }
+
+    @Test
+    fun `Should return empty set for matchingDrugsWithPD if no PD occurred with any matching drug`() {
+        val treatmentHistory = treatmentHistoryEntry(
+            treatments = setOf(TARGET_DRUG_TREATMENT, WRONG_DRUG_TREATMENT),
+            stopReason = StopReason.TOXICITY
+        )
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).matchingDrugsWithPD).isEmpty()
+    }
+
+    @Test
+    fun `Should return true for matchesWithUnclearPD if all matching drugs have stop reason null`() {
+        val treatmentHistory = treatmentHistoryEntry(treatments = setOf(TARGET_DRUG_TREATMENT, WRONG_DRUG_TREATMENT), stopReason = null)
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).matchesWithUnclearPD).isTrue()
+    }
+
+    @Test
+    fun `Should return true for possible trial match when target drug is trial and correct category`() {
+        val treatmentHistory = treatmentHistoryEntry(treatments = setOf(DRUG_TREATMENT_WITH_TARGET_CATEGORY), isTrial = true)
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).possibleTrialMatch).isTrue
+    }
+
+    @Test
+    fun `Should return true for possible trial match when target drug is trial and no category configured`() {
+        val treatmentHistory = treatmentHistoryEntry(treatments = setOf(TRIAL_DRUG_TREATMENT_NO_CATEGORY), isTrial = true)
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).possibleTrialMatch).isTrue
+    }
+
+    @Test
+    fun `Should return true for matchesWithToxicity when target drug has stop reason toxicity`() {
+        val treatmentHistory = treatmentHistoryEntry(treatments = setOf(TARGET_DRUG_TREATMENT), stopReason = StopReason.TOXICITY)
+        assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).matchesWithToxicity).isTrue
+    }
+
+    // Testing of fun portionOfTreatmentHistoryEntryMatchingPredicate
     @Test
     fun `Should return unmodified entry for matching single-stage treatment`() {
         val entry = treatmentHistoryEntry(setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)))
@@ -176,6 +273,7 @@ class TreatmentHistoryEntryFunctionsTest {
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate)).isNull()
     }
 
+    // Testing of fun fullTreatmentDisplay
     @Test
     fun `Should display switch and maintenance treatments when present`() {
         val switchToTreatment = treatmentStage(drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)

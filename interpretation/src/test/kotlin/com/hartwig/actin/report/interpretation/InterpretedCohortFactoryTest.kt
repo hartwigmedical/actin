@@ -25,19 +25,19 @@ class InterpretedCohortFactoryTest {
 
     @Test
     fun `Should create evaluated cohorts from minimal match`() {
-        val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
+        val cohorts = createEvaluableCohorts(emptyList(), false)
         assertThat(cohorts).isEmpty()
     }
 
     @Test
     fun `Should create non evaluable cohorts from minimal match`() {
-        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
+        val nonEvaluableCohorts = createNonEvaluableCohorts(emptyList())
         assertThat(nonEvaluableCohorts).isEmpty()
     }
 
     @Test
     fun `Should create evaluated cohorts from proper match`() {
-        val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
+        val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createTestTrialMatches(), false)
         assertThat(cohorts).hasSize(4)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
@@ -93,7 +93,7 @@ class InterpretedCohortFactoryTest {
 
     @Test
     fun `Should create non evaluable cohorts from proper match`() {
-        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch())
+        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createTestTrialMatches())
         assertThat(nonEvaluableCohorts).hasSize(1)
 
         val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
@@ -128,17 +128,16 @@ class InterpretedCohortFactoryTest {
             evaluations = emptyMap()
         )
 
-        val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(trialMatches = listOf(trialMatchWithoutCohort))
-        val cohorts = createEvaluableCohorts(treatmentMatch, false)
+        val cohorts = createEvaluableCohorts(listOf(trialMatchWithoutCohort), false)
         assertThat(cohorts).hasSize(1)
     }
 
     @Test
     fun `Should filter trials on SOC exhaustion and tumor type`() {
-        val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
-        val cohortsWithoutFiltering = createEvaluableCohorts(treatmentMatch, false)
+        val trialMatches = TestTreatmentMatchFactory.createTestTrialMatches()
+        val cohortsWithoutFiltering = createEvaluableCohorts(trialMatches, false)
         assertThat(cohortsWithoutFiltering).hasSize(4)
-        val cohortsWithFiltering = createEvaluableCohorts(treatmentMatch, true)
+        val cohortsWithFiltering = createEvaluableCohorts(trialMatches, true)
         assertThat(cohortsWithFiltering).hasSize(1)
     }
 
@@ -149,9 +148,8 @@ class InterpretedCohortFactoryTest {
 
         val cohorts = listOf(createCohortMatch("A", cohortAEvaluation), createCohortMatch("B", cohortBEvaluation))
         val trialMatch = createTrialMatch(cohorts, emptyMap())
-        val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch))
 
-        val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
+        val evaluatedCohorts = createEvaluableCohorts(listOf(trialMatch), false)
         val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
         val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
         assertThat(cohortA.isMissingMolecularResultForEvaluation).isTrue()
@@ -166,9 +164,8 @@ class InterpretedCohortFactoryTest {
 
         val cohorts = listOf(createCohortMatch("A", cohortAEvaluation), createCohortMatch("B", cohortBEvaluation))
         val trialMatch = createTrialMatch(cohorts, trialEvaluation)
-        val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch))
 
-        val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
+        val evaluatedCohorts = createEvaluableCohorts(listOf(trialMatch), false)
         val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
         val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
         assertThat(cohortA.isMissingMolecularResultForEvaluation).isTrue()

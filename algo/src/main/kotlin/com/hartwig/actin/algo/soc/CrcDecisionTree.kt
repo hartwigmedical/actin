@@ -37,7 +37,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     )
 
     private val msiDecisionTree = DecisionTree(
-        decision = EligibilityFunction(EligibilityRule.MSI_SIGNATURE),
+        decision = EligibilityFunction(EligibilityRule.MMR_DEFICIENT),
         trueBranch = DecisionTreeLeaf(listOf(PEMBROLIZUMAB, NIVOLUMAB).map(treatmentCandidateDatabase::treatmentCandidate)),
         falseBranch = DecisionTreeLeaf(emptyList())
     )

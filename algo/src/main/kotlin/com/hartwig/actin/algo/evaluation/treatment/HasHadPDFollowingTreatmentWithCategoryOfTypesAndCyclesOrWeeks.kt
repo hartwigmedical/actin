@@ -5,8 +5,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.calendar.DateComparison.minWeeksBetweenDates
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.calendar.DateComparison.minWeeksBetweenDates
+import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -84,7 +85,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                undetermined(hasTreatmentMessage("Unclear if received " + category.display()))
+                undetermined("Undetermined if patient received ${treatment()}}")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
@@ -132,7 +133,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 hadTreatment == true && hadPD == null && hadUnclearWeeks -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS
                 hadTreatment == true && hadPD == null -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS
                 hadTreatment == null || hadTrial -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
-                hadTreatment == true -> HAS_HAD_TREATMENT
+                hadTreatment -> HAS_HAD_TREATMENT
                 else -> NO_MATCH
             }
         }

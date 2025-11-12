@@ -3,16 +3,15 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 
 object InterpretedCohortFactory {
 
-    fun createEvaluableCohorts(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<InterpretedCohort> {
+    fun createEvaluableCohorts(trialMatches: List<TrialMatch>, filterOnSOCExhaustionAndTumorType: Boolean): List<InterpretedCohort> {
         return filteredMatches(
-            treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
+            trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
         ).flatMap { trialMatch: TrialMatch ->
             val trialWarnings = extractWarnings(trialMatch.evaluations)
             val trialFails = extractFails(trialMatch.evaluations)
@@ -78,8 +77,8 @@ object InterpretedCohortFactory {
         }.sortedWith(InterpretedCohortComparator())
     }
 
-    fun createNonEvaluableCohorts(treatmentMatch: TreatmentMatch): List<InterpretedCohort> {
-        return treatmentMatch.trialMatches.flatMap { trialMatch: TrialMatch ->
+    fun createNonEvaluableCohorts(trialMatches: List<TrialMatch>): List<InterpretedCohort> {
+        return trialMatches.flatMap { trialMatch: TrialMatch ->
             val identification = trialMatch.identification
             trialMatch.nonEvaluableCohorts.map { cohortMetadata: CohortMetadata ->
                 InterpretedCohort(

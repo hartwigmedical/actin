@@ -23,8 +23,16 @@ class MolecularDriversSummarizer private constructor(
             .filterNot { it in keyVariants() }.toSet().sorted().toList()
     }
 
-    private fun formatEvent(event: String, sourceEvent: String): String {
-        return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
+    fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
+        val nonDisruptionDrivers = listOf(
+            drivers.variants.map { it.copy(event = formatEvent(it.event, it.sourceEvent)) },
+            drivers.copyNumbers,
+            drivers.fusions,
+            drivers.homozygousDisruptions,
+            drivers.viruses
+        ).flatten().filterNot(::isReportableHighDriver)
+        return (nonDisruptionDrivers + drivers.disruptions.toList())
+            .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
 
     fun keyAmplifiedGenes(): List<String> {
@@ -62,18 +70,6 @@ class MolecularDriversSummarizer private constructor(
             .distinct()
     }
 
-    fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
-        val nonDisruptionDrivers = listOf(
-            drivers.variants,
-            drivers.copyNumbers,
-            drivers.fusions,
-            drivers.homozygousDisruptions,
-            drivers.viruses
-        ).flatten().filterNot(::isReportableHighDriver)
-        return (nonDisruptionDrivers + drivers.disruptions.toList())
-            .filter(interpretedCohortsSummarizer::driverIsActionable)
-    }
-
     private fun isReportableHighDriver(driver: Driver): Boolean {
         return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
     }
@@ -101,7 +97,7 @@ class MolecularDriversSummarizer private constructor(
         fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
             return with(drivers) {
                 Drivers(
-                    variants = variants.matchingLikelihood(useHighDrivers),
+                    variants = variants.matchingLikelihood(useHighDrivers).map { it.copy(event = formatEvent(it.event, it.sourceEvent)) },
                     copyNumbers = copyNumbers.matchingLikelihood(useHighDrivers),
                     homozygousDisruptions = homozygousDisruptions.matchingLikelihood(useHighDrivers),
                     disruptions = disruptions.matchingLikelihood(useHighDrivers),
@@ -109,6 +105,10 @@ class MolecularDriversSummarizer private constructor(
                     viruses = viruses.matchingLikelihood(useHighDrivers)
                 )
             }
+        }
+
+        private fun formatEvent(event: String, sourceEvent: String): String {
+            return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
         }
     }
 }

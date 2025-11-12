@@ -24,7 +24,7 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
 
         return when {
             infection?.hasActiveInfection == true -> {
-                EvaluationFactory.recoverablePass("Has active infection '${description(infection)}'")
+                EvaluationFactory.recoverablePass("Has active infection (${description(infection)})")
             }
 
             currentlyUsesAntimicrobials -> {
@@ -43,7 +43,7 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
 
     companion object {
         private fun description(infection: InfectionStatus): String {
-            return infection.description ?: "Unknown"
+            return infection.description ?: "unknown type"
         }
     }
 }

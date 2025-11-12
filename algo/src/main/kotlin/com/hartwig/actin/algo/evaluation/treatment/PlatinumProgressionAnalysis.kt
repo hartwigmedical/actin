@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
+import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry

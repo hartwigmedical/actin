@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.interpretation
+package com.hartwig.actin.molecular.util
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -18,12 +18,12 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class AggregatedEvidenceFactoryTest {
+class AggregatedEvidenceTest {
 
     @Test
     fun `Should find no evidence on minimal record`() {
         val minimalRecord = TestMolecularFactory.createMinimalWholeGenomeTest()
-        assertThat(AggregatedEvidenceFactory.create(minimalRecord).treatmentEvidencePerEvent).isEmpty()
+        assertThat(AggregatedEvidence.create(minimalRecord).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
@@ -43,13 +43,13 @@ class AggregatedEvidenceFactoryTest {
                 evidence = TestClinicalEvidenceFactory.createEmpty()
             )
         )
-        assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidencePerEvent).isEmpty()
+        assertThat(AggregatedEvidence.create(withCharacteristics(characteristics)).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
     fun `Should find no external eligible trials when hasSufficientQuality is false`() {
         assertThat(
-            AggregatedEvidenceFactory.create(
+            AggregatedEvidence.create(
                 TestMolecularFactory.createMinimalWholeGenomeTest().copy(hasSufficientQuality = false)
             ).eligibleTrialsPerEvent
         ).isEmpty()
@@ -58,7 +58,7 @@ class AggregatedEvidenceFactoryTest {
     @Test
     fun `Should aggregate characteristics`() {
         val characteristics = TestMolecularFactory.createExhaustiveWholeGenomeTest().characteristics
-        val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
+        val evidence = AggregatedEvidence.create(withCharacteristics(characteristics))
 
         assertThat(evidence.treatmentEvidencePerEvent.map { it.key }).containsExactlyInAnyOrder(
             "MSS",
@@ -101,7 +101,7 @@ class AggregatedEvidenceFactoryTest {
                 )
             ),
         )
-        val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
+        val evidence = AggregatedEvidence.create(withDrivers(drivers))
         assertThat(evidence.treatmentEvidencePerEvent).hasSize(6)
     }
 
@@ -115,7 +115,7 @@ class AggregatedEvidenceFactoryTest {
         val drivers = TestMolecularFactory.createMinimalWholeGenomeTest().drivers.copy(
             variants = listOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
         )
-        val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
+        val evidence = AggregatedEvidence.create(withDrivers(drivers))
         assertThat(evidence.treatmentEvidencePerEvent).hasSize(1)
     }
 

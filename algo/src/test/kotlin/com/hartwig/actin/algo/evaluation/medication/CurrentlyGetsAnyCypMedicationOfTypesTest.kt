@@ -7,9 +7,15 @@ import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class CurrentlyGetsAnyCypInhibitingOrInducingMedicationTest {
-    private val alwaysActiveFunction = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive())
-    private val alwaysPlannedFunction = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysPlanned())
+class CurrentlyGetsAnyCypMedicationOfTypesTest {
+    private val alwaysActiveFunction = CurrentlyGetsAnyCypMedicationOfTypes(
+        MedicationTestFactory.alwaysActive(),
+        setOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR)
+    )
+    private val alwaysPlannedFunction = CurrentlyGetsAnyCypMedicationOfTypes(
+        MedicationTestFactory.alwaysPlanned(),
+        setOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR)
+    )
 
     @Test
     fun `Should pass when any CYP inhibiting or inducing medication`() {

@@ -1,16 +1,21 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
+import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularTest
-import java.time.LocalDate
 
-class MmrStatusIsAvailable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class MmrStatusIsAvailable : EvaluationFunction {
 
-    override fun noMolecularTestEvaluation() = EvaluationFactory.recoverableFail("No MMR status available (no molecular test)")
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val ihcResultAvailable = IhcTestEvaluation.create("MMR", record.ihcTests).filteredTests.isNotEmpty()
+        val molecularResultAvailable = record.molecularTests.any { it.characteristics.microsatelliteStability != null }
 
-    override fun evaluate(test: MolecularTest): Evaluation {
-        return test.characteristics.microsatelliteStability?.let { EvaluationFactory.pass("MMR status is available") }
-            ?: EvaluationFactory.recoverableFail("No MMR status available")
+        return if (ihcResultAvailable || molecularResultAvailable) {
+            EvaluationFactory.pass("MMR status is available")
+        } else {
+            EvaluationFactory.recoverableFail("No MMR status available")
+        }
     }
 }

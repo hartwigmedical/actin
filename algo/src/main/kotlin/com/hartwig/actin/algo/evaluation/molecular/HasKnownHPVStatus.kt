@@ -18,7 +18,7 @@ class HasKnownHPVStatus : EvaluationFunction {
         val molecularRecords = MolecularHistory(record.molecularTests).allOrangeMolecularRecords()
 
         return when {
-            molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
+            molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.hasSufficientQuality } -> {
                 EvaluationFactory.pass("HPV status known (by WGS test)")
             }
 

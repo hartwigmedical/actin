@@ -1,10 +1,11 @@
-package com.hartwig.actin.molecular.util
+package com.hartwig.actin.datamodel.molecular.characteristics
 
 object MolecularCharacteristicEvents {
     const val MICROSATELLITE_UNSTABLE = "MSI"
     const val MICROSATELLITE_STABLE = "MSS"
 
     const val HOMOLOGOUS_RECOMBINATION_DEFICIENT = "HRD"
+    const val HOMOLOGOUS_RECOMBINATION_PROFICIENT = "HRP"
 
     const val HIGH_TUMOR_MUTATIONAL_BURDEN = "TMB High"
     const val LOW_TUMOR_MUTATIONAL_BURDEN = "TMB Low"

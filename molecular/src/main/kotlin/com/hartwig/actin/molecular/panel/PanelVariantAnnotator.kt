@@ -22,6 +22,10 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
+private val NONSENSE_OR_FRAMESHIFT_EFFECTS =
+    setOf(PaveVariantEffect.FRAMESHIFT, PaveVariantEffect.START_LOST, PaveVariantEffect.STOP_GAINED, PaveVariantEffect.STOP_LOST)
+private val SPLICE_EFFECTS = setOf(PaveVariantEffect.SPLICE_ACCEPTOR, PaveVariantEffect.SPLICE_DONOR)
+
 fun eventString(paveResponse: PaveResponse): String {
     return formatVariantImpact(
         paveResponse.impact.hgvsProteinImpact,
@@ -141,15 +145,18 @@ class PanelVariantAnnotator(
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
 
+        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
+            shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveImpact.canonicalEffects.toSet(), paveImpact.gene)
+
         return TranscriptVariantImpact(
             transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
-            hgvsProteinImpact = forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
+            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
             affectedExon = paveLiteAnnotation.affectedExon(),
             inSpliceRegion = paveImpact.spliceRegion,
             effects = paveImpact.canonicalEffects.map { variantEffect(it) }.toSet(),
-            codingEffect = codingEffect(paveImpact.canonicalCodingEffect),
+            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(paveImpact.canonicalCodingEffect),
         )
     }
 
@@ -170,21 +177,29 @@ class PanelVariantAnnotator(
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
 
+        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
+            shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveTranscriptImpact.effects.toSet(), paveTranscriptImpact.gene)
+
         return TranscriptVariantImpact(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
-            hgvsProteinImpact = forceSingleLetterAminoAcids(paveTranscriptImpact.hgvsProteinImpact),
+            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(
+                paveTranscriptImpact.hgvsProteinImpact
+            ),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
             affectedExon = paveLiteAnnotation.affectedExon(),
             inSpliceRegion = paveTranscriptImpact.spliceRegion,
             effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
-            codingEffect = codingEffect(
+            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(
                 paveTranscriptImpact.effects
                     .map(PaveCodingEffect::fromPaveVariantEffect)
                     .let(PaveCodingEffect::worstCodingEffect)
             )
         )
     }
+
+    private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PaveVariantEffect>, gene: String): Boolean =
+        gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
 
     private fun variantType(transvarVariant: com.hartwig.actin.tools.variant.Variant): VariantType {
         val ref = transvarVariant.ref()

@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.util.GeneConstants
-import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import java.time.LocalDate
 
 class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {

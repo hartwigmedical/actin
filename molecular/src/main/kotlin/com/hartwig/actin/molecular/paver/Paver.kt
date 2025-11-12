@@ -186,9 +186,7 @@ fun interpretSpliceRegion(spliceRegion: String): Boolean {
     return when (spliceRegion) {
         "true" -> true
         "false" -> false
-        else -> {
-            throw RuntimeException("Unexpected splice region value: $spliceRegion")
-        }
+        else -> throw RuntimeException("Unexpected splice region value: $spliceRegion")
     }
 }
 
