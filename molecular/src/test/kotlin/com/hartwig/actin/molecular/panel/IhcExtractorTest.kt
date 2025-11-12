@@ -7,21 +7,20 @@ import java.time.LocalDate
 
 private const val POSITIVE_FUSION_GENE = "ALK"
 private const val NEGATIVE_FUSION_GENE = "ROS1"
-private const val ONLY_POSITIVE_FUSION_GENE = "NTRK1"
 private const val OTHER_GENE = "GENE"
 
 class IhcExtractorTest {
 
     @Test
     fun `Should extract fusion positives from IHC`() {
-        val ihcTests = listOf(positiveIhc(POSITIVE_FUSION_GENE), positiveIhc(ONLY_POSITIVE_FUSION_GENE))
+        val ihcTests = listOf(positiveIhc(POSITIVE_FUSION_GENE))
 
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEqualTo(
             listOf(
                 IhcExtraction(
                     null,
-                    setOf(POSITIVE_FUSION_GENE, ONLY_POSITIVE_FUSION_GENE),
+                    setOf(POSITIVE_FUSION_GENE),
                     emptySet()
                 )
             )
@@ -33,13 +32,6 @@ class IhcExtractorTest {
         val ihcTests = listOf(negativeIhc(NEGATIVE_FUSION_GENE))
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEqualTo(listOf(IhcExtraction(null, emptySet(), setOf(NEGATIVE_FUSION_GENE))))
-    }
-
-    @Test
-    fun `Should not extract fusion negatives from IHC if it is only positive fusion gene`() {
-        val ihcTests = listOf(negativeIhc(ONLY_POSITIVE_FUSION_GENE))
-        val result = IhcExtractor().extract(ihcTests)
-        assertThat(result).isEmpty()
     }
 
     @Test

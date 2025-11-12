@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.molecular.MolecularExtractor
 
 private val IHC_FUSION_GENES = setOf("ALK", "ROS1")
-private val IHC_FUSION_GENES_IF_POSITIVE = setOf("NTRK1", "NTRK2", "NTRK3")
 
 class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
 
@@ -13,15 +12,15 @@ class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
             .map { (date, tests) ->
                 IhcExtraction(
                     date,
-                    ihcFusionGenes(tests, IHC_FUSION_GENES + IHC_FUSION_GENES_IF_POSITIVE, "positive"),
-                    ihcFusionGenes(tests, IHC_FUSION_GENES, "negative")
+                    ihcFusionGenes(tests,"positive"),
+                    ihcFusionGenes(tests,"negative")
                 )
             }
             .filter { it.fusionPositiveGenes.isNotEmpty() || it.fusionNegativeGenes.isNotEmpty() }
     }
 
-    private fun ihcFusionGenes(ihcTests: List<IhcTest>, genes: Set<String>, scoreText: String): Set<String> {
-        return ihcTests.filter { it.item in genes && it.scoreText?.lowercase() == scoreText }
+    private fun ihcFusionGenes(ihcTests: List<IhcTest>, scoreText: String): Set<String> {
+        return ihcTests.filter { it.item in IHC_FUSION_GENES && it.scoreText?.lowercase() == scoreText }
             .map { it.item }
             .toSet()
     }
