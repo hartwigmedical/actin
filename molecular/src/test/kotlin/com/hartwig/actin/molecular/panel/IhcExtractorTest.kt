@@ -44,7 +44,7 @@ class IhcExtractorTest {
 
     @Test
     fun `Should ignore other genes`() {
-        val ihcTests = listOf(positiveIhc(OTHER_GENE))
+        val ihcTests = listOf(positiveIhc(OTHER_GENE), negativeIhc(OTHER_GENE))
 
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEmpty()
