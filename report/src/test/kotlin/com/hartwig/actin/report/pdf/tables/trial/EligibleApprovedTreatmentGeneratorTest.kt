@@ -22,7 +22,7 @@ import org.junit.Test
 class EligibleApprovedTreatmentGeneratorTest {
 
     @Test
-    fun `Should return Potential SOC if it is a cancer of unknown primary`() {
+    fun `Should return Potential SoC if it is a cancer of unknown primary`() {
         val cupTumor = TumorDetails(name = "Some $CUP_STRING")
         val clinicalRecord = TestClinicalFactory.createProperTestClinicalRecord().copy(tumor = cupTumor)
 

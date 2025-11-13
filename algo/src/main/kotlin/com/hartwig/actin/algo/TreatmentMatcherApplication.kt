@@ -54,7 +54,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             functionInputResolver = functionInputResolver,
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,
-            personalizationDataPath = config.personalizationDataPath,
             treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,
             algoConfiguration = configuration,
             maxMolecularTestAge = maxMolecularTestAge

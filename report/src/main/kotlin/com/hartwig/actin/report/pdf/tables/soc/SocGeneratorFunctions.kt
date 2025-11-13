@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.efficacy.TrialReference
-import com.hartwig.actin.datamodel.personalization.MIN_PATIENT_COUNT
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -16,10 +15,9 @@ import com.itextpdf.layout.element.Table
 
 const val NA = "NA"
 
-object SOCGeneratorFunctions {
+object SoCGeneratorFunctions {
 
-    private val annotatedTreatmentComparator = Comparator.nullsLast(compareByDescending<AnnotatedTreatmentMatch> { it.generalPfs?.value }
-        .thenByDescending { it.annotations.size })
+    private val annotatedTreatmentComparator = compareBy<AnnotatedTreatmentMatch> { it.treatmentCandidate.treatment.name }
 
     fun addEndPointsToTable(analysisGroup: AnalysisGroup?, endPointName: String, subTable: Table) {
         val primaryEndPoint = analysisGroup?.endPoints?.find { it.name == endPointName }
@@ -40,7 +38,7 @@ object SOCGeneratorFunctions {
         return if (patientPopulation.analysisGroups.count() == 1) {
             patientPopulation.analysisGroups.first()
         } else {
-            // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
+            // JB: If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
             patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients }
         }
     }
@@ -82,15 +80,13 @@ object SOCGeneratorFunctions {
                     Cells.createContent(subTable)
                 }
 
-                val efficacyEvidenceCell = addRealWorldEfficacyToTable(treatment)
-
                 val warningMessages = treatment.evaluations.flatMap {
                     it.undeterminedMessages + it.warnMessages + if (it.recoverable) it.failMessages else emptyList()
                 }.map { it.toString() }
                 val warningsCell = Cells.createContent(
                     warningMessages.sorted().distinct().joinToString(Formats.COMMA_SEPARATOR)
                 )
-                sequenceOf(nameCell, annotationsCell, efficacyEvidenceCell, warningsCell)
+                sequenceOf(nameCell, annotationsCell, warningsCell)
             }
     }
 
@@ -114,36 +110,5 @@ object SOCGeneratorFunctions {
                 subTable.addCell(Cells.createValue(" "))
                 subTable.addCell(Cells.createValue(" "))
             }
-    }
-
-    private fun addRealWorldEfficacyToTable(treatment: AnnotatedTreatmentMatch): Cell {
-        val subTable = Tables.createFixedWidthCols(25f, 150f).setWidth(175f)
-
-        val efficacyDataList = listOf(
-            "PFS" to treatment.generalPfs,
-            "OS" to treatment.generalOs
-        )
-
-        if (efficacyDataList.all { (_, data) -> data == null || data.numPatients <= MIN_PATIENT_COUNT }) {
-            return Cells.createContent("Not available yet")
-        }
-
-        if (treatment.annotations.isNotEmpty()) {
-            subTable.addCell(Cells.createValue("\n"))
-            subTable.addCell(Cells.createKey("\n"))
-        }
-
-        for ((name, data) in efficacyDataList) {
-            val value = data?.takeIf { it.numPatients > MIN_PATIENT_COUNT }?.let {
-                val iqrString = if (it.iqr != null && !it.iqr!!.isNaN()) {
-                    ", IQR: ${Formats.daysToMonths(it.iqr!!)}"
-                } else ""
-                "${Formats.daysToMonths(it.value)} months$iqrString"
-            } ?: NA
-            subTable.addCell(Cells.createValue("$name: "))
-            subTable.addCell(Cells.createKey(value))
-        }
-
-        return Cells.createContent(subTable)
     }
 }

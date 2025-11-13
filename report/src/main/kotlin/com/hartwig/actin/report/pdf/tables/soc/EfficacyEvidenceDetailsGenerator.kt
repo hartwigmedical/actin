@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.efficacy.EndPoint
 import com.hartwig.actin.datamodel.efficacy.EndPointType
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.analysisGroupForPopulation
+import com.hartwig.actin.report.pdf.tables.soc.SoCGeneratorFunctions.analysisGroupForPopulation
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
@@ -88,7 +88,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
             "Sex" to { "Male: ${it.numberOfMale ?: NA}\n Female: ${it.numberOfFemale}" },
             "Race" to { it.patientsPerRace?.entries?.joinToString(", ") { (key, value) -> "$key: $value patients" } },
             "Region" to { it.patientsPerRegion?.entries?.joinToString(", ") { (key, value) -> "$key: $value patients" } },
-            "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
+            "WHO/ECOG" to SoCGeneratorFunctions::createWhoString,
             "Primary tumor location" to { it.formatTumorLocation("\n") },
             "Mutations" to PatientPopulation::mutations,
             "Metastatic sites" to PatientPopulation::formatMetastaticSites,
@@ -108,9 +108,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry) : 
         return table
     }
 
-    private fun createEndPointTable(
-        patientPopulations: List<PatientPopulation>, title: String, endPointType: EndPointType
-    ): Table {
+    private fun createEndPointTable(patientPopulations: List<PatientPopulation>, title: String, endPointType: EndPointType): Table {
         val table = Tables.createFixedWidthCols(200f, 140f, 140f, 140f, 80f).setWidth(700f)
         table.addCell(Cells.createValue(title))
         table.addCell(Cells.createKey(""))

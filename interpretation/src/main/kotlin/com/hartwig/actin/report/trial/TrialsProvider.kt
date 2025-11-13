@@ -112,7 +112,7 @@ class TrialsProvider(
             treatmentMatch: TreatmentMatch,
             countryOfReference: Country,
             retainOriginalExternalTrials: Boolean,
-            filterOnSOCExhaustionAndTumorType: Boolean,
+            filterOnSoCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
             return create(
@@ -121,7 +121,7 @@ class TrialsProvider(
                 countryOfReference,
                 (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF,
                 retainOriginalExternalTrials,
-                filterOnSOCExhaustionAndTumorType,
+                filterOnSoCExhaustionAndTumorType,
                 filter
             )
         }

@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
-import com.hartwig.actin.datamodel.personalization.Measurement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.IElement
 import com.itextpdf.layout.element.Paragraph
@@ -19,13 +18,13 @@ import org.junit.Test
 
 private const val TOTAL_POPULATION = 10
 
-class SOCGeneratorFunctionsTest {
+class SoCGeneratorFunctionsTest {
 
     @Test
     fun `Should return single analysis group`() {
         val analysisGroup = AnalysisGroup(1, "ag", 5, emptyList())
         val population = patientPopulation(listOf(analysisGroup))
-        assertThat(SOCGeneratorFunctions.analysisGroupForPopulation(population)).isEqualTo(analysisGroup)
+        assertThat(SoCGeneratorFunctions.analysisGroupForPopulation(population)).isEqualTo(analysisGroup)
     }
 
     @Test
@@ -33,7 +32,7 @@ class SOCGeneratorFunctionsTest {
         val analysisGroup1 = AnalysisGroup(1, "ag1", 5, emptyList())
         val analysisGroup2 = AnalysisGroup(2, "ag2", TOTAL_POPULATION, emptyList())
         val population = patientPopulation(listOf(analysisGroup1, analysisGroup2))
-        assertThat(SOCGeneratorFunctions.analysisGroupForPopulation(population)).isEqualTo(analysisGroup2)
+        assertThat(SoCGeneratorFunctions.analysisGroupForPopulation(population)).isEqualTo(analysisGroup2)
     }
 
     @Test
@@ -41,7 +40,7 @@ class SOCGeneratorFunctionsTest {
         val analysisGroup1 = AnalysisGroup(1, "ag1", 5, emptyList())
         val analysisGroup2 = AnalysisGroup(2, "ag2", 3, emptyList())
         val population = patientPopulation(listOf(analysisGroup1, analysisGroup2))
-        assertThat(SOCGeneratorFunctions.analysisGroupForPopulation(population)).isNull()
+        assertThat(SoCGeneratorFunctions.analysisGroupForPopulation(population)).isNull()
     }
 
     @Test
@@ -55,24 +54,24 @@ class SOCGeneratorFunctionsTest {
             patientsWithWho3 = null,
             patientsWithWho4 = 7
         )
-        assertThat(SOCGeneratorFunctions.createWhoString(population)).isEqualTo("0: 1, 1: 3, 1-2: 4, 2: 5, 4: 7")
+        assertThat(SoCGeneratorFunctions.createWhoString(population)).isEqualTo("0: 1, 1: 3, 1-2: 4, 2: 5, 4: 7")
     }
 
     @Test
     fun `Should create empty WHO string for population with no WHO information`() {
         val population = patientPopulation(emptyList())
-        assertThat(SOCGeneratorFunctions.createWhoString(population)).isEmpty()
+        assertThat(SoCGeneratorFunctions.createWhoString(population)).isEmpty()
     }
 
     @Test
     fun `Should use short treatment name annotation`() {
-        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX+BEVACIZUMAB")).isEqualTo("FOLFOX-B")
-        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX+PANITUMUMAB")).isEqualTo("FOLFOX-P")
-        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX")).isEqualTo("FOLFOX")
+        assertThat(SoCGeneratorFunctions.abbreviate("FOLFOX+BEVACIZUMAB")).isEqualTo("FOLFOX-B")
+        assertThat(SoCGeneratorFunctions.abbreviate("FOLFOX+PANITUMUMAB")).isEqualTo("FOLFOX-P")
+        assertThat(SoCGeneratorFunctions.abbreviate("FOLFOX")).isEqualTo("FOLFOX")
     }
 
     @Test
-    fun `Should create approved treatment cells for treatments sorted by descending general PFS`() {
+    fun `Should create approved treatment cells for treatments sorted by descending number of annotations`() {
         val treatments = listOf(
             annotatedTreatmentMatch(
                 "t1",
@@ -80,31 +79,21 @@ class SOCGeneratorFunctionsTest {
                     evaluation(EvaluationResult.UNDETERMINED, setOf("no data")),
                     evaluation(EvaluationResult.WARN, setOf("no data", "not recommended")),
                     evaluation(EvaluationResult.PASS, setOf("approved"))
-                ),
-                Measurement(103.0, 100, 52, 390, 100.0)
+                )
             ),
-            annotatedTreatmentMatch("t2", listOf(evaluation(EvaluationResult.WARN, setOf("no data"))), Measurement(116.5, 94, 78, 431)),
+            annotatedTreatmentMatch("t2", listOf(evaluation(EvaluationResult.WARN, setOf("no data")))),
             annotatedTreatmentMatch("t3", listOf(evaluation(EvaluationResult.FAIL, setOf("lab value out of range"), recoverable = true)))
         )
-        val cells = SOCGeneratorFunctions.approvedTreatmentCells(treatments)
-        assertThat(cells).hasSize(12)
+        val cells = SoCGeneratorFunctions.approvedTreatmentCells(treatments)
+        assertThat(cells).hasSize(9)
         assertThat(extractAllTextFromCell(cells)).containsExactly(
-            "t2",
-            "Not available yet",
-            "PFS: ",
-            "3.8 months",
-            "OS: ",
-            NA,
-            "no data",
             "t1",
             "Not available yet",
-            "PFS: ",
-            "3.4 months, IQR: 3.3",
-            "OS: ",
-            NA,
             "no data, not recommended",
-            "t3",
+            "t2",
             "Not available yet",
+            "no data",
+            "t3",
             "Not available yet",
             "lab value out of range"
         )
@@ -133,14 +122,9 @@ class SOCGeneratorFunctionsTest {
         }
     }
 
-    private fun annotatedTreatmentMatch(
-        name: String,
-        evaluations: List<Evaluation>,
-        pfs: Measurement? = null,
-        os: Measurement? = null
-    ): AnnotatedTreatmentMatch {
+    private fun annotatedTreatmentMatch(name: String, evaluations: List<Evaluation>): AnnotatedTreatmentMatch {
         return AnnotatedTreatmentMatch(
-            TreatmentCandidate(treatment(name, true), false, emptySet()), evaluations, emptyList(), pfs, os, emptyList()
+            TreatmentCandidate(treatment(name, true), false, emptySet()), evaluations, emptyList(), emptyList()
         )
     }
 

@@ -1,6 +1,5 @@
 package com.hartwig.actin.datamodel.algo
 
-import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
 import java.time.LocalDate
 
 data class TreatmentMatch(
@@ -9,7 +8,6 @@ data class TreatmentMatch(
     val referenceDateIsLive: Boolean,
     val trialMatches: List<TrialMatch>,
     val standardOfCareMatches: List<AnnotatedTreatmentMatch>?,
-    val personalizedDataAnalysis: PersonalizedDataAnalysis?,
     val personalizedTreatmentSummary: PersonalizedTreatmentSummary?,
     val maxMolecularTestAge: LocalDate? = null
 )

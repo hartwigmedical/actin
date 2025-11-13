@@ -50,8 +50,10 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
                         EvaluationResult.FAIL
                     ) && genes?.let { !NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE.containsAll(genes) } ?: false
                 ) {
-                    val unevaluatedGenes = genes!!.subtract(NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE)
-                    EvaluationFactory.undetermined("Possible presence of driver events for gene(s) ${Format.concat(unevaluatedGenes)} could not be determined")
+                    val unevaluatedGenes = genes.subtract(NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE)
+                    EvaluationFactory.undetermined(
+                        "Possible presence of driver events for gene(s) ${Format.concat(unevaluatedGenes)} could not be determined"
+                    )
                 } else {
                     evaluation
                 }
