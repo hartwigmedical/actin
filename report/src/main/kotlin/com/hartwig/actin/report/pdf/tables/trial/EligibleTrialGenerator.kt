@@ -141,7 +141,7 @@ class EligibleTrialGenerator(
 
             val referenceCountryString = countryOfReference?.let { "trials in ${it.display()}" } ?: "trials"
             val trialDescriptionString = when (type) {
-                TrialType.LOCAL_LATE_PHASE -> "Phase 2/3 $referenceCountryString"
+                TrialType.LOCAL_LATE_PHASE -> "Phase 2/3+ $referenceCountryString"
                 TrialType.LOCAL_EARLY_PHASE -> "Phase 1 (or unknown phase) $referenceCountryString"
                 TrialType.EXTERNAL -> "International trials"
             }

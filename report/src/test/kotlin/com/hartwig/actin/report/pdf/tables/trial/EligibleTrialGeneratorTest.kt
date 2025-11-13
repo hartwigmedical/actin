@@ -68,7 +68,7 @@ class EligibleTrialGeneratorTest {
         val result = EligibleTrialGenerator.nationalOpenCohorts(cohorts, externalTrials, requestingSource, countryOfReference, trialType)
 
         assertThat(result.cohortSize()).isEqualTo(1)
-        assertThat(result.title()).isEqualTo("Phase 2/3 trials in NL that are open and potentially eligible (1 cohort from 1 trial)")
+        assertThat(result.title()).isEqualTo("Phase 2/3+ trials in NL that are open and potentially eligible (1 cohort from 1 trial)")
     }
 
     @Test
