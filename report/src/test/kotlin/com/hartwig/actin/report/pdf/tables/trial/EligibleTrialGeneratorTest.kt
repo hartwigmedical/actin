@@ -11,11 +11,10 @@ import org.junit.Test
 
 class EligibleTrialGeneratorTest {
 
-    val externalTrials =
-        ExternalTrials(
-            MolecularFilteredExternalTrials(emptySet(), emptySet()),
-            MolecularFilteredExternalTrials(emptySet(), emptySet())
-        )
+    val externalTrials = ExternalTrials(
+        MolecularFilteredExternalTrials(emptySet(), emptySet()),
+        MolecularFilteredExternalTrials(emptySet(), emptySet())
+    )
     val requestingSource = TrialSource.EXAMPLE
     val countryOfReference = Country.NETHERLANDS
 
