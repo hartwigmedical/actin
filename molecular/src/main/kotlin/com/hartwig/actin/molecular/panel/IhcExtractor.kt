@@ -2,9 +2,9 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.molecular.MolecularExtractor
+import com.hartwig.actin.molecular.util.GeneConstants
 
 private val IHC_FUSION_GENES = setOf("ALK", "ROS1")
-private val IHC_DELETION_AND_MUTATION_TESTED_GENES = setOf("MLH1", "MSH2", "MSH6", "PMS2", "MTAP")
 
 class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
 
@@ -31,7 +31,7 @@ class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
     }
 
     private fun ihcDeletionAndMutationTestedGenes(ihcTests: List<IhcTest>): Set<String> {
-        return ihcTests.filter { it.item in IHC_DELETION_AND_MUTATION_TESTED_GENES && !it.impliesPotentialIndeterminateStatus }
+        return ihcTests.filter { it.item in GeneConstants.IHC_LOSS_EVALUABLE_GENES && !it.impliesPotentialIndeterminateStatus }
             .map { it.item }
             .toSet()
     }

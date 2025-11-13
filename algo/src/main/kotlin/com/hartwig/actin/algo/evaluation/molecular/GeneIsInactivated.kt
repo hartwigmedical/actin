@@ -13,8 +13,6 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
-val IHC_LOSS_EVALUABLE_GENES = setOf("MLH1", "MSH2", "MSH6", "PMS2", "MTAP")
-
 class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null, private val onlyDeletions: Boolean) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = if (onlyDeletions) {
@@ -33,7 +31,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
         val ihcLossEventsThatAreIndeterminate: MutableSet<String> = mutableSetOf()
 
-        val ihcTestEvaluation = if (gene in IHC_LOSS_EVALUABLE_GENES) IhcTestEvaluation.create(gene, record.ihcTests) else null
+        val ihcTestEvaluation = if (gene in GeneConstants.IHC_LOSS_EVALUABLE_GENES) IhcTestEvaluation.create(gene, record.ihcTests) else null
         if (ihcTestEvaluation?.hasCertainLossResultsForItem() == true) {
             inactivationEventsThatQualify.add("$gene loss by IHC")
         } else if (ihcTestEvaluation?.hasPossibleLossResultsForItem() == true) {
