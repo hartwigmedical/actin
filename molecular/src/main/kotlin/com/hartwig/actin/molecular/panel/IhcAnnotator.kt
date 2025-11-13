@@ -14,17 +14,16 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : MolecularAnnotator<IhcExtraction> {
 
     override fun annotate(input: IhcExtraction): MolecularTest {
+        val geneTargetMap = (input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith { listOf(MolecularTestTarget.FUSION) } +
+                input.mutationAndDeletionTestedGenes.associateWith { listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION) }
+
         return MolecularTest(
             date = input.date,
             sampleId = null,
             reportHash = null,
             experimentType = ExperimentType.IHC,
             testTypeDisplay = ExperimentType.IHC.display(),
-            targetSpecification = PanelTargetSpecification((input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith {
-                listOf(
-                    MolecularTestTarget.FUSION
-                )
-            }),
+            targetSpecification = PanelTargetSpecification(geneTargetMap),
             refGenomeVersion = RefGenomeVersion.V37,
             containsTumorCells = true,
             hasSufficientPurity = true,
