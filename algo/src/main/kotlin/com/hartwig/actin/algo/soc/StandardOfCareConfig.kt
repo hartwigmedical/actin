@@ -17,7 +17,6 @@ data class StandardOfCareConfig(
     val atcTsv: String,
     val treatmentDirectory: String,
     val runHistorically: Boolean,
-    val personalizationDataPath: String?,
     val overridesYaml: String?
 ) {
 
@@ -30,7 +29,6 @@ data class StandardOfCareConfig(
         private const val ICD_TSV = "icd_tsv"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val RUN_HISTORICALLY = "run_historically"
-        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
         private const val LOG_DEBUG = "log_debug"
 
         fun createOptions(): Options {
@@ -45,7 +43,6 @@ data class StandardOfCareConfig(
                 false,
                 "If set, runs the algo with a date just after the original patient registration date"
             )
-            options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
             options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
@@ -67,7 +64,6 @@ data class StandardOfCareConfig(
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
-                personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }

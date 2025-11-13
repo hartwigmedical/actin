@@ -41,8 +41,9 @@ class TreatmentMatcherTest {
         every { determineEligibility(patient, trials) } returns trialMatches
     }
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-    private val evidenceEntries =
-        EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+    private val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(
+        CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase()
+    )
     private val evidences: List<EfficacyEvidence> = emptyList()
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
@@ -65,7 +66,6 @@ class TreatmentMatcherTest {
         trials = trials,
         referenceDateProvider = CurrentDateProvider(),
         evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-        personalizationDataPath = null,
         treatmentEfficacyPredictionPath = null,
         maxMolecularTestAge = MAX_AGE
     )
@@ -118,7 +118,6 @@ class TreatmentMatcherTest {
             trials = trials,
             referenceDateProvider = CurrentDateProvider(),
             evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-            personalizationDataPath = null,
             treatmentEfficacyPredictionPath = null,
             maxMolecularTestAge = MAX_AGE
         )

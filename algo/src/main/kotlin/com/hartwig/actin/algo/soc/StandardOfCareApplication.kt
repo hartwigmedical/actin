@@ -62,7 +62,6 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
             functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
-            personalizationDataPath = config.personalizationDataPath,
             treatmentEfficacyPredictionJson = null,
             algoConfiguration = configuration,
             maxMolecularTestAge = null

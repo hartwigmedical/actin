@@ -19,7 +19,6 @@ class TreatmentMatcher(
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
-    private val personalizationDataPath: String? = null,
     private val treatmentEfficacyPredictionPath: String? = null,
     private val maxMolecularTestAge: LocalDate?
 ) {
@@ -64,7 +63,6 @@ class TreatmentMatcher(
                 trials = trials,
                 referenceDateProvider = resources.referenceDateProvider,
                 evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
-                personalizationDataPath = resources.personalizationDataPath,
                 treatmentEfficacyPredictionPath = resources.treatmentEfficacyPredictionJson,
                 maxMolecularTestAge = maxMolecularTestAge
             )
