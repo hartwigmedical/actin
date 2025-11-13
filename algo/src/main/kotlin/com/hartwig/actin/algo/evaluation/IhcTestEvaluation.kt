@@ -29,6 +29,16 @@ class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
                     !test.impliesPotentialIndeterminateStatus
         }
 
+    fun hasCertainLossResultsForItem(): Boolean =
+        filteredTests.isNotEmpty() && filteredTests.all {
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_LOSS_TERMS && !it.impliesPotentialIndeterminateStatus
+        }
+
+    fun hasPossibleLossResultsForItem(): Boolean =
+        filteredTests.isNotEmpty() && !filteredTests.all { test ->
+            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NO_LOSS_TERMS) && !test.impliesPotentialIndeterminateStatus
+        }
+
     fun hasCertainWildtypeResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && filteredTests.all {
             it.scoreText?.lowercase() in IhcTestEvaluationConstants.WILD_TYPE_TERMS && !it.impliesPotentialIndeterminateStatus

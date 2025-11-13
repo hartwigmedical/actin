@@ -1,9 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -11,6 +12,8 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
+
+val IHC_LOSS_EVALUABLE_GENES = setOf("MLH1", "MSH2", "MSH6", "PMS2", "MTAP")
 
 class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null, private val onlyDeletions: Boolean) :
     MolecularEvaluationFunction(
@@ -24,8 +27,19 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         }, maxTestAge = maxTestAge
     ) {
 
-    override fun evaluate(test: MolecularTest): Evaluation {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val test = record.molecularTests.first() //TODO
+
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
+        val ihcLossEventsThatAreIndeterminate: MutableSet<String> = mutableSetOf()
+
+        val ihcTestEvaluation = if (gene in IHC_LOSS_EVALUABLE_GENES) IhcTestEvaluation.create(gene, record.ihcTests) else null
+        if (ihcTestEvaluation?.hasCertainLossResultsForItem() == true) {
+            inactivationEventsThatQualify.add("$gene loss by IHC")
+        } else if (ihcTestEvaluation?.hasPossibleLossResultsForItem() == true) {
+            ihcLossEventsThatAreIndeterminate.add("$gene potential loss by IHC")
+        }
+
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
@@ -139,6 +153,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         }
 
         val potentialWarnEvaluation = evaluatePotentialWarns(
+            ihcLossEventsThatAreIndeterminate,
             inactivationEventsThatAreUnreportable,
             inactivationEventsNoTSG,
             inactivationEventsGainOfFunction,
@@ -157,6 +172,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
     }
 
     private fun evaluatePotentialWarns(
+        ihcLossEventsThatAreIndeterminate: Set<String>,
         inactivationEventsThatAreUnreportable: Set<String>,
         inactivationEventsNoTSG: Set<String>,
         inactivationEventsGainOfFunction: Set<String>,
@@ -173,6 +189,10 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
 
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOfNotNull(
+                EventsWithMessages(
+                    ihcLossEventsThatAreIndeterminate,
+                    "$messageSubjectCapitalized event(s) ${concat(ihcLossEventsThatAreIndeterminate)} for $gene but unclear how to interpret IHC result"
+                ),
                 EventsWithMessages(
                     inactivationEventsThatAreUnreportable,
                     "$messageSubjectCapitalized event(s) ${concat(inactivationEventsThatAreUnreportable)} for $gene but event(s) not reportable"
