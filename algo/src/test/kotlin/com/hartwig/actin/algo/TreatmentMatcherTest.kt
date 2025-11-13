@@ -76,7 +76,6 @@ class TreatmentMatcherTest {
         referenceDateIsLive = true,
         trialMatches = trialMatches,
         standardOfCareMatches = null,
-        personalizedDataAnalysis = null,
         personalizedTreatmentSummary = null,
         maxMolecularTestAge = MAX_AGE
     )

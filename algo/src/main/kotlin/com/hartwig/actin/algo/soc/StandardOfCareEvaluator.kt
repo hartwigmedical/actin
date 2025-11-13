@@ -22,7 +22,7 @@ class StandardOfCareEvaluator(
 
     fun standardOfCareEvaluatedTreatments(patientRecord: PatientRecord): StandardOfCareEvaluation {
         require(standardOfCareCanBeEvaluatedForPatient(patientRecord)) {
-            "SOC recommendation only supported for colorectal carcinoma"
+            "SoC recommendation only supported for colorectal carcinoma"
         }
         return StandardOfCareEvaluation(treatmentCandidates().map { evaluateTreatmentEligibilityForPatient(it, patientRecord) })
     }

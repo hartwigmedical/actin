@@ -3,7 +3,6 @@ package com.hartwig.actin.algo
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
-import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
@@ -28,18 +27,16 @@ class TreatmentMatcher(
     fun run(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
-        val (standardOfCareMatches, personalizedDataAnalysis, personalizedTreatmentSummary) =
+        val (standardOfCareMatches, personalizedTreatmentSummary) =
             if (standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient)) {
                 val evaluatedTreatments = standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient).evaluatedTreatments
-                val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
                 val personalizedTreatmentSummary = treatmentEfficacyPredictionPath?.let(PersonalizedTreatmentSummaryJson::read)
-                Triple(
-                    evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
-                    personalizedDataAnalysis,
+                Pair(
+                    evaluatedTreatmentAnnotator.annotate(evaluatedTreatments),
                     personalizedTreatmentSummary
                 )
             } else {
-                Triple(null, null, null)
+                Pair(null, null)
             }
 
         return TreatmentMatch(
@@ -48,7 +45,6 @@ class TreatmentMatcher(
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
-            personalizedDataAnalysis = personalizedDataAnalysis,
             personalizedTreatmentSummary = personalizedTreatmentSummary,
             maxMolecularTestAge = maxMolecularTestAge
         )

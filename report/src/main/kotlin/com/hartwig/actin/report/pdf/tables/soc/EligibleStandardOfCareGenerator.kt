@@ -22,12 +22,10 @@ class EligibleStandardOfCareGenerator(private val report: Report) : TableGenerat
             return Tables.createSingleCol()
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         }
-        val table = Tables.createRelativeWidthCols(18f, 30f, 25f, 27f)
-        sequenceOf("Treatment", "Literature efficacy evidence", "Real-world efficacy evidence", "Warnings")
-            .map(Cells::createHeader)
-            .forEach(table::addHeaderCell)
+        val table = Tables.createRelativeWidthCols(18f, 30f, 27f)
+        sequenceOf("Treatment", "Literature efficacy evidence", "Warnings").map(Cells::createHeader).forEach(table::addHeaderCell)
 
-        SOCGeneratorFunctions.approvedTreatmentCells(treatments).forEach(table::addCell)
+        SoCGeneratorFunctions.approvedTreatmentCells(treatments).forEach(table::addCell)
         return table
     }
 }
