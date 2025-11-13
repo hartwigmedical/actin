@@ -80,6 +80,24 @@ object TestTreatmentMatchFactory {
                 evaluations = createTestGeneralEvaluationsTrial2(),
                 cohorts = createTestCohortsTrial2(),
                 nonEvaluableCohorts = createNonEvaluableTestCohortsTrial2()
+            ),
+            TrialMatch(
+                identification = TrialIdentification(
+                    trialId = "Test Trial 3",
+                    open = true,
+                    acronym = "TEST-3",
+                    title = "Example test trial 3",
+                    nctId = "NCT00000013",
+                    phase = TrialPhase.PHASE_1_2,
+                    source = TrialSource.NKI,
+                    sourceId = "Source ID 3",
+                    locations = setOf("Antoni van Leeuwenhoek"),
+                    url = null
+                ),
+                isPotentiallyEligible = true,
+                evaluations = createTestGeneralEvaluationsTrial3(),
+                cohorts = createTestCohortsTrial3(),
+                nonEvaluableCohorts = emptyList()
             )
         )
     }
@@ -187,8 +205,8 @@ object TestTreatmentMatchFactory {
         return mapOf(
             Eligibility(
                 references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.HER2_STATUS_IS_POSITIVE, parameters = emptyList())
-            ) to unrecoverable(EvaluationResult.PASS, "HER2 amp", "HER2 amp")
+                function = EligibilityFunction(rule = EligibilityRule.AMPLIFICATION_OF_GENE_X, parameters = listOf("EGFR"))
+            ) to unrecoverable(EvaluationResult.PASS, "EGFR amp", "EGFR amp")
         )
     }
 
@@ -240,12 +258,41 @@ object TestTreatmentMatchFactory {
         )
     }
 
+    private fun createTestCohortsTrial3(): List<CohortMatch> {
+        return listOf(
+            CohortMatch(
+                metadata = createTestCohortMetadata("A", true, true, false, false),
+                isPotentiallyEligible = true,
+                evaluations = createTestGeneralEvaluationsTrial3(),
+            )
+        )
+    }
+
+    private fun createTestGeneralEvaluationsTrial3(): Map<Eligibility, Evaluation> {
+        return mapOf(
+            Eligibility(
+                references = setOf("I-01"),
+                function = EligibilityFunction(rule = EligibilityRule.INACTIVATION_OF_GENE_X, parameters = listOf("FGFR1"))
+            ) to unrecoverable(
+                EvaluationResult.UNDETERMINED,
+                "FGFR1 not tested for inactivation",
+                isMissingMolecularResultForEvaluation = true
+            ),
+        )
+    }
+
     private fun unrecoverable(
         result: EvaluationResult,
         message: String? = null,
-        inclusionMolecularEvent: String? = null
+        inclusionMolecularEvent: String? = null,
+        isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
-        val base = Evaluation(result = result, recoverable = false, inclusionMolecularEvents = setOfNotNull(inclusionMolecularEvent))
+        val base = Evaluation(
+            result = result,
+            recoverable = false,
+            inclusionMolecularEvents = setOfNotNull(inclusionMolecularEvent),
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
+        )
         return when (result) {
             EvaluationResult.PASS -> {
                 base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))

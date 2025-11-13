@@ -73,7 +73,7 @@ class IneligibleTrialGenerator(
 
     companion object {
 
-        fun forEvaluableCohorts(
+        fun evaluableCohorts(
             cohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?,
             openOnly: Boolean = false
@@ -90,7 +90,7 @@ class IneligibleTrialGenerator(
             )
         }
 
-        fun forNonEvaluableAndIgnoredCohorts(
+        fun nonEvaluableOrIgnoredCohorts(
             ignoredCohorts: List<InterpretedCohort>,
             nonEvaluableCohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?

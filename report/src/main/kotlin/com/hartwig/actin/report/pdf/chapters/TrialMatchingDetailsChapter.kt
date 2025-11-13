@@ -17,6 +17,7 @@ import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.TrialType
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -79,37 +80,42 @@ class TrialMatchingDetailsChapter(
                     configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
 
         val externalTrials = trialsProvider.externalTrials()
-        val localExternalTrialGenerator = EligibleTrialGenerator.localOpenCohorts(
+        val nationalExternalTrialGenerator = EligibleTrialGenerator.nationalOpenCohorts(
             emptyList(),
             externalTrials,
             requestingSource,
-            configuration.countryOfReference
+            configuration.countryOfReference,
+            TrialType.EXTERNAL
         ).takeIf { includeSpecificExternalGenerators }
 
-        val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(
+        val internationalExternalTrialGenerator = EligibleTrialGenerator.internationalExternalOpenCohorts(
             externalTrials,
             requestingSource,
         ).takeIf { includeSpecificExternalGenerators }
 
-        val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(externalTrials, configuration.countryOfReference)
+        val filteredExternalTrialGenerator = EligibleTrialGenerator.filteredExternalTrials(externalTrials, configuration.countryOfReference)
 
-        return listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator, filteredTrialGenerator) + localTrialGenerators
+        return listOfNotNull(
+            nationalExternalTrialGenerator,
+            internationalExternalTrialGenerator,
+            filteredExternalTrialGenerator
+        ) + localTrialGenerators
     }
 
     private fun createLocalTrialTableGenerators(
-        cohorts: List<InterpretedCohort>,
+        evaluableCohorts: List<InterpretedCohort>,
         nonEvaluableCohorts: List<InterpretedCohort>,
         source: TrialSource?
     ): List<TrialTableGenerator> {
-        val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
+        val (ignoredCohorts, nonIgnoredCohorts) = evaluableCohorts.partition { it.ignore }
 
-        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(nonIgnoredCohorts, source)
-        val ineligibleTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source)
-        val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialGenerator.forNonEvaluableAndIgnoredCohorts(
+        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.closedCohorts(nonIgnoredCohorts, source)
+        val ineligibleTrialsGenerator = IneligibleTrialGenerator.evaluableCohorts(nonIgnoredCohorts, source)
+        val nonEvaluableOrIgnoredCohortsGenerator = IneligibleTrialGenerator.nonEvaluableOrIgnoredCohorts(
             ignoredCohorts, nonEvaluableCohorts, source
         )
 
-        return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableAndIgnoredCohortsGenerator)
+        return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableOrIgnoredCohortsGenerator)
     }
 
     private fun addDetailedTrialMatching(document: Document) {

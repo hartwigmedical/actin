@@ -53,7 +53,6 @@ private val ROS1_ACTIONABLE_WITH_EXTERNAL_TRIAL = ActionableWithExternalTrial(
     BASE_EXTERNAL_TRIAL,
 )
 
-
 private val INTERNAL_TRIAL_IDS = setOf(NCT_01, NCT_03)
 private val EVALUABLE_COHORTS = listOf(
     InterpretedCohortTestFactory.interpretedCohort(
@@ -66,6 +65,22 @@ private val EVALUABLE_COHORTS = listOf(
 )
 
 class TrialsProviderTest {
+
+    @Test
+    fun `Should filter open and eligible cohorts correctly`() {
+        val cohortToRemain = InterpretedCohortTestFactory.interpretedCohort(
+            isPotentiallyEligible = true,
+            isOpen = true,
+            isMissingMolecularResultForEvaluation = false
+        )
+        val cohortToFilter1 = cohortToRemain.copy(isPotentiallyEligible = false)
+        val cohortToFilter2 = cohortToRemain.copy(isOpen = false)
+        val cohortToFilter3 = cohortToRemain.copy(isMissingMolecularResultForEvaluation = true)
+
+        val filtered =
+            TrialsProvider.filterCohortsOpenAndEligible(listOf(cohortToRemain, cohortToFilter1, cohortToFilter2, cohortToFilter3))
+        assertThat(filtered).containsExactly(cohortToRemain)
+    }
 
     @Test
     fun `Should filter internal trials`() {
