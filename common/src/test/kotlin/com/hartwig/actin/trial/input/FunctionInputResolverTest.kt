@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -1103,6 +1104,22 @@ class FunctionInputResolverTest {
         ).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment response", "not a treatment category", "test")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many drug interaction types as input`() {
+        val rule = firstOfType(FunctionInput.MANY_DRUG_INTERACTION_TYPES)
+        val valid = create(rule, listOf("Inhibitor;Inducer"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createManyDrugInteractionTypes(valid)).isEqualTo(
+            setOf(
+                DrugInteraction.Type.INHIBITOR,
+                DrugInteraction.Type.INDUCER
+            )
+        )
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a drug interaction type")))!!).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

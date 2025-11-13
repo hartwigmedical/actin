@@ -326,6 +326,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                     "${DrugType.ALKYLATING_AGENT};${DrugType.ANTIMETABOLITE}",
                 )
             }
+
+            FunctionInput.MANY_DRUG_INTERACTION_TYPES -> {
+                listOf("Inducer;Inhibitor")
+            }
         }
     }
 
