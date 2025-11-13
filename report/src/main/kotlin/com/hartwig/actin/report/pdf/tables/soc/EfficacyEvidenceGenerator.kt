@@ -5,8 +5,8 @@ import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.efficacy.TrialReference
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.addEndPointsToTable
-import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.analysisGroupForPopulation
+import com.hartwig.actin.report.pdf.tables.soc.SoCGeneratorFunctions.addEndPointsToTable
+import com.hartwig.actin.report.pdf.tables.soc.SoCGeneratorFunctions.analysisGroupForPopulation
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -16,7 +16,7 @@ import com.itextpdf.layout.element.Table
 class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentMatch>?) : TableGenerator {
 
     private val patientCharacteristicHeadersAndFunctions = listOf<Pair<String, (PatientPopulation) -> String?>>(
-        "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
+        "WHO/ECOG" to SoCGeneratorFunctions::createWhoString,
         "Primary tumor location" to { it.formatTumorLocation(", ") },
         "Mutations" to PatientPopulation::mutations,
         "Metastatic sites" to PatientPopulation::formatMetastaticSites,
@@ -41,7 +41,7 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
-                table.addCell(Cells.createContentBold(SOCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
+                table.addCell(Cells.createContentBold(SoCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
                     val subTable = Tables.createSingleCol()
                     for (annotation in treatment.annotations) {

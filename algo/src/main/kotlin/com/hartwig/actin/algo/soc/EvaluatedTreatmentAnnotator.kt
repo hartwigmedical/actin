@@ -3,45 +3,23 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
-import com.hartwig.actin.datamodel.personalization.MeasurementType
-import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
-import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_POPULATION_NAME
 
 class EvaluatedTreatmentAnnotator(
     private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>,
     private val resistanceEvidenceMatcher: ResistanceEvidenceMatcher
 ) {
 
-    fun annotate(
-        evaluatedTreatments: List<EvaluatedTreatment>,
-        treatmentAnalyses: List<TreatmentAnalysis>? = null
-    ): List<AnnotatedTreatmentMatch> {
-        val pfsByTreatmentName = treatmentAnalyses?.flatMap { (treatmentGroup, measurementsByType) ->
-            treatmentGroup.memberTreatmentNames.map { treatmentName ->
-                treatmentName to measurementsByType[MeasurementType.PROGRESSION_FREE_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
-            }
-        }?.toMap()
-
-        val osByTreatmentName = treatmentAnalyses?.flatMap { (treatmentGroup, measurementsByType) ->
-            treatmentGroup.memberTreatmentNames.map { treatmentName ->
-                treatmentName to measurementsByType[MeasurementType.OVERALL_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
-            }
-        }?.toMap()
-
+    fun annotate(evaluatedTreatments: List<EvaluatedTreatment>): List<AnnotatedTreatmentMatch> {
         return evaluatedTreatments.map { evaluatedTreatment ->
             val treatment = evaluatedTreatment.treatmentCandidate.treatment
-            val treatmentName = treatment.name.lowercase()
 
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
                 annotations = lookUp(evaluatedTreatment),
-                generalPfs = pfsByTreatmentName?.get(treatmentName),
-                generalOs = osByTreatmentName?.get(treatmentName),
                 resistanceEvidence = resistanceEvidenceMatcher.match(treatment)
             )
         }
-
     }
 
     private fun lookUp(treatment: EvaluatedTreatment): List<EfficacyEntry> {
