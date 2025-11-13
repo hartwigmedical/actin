@@ -193,7 +193,7 @@ fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInte
 
 fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Set<ActionableWithExternalTrial>):
         Set<ActionableWithExternalTrial> {
-    return filterMolecularCriteriaAlreadyPresent(trials.map { it.actionable.eventName() }.toSet())
+    return filterMolecularCriteriaAlreadyPresent(trials.map { it.actionable.event }.toSet())
 }
 
 private fun hospitalsForCountry(trial: ExternalTrial, country: Country) =
@@ -214,6 +214,6 @@ fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInRefe
 
 private fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ActionableWithExternalTrial> {
     return filter {
-        !presentEvents.contains(it.actionable.eventName())
+        !presentEvents.contains(it.actionable.event)
     }.toSet()
 }
