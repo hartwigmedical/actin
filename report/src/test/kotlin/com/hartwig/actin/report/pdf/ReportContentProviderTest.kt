@@ -37,7 +37,7 @@ class ReportContentProviderTest {
         val summaryChapter = ReportContentProvider(report, configuration).provideChapters().filterIsInstance<SummaryChapter>().first()
         val eligibleTrialGenerators = summaryChapter.createSummaryGenerators().filterIsInstance<EligibleTrialGenerator>()
 
-        assertThat(eligibleTrialGenerators).hasSize(2)
+        assertThat(eligibleTrialGenerators).hasSize(4)
         assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
     }
 
@@ -53,7 +53,7 @@ class ReportContentProviderTest {
         val summaryChapter = ReportContentProvider(report, configuration).provideChapters().filterIsInstance<SummaryChapter>().first()
         val eligibleTrialGenerators = summaryChapter.createSummaryGenerators().filterIsInstance<EligibleTrialGenerator>()
 
-        assertThat(eligibleTrialGenerators).hasSize(2)
+        assertThat(eligibleTrialGenerators).hasSize(3)
         assertReportCohortSizeMatchesInput(report, eligibleTrialGenerators)
     }
 
@@ -62,8 +62,7 @@ class ReportContentProviderTest {
         val generators = trialMatchingDetailsChapter.createTrialTableGenerators()
         val trialTableGenerators = generators.filterIsInstance<TrialTableGenerator>()
 
-        val totalCohortSizeOnReport =
-            eligibleTrialGenerators.sumOf { it.cohortSize() } + trialTableGenerators.sumOf { it.cohortSize() }
+        val totalCohortSizeOnReport = eligibleTrialGenerators.sumOf { it.cohortSize() } + trialTableGenerators.sumOf { it.cohortSize() }
         val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
 
         assertThat(totalCohortSizeInput).isEqualTo(totalCohortSizeOnReport)

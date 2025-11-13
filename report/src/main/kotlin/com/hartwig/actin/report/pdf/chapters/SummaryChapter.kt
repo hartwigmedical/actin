@@ -15,10 +15,12 @@ import com.hartwig.actin.report.pdf.tables.soc.EligibleStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.TrialType
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrials
+import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -155,23 +157,37 @@ class SummaryChapter(
         externalTrials: ExternalTrials,
         requestingSource: TrialSource?
     ): List<TrialTableGenerator> {
-        val localOpenCohortsGenerator =
-            EligibleTrialGenerator.localOpenCohorts(
+        val nationalOpenAndEligibleLatePhaseCohortsGenerator =
+            EligibleTrialGenerator.nationalOpenCohorts(
+                cohorts = cohorts,
+                externalTrials = ExternalTrials(
+                    MolecularFilteredExternalTrials(emptySet(), emptySet()),
+                    MolecularFilteredExternalTrials(emptySet(), emptySet())
+                ),
+                requestingSource = requestingSource,
+                countryOfReference = configuration.countryOfReference,
+                trialType = TrialType.LOCAL_LATE_PHASE
+            )
+
+        val nationalOpenAndEligibleEarlyPhaseCohortsGenerator =
+            EligibleTrialGenerator.nationalOpenCohorts(
                 cohorts = cohorts,
                 externalTrials = externalTrials,
                 requestingSource = requestingSource,
-                countryOfReference = configuration.countryOfReference
+                countryOfReference = configuration.countryOfReference,
+                trialType = TrialType.LOCAL_EARLY_PHASE
             )
 
-        val localOpenCohortsWithMissingMolecularResultForEvaluationGenerator =
-            EligibleTrialGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(cohorts, requestingSource)
+        val localOpenAndEligibleCohortsWithMissingMolecularResultForEvaluationGenerator =
+            EligibleTrialGenerator.openCohortsWithMissingMolecularResultsForEvaluation(cohorts, requestingSource)
 
-        val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(externalTrials, requestingSource)
+        val internationalTrialsGenerator = EligibleTrialGenerator.internationalExternalOpenCohorts(externalTrials, requestingSource)
 
         return listOfNotNull(
-            localOpenCohortsGenerator,
-            localOpenCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf { it?.cohortSize() != 0 },
-            nonLocalTrialGenerator.takeIf { externalTrials.internationalTrials.isNotEmpty() },
+            nationalOpenAndEligibleLatePhaseCohortsGenerator,
+            nationalOpenAndEligibleEarlyPhaseCohortsGenerator,
+            localOpenAndEligibleCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf { it?.cohortSize() != 0 },
+            internationalTrialsGenerator.takeIf { externalTrials.internationalTrials.isNotEmpty() },
         )
     }
 }
