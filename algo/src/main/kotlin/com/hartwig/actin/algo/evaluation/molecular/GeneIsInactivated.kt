@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -25,13 +26,12 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         }, maxTestAge = maxTestAge
     ) {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val test = record.molecularTests.first() //TODO
-
+    override fun evaluate(test: MolecularTest, record: PatientRecord): Evaluation {
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
         val ihcLossEventsThatAreIndeterminate: MutableSet<String> = mutableSetOf()
 
-        val ihcTestEvaluation = if (gene in GeneConstants.IHC_LOSS_EVALUABLE_GENES) IhcTestEvaluation.create(gene, record.ihcTests) else null
+        val ihcTestEvaluation =
+            if (gene in GeneConstants.IHC_LOSS_EVALUABLE_GENES) IhcTestEvaluation.create(gene, record.ihcTests) else null
         if (ihcTestEvaluation?.hasCertainLossResultsForItem() == true) {
             inactivationEventsThatQualify.add("$gene loss by IHC")
         } else if (ihcTestEvaluation?.hasPossibleLossResultsForItem() == true) {
