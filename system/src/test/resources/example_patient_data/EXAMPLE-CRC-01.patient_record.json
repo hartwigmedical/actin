@@ -667,7 +667,7 @@
         "predictedTumorOrigin": null,
         "microsatelliteStability": {
           "isUnstable": false,
-          "event": "",
+          "event": "MSS",
           "evidence": {
             "treatmentEvidence": [],
             "eligibleTrials": []
@@ -677,7 +677,7 @@
         "tumorMutationalBurden": {
           "score": 8.0,
           "isHigh": false,
-          "event": "",
+          "event": "TMB Low",
           "evidence": {
             "treatmentEvidence": [],
             "eligibleTrials": []

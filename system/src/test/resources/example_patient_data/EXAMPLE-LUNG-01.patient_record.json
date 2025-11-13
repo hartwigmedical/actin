@@ -750,7 +750,7 @@
         "microsatelliteStability": {
           "microsatelliteIndelsPerMb": 0.0,
           "isUnstable": false,
-          "event": "",
+          "event": "MSI",
           "evidence": {
             "treatmentEvidence": [],
             "eligibleTrials": []
@@ -762,7 +762,7 @@
           "type": "NONE",
           "brca1Value": 0.0,
           "brca2Value": 0.0,
-          "event": "",
+          "event": "HRD",
           "evidence": {
             "treatmentEvidence": [],
             "eligibleTrials": []
@@ -771,7 +771,7 @@
         "tumorMutationalBurden": {
           "score": 14.0,
           "isHigh": true,
-          "event": "",
+          "event": "TMB High",
           "evidence": {
             "treatmentEvidence": [],
             "eligibleTrials": []
@@ -780,7 +780,7 @@
         "tumorMutationalLoad": {
           "score": 160,
           "isHigh": true,
-          "event": "",
+          "event": "TML High",
           "evidence": {
             "treatmentEvidence": [],
             "eligibleTrials": []
