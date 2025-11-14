@@ -10,11 +10,11 @@ import org.junit.Test
 
 class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
 
-    private val MATCHING_CATEGORY = BodyLocationCategory.LUNG
-    private val function = HasHadOncologicalSurgeryInSpecificBodyLocation(setOf(MATCHING_CATEGORY, BodyLocationCategory.KIDNEY))
+    private val matchingCategory = BodyLocationCategory.LUNG
+    private val function = HasHadOncologicalSurgeryInSpecificBodyLocation(setOf(matchingCategory, BodyLocationCategory.KIDNEY))
     private val correctHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
         treatments = setOf(TreatmentTestFactory.treatment("lung surgery", false, setOf(TreatmentCategory.SURGERY), emptySet())),
-        bodyLocationCategory = setOf(MATCHING_CATEGORY)
+        bodyLocationCategory = setOf(matchingCategory)
     )
 
     @Test
@@ -29,7 +29,7 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
             correctHistoryEntry.copy(
                 treatmentHistoryDetails = TreatmentHistoryDetails(
                     bodyLocationCategories = setOf(
-                        MATCHING_CATEGORY,
+                        matchingCategory,
                         BodyLocationCategory.LIVER
                     )
                 )
@@ -58,7 +58,7 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
     fun `Should fail for non-surgery entry with correct body location category`() {
         val treatment = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(TreatmentTestFactory.treatment("radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())),
-            bodyLocationCategory = setOf(MATCHING_CATEGORY)
+            bodyLocationCategory = setOf(matchingCategory)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatment)))
     }

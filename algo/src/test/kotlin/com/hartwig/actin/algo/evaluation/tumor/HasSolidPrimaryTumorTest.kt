@@ -8,6 +8,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasSolidPrimaryTumorTest {
+    
     val function = HasSolidPrimaryTumor(createTestDoidModel())
 
     @Test

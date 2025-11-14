@@ -11,14 +11,14 @@ import org.junit.Test
 
 class TreatmentHistoryAnalysisTest {
 
-    private val PLATINUM_DRUG =
+    private val platinumDrug =
         Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND))
 
     private val platinumDoublet =
         DrugTreatment(
             name = "Carboplatin+Pemetrexed",
             drugs = setOf(
-                PLATINUM_DRUG,
+                platinumDrug,
                 Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
             )
         )

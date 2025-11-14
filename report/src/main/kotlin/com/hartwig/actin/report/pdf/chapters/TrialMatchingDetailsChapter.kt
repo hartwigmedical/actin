@@ -215,7 +215,7 @@ class TrialMatchingDetailsChapter(
         if (metadata.ignore) {
             table.addCell(Cells.createEmpty())
             table.addCell(Cells.createKey("Ignored for eligibility?"))
-            table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.ignore)))
+            table.addCell(Cells.createValue(Formats.yesNoUnknown(true)))
         }
         return table
     }

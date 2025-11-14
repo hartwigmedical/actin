@@ -7,6 +7,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasOvarianBorderlineTumorTest {
+    
     private val function = HasOvarianBorderlineTumor(TestDoidModelFactory.createMinimalTestDoidModel())
     private val targetedType = HasOvarianBorderlineTumor.BORDERLINE_TERMS.first()
 

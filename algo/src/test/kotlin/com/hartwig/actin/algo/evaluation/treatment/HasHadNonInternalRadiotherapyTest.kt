@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import org.junit.Test
 
 class HasHadNonInternalRadiotherapyTest {
+    
     private val function = HasHadNonInternalRadiotherapy()
 
     @Test

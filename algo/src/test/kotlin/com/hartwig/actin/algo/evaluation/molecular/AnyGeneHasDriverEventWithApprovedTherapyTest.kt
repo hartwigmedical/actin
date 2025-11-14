@@ -28,6 +28,7 @@ private val INCORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
 )
 
 class AnyGeneHasDriverEventWithApprovedTherapyTest {
+    
     private val resources = RuleMappingResourcesTestFactory.create()
     private val function = AnyGeneHasDriverEventWithApprovedTherapy(
         setOf(CORRECT_GENE), createMinimalTestDoidModel(), EvaluationFunctionFactory.create(resources)

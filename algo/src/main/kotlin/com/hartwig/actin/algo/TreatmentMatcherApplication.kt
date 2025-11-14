@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo
 
-import InputDataLoader
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory

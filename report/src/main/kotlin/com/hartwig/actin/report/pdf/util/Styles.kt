@@ -7,7 +7,6 @@ import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.layout.Style
-import com.itextpdf.layout.borders.SolidBorder
 import java.io.IOException
 
 object Styles {
@@ -24,7 +23,6 @@ object Styles {
     val PALETTE_RED = DeviceRgb(231, 85, 85)
     val PALETTE_YES_OR_NO_UNCLEAR = DeviceRgb(85, 85, 85)
     val PALETTE_WARN = PALETTE_EVALUATION_WARN
-    val BORDER = SolidBorder(PALETTE_MID_GREY, 0.25f)
 
     const val REGULAR_FONT_SIZE = 8f
     const val SMALL_FONT_SIZE = 6f

@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.junit.Test
 
 class IsEligibleForTreatmentLinesTest {
+    
     private val function = IsEligibleForTreatmentLines(listOf(2))
 
     @Test

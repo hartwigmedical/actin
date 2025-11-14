@@ -12,16 +12,16 @@ import org.junit.Test
 
 class HasAcquiredResistanceToAnyDrugTest {
 
-    val TARGET_DRUG_TREATMENT =
+    val targetDrugTreatment =
         TreatmentTestFactory.drugTreatment("Osimertinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR))
-    val WRONG_DRUG_TREATMENT =
+    val wrongDrugTreatment =
         TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
-    val function = HasAcquiredResistanceToAnyDrug(TARGET_DRUG_TREATMENT.drugs)
+    val function = HasAcquiredResistanceToAnyDrug(targetDrugTreatment.drugs)
 
     @Test
     fun `Should pass if target drug in treatment history with stop reason progressive disease`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(TARGET_DRUG_TREATMENT),
+            treatments = setOf(targetDrugTreatment),
             stopReason = StopReason.PROGRESSIVE_DISEASE
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)))
@@ -30,7 +30,7 @@ class HasAcquiredResistanceToAnyDrugTest {
     @Test
     fun `Should pass if target drug in treatment history with best response progressive disease`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(TARGET_DRUG_TREATMENT),
+            treatments = setOf(targetDrugTreatment),
             bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)))
@@ -39,9 +39,9 @@ class HasAcquiredResistanceToAnyDrugTest {
     @Test
     fun `Should pass for matching drug in switch to treatment with stop reason PD`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(WRONG_DRUG_TREATMENT),
+            setOf(wrongDrugTreatment),
             stopReason = StopReason.PROGRESSIVE_DISEASE,
-            switchToTreatments = listOf(TreatmentTestFactory.treatmentStage(TARGET_DRUG_TREATMENT))
+            switchToTreatments = listOf(TreatmentTestFactory.treatmentStage(targetDrugTreatment))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -52,7 +52,7 @@ class HasAcquiredResistanceToAnyDrugTest {
     @Test
     fun `Should evaluate to undetermined if target drug in treatment history with stop reason toxicity`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(TARGET_DRUG_TREATMENT),
+            treatments = setOf(targetDrugTreatment),
             stopReason = StopReason.TOXICITY
         )
         EvaluationAssert.assertEvaluation(
@@ -64,7 +64,7 @@ class HasAcquiredResistanceToAnyDrugTest {
     @Test
     fun `Should evaluate to undetermined if target drug in treatment history with stop reason and best response null`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(TARGET_DRUG_TREATMENT),
+            treatments = setOf(targetDrugTreatment),
             stopReason = null,
             bestResponse = null
         )
@@ -77,7 +77,7 @@ class HasAcquiredResistanceToAnyDrugTest {
     @Test
     fun `Should evaluate to undetermined if target drug in treatment history with stop reason null and best response partial response`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(TARGET_DRUG_TREATMENT),
+            treatments = setOf(targetDrugTreatment),
             stopReason = null,
             bestResponse = TreatmentResponse.PARTIAL_RESPONSE
         )
@@ -99,7 +99,7 @@ class HasAcquiredResistanceToAnyDrugTest {
     @Test
     fun `Should fail if target drug not in treatment history`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(WRONG_DRUG_TREATMENT),
+            treatments = setOf(wrongDrugTreatment),
             stopReason = StopReason.PROGRESSIVE_DISEASE
         )
         EvaluationAssert.assertEvaluation(

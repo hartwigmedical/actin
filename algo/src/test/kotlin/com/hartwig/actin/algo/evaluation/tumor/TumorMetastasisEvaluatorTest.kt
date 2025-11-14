@@ -8,6 +8,7 @@ import org.junit.Test
 private const val METASTASIS_TYPE: String = "bone"
 
 class TumorMetastasisEvaluatorTest {
+    
     @Test
     fun `Should be undetermined when boolean is null`() {
         val undetermined = TumorMetastasisEvaluator.evaluate(null, null, METASTASIS_TYPE)

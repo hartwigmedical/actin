@@ -15,6 +15,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
+    
     private val genesToFind = setOf("BRCA1", "BRCA2")
     private val function = IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind)
 

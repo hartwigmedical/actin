@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.doid.DoidModel
+import kotlin.math.roundToInt
 
 private enum class TestResult {
     POSITIVE,
@@ -28,7 +29,7 @@ object PDL1EvaluationFunctions {
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
-                val roundedScore = Math.round(scoreValue).toDouble()
+                val roundedScore = scoreValue.roundToInt().toDouble()
                 if (evaluateMaxPDL1) {
                     evaluateVersusMaxValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
                 } else {

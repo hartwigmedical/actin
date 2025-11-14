@@ -11,8 +11,8 @@ class EvaluationSummarizerTest {
 
     @Test
     fun `Should be able to interpret every evaluation result`() {
-        val evaluations = EvaluationResult.values().map(EvaluationTestFactory::withResult)
-        assertThat(summarize(evaluations)).isNotNull
+        val evaluations = EvaluationResult.entries.map(EvaluationTestFactory::withResult)
+        assertThat(summarize(evaluations)).isNotNull()
     }
 
     @Test

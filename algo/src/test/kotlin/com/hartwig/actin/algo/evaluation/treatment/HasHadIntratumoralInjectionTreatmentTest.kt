@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
 class HasHadIntratumoralInjectionTreatmentTest {
+    
     @Test
     fun canEvaluate() {
         val function = HasHadIntratumoralInjectionTreatment()

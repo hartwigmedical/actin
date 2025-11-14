@@ -12,24 +12,24 @@ import org.junit.Test
 class HasHadCompleteResectionTest {
 
     @Test
-    fun shouldFailWithNoTreatmentHistory() {
+    fun `Should fail with no treatment history`() {
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldPassOnCompleteResection() {
+    fun `Should pass on complete resection`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(HasHadCompleteResection.COMPLETE_RESECTION, false)))
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedForUnspecifiedResection() {
+    fun `Should return undetermined for unspecified resection`() {
         val treatments = setOf(treatment("some form of " + HasHadCompleteResection.RESECTION_KEYWORD, false))
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }
 
     @Test
-    fun shouldReturnUndeterminedForUnspecifiedSurgery() {
+    fun `Should return undetermined for unspecified surgery`() {
         val treatments = setOf(treatment("", false, categories = setOf(TreatmentCategory.SURGERY)))
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }

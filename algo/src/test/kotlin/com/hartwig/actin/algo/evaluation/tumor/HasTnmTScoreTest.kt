@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import org.junit.Test
 
 class HasTnmTScoreTest {
+    
     @Test
     fun `Should be undetermined if the tumor is TNM M`(){
         assertEvaluation(
