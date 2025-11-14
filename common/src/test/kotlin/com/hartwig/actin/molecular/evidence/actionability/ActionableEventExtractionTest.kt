@@ -124,12 +124,13 @@ class ActionableEventExtractionTest {
 
     @Test
     fun `Can extract actionable event for hla`() {
-        val actionableHla = ImmutableActionableHLA.builder().from(TestServeMolecularFactory.createActionableEvent())
-            .hlaAllele("hla allele").build()
+        val actionableHla = ImmutableActionableHLA.builder().from(TestServeMolecularFactory.createActionableEvent()).gene("gene")
+            .alleleGroup("allele group").build()
 
         val molecularCriterium = TestServeMolecularFactory.createHlaCriterium(
             baseActionableEvent = actionableHla,
-            hlaAllele = actionableHla.hlaAllele()
+            gene = actionableHla.gene(),
+            alleleGroup = actionableHla.alleleGroup()
         )
 
         assertThat(ActionableEventExtraction.extractEvent(molecularCriterium)).isEqualTo(

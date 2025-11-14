@@ -390,7 +390,7 @@ class ActionabilityMatcherTest {
     @Test
     fun `Should match hla`() {
         val molecularCriterium = TestServeMolecularFactory.createHlaCriterium(
-            baseActionableEvent = TestServeMolecularFactory.createActionableEvent(), hlaAllele = "A*02:01"
+            baseActionableEvent = TestServeMolecularFactory.createActionableEvent(), gene = "HLA-A", alleleGroup = "02", hlaProtein = "01"
         )
         val evidence = TestServeEvidenceFactory.create(
             molecularCriterium = molecularCriterium
