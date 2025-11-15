@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.Gender
 import org.junit.Test
 
 class IsBreastfeedingTest {
+    
     @Test
     fun canEvaluate() {
         val function = IsBreastfeeding()

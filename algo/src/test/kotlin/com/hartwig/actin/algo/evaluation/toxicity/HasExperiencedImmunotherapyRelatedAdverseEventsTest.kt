@@ -32,6 +32,7 @@ private val IMMUNOTHERAPY_INTOLERANCE =
 private val DATE = LocalDate.of(2025, 3, 1)
 
 class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
+    
     private val icdModel = IcdModel.create(
         listOf(
             IcdNode(

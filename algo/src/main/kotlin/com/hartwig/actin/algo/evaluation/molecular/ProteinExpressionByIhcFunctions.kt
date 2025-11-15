@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
+import kotlin.math.roundToInt
 
 enum class IhcExpressionComparisonType {
     LIMITED,
@@ -62,18 +63,18 @@ class ProteinExpressionByIhcFunctions(
     private fun evaluateValue(ihcTest: IhcTest, scoreValue: Double): EvaluationResult {
         return when (comparisonType) {
             IhcExpressionComparisonType.SUFFICIENT -> {
-                evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
+                evaluateVersusMinValue(scoreValue.roundToInt().toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
             }
 
             IhcExpressionComparisonType.EXACT -> {
-                when (referenceExpressionLevel.toLong() == Math.round(scoreValue) && ihcTest.scoreValuePrefix.isNullOrEmpty()) {
+                when (referenceExpressionLevel == scoreValue.roundToInt() && ihcTest.scoreValuePrefix.isNullOrEmpty()) {
                     true -> EvaluationResult.PASS
                     false -> EvaluationResult.FAIL
                 }
             }
 
             IhcExpressionComparisonType.LIMITED -> {
-                evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
+                evaluateVersusMaxValue(scoreValue.roundToInt().toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
             }
         }
     }

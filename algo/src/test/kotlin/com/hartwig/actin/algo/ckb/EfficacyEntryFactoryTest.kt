@@ -113,7 +113,7 @@ class EfficacyEntryFactoryTest {
     @Test
     fun `Should return null gender when neither count is provided`() {
         val bothGendersNotProvided = evidenceEntryFactory.convertGender(null, null, "25")
-        assertThat(bothGendersNotProvided).isEqualTo(null)
+        assertThat(bothGendersNotProvided).isNull()
     }
 
     @Test
@@ -219,8 +219,8 @@ class EfficacyEntryFactoryTest {
 
     @Test
     fun `Should return null primary end point value when primary end point value is NR`() {
-        val NREndPointType = evidenceEntryFactory.convertEndPointValue("NR", "Months")
-        assertThat(NREndPointType).isEqualTo(null)
+        val nrEndPointType = evidenceEntryFactory.convertEndPointValue("NR", "Months")
+        assertThat(nrEndPointType).isEqualTo(null)
     }
 
     @Test

@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.CodingContext
 import com.hartwig.actin.datamodel.molecular.driver.DisruptionType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory.createMinimalTestOrangeRecord
@@ -152,14 +152,14 @@ class DisruptionExtractorTest {
 
     @Test
     fun `Should determine all disruption types`() {
-        for (breakendType in LinxBreakendType.values()) {
+        for (breakendType in LinxBreakendType.entries) {
             assertThat(extractor.determineDisruptionType(breakendType)).isNotNull()
         }
     }
 
     @Test
     fun `Should determine all region types`() {
-        for (regionType in TranscriptRegionType.values()) {
+        for (regionType in TranscriptRegionType.entries) {
             if (regionType != TranscriptRegionType.UNKNOWN) {
                 assertThat(extractor.determineRegionType(regionType)).isNotNull()
             }
@@ -168,7 +168,7 @@ class DisruptionExtractorTest {
 
     @Test
     fun `Should determine all coding types`() {
-        for (codingType in TranscriptCodingType.values()) {
+        for (codingType in TranscriptCodingType.entries) {
             if (codingType != TranscriptCodingType.UNKNOWN) {
                 assertThat(extractor.determineCodingContext(codingType)).isNotNull()
             }

@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -12,6 +11,7 @@ import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
+import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -20,7 +20,6 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext

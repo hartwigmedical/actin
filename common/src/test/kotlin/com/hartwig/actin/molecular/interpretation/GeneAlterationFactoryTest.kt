@@ -21,8 +21,8 @@ class GeneAlterationFactoryTest {
 
     @Test
     fun `Should convert all roles and effects`() {
-        for (geneRole in ServeGeneRole.values()) {
-            for (proteinEffect in ServeProteinEffect.values()) {
+        for (geneRole in ServeGeneRole.entries) {
+            for (proteinEffect in ServeProteinEffect.entries) {
                 val alteration = GeneAlterationFactory.convertAlteration(
                     "", TestServeKnownFactory.createGeneAlteration(geneRole, proteinEffect)
                 )

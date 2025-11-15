@@ -9,6 +9,7 @@ import org.junit.Test
 private const val MEASURE = "measure"
 
 class HasSufficientPDL1ByIhcTest {
+    
     private val minPdl1 = 2.0
     private val function = HasSufficientPDL1ByIhc(MEASURE, minPdl1)
     private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = MEASURE)

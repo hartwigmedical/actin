@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import org.junit.Test
 
 class HasMinimumSitesWithLesionsTest {
+    
     private val testPatient = patient(
         hasBoneLesions = true,
         hasSuspectedBoneLesions = false,

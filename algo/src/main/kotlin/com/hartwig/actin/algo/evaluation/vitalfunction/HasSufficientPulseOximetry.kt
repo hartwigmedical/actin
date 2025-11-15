@@ -29,11 +29,11 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
         val referenceWithMargin = minMedianPulseOximetry * VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
 
         return when {
-            median.compareTo(minMedianPulseOximetry) >= 0 -> {
+            median >= minMedianPulseOximetry -> {
                 EvaluationFactory.recoverablePass("Median pulse oximetry ($median%) above $minMedianPulseOximetry")
             }
 
-            (median.compareTo(referenceWithMargin) >= 0) -> {
+            (median >= referenceWithMargin) -> {
                 EvaluationFactory.recoverableUndetermined("Median pulse oximetry ($median%) below $minMedianPulseOximetry but within margin of error")
             }
 

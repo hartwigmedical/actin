@@ -83,7 +83,7 @@ class MutationTypeMatchingTest {
         matchingTypes.forEach {
             assertThat(MutationTypeMatching.matches(it, nonsenseOrFrameshift)).withFailMessage { "Expected $it to match" }.isTrue()
         }
-        (MutationType.values().toSet() - matchingTypes).forEach {
+        (MutationType.entries.toSet() - matchingTypes).forEach {
             assertThat(MutationTypeMatching.matches(it, nonsenseOrFrameshift)).withFailMessage { "Expected $it not to match" }.isFalse()
         }
     }

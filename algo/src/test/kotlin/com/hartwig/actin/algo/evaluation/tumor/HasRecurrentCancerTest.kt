@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import org.junit.Test
 
 class HasRecurrentCancerTest {
+    
     @Test
     fun canEvaluate() {
         val function = HasRecurrentCancer()

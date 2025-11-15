@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
@@ -158,7 +158,7 @@ class CopyNumberExtractorTest {
 
     @Test
     fun `Should determine type for all interpretations`() {
-        for (interpretation in CopyNumberInterpretation.values()) {
+        for (interpretation in CopyNumberInterpretation.entries) {
             assertThat(extractor.determineType(interpretation)).isNotNull()
         }
     }

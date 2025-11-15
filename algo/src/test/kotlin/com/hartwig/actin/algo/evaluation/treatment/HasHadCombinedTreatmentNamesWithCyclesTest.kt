@@ -12,6 +12,7 @@ private const val TREATMENT_NAME_MATCHING = "Matching"
 private const val TREATMENT_NAME_TEST = "Test"
 
 class HasHadCombinedTreatmentNamesWithCyclesTest {
+    
     private val matchingPriorTreatment = treatmentHistoryEntry(TREATMENT_NAME_MATCHING, 11)
     private val testTreatmentWithWrongCycles = treatmentHistoryEntry(TREATMENT_NAME_TEST, 3)
     private val testTreatmentWithNullCycles = treatmentHistoryEntry(TREATMENT_NAME_TEST, null)
@@ -22,7 +23,7 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
     )
 
     @Test
-    fun shouldPassWhenAllQueryTreatmentNamesHaveAtLeastOneMatchWithRequiredCycles() {
+    fun `Should pass when all query treatment names have at least one match with required cycles`() {
         val treatmentHistory = listOf(
             matchingPriorTreatment,
             treatmentHistoryEntry(TREATMENT_NAME_TEST, 8),
@@ -34,7 +35,7 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
     }
 
     @Test
-    fun shouldReturnUndeterminedWhenAnyQueryTreatmentNameHasAtLeastOneMatchWithNullCyclesAndNoneWithRequiredCycles() {
+    fun `Should return undetermined when any query treatment name has at least one match with null cycles and none with required cycles`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 withTreatmentHistory(
@@ -45,7 +46,7 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
     }
 
     @Test
-    fun shouldFailWhenAnyQueryTreatmentNameHasAllMatchesWithKnownCycleCountOutsideRange() {
+    fun `Should fail when any query treatment name has all matches with known cycle count outside range`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withTreatmentHistory(listOf(matchingPriorTreatment, testTreatmentWithWrongCycles, nonMatchingTreatment))
@@ -54,7 +55,7 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
     }
 
     @Test
-    fun shouldFailWhenAnyQueryTreatmentNameHasNoMatchingTreatmentsInHistory() {
+    fun `Should fail when any query treatment name has no matching treatments in history`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withTreatmentHistory(listOf(matchingPriorTreatment, testTreatmentWithWrongCycles, nonMatchingTreatment))

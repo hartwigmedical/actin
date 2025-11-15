@@ -4,11 +4,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PaveCodingEffectTest {
+    
     @Test
     fun `Should determine worst coding effect`() {
-        assertThat(PaveCodingEffect.worstCodingEffect(
-            listOf(PaveCodingEffect.NONE, PaveCodingEffect.MISSENSE, PaveCodingEffect.SYNONYMOUS)
-        )).isEqualTo(PaveCodingEffect.MISSENSE);
+        assertThat(
+            PaveCodingEffect.worstCodingEffect(
+                listOf(PaveCodingEffect.NONE, PaveCodingEffect.MISSENSE, PaveCodingEffect.SYNONYMOUS)
+            )
+        ).isEqualTo(PaveCodingEffect.MISSENSE)
     }
 
     @Test
@@ -23,8 +26,10 @@ class PaveCodingEffectTest {
                 assertThat(PaveCodingEffect.fromPaveVariantEffect(it)).isEqualTo(PaveCodingEffect.SPLICE)
             }
 
-        listOf(PaveVariantEffect.MISSENSE, PaveVariantEffect.INFRAME_DELETION, PaveVariantEffect.INFRAME_INSERTION,
-            PaveVariantEffect.PHASED_INFRAME_DELETION, PaveVariantEffect.PHASED_INFRAME_INSERTION, PaveVariantEffect.PHASED_MISSENSE)
+        listOf(
+            PaveVariantEffect.MISSENSE, PaveVariantEffect.INFRAME_DELETION, PaveVariantEffect.INFRAME_INSERTION,
+            PaveVariantEffect.PHASED_INFRAME_DELETION, PaveVariantEffect.PHASED_INFRAME_INSERTION, PaveVariantEffect.PHASED_MISSENSE
+        )
             .forEach {
                 assertThat(PaveCodingEffect.fromPaveVariantEffect(it)).isEqualTo(PaveCodingEffect.MISSENSE)
             }
@@ -34,11 +39,12 @@ class PaveCodingEffectTest {
                 assertThat(PaveCodingEffect.fromPaveVariantEffect(it)).isEqualTo(PaveCodingEffect.SYNONYMOUS)
             }
 
-        listOf(PaveVariantEffect.INTRONIC, PaveVariantEffect.FIVE_PRIME_UTR, PaveVariantEffect.THREE_PRIME_UTR,
-            PaveVariantEffect.UPSTREAM_GENE, PaveVariantEffect.NON_CODING_TRANSCRIPT, PaveVariantEffect.OTHER)
+        listOf(
+            PaveVariantEffect.INTRONIC, PaveVariantEffect.FIVE_PRIME_UTR, PaveVariantEffect.THREE_PRIME_UTR,
+            PaveVariantEffect.UPSTREAM_GENE, PaveVariantEffect.NON_CODING_TRANSCRIPT, PaveVariantEffect.OTHER
+        )
             .forEach {
                 assertThat(PaveCodingEffect.fromPaveVariantEffect(it)).isEqualTo(PaveCodingEffect.NONE)
             }
-
     }
 }

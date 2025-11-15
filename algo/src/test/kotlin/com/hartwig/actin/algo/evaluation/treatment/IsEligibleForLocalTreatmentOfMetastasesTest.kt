@@ -1,8 +1,9 @@
-package com.hartwig.actin.algo.evaluation.tumor
+package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.treatment.IsEligibleForLocalTreatmentOfMetastases
+import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
+import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import io.mockk.every
 import io.mockk.mockk

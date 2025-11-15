@@ -30,7 +30,7 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
         fun isHaplotype(string: String): Boolean {
             val asterixIndex = string.indexOf("*")
             val semicolonIndex = string.indexOf("_")
-            return asterixIndex == 0 && semicolonIndex > asterixIndex && string[1].isDigit()
+            return asterixIndex == 0 && semicolonIndex > 0 && string[1].isDigit()
         }
 
         fun isProteinImpact(string: String): Boolean {
@@ -60,7 +60,7 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
         private fun isPositiveNumber(codon: String): Boolean {
             return try {
                 codon.toInt() > 0
-            } catch (exception: NumberFormatException) {
+            } catch (_: NumberFormatException) {
                 false
             }
         }

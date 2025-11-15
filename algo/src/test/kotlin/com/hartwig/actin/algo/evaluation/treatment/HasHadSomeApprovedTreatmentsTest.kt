@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.junit.Test
 
 class HasHadSomeApprovedTreatmentsTest {
+    
     @Test
     fun canEvaluate() {
         val function = HasHadSomeApprovedTreatments(1)

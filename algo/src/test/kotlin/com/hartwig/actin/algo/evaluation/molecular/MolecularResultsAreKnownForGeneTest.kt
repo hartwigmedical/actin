@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import org.junit.Test
 
 class MolecularResultsAreKnownForGeneTest {
+    
     private val function = MolecularResultsAreKnownForGene("gene 1")
 
     private val geneCopyNumber1 = TestCopyNumberFactory.createMinimal().copy(

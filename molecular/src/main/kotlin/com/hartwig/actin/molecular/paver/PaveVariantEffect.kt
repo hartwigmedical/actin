@@ -23,7 +23,7 @@ enum class PaveVariantEffect(private val text: String) {
     OTHER("other");
 
     companion object {
-        private val textToEnum = values().associateBy(PaveVariantEffect::text)
+        private val textToEnum = entries.associateBy(PaveVariantEffect::text)
 
         fun fromString(text: String): PaveVariantEffect {
             return textToEnum[text] ?: throw IllegalArgumentException("Unknown PAVE variant effect: $text")

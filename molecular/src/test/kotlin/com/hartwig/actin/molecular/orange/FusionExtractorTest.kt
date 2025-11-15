@@ -66,7 +66,7 @@ class FusionExtractorTest {
 
     @Test
     fun `Should determine driver type for all fusions`() {
-        for (type in LinxFusionType.values()) {
+        for (type in LinxFusionType.entries) {
             val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reportedType(type).build()
             assertThat(extractor.determineDriverType(fusion)).isNotNull()
         }

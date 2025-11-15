@@ -15,6 +15,7 @@ import org.junit.Test
 const val TARGET_RECEPTOR = "PR"
 
 class HasBreastCancerWithPositiveReceptorOfTypeTest {
+    
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function = HasBreastCancerWithPositiveReceptorOfType(doidModel, ReceptorType.valueOf(TARGET_RECEPTOR))
 
