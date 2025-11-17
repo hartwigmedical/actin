@@ -20,6 +20,7 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrials
+import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -159,7 +160,7 @@ class SummaryChapter(
         val nationalOpenAndEligibleLatePhaseCohortsGenerator =
             EligibleTrialGenerator.localAndNationalExternalOpenAndEligibleCohorts(
                 cohorts = cohorts,
-                externalTrials = externalTrials,
+                externalTrials = returnEmptyExternalTrials(),
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
                 localTrialsType = LocalTrialsType.LOCAL_LATE_PHASE
@@ -190,4 +191,7 @@ class SummaryChapter(
             internationalTrialsGenerator.takeIf { externalTrials.internationalTrials.isNotEmpty() },
         )
     }
+
+    private fun returnEmptyExternalTrials(): ExternalTrials =
+        MolecularFilteredExternalTrials(emptySet(), emptySet()).let { ExternalTrials(it, it) }
 }

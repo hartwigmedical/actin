@@ -93,9 +93,7 @@ class EligibleTrialGenerator(
             countryOfReference: Country?,
             localTrialsType: LocalTrialsType
         ): TrialTableGenerator {
-            val nationalExternalTrials = if (localTrialsType == LocalTrialsType.LOCAL_EARLY_PHASE) {
-                ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered)
-            } else emptySet()
+            val nationalExternalTrials = ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered)
             val nationalExternalTrialFilteredCount = ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials()).size
 
             return forLocalAndNationalExternalOpenAndEligibleLocalCohorts(

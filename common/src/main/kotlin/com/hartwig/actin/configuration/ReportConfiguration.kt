@@ -43,7 +43,7 @@ data class ReportConfiguration(
     val molecularChapterType: MolecularChapterType = MolecularChapterType.STANDARD,
     val efficacyEvidenceChapterType: EfficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,
     val clinicalChapterType: ClinicalChapterType = ClinicalChapterType.COMPLETE,
-    val trialMatchingChapterType: TrialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS,
+    val trialMatchingChapterType: TrialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS,
     val hospitalOfReference: String? = null
