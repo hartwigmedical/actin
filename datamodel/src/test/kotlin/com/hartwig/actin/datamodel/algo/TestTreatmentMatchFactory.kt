@@ -95,7 +95,7 @@ object TestTreatmentMatchFactory {
                     url = null
                 ),
                 isPotentiallyEligible = true,
-                evaluations = createTestGeneralEvaluationsTrial3(),
+                evaluations = createTestCohortEvaluationsTrial3CohortA(),
                 cohorts = createTestCohortsTrial3(),
                 nonEvaluableCohorts = emptyList()
             )
@@ -263,12 +263,12 @@ object TestTreatmentMatchFactory {
             CohortMatch(
                 metadata = createTestCohortMetadata("A", true, true, false, false),
                 isPotentiallyEligible = true,
-                evaluations = createTestGeneralEvaluationsTrial3(),
+                evaluations = createTestCohortEvaluationsTrial3CohortA(),
             )
         )
     }
 
-    private fun createTestGeneralEvaluationsTrial3(): Map<Eligibility, Evaluation> {
+    private fun createTestCohortEvaluationsTrial3CohortA(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
                 references = setOf("I-01"),

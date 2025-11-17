@@ -17,7 +17,6 @@ import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
-import com.hartwig.actin.report.pdf.tables.trial.TrialType
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -80,17 +79,14 @@ class TrialMatchingDetailsChapter(
                     configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
 
         val externalTrials = trialsProvider.externalTrials()
-        val nationalExternalTrialGenerator = EligibleTrialGenerator.nationalOpenCohorts(
-            emptyList(),
-            externalTrials,
-            requestingSource,
-            configuration.countryOfReference,
-            TrialType.EXTERNAL
-        ).takeIf { includeSpecificExternalGenerators }
+        val nationalExternalTrialGenerator =
+            EligibleTrialGenerator.externalOpenAndEligibleCohorts(externalTrials, requestingSource, true)
+                .takeIf { includeSpecificExternalGenerators }
 
-        val internationalExternalTrialGenerator = EligibleTrialGenerator.internationalExternalOpenCohorts(
+        val internationalExternalTrialGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(
             externalTrials,
             requestingSource,
+            false
         ).takeIf { includeSpecificExternalGenerators }
 
         val filteredExternalTrialGenerator = EligibleTrialGenerator.filteredExternalTrials(externalTrials, configuration.countryOfReference)

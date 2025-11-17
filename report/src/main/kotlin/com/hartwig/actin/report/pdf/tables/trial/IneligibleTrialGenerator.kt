@@ -79,7 +79,13 @@ class IneligibleTrialGenerator(
             openOnly: Boolean = false
         ): TrialTableGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
-            val title = "Trials and cohorts that are considered ineligible (${ineligibleCohorts.size})"
+            val ineligibleTrials = ineligibleCohorts.map(InterpretedCohort::trialId).distinct()
+            val title = "Trials and cohorts that are considered ineligible ${
+                TrialFormatFunctions.generateCohortsFromTrialsString(
+                    ineligibleCohorts.size,
+                    ineligibleTrials.size
+                )
+            }"
 
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
@@ -96,7 +102,13 @@ class IneligibleTrialGenerator(
             requestingSource: TrialSource?
         ): TrialTableGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
-            val title = "Trials and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
+            val nonEvaluableAndIgnoredTrials = nonEvaluableAndIgnoredCohorts.map(InterpretedCohort::trialId).distinct()
+            val title = "Trials and cohorts that are not evaluable or ignored ${
+                TrialFormatFunctions.generateCohortsFromTrialsString(
+                    nonEvaluableAndIgnoredCohorts.size,
+                    nonEvaluableAndIgnoredTrials.size
+                )
+            }"
 
             return IneligibleTrialGenerator(
                 cohorts = nonEvaluableAndIgnoredCohorts,

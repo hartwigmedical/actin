@@ -67,7 +67,7 @@ private val EVALUABLE_COHORTS = listOf(
 class TrialsProviderTest {
 
     @Test
-    fun `Should filter open and eligible cohorts correctly`() {
+    fun `Should filter open and eligible cohorts correctly (excluding missing molecular result for evaluation cohorts)`() {
         val cohortToRemain = InterpretedCohortTestFactory.interpretedCohort(
             isPotentiallyEligible = true,
             isOpen = true,
