@@ -2,14 +2,7 @@ package com.hartwig.actin.datamodel.algo
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.efficacy.TestExtendedEvidenceEntryFactory
-import com.hartwig.actin.datamodel.personalization.Measurement
-import com.hartwig.actin.datamodel.personalization.MeasurementType
-import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
-import com.hartwig.actin.datamodel.personalization.Population
-import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
-import com.hartwig.actin.datamodel.personalization.TreatmentGroup
 import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
@@ -29,7 +22,6 @@ object TestTreatmentMatchFactory {
             referenceDateIsLive = true,
             trialMatches = emptyList(),
             standardOfCareMatches = null,
-            personalizedDataAnalysis = null,
             personalizedTreatmentSummary = null,
             maxMolecularTestAge = null
         )
@@ -38,8 +30,7 @@ object TestTreatmentMatchFactory {
     fun createProperTreatmentMatch(): TreatmentMatch {
         return createMinimalTreatmentMatch().copy(
             trialMatches = createTestTrialMatches(),
-            standardOfCareMatches = createSocMatches(),
-            personalizedDataAnalysis = createPersonalizedDataAnalysis()
+            standardOfCareMatches = createSocMatches()
         )
     }
 
@@ -118,8 +109,6 @@ object TestTreatmentMatchFactory {
                     )
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
-                generalPfs = Measurement(136.5, 98, 74, 281, 46.0),
-                generalOs = Measurement(215.0, 90, 121, 470, 110.1),
                 resistanceEvidence = listOf(
                     ResistanceEvidence(
                         event = "BRAF amp",
@@ -316,46 +305,5 @@ object TestTreatmentMatchFactory {
                 base.copy(failMessages = setOfNotNull(message?.let { StaticMessage(it) }))
             }
         }
-    }
-
-    private fun createPersonalizedDataAnalysis(): PersonalizedDataAnalysis {
-        val pembrolizumab = TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY)
-        val populationPfsAndDecision = listOf(
-            Triple("All", 236.5, 0.3),
-            Triple("Age 45-55", 356.5, 0.4),
-            Triple("WHO 1", 321.0, 0.25)
-        )
-        val populationOsAndDecision = listOf(
-            Triple("All", 236.5, 0.3),
-            Triple("Age 45-55", 356.5, 0.4),
-            Triple("WHO 1", 321.0, 0.25)
-        )
-
-        val pfsMap = populationPfsAndDecision.associate { (name, pfs, _) ->
-            name to Measurement(pfs, 100, (pfs / 2).toInt(), (pfs * 2).toInt(), pfs * 0.4)
-        }
-
-        val osMap = populationOsAndDecision.associate { (name, os, _) ->
-            name to Measurement(os, 100, (os / 2).toInt(), (os * 2).toInt(), os * 0.4)
-        }
-
-        val decisionMap = populationPfsAndDecision.associate { (name, _, decision) -> name to Measurement(decision, 100) }
-
-        val treatmentAnalyses = listOf(
-            TreatmentAnalysis(
-                TreatmentGroup.fromTreatmentName(pembrolizumab.name)!!,
-                mapOf(
-                    MeasurementType.PROGRESSION_FREE_SURVIVAL to pfsMap,
-                    MeasurementType.OVERALL_SURVIVAL to osMap,
-                    MeasurementType.TREATMENT_DECISION to decisionMap
-                )
-            )
-        )
-
-        val populations = populationPfsAndDecision.map { (name, _, _) ->
-            Population(name, MeasurementType.entries.associateWith { 1000 })
-        }
-
-        return PersonalizedDataAnalysis(treatmentAnalyses, populations)
     }
 }

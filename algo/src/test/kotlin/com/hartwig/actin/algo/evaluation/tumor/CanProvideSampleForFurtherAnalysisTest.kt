@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import org.junit.Test
 
 class CanProvideSampleForFurtherAnalysisTest {
+    
     @Test
     fun canEvaluate() {
         val function = CanProvideSampleForFurtherAnalysis()

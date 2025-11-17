@@ -79,7 +79,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
     fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {
         try {
             return Intent.valueOf(therapeuticSetting.uppercase())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             throw IllegalStateException("Unknown therapeutic setting: $therapeuticSetting ")
         }
     }
@@ -143,7 +143,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
     fun convertTimeOfMetastases(timeOfMetastases: String): TimeOfMetastases {
         try {
             return TimeOfMetastases.valueOf(timeOfMetastases.uppercase())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             throw IllegalStateException("Unknown time of metastases: $timeOfMetastases")
         }
     }
@@ -155,7 +155,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
     fun convertPrimaryTumorLocation(primaryTumorLocations: String): Map<String, Int> {
         return try {
             primaryTumorLocations.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
-        } catch (e: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             val regex = """^(\w+): (\d+)(?: \(\d+(?:\.\d+)?%\))?$""".toRegex()
             primaryTumorLocations.split(", ").associate { item ->
                 regex.find(item)?.let {
@@ -197,27 +197,27 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
         }
     }
 
-    private fun convertEndPoints(EndPoints: List<CkbEndPointMetric>): List<EndPoint> {
-        return EndPoints.map { EndPoint ->
+    private fun convertEndPoints(endPoints: List<CkbEndPointMetric>): List<EndPoint> {
+        return endPoints.map { endPoint ->
             EndPoint(
-                id = EndPoint.id,
-                name = EndPoint.endPoint.name,
+                id = endPoint.id,
+                name = endPoint.endPoint.name,
                 value = convertEndPointValue(
-                    EndPoint.value,
-                    EndPoint.endPoint.unitOfMeasure
+                    endPoint.value,
+                    endPoint.endPoint.unitOfMeasure
                 ),
-                unitOfMeasure = if (EndPoint.endPoint.unitOfMeasure == "Y/N") {
+                unitOfMeasure = if (endPoint.endPoint.unitOfMeasure == "Y/N") {
                     EndPointUnit.YES_OR_NO
                 } else {
                     try {
-                        EndPointUnit.valueOf(EndPoint.endPoint.unitOfMeasure.uppercase())
-                    } catch (e: Exception) {
-                        throw IllegalStateException("Unknown end point unit measure: $EndPoint.endPoint.unitOfMeasure")
+                        EndPointUnit.valueOf(endPoint.endPoint.unitOfMeasure.uppercase())
+                    } catch (_: Exception) {
+                        throw IllegalStateException("Unknown end point unit measure: $endPoint.endPoint.unitOfMeasure")
                     }
                 },
-                confidenceInterval = EndPoint.confidenceInterval95?.let(::convertConfidenceInterval),
-                type = EndPointType.valueOf(EndPoint.endPointType.uppercase()),
-                derivedMetrics = convertDerivedMetric(EndPoint.derivedMetrics)
+                confidenceInterval = endPoint.confidenceInterval95?.let(::convertConfidenceInterval),
+                type = EndPointType.valueOf(endPoint.endPointType.uppercase()),
+                derivedMetrics = convertDerivedMetric(endPoint.derivedMetrics)
             )
         }
     }

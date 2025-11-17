@@ -10,7 +10,7 @@ class TreatmentCategoryResolverTest {
 
     @Test
     fun `Should convert treatment categories back and forth`() {
-        for (category in TreatmentCategory.values()) {
+        for (category in TreatmentCategory.entries) {
             val set = setOf(category)
             assertThat(fromStringList(toStringList(set))).isEqualTo(set)
         }

@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
+    
     private val matchingCategory = TreatmentCategory.CHEMOTHERAPY
     private val matchingTypes = setOf(DrugType.ANTI_ANDROGEN)
     private val surgery = treatmentHistoryEntry(

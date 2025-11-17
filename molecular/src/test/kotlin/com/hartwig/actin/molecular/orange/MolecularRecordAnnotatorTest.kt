@@ -13,7 +13,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val GENE = "gene 1"
+private const val GENE = "gene 1"
 private val VARIANT = TestVariantFactory.createMinimal()
 
 private val CANCER_ASSOCIATED_VARIANT =

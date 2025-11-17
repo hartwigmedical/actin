@@ -16,19 +16,42 @@ class IhcExtractorTest {
         val ihcTests = listOf(positiveIhc(POSITIVE_FUSION_GENE))
 
         val result = IhcExtractor().extract(ihcTests)
-        assertThat(result).isEqualTo(listOf(IhcExtraction(null, setOf(POSITIVE_FUSION_GENE), emptySet())))
+        assertThat(result).isEqualTo(
+            listOf(
+                IhcExtraction(
+                    null,
+                    setOf(POSITIVE_FUSION_GENE),
+                    emptySet()
+                )
+            )
+        )
     }
 
     @Test
     fun `Should extract fusion negatives from IHC`() {
-        val ihcTests = listOf(negativeIhc(NEGATIVE_FUSION_GENE))
+        val ihcTests = listOf(negativeIhc(NEGATIVE_FUSION_GENE, false))
         val result = IhcExtractor().extract(ihcTests)
-        assertThat(result).isEqualTo(listOf(IhcExtraction(null, emptySet(), setOf(NEGATIVE_FUSION_GENE))))
+        assertThat(result).isEqualTo(
+            listOf(
+                IhcExtraction(
+                    null,
+                    emptySet(),
+                    setOf(NEGATIVE_FUSION_GENE)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should not extract fusion negatives from IHC if indeterminate result`() {
+        val ihcTests = listOf(negativeIhc(NEGATIVE_FUSION_GENE, true))
+        val result = IhcExtractor().extract(ihcTests)
+        assertThat(result).isEmpty()
     }
 
     @Test
     fun `Should ignore other genes`() {
-        val ihcTests = listOf(positiveIhc(OTHER_GENE))
+        val ihcTests = listOf(positiveIhc(OTHER_GENE), negativeIhc(OTHER_GENE, false))
 
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEmpty()
@@ -40,7 +63,7 @@ class IhcExtractorTest {
         val date2 = LocalDate.of(2023, 2, 1)
         val ihcTests = listOf(
             positiveIhc(POSITIVE_FUSION_GENE, date1),
-            negativeIhc(NEGATIVE_FUSION_GENE, date1),
+            negativeIhc(NEGATIVE_FUSION_GENE, false, date1),
             positiveIhc(POSITIVE_FUSION_GENE, date2),
             positiveIhc(OTHER_GENE, date2)
         )
@@ -58,7 +81,7 @@ class IhcExtractorTest {
         return IhcTest(item = gene, measureDate = date, scoreText = "Positive")
     }
 
-    private fun negativeIhc(gene: String, date: LocalDate? = null): IhcTest {
-        return IhcTest(item = gene, measureDate = date, scoreText = "Negative")
+    private fun negativeIhc(gene: String, indeterminate: Boolean, date: LocalDate? = null): IhcTest {
+        return IhcTest(item = gene, measureDate = date, scoreText = "Negative", impliesPotentialIndeterminateStatus = indeterminate)
     }
 }

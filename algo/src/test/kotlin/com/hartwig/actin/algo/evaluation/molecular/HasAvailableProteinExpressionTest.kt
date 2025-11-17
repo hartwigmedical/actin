@@ -7,6 +7,7 @@ import org.junit.Test
 private const val PROTEIN = "protein 1"
 
 class HasAvailableProteinExpressionTest {
+    
     private val function = HasAvailableProteinExpression(PROTEIN)
 
     @Test

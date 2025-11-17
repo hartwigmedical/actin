@@ -17,12 +17,12 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
                 HasDrugIntoleranceWithAnyIcdCodeOrName(
                     icdModel(),
                     IcdConstants.PLATINUM_COMPOUND_CODE,
-                    PLATINUM_COMPOUNDS_SET,
+                    platinumCompoundsSet,
                     "platinum compounds"
                 )
             },
             EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to
-                    { HasDrugIntoleranceWithAnyIcdCodeOrName(icdModel(), IcdConstants.TAXANE_CODE, TAXANE_SET, "taxanes") },
+                    { HasDrugIntoleranceWithAnyIcdCodeOrName(icdModel(), IcdConstants.TAXANE_CODE, taxaneSet, "taxanes") },
             EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
             EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
             EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
@@ -103,7 +103,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         referenceDateProvider().date()
     )
 
-    private val PLATINUM_COMPOUNDS_SET =
+    private val platinumCompoundsSet =
         setOf(
             "satraplatin",
             "eloxatin",
@@ -114,5 +114,5 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             "NC-6004"
         )
 
-    private val TAXANE_SET = setOf("nab-paclitaxel", "Abraxane", "Jevtana", "Tesetaxel")
+    private val taxaneSet = setOf("nab-paclitaxel", "Abraxane", "Jevtana", "Tesetaxel")
 }

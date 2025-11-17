@@ -19,6 +19,7 @@ private const val SPECIFIC_QUERY = "specific"
 private const val NAME_WITH_SPECIFIC_QUERY = "name with $SPECIFIC_QUERY term"
 
 class PrimaryTumorLocationBelongsToDoidTest {
+    
     private val specificQueryFunction =
         PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), SPECIFIC_QUERY)
 

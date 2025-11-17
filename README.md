@@ -12,7 +12,6 @@ More details on the following modules are available from the links below:
 
 | Module                 | Description                                                                                |
 |------------------------|--------------------------------------------------------------------------------------------|
-| [Clinical](clinical)   | Ingestion and curation of an external electronic health record (EHR) clinical data stream. |
 | [Molecular](molecular) | Interpretation of molecular tests and ingestion into ACTIN.                                |
 | [Trial](trial)         | Conversion of trial configuration to ACTIN-readable trial database.                        |
 | [Algo](algo)           | Matching all data from a patient to available treatment options.                           |

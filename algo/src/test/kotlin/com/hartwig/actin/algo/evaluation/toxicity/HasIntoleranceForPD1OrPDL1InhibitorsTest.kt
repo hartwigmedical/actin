@@ -16,6 +16,7 @@ private val MATCHING_ICD_MAIN_CODE = IcdConstants.DRUG_ALLERGY_SET.first()
 private val OTHER_MATCHING_ICD_MAIN_CODE = IcdConstants.DRUG_ALLERGY_SET.last()
 
 class HasIntoleranceForPD1OrPDL1InhibitorsTest {
+    
     private val function = HasIntoleranceForPD1OrPDL1Inhibitors(TestIcdFactory.createTestModel())
 
     @Test

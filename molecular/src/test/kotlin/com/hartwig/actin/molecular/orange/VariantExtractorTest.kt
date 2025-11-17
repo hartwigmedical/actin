@@ -285,7 +285,7 @@ class VariantExtractorTest {
 
     @Test
     fun `Should determine an effect for all variant effects`() {
-        for (variantEffect in PurpleVariantEffect.values()) {
+        for (variantEffect in PurpleVariantEffect.entries) {
             assertThat(extractor.determineVariantEffect(variantEffect)).isNotNull()
         }
     }
@@ -293,7 +293,7 @@ class VariantExtractorTest {
     @Test
     fun `Should determine an effect for all defined coding effects`() {
         assertThat(extractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED)).isNull()
-        PurpleCodingEffect.values().filter { it != PurpleCodingEffect.UNDEFINED }
+        PurpleCodingEffect.entries.filter { it != PurpleCodingEffect.UNDEFINED }
             .forEach { codingEffect ->
                 assertThat(extractor.determineCodingEffect(codingEffect)).isNotNull()
             }

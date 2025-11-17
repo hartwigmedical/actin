@@ -7,33 +7,34 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import kotlin.enums.EnumEntries
 
 class TreatmentCategoryInputTest {
 
     @Test
     fun `Should create for all categories`() {
-        for (category in TreatmentCategory.values()) {
+        for (category in TreatmentCategory.entries) {
             assertThat(TreatmentCategoryInput.fromString(category.display()).mappedCategory).isEqualTo(category)
         }
     }
 
     @Test
     fun `Should create for all drug types`() {
-        assertCreationFromEnumStrings(DrugType.values())
+        assertCreationFromEnumStrings(DrugType.entries)
     }
 
     @Test
     fun `Should create for all radiotherapy types`() {
-        assertCreationFromEnumStrings(RadiotherapyType.values())
+        assertCreationFromEnumStrings(RadiotherapyType.entries)
     }
 
     @Test
     fun `Should create for all other treatment types`() {
-        assertCreationFromEnumStrings(OtherTreatmentType.values())
+        assertCreationFromEnumStrings(OtherTreatmentType.entries)
     }
 
-    private fun assertCreationFromEnumStrings(values: Array<out TreatmentType>) {
-        for (treatmentType in values) {
+    private fun <T> assertCreationFromEnumStrings(entries: EnumEntries<T>) where T: Enum<T>, T : TreatmentType {
+        for (treatmentType in entries) {
             val input = treatmentType.toString().replace("_", " ").lowercase()
             val treatmentCategoryInput = TreatmentCategoryInput.fromString(input)
             assertThat(treatmentCategoryInput.mappedType).isEqualTo(treatmentType)

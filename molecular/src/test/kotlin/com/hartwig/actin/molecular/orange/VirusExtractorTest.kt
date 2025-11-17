@@ -62,7 +62,7 @@ class VirusExtractorTest {
             VirusLikelihoodType.UNKNOWN to null
         )
 
-        for (virusDriverLikelihood in VirusLikelihoodType.values()) {
+        for (virusDriverLikelihood in VirusLikelihoodType.entries) {
             assertThat(extractor.determineDriverLikelihood(virusDriverLikelihood))
                 .isEqualTo(expectedDriverLikelihoodLookup[virusDriverLikelihood])
         }
@@ -71,7 +71,7 @@ class VirusExtractorTest {
     @Test
     fun `Should determine type for all interpretations`() {
         assertThat(extractor.determineType(null)).isEqualTo(VirusType.OTHER)
-        for (interpretation in VirusInterpretation.values()) {
+        for (interpretation in VirusInterpretation.entries) {
             assertThat(extractor.determineType(interpretation)).isNotNull()
         }
     }

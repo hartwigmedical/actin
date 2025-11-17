@@ -11,21 +11,19 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.junit.Test
 
 class ActionabilityMatcherFactoryTest {
+
     @Test
     fun `Should filter hotspots`() {
-
         val applicableMolecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = "GENE1")
         val nonApplicableMolecularCriterium =
             TestServeMolecularFactory.createGeneCriterium(gene = ApplicabilityFiltering.NON_APPLICABLE_GENES.first())
 
         val trial =
             TestServeTrialFactory.create(anyMolecularCriteria = setOf(applicableMolecularCriterium, nonApplicableMolecularCriterium))
-//        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(applicableMolecularCriterium))
         val serveRecord = serveRecord(evidences = emptyList(), trials = listOf(trial))
-
+        
         val matcher = ActionabilityMatcherFactory.create(serveRecord)
         println("Matcher: $matcher")
-
     }
 
     private fun serveRecord(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial> = emptyList()): ServeRecord {

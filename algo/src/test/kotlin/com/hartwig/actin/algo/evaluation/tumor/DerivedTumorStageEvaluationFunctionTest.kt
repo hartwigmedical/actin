@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DerivedTumorStageEvaluationFunctionTest {
+    
     private val properTestPatientRecord = TestPatientFactory.createProperTestPatientRecord()
     private val minimalTestPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val evaluationFunction: EvaluationFunction = mockk()

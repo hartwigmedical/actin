@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadSomeSpecificTreatmentsTest {
+    
     @Test
     fun `Should fail for empty treatments`() {
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))

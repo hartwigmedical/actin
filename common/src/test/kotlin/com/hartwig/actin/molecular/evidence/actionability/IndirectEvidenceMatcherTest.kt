@@ -12,7 +12,6 @@ import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFa
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createKnownHotspot
 import com.hartwig.actin.molecular.evidence.actionability.TestIndirectEvidenceFactory.createVariant
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory.convertProteinEffect
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
@@ -57,11 +56,11 @@ class IndirectEvidenceMatcherTest {
 
         val resistantVariantDriver = TestVariantFactory.createMinimal().copy(
             gene = BRAF_V600E_VARIANT.gene(),
-            proteinEffect = convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+            proteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
         )
         val nonResistantVariantDriver = TestVariantFactory.createMinimal().copy(
             gene = KRAS_G12V_VARIANT.gene(),
-            proteinEffect = convertProteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
+            proteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
         )
 
         assertThat(matcher.findIndirectEvidence(resistantVariantDriver)).isEmpty()
@@ -154,7 +153,7 @@ class IndirectEvidenceMatcherTest {
 
         val variantDriver = TestVariantFactory.createMinimal().copy(
             gene = BRAF_V600E_VARIANT.gene(),
-            proteinEffect = convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION),
+            proteinEffect = GeneAlterationFactory.convertProteinEffect(ProteinEffect.GAIN_OF_FUNCTION),
             chromosome = BRAF_V600E_VARIANT.chromosome(),
             position = BRAF_V600E_VARIANT.position(),
             ref = BRAF_V600E_VARIANT.ref(),

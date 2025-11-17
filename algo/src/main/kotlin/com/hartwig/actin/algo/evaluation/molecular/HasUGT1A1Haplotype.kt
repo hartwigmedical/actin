@@ -28,8 +28,8 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalD
         }
     }
 
-    private fun hasUGT1A1Type(pharmacoEntry: PharmacoEntry, hapolotypeToFind: String): Boolean {
+    private fun hasUGT1A1Type(pharmacoEntry: PharmacoEntry, haplotypeToFind: String): Boolean {
         return pharmacoEntry.gene == PharmacoGene.UGT1A1 &&
-                pharmacoEntry.haplotypes.any { it.toHaplotypeString().lowercase() == hapolotypeToFind.lowercase() }
+                pharmacoEntry.haplotypes.any { it.toHaplotypeString().equals(haplotypeToFind, ignoreCase = true) }
     }
 }

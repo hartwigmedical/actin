@@ -5,7 +5,6 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.algo.ShapDetail
 import com.hartwig.actin.datamodel.algo.SimilarPatientsSummary
-import com.hartwig.actin.datamodel.personalization.MeasurementType
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularEfficacyDescriptionGenerator
@@ -14,8 +13,6 @@ import com.hartwig.actin.report.pdf.tables.molecular.OnLabelMolecularClinicalEvi
 import com.hartwig.actin.report.pdf.tables.molecular.TreatmentRankingGenerator
 import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceGenerator
-import com.hartwig.actin.report.pdf.tables.soc.RealWorldSurvivalOutcomesGenerator
-import com.hartwig.actin.report.pdf.tables.soc.RealWorldTreatmentDecisionsGenerator
 import com.hartwig.actin.report.pdf.tables.soc.ResistanceEvidenceGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
@@ -27,9 +24,7 @@ import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
-import com.itextpdf.layout.element.Table
 import com.itextpdf.svg.converter.SvgConverter
-import org.apache.logging.log4j.LogManager
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomBar
@@ -51,14 +46,12 @@ import kotlin.math.sign
 
 class EfficacyEvidenceChapter(private val report: Report, private val configuration: ReportConfiguration) : ReportChapter {
 
-    private val logger = LogManager.getLogger(EfficacyEvidenceChapter::class.java)
-
     private val molecularTests = report.patientRecord.molecularTests
     private val treatmentEvidenceRanking = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).rank(report.patientRecord)
 
     private val plotWidth = contentWidth() - 50
     private val plotHeight = contentHeight() - 100
-    
+
     override fun name(): String {
         return "Efficacy evidence"
     }
@@ -79,14 +72,14 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
             if (configuration.efficacyEvidenceChapterType == EfficacyEvidenceChapterType.COMPLETE) {
                 addStandardOfCareEfficacyEvidenceDetails(document)
             }
-            addPersonalizedEfficacyEvidence(document)
             addPersonalizedEfficacyPlots(document)
             addStandardOfCareResistanceEvidence(document)
         }
         if (includeMolecularEvidence()) {
-            addMolecularEvidence(document)
-            addMolecularEfficacyDescriptions(document)
             addMolecularEvidenceRanking(document)
+            addMolecularEvidence(document)
+            // Commented out for now (vs removal) because I want to look at this code later
+            // addMolecularEfficacyDescriptions(document)
         }
     }
 
@@ -139,63 +132,6 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generator = ResistanceEvidenceGenerator(eligibleSocTreatments, contentWidth())
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = false)
-        document.add(table)
-    }
-
-    private fun addPersonalizedEfficacyEvidence(document: Document) {
-        val personalizedDataAnalysis = report.treatmentMatch.personalizedDataAnalysis
-
-        if (personalizedDataAnalysis == null) {
-            logger.info("Personalized data analysis is null, unable to generate personalized efficacy evidence data in report")
-            return
-        }
-
-        val table = Tables.createSingleColWithWidth(contentWidth())
-
-        val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches
-            ?.filter(AnnotatedTreatmentMatch::eligible)
-            ?.map { it.treatmentCandidate.treatment.name.lowercase() }
-            ?.toSet() ?: emptySet()
-
-        val generators = listOfNotNull(
-            RealWorldTreatmentDecisionsGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth()),
-            RealWorldSurvivalOutcomesGenerator(
-                personalizedDataAnalysis,
-                eligibleSocTreatments,
-                contentWidth(),
-                MeasurementType.OVERALL_SURVIVAL
-            ),
-            RealWorldSurvivalOutcomesGenerator(
-                personalizedDataAnalysis,
-                eligibleSocTreatments,
-                contentWidth(),
-                MeasurementType.PROGRESSION_FREE_SURVIVAL
-            ),
-        )
-
-        generators.forEach { generator ->
-            val groupingTable = Table(1).setKeepTogether(true).setPadding(0f)
-
-            groupingTable.addCell(Cells.createSubTitle(generator.title()))
-            groupingTable.addCell(Cells.create(generator.contents()))
-
-            table.addCell(Cells.create(groupingTable))
-        }
-
-        table.addCell(Cells.createSubTitle("Explanation:"))
-        sequenceOf(
-            "These tables only show treatments that are considered standard of care (SOC) in colorectal cancer in the Netherlands.\n",
-            "The ‘All’ column shows results in NCR patients who were previously untreated, diagnosed with colorectal cancer with distant " +
-                    "metastases and treated systemically without surgery, for whom the treatment could be categorized in SOC treatments.\n",
-            "The ‘Age’, ‘WHO’, ‘RAS’ and ‘Lesions’ columns show results based on patients from the ‘All’ population, filtered " +
-                    "for equal WHO, similar age, equal RAS status or equal lesion localization, respectively.\n",
-            "‘PFS’ is calculated as the duration from the date on which the first compound of the treatment was administered, until first progression. ",
-            "‘OS’ is calculated as the duration from the date on which the first compound of the treatment was administered, until death from any cause.\n",
-            "When patient number is too low (n <= 20) to predict PFS or OS, \"NA\" is shown.\n",
-        )
-            .map(Cells::createContentNoBorder)
-            .forEach(table::addCell)
-
         document.add(table)
     }
 
