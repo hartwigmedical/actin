@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
+import java.util.Locale
 
 class HasSufficientDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
@@ -54,6 +55,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             weight,
             creatinine
         )
+        val formattedCockcroftGault = String.format(Locale.ENGLISH, "%.1f", cockcroftGault)
 
         val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator, minCreatinineClearance)
         val unit = LabMeasurement.CREATININE.defaultUnit.display()
@@ -63,7 +65,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
                 "eGFR (CG) may be insufficient based on creatinine level ($unit) but body weight unknown"
             )
 
-            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail("eGFR (Cockcroft-Gault) below min of $minCreatinineClearance")
+            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail("eGFR (Cockcroft-Gault) $formattedCockcroftGault below min of $minCreatinineClearance")
 
             result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined("eGFR (Cockcroft-Gault) evaluation undetermined")
 
@@ -71,7 +73,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
                 "eGFR (CG) based on creatinine level ($unit) most likely above min of $minCreatinineClearance but body weight unknown",
             )
 
-            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass("eGFR (Cockcroft-Gault) above min of $minCreatinineClearance")
+            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass("eGFR (Cockcroft-Gault) $formattedCockcroftGault above min of $minCreatinineClearance")
 
             else -> Evaluation(result = result, recoverable = true)
         }
