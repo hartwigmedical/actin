@@ -5,7 +5,7 @@ object TrialFormatFunctions {
     fun generateCohortsFromTrialsString(cohortCount: Int, trialCount: Int): String {
         val formatTrialCount = formatCountWithLabel(trialCount, "trial")
         return when {
-            trialCount > cohortCount -> throw IllegalStateException("Trial count is > 0 while cohort count is 0")
+            trialCount > cohortCount -> throw IllegalStateException("Trial count > cohort count - which should not be possible")
             cohortCount > 0 && cohortCount == trialCount -> "($formatTrialCount)"
             cohortCount > 0 -> "(${formatCountWithLabel(cohortCount, "cohort")} from $formatTrialCount)"
             else -> "(0 trials)"
