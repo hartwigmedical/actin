@@ -139,7 +139,7 @@ class EligibleTrialGenerator(
                         numberOfExternalTrialsExclusiveToYoungAdults,
                         "trial"
                     )
-                } filtered because trial is for young adult patients. " + "See Other Trial Matching Results for filtered matches.")
+                } filtered because trial is for young adult patients. See Other Trial Matching Results for filtered matches.")
                     .takeIf { numberOfExternalTrialsExclusiveToYoungAdults > 0 }).joinToString(
                 "\n"
             )
@@ -177,13 +177,15 @@ class EligibleTrialGenerator(
             val title = "$nationalString trials that are open and potentially eligible $cohortsFromTrialsString"
 
             val footNote = listOfNotNull(
-                "Trials in this table are matched solely on molecular event and tumor type (clinical data excluded).".takeIf { externalTrials.isNotEmpty() },
+                "Trials in this table are matched solely on molecular event and tumor type (clinical data excluded)."
+                    .takeIf { externalTrials.isNotEmpty() },
                 ("${
                     TrialFormatFunctions.formatCountWithLabel(
                         externalTrialsFilteredCount,
                         "trial"
                     )
-                } filtered due to trials recruiting nationally for the same " + "molecular target. See Other Trial Matching Results for filtered matches.").takeIf { externalTrialsFilteredCount > 0 }).joinToString(
+                } filtered due to trials recruiting nationally for the same molecular target. See Other Trial Matching Results for filtered matches.")
+                    .takeIf { externalTrialsFilteredCount > 0 }).joinToString(
                 "\n"
             )
 
