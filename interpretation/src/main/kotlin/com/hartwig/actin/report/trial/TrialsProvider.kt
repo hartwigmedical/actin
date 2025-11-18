@@ -34,19 +34,19 @@ class ExternalTrials(val nationalTrials: MolecularFilteredExternalTrials, val in
 
 class TrialsProvider(
     private val externalTrials: Set<ActionableWithExternalTrial>,
-    private val cohorts: List<InterpretedCohort>,
+    private val evaluableCohorts: List<InterpretedCohort>,
     private val nonEvaluableCohorts: List<InterpretedCohort>,
     private val internalTrialIds: Set<String>,
-    private val isYoungAdult: Boolean,
+    private val patientIsYoungAdult: Boolean,
     private val countryOfReference: Country,
     private val retainOriginalExternalTrials: Boolean
 ) {
     fun evaluableCohorts(): List<InterpretedCohort> {
-        return cohorts
+        return evaluableCohorts
     }
 
     fun evaluableCohortsAndNotIgnore(): List<InterpretedCohort> {
-        return cohorts.filter { !it.ignore }
+        return evaluableCohorts.filter { !it.ignore }
     }
 
     fun nonEvaluableCohorts(): List<InterpretedCohort> {
@@ -54,7 +54,7 @@ class TrialsProvider(
     }
 
     private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
-        return filterCohortsAvailable(cohorts.filter { !it.ignore && it.hasSlotsAvailable })
+        return filterCohortsOpenAndEligible(evaluableCohorts.filter { !it.ignore && it.hasSlotsAvailable })
     }
 
     fun externalTrialsUnfiltered(): ExternalTrials {
@@ -62,20 +62,20 @@ class TrialsProvider(
     }
 
     fun externalTrials(): ExternalTrials {
-        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), isYoungAdult)
+        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult)
     }
 
     private fun externalTrials(
         internalTrialIds: Set<String>,
         internalEvaluatedCohorts: List<InterpretedCohort>,
-        isYoungAdult: Boolean
+        patientIsYoungAdult: Boolean
     ): ExternalTrials {
         val eligibleExternalTrials = externalTrials.filterInternalTrials(internalTrialIds)
 
         val (nationalTrials, internationalTrials) = partitionByCountry(eligibleExternalTrials, countryOfReference)
 
         val filteredNationalTrials =
-            nationalTrials.filterExclusivelyInChildrensHospitalsInReferenceCountry(isYoungAdult, countryOfReference)
+            nationalTrials.filterExclusivelyInChildrensHospitalsInReferenceCountry(patientIsYoungAdult, countryOfReference)
 
         val filteredInternationalTrials =
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
@@ -130,12 +130,12 @@ class TrialsProvider(
             patientRecord: PatientRecord,
             trialMatches: List<TrialMatch>,
             countryOfReference: Country,
-            isYoungAdult: Boolean,
+            patientIsYoungAdult: Boolean,
             retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
-            val cohorts = InterpretedCohortFactory.createEvaluableCohorts(
+            val evaluableCohorts = InterpretedCohortFactory.createEvaluableCohorts(
                 trialMatches,
                 filterOnSOCExhaustionAndTumorType
             )
@@ -143,10 +143,10 @@ class TrialsProvider(
             val internalTrialIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
             return TrialsProvider(
                 externalEligibleTrials(patientRecord, filter),
-                cohorts,
+                evaluableCohorts,
                 nonEvaluableCohorts,
                 internalTrialIds,
-                isYoungAdult,
+                patientIsYoungAdult,
                 countryOfReference,
                 retainOriginalExternalTrials
             )
@@ -163,10 +163,8 @@ class TrialsProvider(
             }.toSet()
         }
 
-        fun filterCohortsAvailable(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
-            return cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation
-            }
+        fun filterCohortsOpenAndEligible(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
+            return cohorts.filter { it.isPotentiallyEligible && it.isOpen && !it.isMissingMolecularResultForEvaluation }
         }
 
         private fun countryNames(it: ActionableWithExternalTrial) = it.trial.countries.map { c -> c.country }
@@ -202,13 +200,13 @@ private fun hospitalsForCountry(trial: ExternalTrial, country: Country) =
 
 
 fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReferenceCountry(
-    isYoungAdult: Boolean,
+    patientIsYoungAdult: Boolean,
     countryOfReference: Country
 ): Set<ActionableWithExternalTrial> {
     return this.filter { ewt ->
         val allHospitalsAreChildrensInReferenceCountry =
             hospitalsForCountry(ewt.trial, countryOfReference).all { it.isChildrensHospital == true }
-        !allHospitalsAreChildrensInReferenceCountry || isYoungAdult
+        !allHospitalsAreChildrensInReferenceCountry || patientIsYoungAdult
     }.toSet()
 }
 

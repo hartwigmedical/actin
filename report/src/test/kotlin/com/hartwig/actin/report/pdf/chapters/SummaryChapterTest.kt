@@ -17,8 +17,6 @@ import org.junit.Test
 
 class SummaryChapterTest {
 
-    private val proper = TestReportFactory.createProperTestReport()
-
     @Test
     fun `Should provide expected summary tables for default configuration`() {
         val generators = createTestSummaryChapter(TestReportFactory.createExhaustiveTestReport()).createSummaryGenerators()
@@ -26,6 +24,8 @@ class SummaryChapterTest {
         assertThat(generators.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
             MolecularSummaryGenerator::class,
+            EligibleTrialGenerator::class,
+            EligibleTrialGenerator::class,
             EligibleTrialGenerator::class,
             EligibleTrialGenerator::class
         )
@@ -51,19 +51,23 @@ class SummaryChapterTest {
             MolecularSummaryGenerator::class,
             ProxyStandardOfCareGenerator::class,
             EligibleTrialGenerator::class,
+            EligibleTrialGenerator::class,
+            EligibleTrialGenerator::class
         )
     }
 
     @Test
     fun `Should omit external trial generators from summary when molecular results not available`() {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
-            patientRecord = proper.patientRecord.copy(molecularTests = emptyList())
+            patientRecord = TestReportFactory.createProperTestReport().patientRecord.copy(molecularTests = emptyList())
         )
         val generators = createTestSummaryChapter(report).createSummaryGenerators()
 
         assertThat(generators.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
             MolecularSummaryGenerator::class,
+            EligibleTrialGenerator::class,
+            EligibleTrialGenerator::class,
             EligibleTrialGenerator::class
         )
     }

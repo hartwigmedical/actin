@@ -545,12 +545,12 @@ object TestMolecularFactory {
                             url = "https://clinicaltrials.gov/study/NCT00000003"
                         ),
                         TestExternalTrialFactory.create(
-                            nctId = "NCT00000011",
-                            title = "this trial should be filtered out",
+                            nctId = "NCT00000-TO-BE-FILTERED-1",
+                            title = "this national external trial should be filtered out",
                             countries = setOf(
                                 CountryDetails(
-                                    Country.BELGIUM, mapOf(
-                                        "Leuven" to setOf(Hospital("hospital", null))
+                                    Country.NETHERLANDS, mapOf(
+                                        "Amsterdam" to setOf(Hospital("children", true))
                                     )
                                 )
                             ),
@@ -568,7 +568,35 @@ object TestMolecularFactory {
                 isReportable = true,
                 event = "FGFR1 amp",
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                evidence = TestClinicalEvidenceFactory.withEligibleTrials(
+                    setOf(
+                        TestExternalTrialFactory.create(
+                            nctId = "NCT00000099",
+                            title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
+                            countries = setOf(
+                                CountryDetails(
+                                    Country.NETHERLANDS, mapOf(
+                                        "Nijmegen" to setOf(Hospital("Radboud UMC", false)),
+                                        "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
+                                    )
+                                )
+                            ),
+                            url = "https://clinicaltrials.gov/study/NCT00000003"
+                        ),
+                        TestExternalTrialFactory.create(
+                            nctId = "NCT00000-TO-BE-FILTERED-2",
+                            title = "this international external trial should be filtered out",
+                            countries = setOf(
+                                CountryDetails(
+                                    Country.BELGIUM, mapOf(
+                                        "Amsterdam" to setOf(Hospital("international", false))
+                                    )
+                                )
+                            ),
+                            url = "https://clinicaltrials.gov/study/NCT00000011"
+                        )
+                    )
+                ),
                 gene = "FGFR1",
                 canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.NONE, 2, 2),
                 otherImpacts = setOf(
