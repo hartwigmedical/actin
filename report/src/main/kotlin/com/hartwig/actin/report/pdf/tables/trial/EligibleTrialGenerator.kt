@@ -74,6 +74,8 @@ class EligibleTrialGenerator(
     }
 
     companion object {
+        const val FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE =
+            "filtered because trial is running exclusively in children's hospital. See Other Trial Matching Results for these trial matches."
 
         fun localAndNationalExternalOpenAndEligibleCohorts(
             cohorts: List<InterpretedCohort>,
@@ -87,8 +89,8 @@ class EligibleTrialGenerator(
 
             return forLocalAndNationalExternalOpenAndEligibleLocalCohorts(
                 openAndEligibleLocalCohorts = filterOpenAndEligibleCohorts(localTrialsType, cohorts),
-                relevantExternalTrials = nationalExternalTrials,
-                numberOfExternalTrialsExclusiveToYoungAdults = nationalExternalTrialFilteredCount,
+                relevantNationalExternalTrials = nationalExternalTrials,
+                relevantNationalExternalTrialsFilteredCount = nationalExternalTrialFilteredCount,
                 requestingSource = requestingSource,
                 countryOfReference = countryOfReference,
                 trialDescriptionString = trialDescriptionString(localTrialsType, countryOfReference),
@@ -118,35 +120,35 @@ class EligibleTrialGenerator(
 
         private fun forLocalAndNationalExternalOpenAndEligibleLocalCohorts(
             openAndEligibleLocalCohorts: List<InterpretedCohort>,
-            relevantExternalTrials: Set<ExternalTrialSummary>,
-            numberOfExternalTrialsExclusiveToYoungAdults: Int,
+            relevantNationalExternalTrials: Set<ExternalTrialSummary>,
+            relevantNationalExternalTrialsFilteredCount: Int,
             requestingSource: TrialSource?,
             countryOfReference: Country? = null,
             trialDescriptionString: String
         ): TrialTableGenerator {
             val openAndEligibleTrials = openAndEligibleLocalCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortsFromTrialsString = TrialFormatFunctions.generateCohortsFromTrialsString(
-                openAndEligibleLocalCohorts.size + relevantExternalTrials.size,
-                openAndEligibleTrials.size + relevantExternalTrials.size
+                openAndEligibleLocalCohorts.size + relevantNationalExternalTrials.size,
+                openAndEligibleTrials.size + relevantNationalExternalTrials.size
             )
             val title = "$trialDescriptionString that are open and potentially eligible $cohortsFromTrialsString"
 
             val footNote = listOfNotNull(
                 "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
-                    .takeIf { relevantExternalTrials.isNotEmpty() },
+                    .takeIf { relevantNationalExternalTrials.isNotEmpty() },
                 ("${
                     TrialFormatFunctions.formatCountWithLabel(
-                        numberOfExternalTrialsExclusiveToYoungAdults,
+                        relevantNationalExternalTrialsFilteredCount,
                         "trial"
                     )
-                } filtered because trial is for young adult patients. See Other Trial Matching Results for filtered matches.")
-                    .takeIf { numberOfExternalTrialsExclusiveToYoungAdults > 0 }).joinToString(
+                } $FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE")
+                    .takeIf { relevantNationalExternalTrialsFilteredCount > 0 }).joinToString(
                 "\n"
             )
 
             return EligibleTrialGenerator(
                 cohorts = openAndEligibleLocalCohorts,
-                externalTrials = relevantExternalTrials,
+                externalTrials = relevantNationalExternalTrials,
                 requestingSource = requestingSource,
                 countryOfReference = countryOfReference,
                 title = title,
@@ -184,8 +186,15 @@ class EligibleTrialGenerator(
                         externalTrialsFilteredCount,
                         "trial"
                     )
+                } $FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE")
+                    .takeIf { externalTrialsFilteredCount > 0 && isNational },
+                ("${
+                    TrialFormatFunctions.formatCountWithLabel(
+                        externalTrialsFilteredCount,
+                        "trial"
+                    )
                 } filtered due to trials recruiting nationally for the same molecular target. See Other Trial Matching Results for filtered matches.")
-                    .takeIf { externalTrialsFilteredCount > 0 }).joinToString(
+                    .takeIf { externalTrialsFilteredCount > 0 && !isNational }).joinToString(
                 "\n"
             )
 

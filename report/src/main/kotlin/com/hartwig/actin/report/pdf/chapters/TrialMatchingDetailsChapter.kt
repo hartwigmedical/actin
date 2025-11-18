@@ -79,9 +79,8 @@ class TrialMatchingDetailsChapter(
                     configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
 
         val externalTrials = trialsProvider.externalTrials()
-        val nationalExternalTrialGenerator =
-            EligibleTrialGenerator.externalOpenAndEligibleCohorts(externalTrials, requestingSource, true)
-                .takeIf { includeSpecificExternalGenerators }
+        val nationalExternalTrialGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(externalTrials, requestingSource, true)
+            .takeIf { includeSpecificExternalGenerators }
 
         val internationalExternalTrialGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(
             externalTrials,

@@ -54,7 +54,7 @@ fun main() {
         molecularChapterType = MolecularChapterType.STANDARD_WITH_PATHOLOGY,
         efficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,
         clinicalChapterType = ClinicalChapterType.COMPLETE,
-        trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS,
+        trialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
         countryOfReference = Country.NETHERLANDS,
         hospitalOfReference = null
     )
