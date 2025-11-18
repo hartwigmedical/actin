@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
@@ -11,15 +10,6 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
-
-private val TRIAL_LATE_PHASES = setOf(
-    TrialPhase.PHASE_2,
-    TrialPhase.PHASE_2_OR_MORE,
-    TrialPhase.PHASE_2_3,
-    TrialPhase.PHASE_3,
-    TrialPhase.PHASE_4,
-    TrialPhase.COMPASSIONATE_USE,
-)
 
 class EligibleTrialGenerator(
     private val cohorts: List<InterpretedCohort>,
@@ -170,8 +160,8 @@ class EligibleTrialGenerator(
         private fun filterOpenAndEligibleCohorts(type: LocalTrialsType, cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
             return TrialsProvider.filterCohortsOpenAndEligible(
                 when (type) {
-                    LocalTrialsType.LOCAL_LATE_PHASE -> filterCohortsLateTrialPhase(cohorts)
-                    LocalTrialsType.LOCAL_EARLY_PHASE -> filterCohortsEarlyTrialPhase(cohorts)
+                    LocalTrialsType.LOCAL_LATE_PHASE -> cohorts.filter { it.phase?.isLatePhase == true }
+                    LocalTrialsType.LOCAL_EARLY_PHASE -> cohorts.filterNot { it.phase?.isLatePhase == true }
                 }
             )
         }
@@ -287,14 +277,6 @@ class EligibleTrialGenerator(
                     includeWarningsColumn = false
                 )
             } else null
-        }
-
-        private fun filterCohortsLateTrialPhase(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
-            return cohorts.filter { it.phase in TRIAL_LATE_PHASES }
-        }
-
-        private fun filterCohortsEarlyTrialPhase(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
-            return cohorts.filterNot { it.phase in TRIAL_LATE_PHASES }
         }
 
         private fun filterCohortsOpenAndEligibleButMissingMolecularResult(cohorts: List<InterpretedCohort>): List<InterpretedCohort> {
