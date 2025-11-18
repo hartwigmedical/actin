@@ -116,7 +116,7 @@ class TrialsProviderTest {
     }
 
     @Test
-    fun `Should not filter trials exclusively in childrens hospitals in reference country when patient is younger than 25 years old`() {
+    fun `Should not filter trials exclusively in childrens hospitals in reference country when patient is young adult`() {
         val notFilteredHospital = createExternalTrialSummaryWithHospitals(
             NETHERLANDS to mapOf(
                 UTRECHT to setOf(PMC)

@@ -11,7 +11,6 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.layout.element.Table
-import kotlin.collections.map
 
 private val TRIAL_LATE_PHASES = setOf(
     TrialPhase.PHASE_2,
@@ -99,7 +98,7 @@ class EligibleTrialGenerator(
             return forLocalAndNationalExternalOpenAndEligibleLocalCohorts(
                 openAndEligibleLocalCohorts = filterOpenAndEligibleCohorts(localTrialsType, cohorts),
                 relevantExternalTrials = nationalExternalTrials,
-                relevantExternalTrialsFilteredCount = nationalExternalTrialFilteredCount,
+                numberOfExternalTrialsExclusiveToYoungAdults = nationalExternalTrialFilteredCount,
                 requestingSource = requestingSource,
                 countryOfReference = countryOfReference,
                 trialDescriptionString = trialDescriptionString(localTrialsType, countryOfReference),
@@ -111,14 +110,13 @@ class EligibleTrialGenerator(
             requestingSource: TrialSource?,
             isNational: Boolean
         ): TrialTableGenerator {
-            val (relevantExternalTrials, relevantExternalTrialsFilteredCount) =
-                if (isNational) {
-                    ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered) to
-                            ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials()).size
-                } else {
-                    ExternalTrialSummarizer.summarize(externalTrials.internationalTrials.filtered) to
-                            ExternalTrialSummarizer.summarize(externalTrials.excludedInternationalTrials()).size
-                }
+            val (includedTrials, excludedTrials) = if (isNational) {
+                externalTrials.nationalTrials.filtered to externalTrials.excludedNationalTrials()
+            } else {
+                externalTrials.internationalTrials.filtered to externalTrials.excludedInternationalTrials()
+            }
+            val relevantExternalTrials = ExternalTrialSummarizer.summarize(includedTrials)
+            val relevantExternalTrialsFilteredCount = ExternalTrialSummarizer.summarize(excludedTrials).size
 
             return forExternalOpenAndEligibleCohorts(
                 externalTrials = relevantExternalTrials,
@@ -131,7 +129,7 @@ class EligibleTrialGenerator(
         private fun forLocalAndNationalExternalOpenAndEligibleLocalCohorts(
             openAndEligibleLocalCohorts: List<InterpretedCohort>,
             relevantExternalTrials: Set<ExternalTrialSummary>,
-            relevantExternalTrialsFilteredCount: Int,
+            numberOfExternalTrialsExclusiveToYoungAdults: Int,
             requestingSource: TrialSource?,
             countryOfReference: Country? = null,
             trialDescriptionString: String
@@ -148,12 +146,13 @@ class EligibleTrialGenerator(
                     .takeIf { relevantExternalTrials.isNotEmpty() },
                 ("${
                     TrialFormatFunctions.formatCountWithLabel(
-                        relevantExternalTrialsFilteredCount,
+                        numberOfExternalTrialsExclusiveToYoungAdults,
                         "trial"
                     )
-                } filtered because trial is for young adult patients. " +
-                        "See Other Trial Matching Results for filtered matches.").takeIf { relevantExternalTrialsFilteredCount > 0 }
-            ).joinToString("\n")
+                } filtered because trial is for young adult patients. " + "See Other Trial Matching Results for filtered matches.")
+                    .takeIf { numberOfExternalTrialsExclusiveToYoungAdults > 0 }).joinToString(
+                "\n"
+            )
 
             return EligibleTrialGenerator(
                 cohorts = openAndEligibleLocalCohorts,
@@ -269,7 +268,12 @@ class EligibleTrialGenerator(
             val summarizedTrials =
                 ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials())
             val title =
-                "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${TrialFormatFunctions.formatCountWithLabel(summarizedTrials.size, "trial")})"
+                "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${
+                    TrialFormatFunctions.formatCountWithLabel(
+                        summarizedTrials.size,
+                        "trial"
+                    )
+                })"
             return if (summarizedTrials.isNotEmpty()) {
                 EligibleTrialGenerator(
                     cohorts = emptyList(),

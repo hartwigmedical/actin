@@ -160,7 +160,7 @@ class SummaryChapter(
         val nationalOpenAndEligibleLatePhaseCohortsGenerator =
             EligibleTrialGenerator.localAndNationalExternalOpenAndEligibleCohorts(
                 cohorts = cohorts,
-                externalTrials = returnEmptyExternalTrials(),
+                externalTrials = MolecularFilteredExternalTrials(emptySet(), emptySet()).let { ExternalTrials(it, it) },
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
                 localTrialsType = LocalTrialsType.LOCAL_LATE_PHASE
@@ -191,7 +191,4 @@ class SummaryChapter(
             internationalTrialsGenerator.takeIf { externalTrials.internationalTrials.isNotEmpty() },
         )
     }
-
-    private fun returnEmptyExternalTrials(): ExternalTrials =
-        MolecularFilteredExternalTrials(emptySet(), emptySet()).let { ExternalTrials(it, it) }
 }
