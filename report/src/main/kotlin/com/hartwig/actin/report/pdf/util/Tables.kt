@@ -27,7 +27,8 @@ object Tables {
 
     fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean, skipWrappingFooter: Boolean = false): Table {
         if (contentTable.numberOfRows == 0) {
-            contentTable.addCell(Cells.createSpanningNoneEntry(contentTable))
+            return createSingleColWithWidth(contentTable.width.value).addCell(Cells.createSpanningNoneEntry(contentTable))
+                .setKeepTogether(true)
         }
 
         if (contentTable.numberOfRows < 3 || forceKeepTogether) {

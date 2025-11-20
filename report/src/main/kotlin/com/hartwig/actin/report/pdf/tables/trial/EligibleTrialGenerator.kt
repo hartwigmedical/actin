@@ -144,7 +144,7 @@ class EligibleTrialGenerator(
                 } $FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE")
                     .takeIf { relevantNationalExternalTrialsFilteredCount > 0 }).joinToString(
                 "\n"
-            )
+            ).ifEmpty { null }
 
             return EligibleTrialGenerator(
                 cohorts = openAndEligibleLocalCohorts,
