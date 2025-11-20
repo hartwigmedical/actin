@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.serialization
 
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -20,11 +19,14 @@ object ClinicalRecordJson {
     }
 
     fun readFromDir(directory: String): List<ClinicalRecord> {
-        val files = File(directory).listFiles()
-            ?: throw IllegalArgumentException("Could not retrieve clinical json files from $directory")
+        return readFromDir(Path.of(directory))
+    }
 
-        return files.filter { it.getName().endsWith(CLINICAL_JSON_EXTENSION) }
-            .map { read(it.toPath()) }
+    fun readFromDir(directory: Path): List<ClinicalRecord> {
+        Files.isDirectory(directory) || throw IllegalArgumentException("Not a directory: $directory")
+        return Files.list(directory).filter { it.fileName.toString().endsWith(CLINICAL_JSON_EXTENSION) }
+            .map { read(it) }
+            .toList()
             .sortedWith(ClinicalRecordComparator())
     }
 
