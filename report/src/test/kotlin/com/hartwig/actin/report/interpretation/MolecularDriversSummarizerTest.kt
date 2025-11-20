@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
@@ -22,6 +21,7 @@ import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.report.interpretation.Functions.eventDisplay
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -222,7 +222,7 @@ class MolecularDriversSummarizerTest {
         )
 
         val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(drivers, cohorts)
-        val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().map(Driver::eventDisplay).distinct().toSet()
+        val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().map({ it.eventDisplay() }).distinct().toSet()
 
         assertThat(otherActionableEvents).hasSize(13)
         assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }

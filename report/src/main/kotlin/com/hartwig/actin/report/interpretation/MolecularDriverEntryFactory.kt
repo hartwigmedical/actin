@@ -19,6 +19,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
+import com.hartwig.actin.report.interpretation.Functions.eventDisplay
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.collections.any
 import kotlin.math.min
@@ -109,17 +110,14 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): List<MolecularDriverEntry> {
-        val entries = mutableListOf<MolecularDriverEntry>()
-        if (copyNumber.canonicalImpact.type != CopyNumberType.NONE || molecularDriversInterpreter.copyNumberIsActionable(copyNumber)) {
-            val canonicalDriverType = getDriverType(copyNumber.canonicalImpact.type, copyNumber.otherImpacts)
-            entries.add(driverEntryForGeneAlteration(canonicalDriverType, copyNumber.eventDisplay(), copyNumber))
+        val driverTypes = if (copyNumber.canonicalImpact.type != CopyNumberType.NONE ||
+            molecularDriversInterpreter.copyNumberIsActionable(copyNumber)
+        ) {
+            listOf(getDriverType(copyNumber.canonicalImpact.type, copyNumber.otherImpacts))
         } else {
-            entries.addAll(copyNumber.otherImpacts.map { impact ->
-                val otherDriverType = getDriverType(impact.type, null)
-                driverEntryForGeneAlteration(otherDriverType, copyNumber.eventDisplay(), copyNumber)
-            })
+            copyNumber.otherImpacts.map { impact -> getDriverType(impact.type, null) }
         }
-        return entries
+        return driverTypes.map { driverEntryForGeneAlteration(it, copyNumber.eventDisplay(), copyNumber) }
     }
 
     private fun getDriverType(type: CopyNumberType, effects: Set<TranscriptCopyNumberImpact>?): String {

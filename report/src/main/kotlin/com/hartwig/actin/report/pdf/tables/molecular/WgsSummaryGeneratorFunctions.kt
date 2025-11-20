@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.report.interpretation.Functions.eventDisplay
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter

@@ -1,10 +1,13 @@
-package com.hartwig.actin.datamodel.molecular.driver
+package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import org.assertj.core.api.Assertions.assertThat
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.report.interpretation.Functions.eventDisplay
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
-class DriverTest {
+class DisplayFunctionsTest {
 
     @Test
     fun `Should format variant event correctly`() {
@@ -12,7 +15,7 @@ class DriverTest {
             event = "BRAF V600E",
             sourceEvent = "BRAF V500E"
         )
-        assertThat(variant.eventDisplay()).isEqualTo("BRAF V600E (also known as BRAF V500E)")
+        Assertions.assertThat(variant.eventDisplay()).isEqualTo("BRAF V600E (also known as BRAF V500E)")
     }
 
     @Test
@@ -23,7 +26,7 @@ class DriverTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.FULL_GAIN, minCopies = 100, maxCopies = 100)
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF 100 copies")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF 100 copies")
     }
 
     @Test
@@ -34,7 +37,7 @@ class DriverTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.FULL_GAIN)
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF")
     }
 
     @Test
@@ -45,7 +48,7 @@ class DriverTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.PARTIAL_GAIN, minCopies = 1, maxCopies = 100)
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF 100 copies (partial)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF 100 copies (partial)")
     }
 
     @Test
@@ -56,7 +59,7 @@ class DriverTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.PARTIAL_GAIN)
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (partial)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (partial)")
     }
 
     @Test
@@ -67,7 +70,7 @@ class DriverTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.NONE),
             otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.FULL_GAIN))
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (alt transcript)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (alt transcript)")
     }
 
     @Test
@@ -77,7 +80,7 @@ class DriverTest {
             event = "BRAF del",
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.FULL_DEL),
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF")
     }
 
     @Test
@@ -88,7 +91,7 @@ class DriverTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.NONE),
             otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.FULL_DEL))
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (alt transcript)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (alt transcript)")
     }
 
     @Test
@@ -99,7 +102,7 @@ class DriverTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.NONE),
             otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.NONE))
         )
-        assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF copy nr")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF copy nr")
     }
 
     @Test
@@ -108,7 +111,7 @@ class DriverTest {
             event = "HPV positive",
             integrations = 5
         )
-        assertThat(virus.eventDisplay()).isEqualTo("HPV positive (5 integrations detected)")
+        Assertions.assertThat(virus.eventDisplay()).isEqualTo("HPV positive (5 integrations detected)")
     }
 
     @Test
@@ -116,24 +119,24 @@ class DriverTest {
         val virus = TestMolecularFactory.createMinimalVirus().copy(
             event = "HPV positive",
         )
-        assertThat(virus.eventDisplay()).isEqualTo("HPV positive")
+        Assertions.assertThat(virus.eventDisplay()).isEqualTo("HPV positive")
     }
 
     @Test
     fun `Should not alter fusion events`() {
         val fusion = TestMolecularFactory.createMinimalFusion().copy(event = "Fusion event")
-        assertThat(fusion.eventDisplay()).isEqualTo("Fusion event")
+        Assertions.assertThat(fusion.eventDisplay()).isEqualTo("Fusion event")
     }
 
     @Test
     fun `Should not alter disruption events`() {
         val disruption = TestMolecularFactory.createMinimalDisruption().copy(event = "Disruption event")
-        assertThat(disruption.eventDisplay()).isEqualTo("Disruption event")
+        Assertions.assertThat(disruption.eventDisplay()).isEqualTo("Disruption event")
     }
 
     @Test
     fun `Should not alter hom disruption events`() {
         val homDisruption = TestMolecularFactory.createMinimalHomozygousDisruption().copy(event = "Hom disruption event")
-        assertThat(homDisruption.eventDisplay()).isEqualTo("Hom disruption event")
+        Assertions.assertThat(homDisruption.eventDisplay()).isEqualTo("Hom disruption event")
     }
 }

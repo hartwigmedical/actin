@@ -3,8 +3,8 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.report.interpretation.Functions.eventDisplay
 
 class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
@@ -18,8 +18,9 @@ class MolecularDriversSummarizer private constructor(
     }
 
     fun otherVariantEvents(): List<String> =
-        drivers.variants.asSequence().filter { it.isReportable }.map { it.eventDisplay() }.filterNot { it in keyVariantEvents() }.toSet()
-            .sorted().toList()
+        keyVariantEvents().let { keyVariants ->
+            drivers.variants.filter { it.isReportable }.map { it.eventDisplay() }.filterNot(keyVariants::contains)
+        }
 
     fun keyAmplifiedGeneEvents(): List<String> =
         drivers.copyNumbers
@@ -42,11 +43,9 @@ class MolecularDriversSummarizer private constructor(
     fun keyHomozygouslyDisruptedGenes(): List<String> =
         drivers.homozygousDisruptions.filter(::isReportableHighDriver).map(GeneAlteration::gene).distinct()
 
-    fun keyFusionEvents(): List<String> =
-        drivers.fusions.filter(::isReportableHighDriver).map(Fusion::eventDisplay).distinct()
+    fun keyFusionEvents(): List<String> = drivers.fusions.keyEvents()
 
-    fun keyVirusEvents(): List<String> =
-        drivers.viruses.filter(::isReportableHighDriver).map { it.eventDisplay() }.distinct()
+    fun keyVirusEvents(): List<String> = drivers.viruses.keyEvents()
 
     fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
         val nonDisruptionDrivers = listOf(
@@ -62,6 +61,8 @@ class MolecularDriversSummarizer private constructor(
 
     private fun isReportableHighDriver(driver: Driver): Boolean =
         driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
+
+    private fun List<Driver>.keyEvents() = filter(::isReportableHighDriver).map { it.eventDisplay() }.distinct()
 
     companion object {
         fun fromMolecularDriversAndEvaluatedCohorts(
