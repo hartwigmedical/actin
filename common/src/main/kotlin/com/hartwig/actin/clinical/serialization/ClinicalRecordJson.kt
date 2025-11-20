@@ -10,10 +10,6 @@ object ClinicalRecordJson {
 
     private const val CLINICAL_JSON_EXTENSION = ".clinical.json"
 
-    fun write(records: List<ClinicalRecord>, directory: String) {
-        write(records, Path.of(directory))
-    }
-
     fun write(records: List<ClinicalRecord>, directory: Path) {
         for (record in records) {
             val jsonFile = directory.resolve(record.patientId + CLINICAL_JSON_EXTENSION)
