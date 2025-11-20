@@ -24,7 +24,7 @@ object ClinicalRecordJson {
             ?: throw IllegalArgumentException("Could not retrieve clinical json files from $directory")
 
         return files.filter { it.getName().endsWith(CLINICAL_JSON_EXTENSION) }
-            .map { fromJson(Files.readString(it.toPath())) }
+            .map { read(it.toPath()) }
             .sortedWith(ClinicalRecordComparator())
     }
 
