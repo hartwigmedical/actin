@@ -2,21 +2,22 @@ package com.hartwig.actin.clinical.serialization
 
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.util.Paths.forceTrailingFileSeparator
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
 import java.nio.file.Files
+import java.nio.file.Path
 
 object ClinicalRecordJson {
 
     private const val CLINICAL_JSON_EXTENSION = ".clinical.json"
 
     fun write(records: List<ClinicalRecord>, directory: String) {
-        val path = forceTrailingFileSeparator(directory)
+        write(records, Path.of(directory))
+    }
+
+    fun write(records: List<ClinicalRecord>, directory: Path) {
         for (record in records) {
-            val jsonFile = path + record.patientId + CLINICAL_JSON_EXTENSION
-            val writer = BufferedWriter(FileWriter(jsonFile))
+            val jsonFile = directory.resolve(record.patientId + CLINICAL_JSON_EXTENSION)
+            val writer = Files.newBufferedWriter(jsonFile)
             writer.write(toJson(record))
             writer.close()
         }
@@ -32,7 +33,11 @@ object ClinicalRecordJson {
     }
 
     fun read(clinicalJson: String): ClinicalRecord {
-        return fromJson(Files.readString(File(clinicalJson).toPath()))
+        return read(Path.of(clinicalJson))
+    }
+
+    fun read(clinicalJson: Path): ClinicalRecord {
+        return fromJson(Files.readString(clinicalJson))
     }
 
     fun toJson(record: ClinicalRecord): String {

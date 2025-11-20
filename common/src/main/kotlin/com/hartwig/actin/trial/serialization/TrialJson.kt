@@ -2,16 +2,13 @@ package com.hartwig.actin.trial.serialization
 
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
-import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
-import java.nio.file.Files
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
 
 object TrialJson {
 
@@ -19,11 +16,14 @@ object TrialJson {
     private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
 
     fun write(trials: List<Trial>, directory: String) {
-        val path: String = Paths.forceTrailingFileSeparator(directory)
+        write(trials, Path.of(directory))
+    }
+
+    fun write(trials: List<Trial>, directory: Path) {
         for (trial: Trial in trials) {
-            val jsonFile = path + trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION
+            val jsonFile = directory.resolve(trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION)
             logger.info(" Writing '{} ({})' to {}", trial.identification.trialId, trial.identification.acronym, jsonFile)
-            val writer = BufferedWriter(FileWriter(jsonFile))
+            val writer = Files.newBufferedWriter(jsonFile)
             writer.write(toJson(trial))
             writer.close()
         }
@@ -34,8 +34,12 @@ object TrialJson {
     }
 
     fun readFromDir(directory: String): List<Trial> {
-        val files = File(directory).listFiles() ?: throw IllegalArgumentException("Could not retrieve files from $directory")
-        return files.filter { it.getName().endsWith(TRIAL_JSON_EXTENSION) }.map(::fromJsonFile)
+        return readFromDir(Path.of(directory))
+    }
+
+    fun readFromDir(directory: Path): List<Trial> {
+        Files.isDirectory(directory) || throw IllegalArgumentException("Not a directory: $directory")
+        return Files.list(directory).filter { it.fileName.toString().endsWith(TRIAL_JSON_EXTENSION) }.map(::fromJsonFile).toList()
     }
 
     fun toJson(trial: Trial): String {
@@ -50,9 +54,9 @@ object TrialJson {
         .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
         .create()
 
-    private fun fromJsonFile(file: File): Trial {
+    private fun fromJsonFile(file: Path): Trial {
         try {
-            return fromJson(Files.readString(file.toPath()))
+            return fromJson(Files.readString(file))
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
