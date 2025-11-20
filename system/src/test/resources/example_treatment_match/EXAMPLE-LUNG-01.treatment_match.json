@@ -10,7 +10,7 @@
         "acronym": "IEMOEN",
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
-        "phase": null,
+        "phase": "PHASE_1",
         "source": null,
         "sourceId": null,
         "locations": [],
@@ -287,7 +287,7 @@
         "acronym": "KAYRAS",
         "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
         "nctId": "NCT00000002",
-        "phase": null,
+        "phase": "PHASE_1_2",
         "source": null,
         "sourceId": null,
         "locations": [
@@ -757,7 +757,7 @@
         "acronym": "TEDR1",
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
-        "phase": null,
+        "phase": "PHASE_2",
         "source": null,
         "sourceId": null,
         "locations": [
@@ -1229,7 +1229,6 @@
     }
   ],
   "standardOfCareMatches": null,
-  "personalizedDataAnalysis": null,
   "personalizedTreatmentSummary": null,
   "maxMolecularTestAge": null
 }

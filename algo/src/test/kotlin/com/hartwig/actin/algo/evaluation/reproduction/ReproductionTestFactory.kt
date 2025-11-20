@@ -4,7 +4,8 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Gender
 
-internal object ReproductionTestFactory {
+object ReproductionTestFactory {
+    
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
     fun withGender(gender: Gender): PatientRecord {

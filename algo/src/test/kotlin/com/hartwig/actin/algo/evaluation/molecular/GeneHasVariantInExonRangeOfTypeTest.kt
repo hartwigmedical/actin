@@ -18,6 +18,7 @@ private const val OTHER_EXON = 6
 private const val TARGET_GENE = "gene A"
 
 class GeneHasVariantInExonRangeOfTypeTest {
+    
     private val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INSERT)
 
     @Test

@@ -10,7 +10,10 @@ import org.junit.Test
 class DPYDDeficiencyEvaluationFunctionsTest {
 
     private val homozygousEntry =
-        PharmacoEntry(gene = PharmacoGene.DPYD, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.REDUCED_FUNCTION)))
+        PharmacoEntry(
+            gene = PharmacoGene.DPYD,
+            haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.REDUCED_FUNCTION))
+        )
     private val heterozygousEntry = PharmacoEntry(
         gene = PharmacoGene.DPYD,
         haplotypes = setOf(
@@ -19,7 +22,10 @@ class DPYDDeficiencyEvaluationFunctionsTest {
         )
     )
     private val proficientEntry =
-        PharmacoEntry(gene = PharmacoGene.DPYD, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)))
+        PharmacoEntry(
+            gene = PharmacoGene.DPYD,
+            haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION))
+        )
 
     @Test
     fun `Should return true if patient has homozygous DPYD haplotypes with reduced function`() {

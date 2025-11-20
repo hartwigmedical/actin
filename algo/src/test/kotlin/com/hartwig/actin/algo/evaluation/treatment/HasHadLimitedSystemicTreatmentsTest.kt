@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import org.junit.Test
 
 class HasHadLimitedSystemicTreatmentsTest {
+    
     private val function = HasHadLimitedSystemicTreatments(1)
 
     @Test

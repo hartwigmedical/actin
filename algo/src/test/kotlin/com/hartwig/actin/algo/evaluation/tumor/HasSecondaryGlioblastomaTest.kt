@@ -7,6 +7,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasSecondaryGlioblastomaTest {
+    
     @Test
     fun canEvaluate() {
         val function = HasSecondaryGlioblastoma(TestDoidModelFactory.createMinimalTestDoidModel())

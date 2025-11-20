@@ -46,8 +46,7 @@ class TreatmentMatchJsonTest {
                     cohorts = emptyList(),
                     nonEvaluableCohorts = emptyList()
                 )
-            ),
-            personalizedDataAnalysis = null
+            )
         )
 
         //@formatter:off
@@ -112,13 +111,10 @@ class TreatmentMatchJsonTest {
                             "upperLimit":18.8},"pValue":"0.0002"}]}]}],"priorTherapies":"5-FU","patientsPerRace":null,
                             "patientsPerRegion":null}],
                             "url":"http://www.ncbi.nlm.nih.gov/pubmed/12345678"}]}],
-                    "generalPfs":{"value":136.5,"numPatients":98,"min":74,"max":281,"iqr":46.0},
-                    "generalOs":{"value":215.0,"numPatients":90,"min":121,"max":470,"iqr":110.1},
                     "resistanceEvidence":[
                         {"event":"BRAF amp","treatmentName":"Pembrolizumab","resistanceLevel":"A",
                         "isTested":null,"isFound":false,"evidenceUrls":["website"]}]}
                     ],
-                "personalizedDataAnalysis":null,
                 "personalizedTreatmentSummary":null,
                 "maxMolecularTestAge":null}
                 """).lineSequence().joinToString("") { it.trim() }

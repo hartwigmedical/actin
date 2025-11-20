@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.util.GeneConstants
 import org.junit.Test
 
 class IsHomologousRecombinationDeficientTest {
+    
     private val function = IsHomologousRecombinationDeficient()
     private val hrGene = GeneConstants.HR_GENES.first()
 

@@ -2,20 +2,14 @@ package com.hartwig.actin.treatment
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
-import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
-import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
-import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.math.exp
 
-data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceScore>) : Comparable<TreatmentRankResult> {
+data class TreatmentRankResult(val treatment: String, val events: Set<String>, val scores: List<EvidenceScore>) :
+    Comparable<TreatmentRankResult> {
 
     val score = scores.sumOf { it.score }
 
@@ -25,7 +19,12 @@ data class TreatmentRankResult(val treatment: String, val scores: List<EvidenceS
 }
 
 data class TreatmentEvidenceWithTarget(val treatmentEvidence: TreatmentEvidence, val target: String)
-data class DuplicateEvidenceGrouping(val treatment: String, val gene: String?, val tumorMatch: TumorMatch, val benefit: Boolean)
+data class DuplicateEvidenceGrouping(
+    val treatment: String,
+    val target: String,
+    val tumorMatch: TumorMatch,
+    val benefit: Boolean,
+)
 
 class TreatmentRankingModel(
     private val scoringModel: EvidenceScoringModel,
@@ -34,13 +33,14 @@ class TreatmentRankingModel(
     fun rank(record: PatientRecord): TreatmentEvidenceRanking {
         val rankingResults = computeRankResults(record)
 
-        return TreatmentEvidenceRanking(rankingResults.map {
-            RankedTreatment(
-                it.treatment,
-                it.scores.map { s -> s.event }.toSet(),
-                it.scores.sumOf { s -> s.score }
-            )
-        })
+        return TreatmentEvidenceRanking(
+            rankingResults.map {
+                RankedTreatment(
+                    it.treatment,
+                    it.events,
+                    it.scores.sumOf { s -> s.score }
+                )
+            })
     }
 
     private fun computeRankResults(record: PatientRecord): List<TreatmentRankResult> {
@@ -51,57 +51,53 @@ class TreatmentRankingModel(
                     it.characteristics.tumorMutationalLoad + it.characteristics.tumorMutationalBurden
         }.filterNotNull()
 
+
         val treatmentEvidencesWithTarget = treatmentEvidencesWithTargets(actionables)
         val scoredTreatments = treatmentEvidencesWithTarget.map { evidenceWithTarget ->
             evidenceWithTarget to scoringModel.score(evidenceWithTarget.treatmentEvidence)
         }
         val scoredTreatmentsWithDuplicatesDiminished = groupEvidenceForDuplicationAndDiminishScores(scoredTreatments)
 
-        return scoredTreatmentsWithDuplicatesDiminished
-            .map { it.key.treatment to it.value }
-            .groupBy { it.first }
-            .map { TreatmentRankResult(it.key, it.value.flatMap { t -> t.second }) }
+        return scoredTreatmentsWithDuplicatesDiminished.entries.groupBy { it.key.treatment }
+            .map { TreatmentRankResult(it.key, it.value.map { g -> g.key.target }.toSet(), it.value.flatMap { g -> g.value }) }
             .sorted()
     }
 
-    private fun groupEvidenceForDuplicationAndDiminishScores(scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>) =
-        scoredTreatmentEntries.groupBy {
+    private fun groupEvidenceForDuplicationAndDiminishScores(
+        scoredTreatmentEntries: Sequence<Pair<TreatmentEvidenceWithTarget, EvidenceScore>>
+    ): Map<DuplicateEvidenceGrouping, List<EvidenceScore>> {
+        val grouped = scoredTreatmentEntries.groupBy {
             DuplicateEvidenceGrouping(
                 it.first.treatmentEvidence.treatment,
                 it.first.target,
                 it.second.scoringMatch.tumorMatch,
                 (it.second.score > 0)
             )
-        }.mapValues { entry ->
-            saturatingDiminishingReturnsScore(entry.value.map { it.second })
         }
+        val diminishedScores = grouped.mapValues { entry ->
+            val originalScores = entry.value.map { it.second }
+            val newScores = saturatingDiminishingReturnsScore(originalScores)
+            newScores
+        }
+        return diminishedScores
+    }
 
     private fun treatmentEvidencesWithTargets(actionables: Sequence<Actionable>) =
         actionables.flatMap { actionable ->
-            actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
+            val evidenceTargets = actionable.evidence.treatmentEvidence.asSequence().map { treatmentEvidence ->
                 TreatmentEvidenceWithTarget(
                     treatmentEvidence,
-                    resolveTarget(actionable, treatmentEvidence),
+                    actionable.event
                 )
             }
-        }
-
-    private fun resolveTarget(actionable: Actionable, treatmentEvidence: TreatmentEvidence): String =
-        when (actionable) {
-            is GeneAlteration -> actionable.gene
-            is MicrosatelliteStability -> "MSI"
-            is TumorMutationalLoad -> "TML"
-            is TumorMutationalBurden -> "TMB"
-            is Fusion -> "${actionable.geneStart}::${actionable.geneEnd}"
-            is Virus -> actionable.name
-            is HomologousRecombination -> actionable.type.toString()
-            else -> treatmentEvidence.molecularMatch.sourceEvent
+            evidenceTargets
         }
 
     private fun saturatingDiminishingReturnsScore(
         evidenceScores: List<EvidenceScore>, slope: Double = 1.5, midpoint: Double = 1.0
     ) = evidenceScores.sortedDescending().withIndex().map { (index, score) ->
-        score to if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
+        val adjustedScore = if (index >= 1) score.score * (1.0 / (1.0 + exp(slope * (index - midpoint)))) else score.score
+        score to adjustedScore
     }.map { it.first.copy(score = it.second) }
 
     companion object {
@@ -141,7 +137,7 @@ class TreatmentRankingModel(
                     with(evidenceScore) {
                         val row = listOf(
                             "",
-                            event,
+                            sourceEvent,
                             scoringMatch.variantMatch.toString(),
                             scoringMatch.tumorMatch.toString(),
                             evidenceLevelDetails.toString(),

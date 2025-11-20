@@ -19,8 +19,6 @@ import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import com.hartwig.serve.datamodel.molecular.range.KnownExon
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
@@ -29,10 +27,7 @@ class KnownEventResolver(
     private val secondaryKnownEvents: KnownEvents,
     private val aggregatedKnownGenes: Set<KnownGene>
 ) {
-    companion object {
-        private val logger: Logger = LogManager.getLogger(KnownEventResolver::class.java)
-    }
-
+    
     fun resolveForVariant(variant: Variant): VariantAlteration {
         val primaryAlteration = findHotspot(primaryKnownEvents.hotspots(), variant)
             ?: findCodon(primaryKnownEvents.codons(), variant)
@@ -100,7 +95,7 @@ class KnownEventResolver(
         return knownExons
             .filter { RangeMatching.isMatch(it, variant) }
             .minWithOrNull(
-                compareBy<KnownExon>(
+                compareBy(
                     { geneAlterationPriority(it) },
                     { it.proteinEffect().name },
                 )

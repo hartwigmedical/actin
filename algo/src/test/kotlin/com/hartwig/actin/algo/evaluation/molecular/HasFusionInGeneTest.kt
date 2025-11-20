@@ -14,6 +14,7 @@ import org.junit.Test
 private const val MATCHING_GENE = "gene A"
 
 class HasFusionInGeneTest {
+    
     val function = HasFusionInGene(MATCHING_GENE)
 
     private val matchingFusion = TestFusionFactory.createMinimal().copy(

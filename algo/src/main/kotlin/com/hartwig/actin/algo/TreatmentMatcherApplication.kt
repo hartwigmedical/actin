@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo
 
-import InputDataLoader
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
@@ -54,7 +53,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             functionInputResolver = functionInputResolver,
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,
-            personalizationDataPath = config.personalizationDataPath,
             treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,
             algoConfiguration = configuration,
             maxMolecularTestAge = maxMolecularTestAge

@@ -75,11 +75,11 @@ class MolecularDriversSummarizerTest {
     @Test
     fun `Should return key amplified genes and indicate partial amplifications and copy nrs if available`() {
         val copyNumbers = listOf(
-            copyNumber(CopyNumberType.FULL_GAIN, "gene 1", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "gene 2", DriverLikelihood.HIGH, true, 20),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 3", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, "gene 4", DriverLikelihood.HIGH, true, 10, 20),
-            copyNumber(CopyNumberType.NONE, "gene 5", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
+            copyNumber(CopyNumberType.FULL_GAIN, "target 1", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "target 2", DriverLikelihood.HIGH, true, 20),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "target 3", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "target 4", DriverLikelihood.HIGH, true, 10, 20),
+            copyNumber(CopyNumberType.NONE, "target 5", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
             copyNumber(CopyNumberType.FULL_DEL, "deletion", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_DEL, "deletion", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
@@ -88,11 +88,11 @@ class MolecularDriversSummarizerTest {
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGeneEvents().toSet()
         assertThat(amplifiedGenes).containsExactlyInAnyOrder(
-            "gene 1",
-            "gene 2 20 copies",
-            "gene 3 (partial)",
-            "gene 4 20 copies (partial)",
-            "gene 5 (alt transcript)"
+            "target 1",
+            "target 2 20 copies",
+            "target 3 (partial)",
+            "target 4 20 copies (partial)",
+            "target 5 (alt transcript)"
         )
     }
 

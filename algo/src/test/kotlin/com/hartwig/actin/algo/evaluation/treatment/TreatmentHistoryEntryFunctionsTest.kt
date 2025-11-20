@@ -19,9 +19,9 @@ private val DRUG_TREATMENT_WITH_TARGET_CATEGORY = drugTreatment("Target therapy 
 private val TRIAL_DRUG_TREATMENT_NO_CATEGORY = drugTreatment("Some trial drug", TreatmentCategory.TARGETED_THERAPY, emptySet())
 
 class TreatmentHistoryEntryFunctionsTest {
+    
     private val predicate: (Treatment) -> Boolean = { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
-
-    // Testing of fun evaluateIfDrugHadPDResponse
+    
     @Test
     fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`() {
         assertThat(evaluateIfDrugHadPDResponse(emptyList(), TARGET_DRUG_SET)).isEqualTo(
@@ -106,8 +106,7 @@ class TreatmentHistoryEntryFunctionsTest {
         val treatmentHistory = treatmentHistoryEntry(treatments = setOf(TARGET_DRUG_TREATMENT), stopReason = StopReason.TOXICITY)
         assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).matchesWithToxicity).isTrue
     }
-
-    // Testing of fun portionOfTreatmentHistoryEntryMatchingPredicate
+    
     @Test
     fun `Should return unmodified entry for matching single-stage treatment`() {
         val entry = treatmentHistoryEntry(setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)))
@@ -272,8 +271,7 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate)).isNull()
     }
-
-    // Testing of fun fullTreatmentDisplay
+    
     @Test
     fun `Should display switch and maintenance treatments when present`() {
         val switchToTreatment = treatmentStage(drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)

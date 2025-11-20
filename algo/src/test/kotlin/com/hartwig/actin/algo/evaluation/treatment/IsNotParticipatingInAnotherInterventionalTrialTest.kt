@@ -13,7 +13,7 @@ import java.time.LocalDate
 class IsNotParticipatingInAnotherInterventionalTrialTest {
 
     private val referenceDate = LocalDate.of(2025, 2, 2)
-    private val alwaysActiveMedicationfunction = IsNotParticipatingInAnotherInterventionalTrial(
+    private val alwaysActiveMedicationFunction = IsNotParticipatingInAnotherInterventionalTrial(
         MedicationTestFactory.alwaysActive(),
         referenceDate.minusWeeks(2)
     )
@@ -23,7 +23,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         val medications = listOf(medication(isTrialMedication = true))
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysActiveMedicationfunction.evaluate(MedicationTestFactory.withMedications(medications))
+            alwaysActiveMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications))
         )
     }
 
@@ -40,7 +40,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysActiveMedicationfunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
         )
     }
 
@@ -67,7 +67,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.NOT_EVALUATED,
-            alwaysActiveMedicationfunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
         )
     }
 
@@ -75,7 +75,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
     fun `Should return not evaluated when patient received no trial treatment or medication`() {
         assertEvaluation(
             EvaluationResult.NOT_EVALUATED,
-            alwaysActiveMedicationfunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            alwaysActiveMedicationFunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

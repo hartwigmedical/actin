@@ -15,6 +15,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class GeneHasActivatingMutationTest {
+
     private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
     private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE)
 
@@ -42,7 +43,8 @@ class GeneHasActivatingMutationTest {
         val result = function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
 
         assertMolecularEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessagesStrings()).containsExactly("gene A activating mutation(s): event but undetermined if in kinase domain")
+        assertThat(result.warnMessagesStrings())
+            .containsExactly("gene A activating mutation(s): event but undetermined if in kinase domain")
     }
 
     @Test
@@ -210,7 +212,8 @@ class GeneHasActivatingMutationTest {
             )
         )
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Activating mutation in gene gene A undetermined (not tested for mutations)")
+        assertThat(result.undeterminedMessagesStrings())
+            .containsExactly("Activating mutation in gene gene A undetermined (not tested for mutations)")
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {

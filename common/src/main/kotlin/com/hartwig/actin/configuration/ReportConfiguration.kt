@@ -45,7 +45,7 @@ data class ReportConfiguration(
     val clinicalChapterType: ClinicalChapterType = ClinicalChapterType.COMPLETE,
     val trialMatchingChapterType: TrialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
-    val countryOfReference: Country = Country.OTHER,
+    val countryOfReference: Country = Country.NETHERLANDS,
     val hospitalOfReference: String? = null
 ) {
 

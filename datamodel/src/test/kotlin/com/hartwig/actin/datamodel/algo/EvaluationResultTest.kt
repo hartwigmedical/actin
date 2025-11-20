@@ -14,7 +14,7 @@ class EvaluationResultTest {
 
     @Test
     fun `Should never rank an evaluation result worse than itself`() {
-        for (result in EvaluationResult.values()) {
+        for (result in EvaluationResult.entries) {
             assertThat(result.isWorseThan(result)).isFalse
         }
     }

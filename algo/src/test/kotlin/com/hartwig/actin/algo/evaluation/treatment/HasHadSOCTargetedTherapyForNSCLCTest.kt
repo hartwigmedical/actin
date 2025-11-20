@@ -12,12 +12,13 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadSOCTargetedTherapyForNSCLCTest {
+    
     private val genesToIgnore = setOf("EGFR")
     private val functionNotIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(emptySet())
     private val functionIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(genesToIgnore)
-    private val CORRECT_DRUG_TYPE = NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.values.flatten().first()
-    private val CORRECT_TREATMENT = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(CORRECT_DRUG_TYPE))
-    private val WRONG_TREATMENT = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.IDO1_INHIBITOR))
+    private val correctDrugType = NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.values.flatten().first()
+    private val correctTreatment = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(correctDrugType))
+    private val wrongTreatment = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.IDO1_INHIBITOR))
 
     @Test
     fun `Should fail for empty treatment history`(){
@@ -28,7 +29,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
     fun `Should fail for other category than targeted therapy`(){
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
-                setOf(drugTreatment("Wrong category treatment", TreatmentCategory.IMMUNOTHERAPY, setOf(CORRECT_DRUG_TYPE)))
+                setOf(drugTreatment("Wrong category treatment", TreatmentCategory.IMMUNOTHERAPY, setOf(correctDrugType)))
             )
         )
         assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.FAIL)
@@ -37,7 +38,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
     @Test
     fun `Should fail for wrong drug type`(){
         val treatmentHistory = listOf(
-            TreatmentTestFactory.treatmentHistoryEntry(setOf(WRONG_TREATMENT))
+            TreatmentTestFactory.treatmentHistoryEntry(setOf(wrongTreatment))
         )
         assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.FAIL)
     }
@@ -61,7 +62,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
     @Test
     fun `Should pass for SOC targeted therapy in history and gene not in genesToIgnore list`(){
         val treatmentHistory = listOf(
-            TreatmentTestFactory.treatmentHistoryEntry(setOf(CORRECT_TREATMENT))
+            TreatmentTestFactory.treatmentHistoryEntry(setOf(correctTreatment))
         )
         assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.PASS)
     }

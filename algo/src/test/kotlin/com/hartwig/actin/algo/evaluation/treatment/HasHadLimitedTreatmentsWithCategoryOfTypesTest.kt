@@ -28,6 +28,7 @@ private val TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES =
 private val RARE_CATEGORY = TreatmentCategory.TRANSPLANTATION
 
 class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
+    
     private val functionTreatmentOptional = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, false)
     private val functionTreatmentOptionalWithTypes =
         HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, false)

@@ -42,7 +42,7 @@ class EvaluatedTreatmentAnnotatorTest {
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
 
     @Test
-    fun `Should annotate SOC treatments with efficacy evidence`() {
+    fun `Should annotate SoC treatments with efficacy evidence`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList())
         val treatmentCandidate = TreatmentCandidate(
             TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.IMMUNOTHERAPY), false, setOf(eligibilityFunction)
@@ -51,13 +51,13 @@ class EvaluatedTreatmentAnnotatorTest {
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
         val expectedAnnotatedTreatmentMatches =
-            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, null, null, emptyList()))
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
 
     @Test
-    fun `Should return empty annotations list for SOC treatment without efficacy evidence`() {
+    fun `Should return empty annotations list for SoC treatment without efficacy evidence`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList())
         val treatmentCandidate = TreatmentCandidate(
             TreatmentTestFactory.drugTreatment("capecitabine+oxaliplatin", TreatmentCategory.CHEMOTHERAPY),
@@ -68,7 +68,7 @@ class EvaluatedTreatmentAnnotatorTest {
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
         val expectedAnnotatedTreatmentMatches =
-            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), null, null, emptyList()))
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
