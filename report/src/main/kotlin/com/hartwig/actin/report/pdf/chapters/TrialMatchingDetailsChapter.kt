@@ -79,37 +79,38 @@ class TrialMatchingDetailsChapter(
                     configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS
 
         val externalTrials = trialsProvider.externalTrials()
-        val localExternalTrialGenerator = EligibleTrialGenerator.localOpenCohorts(
-            emptyList(),
+        val nationalExternalTrialGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(externalTrials, requestingSource, true)
+            .takeIf { includeSpecificExternalGenerators }
+
+        val internationalExternalTrialGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(
             externalTrials,
             requestingSource,
-            configuration.countryOfReference
+            false
         ).takeIf { includeSpecificExternalGenerators }
 
-        val nonLocalTrialGenerator = EligibleTrialGenerator.nonLocalOpenCohorts(
-            externalTrials,
-            requestingSource,
-        ).takeIf { includeSpecificExternalGenerators }
+        val filteredExternalTrialGenerator = EligibleTrialGenerator.filteredExternalTrials(externalTrials, configuration.countryOfReference)
 
-        val filteredTrialGenerator = EligibleTrialGenerator.forFilteredTrials(externalTrials, configuration.countryOfReference)
-
-        return listOfNotNull(localExternalTrialGenerator, nonLocalTrialGenerator, filteredTrialGenerator) + localTrialGenerators
+        return listOfNotNull(
+            nationalExternalTrialGenerator,
+            internationalExternalTrialGenerator,
+            filteredExternalTrialGenerator
+        ) + localTrialGenerators
     }
 
     private fun createLocalTrialTableGenerators(
-        cohorts: List<InterpretedCohort>,
+        evaluableCohorts: List<InterpretedCohort>,
         nonEvaluableCohorts: List<InterpretedCohort>,
         source: TrialSource?
     ): List<TrialTableGenerator> {
-        val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
+        val (ignoredCohorts, nonIgnoredCohorts) = evaluableCohorts.partition { it.ignore }
 
-        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.forClosedCohorts(nonIgnoredCohorts, source)
-        val ineligibleTrialsGenerator = IneligibleTrialGenerator.forEvaluableCohorts(nonIgnoredCohorts, source)
-        val nonEvaluableAndIgnoredCohortsGenerator = IneligibleTrialGenerator.forNonEvaluableAndIgnoredCohorts(
+        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.closedCohorts(nonIgnoredCohorts, source)
+        val ineligibleTrialsGenerator = IneligibleTrialGenerator.evaluableCohorts(nonIgnoredCohorts, source)
+        val nonEvaluableOrIgnoredCohortsGenerator = IneligibleTrialGenerator.nonEvaluableOrIgnoredCohorts(
             ignoredCohorts, nonEvaluableCohorts, source
         )
 
-        return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableAndIgnoredCohortsGenerator)
+        return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableOrIgnoredCohortsGenerator)
     }
 
     private fun addDetailedTrialMatching(document: Document) {
@@ -215,7 +216,7 @@ class TrialMatchingDetailsChapter(
         if (metadata.ignore) {
             table.addCell(Cells.createEmpty())
             table.addCell(Cells.createKey("Ignored for eligibility?"))
-            table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.ignore)))
+            table.addCell(Cells.createValue(Formats.yesNoUnknown(true)))
         }
         return table
     }

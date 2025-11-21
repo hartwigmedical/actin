@@ -9,9 +9,14 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import java.time.LocalDate
 
 internal object SurgeryTestFactory {
+
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
-    fun surgery(endDate: LocalDate?, status: SurgeryStatus = SurgeryStatus.UNKNOWN, treatmentType: OtherTreatmentType = OtherTreatmentType.OTHER_SURGERY): Surgery {
+    fun surgery(
+        endDate: LocalDate?,
+        status: SurgeryStatus = SurgeryStatus.UNKNOWN,
+        treatmentType: OtherTreatmentType = OtherTreatmentType.OTHER_SURGERY
+    ): Surgery {
         return Surgery(name = "Surgery", endDate = endDate, status = status, treatmentType = treatmentType)
     }
 

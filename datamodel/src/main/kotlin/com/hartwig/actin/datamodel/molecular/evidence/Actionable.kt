@@ -2,5 +2,5 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 interface Actionable {
     val evidence: ClinicalEvidence
-    fun eventName(): String
+    val event: String
 }

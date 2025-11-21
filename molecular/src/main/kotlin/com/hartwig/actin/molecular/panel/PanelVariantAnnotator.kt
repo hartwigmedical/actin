@@ -55,12 +55,10 @@ class PanelVariantAnnotator(
     }
 
     private fun resolveVariants(variantExtractions: Map<String, SequencedVariant>): Map<String, TransvarVariant> {
-        return variantExtractions.mapValues { (_, value) -> transvarAnnotation(value) }
-            .mapNotNull { if (it.value != null) it.key to it.value!! else null }
-            .toMap()
+        return variantExtractions.mapValues { (_, value) -> transvarAnnotation(value) }.mapNotNull { it.key to it.value }.toMap()
     }
 
-    private fun transvarAnnotation(sequencedVariant: SequencedVariant): TransvarVariant? {
+    private fun transvarAnnotation(sequencedVariant: SequencedVariant): TransvarVariant {
         val externalVariantAnnotation =
             variantResolver.resolve(
                 sequencedVariant.gene,
@@ -201,7 +199,7 @@ class PanelVariantAnnotator(
     private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PaveVariantEffect>, gene: String): Boolean =
         gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
 
-    private fun variantType(transvarVariant: com.hartwig.actin.tools.variant.Variant): VariantType {
+    private fun variantType(transvarVariant: TransvarVariant): VariantType {
         val ref = transvarVariant.ref()
         val alt = transvarVariant.alt()
         return if (ref.length == alt.length) {

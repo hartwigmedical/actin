@@ -15,6 +15,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
+
     private val genesToFind = setOf("BRCA1", "BRCA2")
     private val function = IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind)
 
@@ -27,7 +28,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     true,
                     TestCopyNumberFactory.createMinimal()
                         .copy(
-                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
+                            canonicalImpact = TestTranscriptCopyNumberImpactFactory
+                                .createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
                             gene = "BRCA1",
                             driverLikelihood = DriverLikelihood.HIGH
                         )
@@ -241,7 +243,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessagesStrings()).containsExactly("Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 and non-homozygous disruption in BRCA1 which could be pathogenic")
+        assertThat(result.warnMessagesStrings())
+            .containsExactly("Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 and non-homozygous disruption in BRCA1 which could be pathogenic")
     }
 
     private fun hrdVariant(

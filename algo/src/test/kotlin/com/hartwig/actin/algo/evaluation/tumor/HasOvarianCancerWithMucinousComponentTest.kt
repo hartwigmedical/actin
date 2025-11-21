@@ -6,6 +6,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasOvarianCancerWithMucinousComponentTest {
+    
     val function = HasOvarianCancerWithMucinousComponent(TestDoidModelFactory.createMinimalTestDoidModel())
     
     @Test

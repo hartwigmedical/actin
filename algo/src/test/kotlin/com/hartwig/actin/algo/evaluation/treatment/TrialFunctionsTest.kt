@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialFunctionsTest {
+    
     private val treatmentEntryWithNoCategory = treatmentHistoryEntry(setOf(treatment("", true, emptySet(), emptySet())), isTrial = true)
 
     @Test
@@ -18,12 +19,12 @@ class TrialFunctionsTest {
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.CHEMOTHERAPY, isTrial = true), setOf(TreatmentCategory.CHEMOTHERAPY)
             )
-        ).isTrue
+        ).isTrue()
     }
 
     @Test
     fun `Should indicate possible trial match for trial treatment with no category and no types for likely trial category`() {
-        assertThat(TrialFunctions.treatmentMayMatchAsTrial(treatmentEntryWithNoCategory, setOf(TreatmentCategory.CHEMOTHERAPY))).isTrue
+        assertThat(TrialFunctions.treatmentMayMatchAsTrial(treatmentEntryWithNoCategory, setOf(TreatmentCategory.CHEMOTHERAPY))).isTrue()
     }
 
     @Test
@@ -40,7 +41,7 @@ class TrialFunctionsTest {
                 ),
                 setOf(TreatmentCategory.CHEMOTHERAPY)
             )
-        ).isTrue
+        ).isTrue()
     }
 
     @Test
@@ -52,7 +53,7 @@ class TrialFunctionsTest {
                 ),
                 setOf(TreatmentCategory.CHEMOTHERAPY)
             )
-        ).isFalse
+        ).isFalse()
     }
 
     @Test
@@ -61,7 +62,7 @@ class TrialFunctionsTest {
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true), setOf(TreatmentCategory.CHEMOTHERAPY)
             )
-        ).isFalse
+        ).isFalse()
     }
 
     @Test
@@ -70,7 +71,7 @@ class TrialFunctionsTest {
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.CHEMOTHERAPY), setOf(TreatmentCategory.CHEMOTHERAPY)
             )
-        ).isFalse
+        ).isFalse()
     }
 
     @Test
@@ -80,7 +81,7 @@ class TrialFunctionsTest {
             TrialFunctions.treatmentMayMatchAsTrial(
                 treatmentEntryWithCategory(TreatmentCategory.SURGERY), setOf(TreatmentCategory.SURGERY)
             )
-        ).isFalse
+        ).isFalse()
     }
 
     private fun treatmentEntryWithCategory(category: TreatmentCategory, isTrial: Boolean = false): TreatmentHistoryEntry =

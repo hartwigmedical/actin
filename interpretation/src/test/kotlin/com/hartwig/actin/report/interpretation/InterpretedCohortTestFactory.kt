@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.trial.TrialPhase
+
 object InterpretedCohortTestFactory {
 
     fun interpretedCohort(
@@ -7,12 +9,14 @@ object InterpretedCohortTestFactory {
         acronym: String = "",
         nctId: String = "",
         title: String = "",
+        phase: TrialPhase? = null,
         cohort: String? = null,
         locations: Set<String> = emptySet(),
         isOpen: Boolean = false,
         hasSlotsAvailable: Boolean = false,
         molecularInclusionEvents: Iterable<String> = emptySet(),
         isPotentiallyEligible: Boolean = false,
+        isMissingMolecularResultForEvaluation: Boolean = false,
         isIgnore: Boolean = false,
         isEvaluable: Boolean = false,
     ): InterpretedCohort {
@@ -21,7 +25,7 @@ object InterpretedCohortTestFactory {
             acronym = acronym,
             nctId = nctId,
             title =  title,
-            phase = null,
+            phase = phase,
             source = null,
             sourceId = null,
             locations = locations,
@@ -34,7 +38,7 @@ object InterpretedCohortTestFactory {
             molecularInclusionEvents = molecularInclusionEvents.toSet(),
             molecularExclusionEvents = emptySet(),
             isPotentiallyEligible = isPotentiallyEligible,
-            isMissingMolecularResultForEvaluation = false,
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
             warnings = emptySet(),
             fails = emptySet(),
         )

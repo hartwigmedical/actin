@@ -15,6 +15,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class HasHadAnySurgeryAfterSpecificDateTest {
+    
     private val evaluationDate = LocalDate.of(2020, 4, 20)
     private val minDate = evaluationDate.minusMonths(2)
     private val function = HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)

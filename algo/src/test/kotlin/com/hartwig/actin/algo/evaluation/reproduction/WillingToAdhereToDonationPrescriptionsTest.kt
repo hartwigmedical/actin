@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
 class WillingToAdhereToDonationPrescriptionsTest {
+    
     @Test
     fun canEvaluate() {
         val function = WillingToAdhereToDonationPrescriptions()

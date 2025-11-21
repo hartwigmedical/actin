@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
 class HasLungMetastasesTest {
+    
     private val function: HasLungMetastases = HasLungMetastases()
 
     @Test

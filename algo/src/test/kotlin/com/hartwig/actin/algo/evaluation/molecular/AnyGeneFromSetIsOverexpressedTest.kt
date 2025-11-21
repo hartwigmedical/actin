@@ -13,6 +13,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class AnyGeneFromSetIsOverexpressedTest {
+    
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
         every { evaluate(any<MolecularTest>(), any<PatientRecord>()) } returns EvaluationFactory.pass("amplification")
     }

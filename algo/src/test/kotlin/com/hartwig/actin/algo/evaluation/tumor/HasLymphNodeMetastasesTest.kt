@@ -6,13 +6,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasLymphNodeMetastasesTest {
+
     private val function: HasLymphNodeMetastases = HasLymphNodeMetastases()
 
     @Test
     fun `Should be undetermined when unknown if has lymph node lesions`() {
         val undetermined = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, null))
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
-        assertThat(undetermined.undeterminedMessagesStrings()).contains("Undetermined if patient has lymph node metastases (missing lesion data)")
+        assertThat(undetermined.undeterminedMessagesStrings())
+            .contains("Undetermined if patient has lymph node metastases (missing lesion data)")
     }
 
     @Test
@@ -43,7 +45,8 @@ class HasLymphNodeMetastasesTest {
     fun `Should be undetermined when no suspected lymph node lesions but unknown certain lymph node lesions`() {
         val undetermined = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, false))
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
-        assertThat(undetermined.undeterminedMessagesStrings()).contains("Undetermined if patient has lymph node metastases (missing lesion data)")
+        assertThat(undetermined.undeterminedMessagesStrings())
+            .contains("Undetermined if patient has lymph node metastases (missing lesion data)")
     }
 
     @Test

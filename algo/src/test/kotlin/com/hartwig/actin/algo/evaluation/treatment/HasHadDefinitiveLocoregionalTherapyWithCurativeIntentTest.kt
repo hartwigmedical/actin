@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import org.junit.Test
 
 class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
+    
     private val radiotherapy = TreatmentTestFactory.treatment("Radiotherapy", true, setOf(TreatmentCategory.RADIOTHERAPY))
     private val surgery = TreatmentTestFactory.treatment("Surgery", true, setOf(TreatmentCategory.SURGERY))
     private val chemotherapy = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))

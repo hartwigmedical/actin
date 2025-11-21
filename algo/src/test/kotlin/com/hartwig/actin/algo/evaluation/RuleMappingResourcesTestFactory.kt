@@ -29,7 +29,6 @@ object RuleMappingResourcesTestFactory {
             functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
-            personalizationDataPath = null,
             treatmentEfficacyPredictionJson = null,
             algoConfiguration = AlgoConfiguration(),
             maxMolecularTestAge = null

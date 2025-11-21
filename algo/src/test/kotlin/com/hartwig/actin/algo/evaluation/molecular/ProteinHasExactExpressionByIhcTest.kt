@@ -8,6 +8,7 @@ import org.junit.Test
 private const val PROTEIN = "protein 1"
 
 class ProteinHasExactExpressionByIhcTest {
+    
     private val function = ProteinHasExactExpressionByIhc(PROTEIN, 2)
 
     @Test

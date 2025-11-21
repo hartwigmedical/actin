@@ -112,9 +112,12 @@ object TestServeMolecularFactory {
 
     fun createHlaCriterium(
         baseActionableEvent: ActionableEvent = createActionableEvent(),
-        hlaAllele: String = ""
+        gene: String = "",
+        alleleGroup: String = "",
+        hlaProtein: String? = null
     ): MolecularCriterium {
-        val actionableHla = ImmutableActionableHLA.builder().from(baseActionableEvent).hlaAllele(hlaAllele).build()
+        val actionableHla =
+            ImmutableActionableHLA.builder().from(baseActionableEvent).gene(gene).alleleGroup(alleleGroup).hlaProtein(hlaProtein).build()
 
         return ImmutableMolecularCriterium.builder().addHla(actionableHla).build()
     }

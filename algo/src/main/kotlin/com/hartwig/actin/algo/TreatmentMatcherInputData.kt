@@ -1,8 +1,9 @@
+package com.hartwig.actin.algo
+
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.TreatmentMatcherConfig
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion

@@ -7,7 +7,7 @@ class TumorTypeInputTest {
 
     @Test
     fun `Should convert all tumor type inputs`() {
-        for (category in TumorTypeInput.values()) {
+        for (category in TumorTypeInput.entries) {
             assertThat(TumorTypeInput.fromString(category.display())).isEqualTo(category)
         }
     }

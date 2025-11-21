@@ -38,7 +38,7 @@ class InterpretedCohortFactoryTest {
     @Test
     fun `Should create evaluated cohorts from proper match`() {
         val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createTestTrialMatches(), false)
-        assertThat(cohorts).hasSize(4)
+        assertThat(cohorts).hasSize(5)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
         assertThat(trial1cohortA.molecularInclusionEvents).isNotEmpty
@@ -54,7 +54,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
-        assertThat(trial1cohortB.molecularInclusionEvents).containsExactly("HER2 amp")
+        assertThat(trial1cohortB.molecularInclusionEvents).containsExactly("EGFR amp")
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
         assertThat(trial1cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortB.isOpen).isTrue
@@ -136,9 +136,9 @@ class InterpretedCohortFactoryTest {
     fun `Should filter trials on SOC exhaustion and tumor type`() {
         val trialMatches = TestTreatmentMatchFactory.createTestTrialMatches()
         val cohortsWithoutFiltering = createEvaluableCohorts(trialMatches, false)
-        assertThat(cohortsWithoutFiltering).hasSize(4)
+        assertThat(cohortsWithoutFiltering).hasSize(5)
         val cohortsWithFiltering = createEvaluableCohorts(trialMatches, true)
-        assertThat(cohortsWithFiltering).hasSize(1)
+        assertThat(cohortsWithFiltering).hasSize(2)
     }
 
     @Test

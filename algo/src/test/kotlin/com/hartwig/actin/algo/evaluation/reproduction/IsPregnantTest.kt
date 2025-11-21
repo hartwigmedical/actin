@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.Gender
 import org.junit.Test
 
 class IsPregnantTest {
+    
     @Test
     fun canEvaluate() {
         val function = IsPregnant()

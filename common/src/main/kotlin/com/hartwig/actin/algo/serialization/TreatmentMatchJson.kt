@@ -6,15 +6,13 @@ import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.EvaluationMessageAdapter
 import com.hartwig.actin.util.json.GsonSerializer
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
-import java.nio.file.Files
 import org.apache.logging.log4j.LogManager
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 object TreatmentMatchJson {
 
@@ -22,17 +20,23 @@ object TreatmentMatchJson {
     private const val TREATMENT_MATCH_EXTENSION = ".treatment_match.json"
 
     fun write(match: TreatmentMatch, directory: String) {
-        val path = Paths.forceTrailingFileSeparator(directory)
-        val jsonFile = path + match.patientId + TREATMENT_MATCH_EXTENSION
+        write(match, Path.of(directory))
+    }
 
+    fun write(match: TreatmentMatch, directory: Path) {
+        val jsonFile = directory.resolve(match.patientId + TREATMENT_MATCH_EXTENSION)
         logger.info("Writing patient treatment match to {}", jsonFile)
-        val writer = BufferedWriter(FileWriter(jsonFile))
+        val writer = Files.newBufferedWriter(jsonFile)
         writer.write(toJson(match))
         writer.close()
     }
 
     fun read(treatmentMatchJson: String): TreatmentMatch {
-        return fromJson(Files.readString(File(treatmentMatchJson).toPath()))
+        return read(File(treatmentMatchJson).toPath())
+    }
+
+    fun read(treatmentMatchJson: Path): TreatmentMatch {
+        return fromJson(Files.readString(treatmentMatchJson))
     }
 
     fun toJson(match: TreatmentMatch): String {

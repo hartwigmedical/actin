@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.util
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import kotlin.math.roundToInt
 
 internal object ExtractionUtil {
 
@@ -9,6 +10,6 @@ internal object ExtractionUtil {
     }
 
     fun keep3Digits(input: Double): Double {
-        return Math.round(input * 1000) / 1000.0
+        return (input * 1000).roundToInt() / 1000.0
     }
 }

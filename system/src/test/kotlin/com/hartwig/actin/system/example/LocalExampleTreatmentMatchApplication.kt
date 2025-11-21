@@ -105,7 +105,6 @@ class LocalExampleTreatmentMatchApplication {
             functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
-            personalizationDataPath = null,
             treatmentEfficacyPredictionJson = null,
             algoConfiguration = algoConfiguration,
             maxMolecularTestAge = algoConfiguration.maxMolecularTestAgeInDays?.let {
