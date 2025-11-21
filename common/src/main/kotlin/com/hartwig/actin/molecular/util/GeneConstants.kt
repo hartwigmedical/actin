@@ -5,5 +5,6 @@ object GeneConstants {
     val MMR_GENES = setOf("EPCAM", "MLH1", "MSH2", "MSH6", "PMS2")
 
     val IHC_LOSS_EVALUABLE_GENES = setOf("MLH1", "MSH2", "MSH6", "PMS2", "MTAP")
+
     val IHC_AMP_EVALUABLE_GENES_TO_PROTEINS = mapOf("ERBB2" to "HER2")
 }
