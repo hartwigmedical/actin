@@ -3,5 +3,7 @@ package com.hartwig.actin.molecular.util
 object GeneConstants {
     val HR_GENES = setOf("BRCA1", "BRCA2", "RAD51C", "PALB2")
     val MMR_GENES = setOf("EPCAM", "MLH1", "MSH2", "MSH6", "PMS2")
+
     val IHC_LOSS_EVALUABLE_GENES = setOf("MLH1", "MSH2", "MSH6", "PMS2", "MTAP")
+    val IHC_AMP_EVALUABLE_GENES_TO_PROTEINS = mapOf("ERBB2" to "HER2")
 }
