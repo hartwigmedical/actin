@@ -15,7 +15,11 @@ class MolecularHistory(
     }
 
     fun allPanels(): List<MolecularTest> {
-        return molecularTests.filter { !isHartwigTest(it) }
+        return molecularTests.filter { it.experimentType == ExperimentType.PANEL }
+    }
+
+    fun allPanelsAndIhc(): List<MolecularTest> {
+        return molecularTests.filter { it.experimentType == ExperimentType.PANEL || it.experimentType == ExperimentType.IHC }
     }
 
     private fun isHartwigTest(test: MolecularTest): Boolean {
