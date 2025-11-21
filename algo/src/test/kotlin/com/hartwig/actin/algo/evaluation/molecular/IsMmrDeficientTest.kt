@@ -15,7 +15,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class IsMmrDeficientTest {
-    
+
     private val mmrGene = GeneConstants.MMR_GENES.first()
     private val function = IsMmrDeficient()
 
@@ -146,10 +146,10 @@ class IsMmrDeficientTest {
 
     @Test
     fun `Should pass with IHC MMR deficient test result`() {
-        assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))
-        )
+        val result = function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))
+
+        assertMolecularEvaluation(EvaluationResult.PASS, result)
+        assertThat(result.passMessagesStrings()).containsExactly("dMMR by IHC")
     }
 
     @Test
@@ -161,11 +161,25 @@ class IsMmrDeficientTest {
     }
 
     @Test
+    fun `Should be undetermined with IHC MMR proficient test result`() {
+        val result = function.evaluate(
+            MolecularTestFactory.withOnlyIhcTests(
+                listOf(
+                    MolecularTestFactory.ihcTest(
+                        GeneConstants.MMR_GENES.intersect(GeneConstants.IHC_LOSS_EVALUABLE_GENES).first(), scoreText = "loss"
+                    )
+                )
+            )
+        )
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if tumor is dMMR by IHC - but loss detected of MMR gene by IHC")
+    }
+
+    @Test
     fun `Should evaluate to undetermined with unclear IHC MMR test result`() {
-        assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                MolecularTestFactory.withIhcTests(
+        val result = function.evaluate(
+            MolecularTestFactory.withOnlyIhcTests(
+                listOf(
                     MolecularTestFactory.ihcTest(
                         "MMR",
                         scoreText = "Proficient",
@@ -174,6 +188,8 @@ class IsMmrDeficientTest {
                 )
             )
         )
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined dMMR result by IHC")
     }
 
     @Test

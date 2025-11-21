@@ -234,13 +234,45 @@ class IhcTestEvaluationTest {
     }
 
     @Test
-    fun `Should set both negative functons to false if there are no tests for that item`() {
+    fun `Should set both negative functions to false if there are no tests for that item`() {
         val test1 = ihcTest(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first(), measureDate = date)
         val test2 = test1.copy(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.last())
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
         assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
         assertThat(ihcEvaluation.hasPossibleNegativeResultsForItem()).isFalse
+    }
+
+    @Test
+    fun `Should set loss functions to true if only loss results present`() {
+        val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_LOSS_TERMS.first(), measureDate = date)
+        val test2 = test1.copy(measureDate = moreRecentDate)
+        val test3 = test1.copy(measureDate = null)
+        val test4 = test1.copy(item = "other item")
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2, test3, test4))
+
+        assertThat(ihcEvaluation.hasCertainLossResultsForItem()).isTrue
+        assertThat(ihcEvaluation.hasPossibleLossResultsForItem()).isTrue
+    }
+
+    @Test
+    fun `Should set loss certain function to false if no loss results present`() {
+        val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.EXACT_NO_LOSS_TERMS.first(), measureDate = date)
+        val test2 = test1.copy(item = "other item", scoreText = IhcTestEvaluationConstants.EXACT_LOSS_TERMS.first())
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
+
+        assertThat(ihcEvaluation.hasCertainLossResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleLossResultsForItem()).isFalse
+    }
+
+    @Test
+    fun `Should set possible loss function to true and certain loss function to false if potential loss`() {
+        val test1 = ihcTest(item = item, scoreText = "Possible loss", measureDate = date)
+        val test2 = test1.copy(item = "other item", scoreText = "Possible loss")
+        val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
+
+        assertThat(ihcEvaluation.hasCertainLossResultsForItem()).isFalse
+        assertThat(ihcEvaluation.hasPossibleLossResultsForItem()).isTrue
     }
 
     @Test
