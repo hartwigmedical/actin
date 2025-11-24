@@ -55,8 +55,8 @@ class GeneHasSpecificExonSkippingTest {
     }
 
     @Test
-    fun `Should temporarily pass on splice variant in specific exon`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT)))
+    fun `Should warn on splice variant in specific exon`() {
+        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT)))
     }
 
     @Test
