@@ -12,6 +12,7 @@ data class SequencedVariant(
     val transcript: String? = null,
     val variantAlleleFrequency: Double? = null,
     val isBiallelic: Boolean? = null,
+    val exonSkippingIsConfirmed: Boolean? = null,
     val exon: Int? = null,
     val codon: Int? = null
 ) {

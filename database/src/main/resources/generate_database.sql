@@ -353,6 +353,7 @@ CREATE TABLE `variant`
     `totalCopyNumber` double precision,
     `isBiallelic` BOOLEAN,
     `isCancerAssociatedVariant` BOOLEAN NOT NULL,
+    `exonSkippingIsConfirmed` BOOLEAN,
     `clonalLikelihood` double precision,
     `phaseGroups` varchar(50),
     `canonicalTranscriptId` varchar(50) NOT NULL,
