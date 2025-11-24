@@ -303,37 +303,7 @@ object TestMolecularFactory {
         event = "PTEN del",
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = TestClinicalEvidenceFactory.withEligibleTrials(
-            setOf(
-                TestExternalTrialFactory.create(
-                    nctId = "NCT00000020",
-                    title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
-                            "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
-                            "for Participants With Advanced Solid Tumor (acronym)",
-                    countries = setOf(
-                        CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet())),
-                        CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
-                    ),
-                    url = "https://clinicaltrials.gov/study/NCT00000020"
-                ), TestExternalTrialFactory.create(
-                    nctId = "NCT00000021",
-                    title = "Another A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
-                            "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
-                            "for Participants With Advanced Solid Tumor (acronym)",
-                    countries = setOf(
-                        CountryDetails(
-                            Country.BELGIUM,
-                            mapOf(
-                                "Location 1" to emptySet(),
-                                "Location 2" to emptySet(),
-                                "Location 3" to emptySet(),
-                                "Location 4" to emptySet()
-                            )
-                        ),
-                        CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
-                    ),
-                    url = "https://clinicaltrials.gov/study/NCT00000021"
-                )
-            )
+            emptySet()
         ),
         gene = "PTEN",
         geneRole = GeneRole.TSG,

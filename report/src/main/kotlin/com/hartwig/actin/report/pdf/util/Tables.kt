@@ -40,15 +40,22 @@ object Tables {
     }
 
     fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean, skipWrappingFooter: Boolean = false): Table {
-        val tableOnlyContainsFootNote =
-            if (contentTable.numberOfRows >= 1) extractTextFromCell(contentTable.getCell(0, 0)) in TrialFormatFunctions.FOOTNOTES else false
+        val tableOnlyContainsFootNote = if (contentTable.numberOfRows == 1) {
+            val text = extractTextFromCell(contentTable.getCell(0, 0))
+            TrialFormatFunctions.FOOTNOTES.any { text.contains(it) }
+        } else false
+
         if (contentTable.numberOfRows == 0 || tableOnlyContainsFootNote) {
-            return createSingleColWithWidth(contentTable.width.value).addCell(Cells.createSpanningNoneEntry(contentTable))
-                .setKeepTogether(true)
+            val tableWithoutHeaders = createSingleColWithWidth(contentTable.width.value)
+            tableWithoutHeaders.addCell(Cells.createSpanningNoneEntry(contentTable))
+            for (row in 0 until contentTable.numberOfRows) {
+                tableWithoutHeaders.addCell(contentTable.getCell(row, 0).clone(true))
+            }
+            return tableWithoutHeaders.setKeepTogether(true)
         }
 
         if (contentTable.numberOfRows < 3 || forceKeepTogether) {
-            contentTable.setKeepTogether(true)
+            contentTable.isKeepTogether = true
             return contentTable
         } else {
             if (skipWrappingFooter) {
@@ -58,7 +65,7 @@ object Tables {
                         .setPaddingBottom(5f)
                 )
             }
-            contentTable.setSkipLastFooter(true)
+            contentTable.isSkipLastFooter = true
 
             val wrappingTable = createSingleColWithWidth(contentTable.width.value).setMarginBottom(10f)
             if (skipWrappingFooter) {
