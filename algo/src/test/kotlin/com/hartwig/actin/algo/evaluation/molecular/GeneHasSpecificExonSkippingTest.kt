@@ -67,6 +67,13 @@ class GeneHasSpecificExonSkippingTest {
     }
 
     @Test
+    fun `Should pass when exon skipping is confirmed without splice coding effect`() {
+        val confirmedPotentialVariant = POTENTIAL_SPLICE_VARIANT.copy(exonSkippingIsConfirmed = true)
+
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withVariant(confirmedPotentialVariant)))
+    }
+
+    @Test
     fun `Should fail on splice variant in specific exon that is not reportable`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT.copy(isReportable = false)))

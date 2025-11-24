@@ -27,7 +27,10 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
         val potentialExonSplicingVariants = findExonSplicingVariants(test, false)
         val exonSplicingVariantEvents = exonSplicingVariants.map(Variant::event).toSet()
         val potentialExonSplicingVariantEvents = potentialExonSplicingVariants.map(Variant::event).toSet()
-        val confirmedExonSkippingEvents = exonSplicingVariants.filter { it.exonSkippingIsConfirmed == true }.map(Variant::event).toSet()
+        val confirmedExonSkippingEvents =
+            (exonSplicingVariants + potentialExonSplicingVariants).filter { it.exonSkippingIsConfirmed == true }
+                .map(Variant::event)
+                .toSet()
 
         return when {
             exonSkippingFusions.isNotEmpty() && exonSplicingVariants.isEmpty() -> {
@@ -48,7 +51,7 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
             confirmedExonSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     "Confirmed $gene exon $exonToSkip skipping detected: ${concat(confirmedExonSkippingEvents)}",
-                    inclusionEvents = exonSplicingVariantEvents
+                    inclusionEvents = confirmedExonSkippingEvents
                 )
             }
 
