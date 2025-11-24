@@ -74,9 +74,6 @@ class EligibleTrialGenerator(
     }
 
     companion object {
-        const val FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE =
-            "filtered because trial is running exclusively in children's hospital. See Other Trial Matching Results for these trial matches."
-
         fun localAndNationalExternalOpenAndEligibleCohorts(
             cohorts: List<InterpretedCohort>,
             externalTrials: ExternalTrials,
@@ -134,15 +131,13 @@ class EligibleTrialGenerator(
             val title = "$trialDescriptionString that are open and potentially eligible $cohortsFromTrialsString"
 
             val footNote = listOfNotNull(
-                "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
-                    .takeIf { relevantNationalExternalTrials.isNotEmpty() },
+                TrialFormatFunctions.FOOT_NOTE_NO_CLINICAL_DATA_USED.takeIf { relevantNationalExternalTrials.isNotEmpty() },
                 ("${
                     TrialFormatFunctions.formatCountWithLabel(
                         relevantNationalExternalTrialsFilteredCount,
                         "trial"
                     )
-                } $FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE")
-                    .takeIf { relevantNationalExternalTrialsFilteredCount > 0 }).joinToString(
+                } ${TrialFormatFunctions.FOOT_NOTE_FILTERED_NATIONAL_EXTERNAL_TRIALS}").takeIf { relevantNationalExternalTrialsFilteredCount > 0 }).joinToString(
                 "\n"
             ).ifEmpty { null }
 
@@ -179,24 +174,21 @@ class EligibleTrialGenerator(
             val title = "$nationalString trials that are open and potentially eligible $cohortsFromTrialsString"
 
             val footNote = listOfNotNull(
-                "Trials in this table are matched solely on molecular event and tumor type (clinical data excluded)."
-                    .takeIf { externalTrials.isNotEmpty() },
+                TrialFormatFunctions.FOOT_NOTE_CLINICAL_DATA_EXCLUDED.takeIf { externalTrials.isNotEmpty() },
                 ("${
                     TrialFormatFunctions.formatCountWithLabel(
                         externalTrialsFilteredCount,
                         "trial"
                     )
-                } $FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE")
-                    .takeIf { externalTrialsFilteredCount > 0 && isNational },
+                } ${TrialFormatFunctions.FOOT_NOTE_FILTERED_NATIONAL_EXTERNAL_TRIALS}").takeIf { externalTrialsFilteredCount > 0 && isNational },
                 ("${
                     TrialFormatFunctions.formatCountWithLabel(
                         externalTrialsFilteredCount,
                         "trial"
                     )
-                } filtered due to trials recruiting nationally for the same molecular target. See Other Trial Matching Results for filtered matches.")
-                    .takeIf { externalTrialsFilteredCount > 0 && !isNational }).joinToString(
+                } ${TrialFormatFunctions.FOOT_NOTE_SAME_MOLECULAR_TARGET}").takeIf { externalTrialsFilteredCount > 0 && !isNational }).joinToString(
                 "\n"
-            )
+            ).ifEmpty { null }
 
             return EligibleTrialGenerator(
                 cohorts = emptyList(),

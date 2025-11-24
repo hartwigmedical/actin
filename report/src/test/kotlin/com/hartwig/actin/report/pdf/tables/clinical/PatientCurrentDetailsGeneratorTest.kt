@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
-import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
+import com.hartwig.actin.report.pdf.util.Tables.extractTextFromCell
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

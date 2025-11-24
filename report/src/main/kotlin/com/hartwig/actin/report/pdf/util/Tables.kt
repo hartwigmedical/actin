@@ -1,6 +1,10 @@
 package com.hartwig.actin.report.pdf.util
 
+import com.hartwig.actin.report.pdf.tables.trial.TrialFormatFunctions
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.UnitValue
 
 object Tables {
@@ -25,8 +29,20 @@ object Tables {
         return createSingleCol().setWidth(width)
     }
 
+    fun extractTextFromCell(cell: Cell): String {
+        return cell.children
+            .filterIsInstance<Paragraph>()
+            .joinToString("\n") { paragraph ->
+                paragraph.children
+                    .filterIsInstance<Text>()
+                    .joinToString("") { it.text }
+            }
+    }
+
     fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean, skipWrappingFooter: Boolean = false): Table {
-        if (contentTable.numberOfRows == 0) {
+        val tableOnlyContainsFootNote =
+            if (contentTable.numberOfRows >= 1) extractTextFromCell(contentTable.getCell(0, 0)) in TrialFormatFunctions.FOOTNOTES else false
+        if (contentTable.numberOfRows == 0 || tableOnlyContainsFootNote) {
             return createSingleColWithWidth(contentTable.width.value).addCell(Cells.createSpanningNoneEntry(contentTable))
                 .setKeepTogether(true)
         }

@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.report.pdf.tables.CellTestUtil
+import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.Style
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -32,7 +32,7 @@ class PathologyReportFunctionsTest {
         )
 
         with(pathologyReport) {
-            assertThat(CellTestUtil.extractTextFromCell(cell))
+            assertThat(Tables.extractTextFromCell(cell))
                 .isEqualTo(
                     "Test - T-100001 ($lab, Tissue date: ${df.format(tissueDate)}, " +
                             "Authorization date: ${df.format(authorisationDate)}, " +
@@ -58,7 +58,7 @@ class PathologyReportFunctionsTest {
         val cell = PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)
 
         with(pathologyReport) {
-            assertThat(CellTestUtil.extractTextFromCell(cell))
+            assertThat(Tables.extractTextFromCell(cell))
                 .isEqualTo(
                     "Unknown Tissue ID (Report date: ${df.format(reportDate)})"
                 )
