@@ -14,6 +14,8 @@ class GeneDriverLikelihoodModel(private val dndsModel: DndsModel) {
             return null
         } else if (hasCancerAssociatedVariant) {
             return 1.0
+        } else if (variants.any { it.isBiallelic == true && it.canonicalImpact.codingEffect != CodingEffect.MISSENSE }) {
+            return 1.0
         } else {
             handleVariantsOfUnknownSignificance(gene, geneRole, variants)
         }

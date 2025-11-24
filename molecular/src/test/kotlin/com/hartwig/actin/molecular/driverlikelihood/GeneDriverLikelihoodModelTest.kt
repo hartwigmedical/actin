@@ -69,6 +69,22 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
+    fun `Should assign driver likelihood of high when biallelic splice variant`() {
+        val biallelicVariant = TestVariantFactory.createMinimal().copy(
+            isBiallelic = true,
+            canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
+                codingEffect = CodingEffect.SPLICE
+            )
+        )
+        val result = geneDriverLikelihoodModel.evaluate(
+            GENE,
+            GeneRole.TSG,
+            listOf(biallelicVariant)
+        )
+        assertThat(result).isEqualTo(1.0)
+    }
+
+    @Test
     fun `Should assign null driver likelihood when gene role is unknown`() {
         val result = geneDriverLikelihoodModel.evaluate(
             GENE,
