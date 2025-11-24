@@ -10,14 +10,11 @@ class GeneDriverLikelihoodModel(private val dndsModel: DndsModel) {
 
     fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
         val hasCancerAssociatedVariant = variants.any { it.isCancerAssociatedVariant }
-        return if (variants.isEmpty()) {
-            return null
-        } else if (hasCancerAssociatedVariant) {
-            return 1.0
-        } else if (variants.any { it.isBiallelic == true && it.canonicalImpact.codingEffect != CodingEffect.MISSENSE }) {
-            return 1.0
-        } else {
-            handleVariantsOfUnknownSignificance(gene, geneRole, variants)
+        return when {
+            variants.isEmpty() -> null
+            hasCancerAssociatedVariant -> 1.0
+            variants.any { it.isBiallelic == true && it.canonicalImpact.codingEffect != CodingEffect.MISSENSE } -> 1.0
+            else -> handleVariantsOfUnknownSignificance(gene, geneRole, variants)
         }
     }
 
