@@ -10,10 +10,16 @@ class GeneDriverLikelihoodModel(private val dndsModel: DndsModel) {
 
     fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
         val hasCancerAssociatedVariant = variants.any { it.isCancerAssociatedVariant }
+        val hasBiallelicSpliceNonSenseOrFrameshift = variants.any {
+            it.isBiallelic == true && it.canonicalImpact.codingEffect in setOf(
+                CodingEffect.SPLICE,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            )
+        }
         return when {
             variants.isEmpty() -> null
             hasCancerAssociatedVariant -> 1.0
-            variants.any { it.isBiallelic == true && it.canonicalImpact.codingEffect != CodingEffect.MISSENSE } -> 1.0
+            geneRole == GeneRole.TSG && hasBiallelicSpliceNonSenseOrFrameshift -> 1.0
             else -> handleVariantsOfUnknownSignificance(gene, geneRole, variants)
         }
     }
