@@ -105,7 +105,8 @@ class MolecularDetailsChapter(
         topTable: Table
     ) {
         pathologyReport?.let {
-            topTable.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = it)))
+            val pathology = if (ihcTests.any { it.reportHash == pathologyReport.report }) pathologyReport else pathologyReport.copy(tissueId = null)
+            topTable.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathology)))
         }
 
         val tableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
@@ -139,8 +140,12 @@ class MolecularDetailsChapter(
     }
 
     private fun addPathologyReport(document: Document) {
+        val testReportHashes = with(report.patientRecord) {
+            molecularTests.map { it.reportHash } + ihcTests.map { it.reportHash }
+        }
         report.patientRecord.pathologyReports
             ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
+            ?.filter { it.reportHash in testReportHashes }
             ?.let {
                 document.add(Div().setHeight(20F))
                 val table = Tables.createSingleColWithWidth(contentWidth())

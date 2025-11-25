@@ -50,7 +50,7 @@ class MolecularSummaryGenerator(
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
                 val allReportHashes = molecularTests.map { it.reportHash } + ihcTests.map { it.reportHash }
-                val pathology = if (allReportHashes.contains(pathologyReport.report)) pathologyReport else pathologyReport.copy(tissueId = null)
+                val pathology = if (pathologyReport.reportHash in allReportHashes) pathologyReport else pathologyReport.copy(tissueId = null)
                 table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathology)))
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
