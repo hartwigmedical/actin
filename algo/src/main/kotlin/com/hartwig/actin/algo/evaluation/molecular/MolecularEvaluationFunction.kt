@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import java.time.LocalDate
@@ -35,7 +36,8 @@ abstract class MolecularEvaluationFunction(
                     isMissingMolecularResultForEvaluation = true
                 )
 
-            val testEvaluation = recentMolecularTests.mapNotNull { evaluate(it, record)?.let { eval -> MolecularEvaluation(it, eval) } }
+            val testEvaluation =
+                recentMolecularTests.mapNotNull { evaluate(it, record.ihcTests)?.let { eval -> MolecularEvaluation(it, eval) } }
             if (testEvaluation.isNotEmpty()) {
                 return MolecularEvaluation.combine(testEvaluation, evaluationPrecedence())
             }
@@ -49,7 +51,7 @@ abstract class MolecularEvaluationFunction(
 
     open fun noMolecularTestEvaluation(): Evaluation? = null
     open fun evaluate(test: MolecularTest): Evaluation? = null
-    open fun evaluate(test: MolecularTest, record: PatientRecord): Evaluation? = evaluate(test)
+    open fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation? = evaluate(test)
 
     open fun evaluationPrecedence(): (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? =
         { MolecularEvaluation.defaultEvaluationPrecedence(it) }

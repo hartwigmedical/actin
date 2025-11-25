@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
-import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
@@ -88,7 +88,7 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
         maxTestAge = maxTestAge
     ) {
 
-    override fun evaluate(test: MolecularTest, record: PatientRecord): Evaluation {
+    override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>> =
             test.drivers.copyNumbers.filter { copyNumber -> copyNumber.gene == gene }
                 .groupBy({ copyNumber ->
@@ -108,7 +108,7 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
             if (gene in GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.keys) IhcTestEvaluation.create(
                 GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.getValue(
                     gene
-                ), record.ihcTests
+                ), ihcTests
             ) else null
         val hasPositiveIhcEvaluation = ihcTestEvaluation?.hasCertainPositiveResultsForItem() == true
 

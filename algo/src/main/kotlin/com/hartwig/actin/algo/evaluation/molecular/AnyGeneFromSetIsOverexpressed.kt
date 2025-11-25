@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
@@ -16,9 +16,9 @@ class AnyGeneFromSetIsOverexpressed(
 
     private val genesToAmplification: Map<String, GeneIsAmplified> = genes.associateWith { geneIsAmplifiedCreator(it, maxTestAge) }
 
-    override fun evaluate(test: MolecularTest, record: PatientRecord): Evaluation {
+    override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val amplifiedGenes = genesToAmplification.filter { (_, geneIsAmplified) ->
-            val result = geneIsAmplified.evaluate(test, record).result
+            val result = geneIsAmplified.evaluate(test, ihcTests).result
             result == EvaluationResult.PASS || result == EvaluationResult.WARN
         }.map { it.key }
 
