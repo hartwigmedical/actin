@@ -151,7 +151,7 @@ class MolecularDetailsChapter(
             ?.let {
                 document.add(Div().setHeight(20F))
                 val table = Tables.createSingleColWithWidth(contentWidth())
-                val generator = PathologyReportGenerator(report.patientRecord.pathologyReports)
+                val generator = PathologyReportGenerator(it)
                 // KD: This table doesn't fit in the typical generator format since it contains one row but with a lot of lines.
                 table.addCell(Cells.createTitle(generator.title()))
                 table.addCell(Cells.create(generator.contents()))
