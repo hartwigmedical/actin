@@ -147,7 +147,6 @@ class MolecularDetailsChapter(
         report.patientRecord.pathologyReports
             ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
             ?.filter { it.reportHash in testReportsHash }
-            ?.takeIf { it.isNotEmpty() }
             ?.let {
                 document.add(Div().setHeight(20F))
                 val table = Tables.createSingleColWithWidth(contentWidth())
