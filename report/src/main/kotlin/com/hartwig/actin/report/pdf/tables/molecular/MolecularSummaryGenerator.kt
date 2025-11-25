@@ -49,7 +49,8 @@ class MolecularSummaryGenerator(
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)))
+                val tissueId = if (molecularTests.any { it.reportHash == pathologyReport.report }) pathologyReport.tissueId else null
+                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport.copy(tissueId = tissueId))))
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
