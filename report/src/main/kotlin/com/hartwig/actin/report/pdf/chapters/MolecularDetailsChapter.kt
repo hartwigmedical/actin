@@ -78,11 +78,13 @@ class MolecularDetailsChapter(
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
+        val ihcTestsReportHash = filteredIhcTests.mapNotNull { it.reportHash }
+        val filteredPathologyReports = report.patientRecord.pathologyReports?.filter { it.reportHash in ihcTestsReportHash }
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             listOfNotNull(orangeMolecularTest),
             externalPanelResults,
             filteredIhcTests,
-            report.patientRecord.pathologyReports
+            filteredPathologyReports
         )
 
         val table = Tables.createSingleColWithWidth(contentWidth())
@@ -105,8 +107,7 @@ class MolecularDetailsChapter(
         topTable: Table
     ) {
         pathologyReport?.let {
-            val pathology = if (ihcTests.any { it.reportHash == pathologyReport.report }) pathologyReport else pathologyReport.copy(tissueId = null)
-            topTable.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathology)))
+            topTable.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = it)))
         }
 
         val tableWidth = topTable.width.value - 2 * Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE
@@ -140,12 +141,12 @@ class MolecularDetailsChapter(
     }
 
     private fun addPathologyReport(document: Document) {
-        val testReportHashes = with(report.patientRecord) {
+        val testReportsHash = with(report.patientRecord) {
             molecularTests.map { it.reportHash } + ihcTests.map { it.reportHash }
         }.filterNotNull()
         report.patientRecord.pathologyReports
             ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
-            ?.filter { it.reportHash in testReportHashes }
+            ?.filter { it.reportHash in testReportsHash }
             ?.takeIf { it.isNotEmpty() }
             ?.let {
                 document.add(Div().setHeight(20F))

@@ -39,19 +39,19 @@ class MolecularSummaryGenerator(
         val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }
+        val testReportsHash = nonIhcTestsIncludedInTrialMatching.mapNotNull { it.reportHash } + ihcTestsFiltered.mapNotNull { it.reportHash }
+        val filteredPathologyReports = patientRecord.pathologyReports?.filter { it.reportHash in testReportsHash }
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             emptyList(),
             nonIhcTestsIncludedInTrialMatching,
             ihcTestsFiltered,
-            patientRecord.pathologyReports
+            filteredPathologyReports,
         )
 
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                val allReportHashes = molecularTests.map { it.reportHash } + ihcTests.map { it.reportHash }
-                val pathology = if (pathologyReport.reportHash in allReportHashes) pathologyReport else pathologyReport.copy(tissueId = null)
-                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathology)))
+                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)))
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable)
                 table.addCell(Cells.create(reportTable))
