@@ -142,10 +142,11 @@ class MolecularDetailsChapter(
     private fun addPathologyReport(document: Document) {
         val testReportHashes = with(report.patientRecord) {
             molecularTests.map { it.reportHash } + ihcTests.map { it.reportHash }
-        }
+        }.filterNotNull()
         report.patientRecord.pathologyReports
             ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
             ?.filter { it.reportHash in testReportHashes }
+            ?.takeIf { it.isNotEmpty() }
             ?.let {
                 document.add(Div().setHeight(20F))
                 val table = Tables.createSingleColWithWidth(contentWidth())
