@@ -78,11 +78,13 @@ class MolecularDetailsChapter(
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
+        val ihcTestsReportHash = filteredIhcTests.mapNotNull { it.reportHash }
+        val filteredPathologyReports = report.patientRecord.pathologyReports?.filter { it.reportHash in ihcTestsReportHash }
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             listOfNotNull(orangeMolecularTest),
             externalPanelResults,
             filteredIhcTests,
-            report.patientRecord.pathologyReports
+            filteredPathologyReports
         )
 
         val table = Tables.createSingleColWithWidth(contentWidth())
@@ -139,12 +141,16 @@ class MolecularDetailsChapter(
     }
 
     private fun addPathologyReport(document: Document) {
+        val testReportsHash = with(report.patientRecord) {
+            molecularTests.map { it.reportHash } + ihcTests.map { it.reportHash }
+        }.filterNotNull()
         report.patientRecord.pathologyReports
             ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
+            ?.filter { it.reportHash in testReportsHash }
             ?.let {
                 document.add(Div().setHeight(20F))
                 val table = Tables.createSingleColWithWidth(contentWidth())
-                val generator = PathologyReportGenerator(report.patientRecord.pathologyReports)
+                val generator = PathologyReportGenerator(it)
                 // KD: This table doesn't fit in the typical generator format since it contains one row but with a lot of lines.
                 table.addCell(Cells.createTitle(generator.title()))
                 table.addCell(Cells.create(generator.contents()))
