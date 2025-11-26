@@ -132,7 +132,8 @@ class EligibleTrialGenerator(
 
             val footNote = listOfNotNull(
                 TrialFormatFunctions.FOOT_NOTE_NO_CLINICAL_DATA_USED.takeIf { relevantNationalExternalTrials.isNotEmpty() },
-                ("${TrialFormatFunctions.formatCountWithLabel(relevantNationalExternalTrialsFilteredCount, "trial")
+                ("${
+                    TrialFormatFunctions.formatCountWithLabel(relevantNationalExternalTrialsFilteredCount, "trial")
                 } ${TrialFormatFunctions.FOOT_NOTE_FILTERED_NATIONAL_EXTERNAL_TRIALS}")
                     .takeIf { relevantNationalExternalTrialsFilteredCount > 0 })
                 .joinToString("\n")
@@ -173,19 +174,15 @@ class EligibleTrialGenerator(
             val footNote = listOfNotNull(
                 TrialFormatFunctions.FOOT_NOTE_CLINICAL_DATA_EXCLUDED.takeIf { externalTrials.isNotEmpty() },
                 ("${
-                    TrialFormatFunctions.formatCountWithLabel(
-                        externalTrialsFilteredCount,
-                        "trial"
-                    )
-                } ${TrialFormatFunctions.FOOT_NOTE_FILTERED_NATIONAL_EXTERNAL_TRIALS}").takeIf { externalTrialsFilteredCount > 0 && isNational },
+                    TrialFormatFunctions.formatCountWithLabel(externalTrialsFilteredCount, "trial")
+                } ${TrialFormatFunctions.FOOT_NOTE_FILTERED_NATIONAL_EXTERNAL_TRIALS}")
+                    .takeIf { externalTrialsFilteredCount > 0 && isNational },
                 ("${
-                    TrialFormatFunctions.formatCountWithLabel(
-                        externalTrialsFilteredCount,
-                        "trial"
-                    )
-                } ${TrialFormatFunctions.FOOT_NOTE_SAME_MOLECULAR_TARGET}").takeIf { externalTrialsFilteredCount > 0 && !isNational }).joinToString(
-                "\n"
-            ).ifEmpty { null }
+                    TrialFormatFunctions.formatCountWithLabel(externalTrialsFilteredCount, "trial")
+                } ${TrialFormatFunctions.FOOT_NOTE_SAME_MOLECULAR_TARGET}")
+                    .takeIf { externalTrialsFilteredCount > 0 && !isNational })
+                .joinToString("\n")
+                .ifEmpty { null }
 
             return EligibleTrialGenerator(
                 cohorts = emptyList(),
