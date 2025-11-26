@@ -132,14 +132,11 @@ class EligibleTrialGenerator(
 
             val footNote = listOfNotNull(
                 TrialFormatFunctions.FOOT_NOTE_NO_CLINICAL_DATA_USED.takeIf { relevantNationalExternalTrials.isNotEmpty() },
-                ("${
-                    TrialFormatFunctions.formatCountWithLabel(
-                        relevantNationalExternalTrialsFilteredCount,
-                        "trial"
-                    )
-                } ${TrialFormatFunctions.FOOT_NOTE_FILTERED_NATIONAL_EXTERNAL_TRIALS}").takeIf { relevantNationalExternalTrialsFilteredCount > 0 }).joinToString(
-                "\n"
-            ).ifEmpty { null }
+                ("${TrialFormatFunctions.formatCountWithLabel(relevantNationalExternalTrialsFilteredCount, "trial")
+                } ${TrialFormatFunctions.FOOT_NOTE_FILTERED_NATIONAL_EXTERNAL_TRIALS}")
+                    .takeIf { relevantNationalExternalTrialsFilteredCount > 0 })
+                .joinToString("\n")
+                .ifEmpty { null }
 
             return EligibleTrialGenerator(
                 cohorts = openAndEligibleLocalCohorts,
