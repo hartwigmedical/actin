@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -25,11 +26,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val GENE = "gene A"
+private const val IHC_EVALUABLE_GENE = "MSH2"
 
 class GeneIsInactivatedTest {
 
-    private val functionInactivation = GeneIsInactivated(GENE, onlyDeletions = false)
-    private val functionDeletion = GeneIsInactivated(GENE, onlyDeletions = true)
+    private val functionInactivation = GeneIsInactivated(gene = GENE, onlyDeletions = false)
+    private val functionDeletion = GeneIsInactivated(gene = GENE, onlyDeletions = true)
+
+    private val matchingIhcResult = IhcTest(item = IHC_EVALUABLE_GENE, scoreText = "Loss")
 
     private val matchingHomDisruption = TestHomozygousDisruptionFactory.createMinimal().copy(
         gene = GENE, isReportable = true, geneRole = GeneRole.TSG, proteinEffect = ProteinEffect.LOSS_OF_FUNCTION, event = "event"
@@ -72,6 +76,32 @@ class GeneIsInactivatedTest {
 
         assertThat(evaluationInactivation.failMessagesStrings()).containsExactly("No gene A inactivation")
         assertThat(evaluationDeletion.failMessagesStrings()).containsExactly("No gene A deletion")
+    }
+
+    @Test
+    fun `Should pass with matching IHC event for both functions`() {
+        assertBothFunctionsForIhc(EvaluationResult.PASS, MolecularTestFactory.withIhcTests(matchingIhcResult))
+    }
+
+    @Test
+    fun `Should warn with potentially eligible IHC event for both functions`() {
+        assertBothFunctionsForIhc(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(scoreText = "possible loss"))
+        )
+    }
+
+    @Test
+    fun `Should fail with potentially eligible IHC event for both functions if correct result but on wrong gene`() {
+        assertBothFunctionsForIhc(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE))
+        )
+    }
+
+    @Test
+    fun `Should fail with matching IHC event for both functions if gene is not considered for IHC`() {
+        assertBothFunctions(EvaluationResult.FAIL, MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)))
     }
 
     @Test
@@ -454,6 +484,11 @@ class GeneIsInactivatedTest {
     private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {
         assertMolecularEvaluation(result, functionInactivation.evaluate(record))
         assertMolecularEvaluation(result, functionDeletion.evaluate(record))
+    }
+
+    private fun assertBothFunctionsForIhc(result: EvaluationResult, record: PatientRecord) {
+        assertMolecularEvaluation(result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = false).evaluate(record))
+        assertMolecularEvaluation(result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = true).evaluate(record))
     }
 
     private fun variantWithPhaseGroups(phaseGroups: Set<Int>?) = TestVariantFactory.createMinimal().copy(

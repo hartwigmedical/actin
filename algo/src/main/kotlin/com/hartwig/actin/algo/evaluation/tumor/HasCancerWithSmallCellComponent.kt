@@ -23,7 +23,7 @@ class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : Evalua
                 EvaluationFactory.pass("Has cancer with small cell component")
             }
 
-            isNsclc && ihcTestEvaluation.hasCertainPositiveResultsForItem() -> {
+            isNsclc && ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() -> {
                 EvaluationFactory.warn("Has potentially cancer with small cell component (positive SCLC transformation)")
             }
 

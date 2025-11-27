@@ -140,7 +140,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
         val ihcMolecularTests = interpretIhcMolecularTests(
             clinical.ihcTests,
-            panelFusionAnnotator,
             evidenceAnnotator
         )
 
@@ -183,12 +182,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretIhcMolecularTests(
         ihcTests: List<IhcTest>,
-        panelFusionAnnotator: PanelFusionAnnotator,
         panelRecordEvidenceAnnotator: EvidenceAnnotator
     ): List<MolecularTest> {
         return MolecularInterpreter(
             extractor = IhcExtractor(),
-            annotator = IhcAnnotator(panelFusionAnnotator),
+            annotator = IhcAnnotator(),
             postAnnotators = listOf(panelRecordEvidenceAnnotator)
         ).run(ihcTests)
     }

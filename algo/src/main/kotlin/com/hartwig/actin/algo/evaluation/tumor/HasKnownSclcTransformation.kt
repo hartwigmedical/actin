@@ -30,7 +30,7 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
         val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
 
         return when {
-            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainPositiveResultsForItem) -> {
+            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
                 EvaluationFactory.pass("Has SCLC transformation", inclusionEvents = setOf("small cell transformation"))
             }
 

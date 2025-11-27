@@ -17,9 +17,13 @@ import java.time.LocalDate
 class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTestEvaluation = IhcTestEvaluation.create("MMR", record.ihcTests)
-        val isMmrDeficientIhcResult = isMmrDeficientIhc(ihcTestEvaluation)
-        val isMmrProficientIhcResult = isMmrProficientIhc(ihcTestEvaluation)
+        val mmrIhcTestEvaluation = IhcTestEvaluation.create("MMR", record.ihcTests)
+        val isMmrDeficientIhcResult = isMmrDeficientIhc(mmrIhcTestEvaluation)
+        val isMmrProficientIhcResult = isMmrProficientIhc(mmrIhcTestEvaluation)
+
+        val mmrGeneIhcTestEvaluations =
+            GeneConstants.MMR_GENES.intersect(GeneConstants.IHC_LOSS_EVALUABLE_GENES).map { gene -> IhcTestEvaluation.create(gene, record.ihcTests) }
+        val hasMmrDeficiencyGeneLoss = mmrGeneIhcTestEvaluations.any { it.hasCertainLossResultsForItem() }
 
         val molecularTestFilter = MolecularTestFilter(maxTestAge, false)
         val molecularHistory = MolecularHistory(molecularTestFilter.apply(record.molecularTests))
@@ -40,10 +44,10 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
         val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
 
         return when {
-            test == null && ihcTestEvaluation.filteredTests.isEmpty() ->
+            test == null && mmrIhcTestEvaluation.filteredTests.isEmpty() && mmrGeneIhcTestEvaluations.isEmpty() ->
                 EvaluationFactory.undetermined("No MMR deficiency test result", isMissingMolecularResultForEvaluation = true)
 
-            test == null -> evaluateIhcOnly(isMmrDeficientIhcResult, isMmrProficientIhcResult)
+            test == null -> evaluateIhcOnly(isMmrDeficientIhcResult, isMmrProficientIhcResult, hasMmrDeficiencyGeneLoss)
 
             test.characteristics.microsatelliteStability?.isUnstable == true && isMmrProficientIhcResult ->
                 EvaluationFactory.warn(
@@ -84,10 +88,21 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
             .maxByOrNull { it.date ?: LocalDate.MIN }
     }
 
-    private fun evaluateIhcOnly(isMmrDeficientIhcResult: Boolean, isMmrProficientIhcResult: Boolean): Evaluation =
+    private fun evaluateIhcOnly(
+        isMmrDeficientIhcResult: Boolean,
+        isMmrProficientIhcResult: Boolean,
+        hasMmrDeficiencyGeneLoss: Boolean
+    ): Evaluation =
         when {
             isMmrDeficientIhcResult -> EvaluationFactory.pass("Tumor is dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
             isMmrProficientIhcResult -> EvaluationFactory.fail("Tumor is not dMMR by IHC")
+            hasMmrDeficiencyGeneLoss -> {
+                EvaluationFactory.undetermined(
+                    "Undetermined if tumor is dMMR by IHC - but loss detected of MMR gene by IHC",
+                    isMissingMolecularResultForEvaluation = true
+                )
+            }
+
             else -> EvaluationFactory.undetermined("Undetermined dMMR result by IHC", isMissingMolecularResultForEvaluation = true)
         }
 

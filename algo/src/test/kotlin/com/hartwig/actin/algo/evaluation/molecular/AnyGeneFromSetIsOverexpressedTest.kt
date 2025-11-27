@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import io.mockk.every
 import io.mockk.mockk
@@ -14,13 +15,13 @@ import java.time.LocalDate
 class AnyGeneFromSetIsOverexpressedTest {
     
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
-        every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.pass("amplification")
+        every { evaluate(any<MolecularTest>(), any<List<IhcTest>>()) } returns EvaluationFactory.pass("amplification")
     }
     private val alwaysWarnGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
-        every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.warn("possible amplification")
+        every { evaluate(any<MolecularTest>(), any<List<IhcTest>>()) } returns EvaluationFactory.warn("possible amplification")
     }
     private val alwaysFailGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
-        every { evaluate(any<MolecularTest>()) } returns EvaluationFactory.fail("no amplification")
+        every { evaluate(any<MolecularTest>(), any<List<IhcTest>>()) } returns EvaluationFactory.fail("no amplification")
     }
 
     @Test

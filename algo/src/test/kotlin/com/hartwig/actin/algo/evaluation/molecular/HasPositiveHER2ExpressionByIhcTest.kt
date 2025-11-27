@@ -46,7 +46,7 @@ class HasPositiveHER2ExpressionByIhcTest {
             MolecularTestFactory.withIhcTests(
                 listOf(
                     ihcTest(scoreValue = 3.0, scoreValueUnit = "+"),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first())
+                    ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first())
                 )
             )
         )
@@ -61,7 +61,7 @@ class HasPositiveHER2ExpressionByIhcTest {
                 listOf(
                     ihcTest(scoreValue = 0.0),
                     ihcTest(scoreValue = 1.0, scoreValueUnit = "+"),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
+                    ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
                 )
             )
         )
@@ -100,8 +100,8 @@ class HasPositiveHER2ExpressionByIhcTest {
             function.evaluate(
                 MolecularTestFactory.withIhcTests(
                     listOf(
-                        ihcTest(scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first()),
-                        ihcTest(scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
+                        ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first()),
+                        ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
                     )
                 )
             )
@@ -115,7 +115,7 @@ class HasPositiveHER2ExpressionByIhcTest {
             MolecularTestFactory.withIhcTests(
                 listOf(
                     ihcTest(
-                        scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(),
+                        scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first(),
                         impliesPotentialIndeterminateStatus = true
                     )
                 )
@@ -138,7 +138,7 @@ class HasPositiveHER2ExpressionByIhcTest {
                 erbb2Amp,
                 listOf(
                     ihcTest(
-                        scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first(),
+                        scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first(),
                         impliesPotentialIndeterminateStatus = true
                     )
                 )

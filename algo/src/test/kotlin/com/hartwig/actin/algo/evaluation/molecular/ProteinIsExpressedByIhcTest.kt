@@ -11,8 +11,8 @@ private const val PROTEIN = "protein 1"
 class ProteinIsExpressedByIhcTest {
 
     private val function = ProteinIsExpressedByIhc(PROTEIN)
-    private val passingTest = ihcTest(item = PROTEIN, scoreText = IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS.first())
-    private val wrongTest = ihcTest(item = PROTEIN, scoreText = IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS.first())
+    private val passingTest = ihcTest(item = PROTEIN, scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first())
+    private val wrongTest = ihcTest(item = PROTEIN, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
     private val inconclusiveTest = ihcTest(item = PROTEIN, scoreText = "something")
 
     @Test

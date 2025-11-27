@@ -20,7 +20,7 @@ class GeneHasActivatingMutationTest {
     private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE)
 
     @Test
-    fun `Should fail for minimal patient`() {
+    fun `Should fail for patient with minimal WGS record`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
