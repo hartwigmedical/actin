@@ -26,7 +26,7 @@ class DriverDisplayFunctionsTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.FULL_GAIN, minCopies = 100, maxCopies = 100)
         )
-        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF 100 copies")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF amp 100 copies")
     }
 
     @Test
@@ -37,29 +37,29 @@ class DriverDisplayFunctionsTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.FULL_GAIN)
         )
-        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF amp")
     }
 
     @Test
     fun `Should format copy nr gain correctly when partial gain and min and max copy nr is known`() {
         val copyNumber = TestMolecularFactory.createMinimalCopyNumber().copy(
             gene = "BRAF",
-            event = "BRAF amp",
+            event = "BRAF partial amp",
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.PARTIAL_GAIN, minCopies = 1, maxCopies = 100)
         )
-        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF 100 copies (partial)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF partial amp 100 copies")
     }
 
     @Test
     fun `Should format copy nr gain correctly when partial gain and min and max copy nr is not known`() {
         val copyNumber = TestMolecularFactory.createMinimalCopyNumber().copy(
             gene = "BRAF",
-            event = "BRAF amp",
+            event = "BRAF partial amp",
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
                 .copy(type = CopyNumberType.PARTIAL_GAIN)
         )
-        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (partial)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF partial amp")
     }
 
     @Test
@@ -70,7 +70,7 @@ class DriverDisplayFunctionsTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.NONE),
             otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.FULL_GAIN))
         )
-        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (alt transcript)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF amp (alt transcript)")
     }
 
     @Test
@@ -80,7 +80,7 @@ class DriverDisplayFunctionsTest {
             event = "BRAF del",
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.FULL_DEL),
         )
-        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF del")
     }
 
     @Test
@@ -91,7 +91,7 @@ class DriverDisplayFunctionsTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.NONE),
             otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact().copy(type = CopyNumberType.FULL_DEL))
         )
-        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF (alt transcript)")
+        Assertions.assertThat(copyNumber.eventDisplay()).isEqualTo("BRAF del (alt transcript)")
     }
 
     @Test

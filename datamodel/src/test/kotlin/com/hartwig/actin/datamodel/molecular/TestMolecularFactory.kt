@@ -481,49 +481,83 @@ object TestMolecularFactory {
     private fun createExhaustiveTestDrivers(): Drivers {
         val proper = createProperTestDrivers()
         return proper.copy(
-            variants = proper.variants + Variant(
-                chromosome = "7",
-                position = 140453000,
-                ref = "T",
-                alt = "A",
-                type = VariantType.SNV,
-                canonicalImpact = TranscriptVariantImpact(
-                    transcriptId = "ENST00000288602",
-                    hgvsCodingImpact = "c.1499T>A",
-                    hgvsProteinImpact = "p.V500E",
-                    affectedCodon = 500,
-                    affectedExon = 14,
-                    inSpliceRegion = false,
-                    effects = setOf(VariantEffect.MISSENSE),
-                    codingEffect = CodingEffect.MISSENSE
-                ),
-                otherImpacts = setOf(
-                    TranscriptVariantImpact(
-                        transcriptId = "ENST00000288603",
-                        hgvsCodingImpact = "c.1796T>A",
-                        hgvsProteinImpact = "p.V450E",
-                        affectedCodon = 450,
-                        affectedExon = 15,
+            variants = proper.variants + listOf(
+                Variant(
+                    chromosome = "7",
+                    position = 140453000,
+                    ref = "T",
+                    alt = "A",
+                    type = VariantType.SNV,
+                    canonicalImpact = TranscriptVariantImpact(
+                        transcriptId = "ENST00000288602",
+                        hgvsCodingImpact = "c.1499T>A",
+                        hgvsProteinImpact = "p.V500E",
+                        affectedCodon = 500,
+                        affectedExon = 14,
                         inSpliceRegion = false,
                         effects = setOf(VariantEffect.MISSENSE),
                         codingEffect = CodingEffect.MISSENSE
-                    )
-                ),
-                variantCopyNumber = 4.1,
-                totalCopyNumber = 6.0,
-                isBiallelic = false,
-                clonalLikelihood = 1.0,
-                phaseGroups = null,
-                isCancerAssociatedVariant = true,
-                sourceEvent = "BRAF V450E",
-                isReportable = true,
-                event = "BRAF V500E",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withApprovedTreatment("Vemurafenib"),
-                gene = "BRAF",
-                geneRole = GeneRole.ONCO,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                isAssociatedWithDrugResistance = true,
+                    ),
+                    otherImpacts = setOf(
+                        TranscriptVariantImpact(
+                            transcriptId = "ENST00000288603",
+                            hgvsCodingImpact = "c.1796T>A",
+                            hgvsProteinImpact = "p.V450E",
+                            affectedCodon = 450,
+                            affectedExon = 15,
+                            inSpliceRegion = false,
+                            effects = setOf(VariantEffect.MISSENSE),
+                            codingEffect = CodingEffect.MISSENSE
+                        )
+                    ),
+                    variantCopyNumber = 4.1,
+                    totalCopyNumber = 6.0,
+                    isBiallelic = false,
+                    clonalLikelihood = 1.0,
+                    phaseGroups = null,
+                    isCancerAssociatedVariant = true,
+                    sourceEvent = "BRAF V450E",
+                    isReportable = true,
+                    event = "BRAF V500E",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.withApprovedTreatment("Vemurafenib"),
+                    gene = "BRAF",
+                    geneRole = GeneRole.ONCO,
+                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                    isAssociatedWithDrugResistance = true,
+                ), Variant(
+                    chromosome = "7",
+                    position = 100000,
+                    ref = "T",
+                    alt = "A",
+                    type = VariantType.SNV,
+                    canonicalImpact = TranscriptVariantImpact(
+                        transcriptId = "transcript",
+                        hgvsCodingImpact = "c.1000T>A",
+                        hgvsProteinImpact = "p.T788M",
+                        affectedCodon = 788,
+                        affectedExon = 20,
+                        inSpliceRegion = false,
+                        effects = setOf(VariantEffect.MISSENSE),
+                        codingEffect = CodingEffect.MISSENSE
+                    ),
+                    otherImpacts = emptySet(),
+                    variantCopyNumber = 2.0,
+                    totalCopyNumber = 3.0,
+                    isBiallelic = false,
+                    clonalLikelihood = 1.0,
+                    phaseGroups = null,
+                    isCancerAssociatedVariant = false,
+                    sourceEvent = "EGFR T788M",
+                    isReportable = true,
+                    event = "EGFR T788M",
+                    driverLikelihood = DriverLikelihood.LOW,
+                    evidence = TestClinicalEvidenceFactory.createEmpty(),
+                    gene = "EGFR",
+                    geneRole = GeneRole.ONCO,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = false,
+                )
             ),
             copyNumbers = proper.copyNumbers + listOf(
                 CopyNumber(
@@ -664,7 +698,7 @@ object TestMolecularFactory {
                     isAssociatedWithDrugResistance = null
                 ), CopyNumber(
                     isReportable = true,
-                    event = "PIK3CA amp",
+                    event = "PIK3CA partial amp",
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
                     gene = "PIK3CA",
@@ -679,10 +713,10 @@ object TestMolecularFactory {
                     isAssociatedWithDrugResistance = null
                 ), CopyNumber(
                     isReportable = false,
-                    event = "Unreported gene copy number",
-                    driverLikelihood = DriverLikelihood.HIGH,
+                    event = "UNREP copy number",
+                    driverLikelihood = DriverLikelihood.MEDIUM,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                    gene = "Unreported gene",
+                    gene = "UNREP",
                     canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
                         CopyNumberType.PARTIAL_GAIN,
                         20,
@@ -718,7 +752,7 @@ object TestMolecularFactory {
                 isAssociatedWithDrugResistance = null,
                 clusterGroup = 0
             ), fusions = proper.fusions + Fusion(
-                isReportable = false,
+                isReportable = true,
                 event = "EML4(exon6)::ALK(exon20) fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustive(),
@@ -739,7 +773,7 @@ object TestMolecularFactory {
                     isReliable = true,
                     isReportable = true,
                     event = "HPV positive",
-                    driverLikelihood = DriverLikelihood.HIGH,
+                    driverLikelihood = DriverLikelihood.LOW,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 ), Virus(
                     name = "Epstein-Barr virus",
@@ -750,6 +784,15 @@ object TestMolecularFactory {
                     event = "EBV positive",
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                ), Virus(
+                    name = "Other virus",
+                    type = VirusType.OTHER,
+                    integrations = 4,
+                    isReliable = true,
+                    isReportable = true,
+                    event = "Other virus positive",
+                    driverLikelihood = DriverLikelihood.LOW,
+                    evidence = TestClinicalEvidenceFactory.createEmpty(),
                 )
             )
         )

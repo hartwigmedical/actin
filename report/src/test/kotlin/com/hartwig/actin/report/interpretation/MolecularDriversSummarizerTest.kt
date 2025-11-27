@@ -75,42 +75,44 @@ class MolecularDriversSummarizerTest {
     @Test
     fun `Should return key amplified genes and indicate partial amplifications and copy nrs if available`() {
         val copyNumbers = listOf(
-            copyNumber(CopyNumberType.FULL_GAIN, "target 1", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "target 2", DriverLikelihood.HIGH, true, 20),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, "target 3", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, "target 4", DriverLikelihood.HIGH, true, 10, 20),
-            copyNumber(CopyNumberType.NONE, "target 5", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
-            copyNumber(CopyNumberType.FULL_DEL, "deletion", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_DEL, "deletion", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "low driver", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false),
+            copyNumber(CopyNumberType.FULL_GAIN, "target 1 amp", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "target 2 amp", DriverLikelihood.HIGH, true, 20),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "target 3 partial amp", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "target 4 partial amp", DriverLikelihood.HIGH, true, 10, 20),
+            copyNumber(CopyNumberType.NONE, "target 5 amp", DriverLikelihood.HIGH, true, 10, 20, CopyNumberType.FULL_GAIN),
+            copyNumber(CopyNumberType.FULL_DEL, "irrelevant 6 del", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "irrelevant 7 del", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "irrelevant 8 amp", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_GAIN, "irrelevant 9 amp", DriverLikelihood.HIGH, false),
         )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGeneEvents().toSet()
         assertThat(amplifiedGenes).containsExactlyInAnyOrder(
-            "target 1",
-            "target 2 20 copies",
-            "target 3 (partial)",
-            "target 4 20 copies (partial)",
-            "target 5 (alt transcript)"
+            "target 1 amp",
+            "target 2 amp 20 copies",
+            "target 3 partial amp",
+            "target 4 partial amp 20 copies",
+            "target 5 amp (alt transcript)"
         )
     }
 
     @Test
     fun `Should return key deleted genes`() {
         val copyNumbers = listOf(
-            copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.FULL_DEL, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.FULL_DEL, "non-reportable", DriverLikelihood.HIGH, false),
-            copyNumber(CopyNumberType.PARTIAL_DEL, EXPECTED_GENE, DriverLikelihood.HIGH, true),
-            copyNumber(CopyNumberType.PARTIAL_DEL, "low", DriverLikelihood.LOW, true),
-            copyNumber(CopyNumberType.PARTIAL_DEL, "non-reportable", DriverLikelihood.HIGH, false)
+            copyNumber(CopyNumberType.FULL_GAIN, "irrelevant 1 amp", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_GAIN, "irrelevant 2 partial amp", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_DEL, "target 1 del", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.FULL_DEL, "irrelevant 3 low driver del", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.FULL_DEL, "irrelevant 4 unreportable del", DriverLikelihood.HIGH, false),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "target 2 del", DriverLikelihood.HIGH, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "irrelevant 5 low driver del", DriverLikelihood.LOW, true),
+            copyNumber(CopyNumberType.PARTIAL_DEL, "irrelevant 6 unreportable del", DriverLikelihood.HIGH, false)
 
         )
         val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
-        assertExpectedListResult(summarizer(molecularDrivers).keyDeletedGeneEvents())
+        val deletedGenes = summarizer(molecularDrivers).keyDeletedGeneEvents().toSet()
+
+        assertThat(deletedGenes).containsExactlyInAnyOrder("target 1 del", "target 2 del")
     }
 
     @Test
@@ -278,7 +280,7 @@ class MolecularDriversSummarizerTest {
 
     private fun copyNumber(
         canonicalType: CopyNumberType,
-        name: String,
+        event: String,
         driverLikelihood: DriverLikelihood?,
         isReportable: Boolean,
         minCopies: Int? = null,
@@ -298,8 +300,8 @@ class MolecularDriversSummarizerTest {
                     maxCopies
                 )
             ),
-            gene = name,
-            event = name,
+            gene = "gene",
+            event = event,
             driverLikelihood = driverLikelihood,
             isReportable = isReportable
         )

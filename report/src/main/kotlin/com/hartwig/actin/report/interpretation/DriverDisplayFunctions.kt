@@ -13,7 +13,6 @@ object DriverDisplayFunctions {
         is Variant -> displayVariantEvent(event, sourceEvent)
         is CopyNumber -> {
             displayCopyNumberEvent(
-                gene,
                 event,
                 canonicalImpact.minCopies,
                 canonicalImpact.maxCopies,
@@ -30,7 +29,6 @@ object DriverDisplayFunctions {
         if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
 
     private fun displayCopyNumberEvent(
-        gene: String,
         event: String,
         minCopies: Int?,
         maxCopies: Int?,
@@ -38,10 +36,10 @@ object DriverDisplayFunctions {
         otherEffects: Set<TranscriptCopyNumberImpact>
     ): String =
         when (canonicalImpactType) {
-            CopyNumberType.FULL_GAIN -> minCopies?.let { "$gene $minCopies copies" } ?: gene
-            CopyNumberType.PARTIAL_GAIN -> maxCopies?.let { "$gene $maxCopies copies (partial)" } ?: "$gene (partial)"
-            CopyNumberType.FULL_DEL, CopyNumberType.PARTIAL_DEL -> gene
-            CopyNumberType.NONE -> if (otherEffects.all { it.type == CopyNumberType.NONE }) event else "$gene (alt transcript)"
+            CopyNumberType.FULL_GAIN -> minCopies?.let { "$event $minCopies copies" } ?: event
+            CopyNumberType.PARTIAL_GAIN -> maxCopies?.let { "$event $maxCopies copies" } ?: event
+            CopyNumberType.FULL_DEL, CopyNumberType.PARTIAL_DEL -> event
+            CopyNumberType.NONE -> if (otherEffects.all { it.type == CopyNumberType.NONE }) event else "$event (alt transcript)"
         }
 
     private fun displayVirusEvent(event: String, integrations: Int?): String =
