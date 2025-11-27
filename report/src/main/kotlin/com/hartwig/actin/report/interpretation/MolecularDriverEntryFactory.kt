@@ -19,7 +19,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
+import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.pdf.util.Formats
+import kotlin.collections.any
 import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
@@ -56,7 +58,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val (variantCopyString, totalCopyString) = variantAndTotalCopies.map(::formatCopyNumberString)
 
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
-        val name = "${variant.event} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
+        val name = "${variant.eventDisplay()} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
 
         return driverEntryForGeneAlteration(driverType, name, variant)
     }
@@ -67,43 +69,29 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
                 "cancer-associated variant with unknown protein effect"
             }
 
-            variant.isCancerAssociatedVariant && isNoEffect(variant) -> {
-                "cancer-associated variant with no protein effect"
-            }
+            variant.isCancerAssociatedVariant && isNoEffect(variant) -> "cancer-associated variant with no protein effect"
 
-            isNoEffect(variant) -> {
-                "no protein effect"
-            }
+            isNoEffect(variant) -> "no protein effect"
 
-            variant.geneRole == GeneRole.ONCO && isGainOfFunction(variant) -> {
-                "gain of function"
-            }
+            variant.geneRole == GeneRole.ONCO && isGainOfFunction(variant) -> "gain of function"
 
-            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.isBiallelic == true) -> {
-                "loss of function, biallelic"
-            }
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) && (variant.isBiallelic == true) -> "loss of function, biallelic"
 
-            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) -> {
-                "loss of function"
-            }
+            variant.geneRole == GeneRole.TSG && isLossOfFunction(variant) -> "loss of function"
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG)
                     && variant.isCancerAssociatedVariant && (variant.isBiallelic == true) -> {
                 "cancer-associated variant, biallelic"
             }
 
-            variant.isCancerAssociatedVariant -> {
-                "cancer-associated variant"
-            }
+            variant.isCancerAssociatedVariant -> "cancer-associated variant"
 
             (variant.geneRole == GeneRole.UNKNOWN || variant.geneRole == GeneRole.BOTH || variant.geneRole == GeneRole.TSG) &&
                     (variant.isBiallelic == true) -> {
                 "no known cancer-associated variant, biallelic"
             }
 
-            else -> {
-                "no known cancer-associated variant, not biallelic"
-            }
+            else -> "no known cancer-associated variant, not biallelic"
         }
     }
 
@@ -122,32 +110,21 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): List<MolecularDriverEntry> {
-        val entries = mutableListOf<MolecularDriverEntry>()
-        if (copyNumber.canonicalImpact.type != CopyNumberType.NONE || molecularDriversInterpreter.copyNumberIsActionable(copyNumber)) {
-            val canonicalDriverType = getDriverType(copyNumber.canonicalImpact.type)
-            val canonicalName = "${copyNumber.event}, ${formatCopies(copyNumber.canonicalImpact)}"
-            entries.add(driverEntryForGeneAlteration(canonicalDriverType, canonicalName, copyNumber))
+        val driverTypes = if (copyNumber.canonicalImpact.type != CopyNumberType.NONE ||
+            molecularDriversInterpreter.copyNumberIsActionable(copyNumber)
+        ) {
+            listOf(getDriverType(copyNumber.canonicalImpact.type, copyNumber.otherImpacts))
+        } else {
+            copyNumber.otherImpacts.map { impact -> getDriverType(impact.type, null) }
         }
-
-        entries.addAll(copyNumber.otherImpacts.map { impact ->
-            val otherDriverType = getDriverType(impact.type)
-            val otherName = "${copyNumber.event} (alt), ${formatCopies(impact)}"
-            driverEntryForGeneAlteration(otherDriverType, otherName, copyNumber)
-        })
-        return entries
+        return driverTypes.map { driverEntryForGeneAlteration(it, copyNumber.eventDisplay(), copyNumber) }
     }
 
-    private fun formatCopies(impact: TranscriptCopyNumberImpact): String {
-        return if (impact.type == CopyNumberType.PARTIAL_GAIN) {
-            "${impact.maxCopies} copies (${impact.minCopies} full copies)"
-        } else "${impact.minCopies} copies"
-    }
-
-    private fun getDriverType(type: CopyNumberType): String {
-        return when (type) {
-            CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> "Amplification"
-            CopyNumberType.FULL_DEL, CopyNumberType.PARTIAL_DEL -> "Deletion"
-            CopyNumberType.NONE -> "Copy Number"
+    private fun getDriverType(type: CopyNumberType, impacts: Set<TranscriptCopyNumberImpact>?): String {
+        return when {
+            type.isGain || impacts?.any { it.type.isGain } == true -> "Amplification"
+            type.isDeletion || impacts?.any { it.type.isDeletion } == true -> "Deletion"
+            else -> "Copy Number"
         }
     }
 
@@ -174,9 +151,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
-        val name = virus.event + (virus.integrations?.let { ", ${virus.integrations} integrations detected" } ?: "")
         val driverType = "Virus" + (virus.driverLikelihood?.let { " (${formatDriverLikelihood(it)})" } ?: "")
-        return driverEntry(driverType, name, virus)
+        return driverEntry(driverType, virus.eventDisplay(), virus)
     }
 
     private fun <T> driverEntryForGeneAlteration(
@@ -207,22 +183,10 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     private fun bestResponsiveEvidence(driver: Driver): String? {
         val evidence = driver.evidence
         return when {
-            approved(evidence.treatmentEvidence).isNotEmpty() -> {
-                "Approved"
-            }
-
-            experimental(evidence.treatmentEvidence, true).isNotEmpty() -> {
-                "On-label experimental"
-            }
-
-            experimental(evidence.treatmentEvidence, false).isNotEmpty() -> {
-                "Off-label experimental"
-            }
-
-            preclinical(evidence.treatmentEvidence).isNotEmpty() -> {
-                "Pre-clinical"
-            }
-
+            approved(evidence.treatmentEvidence).isNotEmpty() -> "Approved"
+            experimental(evidence.treatmentEvidence, true).isNotEmpty() -> "On-label experimental"
+            experimental(evidence.treatmentEvidence, false).isNotEmpty() -> "Off-label experimental"
+            preclinical(evidence.treatmentEvidence).isNotEmpty() -> "Pre-clinical"
             else -> null
         }
     }
@@ -230,14 +194,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     private fun bestResistanceEvidence(driver: Driver): String? {
         val evidence = driver.evidence
         return when {
-            knownResistant(evidence.treatmentEvidence).isNotEmpty() -> {
-                "Known resistance"
-            }
-
-            suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> {
-                "Suspect resistance"
-            }
-
+            knownResistant(evidence.treatmentEvidence).isNotEmpty() -> "Known resistance"
+            suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> "Suspect resistance"
             else -> null
         }
     }

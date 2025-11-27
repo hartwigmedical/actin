@@ -58,7 +58,7 @@ class PanelCopyNumberAnnotatorTest {
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 20, maxCopies = 20)
         val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
-        check(annotatedPanel, canonicalImpact, otherImpacts, "amp")
+        check(annotatedPanel, canonicalImpact, otherImpacts, "partial amp")
     }
 
     @Test
@@ -72,7 +72,7 @@ class PanelCopyNumberAnnotatorTest {
             TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_GAIN)
                 .copy(transcriptId = NON_CANONICAL_TRANSCRIPT, minCopies = 20, maxCopies = 20)
         )
-        check(annotatedPanel, canonicalImpact, otherImpacts, "amp")
+        check(annotatedPanel, canonicalImpact, otherImpacts, "partial amp")
     }
 
     @Test
@@ -138,7 +138,7 @@ class PanelCopyNumberAnnotatorTest {
         panel: List<CopyNumber>,
         canonicalImpact: TranscriptCopyNumberImpact,
         otherImpacts: Set<TranscriptCopyNumberImpact>,
-        type: String
+        eventType: String
     ) {
         assertThat(panel).isEqualTo(
             listOf(
@@ -146,7 +146,7 @@ class PanelCopyNumberAnnotatorTest {
                     canonicalImpact = canonicalImpact,
                     otherImpacts = otherImpacts,
                     isReportable = true,
-                    event = "$GENE $type",
+                    event = "$GENE $eventType",
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty(),
                     gene = GENE,

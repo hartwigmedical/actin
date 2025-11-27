@@ -62,7 +62,7 @@ class ActionableAndEvidenceFactoryTest {
 
         assertThat(countsByType)
             .containsEntry(Variant::class.java, 2L)
-            .containsEntry(CopyNumber::class.java, 3L)
+            .containsEntry(CopyNumber::class.java, 4L)
             .containsEntry(HomozygousDisruption::class.java, 1L)
             .containsEntry(Disruption::class.java, 1L)
             .containsEntry(Fusion::class.java, 1L)
