@@ -69,7 +69,7 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should assign driver likelihood of high when biallelic splice variant`() {
+    fun `Should assign driver likelihood of high when biallelic splice variant in TSG`() {
         val biallelicVariant = TestVariantFactory.createMinimal().copy(
             isBiallelic = true,
             canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(

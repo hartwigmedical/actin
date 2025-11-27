@@ -6,16 +6,14 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import kotlin.math.max
 
+private val SPLICE_NONSENSE_OR_FRAMESHIFT_CODING_EFFECT = setOf(CodingEffect.SPLICE, CodingEffect.NONSENSE_OR_FRAMESHIFT)
+
 class GeneDriverLikelihoodModel(private val dndsModel: DndsModel) {
 
     fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
         val hasCancerAssociatedVariant = variants.any { it.isCancerAssociatedVariant }
-        val hasBiallelicSpliceNonSenseOrFrameshift = variants.any {
-            it.isBiallelic == true && it.canonicalImpact.codingEffect in setOf(
-                CodingEffect.SPLICE,
-                CodingEffect.NONSENSE_OR_FRAMESHIFT
-            )
-        }
+        val hasBiallelicSpliceNonSenseOrFrameshift =
+            variants.any { it.isBiallelic == true && it.canonicalImpact.codingEffect in SPLICE_NONSENSE_OR_FRAMESHIFT_CODING_EFFECT }
         return when {
             variants.isEmpty() -> null
             hasCancerAssociatedVariant -> 1.0
