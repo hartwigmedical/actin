@@ -124,6 +124,7 @@ class PanelVariantAnnotator(
         isBiallelic = variant.isBiallelic,
         clonalLikelihood = null,
         phaseGroups = null,
+        exonSkippingIsConfirmed = variant.exonSkippingIsConfirmed,
         isCancerAssociatedVariant = false,
         sourceEvent = sourceEvent(variant, paveResponse, transvarAnnotation),
         isReportable = true,

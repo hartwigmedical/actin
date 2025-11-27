@@ -131,6 +131,12 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
+    fun `Should propagate confirmed exon skipping flag`() {
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT.copy(exonSkippingIsConfirmed = true))).first()
+        assertThat(annotated.exonSkippingIsConfirmed).isTrue()
+    }
+
+    @Test
     fun `Should exclude other transcript impacts from non canonical gene`() {
         val complexPaveAnnotation = PAVE_ANNOTATION.copy(
             transcriptImpacts = listOf(

@@ -16,6 +16,7 @@ data class Variant(
     val isBiallelic: Boolean?,
     val clonalLikelihood: Double?,
     val phaseGroups: Set<Int>?,
+    val exonSkippingIsConfirmed: Boolean? = null,
     val isCancerAssociatedVariant: Boolean,
     val sourceEvent: String,
     override val isReportable: Boolean,
