@@ -7,18 +7,20 @@ import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 
-object Functions {
+object DriverDisplayFunctions {
 
     fun Driver.eventDisplay(): String = when (this) {
         is Variant -> displayVariantEvent(event, sourceEvent)
-        is CopyNumber -> displayCopyNumberEvent(
-            gene,
-            event,
-            canonicalImpact.minCopies,
-            canonicalImpact.maxCopies,
-            canonicalImpact.type,
-            otherImpacts
-        )
+        is CopyNumber -> {
+            displayCopyNumberEvent(
+                gene,
+                event,
+                canonicalImpact.minCopies,
+                canonicalImpact.maxCopies,
+                canonicalImpact.type,
+                otherImpacts
+            )
+        }
 
         is Virus -> displayVirusEvent(event, integrations)
         else -> event

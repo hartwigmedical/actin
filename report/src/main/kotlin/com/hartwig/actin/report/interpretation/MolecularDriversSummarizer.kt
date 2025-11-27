@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.report.interpretation.Functions.eventDisplay
+import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 
 class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
@@ -14,12 +14,12 @@ class MolecularDriversSummarizer private constructor(
     fun keyVariantEvents(): List<String> {
         val highDriverVariants = drivers.variants.filter(::isReportableHighDriver)
         val variantsAssociatedWithDrugResistance = drivers.variants.filter { it.isReportable && it.isAssociatedWithDrugResistance == true }
-        return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { it.eventDisplay() }.sorted()
+        return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { it.eventDisplay() }.distinct().sorted()
     }
 
     fun otherVariantEvents(): List<String> =
-        keyVariantEvents().let { keyVariants ->
-            drivers.variants.filter { it.isReportable }.map { it.eventDisplay() }.filterNot(keyVariants::contains)
+        keyVariantEvents().toSet().let { keyVariants ->
+            drivers.variants.filter { it.isReportable }.map { it.eventDisplay() }.filterNot(keyVariants::contains).distinct().sorted()
         }
 
     fun keyAmplifiedGeneEvents(): List<String> =
@@ -29,6 +29,7 @@ class MolecularDriversSummarizer private constructor(
             .filter(::isReportableHighDriver)
             .map { it.eventDisplay() }
             .distinct()
+            .sorted()
             .toList()
 
     fun keyDeletedGeneEvents(): List<String> =
@@ -38,14 +39,15 @@ class MolecularDriversSummarizer private constructor(
             .filter(::isReportableHighDriver)
             .map { it.eventDisplay() }
             .distinct()
+            .sorted()
             .toList()
 
     fun keyHomozygouslyDisruptedGenes(): List<String> =
-        drivers.homozygousDisruptions.filter(::isReportableHighDriver).map(GeneAlteration::gene).distinct()
+        drivers.homozygousDisruptions.filter(::isReportableHighDriver).map(GeneAlteration::gene).distinct().sorted()
 
-    fun keyFusionEvents(): List<String> = drivers.fusions.keyEvents()
+    fun keyFusionEvents(): List<String> = drivers.fusions.keyEvents().distinct().sorted()
 
-    fun keyVirusEvents(): List<String> = drivers.viruses.keyEvents()
+    fun keyVirusEvents(): List<String> = drivers.viruses.keyEvents().distinct().sorted()
 
     fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
         val nonDisruptionDrivers = listOf(
@@ -55,8 +57,8 @@ class MolecularDriversSummarizer private constructor(
             drivers.homozygousDisruptions,
             drivers.viruses
         ).flatten().filterNot(::isReportableHighDriver)
-        return (nonDisruptionDrivers + drivers.disruptions.toList())
-            .filter(interpretedCohortsSummarizer::driverIsActionable)
+        return (nonDisruptionDrivers + drivers.disruptions)
+            .filter(interpretedCohortsSummarizer::driverIsActionable).distinct().sortedBy { it.eventDisplay() }
     }
 
     private fun isReportableHighDriver(driver: Driver): Boolean =

@@ -525,168 +525,174 @@ object TestMolecularFactory {
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 isAssociatedWithDrugResistance = true,
             ),
-            copyNumbers = proper.copyNumbers + CopyNumber(
-                isReportable = true,
-                event = "MYC amp",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEligibleTrials(
-                    setOf(
-                        TestExternalTrialFactory.create(
-                            nctId = "NCT00000003",
-                            title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
-                            countries = setOf(
-                                CountryDetails(
-                                    Country.NETHERLANDS, mapOf(
-                                        "Nijmegen" to setOf(Hospital("Radboud UMC", false)),
-                                        "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
+            copyNumbers = proper.copyNumbers + listOf(
+                CopyNumber(
+                    isReportable = true,
+                    event = "MYC amp",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.withEligibleTrials(
+                        setOf(
+                            TestExternalTrialFactory.create(
+                                nctId = "NCT00000003",
+                                title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
+                                countries = setOf(
+                                    CountryDetails(
+                                        Country.NETHERLANDS, mapOf(
+                                            "Nijmegen" to setOf(Hospital("Radboud UMC", false)),
+                                            "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
+                                        )
                                     )
-                                )
+                                ),
+                                url = "https://clinicaltrials.gov/study/NCT00000003"
                             ),
-                            url = "https://clinicaltrials.gov/study/NCT00000003"
-                        ),
-                        TestExternalTrialFactory.create(
-                            nctId = "NCT00000-TO-BE-FILTERED-1",
-                            title = "this national external trial should be filtered out",
-                            countries = setOf(
-                                CountryDetails(
-                                    Country.NETHERLANDS, mapOf(
-                                        "Amsterdam" to setOf(Hospital("children", true))
+                            TestExternalTrialFactory.create(
+                                nctId = "NCT00000-TO-BE-FILTERED-1",
+                                title = "this national external trial should be filtered out",
+                                countries = setOf(
+                                    CountryDetails(
+                                        Country.NETHERLANDS, mapOf(
+                                            "Amsterdam" to setOf(Hospital("children", true))
+                                        )
                                     )
-                                )
-                            ),
-                            url = "https://clinicaltrials.gov/study/NCT00000011"
+                                ),
+                                url = "https://clinicaltrials.gov/study/NCT00000011"
+                            )
                         )
-                    )
-                ),
-                gene = "MYC",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 38, 38),
-                otherImpacts = emptySet(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null
-            ) + CopyNumber(
-                isReportable = true,
-                event = "EGFR amp",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withEligibleTrials(
-                    setOf(
-                        TestExternalTrialFactory.create(
-                            nctId = "NCT00000099",
-                            title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
-                            countries = setOf(
-                                CountryDetails(
-                                    Country.NETHERLANDS, mapOf(
-                                        "Nijmegen" to setOf(Hospital("Radboud UMC", false)),
-                                        "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
+                    ),
+                    gene = "MYC",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.FULL_GAIN,
+                        38,
+                        38
+                    ),
+                    otherImpacts = emptySet(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null
+                ), CopyNumber(
+                    isReportable = true,
+                    event = "EGFR amp",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.withEligibleTrials(
+                        setOf(
+                            TestExternalTrialFactory.create(
+                                nctId = "NCT00000099",
+                                title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
+                                countries = setOf(
+                                    CountryDetails(
+                                        Country.NETHERLANDS, mapOf(
+                                            "Nijmegen" to setOf(Hospital("Radboud UMC", false)),
+                                            "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
+                                        )
                                     )
-                                )
+                                ),
+                                url = "https://clinicaltrials.gov/study/NCT00000003"
                             ),
-                            url = "https://clinicaltrials.gov/study/NCT00000003"
-                        ),
-                        TestExternalTrialFactory.create(
-                            nctId = "NCT00000-TO-BE-FILTERED-2",
-                            title = "this international external trial should be filtered out",
-                            countries = setOf(
-                                CountryDetails(
-                                    Country.BELGIUM, mapOf(
-                                        "Amsterdam" to setOf(Hospital("international", false))
+                            TestExternalTrialFactory.create(
+                                nctId = "NCT00000-TO-BE-FILTERED-2",
+                                title = "this international external trial should be filtered out",
+                                countries = setOf(
+                                    CountryDetails(
+                                        Country.BELGIUM, mapOf(
+                                            "Amsterdam" to setOf(Hospital("international", false))
+                                        )
                                     )
-                                )
-                            ),
-                            url = "https://clinicaltrials.gov/study/NCT00000011"
+                                ),
+                                url = "https://clinicaltrials.gov/study/NCT00000011"
+                            )
                         )
-                    )
-                ),
-                gene = "EGFR",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                    CopyNumberType.PARTIAL_GAIN,
-                    20,
-                    20
-                ),
-                otherImpacts = emptySet(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null
-            ) + CopyNumber(
-                isReportable = false,
-                event = "RET copy nr",
-                driverLikelihood = null,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                gene = "RET",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                    CopyNumberType.NONE,
-                    6,
-                    6
-                ),
-                otherImpacts = setOf(
-                    TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    ),
+                    gene = "EGFR",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.PARTIAL_GAIN,
+                        20,
+                        20
+                    ),
+                    otherImpacts = emptySet(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null
+                ), CopyNumber(
+                    isReportable = false,
+                    event = "RET copy nr",
+                    driverLikelihood = null,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                    gene = "RET",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
                         CopyNumberType.NONE,
                         6,
                         6
-                    ), TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                        CopyNumberType.NONE,
-                        8,
-                        8
-                    )
-                ),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null
-            ) + CopyNumber(
-                isReportable = true,
-                event = "DFGFRF1 del",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                gene = "DFGFR1",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                    CopyNumberType.NONE,
-                    6,
-                    6
-                ),
-                otherImpacts = setOf(
-                    TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                    ),
+                    otherImpacts = setOf(
+                        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                            CopyNumberType.NONE,
+                            6,
+                            6
+                        ), TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                            CopyNumberType.NONE,
+                            8,
+                            8
+                        )
+                    ),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null
+                ), CopyNumber(
+                    isReportable = true,
+                    event = "DFGFRF1 del",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                    gene = "DFGFR1",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
                         CopyNumberType.NONE,
                         6,
                         6
-                    ), TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                        CopyNumberType.FULL_DEL,
-                        0,
-                        0
-                    )
-                ),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null
-            ) + CopyNumber(
-                isReportable = true,
-                event = "PIK3CA amp",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                gene = "PIK3CA",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                    CopyNumberType.PARTIAL_GAIN,
-                    null,
-                    null
-                ),
-                otherImpacts = emptySet(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null
-            ) + CopyNumber(
-                isReportable = false,
-                event = "Unreported gene copy number",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                gene = "Unreported gene",
-                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
-                    CopyNumberType.PARTIAL_GAIN,
-                    20,
-                    20
-                ),
-                otherImpacts = emptySet(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null
+                    ),
+                    otherImpacts = setOf(
+                        TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                            CopyNumberType.NONE,
+                            6,
+                            6
+                        ), TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                            CopyNumberType.FULL_DEL,
+                            0,
+                            0
+                        )
+                    ),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null
+                ), CopyNumber(
+                    isReportable = true,
+                    event = "PIK3CA amp",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                    gene = "PIK3CA",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.PARTIAL_GAIN,
+                        null,
+                        null
+                    ),
+                    otherImpacts = emptySet(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null
+                ), CopyNumber(
+                    isReportable = false,
+                    event = "Unreported gene copy number",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                    gene = "Unreported gene",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.PARTIAL_GAIN,
+                        20,
+                        20
+                    ),
+                    otherImpacts = emptySet(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null
+                )
             ), homozygousDisruptions = proper.homozygousDisruptions + HomozygousDisruption(
                 isReportable = true,
                 event = "PTEN hom disruption",
@@ -725,24 +731,26 @@ object TestMolecularFactory {
                 geneTranscriptEnd = "ENST00000389048",
                 fusedExonUp = 6,
                 fusedExonDown = 20,
-            ), viruses = proper.viruses + Virus(
-                name = "Human papillomavirus type 16",
-                type = VirusType.HPV,
-                integrations = null,
-                isReliable = true,
-                isReportable = true,
-                event = "HPV positive",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
-            ) + Virus(
-                name = "Epstein-Barr virus",
-                type = VirusType.EBV,
-                integrations = 4,
-                isReliable = true,
-                isReportable = true,
-                event = "EBV positive",
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+            ), viruses = proper.viruses + listOf(
+                Virus(
+                    name = "Human papillomavirus type 16",
+                    type = VirusType.HPV,
+                    integrations = null,
+                    isReliable = true,
+                    isReportable = true,
+                    event = "HPV positive",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                ), Virus(
+                    name = "Epstein-Barr virus",
+                    type = VirusType.EBV,
+                    integrations = 4,
+                    isReliable = true,
+                    isReportable = true,
+                    event = "EBV positive",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                )
             )
         )
     }

@@ -19,7 +19,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
-import com.hartwig.actin.report.interpretation.Functions.eventDisplay
+import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.collections.any
 import kotlin.math.min
@@ -120,13 +120,10 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         return driverTypes.map { driverEntryForGeneAlteration(it, copyNumber.eventDisplay(), copyNumber) }
     }
 
-    private fun getDriverType(type: CopyNumberType, effects: Set<TranscriptCopyNumberImpact>?): String {
-        val hasGainOtherCopyNumberType = effects != null && effects.any { it.type.isGain }
-        val hasDelOtherCopyNumberType = effects != null && effects.any { it.type.isDeletion }
-
+    private fun getDriverType(type: CopyNumberType, impacts: Set<TranscriptCopyNumberImpact>?): String {
         return when {
-            type.isGain || hasGainOtherCopyNumberType -> "Amplification"
-            type.isDeletion || hasDelOtherCopyNumberType -> "Deletion"
+            type.isGain || impacts?.any { it.type.isGain } == true -> "Amplification"
+            type.isDeletion || impacts?.any { it.type.isDeletion } == true -> "Deletion"
             else -> "Copy Number"
         }
     }

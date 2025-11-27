@@ -21,7 +21,7 @@ import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.report.interpretation.Functions.eventDisplay
+import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

@@ -3,11 +3,11 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.report.interpretation.Functions.eventDisplay
+import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-class DisplayFunctionsTest {
+class DriverDisplayFunctionsTest {
 
     @Test
     fun `Should format variant event correctly`() {
