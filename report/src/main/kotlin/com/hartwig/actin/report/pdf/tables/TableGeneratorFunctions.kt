@@ -26,7 +26,7 @@ object TableGeneratorFunctions {
             val contentTable = generator.contents().setWidth(innerTableWidth).setFixedLayout()
 
             val updatedContentTable = if (contentTable.numberOfRows == 0) {
-                Tables.createSingleColWithWidth(contentTable.width.value).addCell(Cells.createSpanningNoneEntry(contentTable))
+                Tables.createNoneTable(contentTable.width.value)
             } else contentTable
 
             val tableWithOptionalFootNote = generator.footnote()
@@ -45,7 +45,7 @@ object TableGeneratorFunctions {
                 )
             )
             if (tableWithOptionalFootNote.numberOfRows < 3 || generator.forceKeepTogether()) {
-                generatedTable.setKeepTogether(true)
+                generatedTable.isKeepTogether = true
             }
             Cells.create(generatedTable)
         }.forEach(table::addCell)

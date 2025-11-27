@@ -25,6 +25,11 @@ object Tables {
         return createSingleCol().setWidth(width)
     }
 
+    fun createNoneTable(width: Float): Table {
+        val table = createSingleColWithWidth(width)
+        return table.addCell(Cells.createSpanningNoneEntry(table))
+    }
+
     fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean, skipWrappingFooter: Boolean = false): Table {
         if (contentTable.numberOfRows < 3 || forceKeepTogether) {
             contentTable.setKeepTogether(true)
