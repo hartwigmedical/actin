@@ -25,10 +25,26 @@ object TableGeneratorFunctions {
             }
             val contentTable = generator.contents().setWidth(innerTableWidth).setFixedLayout()
 
+            val updatedContentTable = if (contentTable.numberOfRows == 0) {
+                Tables.createSingleColWithWidth(contentTable.width.value).addCell(Cells.createSpanningNoneEntry(contentTable))
+            } else contentTable
+
+            val tableWithOptionalFootNote = generator.footnote()
+                ?.let { updatedContentTable.addCell(Cells.createSpanningSubNote(it, updatedContentTable)) }
+                ?: updatedContentTable
+
             // KD: Note, in order to more accurately test the layout of the tables, it helps to set the border of the both the generated
-            // table and the main table (e.g. remove Cells.create from below line and the map output
-            generatedTable.addCell(Cells.create(Tables.makeWrapping(contentTable, generator.forceKeepTogether(), skipWrappingFooter)))
-            if (contentTable.numberOfRows < 3 || generator.forceKeepTogether()) {
+            // table and the main table (e.g. remove Cells.create from below line and the map output)
+            generatedTable.addCell(
+                Cells.create(
+                    Tables.makeWrapping(
+                        tableWithOptionalFootNote,
+                        generator.forceKeepTogether(),
+                        skipWrappingFooter
+                    )
+                )
+            )
+            if (tableWithOptionalFootNote.numberOfRows < 3 || generator.forceKeepTogether()) {
                 generatedTable.setKeepTogether(true)
             }
             Cells.create(generatedTable)

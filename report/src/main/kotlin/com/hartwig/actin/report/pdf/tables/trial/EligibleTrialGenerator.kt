@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
@@ -60,13 +59,11 @@ class EligibleTrialGenerator(
             includeCohortConfig = false,
             includeSites = true
         )
-        if (footNote != null) {
-            val note = Cells.createSpanningSubNote(footNote, table).apply {
-                if (useSmallerSize) setFontSize(Styles.SMALL_FONT_SIZE)
-            }
-            table.addCell(note)
-        }
         return table
+    }
+
+    override fun footnote(): String? {
+        return footNote
     }
 
     override fun cohortSize(): Int {
