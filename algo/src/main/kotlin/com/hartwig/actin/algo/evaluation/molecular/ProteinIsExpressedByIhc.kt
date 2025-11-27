@@ -19,7 +19,7 @@ class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction 
                 )
             }
 
-            ihcTestEvaluation.hasCertainPositiveResultsForItem() -> {
+            ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() -> {
                 EvaluationFactory.pass(
                     "$protein has expression by IHC",
                     inclusionEvents = setOf("IHC $protein expression")

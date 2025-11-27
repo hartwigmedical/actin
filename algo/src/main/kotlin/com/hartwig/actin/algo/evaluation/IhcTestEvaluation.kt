@@ -7,36 +7,41 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 
 class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
 
-    fun hasCertainPositiveResultsForItem(): Boolean =
+    fun hasCertainExactPositiveResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && filteredTests.all {
-            it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS && !it.impliesPotentialIndeterminateStatus
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.POSITIVE_TERMS && !it.impliesPotentialIndeterminateStatus
+        }
+
+    fun hasCertainBroadPositiveResultsForItem(): Boolean =
+        filteredTests.isNotEmpty() && filteredTests.all {
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS && !it.impliesPotentialIndeterminateStatus
         }
 
     fun hasPossiblePositiveResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && !filteredTests.all { test ->
-            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS || testValueZero(test)) &&
+            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS || testValueZero(test)) &&
                     !test.impliesPotentialIndeterminateStatus
         }
 
     fun hasCertainNegativeResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && filteredTests.all {
-            it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NEGATIVE_TERMS && !it.impliesPotentialIndeterminateStatus
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS && !it.impliesPotentialIndeterminateStatus
         }
 
     fun hasPossibleNegativeResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && !filteredTests.all { test ->
-            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_POSITIVE_TERMS || testValueAboveZero(test)) &&
+            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS || testValueAboveZero(test)) &&
                     !test.impliesPotentialIndeterminateStatus
         }
 
     fun hasCertainLossResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && filteredTests.all {
-            it.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_LOSS_TERMS && !it.impliesPotentialIndeterminateStatus
+            it.scoreText?.lowercase() in IhcTestEvaluationConstants.LOSS_TERMS && !it.impliesPotentialIndeterminateStatus
         }
 
     fun hasPossibleLossResultsForItem(): Boolean =
         filteredTests.isNotEmpty() && !filteredTests.all { test ->
-            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.EXACT_NO_LOSS_TERMS) && !test.impliesPotentialIndeterminateStatus
+            (test.scoreText?.lowercase() in IhcTestEvaluationConstants.NO_LOSS_TERMS) && !test.impliesPotentialIndeterminateStatus
         }
 
     fun hasCertainWildtypeResultsForItem(): Boolean =

@@ -110,7 +110,7 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
                     gene
                 ), ihcTests
             ) else null
-        val hasPositiveIhcEvaluation = ihcTestEvaluation?.hasCertainPositiveResultsForItem() == true
+        val hasPositiveIhcEvaluation = ihcTestEvaluation?.hasCertainBroadPositiveResultsForItem() == true
 
         return when {
             eligibleAmplification != null -> {

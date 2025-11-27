@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
@@ -11,11 +10,16 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 
-class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : MolecularAnnotator<IhcExtraction> {
+class IhcAnnotator() : MolecularAnnotator<IhcExtraction> {
 
     override fun annotate(input: IhcExtraction): MolecularTest {
-        val geneTargetMap = (input.fusionPositiveGenes + input.fusionNegativeGenes).associateWith { listOf(MolecularTestTarget.FUSION) } +
-                input.mutationAndDeletionTestedGenes.associateWith { listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION) }
+        val geneTargetMap = (input.fusionTestedGenes).associateWith { listOf(MolecularTestTarget.FUSION) } +
+                input.mutationAndDeletionTestedGenes.associateWith {
+                    listOf(
+                        MolecularTestTarget.MUTATION,
+                        MolecularTestTarget.DELETION
+                    )
+                }
 
         return MolecularTest(
             date = input.date,
@@ -34,10 +38,7 @@ class IhcAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : Mol
                 copyNumbers = emptyList(),
                 homozygousDisruptions = emptyList(),
                 disruptions = emptyList(),
-                fusions = panelFusionAnnotator.annotate(
-                    input.fusionPositiveGenes.map { SequencedFusion(geneUp = it) }.toSet(),
-                    emptySet()
-                ),
+                fusions = emptyList(),
                 viruses = emptyList()
             ),
             characteristics = emptyCharacteristics(),

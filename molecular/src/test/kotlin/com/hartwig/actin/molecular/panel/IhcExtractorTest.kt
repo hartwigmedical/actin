@@ -1,58 +1,41 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
+import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private const val POSITIVE_FUSION_GENE = "ALK"
-private const val NEGATIVE_FUSION_GENE = "ROS1"
-private const val DELETION_OR_MUTATION_TESTED_GENE = "MTAP"
+private val FUSION_TESTED_GENE = GeneConstants.IHC_FUSION_EVALUABLE_GENES.first()
+private val OTHER_FUSION_TESTED_GENE = GeneConstants.IHC_FUSION_EVALUABLE_GENES.last()
+private val DELETION_OR_MUTATION_TESTED_GENE = GeneConstants.IHC_LOSS_EVALUABLE_GENES.first()
 private const val OTHER_GENE = "GENE"
 
 class IhcExtractorTest {
 
     @Test
-    fun `Should extract fusion positives from IHC`() {
-        val ihcTests = listOf(positiveIhc(POSITIVE_FUSION_GENE))
+    fun `Should extract specific fusion tested genes from IHC`() {
+        val ihcTests = listOf(positiveIhc(FUSION_TESTED_GENE))
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEqualTo(
             listOf(
                 IhcExtraction(
                     null,
-                    setOf(POSITIVE_FUSION_GENE),
+                    setOf(FUSION_TESTED_GENE),
                     emptySet(),
-                    emptySet()
                 )
             )
         )
     }
 
     @Test
-    fun `Should extract fusion negatives from IHC`() {
-        val ihcTests = listOf(negativeIhc(NEGATIVE_FUSION_GENE, false))
-        val result = IhcExtractor().extract(ihcTests)
-        assertThat(result).isEqualTo(
-            listOf(
-                IhcExtraction(
-                    null,
-                    emptySet(),
-                    setOf(NEGATIVE_FUSION_GENE),
-                    emptySet()
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should extract mutation or deletion tested genes from IHC`() {
+    fun `Should extract specific mutation or deletion tested genes from IHC`() {
         val ihcTests = listOf(anyIhc(DELETION_OR_MUTATION_TESTED_GENE, false))
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEqualTo(
             listOf(
                 IhcExtraction(
                     null,
-                    emptySet(),
                     emptySet(),
                     setOf(DELETION_OR_MUTATION_TESTED_GENE)
                 )
@@ -61,8 +44,8 @@ class IhcExtractorTest {
     }
 
     @Test
-    fun `Should not extract fusion negatives from IHC if indeterminate result`() {
-        val ihcTests = listOf(negativeIhc(NEGATIVE_FUSION_GENE, true))
+    fun `Should not extract tested genes from IHC if indeterminate result`() {
+        val ihcTests = listOf(negativeIhc(FUSION_TESTED_GENE, true))
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEmpty()
     }
@@ -70,7 +53,6 @@ class IhcExtractorTest {
     @Test
     fun `Should ignore other genes`() {
         val ihcTests = listOf(positiveIhc(OTHER_GENE), negativeIhc(OTHER_GENE, false))
-
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEmpty()
     }
@@ -80,17 +62,18 @@ class IhcExtractorTest {
         val date1 = LocalDate.of(2023, 1, 1)
         val date2 = LocalDate.of(2023, 2, 1)
         val ihcTests = listOf(
-            positiveIhc(POSITIVE_FUSION_GENE, date1),
-            negativeIhc(NEGATIVE_FUSION_GENE, false, date1),
-            positiveIhc(POSITIVE_FUSION_GENE, date2),
+            positiveIhc(FUSION_TESTED_GENE, date1),
+            negativeIhc(OTHER_FUSION_TESTED_GENE, false, date1),
+            positiveIhc(FUSION_TESTED_GENE, date2),
+            positiveIhc(DELETION_OR_MUTATION_TESTED_GENE, date2),
             positiveIhc(OTHER_GENE, date2)
         )
 
         val result = IhcExtractor().extract(ihcTests)
         assertThat(result).isEqualTo(
             listOf(
-                IhcExtraction(date1, setOf(POSITIVE_FUSION_GENE), setOf(NEGATIVE_FUSION_GENE), emptySet()),
-                IhcExtraction(date2, setOf(POSITIVE_FUSION_GENE), emptySet(), emptySet())
+                IhcExtraction(date1, setOf(FUSION_TESTED_GENE, OTHER_FUSION_TESTED_GENE), emptySet()),
+                IhcExtraction(date2, setOf(FUSION_TESTED_GENE), setOf(DELETION_OR_MUTATION_TESTED_GENE))
             )
         )
     }

@@ -287,11 +287,16 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should warn with appropriate message when matching IHC event`() {
-        val result = GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR).evaluate(
-            MolecularTestFactory.withIhcTests(matchingIhcResult)
-        )
+        val functionIhcEvaluable = GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR)
+        val result = functionIhcEvaluable.evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
+        val resultWithOnlyIhc = functionIhcEvaluable.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(matchingIhcResult)))
+
         assertThat(result.result).isEqualTo(EvaluationResult.WARN)
-        assertThat(result.warnMessagesStrings()).containsExactly("ERBB2 may be amplified with >= 5 copies - based on positive HER2 IHC result")
+        assertThat(resultWithOnlyIhc.result).isEqualTo(EvaluationResult.WARN)
+
+        val message = "ERBB2 may be amplified with >= 5 copies - based on positive HER2 IHC result"
+        assertThat(result.warnMessagesStrings()).containsExactly(message)
+        assertThat(resultWithOnlyIhc.warnMessagesStrings()).containsExactly(message)
     }
 
     @Test
