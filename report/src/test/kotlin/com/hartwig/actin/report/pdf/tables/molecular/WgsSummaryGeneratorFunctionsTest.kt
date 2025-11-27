@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.SummaryType
+import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -58,7 +59,7 @@ class WgsSummaryGeneratorFunctionsTest {
         )
         val cell = WgsSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers, 2.5)
 
-        assertThat(Tables.extractTextFromCell(cell))
+        assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo(
                 "event 1 (4 copies - with tumor ploidy 2.5), event 2 (annotated as not a driver), event 3 (low driver likelihood), " +
                         "event 4 (medium driver likelihood), event 5"
@@ -70,14 +71,14 @@ class WgsSummaryGeneratorFunctionsTest {
         val drivers = emptyList<Driver>()
         val cell = WgsSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers)
 
-        assertThat(Tables.extractTextFromCell(cell)).isEqualTo("None")
+        assertThat(CellTestUtil.extractTextFromCell(cell)).isEqualTo("None")
     }
 
     @Test
     fun `Should add '(low purity)' to predicted tumor origin when conclusive with sufficient quality and insufficient purity`() {
         val cell = WgsSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord.copy(hasSufficientPurity = false))
 
-        assertThat(Tables.extractTextFromCell(cell)).isEqualTo("Melanoma (100%) (low purity)")
+        assertThat(CellTestUtil.extractTextFromCell(cell)).isEqualTo("Melanoma (100%) (low purity)")
     }
 
     @Test
@@ -86,7 +87,7 @@ class WgsSummaryGeneratorFunctionsTest {
             molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics).copy(hasSufficientPurity = false)
         )
 
-        assertThat(Tables.extractTextFromCell(cell)).isEqualTo("Inconclusive (Melanoma 60%, Lung 20%) (low purity)")
+        assertThat(CellTestUtil.extractTextFromCell(cell)).isEqualTo("Inconclusive (Melanoma 60%, Lung 20%) (low purity)")
     }
 
     @Test
@@ -117,7 +118,7 @@ class WgsSummaryGeneratorFunctionsTest {
             )
         )
         assertThat(
-            Tables.extractTextFromCell(
+            CellTestUtil.extractTextFromCell(
                 table.getCell(
                     0,
                     0

@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
-import com.hartwig.actin.report.pdf.util.Tables.extractTextFromCell
+import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
