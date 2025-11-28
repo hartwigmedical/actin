@@ -128,7 +128,7 @@ class HasToxicityWithGradeTest {
     fun `Should return recoverable pass when questionnaire is not source but configured not to warn`() {
         val function = function(warnIfToxicitiesNotFromQuestionnaire = false)
         val toxicities = listOf(
-            toxicity(ToxicitySource.EHR, 2 + 1, "toxicity 1")
+            toxicity(ToxicitySource.EHR, DEFAULT_QUESTIONNAIRE_GRADE + 1, "toxicity 1")
         )
         val evaluation = function.evaluate(ComorbidityTestFactory.withToxicities(toxicities))
         assertEvaluation(EvaluationResult.PASS, evaluation)
