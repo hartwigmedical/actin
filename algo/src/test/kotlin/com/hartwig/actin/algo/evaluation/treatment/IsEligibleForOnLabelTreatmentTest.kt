@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
@@ -22,6 +23,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
@@ -78,66 +80,6 @@ class IsEligibleForOnLabelTreatmentTest {
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
-    }
-
-    @Test
-    fun `Should pass for NSCLC patient eligible for on label treatment pembrolizumab based on PD-L1 TPS status and no driver events`() {
-        standardOfCareCannotBeEvaluatedForPatient()
-        val record = withTreatmentHistory(emptyList()).copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)), ihcTests = listOf(
-                IhcTest(
-                    item = "PD-L1",
-                    measure = "TPS",
-                    scoreText = "Positive",
-                    scoreValue = 55.0,
-                    scoreValueUnit = "%"
-                )
-            )
-        )
-        assertEvaluation(EvaluationResult.PASS, functionEvaluatingPembrolizumab.evaluate(record))
-    }
-
-    @Test
-    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on PD-L1 TPS status below 50`() {
-        standardOfCareCannotBeEvaluatedForPatient()
-        val record = withTreatmentHistory(emptyList()).copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)), ihcTests = listOf(
-                IhcTest(
-                    item = "PD-L1",
-                    measure = "TPS",
-                    scoreValue = 30.0,
-                    scoreValueUnit = "%"
-                )
-            )
-        )
-        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
-    }
-
-    @Test
-    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on EGFR driver event`() {
-        standardOfCareCannotBeEvaluatedForPatient()
-        val record = MolecularTestFactory.withVariant(
-            TestVariantFactory.createMinimal().copy(
-                gene = "EGFR",
-                isReportable = true,
-                type = VariantType.DELETE,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 19),
-                clonalLikelihood = 1.0,
-                driverLikelihood = DriverLikelihood.HIGH,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                isCancerAssociatedVariant = true
-            )
-        ).copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)), ihcTests = listOf(
-                IhcTest(
-                    item = "PD-L1",
-                    measure = "TPS",
-                    scoreValue = 55.0,
-                    scoreValueUnit = "%"
-                )
-            )
-        )
-        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
     }
 
     @Test
@@ -211,6 +153,50 @@ class IsEligibleForOnLabelTreatmentTest {
             )
         )
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
+    }
+
+    @Test
+    fun `Should pass for treatment naive NSCLC patient eligible for on label treatment pembrolizumab with PD-L1 TPS above 50 and no driver events in EGFR and ALK`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreValue = 55.0, scoreValueUnit = "%")),
+            oncologicalHistory = emptyList()
+        )
+        assertEvaluation(EvaluationResult.PASS, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on PD-L1 TPS status below 50`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = TumorTestFactory.withIhcTestsAndDoids(
+            ihcTests = listOf(
+                IhcTest(
+                    item = "PD-L1",
+                    measure = "TPS",
+                    scoreValue = 30.0,
+                    scoreValueUnit = "%"
+                )
+            ), doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+        )
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on ALK fusion`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = MolecularTestFactory.withFusion(
+            TestFusionFactory.createMinimal().copy(
+                isReportable = true,
+                geneStart = "Partner gene",
+                geneEnd = "ALK",
+                driverLikelihood = DriverLikelihood.HIGH,
+                fusedExonUp = 3,
+                fusedExonDown = 5,
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
     }
 
     @Test
