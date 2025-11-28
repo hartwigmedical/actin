@@ -54,7 +54,7 @@ class HasToxicityWithGradeTest {
     @Test
     fun `Should return undetermined for questionnaire toxicity without grade with higher minimum grade`() {
         val toxicities = listOf(toxicity(source = ToxicitySource.QUESTIONNAIRE))
-        val function = function(minGrade = 2 + 1)
+        val function = function(minGrade = DEFAULT_QUESTIONNAIRE_GRADE + 1)
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities))
         )
@@ -63,9 +63,9 @@ class HasToxicityWithGradeTest {
     @Test
     fun `Should pass with questionnaire toxicity with higher grade`() {
         val toxicities = listOf(
-            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2 + 2)
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = DEFAULT_QUESTIONNAIRE_GRADE + 2)
         )
-        val function = function(minGrade = 2 + 1)
+        val function = function(minGrade = DEFAULT_QUESTIONNAIRE_GRADE + 1)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
     }
 
@@ -117,7 +117,7 @@ class HasToxicityWithGradeTest {
     fun `Should warn when questionnaire is not source`() {
         val toxicities = listOf(
             toxicity(
-                source = ToxicitySource.EHR, grade = 2 + 1, name = "toxicity 1",
+                source = ToxicitySource.EHR, grade = DEFAULT_QUESTIONNAIRE_GRADE + 1, name = "toxicity 1",
             )
         )
         val evaluation = function().evaluate(ComorbidityTestFactory.withToxicities(toxicities))
@@ -140,7 +140,7 @@ class HasToxicityWithGradeTest {
         val function = function()
         val toxicities = listOf(
             toxicity(
-                ToxicitySource.QUESTIONNAIRE, 2, "toxicity 1", endDate = LocalDate.of(2022, 1, 2)
+                ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", endDate = LocalDate.of(2022, 1, 2)
             )
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
@@ -148,7 +148,7 @@ class HasToxicityWithGradeTest {
 
     private fun function(
         icd: IcdModel = icdModel,
-        minGrade: Int = 2,
+        minGrade: Int = DEFAULT_QUESTIONNAIRE_GRADE,
         targetIcdTitles: List<String>? = null,
         ignoreFilters: List<String> = emptyList(),
         warnIfToxicitiesNotFromQuestionnaire: Boolean = true
