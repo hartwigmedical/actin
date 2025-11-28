@@ -10,8 +10,6 @@ import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-const val DEFAULT_QUESTIONNAIRE_GRADE = 2
-
 class HasToxicityWithGrade(
     private val icdModel: IcdModel,
     private val minGrade: Int,
@@ -29,13 +27,13 @@ class HasToxicityWithGrade(
 
         val (matchingToxicities, otherToxicities) =
             relevantToxicities.partition { toxicity ->
-                val grade = toxicity.grade ?: DEFAULT_QUESTIONNAIRE_GRADE.takeIf { toxicity.source == ToxicitySource.QUESTIONNAIRE }
+                val grade = toxicity.grade ?: 2.takeIf { toxicity.source == ToxicitySource.QUESTIONNAIRE }
                 val gradeMatch = grade?.let { it >= minGrade } ?: false
 
                 gradeMatch && (icdMatches == null || icdMatches.contains(toxicity))
             }
 
-        val unresolvableToxicities = if (minGrade <= DEFAULT_QUESTIONNAIRE_GRADE) emptyList() else {
+        val unresolvableToxicities = if (minGrade <= 2) emptyList() else {
             otherToxicities.filter {
                 with(it) { grade == null && source == ToxicitySource.QUESTIONNAIRE && icdMatches?.contains(this) != false }
             }
@@ -56,7 +54,7 @@ class HasToxicityWithGrade(
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                return EvaluationFactory.undetermined("Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
+                return EvaluationFactory.undetermined("Has toxicities grade >= 2$toxicityString but unknown if grade >= $minGrade")
             }
 
             else -> return EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")

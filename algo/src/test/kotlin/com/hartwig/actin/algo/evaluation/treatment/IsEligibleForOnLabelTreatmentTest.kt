@@ -23,7 +23,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
@@ -63,6 +62,7 @@ class IsEligibleForOnLabelTreatmentTest {
     )
 
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, "left")
+    private val nsclcTumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
 
     @Test
     fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion`() {
@@ -78,7 +78,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 isCancerAssociatedVariant = true
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -93,7 +93,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 20),
                 driverLikelihood = DriverLikelihood.HIGH
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -107,7 +107,7 @@ class IsEligibleForOnLabelTreatmentTest {
                     stopReason = StopReason.PROGRESSIVE_DISEASE
                 )
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -122,7 +122,7 @@ class IsEligibleForOnLabelTreatmentTest {
                     stopMonth = MIN_DATE.monthValue + 3
                 )
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -139,7 +139,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 driverLikelihood = DriverLikelihood.HIGH
             )
         ).copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            tumor = nsclcTumor,
             oncologicalHistory = listOf(
                 treatmentHistoryEntry(
                     treatments = setOf(
@@ -159,7 +159,7 @@ class IsEligibleForOnLabelTreatmentTest {
     fun `Should pass for treatment naive NSCLC patient eligible for on label treatment pembrolizumab with PD-L1 TPS above 50 and no driver events in EGFR and ALK`() {
         standardOfCareCannotBeEvaluatedForPatient()
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            tumor = nsclcTumor,
             ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreValue = 55.0, scoreValueUnit = "%")),
             oncologicalHistory = emptyList()
         )
@@ -183,19 +183,17 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
-    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on ALK fusion`() {
+    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on EGFR driver`() {
         standardOfCareCannotBeEvaluatedForPatient()
-        val record = MolecularTestFactory.withFusion(
-            TestFusionFactory.createMinimal().copy(
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = "EGFR",
+                event = "EGFR L858R",
+                isCancerAssociatedVariant = true,
                 isReportable = true,
-                geneStart = "Partner gene",
-                geneEnd = "ALK",
-                driverLikelihood = DriverLikelihood.HIGH,
-                fusedExonUp = 3,
-                fusedExonDown = 5,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+                driverLikelihood = DriverLikelihood.HIGH
             )
-        )
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
     }
 
