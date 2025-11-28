@@ -9,6 +9,8 @@ import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantInExonRangeOfType
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantWithProteinImpact
+import com.hartwig.actin.algo.evaluation.molecular.HasMolecularDriverEventInNsclc
+import com.hartwig.actin.algo.evaluation.molecular.HasSufficientPDL1ByIhc
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.algo.evaluation.tumor.TumorEvaluationFunctions.hasCancerOfUnknownPrimary
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
@@ -113,6 +115,13 @@ class IsEligibleForOnLabelTreatment(
                         )
                     )
                 )
+            )
+        ),
+        "Pembrolizumab" to And(
+            listOf(
+                HasHadLimitedSystemicTreatments(0),
+                HasSufficientPDL1ByIhc("TPS", 50.0, doidModel),
+                Not(HasMolecularDriverEventInNsclc(setOf("EGFR", "ALK"), emptySet(), maxTestAge, false, false))
             )
         )
     )

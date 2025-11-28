@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -34,13 +35,14 @@ import java.time.LocalDate
 
 private val MIN_DATE = LocalDate.of(2020, 6, 6)
 private val OSIMERTINIB = treatment("OSIMERTINIB", true)
+private val PEMBROLIZUMAB = treatment("PEMBROLIZUMAB", true)
 
 class IsEligibleForOnLabelTreatmentTest {
 
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val standardOfCareEvaluatorFactory =
         mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
-    private val targetTreatment = treatment("PEMBROLIZUMAB", true)
+    private val targetTreatment = treatment("TREATMENT", true)
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function =
         IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE)
@@ -51,6 +53,13 @@ class IsEligibleForOnLabelTreatmentTest {
             doidModel,
             MIN_DATE
         )
+    private val functionEvaluatingPembrolizumab = IsEligibleForOnLabelTreatment(
+        PEMBROLIZUMAB,
+        standardOfCareEvaluatorFactory,
+        doidModel,
+        MIN_DATE
+    )
+
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
@@ -69,6 +78,66 @@ class IsEligibleForOnLabelTreatmentTest {
             )
         ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
+    }
+
+    @Test
+    fun `Should pass for NSCLC patient eligible for on label treatment pembrolizumab based on PD-L1 TPS status and no driver events`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = withTreatmentHistory(emptyList()).copy(
+            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)), ihcTests = listOf(
+                IhcTest(
+                    item = "PD-L1",
+                    measure = "TPS",
+                    scoreText = "Positive",
+                    scoreValue = 55.0,
+                    scoreValueUnit = "%"
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on PD-L1 TPS status below 50`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = withTreatmentHistory(emptyList()).copy(
+            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)), ihcTests = listOf(
+                IhcTest(
+                    item = "PD-L1",
+                    measure = "TPS",
+                    scoreValue = 30.0,
+                    scoreValueUnit = "%"
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on EGFR driver event`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = "EGFR",
+                isReportable = true,
+                type = VariantType.DELETE,
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 19),
+                clonalLikelihood = 1.0,
+                driverLikelihood = DriverLikelihood.HIGH,
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                isCancerAssociatedVariant = true
+            )
+        ).copy(
+            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)), ihcTests = listOf(
+                IhcTest(
+                    item = "PD-L1",
+                    measure = "TPS",
+                    scoreValue = 55.0,
+                    scoreValueUnit = "%"
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
     }
 
     @Test
@@ -156,7 +225,7 @@ class IsEligibleForOnLabelTreatmentTest {
         every {
             standardOfCareEvaluator.standardOfCareEvaluatedTreatments(colorectalCancerPatient)
         } returns StandardOfCareEvaluation(expectedSocTreatments)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(colorectalCancerPatient))
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(colorectalCancerPatient))
     }
 
     @Test
