@@ -94,7 +94,7 @@ class HasMolecularDriverEventInNsclc(
 
         return when {
             undeterminedInput.any { it in setOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE) } -> {
-                setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (data missing)"))
+                setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (molecular data missing)"))
             }
 
             undeterminedGenes.isNotEmpty() -> {
