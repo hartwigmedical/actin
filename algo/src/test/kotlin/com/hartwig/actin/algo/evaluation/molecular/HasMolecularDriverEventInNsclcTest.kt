@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -268,6 +269,43 @@ class HasMolecularDriverEventInNsclcTest {
         evaluateMessages(
             functionIncludingAtLeastGenes.evaluate(record).passMessagesStrings(),
             setOf("NSCLC driver event(s) detected: EGFR L858R")
+        )
+    }
+
+    @Test
+    fun `Should return undetermined with specific message when no molecular data is present`() {
+        val record = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+        evaluateIncludeFunctions(EvaluationResult.UNDETERMINED, record)
+        evaluateExcludeFunction(EvaluationResult.UNDETERMINED, record)
+
+        listOf(
+            functionIncludingAllGenes,
+            functionIncludingSpecificGenes,
+            functionIncludingAtLeastGenes,
+            functionExcludingSpecificGenes
+        ).forEach { function ->
+            evaluateMessages(
+                function.evaluate(record).undeterminedMessagesStrings(),
+                setOf("Undetermined if NSCLC driver event(s) present (data missing)")
+            )
+        }
+    }
+
+    @Test
+    fun `Should return undetermined with target coverage message when specific molecular results are missing`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularTests = listOf(
+                TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL, date = LocalDate.of(2026, 12, 1))
+            )
+        )
+        val evaluation = functionIncludingSpecificGenes.evaluate(patient)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        evaluateMessages(
+            evaluation.undeterminedMessagesStrings(),
+            setOf(
+                "Activating mutation in gene EGFR undetermined (not tested for mutations)",
+                "Mutation with protein impact(s) V600E in gene BRAF undetermined (not tested for mutations)"
+            )
         )
     }
 

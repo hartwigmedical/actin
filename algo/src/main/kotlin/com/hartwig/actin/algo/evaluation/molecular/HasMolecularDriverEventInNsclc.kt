@@ -88,9 +88,9 @@ class HasMolecularDriverEventInNsclc(
     }
 
     private fun writeUndeterminedMessage(undeterminedInput: Set<String>): Set<StaticMessage> {
-        return if (undeterminedInput.isEmpty()) {
-            emptySet()
-        } else setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (data missing)"))
+        return if (listOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE).intersect(undeterminedInput).isNotEmpty()) {
+            setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (data missing)"))
+        } else undeterminedInput.map { StaticMessage(it) }.toSet()
     }
 
     private fun writeFailMessage(failInput: Set<String>): Set<StaticMessage> {
