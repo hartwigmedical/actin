@@ -295,7 +295,7 @@ class HasMolecularDriverEventInNsclcTest {
     fun `Should return undetermined with target coverage message when specific molecular results are missing`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
             molecularTests = listOf(
-                TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL, date = LocalDate.of(2026, 12, 1))
+                TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL, date = LocalDate.of(2025, 12, 1))
             )
         )
         val evaluation = functionIncludingSpecificGenes.evaluate(patient)
