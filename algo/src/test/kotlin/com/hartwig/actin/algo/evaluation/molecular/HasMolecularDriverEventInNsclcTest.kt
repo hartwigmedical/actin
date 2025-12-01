@@ -286,7 +286,7 @@ class HasMolecularDriverEventInNsclcTest {
         ).forEach { function ->
             evaluateMessages(
                 function.evaluate(record).undeterminedMessagesStrings(),
-                setOf("Undetermined if NSCLC driver event(s) present (data missing)")
+                setOf("Undetermined if NSCLC driver event(s) present (molecular data missing)")
             )
         }
     }
