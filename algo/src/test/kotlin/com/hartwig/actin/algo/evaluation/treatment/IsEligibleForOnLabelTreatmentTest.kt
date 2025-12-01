@@ -167,23 +167,7 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
-    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on PD-L1 TPS status below 50`() {
-        standardOfCareCannotBeEvaluatedForPatient()
-        val record = TumorTestFactory.withIhcTestsAndDoids(
-            ihcTests = listOf(
-                IhcTest(
-                    item = "PD-L1",
-                    measure = "TPS",
-                    scoreValue = 30.0,
-                    scoreValueUnit = "%"
-                )
-            ), doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-        )
-        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
-    }
-
-    @Test
-    fun `Should fail for NSCLC patient not eligible for on label treatment pembrolizumab based on EGFR driver`() {
+    fun `Should fail for treatment naive NSCLC patient not eligible for on label treatment pembrolizumab based on EGFR driver`() {
         standardOfCareCannotBeEvaluatedForPatient()
         val record = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
@@ -193,8 +177,19 @@ class IsEligibleForOnLabelTreatmentTest {
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH
             )
-        ).copy(tumor = nsclcTumor)
+        ).copy(tumor = nsclcTumor, oncologicalHistory = emptyList())
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should return undetermined for treatment naive NSCLC patient with uncertain eligibility for on label treatment pembrolizumab based on PD-L1 TPS status below 50 and no EGFR or ALK driver`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = nsclcTumor,
+            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreValue = 30.0, scoreValueUnit = "%")),
+            oncologicalHistory = emptyList()
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))
     }
 
     @Test

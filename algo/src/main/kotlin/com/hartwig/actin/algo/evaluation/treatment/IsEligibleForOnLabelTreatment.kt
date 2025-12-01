@@ -117,12 +117,26 @@ class IsEligibleForOnLabelTreatment(
                 )
             )
         ),
-        "Pembrolizumab" to And(
-            listOf(
-                HasHadLimitedSystemicTreatments(0),
-                HasSufficientPDL1ByIhc("TPS", 50.0, doidModel),
-                Not(HasMolecularDriverEventInNsclc(setOf("EGFR", "ALK"), emptySet(), maxTestAge, false, false))
-            )
-        )
+        "Pembrolizumab" to object : EvaluationFunction {
+            override fun evaluate(record: PatientRecord): Evaluation {
+                val isTreatmentNaive = HasHadLimitedSystemicTreatments(0).evaluate(record).result.isPassOrNotEvaluated()
+                val hasEgfrOrAlkDriver = HasMolecularDriverEventInNsclc(
+                    setOf("EGFR", "ALK"),
+                    emptySet(),
+                    maxTestAge,
+                    false,
+                    false
+                ).evaluate(record).result.isPassOrNotEvaluated()
+                val hasPDL1Above50 = HasSufficientPDL1ByIhc("TPS", 50.0, doidModel).evaluate(record).result.isPassOrNotEvaluated()
+
+                return when {
+                    isTreatmentNaive && !hasEgfrOrAlkDriver && hasPDL1Above50 -> EvaluationFactory.pass("")
+                    isTreatmentNaive && hasEgfrOrAlkDriver -> EvaluationFactory.fail("")
+                    else -> EvaluationFactory.undetermined("")
+                }
+            }
+        }
     )
+
+    private fun EvaluationResult.isPassOrNotEvaluated() = this == EvaluationResult.PASS || this == EvaluationResult.NOT_EVALUATED
 }
