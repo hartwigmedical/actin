@@ -302,10 +302,7 @@ class HasMolecularDriverEventInNsclcTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         evaluateMessages(
             evaluation.undeterminedMessagesStrings(),
-            setOf(
-                "Activating mutation in gene EGFR undetermined (not tested for mutations)",
-                "Mutation with protein impact(s) V600E in gene BRAF undetermined (not tested for mutations)"
-            )
+            setOf("Presence of NSCLC driver event(s) undetermined (BRAF and EGFR not tested)")
         )
     }
 

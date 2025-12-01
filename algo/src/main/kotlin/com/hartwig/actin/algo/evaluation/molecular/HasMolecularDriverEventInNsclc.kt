@@ -88,9 +88,21 @@ class HasMolecularDriverEventInNsclc(
     }
 
     private fun writeUndeterminedMessage(undeterminedInput: Set<String>): Set<StaticMessage> {
-        return if (listOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE).intersect(undeterminedInput).isNotEmpty()) {
-            setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (data missing)"))
-        } else undeterminedInput.map { StaticMessage(it) }.toSet()
+        val undeterminedGenes = undeterminedInput.filter { it.contains(UNDETERMINED_NOT_TESTED_STRING) }
+            .flatMap { msg -> ALL_GENES.filter { gene -> msg.contains(gene, ignoreCase = true) } }
+            .toSet()
+
+        return when {
+            undeterminedInput.any { it in setOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE) } -> {
+                setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (data missing)"))
+            }
+
+            undeterminedGenes.isNotEmpty() -> {
+                setOf(StaticMessage("Presence of NSCLC driver event(s) undetermined (${Format.concat(undeterminedGenes)} not tested)"))
+            }
+
+            else -> emptySet()
+        }
     }
 
     private fun writeFailMessage(failInput: Set<String>): Set<StaticMessage> {
