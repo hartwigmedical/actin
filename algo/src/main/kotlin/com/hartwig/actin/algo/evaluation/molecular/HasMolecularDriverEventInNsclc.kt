@@ -65,6 +65,7 @@ class HasMolecularDriverEventInNsclc(
             result = if (mustWarn) EvaluationResult.WARN else evaluation.result,
             passMessages = writePassMessage(evaluation.passMessagesStrings(), mustWarn, message),
             warnMessages = writeWarnMessage(evaluation.passMessagesStrings(), evaluation.warnMessagesStrings(), mustWarn, message),
+            undeterminedMessages = writeUndeterminedMessage(evaluation.undeterminedMessagesStrings()),
             failMessages = writeFailMessage(evaluation.failMessagesStrings()),
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
@@ -84,6 +85,12 @@ class HasMolecularDriverEventInNsclc(
 
             else -> emptySet()
         }
+    }
+
+    private fun writeUndeterminedMessage(undeterminedInput: Set<String>): Set<StaticMessage> {
+        return if (undeterminedInput.isEmpty()) {
+            emptySet()
+        } else setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (data missing)"))
     }
 
     private fun writeFailMessage(failInput: Set<String>): Set<StaticMessage> {
