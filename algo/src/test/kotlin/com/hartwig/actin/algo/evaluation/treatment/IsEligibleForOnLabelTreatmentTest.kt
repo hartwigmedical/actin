@@ -193,6 +193,14 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
+    fun `Should return undetermined for non treatment naive NSCLC patient with uncertain eligibility for on label treatment pembrolizumab`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record =
+            withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true))))).copy(tumor = nsclcTumor)
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
     fun `Should return undetermined for colorectal cancer patient eligible for on label treatment pembrolizumab`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList())
         val treatmentCandidate = TreatmentCandidate(

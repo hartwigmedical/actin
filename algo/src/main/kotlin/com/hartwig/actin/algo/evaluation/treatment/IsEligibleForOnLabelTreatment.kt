@@ -117,26 +117,33 @@ class IsEligibleForOnLabelTreatment(
                 )
             )
         ),
-        "Pembrolizumab" to object : EvaluationFunction {
-            override fun evaluate(record: PatientRecord): Evaluation {
-                val isTreatmentNaive = HasHadLimitedSystemicTreatments(0).evaluate(record).result.isPassOrNotEvaluated()
-                val hasEgfrOrAlkDriver = HasMolecularDriverEventInNsclc(
-                    setOf("EGFR", "ALK"),
-                    emptySet(),
-                    maxTestAge,
-                    false,
-                    false
-                ).evaluate(record).result.isPassOrNotEvaluated()
-                val hasPDL1Above50 = HasSufficientPDL1ByIhc("TPS", 50.0, doidModel).evaluate(record).result.isPassOrNotEvaluated()
-
-                return when {
-                    isTreatmentNaive && !hasEgfrOrAlkDriver && hasPDL1Above50 -> EvaluationFactory.pass("")
-                    isTreatmentNaive && hasEgfrOrAlkDriver -> EvaluationFactory.fail("")
-                    else -> EvaluationFactory.undetermined("")
-                }
-            }
-        }
+        "Pembrolizumab" to PembrolizumabEvaluationFunction(doidModel, maxTestAge)
     )
 
-    private fun EvaluationResult.isPassOrNotEvaluated() = this == EvaluationResult.PASS || this == EvaluationResult.NOT_EVALUATED
+    private class PembrolizumabEvaluationFunction(
+        private val doidModel: DoidModel,
+        private val maxTestAge: LocalDate?
+    ) : EvaluationFunction {
+        override fun evaluate(record: PatientRecord): Evaluation {
+            val isTreatmentNaive = HasHadLimitedSystemicTreatments(0).evaluate(record).result.isPassOrNotEvaluated()
+            val egfrOrAlkDriverEvaluationResult = HasMolecularDriverEventInNsclc(
+                setOf("EGFR", "ALK"),
+                emptySet(),
+                maxTestAge,
+                warnForMatchesOutsideGenesToInclude = false,
+                withAvailableSoc = false
+            ).evaluate(record).result
+            val hasNoEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult == EvaluationResult.FAIL
+            val hasEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult.isPassOrNotEvaluated()
+            val hasPdl1Above50 = HasSufficientPDL1ByIhc("TPS", 50.0, doidModel).evaluate(record).result.isPassOrNotEvaluated()
+
+            return when {
+                isTreatmentNaive && hasNoEgfrOrAlkDriver && hasPdl1Above50 -> EvaluationFactory.pass("")
+                isTreatmentNaive && hasEgfrOrAlkDriver -> EvaluationFactory.fail("")
+                else -> EvaluationFactory.undetermined("")
+            }
+        }
+
+        private fun EvaluationResult.isPassOrNotEvaluated() = this == EvaluationResult.PASS || this == EvaluationResult.NOT_EVALUATED
+    }
 }
